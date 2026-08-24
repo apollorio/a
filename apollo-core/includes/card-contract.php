@@ -28,8 +28,9 @@
  *     archive-classified.php:10 deliberately stopped linking marketplace.css,
  *     and the only head payload (parts/mk/styles.php) styles the grid but not
  *     the card. The live marketplace renders accommodation cards with NO card
- *     CSS, while parts/mk/styles.php:42-71 styles a .mk-ticket*/.mk-ac*
+ *     CSS, while parts/mk/styles.php:42-71 styles a .mk-ticket-star / .mk-ac-star
  *     vocabulary no template emits.
+ *     (Space before the slash — a bare star-slash would close this docblock.)
  *
  * Shortcodes and get_template_part() conventions both already existed here and
  * neither prevented any of that, because neither gives a card a SINGLE OWNER or

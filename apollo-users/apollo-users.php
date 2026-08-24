@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Plugin Name: Apollo Users
  * Plugin URI: https://apollo.rio.br/plugins/apollo-users
@@ -17,13 +16,13 @@
  * @package Apollo\Users
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // plan-001 · G07 — file was directly reachable over HTTP
-}
-
 declare(strict_types=1);
 
 namespace Apollo\Users;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // plan-001 · G07 — file was directly reachable over HTTP
+}
 
 $old_error_reporting = error_reporting();
 if (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '/radar') !== false) {

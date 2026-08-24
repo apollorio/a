@@ -68,7 +68,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * sanitize callbacks — works unchanged. This only removes the requirement to
  * write a class to get at it.
  */
-final class DeclarativePanel extends Panel {
+final class DeclarativePanel extends \Apollo\LuxPanels\Panel {
 
 	private string $cpt;
 
