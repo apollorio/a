@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# apollo-guard pre-commit gate.
+set -euo pipefail
+ROOT="$(git rev-parse --show-toplevel)"
+GUARD="$ROOT/_inventory/_current/apollo-guard.mjs"
+[ -f "$GUARD" ] || exit 0
+BASE=""
+[ -f "$ROOT/.apollo-guard-baseline.json" ] && BASE="--baseline $ROOT/.apollo-guard-baseline.json"
+node "$GUARD" --root "$ROOT" --staged $BASE || {
+  echo ""
+  echo "  -- commit refused --"
+  echo "  Fix the finding, or open the chapter it cites and change the rule on purpose."
+  echo ""
+  exit 1
+}

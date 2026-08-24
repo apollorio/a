@@ -21,3 +21,6 @@ loginizer-security/
 query-monitor/
 really-simple-ssl/
 wp-debugging/
+
+sync.ffs_lock
+
