@@ -24,3 +24,9 @@ wp-debugging/
 
 sync.ffs_lock
 
+
+*.ffs_tmp
+
+*.ffs_db
+
+debug-*.log
