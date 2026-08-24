@@ -34,6 +34,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
+import { installCRules } from './apollo-guard-c.mjs';
 
 /* ─────────────────────────── configuration ─────────────────────────── */
 
@@ -477,6 +478,9 @@ rule({
     return out;
   },
 });
+
+/* ── C-series: contract rules (plan-003 · P1). Own cell: apollo-guard-c.mjs ── */
+installCRules(rule);
 
 /* ── M-series: mobile-first. The product is a phone app; the desktop is the
       secondary client. A rule here fails the app, not the website. ───────── */
