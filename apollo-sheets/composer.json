@@ -1,0 +1,19 @@
+{
+    "name": "apollo/sheets",
+    "description": "Apollo Sheets — Data tables, spreadsheet editor, import/export, DataTables frontend",
+    "type": "wordpress-plugin",
+    "license": "proprietary",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Apollo\\Sheets\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.1"
+    },
+    "config": {
+        "optimize-autoloader": true
+    }
+}

@@ -1,0 +1,1028 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-sheets",
+    "owner": "apollo-sheets",
+    "wrap": "plugins.apollo-sheets",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-sheets",
+  "namespace": "Apollo\\Sheets",
+  "priority": 7,
+  "status": "IMPLEMENTED",
+  "description": "Data tables & spreadsheets — bulk data display, import/export CSV/JSON/HTML, frontend DataTables, admin editor, dashboard widgets, shortcodes.",
+  "dependencies": [
+    "apollo-core"
+  ],
+  "provides": [
+    "sheet-cpt",
+    "sheet-editor",
+    "datatables",
+    "import-export",
+    "bulk-edit",
+    "sheet-shortcodes"
+  ],
+  "cpts": [
+    "apollo_sheet"
+  ],
+  "taxonomies": [],
+  "tables": [],
+  "constants": {
+    "APOLLO_SHEETS_VERSION": "1.0.0",
+    "APOLLO_SHEETS_DB_VERSION": 1,
+    "APOLLO_SHEETS_FILE": "__FILE__",
+    "APOLLO_SHEETS_DIR": "plugin_dir_path",
+    "APOLLO_SHEETS_URL": "plugin_dir_url",
+    "APOLLO_SHEETS_BASENAME": "plugin_basename",
+    "APOLLO_SHEETS_CPT": "apollo_sheet"
+  },
+  "src_classes": [
+    "Plugin",
+    "Model",
+    "Render",
+    "Shortcodes",
+    "Import",
+    "Export",
+    "Activation",
+    "Deactivation",
+    "API/SheetsController",
+    "Admin/",
+    "Bulk/"
+  ],
+  "meta": {
+    "post": {
+      "_apollo_sheet_id": {
+        "_source": "deep_scan"
+      },
+      "_apollo_sheet_options": {
+        "_source": "deep_scan"
+      },
+      "_apollo_sheet_visibility": {
+        "_source": "deep_scan"
+      },
+      "_edit_last": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {},
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "description": "Live apollo/v1 (DELEGATES_TO_METHOD)",
+      "auth": "DELEGATES_TO_METHOD",
+      "permission_risk": "REVIEW",
+      "permission_method": "get_items_permissions_check",
+      "permission_binding": "SheetsController::get_items_permissions_check",
+      "permission_summary": "Delegates to $this->is_logged_in() (may need recursive resolve)",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return $this->is_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_items",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/SheetsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PATCH",
+        "POST",
+        "PUT"
+      ],
+      "description": "Live apollo/v1 (DELEGATES_TO_METHOD)",
+      "auth": "DELEGATES_TO_METHOD",
+      "permission_risk": "REVIEW",
+      "permission_method": "get_item_permissions_check",
+      "permission_binding": "SheetsController::get_item_permissions_check",
+      "permission_summary": "Delegates to $this->is_logged_in() (may need recursive resolve)",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return $this->is_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_item",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/SheetsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (CAPABILITY_CHECK)",
+      "auth": "CAPABILITY_CHECK",
+      "permission_risk": "LOW",
+      "permission_method": "create_item_permissions_check",
+      "permission_binding": "SheetsController::create_item_permissions_check",
+      "permission_summary": "Requires capability: edit_posts",
+      "permission_capabilities": [
+        "edit_posts"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if (! current_user_can('edit_posts')) { return $this->prepare_error('rest_forbidden', __('Sem permissão para criar sheets.', 'apollo-sheets'), 403); } return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "copy_item",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/SheetsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (DELEGATES_TO_METHOD)",
+      "auth": "DELEGATES_TO_METHOD",
+      "permission_risk": "REVIEW",
+      "permission_method": "get_item_permissions_check",
+      "permission_binding": "SheetsController::get_item_permissions_check",
+      "permission_summary": "Delegates to $this->is_logged_in() (may need recursive resolve)",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return $this->is_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "export_item",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/SheetsController.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "pages": [],
+  "shortcodes": [
+    {
+      "tag": "apollo-sheet",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo-sheet-info",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "version": "1.0.1",
+  "ajax": {
+    "priv": [
+      "apollo_bulk_delete",
+      "apollo_bulk_insert",
+      "apollo_bulk_load",
+      "apollo_bulk_save",
+      "apollo_sheets_add_col",
+      "apollo_sheets_add_row",
+      "apollo_sheets_delete",
+      "apollo_sheets_export",
+      "apollo_sheets_export_zip",
+      "apollo_sheets_import",
+      "apollo_sheets_preview",
+      "apollo_sheets_save",
+      "apollo_sheets_save_settings"
+    ],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [
+    "apollo/sheets/added",
+    "apollo/sheets/before_save_settings",
+    "apollo/sheets/bulk/allowed_post_types",
+    "apollo/sheets/bulk/comment_query_args",
+    "apollo/sheets/bulk/query_args",
+    "apollo/sheets/bulk/register_columns",
+    "apollo/sheets/bulk/register_comment_columns",
+    "apollo/sheets/bulk/register_user_columns",
+    "apollo/sheets/bulk/user_query_args",
+    "apollo/sheets/cell_content",
+    "apollo/sheets/cell_css_class",
+    "apollo/sheets/copied",
+    "apollo/sheets/datatables_params",
+    "apollo/sheets/deleted",
+    "apollo/sheets/formula_evaluated_data",
+    "apollo/sheets/formula_function",
+    "apollo/sheets/import_fix_common_url_mistakes",
+    "apollo/sheets/initialized",
+    "apollo/sheets/pre_delete",
+    "apollo/sheets/render_data",
+    "apollo/sheets/rest_created",
+    "apollo/sheets/rest_deleted",
+    "apollo/sheets/rest_imported",
+    "apollo/sheets/rest_updated",
+    "apollo/sheets/row_css_class",
+    "apollo/sheets/saved",
+    "apollo/sheets/saved_settings",
+    "apollo/sheets/span_trigger_keywords",
+    "apollo/sheets/table_css_classes",
+    "apollo/sheets/table_output"
+  ],
+  "hooks_listened": [],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [
+      "apollo-bulk-editor",
+      "apollo-sheets-admin",
+      "apollo-sheets-datatables",
+      "apollo-sheets-frontend"
+    ],
+    "styles": [
+      "apollo-bulk-editor",
+      "apollo-sheets",
+      "apollo-sheets-admin",
+      "apollo-sheets-datatables"
+    ]
+  },
+  "options": [
+    "apollo_sheets_db_version",
+    "apollo_sheets_settings",
+    "apollo_sheets_tables",
+    "apollo_sheets_version"
+  ],
+  "security": {
+    "risk_band": "MEDIUM",
+    "risk_score": 40,
+    "abspath_coverage_pct": 96,
+    "rest_open_routes": 0,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 0,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 4,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 0.5
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_sheets_save_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_sheets_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_sheets_settings_save",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [],
+  "query_vars": [],
+  "php_surface": {
+    "files": 27,
+    "loc": 8523,
+    "classes": 19,
+    "functions": 6
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:51.237Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 145,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-sheets",
+    "main_file": "apollo-sheets.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Sheets",
+      "plugin_uri": "https://apollo.rio.br/plugins/apollo-sheets",
+      "description": "Data tables & spreadsheets — bulk data display, import/export CSV/JSON/HTML, frontend DataTables, admin editor, dashboard widgets, shortcodes.",
+      "version": "1.0.1",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "Proprietary",
+      "text_domain": "apollo-sheets",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": "false"
+    },
+    "composer": {
+      "name": "apollo/sheets",
+      "namespaces": [
+        "Apollo\\Sheets"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 27,
+        ".css": 4,
+        ".js": 4,
+        ".json": 2,
+        ".md": 1,
+        ".lnk": 2
+      },
+      "by_top_directory": {
+        "(root)": 6,
+        "assets": 7,
+        "blocks": 3,
+        "includes": 3,
+        "src": 19,
+        "templates": 2
+      },
+      "total_bytes": 335348
+    },
+    "php": {
+      "files": 27,
+      "loc": 8523,
+      "classes": 19,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 6
+    },
+    "architecture": {
+      "namespace": "Apollo\\Sheets",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Sheets\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "BulkController",
+          "fqcn": "Apollo\\Sheets\\Admin\\BulkController",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Admin/BulkController.php"
+        },
+        {
+          "kind": "class",
+          "name": "Controller",
+          "fqcn": "Apollo\\Sheets\\Admin\\Controller",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Admin/Controller.php"
+        },
+        {
+          "kind": "class",
+          "name": "SheetsController",
+          "fqcn": "Apollo\\Sheets\\API\\SheetsController",
+          "extends": "RestBase",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/SheetsController.php"
+        },
+        {
+          "kind": "class",
+          "name": "ColumnRegistry",
+          "fqcn": "Apollo\\Sheets\\Bulk\\ColumnRegistry",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Bulk/ColumnRegistry.php"
+        },
+        {
+          "kind": "class",
+          "name": "CommentsProvider",
+          "fqcn": "Apollo\\Sheets\\Bulk\\CommentsProvider",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Bulk/CommentsProvider.php"
+        },
+        {
+          "kind": "class",
+          "name": "Manager",
+          "fqcn": "Apollo\\Sheets\\Bulk\\Manager",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Bulk/Manager.php"
+        },
+        {
+          "kind": "class",
+          "name": "PostsProvider",
+          "fqcn": "Apollo\\Sheets\\Bulk\\PostsProvider",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Bulk/PostsProvider.php"
+        },
+        {
+          "kind": "class",
+          "name": "UsersProvider",
+          "fqcn": "Apollo\\Sheets\\Bulk\\UsersProvider",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Bulk/UsersProvider.php"
+        },
+        {
+          "kind": "class",
+          "name": "DashboardWidget",
+          "fqcn": "Apollo\\Sheets\\DashboardWidget",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/DashboardWidget.php"
+        },
+        {
+          "kind": "class",
+          "name": "Deactivation",
+          "fqcn": "Apollo\\Sheets\\Deactivation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Deactivation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Export",
+          "fqcn": "Apollo\\Sheets\\Export",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Export.php"
+        },
+        {
+          "kind": "class",
+          "name": "Formula",
+          "fqcn": "Apollo\\Sheets\\Formula",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Formula.php"
+        },
+        {
+          "kind": "class",
+          "name": "Import",
+          "fqcn": "Apollo\\Sheets\\Import",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Import.php"
+        },
+        {
+          "kind": "class",
+          "name": "Model",
+          "fqcn": "Apollo\\Sheets\\Model",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Model.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Sheets\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "Render",
+          "fqcn": "Apollo\\Sheets\\Render",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Render.php"
+        },
+        {
+          "kind": "class",
+          "name": "Settings",
+          "fqcn": "Apollo\\Sheets\\Settings",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Settings.php"
+        },
+        {
+          "kind": "class",
+          "name": "Shortcodes",
+          "fqcn": "Apollo\\Sheets\\Shortcodes",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Shortcodes.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_sheets_check_dependencies",
+          "file": "apollo-sheets.php"
+        },
+        {
+          "name": "apollo_sheets_init",
+          "file": "apollo-sheets.php"
+        },
+        {
+          "name": "apollo_sheets",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_sheets_get_table",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_sheets_print_table",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_sheets_get_info",
+          "file": "includes/functions.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 4,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "GET",
+            "POST"
+          ],
+          "permission": {
+            "class": "DELEGATES_TO_METHOD",
+            "risk": "REVIEW",
+            "method": "get_items_permissions_check",
+            "target": "SheetsController",
+            "analysis": {
+              "effective_class": "DELEGATES_TO_METHOD",
+              "risk": "REVIEW",
+              "summary": "Delegates to $this->is_logged_in() (may need recursive resolve)",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [
+                  "is_logged_in"
+                ],
+                "returns": [
+                  "$this->is_logged_in()"
+                ]
+              },
+              "body_preview": "return $this->is_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "SheetsController::get_items_permissions_check",
+              "method_file": "src/API/SheetsController.php",
+              "method_signature": "$request"
+            }
+          },
+          "callback": "get_items",
+          "file": "src/API/SheetsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "DELETE",
+            "GET",
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "permission": {
+            "class": "DELEGATES_TO_METHOD",
+            "risk": "REVIEW",
+            "method": "get_item_permissions_check",
+            "target": "SheetsController",
+            "analysis": {
+              "effective_class": "DELEGATES_TO_METHOD",
+              "risk": "REVIEW",
+              "summary": "Delegates to $this->is_logged_in() (may need recursive resolve)",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [
+                  "is_logged_in"
+                ],
+                "returns": [
+                  "$this->is_logged_in()"
+                ]
+              },
+              "body_preview": "return $this->is_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "SheetsController::get_item_permissions_check",
+              "method_file": "src/API/SheetsController.php",
+              "method_signature": "$request"
+            }
+          },
+          "callback": "get_item",
+          "file": "src/API/SheetsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "CAPABILITY_CHECK",
+            "risk": "LOW",
+            "method": "create_item_permissions_check",
+            "target": "SheetsController",
+            "analysis": {
+              "effective_class": "CAPABILITY_CHECK",
+              "risk": "LOW",
+              "summary": "Requires capability: edit_posts",
+              "capabilities": [
+                "edit_posts"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [
+                  "prepare_error"
+                ],
+                "returns": [
+                  "$this->prepare_error('rest_forbidden', __('Sem permissão para criar sheets.', 'apollo-sheets'), 403)",
+                  "true"
+                ]
+              },
+              "body_preview": "if (! current_user_can('edit_posts')) { return $this->prepare_error('rest_forbidden', __('Sem permissão para criar sheets.', 'apollo-sheets'), 403); } return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "SheetsController::create_item_permissions_check",
+              "method_file": "src/API/SheetsController.php",
+              "method_signature": "$request"
+            }
+          },
+          "callback": "copy_item",
+          "file": "src/API/SheetsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "DELEGATES_TO_METHOD",
+            "risk": "REVIEW",
+            "method": "get_item_permissions_check",
+            "target": "SheetsController",
+            "analysis": {
+              "effective_class": "DELEGATES_TO_METHOD",
+              "risk": "REVIEW",
+              "summary": "Delegates to $this->is_logged_in() (may need recursive resolve)",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [
+                  "is_logged_in"
+                ],
+                "returns": [
+                  "$this->is_logged_in()"
+                ]
+              },
+              "body_preview": "return $this->is_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "SheetsController::get_item_permissions_check",
+              "method_file": "src/API/SheetsController.php",
+              "method_signature": "$request"
+            }
+          },
+          "callback": "export_item",
+          "file": "src/API/SheetsController.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 1,
+        "REVIEW": 3
+      },
+      "effective_class_counts": {
+        "DELEGATES_TO_METHOD": 3,
+        "CAPABILITY_CHECK": 1
+      },
+      "permission_body_resolved": 4,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [],
+      "admin_cap_routes": [],
+      "logged_in_routes": []
+    },
+    "database": {
+      "tables_owned_or_defined": [],
+      "tables_referenced": [
+        "apollo_sheets_save_settings",
+        "apollo_sheets_settings",
+        "apollo_sheets_settings_save"
+      ],
+      "tables_for_registry": [],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_sheets_save_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_sheets_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_sheets_settings_save",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 4,
+      "user_count": 0,
+      "term_count": 0,
+      "post_keys": [
+        "_apollo_sheet_id",
+        "_apollo_sheet_options",
+        "_apollo_sheet_visibility",
+        "_edit_last"
+      ],
+      "user_keys": [],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [],
+      "query_vars": [],
+      "pages_derived": []
+    },
+    "cpts": [
+      {
+        "slug": "apollo_sheet",
+        "registered_locally": false,
+        "via_constant": true
+      }
+    ],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 30,
+      "listened_count": 29,
+      "apollo_fired": [
+        "apollo/sheets/added",
+        "apollo/sheets/before_save_settings",
+        "apollo/sheets/bulk/allowed_post_types",
+        "apollo/sheets/bulk/comment_query_args",
+        "apollo/sheets/bulk/query_args",
+        "apollo/sheets/bulk/register_columns",
+        "apollo/sheets/bulk/register_comment_columns",
+        "apollo/sheets/bulk/register_user_columns",
+        "apollo/sheets/bulk/user_query_args",
+        "apollo/sheets/cell_content",
+        "apollo/sheets/cell_css_class",
+        "apollo/sheets/copied",
+        "apollo/sheets/datatables_params",
+        "apollo/sheets/deleted",
+        "apollo/sheets/formula_evaluated_data",
+        "apollo/sheets/formula_function",
+        "apollo/sheets/import_fix_common_url_mistakes",
+        "apollo/sheets/initialized",
+        "apollo/sheets/pre_delete",
+        "apollo/sheets/render_data",
+        "apollo/sheets/rest_created",
+        "apollo/sheets/rest_deleted",
+        "apollo/sheets/rest_imported",
+        "apollo/sheets/rest_updated",
+        "apollo/sheets/row_css_class",
+        "apollo/sheets/saved",
+        "apollo/sheets/saved_settings",
+        "apollo/sheets/span_trigger_keywords",
+        "apollo/sheets/table_css_classes",
+        "apollo/sheets/table_output"
+      ],
+      "apollo_listened": [],
+      "critical_wp_listened": [
+        "admin_menu",
+        "init",
+        "plugins_loaded",
+        "rest_api_init"
+      ]
+    },
+    "ajax": {
+      "priv": [
+        "apollo_bulk_delete",
+        "apollo_bulk_insert",
+        "apollo_bulk_load",
+        "apollo_bulk_save",
+        "apollo_sheets_add_col",
+        "apollo_sheets_add_row",
+        "apollo_sheets_delete",
+        "apollo_sheets_export",
+        "apollo_sheets_export_zip",
+        "apollo_sheets_import",
+        "apollo_sheets_preview",
+        "apollo_sheets_save",
+        "apollo_sheets_save_settings"
+      ],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [
+      "apollo-sheet",
+      "apollo-sheet-info"
+    ],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [
+        "apollo-bulk-editor",
+        "apollo-sheets-admin",
+        "apollo-sheets-datatables",
+        "apollo-sheets-frontend"
+      ],
+      "styles": [
+        "apollo-bulk-editor",
+        "apollo-sheets",
+        "apollo-sheets-admin",
+        "apollo-sheets-datatables"
+      ]
+    },
+    "options": [
+      "apollo_sheets_db_version",
+      "apollo_sheets_settings",
+      "apollo_sheets_tables",
+      "apollo_sheets_version"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_SHEETS_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_SHEETS_DB_VERSION",
+        "value": "1"
+      },
+      {
+        "name": "APOLLO_SHEETS_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_SHEETS_DIR",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_SHEETS_URL",
+        "value": "plugin_dir_url( __FILE__"
+      },
+      {
+        "name": "APOLLO_SHEETS_BASENAME",
+        "value": "plugin_basename( __FILE__"
+      },
+      {
+        "name": "APOLLO_SHEETS_CPT",
+        "value": "apollo_sheet"
+      },
+      {
+        "name": "APOLLO_SHEETS_REST_NAMESPACE",
+        "value": "apollo/v1"
+      },
+      {
+        "name": "APOLLO_SHEETS_TABLE_SCHEME",
+        "value": "1"
+      },
+      {
+        "name": "APOLLO_SHEETS_DEFAULT_ROWS",
+        "value": "5"
+      },
+      {
+        "name": "APOLLO_SHEETS_DEFAULT_COLS",
+        "value": "5"
+      },
+      {
+        "name": "APOLLO_SHEETS_MAX_ENTRIES",
+        "value": "100"
+      }
+    ],
+    "security": {
+      "php_files": 27,
+      "abspath_guard_files": 26,
+      "abspath_coverage_pct": 96,
+      "wpdb_prepare_calls": 2,
+      "wpdb_query_calls": 4,
+      "prepare_to_query_ratio": 0.5,
+      "nonce_checks": 15,
+      "current_user_can_calls": 25,
+      "raw_superglobal": {
+        "get": 8,
+        "post": 35,
+        "request": 0
+      },
+      "permission_callback_return_true": 0,
+      "escape_helpers": 72,
+      "echo_statements": 82,
+      "eval_calls": 1,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 2,
+      "risk_score": 40,
+      "risk_band": "MEDIUM",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 0,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 0
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core"
+      ],
+      "signals": [
+        "apollo-core"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.0.1",
+      "version_changed": false,
+      "old_rest": 6,
+      "live_rest": 4,
+      "old_pages": 0,
+      "live_pages": 0,
+      "new_plugin": false
+    }
+  },
+  "canvas_contract": {
+    "variant": "none",
+    "action": "VERIFIED",
+    "shape": "no-canvas",
+    "audited": "2026-07-28",
+    "ref": "$canvas_shell.plugins.apollo-sheets"
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 27,
+    "php_loc": 8496,
+    "rest_routes_found": 1,
+    "cpts_found": [],
+    "tables_found": [],
+    "shortcodes_found": [
+      "apollo-sheet",
+      "apollo-sheet-info"
+    ]
+  }
+}

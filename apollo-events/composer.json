@@ -1,0 +1,21 @@
+{
+	"name": "apollo/apollo-events",
+	"description": "Apollo Events — CPT de eventos com calendário, expiration, REST API e 4 style packs.",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"require": {
+		"php": ">=8.1"
+	},
+	"autoload": {
+		"psr-4": {
+			"Apollo\\Event\\": "src/"
+		},
+		"files": [
+			"includes/constants.php",
+			"includes/functions.php"
+		]
+	},
+	"extra": {
+		"wordpress-plugin": true
+	}
+}

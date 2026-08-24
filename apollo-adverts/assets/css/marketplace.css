@@ -1,0 +1,39 @@
+/* ==========================================
+   APOLLO CLASSIFIEDS — MARKETPLACE
+   Ultra-Modular Aggregator
+   Each partial lives in marketplace/ for easy fixes.
+   ========================================== */
+
+/* ── Foundation ── */
+@import url("marketplace/_variables.css");
+@import url("marketplace/_layout.css");
+
+/* ── Page chrome ── */
+@import url("marketplace/_page-header.css");
+@import url("marketplace/_filters.css");
+@import url("marketplace/_info-box.css");
+@import url("marketplace/_section-header.css");
+
+/* ── Ticket card ── */
+@import url("marketplace/_ticket-base.css");
+@import url("marketplace/_ticket-content.css");
+@import url("marketplace/_ticket-rip.css");
+@import url("marketplace/_ticket-bottom.css");
+
+/* ── Carousel (breakpoints) ── */
+@import url("marketplace/_carousel-desktop.css");
+@import url("marketplace/_carousel-tablet.css");
+@import url("marketplace/_carousel-xs.css");
+@import url("marketplace/_carousel-sm.css");
+
+/* ── Grid view ── */
+@import url("marketplace/_ticket-grid.css");
+
+/* ── Accommodation ── */
+@import url("marketplace/_accommodation.css");
+
+/* ── Modal ── */
+@import url("marketplace/_modal-overlay.css");
+@import url("marketplace/_modal-content.css");
+@import url("marketplace/_modal-consent.css");
+@import url("marketplace/_modal-actions.css");

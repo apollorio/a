@@ -1,0 +1,169 @@
+{
+  "$chapter": {
+    "id": "04-audit",
+    "owner": "apollo-core",
+    "keys": [
+      "$audit",
+      "$deep_audit.generated",
+      "$deep_audit.duration_ms",
+      "$deep_audit.targets"
+    ],
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "$audit": {
+    "last_rest_audit": "2026-03-26",
+    "last_security_audit": "2026-02-18",
+    "compliance_rate": "85%",
+    "status": "LIVE_SSOT_AFTER_P1_P2_P3",
+    "pending_implementations": [
+      "apollo-login: /auth/verify-email, /auth/resend-verification - Email verification endpoints"
+    ],
+    "completed_recent": [
+      "apollo-login: Full security hardening â€” 6 classes implemented (Firewall 7G, SecurityHeaders, WPHardening, RateLimiter, Lockout, URLRewriter)",
+      "apollo-login: Firewall 7G â€” SQL/XSS injection firewall, IP blacklist (permanent + transient), bad agent blocking, theme detector blocking, directory browsing block",
+      "apollo-login: SecurityHeaders â€” CSP, HSTS, X-Frame-Options, X-XSS-Protection, Referrer-Policy, Permissions-Policy, removes X-Powered-By",
+      "apollo-login: WPHardening â€” removes WP generator meta, disables XML-RPC/oEmbed/embeds, blocks sensitive files (readme.html, wp-config.php, debug.log)",
+      "apollo-login: RateLimiter â€” IP-based rate limiting for logins, page loads, comment spam; auto-blacklists via Firewall on threshold exceeded",
+      "apollo-login: Lockout â€” user meta lockout (_apollo_lockout_until) + IP lockout (delegates to Firewall); AJAX admin unlock handlers",
+      "Platform: PHP syntax validation â€” 0 errors across all 27 plugins (600+ files)",
+      "Platform: Security audit â€” all AJAX handlers have check_ajax_referer/check_admin_referer; all REST controllers have permission_callback; no raw SQL injection paths; no unescaped output",
+      "Apollo icons: audit and fix of all ri-* icon class references across apollo-core and apollo-users templates",
+      "apollo-social: YouTube embed support in ContentParser (youtube.com, youtu.be, shorts)",
+      "apollo-social: Template parts refactor (9 partials in templates/parts/)",
+      "apollo-social: Compose toolbar media URL buttons (SoundCloud, Spotify, Event, YouTube)",
+      "apollo-social: No-image uploads enforcement (server-side validation)",
+      "apollo-social: Comment vs Depoimento conditional labels in feed.js",
+      "apollo-social: Classifieds safety disclaimer modal with checkbox consent",
+      "apollo-social: feed.php renamed to explore.php",
+      "FASE 5 â€” apollo/membership/* canonical hooks: created apollo-membership/includes/bridges.php with 8 bridge actions (points_awarded, points_deducted, points_reset, points_updated, badge_assigned, achievement_awarded, rank_awarded, credit_added) wired via add_action onto legacy apollo_award_*/apollo_membership_* hooks",
+      "FASE 5 â€” apollo_query_members() shared helper: added to apollo-users/includes/functions.php as canonical paginated member query; apollo-social/src/Plugin.php::rest_get_members() refactored to delegate to it with function_exists fallback",
+      "FASE 5 â€” apollo-hub double-fire fix: constructor registers apollo/login/registered (primary prio 20) + user_registerâ†’auto_provision_hub_fallback() (prio 99 with did_action guard); prevents duplicate hub provisioning",
+      "FASE 5 â€” apollo/event/published canonical hook: apollo-events/src/Registry.php fires on transition_post_status; apollo-social migrated from legacy publish_event to apollo/event/published",
+      "FASE 4 â€” Structural cleanup: apollo-users strpos() PHP8.1 bug fixed; 8 debug files deleted; uninstall.php created for apollo-loc, apollo-dashboard, apollo-seo, apollo-runtime; composer.json created for apollo-dashboard, apollo-seo, apollo-runtime",
+      "FASE 3 â€” apollo-statistics: apollo_stats_user typo fixed â†’ apollo_stats_users in class-analytics.php",
+      "FASE 3 â€” apollo-djs: Registry.php duplicate metabox hooks removed (delegated to Admin\\\\Metabox PSR-4 class)",
+      "FASE 3 â€” apollo-fav: constants renamed (interesseâ†’fav_events/fav_items/fav_users/fav_all) with LEGACY_ fallback reads; conditional enqueue; uninstall.php created",
+      "FASE 3 â€” apollo-chat v2.0.0: apollo_blocksâ†’apollo_chat_blocks fixed; upload_nonce added; context column in threads; POST /chat/upload endpoint; CSS extracted to chat-premium.css; version 2.0.0",
+      "FASE 3 â€” apollo-loc: namespace \\\\Apollo\\\\Loc\\\\Geocoder â†’ \\\\Apollo\\\\Local\\\\Geocoder fixed in Admin/Metabox.php",
+      "FASE 3 â€” apollo-social: rest_report_spam() fires do_action('apollo/mod/report') + DB fallback instead of direct update",
+      "FASE 2 â€” apollo-shortcodes absorvido por apollo-core: ShortcodeRegistry migrado para apollo-core/src/Core/ShortcodeRegistry.php, ShortcodesController em apollo-core/src/API/ShortcodesController.php (3 endpoints: GET /shortcodes, GET /shortcodes/{tag}, POST /shortcodes/render), apollo-shortcodes marcado DEPRECATED",
+      "FASE 1 â€” apollo-classifieds absorvido por apollo-adverts: marketplace CSS/JS migrados, 8 template parts â†’ templates/marketplace/parts/, 3 canvas templates (archive/single/create-classified), 2 shortcodes (apollo_classifieds_sell_ticket, apollo_classifieds_rent_space), 6 meta keys adicionados, integrations.php chat button â†’ modal disclaimer flow, demo-data.php migrado, apollo-classifieds marcado DEPRECATED",
+      "apollo-classifieds: New plugin created (frontend marketplace complement to apollo-adverts)",
+      "apollo-seo: Full SEO module (Meta, Schema, Sitemap, Metabox, Admin)",
+      "apollo-sheets: Bulk editor with DataTables, import/export, REST API",
+      "Registry v6.2.0: Added apollo-seo, apollo-sheets, apollo-classifieds entries",
+      "apollo-sign v1.2.0: Hand-drawn signature pad (canvas draw/upload/undo/color/PNG export), visual stamp generation (GD), signature image storage, DB v3 (+signature_image_path, stamp_path columns), adapted from _library/signing doc references",
+      "apollo-users v6.5.0 MATCHMAKING ENGINE: MatchmakingEngine.php (550+ lines) â€” offline pre-scheduled asymmetric affinity scoring (Aâ†’B â‰  Bâ†’A); 10-signal calculators (ratings 20, wow 15, chat 15, comments 10, views 5, sounds 15, favs 10, rsvp 5, groups 3, passive 2); Jaccard + time-decay(2^(-days/90)) normalization; NÂ² daily cron (15:00 UTC) + 5-min incremental dirty-pair queue; new REST GET /users/{id}/matchmaking (score+mutual+breakdown+top_matches) + GET /users/me/matches; new table apollo_matchmaking_scores (directional pairs, decimal(5,2) per signal); 6 real-time signal hooks; ApolloTable::MATCHMAKING_SCORES constant added to apollo-core",
+      "apollo-users MATCHMAKING BUG FIXES 2026-03-26: 3 bugs fixed: (1) RSVP hook name wrong 'apollo/events/rsvp_received'â†’'apollo/event/rsvp', (2) unused ApolloMeta import removed, (3) dead Activation::deactivate() method removed",
+      "AUDIT 2026-04-03 â€” Profile context refactor: apollo_get_profile_context($user_id) built as single source of truth in apollo-users/includes/functions.php (~230 lines); single-profile.php refactored to use it, removing ~150 lines of inline DB reads",
+      "AUDIT 2026-04-03 â€” JS config nonce fix: replaced scattered inline PHP nonce/config with single wp_json_encode($ctx['js_config']) in single-profile.php; nonces only for logged-in users, admin keys only for admins",
+      "AUDIT 2026-04-03 â€” Debug cleanup: removed console.log('Edit profile clicked') from single-profile.php",
+      "AUDIT 2026-04-03 â€” Security audit: found 5 CRITICAL raw SQL, 10 CRITICAL data-* nonce exposures, 6 HIGH unescaped output, 37 debug-in-production instances across 8+ plugins",
+      "AUDIT 2026-04-03 â€” Apollo Rule: $apollo_rule section added to registry with 12-point audit verificator, data flow architecture, mandatory guidelines",
+      "REGISTRY v6.6.0 â€” Deep investigation: plugin-by-plugin source code scan, all CPTs/taxonomies/REST/tables/hooks verified against actual code, missing REST endpoints documented (apollo-login JWT+AppAuth, apollo-pane-engine, apollo-maps)"
+    ],
+    "security_audit": {
+      "date": "2026-04-03",
+      "previous_audit": "2026-02-18",
+      "report_file": "plugins/_inventory/SECURITY_AUDIT_2026.md",
+      "php_syntax": "PASS â€” 0 errors in 27 plugins",
+      "ajax_nonces": "PASS â€” all wp_ajax_* handlers have check_ajax_referer or check_admin_referer",
+      "rest_permissions": "WARN â€” 1 handler uses __return_true (apollo-groups REST)",
+      "sql_injection": "WARN â€” 5 CRITICAL raw SQL without prepare() found (apollo-chat Plugin.php L1191/L1193, apollo-notif Plugin.php L1185, apollo-notif Admin.php L304, apollo-adverts Deactivation.php L56)",
+      "output_escaping": "WARN â€” 6 HIGH unescaped echo: apollo-djs player.php/hero.php/bio-modal.php, apollo-remind admin-dashboard.php, apollo-sign titan-stamp.php",
+      "nonce_exposure": "WARN â€” 10 CRITICAL nonces in data-* attributes across 8 plugins (apollo-fav, apollo-wow, apollo-adverts, apollo-events, apollo-membership, apollo-hub, apollo-sheets, apollo-statistics, apollo-pane-engine)",
+      "debug_in_production": "WARN â€” 22 console.log + 15 unguarded error_log() calls",
+      "write_operation_gaps": [
+        "apollo-fav: nopriv AJAX handler should be restricted",
+        "apollo-hub: JSON blocks without schema validation",
+        "apollo-groups: __return_true on REST permission_callback",
+        "apollo-email: newsletter subscribe without rate-limiting",
+        "apollo-statistics: capability check unverified on toggle metric"
+      ],
+      "remediation_status": {
+        "profile_context_refactor": "DONE â€” apollo_get_profile_context() built, single-profile.php refactored",
+        "js_config_nonce_fix": "DONE â€” inline nonces replaced with wp_json_encode() in single-profile.php",
+        "console_log_removed": "DONE â€” removed from single-profile.php",
+        "remaining_fixes": "PENDING â€” raw SQL, data-* nonces in 8 plugins, unescaped output in 3 plugins"
+      }
+    },
+    "notes": "36 total plugins: 27 active + 4 planned + 2 deprecated + 1 not_installed (apollo-elementor) + 2 locked_next. apollo-dj-sync is desktop_bridge (apolloDJ.exe) not public web UX. apollo-social REST uses /feed (not /explore) for API routes. Canonical guest landing /casa (May 2026). Registry v6.6.1 doc refresh 2026-05-20.",
+    "last_full_technical_audit": "2026-07-20",
+    "last_security_remediation": "2026-07-20",
+    "audit_script": "plugins/_inventory/deep-audit-registry2.js",
+    "audit_level": "DEEP",
+    "audit_targets": 39,
+    "audit_method": "Deep PHP tree + REST permission_callback BODY resolution; CREATE TABLE schemas; meta; rewrites; security; coupling. Post P1/P2/P3 remediations baked into live code.",
+    "output_policy": "apollo-registry.json canonical + apollo-registry-2.json mirror",
+    "remediations": {
+      "P1": {
+        "date": "2026-07-20",
+        "items": [
+          "apollo-users: prepare_user_data never exposes email/phone publicly; assert_profile_visible on by-id/public/radar; radar privacy filters + list-safe payloads",
+          "apollo-core: GET /pane-mode/status public response reduced to mode_active + plugin_active booleans only",
+          "apollo-dashboard: GET /dashboard/widgets requires check_logged_in"
+        ]
+      },
+      "P2": {
+        "date": "2026-07-20",
+        "items": [
+          "ABSPATH guards: apollo-pane-engine, apollo-email, apollo-dj-sync, apollo-wow (and related stubs)",
+          "SQL prepare/%i: apollo-docs DROP tables, apollo-mod uninstall, apollo-fav stats+uninstall, apollo-hub uninstall deletes/transients"
+        ]
+      },
+      "P3": {
+        "date": "2026-07-20",
+        "items": [
+          "apollo-templates/examples/user-radar-examples.php: ABSPATH + APOLLO_LOAD_TEMPLATE_EXAMPLES gate (no production REST/cron registration)",
+          "deep audit skips examples/ and phpcs-logs directories"
+        ]
+      }
+    }
+  },
+  "$deep_audit": {
+    "generated": "2026-07-20",
+    "duration_ms": 5680,
+    "targets": [
+      "apollo-templates",
+      "apollo-users",
+      "apollo-wow",
+      "apollo-admin",
+      "apollo-adverts",
+      "apollo-calendar",
+      "apollo-chat",
+      "apollo-coauthor",
+      "apollo-comment",
+      "apollo-core",
+      "apollo-dashboard",
+      "apollo-djs",
+      "apollo-dj-sync",
+      "apollo-docs",
+      "apollo-elementor",
+      "apollo-elementor-pro",
+      "apollo-email",
+      "apollo-events",
+      "apollo-fav",
+      "apollo-gestor",
+      "apollo-groups",
+      "apollo-hub",
+      "apollo-journal",
+      "apollo-loc",
+      "apollo-login",
+      "apollo-maps",
+      "apollo-membership",
+      "apollo-mod",
+      "apollo-notif",
+      "apollo-pane-engine",
+      "apollo-radio",
+      "apollo-remind",
+      "apollo-scheduler",
+      "apollo-seo",
+      "apollo-sheets",
+      "apollo-sign",
+      "apollo-social",
+      "apollo-statistics",
+      "apollo-telegram"
+    ]
+  }
+}

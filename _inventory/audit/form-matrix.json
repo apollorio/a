@@ -1,0 +1,24 @@
+{
+  "generated": "2026-07-21",
+  "event": {
+    "create_edit_surface": "/novo-evento (create-event.php) + wp-admin Metabox.php; save via REST apollo/v1/eventos (POST/PUT), collectPayload in apollo-events-create-bridge.js",
+    "security": { "nonce": "wp_rest (X-WP-Nonce)", "capability": "edit_posts (create) / edit_post+author+coauthor (update)", "non_publisher": "forced post_status=draft" },
+    "coverage": "100% of single-consumed writable keys have inputs (ticket_url/ticket_price/list_url/lista_cta_label added in prior pass to form-access.php).",
+    "derived_runtime_correctly_no_input": ["_event_is_gone (cron)","_event_view_count","rsvp table","chat"]
+  },
+  "dj": {
+    "create_edit_surface": "/editar/dj/{id} (apollo-templates FrontendEditor + apollo-djs/includes/frontend-fields.php) + wp-admin Metabox.php",
+    "save_handler": "apollo-templates/src/FrontendEditor.php handle_save() (check_ajax_referer apollo_frontend_editor; per-post cap; readonly enforced server-side)",
+    "coverage": "All single-rendered writable keys have inputs EXCEPT _dj_gallery (admin metabox only — no frontend field). _dj_verified readonly by design.",
+    "gap": "dj.gallery: no frontend editor field (P3, non-blocking; admin can set)"
+  },
+  "local": {
+    "create_edit_surface": "wp-admin metaboxes (AddressMetabox, ContactMetabox, DetailsMetabox) + frontend-fields.php (name/address/city/state/country/postal/lat/lng/phone/website/instagram/capacity/price_range)",
+    "save_handler": "apollo-loc/src/Admin/Metabox/MetaboxSaver.php (sanitize_text_field/esc_url_raw/absint/wp_kses_post; hours+amenities repeaters)",
+    "coverage": "Address/contact/details/hours/amenities all have inputs + save.",
+    "gaps": [
+      { "field": "_local_image_1..5", "status": "NO INPUT PATH (metabox/frontend/REST) — single reads them; populate only via featured image today", "severity": "HIGH", "action": "DECISION_REQUIRED (media uploader feature, not a minor adjust)" },
+      { "field": "_local_testimonials", "status": "NO INPUT PATH; single reads it; not in MetaRegistrar", "severity": "MEDIUM", "action": "DECISION_REQUIRED" }
+    ]
+  }
+}

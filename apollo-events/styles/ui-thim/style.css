@@ -1,0 +1,243 @@
+/**
+ * UI ThimPress Style — Clean, professional event design
+ * Baseado no padrão ThimPress (tp_event_*), tons claros, shadows suaves.
+ *
+ * @package Apollo\Event
+ */
+
+:root {
+	--a-eve-primary: #333;
+	--a-eve-secondary: #888;
+	--a-eve-accent: #f7941d;
+	--a-eve-bg: #fff;
+	--a-eve-bg-alt: #f5f5f5;
+	--a-eve-border: #eee;
+	--a-eve-radius: 6px;
+	--a-eve-shadow: 0 2px 12px rgba(var(--rgb-d),.06);
+	--a-eve-gap: 20px;
+	--a-eve-font: 'Roboto', 'Helvetica Neue', sans-serif;
+}
+
+/* ─── Card: UI-Thim ─────────────────────────────────────────────────── */
+.a-eve-card {
+	background: var(--a-eve-bg);
+	border-radius: var(--a-eve-r);
+	box-shadow: var(--a-eve-shadow);
+	border: none;
+	overflow: hidden;
+	transition: box-shadow .3s;
+	font-family: var(--a-eve-font);
+}
+
+.a-eve-card:hover {
+	box-shadow: 0 6px 24px rgba(var(--rgb-d),.1);
+	transform: translateY(-3px);
+}
+
+.a-eve-card__banner {
+	position: relative;
+}
+
+.a-eve-card__banner::after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 60px;
+	background: linear-gradient(transparent, rgba(var(--rgb-d),.4));
+}
+
+.a-eve-card__status {
+	background: var(--a-eve-accent);
+	border-radius: 20px;
+	font-size: .75rem;
+	font-weight: 500;
+	z-index: 1;
+}
+
+.a-eve-card__body {
+	padding: 20px;
+}
+
+.a-eve-card__date {
+	color: var(--a-eve-accent);
+	font-weight: 600;
+	font-size: .85rem;
+}
+
+.a-eve-card__title {
+	font-size: 1.15rem;
+	font-weight: 600;
+	color: var(--a-eve-primary);
+}
+
+.a-eve-card__title a:hover {
+	color: var(--a-eve-accent);
+}
+
+.a-eve-card__meta {
+	color: var(--a-eve-secondary);
+	font-size: .85rem;
+}
+
+.a-eve-card__sound-tag {
+	background: rgba(247, 148, 29, .1);
+	border: none;
+	color: var(--a-eve-accent);
+	border-radius: 20px;
+	font-weight: 500;
+	padding: 3px 10px;
+}
+
+.a-eve-card__footer {
+	border-top: 1px solid var(--a-eve-border);
+	padding: 14px 20px;
+}
+
+.a-eve-card__ticket {
+	background: var(--a-eve-accent);
+	border-radius: 20px;
+	font-weight: 500;
+	padding: 8px 18px;
+}
+
+.a-eve-card__ticket:hover {
+	background: #e5851a;
+}
+
+/* ─── Gone ──────────────────────────────────────────────────────────── */
+.a-eve-gone {
+	opacity: .5;
+	filter: grayscale(.6);
+}
+
+/* ─── List: UI-Thim ─────────────────────────────────────────────────── */
+.a-eve-list-item {
+	border-bottom: 1px solid var(--a-eve-border);
+	font-family: var(--a-eve-font);
+	padding: 16px 0;
+}
+
+.a-eve-list-item:hover {
+	background: var(--a-eve-bg-alt);
+	padding-left: 16px;
+	padding-right: 16px;
+	border-radius: var(--a-eve-r);
+}
+
+.a-eve-list-item__day {
+	color: var(--a-eve-accent);
+	font-size: 1.8rem;
+	font-weight: 700;
+}
+
+.a-eve-list-item__month {
+	color: var(--a-eve-accent);
+	font-weight: 600;
+}
+
+.a-eve-list-item__title a {
+	color: var(--a-eve-primary);
+	font-weight: 600;
+}
+
+/* ─── Calendar: UI-Thim ─────────────────────────────────────────────── */
+.a-eve-calendar {
+	font-family: var(--a-eve-font);
+}
+
+.a-eve-cal-header {
+	background: var(--a-eve-accent);
+	color: #fff;
+	border-radius: var(--a-eve-r) var(--a-eve-r) 0 0;
+	padding: 16px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.a-eve-cal-title {
+	color: #fff;
+	font-weight: 600;
+}
+
+.a-eve-cal-nav {
+	background: rgba(var(--rgb-t),.2);
+	border: none;
+	color: #fff;
+	border-radius: 50%;
+	width: 32px;
+	height: 32px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.a-eve-cal-nav:hover {
+	background: rgba(var(--rgb-t),.4);
+}
+
+.a-eve-cal-grid {
+	background: var(--a-eve-bg);
+	border: 1px solid var(--a-eve-border);
+	border-top: none;
+	border-radius: 0 0 var(--a-eve-r) var(--a-eve-r);
+}
+
+.a-eve-cal-dow {
+	color: var(--a-eve-secondary);
+	font-weight: 600;
+	font-size: .8rem;
+}
+
+.a-eve-cal-day--has-event {
+	background: rgba(247, 148, 29, .08);
+	cursor: pointer;
+}
+
+.a-eve-cal-day--today {
+	background: var(--a-eve-accent);
+	color: #fff;
+	border-radius: 50%;
+}
+
+.a-eve-cal-dot {
+	background: var(--a-eve-accent);
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	display: block;
+	margin: 2px auto 0;
+}
+
+/* ─── Single & Archive ──────────────────────────────────────────────── */
+.a-eve-single,
+.a-eve-archive {
+	font-family: var(--a-eve-font);
+}
+
+.a-eve-single__info-box {
+	background: var(--a-eve-bg);
+	border-radius: var(--a-eve-r);
+	box-shadow: var(--a-eve-shadow);
+	padding: 20px;
+	margin-bottom: 16px;
+}
+
+.a-eve-view-btn {
+	background: var(--a-eve-bg);
+	border: 1px solid var(--a-eve-border);
+	border-radius: 20px;
+	padding: 6px 14px;
+	cursor: pointer;
+	color: var(--a-eve-secondary);
+}
+
+.a-eve-view-btn--active,
+.a-eve-view-btn:hover {
+	background: var(--a-eve-accent);
+	color: #fff;
+	border-color: var(--a-eve-accent);
+}

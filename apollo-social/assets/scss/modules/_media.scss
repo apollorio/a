@@ -1,0 +1,256 @@
+/**
+ * Media styles — images, videos, audio players
+ *
+ * @package Apollo\Social
+ */
+
+@import '../scss/variables';
+
+// ─ General Media Zone ─
+.media-zone {
+    overflow: hidden;
+    margin-bottom: 20px;
+    position: relative;
+    border-radius: 22px;
+    corner-shape: squircle;
+    box-shadow: 0 40px 40px rgba(var(--rgb-d), 0.005);
+
+    img, iframe {
+        filter: grayscale(100%);
+        transition: filter 0.5s ease;
+    }
+}
+
+.post:hover .media-zone img,
+.post:hover .media-zone iframe {
+    filter: grayscale(0%);
+}
+
+// ─ YouTube ─
+.yt-frame {
+    aspect-ratio: 16/9;
+    width: 100%;
+    position: relative;
+
+    iframe {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+}
+
+// ─ SoundCloud ─
+.sc-frame {
+    width: 100%;
+    height: 166px;
+    border: none;
+}
+
+.sc-native {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    padding: 0;
+    border-radius: var(--r);
+    margin-bottom: 20px;
+
+    .sc-art {
+        width: 72px;
+        height: 72px;
+        border-radius: 14px;
+        overflow: hidden;
+        flex-shrink: 0;
+        position: relative;
+        cursor: pointer;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%);
+            transition: filter 0.4s;
+        }
+
+        .play-hover {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(var(--rgb-d), 0.25);
+            opacity: 0;
+            transition: 0.3s;
+
+            i {
+                font-size: 28px;
+                color: #fff;
+            }
+        }
+
+        &:hover .play-hover {
+            opacity: 1;
+        }
+    }
+
+    .post:hover .sc-art img {
+        filter: grayscale(0%);
+    }
+
+    .sc-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .sc-track {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--black-4);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .sc-artist {
+        font-family: var(--ff-mono);
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 2px;
+    }
+
+    .sc-wave {
+        display: flex;
+        align-items: flex-end;
+        gap: 2px;
+        height: 28px;
+        margin-top: 10px;
+
+        .bar {
+            flex: 1;
+            border-radius: 1px;
+            background: rgba(var(--rgb-d), 0.08);
+            transition: background 0.2s;
+
+            &.played {
+                background: var(--black-4);
+            }
+        }
+    }
+
+    .post:hover .sc-wave .bar.played {
+        background: var(--primary);
+    }
+
+    .sc-time {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 6px;
+        font-family: var(--ff-mono);
+        font-size: 9px;
+        color: var(--muted);
+    }
+
+    .sc-badge {
+        font-size: 18px;
+        color: #ff5500;
+        flex-shrink: 0;
+        opacity: 0.4;
+    }
+}
+
+// ─ Spotify ─
+.sp-frame {
+    width: 100%;
+    height: 152px;
+    border: none;
+    border-radius: var(--r);
+}
+
+.sp-native {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    padding: 20px;
+    border-radius: var(--r);
+    margin-bottom: 20px;
+
+    .sp-art {
+        width: 64px;
+        height: 64px;
+        border-radius: 10px;
+        overflow: hidden;
+        flex-shrink: 0;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%);
+            transition: filter 0.4s;
+        }
+    }
+
+    .post:hover .sp-art img {
+        filter: grayscale(0%);
+    }
+
+    .sp-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .sp-track {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--black-4);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .sp-artist {
+        font-family: var(--ff-mono);
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 2px;
+    }
+
+    .sp-bar-wrap {
+        height: 3px;
+        background: rgba(var(--rgb-d), 0.06);
+        border-radius: 2px;
+        margin-top: 10px;
+        overflow: hidden;
+    }
+
+    .sp-bar-fill {
+        height: 100%;
+        border-radius: 2px;
+        background: var(--black-4);
+        transition: background 0.3s;
+    }
+
+    .post:hover .sp-bar-fill {
+        background: #1db954;
+    }
+
+    .sp-time {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 4px;
+        font-family: var(--ff-mono);
+        font-size: 9px;
+        color: var(--muted);
+    }
+
+    .sp-badge {
+        font-size: 18px;
+        color: var(--muted);
+        flex-shrink: 0;
+    }
+
+    .post:hover .sp-badge {
+        color: #1db954;
+    }
+}

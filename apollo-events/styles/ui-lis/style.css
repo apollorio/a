@@ -1,0 +1,232 @@
+/**
+ * UI Lis Style — Minimal, clean listing design
+ * Foco em legibilidade e simplicidade.
+ *
+ * @package Apollo\Event
+ */
+
+:root {
+	--a-eve-primary: #1d1d1f;
+	--a-eve-secondary: #6e6e73;
+	--a-eve-accent: #0071e3;
+	--a-eve-bg: #fff;
+	--a-eve-bg-alt: #fbfbfd;
+	--a-eve-border: #d2d2d7;
+	--a-eve-radius: 12px;
+	--a-eve-shadow: none;
+	--a-eve-gap: 16px;
+	--a-eve-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ─── Card: UI-Lis ──────────────────────────────────────────────────── */
+.a-eve-card {
+	background: var(--a-eve-bg);
+	border: 1px solid var(--a-eve-border);
+	border-radius: var(--a-eve-r);
+	box-shadow: none;
+	overflow: hidden;
+	font-family: var(--a-eve-font);
+	transition: border-color .2s;
+}
+
+.a-eve-card:hover {
+	border-color: var(--a-eve-accent);
+	transform: none;
+	box-shadow: none;
+}
+
+.a-eve-card__banner {
+	aspect-ratio: 2/1;
+}
+
+.a-eve-card__status {
+	background: var(--a-eve-accent);
+	border-radius: var(--a-eve-r);
+	font-size: .7rem;
+}
+
+.a-eve-card__body {
+	padding: 16px;
+}
+
+.a-eve-card__date {
+	color: var(--a-eve-accent);
+	font-weight: 500;
+	font-size: .85rem;
+}
+
+.a-eve-card__title {
+	font-size: 1.05rem;
+	font-weight: 600;
+	line-height: 1.35;
+}
+
+.a-eve-card__title a {
+	color: var(--a-eve-primary);
+}
+
+.a-eve-card__title a:hover {
+	color: var(--a-eve-accent);
+}
+
+.a-eve-card__meta {
+	color: var(--a-eve-secondary);
+	font-size: .8rem;
+}
+
+.a-eve-card__sound-tag {
+	background: var(--a-eve-bg-alt);
+	border: 1px solid var(--a-eve-border);
+	border-radius: 6px;
+	font-size: .7rem;
+	color: var(--a-eve-secondary);
+}
+
+.a-eve-card__footer {
+	border-top: 1px solid var(--a-eve-border);
+	padding: 10px 16px;
+}
+
+.a-eve-card__ticket {
+	background: var(--a-eve-accent);
+	border-radius: 980px;
+	font-size: .8rem;
+	font-weight: 500;
+	padding: 6px 16px;
+}
+
+.a-eve-card__ticket:hover {
+	opacity: .8;
+}
+
+/* ─── Gone ──────────────────────────────────────────────────────────── */
+.a-eve-gone {
+	opacity: .4;
+	filter: grayscale(.5);
+}
+
+/* ─── List: UI-Lis ──────────────────────────────────────────────────── */
+.a-eve-list-item {
+	border-bottom: 1px solid var(--a-eve-border);
+	font-family: var(--a-eve-font);
+	padding: 14px 0;
+}
+
+.a-eve-list-item:hover {
+	background: var(--a-eve-bg-alt);
+}
+
+.a-eve-list-item__day {
+	color: var(--a-eve-accent);
+	font-weight: 700;
+	font-size: 1.5rem;
+}
+
+.a-eve-list-item__month {
+	color: var(--a-eve-secondary);
+	font-size: .7rem;
+}
+
+.a-eve-list-item__title a {
+	color: var(--a-eve-primary);
+	font-weight: 600;
+}
+
+.a-eve-list-item__details {
+	font-size: .8rem;
+	color: var(--a-eve-secondary);
+}
+
+/* ─── Calendar: UI-Lis ──────────────────────────────────────────────── */
+.a-eve-calendar {
+	font-family: var(--a-eve-font);
+}
+
+.a-eve-cal-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 16px 0;
+}
+
+.a-eve-cal-title {
+	font-weight: 600;
+	font-size: 1.1rem;
+	color: var(--a-eve-primary);
+}
+
+.a-eve-cal-nav {
+	background: var(--a-eve-bg-alt);
+	border: 1px solid var(--a-eve-border);
+	border-radius: 8px;
+	padding: 6px 12px;
+	cursor: pointer;
+	color: var(--a-eve-secondary);
+}
+
+.a-eve-cal-nav:hover {
+	border-color: var(--a-eve-accent);
+	color: var(--a-eve-accent);
+}
+
+.a-eve-cal-dow {
+	color: var(--a-eve-secondary);
+	font-size: .75rem;
+	font-weight: 600;
+}
+
+.a-eve-cal-day {
+	border-radius: 8px;
+	color: var(--a-eve-secondary);
+}
+
+.a-eve-cal-day--has-event {
+	background: rgba(0, 113, 227, .06);
+	color: var(--a-eve-primary);
+	cursor: pointer;
+}
+
+.a-eve-cal-day--today {
+	background: var(--a-eve-accent);
+	color: #fff;
+}
+
+.a-eve-cal-dot {
+	width: 5px;
+	height: 5px;
+	border-radius: 50%;
+	background: var(--a-eve-accent);
+	display: block;
+	margin: 2px auto 0;
+}
+
+/* ─── Single & Archive ──────────────────────────────────────────────── */
+.a-eve-single,
+.a-eve-archive {
+	font-family: var(--a-eve-font);
+}
+
+.a-eve-single__info-box {
+	background: var(--a-eve-bg-alt);
+	border: 1px solid var(--a-eve-border);
+	border-radius: var(--a-eve-r);
+	padding: 16px;
+	margin-bottom: 12px;
+}
+
+.a-eve-view-btn {
+	background: var(--a-eve-bg);
+	border: 1px solid var(--a-eve-border);
+	border-radius: 8px;
+	padding: 6px 12px;
+	cursor: pointer;
+	color: var(--a-eve-secondary);
+	font-size: .85rem;
+}
+
+.a-eve-view-btn--active,
+.a-eve-view-btn:hover {
+	border-color: var(--a-eve-accent);
+	color: var(--a-eve-accent);
+	background: rgba(0, 113, 227, .05);
+}

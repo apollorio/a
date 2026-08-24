@@ -1,0 +1,19 @@
+/* ===========================================
+   MARKETPLACE — Page Header (MARKET::PLACE)
+   =========================================== */
+
+.apollo-page-header {
+    padding: 60px 0 40px 0;
+}
+
+.apollo-masthead {
+    font-size: clamp(40px, 6vw, 80px);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    margin: 0;
+}
+
+.apollo-accent {
+    color: var(--primary);
+}

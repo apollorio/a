@@ -1,0 +1,59 @@
+/**
+ * Apollo Admin — Shell / Wrap
+ */
+
+.apollo-admin-wrap {
+    max-width: 1400px;
+    margin: 20px 20px 20px 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--apollo-text);
+}
+
+.apollo-admin-header {
+    background: linear-gradient(135deg, var(--apollo-primary) 0%, #8b5cf6 100%);
+    color: #fff;
+    padding: 24px 32px;
+    border-radius: var(--apollo-r) var(--apollo-r) 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.apollo-admin-header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.apollo-admin-header h1 .dashicons {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+}
+
+.apollo-admin-subtitle {
+    margin: 0;
+    opacity: .8;
+    font-size: 13px;
+}
+
+.apollo-admin-layout {
+    display: flex;
+    background: var(--apollo-bg);
+    border: 1px solid var(--apollo-border);
+    border-top: none;
+    border-radius: 0 0 var(--apollo-r) var(--apollo-r);
+    min-height: 600px;
+    box-shadow: var(--apollo-shadow);
+}
+
+.apollo-admin-content {
+    flex: 1;
+    padding: 28px 32px;
+    overflow-y: auto;
+}

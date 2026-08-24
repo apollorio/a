@@ -1,0 +1,671 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-elementor",
+    "owner": "apollo-elementor",
+    "wrap": "plugins.apollo-elementor",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-elementor",
+  "namespace": "Apollo\\ElementorAE",
+  "priority": 15,
+  "status": "IMPLEMENTED",
+  "install_note": "Plugin registered in registry v6.6.0 as IMPLEMENTED but directory does not exist in this aprio installation. Scheduled for future deployment.",
+  "version": "1.0.1",
+  "description": "Server-rendered Elementor widgets with cache-first data helpers for the Apollo ecosystem. Premium singles, planners, charts, and gestor dashboards.",
+  "dependencies": [
+    "apollo-core",
+    "elementor"
+  ],
+  "provides": [
+    "elementor-widgets",
+    "event-card-widget",
+    "dj-card-widget",
+    "loc-card-widget"
+  ],
+  "widgets": [
+    {
+      "name": "apollo-event-card",
+      "cpt": "event",
+      "skins": [
+        "card",
+        "grid",
+        "carousel"
+      ]
+    },
+    {
+      "name": "apollo-dj-card",
+      "cpt": "dj",
+      "skins": [
+        "card",
+        "grid",
+        "carousel"
+      ]
+    },
+    {
+      "name": "apollo-loc-card",
+      "cpt": "local",
+      "skins": [
+        "card",
+        "grid",
+        "carousel"
+      ]
+    }
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [],
+  "meta": {
+    "post": {
+      "_apollo_appointment_date": {
+        "_source": "deep_scan"
+      },
+      "_apollo_appointment_progress": {
+        "_source": "deep_scan"
+      },
+      "_apollo_appointment_time_end": {
+        "_source": "deep_scan"
+      },
+      "_apollo_appointment_time_start": {
+        "_source": "deep_scan"
+      },
+      "_apollo_appointment_type": {
+        "_source": "deep_scan"
+      },
+      "_apollo_appointment_venue": {
+        "_source": "deep_scan"
+      },
+      "_apollo_capacity": {
+        "_source": "deep_scan"
+      },
+      "_apollo_city": {
+        "_source": "deep_scan"
+      },
+      "_apollo_event_date": {
+        "_source": "deep_scan"
+      },
+      "_apollo_event_time_end": {
+        "_source": "deep_scan"
+      },
+      "_apollo_event_time_start": {
+        "_source": "deep_scan"
+      },
+      "_apollo_lineup": {
+        "_source": "deep_scan"
+      },
+      "_apollo_revenue": {
+        "_source": "deep_scan"
+      },
+      "_apollo_rsvp_count": {
+        "_source": "deep_scan"
+      },
+      "_apollo_venue": {
+        "_source": "deep_scan"
+      },
+      "_apollo_venue_address": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {
+      "_apollo_avatar_url": {
+        "_source": "deep_scan"
+      },
+      "_apollo_bio": {
+        "_source": "deep_scan"
+      },
+      "_apollo_city": {
+        "_source": "deep_scan"
+      },
+      "_apollo_fav_count": {
+        "_source": "deep_scan"
+      },
+      "_apollo_instagram": {
+        "_source": "deep_scan"
+      },
+      "_apollo_membership": {
+        "_source": "deep_scan"
+      },
+      "_apollo_soundcloud": {
+        "_source": "deep_scan"
+      },
+      "_apollo_wow_count": {
+        "_source": "deep_scan"
+      }
+    },
+    "term": {}
+  },
+  "rest": [],
+  "pages": [],
+  "shortcodes": [],
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [],
+  "hooks_listened": [],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [
+      "apollo-elementor-base"
+    ],
+    "styles": [
+      "apollo-elementor-",
+      "apollo-elementor-base"
+    ]
+  },
+  "options": [],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 0,
+    "abspath_coverage_pct": 98,
+    "rest_open_routes": 0,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 0,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 0,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": null
+  },
+  "database_schemas": [],
+  "rewrite_rules": [],
+  "query_vars": [],
+  "php_surface": {
+    "files": 48,
+    "loc": 3862,
+    "classes": 26,
+    "functions": 3
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:48.598Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 113,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-elementor",
+    "main_file": "apollo-elementor.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Elementor",
+      "plugin_uri": "https://apollo.rio.br",
+      "description": "Server-rendered Elementor widgets with cache-first data helpers for the Apollo ecosystem. Premium singles, planners, charts, and gestor dashboards.",
+      "version": "1.0.1",
+      "author": "Apollo Rio",
+      "author_uri": null,
+      "license": "GPL-2.0-or-later",
+      "text_domain": "apollo-elementor",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.2",
+      "requires_plugins": null,
+      "network": null
+    },
+    "composer": {
+      "name": "apollo/elementor-ae",
+      "namespaces": [
+        "Apollo\\ElementorAE"
+      ],
+      "require": {
+        "php": ">=8.2"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 48,
+        ".css": 7,
+        ".js": 11,
+        ".json": 1,
+        ".txt": 1
+      },
+      "by_top_directory": {
+        "(root)": 4,
+        "assets": 18,
+        "src": 27,
+        "templates": 19
+      },
+      "total_bytes": 200649
+    },
+    "php": {
+      "files": 48,
+      "loc": 3862,
+      "classes": 26,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 3
+    },
+    "architecture": {
+      "namespace": "Apollo\\ElementorAE",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "ChartsRepository",
+          "fqcn": "Apollo\\ElementorAE\\Data\\ChartsRepository",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Data/ChartsRepository.php"
+        },
+        {
+          "kind": "class",
+          "name": "DJRepository",
+          "fqcn": "Apollo\\ElementorAE\\Data\\DJRepository",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Data/DJRepository.php"
+        },
+        {
+          "kind": "class",
+          "name": "EventRepository",
+          "fqcn": "Apollo\\ElementorAE\\Data\\EventRepository",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Data/EventRepository.php"
+        },
+        {
+          "kind": "class",
+          "name": "PlannerRepository",
+          "fqcn": "Apollo\\ElementorAE\\Data\\PlannerRepository",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Data/PlannerRepository.php"
+        },
+        {
+          "kind": "class",
+          "name": "Integration",
+          "fqcn": "Apollo\\ElementorAE\\Integration",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Integration.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\ElementorAE\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "AppointmentCard",
+          "fqcn": "Apollo\\ElementorAE\\Widgets\\Atomic\\AppointmentCard",
+          "extends": "BaseWidget",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Widgets/Atomic/AppointmentCard.php"
+        },
+        {
+          "kind": "class",
+          "name": "BentoGrid",
+          "fqcn": "Apollo\\ElementorAE\\Widgets\\Atomic\\BentoGrid",
+          "extends": "BaseWidget",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Widgets/Atomic/BentoGrid.php"
+        },
+        {
+          "kind": "class",
+          "name": "ChartBar",
+          "fqcn": "Apollo\\ElementorAE\\Widgets\\Atomic\\ChartBar",
+          "extends": "BaseWidget",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Widgets/Atomic/ChartBar.php"
+        },
+        {
+          "kind": "class",
+          "name": "ChartLine",
+          "fqcn": "Apollo\\ElementorAE\\Widgets\\Atomic\\ChartLine",
+          "extends": "BaseWidget",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Widgets/Atomic/ChartLine.php"
+        },
+        {
+          "kind": "class",
+          "name": "ChartRadial",
+          "fqcn": "Apollo\\ElementorAE\\Widgets\\Atomic\\ChartRadial",
+          "extends": "BaseWidget",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Widgets/Atomic/ChartRadial.php"
+        },
+        {
+          "kind": "class",
+          "name": "DiscographyList",
+          "fqcn": "Apollo\\ElementorAE\\Widgets\\Atomic\\DiscographyList",
+          "extends": "BaseWidget",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Widgets/Atomic/DiscographyList.php"
+        },
+        {
+          "kind": "class",
+          "name": "EventLineup",
+          "fqcn": "Apollo\\ElementorAE\\Widgets\\Atomic\\EventLineup",
+          "extends": "BaseWidget",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Widgets/Atomic/EventLineup.php"
+        },
+        {
+          "kind": "class",
+          "name": "EventRSVP",
+          "fqcn": "Apollo\\ElementorAE\\Widgets\\Atomic\\EventRSVP",
+          "extends": "BaseWidget",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Widgets/Atomic/EventRSVP.php"
+        },
+        {
+          "kind": "class",
+          "name": "KanbanColumn",
+          "fqcn": "Apollo\\ElementorAE\\Widgets\\Atomic\\KanbanColumn",
+          "extends": "BaseWidget",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Widgets/Atomic/KanbanColumn.php"
+        },
+        {
+          "kind": "class",
+          "name": "Marquee",
+          "fqcn": "Apollo\\ElementorAE\\Widgets\\Atomic\\Marquee",
+          "extends": "BaseWidget",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Widgets/Atomic/Marquee.php"
+        },
+        {
+          "kind": "class",
+          "name": "MetaStrip",
+          "fqcn": "Apollo\\ElementorAE\\Widgets\\Atomic\\MetaStrip",
+          "extends": "BaseWidget",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Widgets/Atomic/MetaStrip.php"
+        },
+        {
+          "kind": "class",
+          "name": "NowLine",
+          "fqcn": "Apollo\\ElementorAE\\Widgets\\Atomic\\NowLine",
+          "extends": "BaseWidget",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Widgets/Atomic/NowLine.php"
+        },
+        {
+          "kind": "class",
+          "name": "PlayedWithList",
+          "fqcn": "Apollo\\ElementorAE\\Widgets\\Atomic\\PlayedWithList",
+          "extends": "BaseWidget",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Widgets/Atomic/PlayedWithList.php"
+        },
+        {
+          "kind": "class",
+          "name": "BaseWidget",
+          "fqcn": "Apollo\\ElementorAE\\Widgets\\BaseWidget",
+          "extends": "Widget_Base",
+          "implements": [],
+          "modifiers": "abstract",
+          "file": "src/Widgets/BaseWidget.php"
+        },
+        {
+          "kind": "class",
+          "name": "ChartsDashboard",
+          "fqcn": "Apollo\\ElementorAE\\Widgets\\Composites\\ChartsDashboard",
+          "extends": "BaseWidget",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Widgets/Composites/ChartsDashboard.php"
+        },
+        {
+          "kind": "class",
+          "name": "DJSinglePage",
+          "fqcn": "Apollo\\ElementorAE\\Widgets\\Composites\\DJSinglePage",
+          "extends": "BaseWidget",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Widgets/Composites/DJSinglePage.php"
+        },
+        {
+          "kind": "class",
+          "name": "EventSinglePage",
+          "fqcn": "Apollo\\ElementorAE\\Widgets\\Composites\\EventSinglePage",
+          "extends": "BaseWidget",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Widgets/Composites/EventSinglePage.php"
+        },
+        {
+          "kind": "class",
+          "name": "GestorDashboard",
+          "fqcn": "Apollo\\ElementorAE\\Widgets\\Composites\\GestorDashboard",
+          "extends": "BaseWidget",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Widgets/Composites/GestorDashboard.php"
+        },
+        {
+          "kind": "class",
+          "name": "MonthlyCalendar",
+          "fqcn": "Apollo\\ElementorAE\\Widgets\\Composites\\MonthlyCalendar",
+          "extends": "BaseWidget",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Widgets/Composites/MonthlyCalendar.php"
+        },
+        {
+          "kind": "class",
+          "name": "WeeklyPlanner",
+          "fqcn": "Apollo\\ElementorAE\\Widgets\\Composites\\WeeklyPlanner",
+          "extends": "BaseWidget",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Widgets/Composites/WeeklyPlanner.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_cache_get",
+          "file": "src/helpers.php"
+        },
+        {
+          "name": "apollo_cache_set",
+          "file": "src/helpers.php"
+        },
+        {
+          "name": "apollo_cache_bust",
+          "file": "src/helpers.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 0,
+      "routes": [],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {},
+      "permission_body_resolved": 0,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [],
+      "admin_cap_routes": [],
+      "logged_in_routes": []
+    },
+    "database": {
+      "tables_owned_or_defined": [],
+      "tables_referenced": [],
+      "tables_for_registry": [],
+      "schemas_with_columns": 0,
+      "schemas": []
+    },
+    "meta": {
+      "post_count": 16,
+      "user_count": 8,
+      "term_count": 0,
+      "post_keys": [
+        "_apollo_appointment_date",
+        "_apollo_appointment_progress",
+        "_apollo_appointment_time_end",
+        "_apollo_appointment_time_start",
+        "_apollo_appointment_type",
+        "_apollo_appointment_venue",
+        "_apollo_capacity",
+        "_apollo_city",
+        "_apollo_event_date",
+        "_apollo_event_time_end",
+        "_apollo_event_time_start",
+        "_apollo_lineup",
+        "_apollo_revenue",
+        "_apollo_rsvp_count",
+        "_apollo_venue",
+        "_apollo_venue_address"
+      ],
+      "user_keys": [
+        "_apollo_avatar_url",
+        "_apollo_bio",
+        "_apollo_city",
+        "_apollo_fav_count",
+        "_apollo_instagram",
+        "_apollo_membership",
+        "_apollo_soundcloud",
+        "_apollo_wow_count"
+      ],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [],
+      "query_vars": [],
+      "pages_derived": []
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 0,
+      "listened_count": 9,
+      "apollo_fired": [],
+      "apollo_listened": [],
+      "critical_wp_listened": [
+        "plugins_loaded",
+        "save_post"
+      ]
+    },
+    "ajax": {
+      "priv": [],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [
+        "apollo-elementor-base"
+      ],
+      "styles": [
+        "apollo-elementor-",
+        "apollo-elementor-base"
+      ]
+    },
+    "options": [],
+    "constants": [
+      {
+        "name": "APOLLO_AE_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_AE_DIR",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_AE_URL",
+        "value": "plugin_dir_url( __FILE__"
+      },
+      {
+        "name": "APOLLO_AE_FILE",
+        "value": "__FILE__"
+      }
+    ],
+    "security": {
+      "php_files": 48,
+      "abspath_guard_files": 47,
+      "abspath_coverage_pct": 98,
+      "wpdb_prepare_calls": 0,
+      "wpdb_query_calls": 0,
+      "prepare_to_query_ratio": null,
+      "nonce_checks": 0,
+      "current_user_can_calls": 0,
+      "raw_superglobal": {
+        "get": 0,
+        "post": 0,
+        "request": 0
+      },
+      "permission_callback_return_true": 0,
+      "escape_helpers": 215,
+      "echo_statements": 217,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 0,
+      "risk_band": "LOW",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 0,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 0
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core",
+        "elementor"
+      ],
+      "signals": []
+    },
+    "lifecycle": {
+      "register_activation_hook": false,
+      "register_deactivation_hook": false,
+      "register_uninstall_hook": true,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "NOT_INSTALLED",
+      "old_version": "1.0.0",
+      "new_version": "1.0.1",
+      "version_changed": true,
+      "old_rest": 0,
+      "live_rest": 0,
+      "old_pages": 0,
+      "live_pages": 0,
+      "new_plugin": false
+    }
+  },
+  "canvas_contract": {
+    "variant": "none",
+    "action": "VERIFIED",
+    "shape": "no-canvas",
+    "audited": "2026-07-28",
+    "ref": "$canvas_shell.plugins.apollo-elementor"
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 49,
+    "php_loc": 3892,
+    "rest_routes_found": 0,
+    "cpts_found": [],
+    "tables_found": [],
+    "shortcodes_found": []
+  }
+}

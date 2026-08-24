@@ -1,0 +1,4495 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-login",
+    "owner": "apollo-login",
+    "wrap": "plugins.apollo-login",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-login",
+  "namespace": "Apollo\\Login",
+  "priority": 1,
+  "status": "IMPLEMENTED",
+  "description": "Auth: Login, Register, Password Reset, MANDATORY Aptitude Quiz (Pattern, Simon, Ethics, Reaction), URL Protection (Hide My WP native), Rate Limiting",
+  "dependencies": [
+    "apollo-chat",
+    "apollo-core",
+    "apollo-email",
+    "apollo-loc",
+    "apollo-membership",
+    "apollo-social",
+    "apollo-telegram",
+    "apollo-templates"
+  ],
+  "provides": [
+    "multi-step-registration",
+    "social-name-collection",
+    "instagram-integration",
+    "instagram-avatar-fetch",
+    "sound-selection-registration",
+    "login",
+    "register",
+    "password-reset",
+    "mandatory-aptitude-quiz",
+    "simon-game-required",
+    "wp-hide-ghost",
+    "blank-canvas-templates",
+    "url-protection",
+    "rate-limiting",
+    "recaptcha",
+    "login-hardening",
+    "7g-firewall",
+    "ip-blacklist",
+    "security-headers",
+    "wp-hardening",
+    "lockout",
+    "bad-agent-blocking"
+  ],
+  "multi_step_registration": {
+    "enabled": true,
+    "steps": 7,
+    "conversational": true,
+    "language": "neutral_portuguese",
+    "description": "7-step conversational registration flow with trans/queer inclusive language",
+    "flow": [
+      {
+        "step": 1,
+        "name": "social_name",
+        "label": "Como vocÃª gosta de ser chamade?",
+        "type": "text",
+        "required": true,
+        "validation": "min:2",
+        "description": "Trans-inclusive neutral Portuguese - collects preferred social name"
+      },
+      {
+        "step": 2,
+        "name": "instagram_username",
+        "label": "Qual seu @insta?",
+        "type": "text",
+        "required": true,
+        "validation": "regex:[a-z0-9._]",
+        "description": "Instagram username - becomes Apollo username AUTOMATICALLY (mandatory equivalence)"
+      },
+      {
+        "step": 3,
+        "name": "email",
+        "label": "Qual seu email?",
+        "type": "email",
+        "required": true,
+        "validation": "email|unique"
+      },
+      {
+        "step": 4,
+        "name": "password",
+        "label": "Crie sua senha",
+        "type": "password",
+        "required": true,
+        "validation": "min:8"
+      },
+      {
+        "step": 5,
+        "name": "confirm_password",
+        "label": "Confirme sua senha",
+        "type": "password",
+        "required": true,
+        "validation": "match:password"
+      },
+      {
+        "step": 6,
+        "name": "sounds",
+        "label": "Escolha de 3 a 5 sons que vocÃª curte",
+        "type": "multi-select-chips",
+        "required": true,
+        "validation": "array|min:3|max:5",
+        "taxonomy": "sound",
+        "global_bridge": true,
+        "description": "Sound preferences from GLOBAL BRIDGE taxonomy - visual chip selection UI"
+      },
+      {
+        "step": 7,
+        "name": "quiz",
+        "label": "Quiz de aptidÃ£o em 4 etapas: PadrÃµes, Jogo Simon, Ã‰tica e Reflexos",
+        "type": "interactive_quiz",
+        "required": true,
+        "description": "4-stage mandatory aptitude quiz"
+      }
+    ]
+  },
+  "instagram_integration": {
+    "enabled": true,
+    "username_enforcement": "MANDATORY - Apollo username MUST equal Instagram username",
+    "avatar_auto_fetch": true,
+    "avatar_method": "cURL scraping of public Instagram profile",
+    "avatar_quality": "HD profile picture",
+    "fallback": "URL-only storage if download fails",
+    "user_meta": {
+      "_apollo_social_name": "Social name (trans-inclusive)",
+      "_apollo_instagram": "Instagram username",
+      "_apollo_avatar_url": "Instagram profile picture URL",
+      "_apollo_avatar_attachment_id": "WordPress attachment ID (if downloaded)",
+      "avatar_thumb": "Thumbnail URL"
+    }
+  },
+  "quiz_system": {
+    "mandatory": true,
+    "tests": [
+      "pattern_recognition",
+      "simon_memory_game",
+      "ethics_respect_quiz",
+      "reaction_test"
+    ],
+    "required_for_registration": true,
+    "stages": 4,
+    "description": "4-stage aptitude test REQUIRED before account creation"
+  },
+  "security": {
+    "risk_band": "HIGH",
+    "risk_score": 75,
+    "abspath_coverage_pct": 92,
+    "rest_open_routes": 16,
+    "rest_critical_write_public": 11,
+    "rest_open_non_intentional": 0,
+    "rest_intentional_public": 16,
+    "permission_methods_resolved": 26,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 0.94
+  },
+  "wp_hide_ghost": {
+    "enabled": true,
+    "implementation": "Hook-based protection - NO core WordPress file modification",
+    "protection_layers": 6,
+    "features": {
+      "hide_wp_login": {
+        "enabled": true,
+        "behavior": "Real 404 (status_header 404), not redirect",
+        "protected_urls": [
+          "/wp-login.php"
+        ],
+        "custom_login_url": "/acesso",
+        "whitelist": [
+          "logout",
+          "lostpassword",
+          "retrievepassword",
+          "resetpass",
+          "rp"
+        ]
+      },
+      "hide_wp_admin": {
+        "enabled": true,
+        "behavior": "Real 404 for non-logged users",
+        "protected_urls": [
+          "/wp-admin",
+          "/wp-admin/"
+        ],
+        "allowed_for": "logged_in_users_only"
+      },
+      "filter_urls": {
+        "enabled": true,
+        "hooks": [
+          "site_url",
+          "admin_url",
+          "wp_redirect"
+        ],
+        "description": "Prevent WordPress from exposing wp-admin in generated URLs"
+      },
+      "404_handling": {
+        "method": "show_404()",
+        "template": "theme_404_template",
+        "fallback": "inline_html",
+        "description": "Loads theme's 404.php or displays basic 404 HTML"
+      }
+    }
+  },
+  "blank_canvas_templates": {
+    "enabled": true,
+    "description": "Auth pages (/acesso, /registre, etc.) use minimal HTML: no full theme wp_head stack; apollo-core CDN skips when apollo_is_blank_canvas_request() is true. Body carries data-apollo-page=auth for core.js auth-lite mode.",
+    "removed_hooks": [
+      "wp_head",
+      "wp_footer"
+    ],
+    "direct_assets": true,
+    "custom_hooks": [
+      "apollo_auth_config filter",
+      "templates/parts/auth-scripts.php (GSAP defer, icon.js, register.js; no sync jQuery CDN in head)"
+    ],
+    "templates": [
+      "login.php",
+      "register.php",
+      "reset.php",
+      "verify-email.php"
+    ],
+    "primary_css": "assets/css/apollo-auth-complete.css",
+    "js_entry": "assets/js/register.js (login flows via REST + auth-scripts partial)",
+    "jquery_cdn": null,
+    "note": "Legacy apollo_login_head / jquery-3.7.1 / login.css removed May 2026."
+  },
+  "native_features": {
+    "userswp_equivalent": [
+      "custom_registration_forms",
+      "multi_step_registration",
+      "email_verification",
+      "password_strength",
+      "social_login_ready"
+    ],
+    "hidemywp_equivalent": [
+      "hide_wp_login",
+      "custom_login_url",
+      "hide_wp_admin",
+      "brute_force_protection",
+      "rate_limiting",
+      "real_404_responses",
+      "7g_firewall",
+      "ip_blacklist_permanent",
+      "ip_blacklist_temporary",
+      "bad_agent_blocking",
+      "security_headers_csp_hsts",
+      "hide_wp_version",
+      "disable_xmlrpc",
+      "disable_oembed",
+      "disable_embeds",
+      "block_sensitive_files",
+      "strip_query_version_strings",
+      "user_lockout",
+      "theme_detector_blocking",
+      "directory_browsing_block",
+      "cloudflare_aware_ip_detection"
+    ]
+  },
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [],
+  "meta": {
+    "post": {
+      "_apollo_birth_date": {
+        "_source": "deep_scan"
+      },
+      "_apollo_email_verified": {
+        "_source": "deep_scan"
+      },
+      "_apollo_exe_current_action": {
+        "_source": "deep_scan"
+      },
+      "_apollo_exe_last_seen": {
+        "_source": "deep_scan"
+      },
+      "_apollo_exe_version": {
+        "_source": "deep_scan"
+      },
+      "_apollo_last_login": {
+        "_source": "deep_scan"
+      },
+      "_apollo_lockout_tier": {
+        "_source": "deep_scan"
+      },
+      "_apollo_lockout_until": {
+        "_source": "deep_scan"
+      },
+      "_apollo_login_attempts": {
+        "_source": "deep_scan"
+      },
+      "_apollo_party_role": {
+        "_source": "deep_scan"
+      },
+      "_apollo_password_reset_expires": {
+        "_source": "deep_scan"
+      },
+      "_apollo_password_reset_token": {
+        "_source": "deep_scan"
+      },
+      "_apollo_phone": {
+        "_source": "deep_scan"
+      },
+      "_apollo_quiz_score": {
+        "_source": "deep_scan"
+      },
+      "_apollo_social_name": {
+        "_source": "deep_scan"
+      },
+      "_apollo_telegram_chat_id": {
+        "_source": "deep_scan"
+      },
+      "_apollo_verification_token": {
+        "_source": "deep_scan"
+      },
+      "_apollo_zodiac_sign": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {
+      "_apollo_app_device_": {
+        "_source": "deep_scan"
+      },
+      "_apollo_app_token_": {
+        "_source": "deep_scan"
+      },
+      "_apollo_avatar_attachment_id": {
+        "_source": "deep_scan"
+      },
+      "_apollo_avatar_url": {
+        "_source": "deep_scan"
+      },
+      "_apollo_cpf": {
+        "_source": "deep_scan"
+      },
+      "_apollo_dj_allowed_tabs": {
+        "_source": "deep_scan"
+      },
+      "_apollo_doc_type": {
+        "_source": "deep_scan"
+      },
+      "_apollo_email_prefs": {
+        "_source": "deep_scan"
+      },
+      "_apollo_email_verified": {
+        "_source": "deep_scan"
+      },
+      "_apollo_instagram": {
+        "_source": "deep_scan"
+      },
+      "_apollo_last_login": {
+        "_source": "deep_scan"
+      },
+      "_apollo_lockout_until": {
+        "_source": "deep_scan"
+      },
+      "_apollo_login_attempts": {
+        "_source": "deep_scan"
+      },
+      "_apollo_membership": {
+        "_source": "deep_scan"
+      },
+      "_apollo_passport": {
+        "_source": "deep_scan"
+      },
+      "_apollo_passport_country": {
+        "_source": "deep_scan"
+      },
+      "_apollo_quiz_answers": {
+        "_source": "deep_scan"
+      },
+      "_apollo_quiz_score": {
+        "_source": "deep_scan"
+      },
+      "_apollo_registered_via_ajax": {
+        "_source": "deep_scan"
+      },
+      "_apollo_simon_highscore": {
+        "_source": "deep_scan"
+      },
+      "_apollo_social_name": {
+        "_source": "deep_scan"
+      },
+      "_apollo_sound_preferences": {
+        "_source": "deep_scan"
+      },
+      "_apollo_user_verified": {
+        "_source": "deep_scan"
+      },
+      "_apollo_verification_token": {
+        "_source": "deep_scan"
+      },
+      "_apollo_verification_token_expiry": {
+        "_source": "deep_scan"
+      },
+      "apollo_quiz_token": {
+        "_source": "deep_scan"
+      }
+    },
+    "term": {
+      "_apollo_icon": {
+        "_source": "deep_scan"
+      }
+    }
+  },
+  "rest": [
+    {
+      "endpoint": "/activity/log",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (DELEGATES_TO_METHOD)",
+      "auth": "DELEGATES_TO_METHOD",
+      "permission_risk": "REVIEW",
+      "permission_method": "require_app_token",
+      "permission_binding": "ActivityLogController::require_app_token",
+      "permission_summary": "Delegates to $this->resolve_user_by_token() (may need recursive resolve)",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "$raw_token = $request->get_header('X-Apollo-App-Token'); if (empty($raw_token)) { return new WP_Error( 'missing_token', __('Token de autenticação não fornecido.', 'apollo-login'), array('status' => 401) ); } $raw_token = sanitize_text_field($raw_token); if (! preg_match('/^[a-zA-",
+      "permission_delegated_to": {
+        "method": "resolve_user_by_token",
+        "file": "src/API/ActivityLogController.php",
+        "effective_class": "CUSTOM_LOGIC",
+        "risk": "REVIEW",
+        "summary": "Custom permission logic; returns: $user",
+        "capabilities": [],
+        "body_preview": "$hashed_token = wp_hash($raw_token); $meta_key = '_apollo_app_token_' . self::APP_ID; // Fast path: transient cache. $cached_uid = get_transient('apollo_apptk_' . md5($hashed_token)); if ($cached_uid) { $stored = get_user_meta((int) $cached_uid, $meta_key, true); if ($stored && h"
+      },
+      "intentional_public": false,
+      "callback": "log_activity",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/ActivityLogController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/activity/log",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (ADMIN_CAPABILITY)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can('manage_options');",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_activity",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/ActivityLogController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/app/auth",
+      "methods": [
+        "POST"
+      ],
+      "description": "Issue desktop app token (apollodj integration)",
+      "auth": "CUSTOM_LOGIC",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Custom permission logic; returns: true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "$app_id = sanitize_key((string) $request->get_param('app_id')); if (! in_array($app_id, self::ALLOWED_APPS, true)) { return new WP_Error('invalid_app', __('Aplicativo não reconhecido.', 'apollo-login'), array('status' => 403)); } return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "authenticate",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/AppAuthController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/app/verify",
+      "methods": [
+        "GET"
+      ],
+      "description": "Validate desktop app token",
+      "auth": "CUSTOM_LOGIC",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Custom permission logic; returns: true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "$app_id = sanitize_key((string) $request->get_param('app_id')); if (! in_array($app_id, self::ALLOWED_APPS, true)) { return new WP_Error('invalid_app', __('Aplicativo não reconhecido.', 'apollo-login'), array('status' => 403)); } $token = sanitize_text_field((string) $request->ge",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "verify",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/AppAuthController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/app/revoke",
+      "methods": [
+        "POST"
+      ],
+      "description": "Revoke desktop app token",
+      "auth": "CUSTOM_LOGIC",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Custom permission logic; returns: true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "$app_id = sanitize_key((string) $request->get_param('app_id')); if (! in_array($app_id, self::ALLOWED_APPS, true)) { return new WP_Error('invalid_app', __('Aplicativo não reconhecido.', 'apollo-login'), array('status' => 403)); } $token = sanitize_text_field((string) $request->ge",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "revoke",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/AppAuthController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/dj/config",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [likely intentional public surface]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": true,
+      "callback": "dj_config",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/AppAuthController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/dj/permissions",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (CUSTOM_LOGIC)",
+      "auth": "CUSTOM_LOGIC",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Custom permission logic; returns: true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "$app_id = sanitize_key((string) $request->get_param('app_id')); if (! in_array($app_id, self::ALLOWED_APPS, true)) { return new WP_Error('invalid_app', __('Aplicativo não reconhecido.', 'apollo-login'), array('status' => 403)); } $token = sanitize_text_field((string) $request->ge",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "dj_permissions",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/AppAuthController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/auth/login",
+      "methods": [
+        "POST"
+      ],
+      "description": "Authenticate user",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": true,
+      "callback": "login",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/AuthController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/auth/register",
+      "methods": [
+        "POST"
+      ],
+      "description": "Create account with multi-step data (social_name, instagram, email, password, sounds, quiz)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": true,
+      "callback": "register",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/AuthController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/auth/logout",
+      "methods": [
+        "POST"
+      ],
+      "description": "End session",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "is_user_logged_in",
+      "permission_binding": "is_user_logged_in",
+      "permission_summary": "WP core is_user_logged_in callback",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "logout",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/AuthController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/auth/reset-request",
+      "methods": [
+        "POST"
+      ],
+      "description": "Request password reset",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": true,
+      "callback": "reset_request",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/AuthController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/auth/check-username",
+      "methods": [
+        "GET"
+      ],
+      "description": "Check username availability",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [likely intentional public surface]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": true,
+      "callback": "check_username",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/AuthController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/auth/check-email",
+      "methods": [
+        "GET"
+      ],
+      "description": "Check email availability",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [likely intentional public surface]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": true,
+      "callback": "check_email",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/AuthController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/auth/reset-confirm",
+      "methods": [
+        "POST"
+      ],
+      "description": "Confirm new password",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": true,
+      "callback": "reset_confirm",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/AuthController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/auth/verify-email",
+      "methods": [
+        "POST"
+      ],
+      "description": "Verify email address",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": true,
+      "callback": "verify_email",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/AuthController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/auth/resend-verification",
+      "methods": [
+        "POST"
+      ],
+      "description": "Resend verification email",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": true,
+      "callback": "resend_verification",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/AuthController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/quiz/questions",
+      "methods": [
+        "GET"
+      ],
+      "description": "Get quiz questions",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [likely intentional public surface]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": true,
+      "callback": "get_questions",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/QuizController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/quiz/submit",
+      "methods": [
+        "POST"
+      ],
+      "description": "Submit quiz answers",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": true,
+      "callback": "submit_quiz",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/QuizController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/simon/submit",
+      "methods": [
+        "POST"
+      ],
+      "description": "Submit Simon score",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": true,
+      "callback": "submit_simon",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/QuizController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/simon/highscores",
+      "methods": [
+        "GET"
+      ],
+      "description": "Get Simon leaderboard",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [likely intentional public surface]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": true,
+      "callback": "get_simon_highscores",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/QuizController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/security/rewrites",
+      "methods": [
+        "GET"
+      ],
+      "description": "Get URL rewrites (admin only)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "admin_only",
+      "permission_binding": "SecurityController::admin_only",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can('manage_options');",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_rewrites",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/SecurityController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/security/attempts",
+      "methods": [
+        "GET"
+      ],
+      "description": "Get login attempts log",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "admin_only",
+      "permission_binding": "SecurityController::admin_only",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can('manage_options');",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_attempts",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/SecurityController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/auth/token",
+      "methods": [
+        "POST"
+      ],
+      "description": "Obtain JWT access token via credentials",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": true,
+      "callback": "handle_token_request",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Security/JWTAuth.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/auth/token/refresh",
+      "methods": [
+        "POST"
+      ],
+      "description": "Refresh JWT access token",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": true,
+      "callback": "handle_refresh_request",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Security/JWTAuth.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/auth/token/revoke",
+      "methods": [
+        "POST"
+      ],
+      "description": "Revoke JWT refresh token",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "require_auth",
+      "permission_binding": "JWTAuth::require_auth",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "handle_revoke_request",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Security/JWTAuth.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/csp-report",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": true,
+      "callback": "handle_csp_report",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Security/SecurityHeaders.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "ajax": {
+    "priv": [
+      "apollo_auth_debug_log",
+      "apollo_auth_nonce",
+      "apollo_blacklist_ip",
+      "apollo_forgot_password",
+      "apollo_login",
+      "apollo_register",
+      "apollo_resend_verification",
+      "apollo_reset_confirm",
+      "apollo_unblacklist_ip",
+      "apollo_unlock_ip",
+      "apollo_unlock_user",
+      "apollo_validate_cpf",
+      "nopriv_apollo_auth_debug_log",
+      "nopriv_apollo_auth_nonce",
+      "nopriv_apollo_forgot_password",
+      "nopriv_apollo_login",
+      "nopriv_apollo_register",
+      "nopriv_apollo_resend_verification",
+      "nopriv_apollo_reset_confirm",
+      "nopriv_apollo_validate_cpf"
+    ],
+    "nopriv": [
+      "apollo_auth_debug_log",
+      "apollo_auth_nonce",
+      "apollo_forgot_password",
+      "apollo_login",
+      "apollo_register",
+      "apollo_resend_verification",
+      "apollo_reset_confirm",
+      "apollo_validate_cpf"
+    ]
+  },
+  "pages": [
+    {
+      "slug": "{param}",
+      "rewrite": "^(' . $alt . ')/?$",
+      "query": "index.php?apollo_login_page=login",
+      "query_vars": [
+        "apollo_login_page=login"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "{param}/login",
+      "rewrite": "^(' . $alt . ')/login/?$",
+      "query": "index.php?apollo_login_page=login",
+      "query_vars": [
+        "apollo_login_page=login"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "registre",
+      "rewrite": "^registre/?$",
+      "query": "index.php?apollo_login_page=register",
+      "query_vars": [
+        "apollo_login_page=register"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "reset",
+      "rewrite": "^reset/?$",
+      "query": "index.php?apollo_login_page=reset",
+      "query_vars": [
+        "apollo_login_page=reset"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "verificar-email",
+      "rewrite": "^verificar-email/?$",
+      "query": "index.php?apollo_login_page=verify-email",
+      "query_vars": [
+        "apollo_login_page=verify-email"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "sair",
+      "rewrite": "^sair/?$",
+      "query": "index.php?apollo_login_page=logout",
+      "query_vars": [
+        "apollo_login_page=logout"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    }
+  ],
+  "shortcodes": [
+    {
+      "tag": "apollo_login",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_password_reset",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_quiz",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_register",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_simon",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_verify_email",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "cron": [],
+  "version": "1.0.41",
+  "hooks_fired": [
+    "apollo/firewall/blocked",
+    "apollo/login/email_verified",
+    "apollo/login/failed_attempt",
+    "apollo/login/jwt_authenticated",
+    "apollo/login/jwt_issued",
+    "apollo/login/logged_in",
+    "apollo/login/password_reset_requested",
+    "apollo/login/registered",
+    "apollo/login/send_email",
+    "apollo/login/verification_email",
+    "apollo/security/csp_directives",
+    "apollo/security/ip_locked",
+    "apollo/security/is_blank_canvas_csp",
+    "apollo/security/rate_limited",
+    "apollo/security/rate_limited_page",
+    "apollo/security/user_locked",
+    "apollo/security/user_unlocked",
+    "apollo_auth_brand_subtitle",
+    "apollo_auth_config",
+    "apollo_auth_node_name",
+    "apollo_login_auth_bg_video_poster",
+    "apollo_login_auth_bg_video_sources",
+    "apollo_login_bypass_phone_verification",
+    "apollo_login_redirect",
+    "apollo_login_registration_redirect",
+    "apollo_registration_sounds"
+  ],
+  "hooks_listened": [
+    "apollo/error/should_intercept",
+    "apollo/login/failed_attempt",
+    "apollo/login/login_failed",
+    "apollo/login/password_reset_requested",
+    "apollo/login/verification_email",
+    "apollo_jwt_purge_expired",
+    "apollo_login_pending_registration_cleanup",
+    "apollo_templates_should_intercept"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [],
+    "styles": []
+  },
+  "options": [
+    "apollo_dj_allowed_memberships_nicotine",
+    "apollo_dj_allowed_roles_login",
+    "apollo_dj_daily_limit",
+    "apollo_dj_global_message",
+    "apollo_dj_maintenance_mode",
+    "apollo_dj_min_accuracy",
+    "apollo_dj_min_version",
+    "apollo_dj_quantize_level",
+    "apollo_firewall_blacklist",
+    "apollo_lockout_duration",
+    "apollo_lockout_max_attempts",
+    "apollo_login_custom_url_active",
+    "apollo_login_flush_rewrites",
+    "apollo_login_page_id",
+    "apollo_login_settings",
+    "apollo_rate_block",
+    "apollo_rate_max_hits",
+    "apollo_rate_window"
+  ],
+  "database_schemas": [
+    {
+      "table": "apollo_app_activity",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_dj_allowed_memberships_nicotine",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_dj_allowed_roles_login",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_jwt_purge_expired",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_jwt_refresh",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_lockout_max_attempts",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_log",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_activated",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_attempts",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_attempts_",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_auth_bg_video_poster",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_auth_bg_video_sources",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_auth_cache_purged",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_auth_retry",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_bypass_phone_verification",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_custom_login_slug",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_custom_url_active",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_external_auth_nonce",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_external_auth_test",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_flush_rewrites",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_hide_wp_login",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_lockout_duration",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_max_attempts",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_page",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_page_id",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_pending_registration_cleanup",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_purge_unverified_users",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_quiz_mandatory",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_redirect",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_registration_redirect",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_rewrites",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_sounds_catalog",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_test_result_",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_version",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_get_user_access_slugs",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_get_user_slugs",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_quiz_results",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_resend_verification",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_resend_verify_",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_resend_verify_ip_",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_simon_scores",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_telegram_verify",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_url_rewrites",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_verification_email_sent",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_verify_attempts_",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_verify_email",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [
+    {
+      "pattern": "^(' . $alt . ')/?$",
+      "query": "index.php?apollo_login_page=login"
+    },
+    {
+      "pattern": "^(' . $alt . ')/login/?$",
+      "query": "index.php?apollo_login_page=login"
+    },
+    {
+      "pattern": "^registre/?$",
+      "query": "index.php?apollo_login_page=register"
+    },
+    {
+      "pattern": "^reset/?$",
+      "query": "index.php?apollo_login_page=reset"
+    },
+    {
+      "pattern": "^verificar-email/?$",
+      "query": "index.php?apollo_login_page=verify-email"
+    },
+    {
+      "pattern": "^sair/?$",
+      "query": "index.php?apollo_login_page=logout"
+    }
+  ],
+  "query_vars": [
+    "apollo_login_page",
+    "apollo_profile_user"
+  ],
+  "php_surface": {
+    "files": 53,
+    "loc": 14933,
+    "classes": 23,
+    "functions": 57
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:50.573Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 318,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-login",
+    "main_file": "apollo-login.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Login",
+      "plugin_uri": "https://apollo.rio.br/plugins/apollo-login",
+      "description": "Auth: Login, Register, Password Reset, MANDATORY Aptitude Quiz (Pattern, Simon, Ethics, Reaction), URL Protection (Hide My WP native), Rate Limiting",
+      "version": "1.0.41",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "Proprietary",
+      "text_domain": "apollo-login",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": "false"
+    },
+    "composer": {
+      "name": "apollo/login",
+      "namespaces": [
+        "Apollo\\Login"
+      ],
+      "require": {
+        "php": ">=8.1",
+        "composer/installers": "^2.0"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".none": 1,
+        ".php": 53,
+        ".css": 8,
+        ".js": 8,
+        ".md": 3,
+        ".json": 1,
+        ".fixed": 1,
+        ".ffs_db": 1
+      },
+      "by_top_directory": {
+        "(root)": 8,
+        "assets": 17,
+        "includes": 5,
+        "src": 23,
+        "templates": 23
+      },
+      "total_bytes": 975888
+    },
+    "php": {
+      "files": 53,
+      "loc": 14933,
+      "classes": 23,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 57
+    },
+    "architecture": {
+      "namespace": "Apollo\\Login",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Login\\Core\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Login\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "ActivityLogController",
+          "fqcn": "Apollo\\Login\\API\\ActivityLogController",
+          "extends": "WP_REST_Controller",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/ActivityLogController.php"
+        },
+        {
+          "kind": "class",
+          "name": "AppAuthController",
+          "fqcn": "Apollo\\Login\\API\\AppAuthController",
+          "extends": "WP_REST_Controller",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/AppAuthController.php"
+        },
+        {
+          "kind": "class",
+          "name": "AuthController",
+          "fqcn": "Apollo\\Login\\API\\AuthController",
+          "extends": "WP_REST_Controller",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/AuthController.php"
+        },
+        {
+          "kind": "class",
+          "name": "QuizController",
+          "fqcn": "Apollo\\Login\\API\\QuizController",
+          "extends": "WP_REST_Controller",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/QuizController.php"
+        },
+        {
+          "kind": "class",
+          "name": "SecurityController",
+          "fqcn": "Apollo\\Login\\API\\SecurityController",
+          "extends": "WP_REST_Controller",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/SecurityController.php"
+        },
+        {
+          "kind": "class",
+          "name": "EmailVerification",
+          "fqcn": "Apollo\\Login\\Auth\\EmailVerification",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Auth/EmailVerification.php"
+        },
+        {
+          "kind": "class",
+          "name": "LoginHandler",
+          "fqcn": "Apollo\\Login\\Auth\\LoginHandler",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Auth/LoginHandler.php"
+        },
+        {
+          "kind": "class",
+          "name": "PasswordReset",
+          "fqcn": "Apollo\\Login\\Auth\\PasswordReset",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Auth/PasswordReset.php"
+        },
+        {
+          "kind": "class",
+          "name": "PendingRegistrationCleanup",
+          "fqcn": "Apollo\\Login\\Auth\\PendingRegistrationCleanup",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Auth/PendingRegistrationCleanup.php"
+        },
+        {
+          "kind": "class",
+          "name": "RegisterHandler",
+          "fqcn": "Apollo\\Login\\Auth\\RegisterHandler",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Auth/RegisterHandler.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Login\\Core\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Core/Plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "Deactivation",
+          "fqcn": "Apollo\\Login\\Deactivation",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Deactivation.php"
+        },
+        {
+          "kind": "class",
+          "name": "QuizManager",
+          "fqcn": "Apollo\\Login\\Quiz\\QuizManager",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Quiz/QuizManager.php"
+        },
+        {
+          "kind": "class",
+          "name": "SimonGame",
+          "fqcn": "Apollo\\Login\\Quiz\\SimonGame",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Quiz/SimonGame.php"
+        },
+        {
+          "kind": "class",
+          "name": "Firewall",
+          "fqcn": "Apollo\\Login\\Security\\Firewall",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Security/Firewall.php"
+        },
+        {
+          "kind": "class",
+          "name": "JWTAuth",
+          "fqcn": "Apollo\\Login\\Security\\JWTAuth",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Security/JWTAuth.php"
+        },
+        {
+          "kind": "class",
+          "name": "Lockout",
+          "fqcn": "Apollo\\Login\\Security\\Lockout",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Security/Lockout.php"
+        },
+        {
+          "kind": "class",
+          "name": "RateLimiter",
+          "fqcn": "Apollo\\Login\\Security\\RateLimiter",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Security/RateLimiter.php"
+        },
+        {
+          "kind": "class",
+          "name": "SecurityHeaders",
+          "fqcn": "Apollo\\Login\\Security\\SecurityHeaders",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Security/SecurityHeaders.php"
+        },
+        {
+          "kind": "class",
+          "name": "URLRewriter",
+          "fqcn": "Apollo\\Login\\Security\\URLRewriter",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Security/URLRewriter.php"
+        },
+        {
+          "kind": "class",
+          "name": "WPHardening",
+          "fqcn": "Apollo\\Login\\Security\\WPHardening",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Security/WPHardening.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_login_init",
+          "file": "apollo-login.php"
+        },
+        {
+          "name": "apollo_login_suppress_textdomain_notice",
+          "file": "apollo-login.php"
+        },
+        {
+          "name": "apollo_login_register_query_vars",
+          "file": "apollo-login.php"
+        },
+        {
+          "name": "apollo_login_parse_request",
+          "file": "apollo-login.php"
+        },
+        {
+          "name": "apollo_login_wp_fallback",
+          "file": "apollo-login.php"
+        },
+        {
+          "name": "apollo_login_process_logout_request",
+          "file": "apollo-login.php"
+        },
+        {
+          "name": "apollo_login_template_redirect",
+          "file": "apollo-login.php"
+        },
+        {
+          "name": "apollo_login_activate",
+          "file": "apollo-login.php"
+        },
+        {
+          "name": "apollo_login_deactivate",
+          "file": "apollo-login.php"
+        },
+        {
+          "name": "apollo_login",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_canonical_login_url",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_register_url",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_password_recovery_url",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_normalized_request_path",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_virtual_page_map",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_quiz_completed",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_is_locked_out",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_lockout_remaining",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_log_login_attempt",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_failed_attempts",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_validate_cpf",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_validate_passport",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_party_roles",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_zodiac_labels",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_zodiac_label",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_zodiac_from_date",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_validate_birth_date",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_parse_birth_date_from_input",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_generate_verification_token",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_verify_email_token",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_verification_email_was_sent",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_mark_verification_email_sent",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_must_verify_email_before_login",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_send_verification_email",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_password_reset_email_was_sent",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_mark_password_reset_email_sent",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_validate_password_reset_token",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_smtp_is_live",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_send_password_reset_email",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_generate_token",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_send_email",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_session_log",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_debug_log",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_is_local_dev",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_sanitize_password_param",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_sanitize_username_param",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_resolve_user_by_email_or_login",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_get_user_by_login_ci",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_resolve_user_identifier",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_authenticate_credentials",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_email_registration_conflict",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_login_get_sounds_catalog",
+          "file": "includes/sounds-catalog.php"
+        },
+        {
+          "name": "apollo_login_fetch_sounds_catalog_from_remote",
+          "file": "includes/sounds-catalog.php"
+        },
+        {
+          "name": "apollo_login_normalize_sounds_entries",
+          "file": "includes/sounds-catalog.php"
+        },
+        {
+          "name": "apollo_login_sounds_catalog_taxonomy_fallback",
+          "file": "includes/sounds-catalog.php"
+        },
+        {
+          "name": "apollo_login_sounds_catalog_flat",
+          "file": "includes/sounds-catalog.php"
+        },
+        {
+          "name": "apollo_login_sounds_catalog_slugs",
+          "file": "includes/sounds-catalog.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 26,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/activity/log",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "DELEGATES_TO_METHOD",
+            "risk": "REVIEW",
+            "method": "require_app_token",
+            "target": "ActivityLogController",
+            "analysis": {
+              "effective_class": "DELEGATES_TO_METHOD",
+              "risk": "REVIEW",
+              "summary": "Delegates to $this->resolve_user_by_token() (may need recursive resolve)",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [
+                  "resolve_user_by_token"
+                ],
+                "returns": [
+                  "new WP_Error( 'missing_token', __('Token de autenticação não fornecido.', 'apollo-login'), array('st",
+                  "new WP_Error( 'invalid_token_format', __('Formato de token inválido.', 'apollo-login'), array('statu",
+                  "new WP_Error( 'invalid_token', __('Token inválido ou expirado.', 'apollo-login'), array('status' => ",
+                  "new WP_Error( 'rate_limited', __( 'Limite de requisições atingido.', 'apollo-login' ), array( 'statu",
+                  "true"
+                ]
+              },
+              "body_preview": "$raw_token = $request->get_header('X-Apollo-App-Token'); if (empty($raw_token)) { return new WP_Error( 'missing_token', __('Token de autenticação não fornecido.', 'apollo-login'), array('status' => 401) ); } $raw_token = sanitize_text_field($raw_token); if (! preg_match('/^[a-zA-",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "ActivityLogController::require_app_token",
+              "method_file": "src/API/ActivityLogController.php",
+              "method_signature": "WP_REST_Request $request",
+              "delegated_to": {
+                "method": "resolve_user_by_token",
+                "file": "src/API/ActivityLogController.php",
+                "effective_class": "CUSTOM_LOGIC",
+                "risk": "REVIEW",
+                "summary": "Custom permission logic; returns: $user",
+                "capabilities": [],
+                "body_preview": "$hashed_token = wp_hash($raw_token); $meta_key = '_apollo_app_token_' . self::APP_ID; // Fast path: transient cache. $cached_uid = get_transient('apollo_apptk_' . md5($hashed_token)); if ($cached_uid) { $stored = get_user_meta((int) $cached_uid, $meta_key, true); if ($stored && h"
+              }
+            }
+          },
+          "callback": "log_activity",
+          "file": "src/API/ActivityLogController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/activity/log",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": null,
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can('manage_options')"
+                ]
+              },
+              "body_preview": "return current_user_can('manage_options');",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "get_activity",
+          "file": "src/API/ActivityLogController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/app/auth",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "CUSTOM_LOGIC",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "CUSTOM_LOGIC",
+              "risk": "REVIEW",
+              "summary": "Custom permission logic; returns: true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "new WP_Error('invalid_app', __('Aplicativo não reconhecido.', 'apollo-login'), array('status' => 403",
+                  "true"
+                ]
+              },
+              "body_preview": "$app_id = sanitize_key((string) $request->get_param('app_id')); if (! in_array($app_id, self::ALLOWED_APPS, true)) { return new WP_Error('invalid_app', __('Aplicativo não reconhecido.', 'apollo-login'), array('status' => 403)); } return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "authenticate",
+          "file": "src/API/AppAuthController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/app/verify",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "CUSTOM_LOGIC",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "CUSTOM_LOGIC",
+              "risk": "REVIEW",
+              "summary": "Custom permission logic; returns: true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "new WP_Error('invalid_app', __('Aplicativo não reconhecido.', 'apollo-login'), array('status' => 403",
+                  "new WP_Error('missing_token', __('Token de autenticação não fornecido.', 'apollo-login'), array('sta",
+                  "new WP_Error('invalid_token_format', __('Formato de token inválido.', 'apollo-login'), array('status",
+                  "true"
+                ]
+              },
+              "body_preview": "$app_id = sanitize_key((string) $request->get_param('app_id')); if (! in_array($app_id, self::ALLOWED_APPS, true)) { return new WP_Error('invalid_app', __('Aplicativo não reconhecido.', 'apollo-login'), array('status' => 403)); } $token = sanitize_text_field((string) $request->ge",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "verify",
+          "file": "src/API/AppAuthController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/app/revoke",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "CUSTOM_LOGIC",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "CUSTOM_LOGIC",
+              "risk": "REVIEW",
+              "summary": "Custom permission logic; returns: true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "new WP_Error('invalid_app', __('Aplicativo não reconhecido.', 'apollo-login'), array('status' => 403",
+                  "new WP_Error('missing_token', __('Token de autenticação não fornecido.', 'apollo-login'), array('sta",
+                  "new WP_Error('invalid_token_format', __('Formato de token inválido.', 'apollo-login'), array('status",
+                  "true"
+                ]
+              },
+              "body_preview": "$app_id = sanitize_key((string) $request->get_param('app_id')); if (! in_array($app_id, self::ALLOWED_APPS, true)) { return new WP_Error('invalid_app', __('Aplicativo não reconhecido.', 'apollo-login'), array('status' => 403)); } $token = sanitize_text_field((string) $request->ge",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "revoke",
+          "file": "src/API/AppAuthController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/dj/config",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true [likely intentional public surface]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": true,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "dj_config",
+          "file": "src/API/AppAuthController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/dj/permissions",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "CUSTOM_LOGIC",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "CUSTOM_LOGIC",
+              "risk": "REVIEW",
+              "summary": "Custom permission logic; returns: true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "new WP_Error('invalid_app', __('Aplicativo não reconhecido.', 'apollo-login'), array('status' => 403",
+                  "new WP_Error('missing_token', __('Token de autenticação não fornecido.', 'apollo-login'), array('sta",
+                  "new WP_Error('invalid_token_format', __('Formato de token inválido.', 'apollo-login'), array('status",
+                  "true"
+                ]
+              },
+              "body_preview": "$app_id = sanitize_key((string) $request->get_param('app_id')); if (! in_array($app_id, self::ALLOWED_APPS, true)) { return new WP_Error('invalid_app', __('Aplicativo não reconhecido.', 'apollo-login'), array('status' => 403)); } $token = sanitize_text_field((string) $request->ge",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "dj_permissions",
+          "file": "src/API/AppAuthController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/auth/login",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": true,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "login",
+          "file": "src/API/AuthController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/auth/register",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": true,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "register",
+          "file": "src/API/AuthController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/auth/logout",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "is_user_logged_in",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "WP core is_user_logged_in callback",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "is_user_logged_in"
+            }
+          },
+          "callback": "logout",
+          "file": "src/API/AuthController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/auth/reset-request",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": true,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "reset_request",
+          "file": "src/API/AuthController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/auth/check-username",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true [likely intentional public surface]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": true,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "check_username",
+          "file": "src/API/AuthController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/auth/check-email",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true [likely intentional public surface]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": true,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "check_email",
+          "file": "src/API/AuthController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/auth/reset-confirm",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": true,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "reset_confirm",
+          "file": "src/API/AuthController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/auth/verify-email",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": true,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "verify_email",
+          "file": "src/API/AuthController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/auth/resend-verification",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": true,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "resend_verification",
+          "file": "src/API/AuthController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/quiz/questions",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true [likely intentional public surface]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": true,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_questions",
+          "file": "src/API/QuizController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/quiz/submit",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": true,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "submit_quiz",
+          "file": "src/API/QuizController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/simon/submit",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": true,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "submit_simon",
+          "file": "src/API/QuizController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/simon/highscores",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true [likely intentional public surface]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": true,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_simon_highscores",
+          "file": "src/API/QuizController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/security/rewrites",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "admin_only",
+            "target": "SecurityController",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can('manage_options')"
+                ]
+              },
+              "body_preview": "return current_user_can('manage_options');",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "SecurityController::admin_only",
+              "method_file": "src/API/SecurityController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_rewrites",
+          "file": "src/API/SecurityController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/security/attempts",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "admin_only",
+            "target": "SecurityController",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can('manage_options')"
+                ]
+              },
+              "body_preview": "return current_user_can('manage_options');",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "SecurityController::admin_only",
+              "method_file": "src/API/SecurityController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_attempts",
+          "file": "src/API/SecurityController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/auth/token",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": true,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "handle_token_request",
+          "file": "src/Security/JWTAuth.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/auth/token/refresh",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": true,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "handle_refresh_request",
+          "file": "src/Security/JWTAuth.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/auth/token/revoke",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "require_auth",
+            "target": "JWTAuth",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "JWTAuth::require_auth",
+              "method_file": "src/Security/JWTAuth.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "handle_revoke_request",
+          "file": "src/Security/JWTAuth.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/csp-report",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": true,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "handle_csp_report",
+          "file": "src/Security/SecurityHeaders.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 11,
+        "HIGH": 5,
+        "MEDIUM": 2,
+        "LOW": 3,
+        "REVIEW": 5
+      },
+      "effective_class_counts": {
+        "DELEGATES_TO_METHOD": 1,
+        "ADMIN_CAPABILITY": 3,
+        "CUSTOM_LOGIC": 4,
+        "PUBLIC_UNAUTHENTICATED": 16,
+        "LOGGED_IN_ONLY": 2
+      },
+      "permission_body_resolved": 26,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 16,
+      "write_critical_public": 11,
+      "open_routes": [
+        {
+          "endpoint": "/dj/config",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true [likely intentional public surface]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": true,
+          "file": "src/API/AppAuthController.php"
+        },
+        {
+          "endpoint": "/auth/login",
+          "methods": [
+            "POST"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": true,
+          "file": "src/API/AuthController.php"
+        },
+        {
+          "endpoint": "/auth/register",
+          "methods": [
+            "POST"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": true,
+          "file": "src/API/AuthController.php"
+        },
+        {
+          "endpoint": "/auth/reset-request",
+          "methods": [
+            "POST"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": true,
+          "file": "src/API/AuthController.php"
+        },
+        {
+          "endpoint": "/auth/check-username",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true [likely intentional public surface]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": true,
+          "file": "src/API/AuthController.php"
+        },
+        {
+          "endpoint": "/auth/check-email",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true [likely intentional public surface]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": true,
+          "file": "src/API/AuthController.php"
+        },
+        {
+          "endpoint": "/auth/reset-confirm",
+          "methods": [
+            "POST"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": true,
+          "file": "src/API/AuthController.php"
+        },
+        {
+          "endpoint": "/auth/verify-email",
+          "methods": [
+            "POST"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": true,
+          "file": "src/API/AuthController.php"
+        },
+        {
+          "endpoint": "/auth/resend-verification",
+          "methods": [
+            "POST"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": true,
+          "file": "src/API/AuthController.php"
+        },
+        {
+          "endpoint": "/quiz/questions",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true [likely intentional public surface]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": true,
+          "file": "src/API/QuizController.php"
+        },
+        {
+          "endpoint": "/quiz/submit",
+          "methods": [
+            "POST"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": true,
+          "file": "src/API/QuizController.php"
+        },
+        {
+          "endpoint": "/simon/submit",
+          "methods": [
+            "POST"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": true,
+          "file": "src/API/QuizController.php"
+        },
+        {
+          "endpoint": "/simon/highscores",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true [likely intentional public surface]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": true,
+          "file": "src/API/QuizController.php"
+        },
+        {
+          "endpoint": "/auth/token",
+          "methods": [
+            "POST"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": true,
+          "file": "src/Security/JWTAuth.php"
+        },
+        {
+          "endpoint": "/auth/token/refresh",
+          "methods": [
+            "POST"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": true,
+          "file": "src/Security/JWTAuth.php"
+        },
+        {
+          "endpoint": "/csp-report",
+          "methods": [
+            "POST"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable] [likely intentional public surface]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": true,
+          "file": "src/Security/SecurityHeaders.php"
+        }
+      ],
+      "admin_cap_routes": [
+        "/activity/log",
+        "/security/rewrites",
+        "/security/attempts"
+      ],
+      "logged_in_routes": [
+        "/auth/logout",
+        "/auth/token/revoke"
+      ]
+    },
+    "database": {
+      "tables_owned_or_defined": [],
+      "tables_referenced": [
+        "apollo_app_activity",
+        "apollo_dj_allowed_memberships_nicotine",
+        "apollo_dj_allowed_roles_login",
+        "apollo_jwt_purge_expired",
+        "apollo_jwt_refresh",
+        "apollo_lockout_max_attempts",
+        "apollo_log",
+        "apollo_login",
+        "apollo_login_activated",
+        "apollo_login_attempts",
+        "apollo_login_attempts_",
+        "apollo_login_auth_bg_video_poster",
+        "apollo_login_auth_bg_video_sources",
+        "apollo_login_auth_cache_purged",
+        "apollo_login_auth_retry",
+        "apollo_login_bypass_phone_verification",
+        "apollo_login_custom_login_slug",
+        "apollo_login_custom_url_active",
+        "apollo_login_external_auth_nonce",
+        "apollo_login_external_auth_test",
+        "apollo_login_flush_rewrites",
+        "apollo_login_hide_wp_login",
+        "apollo_login_lockout_duration",
+        "apollo_login_max_attempts",
+        "apollo_login_page",
+        "apollo_login_page_id",
+        "apollo_login_pending_registration_cleanup",
+        "apollo_login_purge_unverified_users",
+        "apollo_login_quiz_mandatory",
+        "apollo_login_redirect",
+        "apollo_login_registration_redirect",
+        "apollo_login_rewrites",
+        "apollo_login_settings",
+        "apollo_login_sounds_catalog",
+        "apollo_login_test_result_",
+        "apollo_login_version",
+        "apollo_membership_get_user_access_slugs",
+        "apollo_membership_get_user_slugs",
+        "apollo_quiz_results",
+        "apollo_resend_verification",
+        "apollo_resend_verify_",
+        "apollo_resend_verify_ip_",
+        "apollo_simon_scores",
+        "apollo_telegram_verify",
+        "apollo_url_rewrites",
+        "apollo_verification_email_sent",
+        "apollo_verify_attempts_",
+        "apollo_verify_email"
+      ],
+      "tables_for_registry": [],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_app_activity",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_dj_allowed_memberships_nicotine",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_dj_allowed_roles_login",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_jwt_purge_expired",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_jwt_refresh",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_lockout_max_attempts",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_log",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_activated",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_attempts",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_attempts_",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_auth_bg_video_poster",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_auth_bg_video_sources",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_auth_cache_purged",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_auth_retry",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_bypass_phone_verification",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_custom_login_slug",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_custom_url_active",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_external_auth_nonce",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_external_auth_test",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_flush_rewrites",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_hide_wp_login",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_lockout_duration",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_max_attempts",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_page",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_page_id",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_pending_registration_cleanup",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_purge_unverified_users",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_quiz_mandatory",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_redirect",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_registration_redirect",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_rewrites",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_sounds_catalog",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_test_result_",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_version",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_get_user_access_slugs",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_get_user_slugs",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_quiz_results",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_resend_verification",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_resend_verify_",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_resend_verify_ip_",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_simon_scores",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_telegram_verify",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_url_rewrites",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_verification_email_sent",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_verify_attempts_",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_verify_email",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 18,
+      "user_count": 26,
+      "term_count": 1,
+      "post_keys": [
+        "_apollo_birth_date",
+        "_apollo_email_verified",
+        "_apollo_exe_current_action",
+        "_apollo_exe_last_seen",
+        "_apollo_exe_version",
+        "_apollo_last_login",
+        "_apollo_lockout_tier",
+        "_apollo_lockout_until",
+        "_apollo_login_attempts",
+        "_apollo_party_role",
+        "_apollo_password_reset_expires",
+        "_apollo_password_reset_token",
+        "_apollo_phone",
+        "_apollo_quiz_score",
+        "_apollo_social_name",
+        "_apollo_telegram_chat_id",
+        "_apollo_verification_token",
+        "_apollo_zodiac_sign"
+      ],
+      "user_keys": [
+        "_apollo_app_device_",
+        "_apollo_app_token_",
+        "_apollo_avatar_attachment_id",
+        "_apollo_avatar_url",
+        "_apollo_cpf",
+        "_apollo_dj_allowed_tabs",
+        "_apollo_doc_type",
+        "_apollo_email_prefs",
+        "_apollo_email_verified",
+        "_apollo_instagram",
+        "_apollo_last_login",
+        "_apollo_lockout_until",
+        "_apollo_login_attempts",
+        "_apollo_membership",
+        "_apollo_passport",
+        "_apollo_passport_country",
+        "_apollo_quiz_answers",
+        "_apollo_quiz_score",
+        "_apollo_registered_via_ajax",
+        "_apollo_simon_highscore",
+        "_apollo_social_name",
+        "_apollo_sound_preferences",
+        "_apollo_user_verified",
+        "_apollo_verification_token",
+        "_apollo_verification_token_expiry",
+        "apollo_quiz_token"
+      ],
+      "term_keys": [
+        "_apollo_icon"
+      ],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [
+        {
+          "pattern": "^(' . $alt . ')/?$",
+          "query": "index.php?apollo_login_page=login",
+          "position": "top",
+          "file": "src/Core/Plugin.php"
+        },
+        {
+          "pattern": "^(' . $alt . ')/login/?$",
+          "query": "index.php?apollo_login_page=login",
+          "position": "top",
+          "file": "src/Core/Plugin.php"
+        },
+        {
+          "pattern": "^registre/?$",
+          "query": "index.php?apollo_login_page=register",
+          "position": "top",
+          "file": "src/Core/Plugin.php"
+        },
+        {
+          "pattern": "^reset/?$",
+          "query": "index.php?apollo_login_page=reset",
+          "position": "top",
+          "file": "src/Core/Plugin.php"
+        },
+        {
+          "pattern": "^verificar-email/?$",
+          "query": "index.php?apollo_login_page=verify-email",
+          "position": "top",
+          "file": "src/Core/Plugin.php"
+        },
+        {
+          "pattern": "^sair/?$",
+          "query": "index.php?apollo_login_page=logout",
+          "position": "top",
+          "file": "src/Core/Plugin.php"
+        }
+      ],
+      "query_vars": [
+        "apollo_login_page",
+        "apollo_profile_user"
+      ],
+      "pages_derived": [
+        {
+          "slug": "{param}",
+          "rewrite": "^(' . $alt . ')/?$",
+          "query": "index.php?apollo_login_page=login",
+          "query_vars": [
+            "apollo_login_page=login"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "{param}/login",
+          "rewrite": "^(' . $alt . ')/login/?$",
+          "query": "index.php?apollo_login_page=login",
+          "query_vars": [
+            "apollo_login_page=login"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "registre",
+          "rewrite": "^registre/?$",
+          "query": "index.php?apollo_login_page=register",
+          "query_vars": [
+            "apollo_login_page=register"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "reset",
+          "rewrite": "^reset/?$",
+          "query": "index.php?apollo_login_page=reset",
+          "query_vars": [
+            "apollo_login_page=reset"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "verificar-email",
+          "rewrite": "^verificar-email/?$",
+          "query": "index.php?apollo_login_page=verify-email",
+          "query_vars": [
+            "apollo_login_page=verify-email"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "sair",
+          "rewrite": "^sair/?$",
+          "query": "index.php?apollo_login_page=logout",
+          "query_vars": [
+            "apollo_login_page=logout"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        }
+      ]
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 30,
+      "listened_count": 66,
+      "apollo_fired": [
+        "apollo/firewall/blocked",
+        "apollo/login/email_verified",
+        "apollo/login/failed_attempt",
+        "apollo/login/jwt_authenticated",
+        "apollo/login/jwt_issued",
+        "apollo/login/logged_in",
+        "apollo/login/password_reset_requested",
+        "apollo/login/registered",
+        "apollo/login/send_email",
+        "apollo/login/verification_email",
+        "apollo/security/csp_directives",
+        "apollo/security/ip_locked",
+        "apollo/security/is_blank_canvas_csp",
+        "apollo/security/rate_limited",
+        "apollo/security/rate_limited_page",
+        "apollo/security/user_locked",
+        "apollo/security/user_unlocked",
+        "apollo_auth_brand_subtitle",
+        "apollo_auth_config",
+        "apollo_auth_node_name",
+        "apollo_login_auth_bg_video_poster",
+        "apollo_login_auth_bg_video_sources",
+        "apollo_login_bypass_phone_verification",
+        "apollo_login_redirect",
+        "apollo_login_registration_redirect",
+        "apollo_registration_sounds"
+      ],
+      "apollo_listened": [
+        "apollo/error/should_intercept",
+        "apollo/login/failed_attempt",
+        "apollo/login/login_failed",
+        "apollo/login/password_reset_requested",
+        "apollo/login/verification_email",
+        "apollo_jwt_purge_expired",
+        "apollo_login_pending_registration_cleanup",
+        "apollo_templates_should_intercept"
+      ],
+      "critical_wp_listened": [
+        "admin_init",
+        "admin_menu",
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "template_redirect",
+        "user_register",
+        "wp_login",
+        "wp_login_failed"
+      ]
+    },
+    "ajax": {
+      "priv": [
+        "apollo_auth_debug_log",
+        "apollo_auth_nonce",
+        "apollo_blacklist_ip",
+        "apollo_forgot_password",
+        "apollo_login",
+        "apollo_register",
+        "apollo_resend_verification",
+        "apollo_reset_confirm",
+        "apollo_unblacklist_ip",
+        "apollo_unlock_ip",
+        "apollo_unlock_user",
+        "apollo_validate_cpf",
+        "nopriv_apollo_auth_debug_log",
+        "nopriv_apollo_auth_nonce",
+        "nopriv_apollo_forgot_password",
+        "nopriv_apollo_login",
+        "nopriv_apollo_register",
+        "nopriv_apollo_resend_verification",
+        "nopriv_apollo_reset_confirm",
+        "nopriv_apollo_validate_cpf"
+      ],
+      "nopriv": [
+        "apollo_auth_debug_log",
+        "apollo_auth_nonce",
+        "apollo_forgot_password",
+        "apollo_login",
+        "apollo_register",
+        "apollo_resend_verification",
+        "apollo_reset_confirm",
+        "apollo_validate_cpf"
+      ]
+    },
+    "cron": [],
+    "shortcodes": [
+      "apollo_login",
+      "apollo_password_reset",
+      "apollo_quiz",
+      "apollo_register",
+      "apollo_simon",
+      "apollo_verify_email"
+    ],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [],
+      "styles": []
+    },
+    "options": [
+      "apollo_dj_allowed_memberships_nicotine",
+      "apollo_dj_allowed_roles_login",
+      "apollo_dj_daily_limit",
+      "apollo_dj_global_message",
+      "apollo_dj_maintenance_mode",
+      "apollo_dj_min_accuracy",
+      "apollo_dj_min_version",
+      "apollo_dj_quantize_level",
+      "apollo_firewall_blacklist",
+      "apollo_lockout_duration",
+      "apollo_lockout_max_attempts",
+      "apollo_login_custom_url_active",
+      "apollo_login_flush_rewrites",
+      "apollo_login_page_id",
+      "apollo_login_settings",
+      "apollo_rate_block",
+      "apollo_rate_max_hits",
+      "apollo_rate_window"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_LOGIN_VERSION",
+        "value": "1.0.41"
+      },
+      {
+        "name": "APOLLO_LOGIN_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_LOGIN_DIR",
+        "value": "plugin_dir_path(__FILE__"
+      },
+      {
+        "name": "APOLLO_LOGIN_URL",
+        "value": "plugin_dir_url(__FILE__"
+      },
+      {
+        "name": "APOLLO_LOGIN_BASENAME",
+        "value": "plugin_basename(__FILE__"
+      },
+      {
+        "name": "APOLLO_LOGIN_BOOTSTRAPPED",
+        "value": "true"
+      },
+      {
+        "name": "APOLLO_LOGIN_REST_NAMESPACE",
+        "value": "apollo/v1"
+      },
+      {
+        "name": "APOLLO_LOGIN_QUIZ_STAGES",
+        "value": "4"
+      },
+      {
+        "name": "APOLLO_LOGIN_SIMON_LEVELS",
+        "value": "4"
+      },
+      {
+        "name": "APOLLO_LOGIN_REACTION_TARGETS",
+        "value": "4"
+      },
+      {
+        "name": "APOLLO_LOGIN_MAX_ATTEMPTS",
+        "value": "3"
+      },
+      {
+        "name": "APOLLO_LOGIN_LOCKOUT_DURATION",
+        "value": "900"
+      },
+      {
+        "name": "APOLLO_LOGIN_CUSTOM_LOGIN_SLUG",
+        "value": "acesso"
+      },
+      {
+        "name": "APOLLO_LOGIN_LOGIN_SLUG_ALIASES",
+        "value": "array(\n\t\t'acesso',\n\t\t'access',\n\t\t'acessar',\n\t\t'ent"
+      },
+      {
+        "name": "APOLLO_LOGIN_CUSTOM_REGISTER_SLUG",
+        "value": "registre"
+      },
+      {
+        "name": "APOLLO_LOCKOUT_TIER_0",
+        "value": "900"
+      },
+      {
+        "name": "APOLLO_LOCKOUT_TIER_1",
+        "value": "3600"
+      },
+      {
+        "name": "APOLLO_LOCKOUT_TIER_2",
+        "value": "36000"
+      },
+      {
+        "name": "APOLLO_LOCKOUT_TIER_3",
+        "value": "86400"
+      },
+      {
+        "name": "APOLLO_LOCKOUT_TIER_4",
+        "value": "129600"
+      },
+      {
+        "name": "APOLLO_RATE_TIER_0",
+        "value": "3600"
+      },
+      {
+        "name": "APOLLO_RATE_TIER_1",
+        "value": "36000"
+      },
+      {
+        "name": "APOLLO_RATE_TIER_2",
+        "value": "86400"
+      },
+      {
+        "name": "APOLLO_RATE_TIER_3",
+        "value": "129600"
+      },
+      {
+        "name": "APOLLO_RATE_TIER_TTL",
+        "value": "172800"
+      },
+      {
+        "name": "APOLLO_LOGIN_TABLE_QUIZ_RESULTS",
+        "value": "apollo_quiz_results"
+      },
+      {
+        "name": "APOLLO_LOGIN_TABLE_SIMON_SCORES",
+        "value": "apollo_simon_scores"
+      },
+      {
+        "name": "APOLLO_LOGIN_TABLE_LOGIN_ATTEMPTS",
+        "value": "apollo_login_attempts"
+      },
+      {
+        "name": "APOLLO_LOGIN_TABLE_URL_REWRITES",
+        "value": "apollo_url_rewrites"
+      },
+      {
+        "name": "APOLLO_LOGIN_TABLE_APP_ACTIVITY",
+        "value": "apollo_app_activity"
+      },
+      {
+        "name": "APOLLO_META_SOCIAL_NAME",
+        "value": "_apollo_social_name"
+      },
+      {
+        "name": "APOLLO_META_EMAIL_VERIFIED",
+        "value": "_apollo_email_verified"
+      },
+      {
+        "name": "APOLLO_META_VERIFICATION_TOKEN",
+        "value": "_apollo_verification_token"
+      },
+      {
+        "name": "APOLLO_META_PASSWORD_RESET_TOKEN",
+        "value": "_apollo_password_reset_token"
+      },
+      {
+        "name": "APOLLO_META_PASSWORD_RESET_EXPIRES",
+        "value": "_apollo_password_reset_expires"
+      },
+      {
+        "name": "APOLLO_META_LOGIN_ATTEMPTS",
+        "value": "_apollo_login_attempts"
+      },
+      {
+        "name": "APOLLO_META_LAST_LOGIN",
+        "value": "_apollo_last_login"
+      },
+      {
+        "name": "APOLLO_META_LOCKOUT_UNTIL",
+        "value": "_apollo_lockout_until"
+      },
+      {
+        "name": "APOLLO_META_LOCKOUT_TIER",
+        "value": "_apollo_lockout_tier"
+      },
+      {
+        "name": "APOLLO_META_BIRTH_DATE",
+        "value": "_apollo_birth_date"
+      },
+      {
+        "name": "APOLLO_META_ZODIAC_SIGN",
+        "value": "_apollo_zodiac_sign"
+      },
+      {
+        "name": "APOLLO_META_PARTY_ROLE",
+        "value": "_apollo_party_role"
+      },
+      {
+        "name": "APOLLO_META_QUIZ_SCORE",
+        "value": "_apollo_quiz_score"
+      },
+      {
+        "name": "APOLLO_META_PHONE",
+        "value": "_apollo_phone"
+      },
+      {
+        "name": "APOLLO_META_TELEGRAM_CHAT_ID",
+        "value": "_apollo_telegram_chat_id"
+      },
+      {
+        "name": "APOLLO_LOGIN_MIN_REGISTRATION_AGE",
+        "value": "18"
+      },
+      {
+        "name": "APOLLO_LOGIN_PAGE_RESET",
+        "value": "reset"
+      }
+    ],
+    "security": {
+      "php_files": 53,
+      "abspath_guard_files": 49,
+      "abspath_coverage_pct": 92,
+      "wpdb_prepare_calls": 15,
+      "wpdb_query_calls": 16,
+      "prepare_to_query_ratio": 0.94,
+      "nonce_checks": 24,
+      "current_user_can_calls": 9,
+      "raw_superglobal": {
+        "get": 25,
+        "post": 81,
+        "request": 4
+      },
+      "permission_callback_return_true": 16,
+      "escape_helpers": 85,
+      "echo_statements": 112,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 1,
+      "risk_score": 75,
+      "risk_band": "HIGH",
+      "rest_permission_critical": 11,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 5,
+      "rest_open_critical": 11,
+      "rest_intentional_public": 16,
+      "rest_open_non_intentional": 0
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-chat",
+        "apollo-core",
+        "apollo-email",
+        "apollo-loc",
+        "apollo-membership",
+        "apollo-social",
+        "apollo-telegram",
+        "apollo-templates"
+      ],
+      "signals": [
+        "apollo-chat",
+        "apollo-core",
+        "apollo-email",
+        "apollo-loc",
+        "apollo-membership",
+        "apollo-social",
+        "apollo-telegram",
+        "apollo-templates"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": false
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.0.41",
+      "version_changed": false,
+      "old_rest": 21,
+      "live_rest": 26,
+      "old_pages": 5,
+      "live_pages": 6,
+      "new_plugin": false
+    }
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 54,
+    "php_loc": 15222,
+    "rest_routes_found": 25,
+    "cpts_found": [],
+    "tables_found": [
+      "apollo_jwt_refresh",
+      "apollo_login_attempts",
+      "apollo_quiz_results",
+      "apollo_simon_scores",
+      "apollo_url_rewrites"
+    ],
+    "shortcodes_found": [
+      "apollo_login",
+      "apollo_password_reset",
+      "apollo_quiz",
+      "apollo_register",
+      "apollo_simon",
+      "apollo_verify_email"
+    ]
+  }
+}

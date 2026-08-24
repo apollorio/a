@@ -1,0 +1,71 @@
+/* ═══════════════════════════════════════════════════════════════
+   APOLLO::RIO — HOME / map.css
+   Leaflet map wrapper — reuses apollo-maps plugin markers/popups
+   ═══════════════════════════════════════════════════════════════ */
+.nh-map-wrap {
+    position: relative; width: 100%; height: 380px;
+    border-radius: var(--r); overflow: hidden;
+    border: 1px solid var(--border-light);
+}
+@media (min-width: 768px) { .nh-map-wrap { height: 480px; } }
+
+.nh-map-canvas { width: 100%; height: 100%; background: #f8f8f6; }
+
+/* Hide Leaflet default controls */
+.nh-map-canvas .leaflet-control-zoom,
+.nh-map-canvas .leaflet-control-attribution { display: none !important; }
+
+/* Pulse markers (home-specific — gradient circle, no pin dot) */
+.nh-map-pulse-wrap {
+    position: relative; width: 80px; height: 80px;
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none;
+}
+.nh-map-pulse-ring {
+    position: absolute; top: 50%; left: 50%;
+    width: 52px; height: 52px;
+    background: radial-gradient(
+        circle,
+        rgba(var(--primary-rgb), 0.45) 0%,
+        rgba(var(--primary-rgb), 0.025) 100%
+    );
+    pointer-events: none; border-radius: 9999px !important;
+}
+.nh-pulse-a { border-radius: 9999px !important; animation: nhMapPulseA 2.4s ease-out infinite; animation-delay: var(--delay, 0ms); }
+.nh-pulse-b { border-radius: 9999px !important; animation: nhMapPulseB 3.1s ease-out infinite; animation-delay: calc(var(--delay, 0ms) + 600ms); }
+@keyframes nhMapPulseA {
+    0%   { width: 52px; height: 52px; opacity: 0.75; transform: translate(-50%,-50%); }
+    100% { width: 90px; height: 90px; opacity: 0;    transform: translate(-50%,-50%); }
+}
+@keyframes nhMapPulseB {
+    0%   { width: 52px; height: 52px; opacity: 0.55; transform: translate(-50%,-50%); }
+    100% { width: 80px; height: 80px; opacity: 0;    transform: translate(-50%,-50%); }
+}
+
+/* Stagger delays per marker */
+.leaflet-marker-icon:nth-child(1)  { --delay:    0ms; }
+.leaflet-marker-icon:nth-child(2)  { --delay:  300ms; }
+.leaflet-marker-icon:nth-child(3)  { --delay:  600ms; }
+.leaflet-marker-icon:nth-child(4)  { --delay:  900ms; }
+.leaflet-marker-icon:nth-child(5)  { --delay: 1200ms; }
+.leaflet-marker-icon:nth-child(6)  { --delay: 1500ms; }
+.leaflet-marker-icon:nth-child(7)  { --delay: 1800ms; }
+.leaflet-marker-icon:nth-child(8)  { --delay: 2100ms; }
+.leaflet-marker-icon .nh-pulse-a { animation-delay: var(--delay, 0ms); }
+.leaflet-marker-icon .nh-pulse-b { animation-delay: calc(var(--delay, 0ms) + 400ms); }
+
+/* Popup */
+.nh-leaflet-popup .leaflet-popup-content-wrapper {
+    background: #fff; border-radius: 12px; padding: 0;
+    box-shadow: 0 8px 24px rgba(var(--rgb-d),0.10);
+    border: 1px solid rgba(var(--rgb-d),0.06); overflow: hidden;
+}
+.nh-leaflet-popup .leaflet-popup-tip { background: #fff; }
+.nh-leaflet-popup .leaflet-popup-content { margin: 0; }
+.nh-map-popup { padding: 12px 16px; font-family: 'Space Grotesk', sans-serif; display: flex; flex-direction: column; gap: 4px; }
+.nh-map-popup-title { font-size: 0.875rem; font-weight: 600; color: #0A0A0A; white-space: nowrap; }
+.nh-map-popup-tag { font-size: 0.72rem; font-weight: 500; color: #FF6925; font-family: 'Space Mono', monospace; letter-spacing: 0.04em; }
+
+@media (max-width: 767px) {
+    .nh-map-wrap { height: clamp(280px,70dvw,380px); display: block; }
+}

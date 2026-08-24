@@ -1,0 +1,359 @@
+/**
+ * admin-test.css — Apollo Statistics TestPanel styling.
+ *
+ * Apollo design tokens: coral #F95006, amber #FFBF00, responsive table layout.
+ *
+ * @package Apollo\Statistics
+ * @since   2.0.0
+ */
+
+/* ── Tokens ─────────────────────────────────────────────────── */
+.atp-wrap {
+    --atp-coral:   #F95006;
+    --atp-amber:   #FFBF00;
+    --atp-green:   #22c55e;
+    --atp-red:     #ef4444;
+    --atp-warn:    #f59e0b;
+    --atp-gray1:   #111827;
+    --atp-gray2:   #374151;
+    --atp-gray3:   #6b7280;
+    --atp-gray4:   #9ca3af;
+    --atp-gray5:   #e5e7eb;
+    --atp-gray6:   #f9fafb;
+    --atp-white:   #ffffff;
+    --atp-radius:  10px;
+    --atp-shadow:  0 1px 8px rgba(var(--rgb-d), .07);
+    max-width: 1180px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--atp-gray2);
+}
+
+/* ── Header ──────────────────────────────────────────────────── */
+.atp-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 22px 0 16px;
+    border-bottom: 2px solid var(--atp-gray5);
+    margin-bottom: 0;
+    flex-wrap: wrap;
+}
+
+.atp-logo {
+    width: 48px;
+    height: 48px;
+    background: var(--atp-coral);
+    border-radius: var(--atp-r);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--atp-white);
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.atp-header-text {
+    flex: 1;
+    min-width: 200px;
+}
+
+.atp-header-text h1 {
+    margin: 0 0 4px;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--atp-gray1);
+    line-height: 1.2;
+}
+
+.atp-header-text h1 span {
+    color: var(--atp-coral);
+}
+
+.atp-header-text p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--atp-gray3);
+}
+
+.atp-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+}
+
+/* ── Summary counts ──────────────────────────────────────────── */
+.atp-summary {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.atp-s-ok   { color: var(--atp-green); }
+.atp-s-warn { color: var(--atp-warn);  }
+.atp-s-fail { color: var(--atp-red);   }
+.atp-total  { color: var(--atp-gray4); }
+
+/* ── Run button ──────────────────────────────────────────────── */
+.atp-btn-run {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--atp-coral);
+    color: var(--atp-white);
+    border: none;
+    border-radius: 7px;
+    padding: 9px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .2s, transform .1s;
+    white-space: nowrap;
+}
+
+.atp-btn-run:hover   { opacity: .88; }
+.atp-btn-run:active  { transform: scale(.97); }
+.atp-btn-run:disabled { opacity: .5; cursor: default; }
+
+.atp-autorun-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    color: var(--atp-gray2);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.atp-autorun-label input {
+    margin: 0;
+    accent-color: var(--atp-coral);
+}
+
+/* ── Progress bar ────────────────────────────────────────────── */
+.atp-progress-bar {
+    height: 4px;
+    background: var(--atp-gray5);
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 12px 0 24px;
+}
+
+.atp-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--atp-coral) 0%, var(--atp-amber) 100%);
+    width: 0%;
+    transition: width .35s ease;
+}
+
+/* ── Sections layout ─────────────────────────────────────────── */
+.atp-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding-bottom: 48px;
+}
+
+.atp-section {
+    background: var(--atp-white);
+    border: 1px solid var(--atp-gray5);
+    border-radius: var(--atp-r);
+    box-shadow: var(--atp-shadow);
+    overflow: hidden;
+}
+
+/* ── Section header ──────────────────────────────────────────── */
+.atp-section-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    background: var(--atp-gray6);
+    border-bottom: 1px solid var(--atp-gray5);
+}
+
+.atp-section-head > i {
+    font-size: 22px;
+    color: var(--atp-coral);
+    flex-shrink: 0;
+    width: 26px;
+    text-align: center;
+}
+
+.atp-section-title {
+    flex: 1;
+}
+
+.atp-section-title h2 {
+    margin: 0 0 2px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--atp-gray1);
+}
+
+.atp-section-title p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--atp-gray3);
+}
+
+/* ── Section badge ───────────────────────────────────────────── */
+.atp-sec-badge {
+    min-width: 36px;
+    height: 28px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--atp-gray5);
+    color: var(--atp-gray3);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 0 10px;
+    transition: background .3s, color .3s;
+    white-space: nowrap;
+}
+
+.atp-sec-badge--ok   { background: rgba(34,197,94,.15); color: #15803d; }
+.atp-sec-badge--warn { background: rgba(245,158,11,.15); color: #92600e; }
+.atp-sec-badge--fail { background: rgba(239,68,68,.12);  color: #b91c1c; }
+
+/* ── Test table ──────────────────────────────────────────────── */
+.atp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    table-layout: fixed;
+}
+
+.atp-table th {
+    text-align: left;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--atp-gray4);
+    padding: 7px 12px;
+    background: var(--atp-gray6);
+    border-bottom: 1px solid var(--atp-gray5);
+}
+
+.atp-th-check  { width: 36px; }
+.atp-th-status { width: 104px; }
+.atp-th-detail { width: 30%; }
+
+.atp-row {
+    border-bottom: 1px solid var(--atp-gray5);
+    transition: background .15s;
+}
+
+.atp-row:last-child {
+    border-bottom: none;
+}
+
+.atp-row:hover {
+    background: #fafbff;
+}
+
+.atp-row td {
+    padding: 9px 12px;
+    vertical-align: middle;
+    line-height: 1.4;
+}
+
+/* ── Check icon cell ─────────────────────────────────────────── */
+.atp-check-cell {
+    width: 36px;
+    text-align: center;
+}
+
+.atp-check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    width: 22px;
+    height: 22px;
+    transition: color .25s;
+}
+
+.atp-check--idle    { color: var(--atp-gray5); }
+.atp-check--testing { color: var(--atp-amber); }
+.atp-check--ok      { color: var(--atp-green); }
+.atp-check--warn    { color: var(--atp-warn);  }
+.atp-check--fail    { color: var(--atp-red);   }
+
+/* ── Text cells ──────────────────────────────────────────────── */
+.atp-test-title {
+    font-weight: 500;
+    color: var(--atp-gray2);
+    width: 24%;
+}
+
+.atp-test-desc {
+    font-size: 12px;
+    color: var(--atp-gray4);
+}
+
+.atp-detail {
+    font-size: 12px;
+    color: var(--atp-gray3);
+    word-break: break-word;
+}
+
+/* ── Status badge ────────────────────────────────────────────── */
+.atp-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 9px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: background .25s, color .25s;
+}
+
+.atp-badge--idle    { background: var(--atp-gray5);          color: var(--atp-gray4); }
+.atp-badge--testing { background: rgba(245,158,11,.15);      color: #92600e; }
+.atp-badge--ok      { background: rgba(34,197,94,.12);       color: #15803d; }
+.atp-badge--warn    { background: rgba(245,158,11,.15);      color: #92600e; }
+.atp-badge--fail    { background: rgba(239,68,68,.12);       color: #b91c1c; }
+
+/* ── Spin animation ──────────────────────────────────────────── */
+@keyframes atp-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+.atp-spin {
+    display: inline-block;
+    animation: atp-spin .85s linear infinite;
+}
+
+/* ── Responsive: stack detail on smaller screens ─────────────── */
+@media (max-width: 900px) {
+    .atp-table th.atp-th-detail,
+    .atp-table td.atp-detail-cell {
+        display: none;
+    }
+
+    .atp-test-title { width: auto; }
+    .atp-th-status  { width: 90px; }
+
+    .atp-header { gap: 12px; }
+    .atp-actions { width: 100%; justify-content: flex-end; }
+}
+
+@media (max-width: 600px) {
+    .atp-table th,
+    .atp-table td {
+        padding: 7px 8px;
+        font-size: 12px;
+    }
+
+    .atp-table th.atp-th-check,
+    .atp-table td.atp-check-cell { width: 28px; }
+}

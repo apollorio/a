@@ -1,0 +1,140 @@
+/*!
+ * Apollo SoundCloud — player chrome.
+ *
+ * Component-scoped only. No :root entry — tokens belong to core.js, and a
+ * design token declared in a plugin forks the system on the first theme change.
+ * Everything here reads the ecosystem's existing variables with a literal
+ * fallback, so the player is correct whether or not core.js has landed yet.
+ */
+
+.apsc {
+  --apsc-size: 44px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* The transport is a hidden iframe, not a player. It only becomes visible in
+   the fallback path, when the SDK is blocked and SoundCloud's own chrome is
+   better than a dead button. */
+.apsc-transport { display: none; }
+.apsc.is-fallback .apsc-transport { display: block; width: 100%; }
+.apsc.is-fallback .apsc-body { display: none; }
+
+.apsc-btn {
+  flex: 0 0 auto;
+  width: var(--apsc-size);
+  height: var(--apsc-size);
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  background: rgba(var(--rgb-diff, 10, 10, 10), .06);
+  color: rgba(var(--rgb-diff, 10, 10, 10), .92);
+  transition: transform .22s var(--ease-snappy, cubic-bezier(.34, 1.16, .64, 1)),
+              background .22s var(--ease, ease);
+}
+.apsc-btn:hover { background: rgba(var(--rgb-diff, 10, 10, 10), .1); transform: scale(1.06); }
+.apsc-btn:active { transform: scale(.94); }
+.apsc-btn:focus-visible {
+  outline: 2px solid var(--accent, #ff5c00);
+  outline-offset: 3px;
+}
+.apsc-btn i { font-size: 20px; line-height: 1; }
+
+/* Playing state is deliberately quiet — a rail of fifteen of these would
+   strobe if the active one shouted. */
+.apsc.is-playing .apsc-btn {
+  background: var(--accent, #ff5c00);
+  color: #fff;
+}
+
+.apsc-body { min-width: 0; flex: 1 1 auto; }
+
+.apsc-title {
+  font-weight: 650;
+  font-size: 14px;
+  letter-spacing: -.01em;
+  color: var(--txt, rgba(10, 10, 10, .95));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.apsc-title:empty::before {
+  /* Metadata arrives after paint; reserve the line so nothing jumps. */
+  content: "\00a0";
+}
+
+.apsc-author {
+  font-family: var(--ff-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted, rgba(10, 10, 10, .48));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Progress ────────────────────────────────────────────────────────────────
+   The bar represents the WHOLE track, with the preview window marked inside it.
+   A bar that fills completely on a 40% excerpt tells the listener they heard the
+   whole thing, which is false. */
+.apsc-bar {
+  position: relative;
+  height: 3px;
+  margin-top: 7px;
+  border-radius: 999px;
+  background: rgba(var(--rgb-diff, 10, 10, 10), .1);
+  overflow: hidden;
+}
+.apsc-bar-window {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: rgba(var(--rgb-diff, 10, 10, 10), .16);
+}
+.apsc-bar-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  background: var(--accent, #ff5c00);
+  transition: width .2s linear;
+}
+
+.apsc-art {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-sm, 8px);
+  object-fit: cover;
+}
+
+/* ── Variants ─────────────────────────────────────────────────────────────── */
+
+/* inline — a play control in running text or a table row. */
+.apsc--inline { gap: 8px; }
+.apsc--inline { --apsc-size: 32px; }
+.apsc--inline .apsc-bar,
+.apsc--inline .apsc-art { display: none; }
+.apsc--inline .apsc-author { display: none; }
+
+/* bar — full width, artwork left, for a footer or a docked player. */
+.apsc--bar { width: 100%; padding: 10px 12px; border-radius: var(--r, 12px);
+  background: rgba(var(--rgb-diff, 10, 10, 10), .03); }
+
+/* vinyl — the control only; the surrounding template owns the disc art and
+   spins it by listening for apollo:sc:play. That is why /dj/{id} keeps its
+   animation without this plugin knowing anything about vinyl. */
+.apsc--vinyl { --apsc-size: 56px; }
+.apsc--vinyl .apsc-body { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .apsc-btn { transition: none; }
+  .apsc-bar-fill { transition: none; }
+}

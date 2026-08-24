@@ -1,0 +1,794 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-wow",
+    "owner": "apollo-wow",
+    "wrap": "plugins.apollo-wow",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-wow",
+  "namespace": "Apollo\\Wow",
+  "priority": 3,
+  "status": "IMPLEMENTED",
+  "description": "Emoji-based WOW reaction system replacing likes — custom reactions on posts/depoimentos with charts.",
+  "dependencies": [
+    "apollo-core"
+  ],
+  "provides": [
+    "wow-reactions",
+    "reaction-types",
+    "reaction-counts"
+  ],
+  "FORBIDDEN": [
+    "like",
+    "heart",
+    "reaction"
+  ],
+  "reaction_types": {
+    "wow": {
+      "emoji": "ðŸ¤©",
+      "label": "Wow"
+    },
+    "fire": {
+      "emoji": "ðŸ”¥",
+      "label": "Fire"
+    },
+    "clap": {
+      "emoji": "ðŸ‘",
+      "label": "Clap"
+    },
+    "mind": {
+      "emoji": "ðŸ¤¯",
+      "label": "Mindblown"
+    },
+    "vibe": {
+      "emoji": "ðŸŽµ",
+      "label": "Vibe"
+    },
+    "rocket": {
+      "emoji": "ðŸš€",
+      "label": "Rocket"
+    }
+  },
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [
+    "apollo_wow_reactions",
+    "apollo_wow_types",
+    "apollo_wows"
+  ],
+  "meta": {
+    "post": {
+      "_wow_count": {
+        "_source": "deep_scan"
+      },
+      "_wow_counts": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {},
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/wows",
+      "methods": [
+        "POST"
+      ],
+      "description": "Add wow",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_toggle_wow",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/wows/(?P<post_id>\\d+)",
+      "methods": [
+        "DELETE",
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_wows",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/wows/types",
+      "methods": [
+        "GET"
+      ],
+      "description": "Get wow types",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_types",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/wows/chart/(?P<post_id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_chart",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "pages": [],
+  "shortcodes": [
+    {
+      "tag": "apollo_wow",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_wow_chart",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "version": "1.0.1",
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [
+    "apollo/wow/added",
+    "apollo/wow/removed",
+    "apollo/wow/types"
+  ],
+  "hooks_listened": [],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [],
+    "styles": []
+  },
+  "options": [
+    "apollo_wow_version"
+  ],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 20,
+    "abspath_coverage_pct": 100,
+    "rest_open_routes": 3,
+    "rest_critical_write_public": 1,
+    "rest_open_non_intentional": 3,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 3,
+    "permission_methods_unresolved": 1,
+    "prepare_ratio": 0.71
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_wow_chart",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_wow_reactions",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_wow_types",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_wow_version",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_wows",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [],
+  "query_vars": [],
+  "php_surface": {
+    "files": 6,
+    "loc": 600,
+    "classes": 3,
+    "functions": 8
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:46.663Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 8,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-wow",
+    "main_file": "apollo-wow.php",
+    "plugin_header": {
+      "plugin_name": "Apollo WOW Reactions",
+      "plugin_uri": "https://apollo.rio.br",
+      "description": "Emoji-based WOW reaction system replacing likes — custom reactions on posts/depoimentos with charts.",
+      "version": "1.0.1",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "GPL-2.0-or-later",
+      "text_domain": "apollo-wow",
+      "domain_path": null,
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": null
+    },
+    "composer": {
+      "name": "apollo/wow",
+      "namespaces": [
+        "Apollo\\Wow"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 6,
+        ".json": 1,
+        ".md": 1
+      },
+      "by_top_directory": {
+        "(root)": 4,
+        "includes": 1,
+        "src": 3
+      },
+      "total_bytes": 19367
+    },
+    "php": {
+      "files": 6,
+      "loc": 600,
+      "classes": 3,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 8
+    },
+    "architecture": {
+      "namespace": "Apollo\\Wow",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Wow\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Deactivation",
+          "fqcn": "Apollo\\Wow\\Deactivation",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Deactivation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Wow\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_get_wow_types",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_add_wow",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_remove_wow",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_toggle_wow",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_wow_counts",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_update_wow_counts",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_user_wows",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_wow_chart_data",
+          "file": "includes/functions.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 4,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/wows",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $logged"
+            }
+          },
+          "callback": "rest_toggle_wow",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/wows/(?P<post_id>\\d+)",
+          "methods": [
+            "DELETE",
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "rest_get_wows",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/wows/types",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "rest_get_types",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/wows/chart/(?P<post_id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "rest_get_chart",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 1,
+        "HIGH": 2,
+        "MEDIUM": 0,
+        "LOW": 0,
+        "REVIEW": 1
+      },
+      "effective_class_counts": {
+        "OTHER": 1,
+        "PUBLIC_UNAUTHENTICATED": 3
+      },
+      "permission_body_resolved": 3,
+      "permission_body_unresolved": 1,
+      "intentional_public_count": 0,
+      "write_critical_public": 1,
+      "open_routes": [
+        {
+          "endpoint": "/wows/(?P<post_id>\\d+)",
+          "methods": [
+            "DELETE",
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/Plugin.php"
+        },
+        {
+          "endpoint": "/wows/types",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/Plugin.php"
+        },
+        {
+          "endpoint": "/wows/chart/(?P<post_id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/Plugin.php"
+        }
+      ],
+      "admin_cap_routes": [],
+      "logged_in_routes": []
+    },
+    "database": {
+      "tables_owned_or_defined": [
+        "apollo_wow_reactions",
+        "apollo_wow_types",
+        "apollo_wows"
+      ],
+      "tables_referenced": [
+        "apollo_wow_chart",
+        "apollo_wow_reactions",
+        "apollo_wow_types",
+        "apollo_wow_version",
+        "apollo_wows"
+      ],
+      "tables_for_registry": [
+        "apollo_wow_reactions",
+        "apollo_wow_types",
+        "apollo_wows"
+      ],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_wow_chart",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_wow_reactions",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_wow_types",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_wow_version",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_wows",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 2,
+      "user_count": 0,
+      "term_count": 0,
+      "post_keys": [
+        "_wow_count",
+        "_wow_counts"
+      ],
+      "user_keys": [],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [],
+      "query_vars": [],
+      "pages_derived": []
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 3,
+      "listened_count": 3,
+      "apollo_fired": [
+        "apollo/wow/added",
+        "apollo/wow/removed",
+        "apollo/wow/types"
+      ],
+      "apollo_listened": [],
+      "critical_wp_listened": [
+        "init",
+        "plugins_loaded",
+        "rest_api_init"
+      ]
+    },
+    "ajax": {
+      "priv": [],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [
+      "apollo_wow",
+      "apollo_wow_chart"
+    ],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [],
+      "styles": []
+    },
+    "options": [
+      "apollo_wow_version"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_WOW_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_WOW_PATH",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_WOW_URL",
+        "value": "plugin_dir_url( __FILE__"
+      },
+      {
+        "name": "APOLLO_WOW_FILE",
+        "value": "__FILE__"
+      }
+    ],
+    "security": {
+      "php_files": 6,
+      "abspath_guard_files": 6,
+      "abspath_coverage_pct": 100,
+      "wpdb_prepare_calls": 5,
+      "wpdb_query_calls": 7,
+      "prepare_to_query_ratio": 0.71,
+      "nonce_checks": 1,
+      "current_user_can_calls": 0,
+      "raw_superglobal": {
+        "get": 0,
+        "post": 0,
+        "request": 0
+      },
+      "permission_callback_return_true": 3,
+      "escape_helpers": 4,
+      "echo_statements": 13,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 20,
+      "risk_band": "LOW",
+      "rest_permission_critical": 1,
+      "rest_permission_unresolved": 1,
+      "rest_open_high": 2,
+      "rest_open_critical": 1,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 3
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core"
+      ],
+      "signals": [
+        "apollo-core"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.0.1",
+      "version_changed": false,
+      "old_rest": 3,
+      "live_rest": 4,
+      "old_pages": 0,
+      "live_pages": 0,
+      "new_plugin": false
+    }
+  },
+  "security_remediation": {
+    "note": "P2: ABSPATH on uninstall",
+    "last_updated": "2026-07-20"
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 6,
+    "php_loc": 594,
+    "rest_routes_found": 4,
+    "cpts_found": [],
+    "tables_found": [
+      "apollo_wow_reactions",
+      "apollo_wow_types",
+      "apollo_wows"
+    ],
+    "shortcodes_found": [
+      "apollo_wow",
+      "apollo_wow_chart"
+    ]
+  }
+}

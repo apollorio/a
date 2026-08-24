@@ -1,0 +1,654 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-radio",
+    "owner": "apollo-radio",
+    "wrap": "plugins.apollo-radio",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-radio",
+  "namespace": "Apollo\\Radio",
+  "priority": 5,
+  "status": "IMPLEMENTED",
+  "version": "1.0.1",
+  "description": "Ultra-pro Web Audio radio engine with BPM-aware beat-aligned crossfade mixing via WAM (Web Audio Mixer). SoundCloud streams resolved through Cloudflare Worker proxy. Independent standalone plugin, integrates seamlessly with Apollo ecosystem when available.",
+  "dependencies": [
+    "apollo-core"
+  ],
+  "optional_integration": [
+    "apollo-core"
+  ],
+  "provides": [
+    "radio-player",
+    "soundcloud-proxy",
+    "beat-sync-mixing",
+    "web-audio-engine"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [],
+  "meta": {
+    "post": {},
+    "user": {},
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_status",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/RadioController.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "pages": [],
+  "shortcodes": [
+    {
+      "tag": "apollo_radio",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [
+    "apollo/radio/initialized"
+  ],
+  "hooks_listened": [
+    "apollo/core/initialized"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [
+      "apollo-cdn",
+      "apollo-radio-engine"
+    ],
+    "styles": [
+      "apollo-radio"
+    ]
+  },
+  "options": [
+    "apollo_radio_json_cdn",
+    "apollo_radio_json_fallback",
+    "apollo_radio_sc_client_id",
+    "apollo_radio_sc_proxy_url"
+  ],
+  "security": {
+    "risk_band": "MEDIUM",
+    "risk_score": 27,
+    "abspath_coverage_pct": 89,
+    "rest_open_routes": 1,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 1,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 1,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 1
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_radio",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_radio_json_cdn",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_radio_json_fallback",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_radio_main",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_radio_playlist_",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_radio_rate_",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_radio_sc_client_id",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_radio_sc_proxy_url",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_radio_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_radio_stream_",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [],
+  "query_vars": [],
+  "php_surface": {
+    "files": 9,
+    "loc": 964,
+    "classes": 5,
+    "functions": 0
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:50.916Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 64,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-radio",
+    "main_file": "apollo-radio.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Radio",
+      "plugin_uri": "https://apollo.rio.br",
+      "description": "Ultra-pro Web Audio radio engine with BPM-aware beat-aligned crossfade mixing via WAM (Web Audio Mixer). SoundCloud streams resolved through Cloudflare Worker proxy. Independent standalone plugin, integrates seamlessly with Apollo ecosystem when available.",
+      "version": "1.0.1",
+      "author": "Apollo Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "GPL-2.0-or-later",
+      "text_domain": "apollo-radio",
+      "domain_path": null,
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": null
+    },
+    "composer": {
+      "name": "apollo/radio",
+      "namespaces": [
+        "Apollo\\Radio"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 9,
+        ".css": 1,
+        ".js": 2,
+        ".json": 1
+      },
+      "by_top_directory": {
+        "(root)": 3,
+        "assets": 2,
+        "cf-worker": 1,
+        "src": 5,
+        "templates": 2
+      },
+      "total_bytes": 111221
+    },
+    "php": {
+      "files": 9,
+      "loc": 964,
+      "classes": 5,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 0
+    },
+    "architecture": {
+      "namespace": "Apollo\\Radio",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Settings",
+          "fqcn": "Apollo\\Radio\\Admin\\Settings",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Admin/Settings.php"
+        },
+        {
+          "kind": "class",
+          "name": "RadioController",
+          "fqcn": "Apollo\\Radio\\API\\RadioController",
+          "extends": "WP_REST_Controller",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/RadioController.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Radio\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "SoundCloudProxy",
+          "fqcn": "Apollo\\Radio\\Service\\SoundCloudProxy",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Service/SoundCloudProxy.php"
+        },
+        {
+          "kind": "class",
+          "name": "RadioShortcode",
+          "fqcn": "Apollo\\Radio\\Shortcode\\RadioShortcode",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Shortcode/RadioShortcode.php"
+        }
+      ],
+      "public_functions": []
+    },
+    "rest": {
+      "count": 1,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_status",
+          "file": "src/API/RadioController.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 1,
+        "MEDIUM": 0,
+        "LOW": 0,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "PUBLIC_UNAUTHENTICATED": 1
+      },
+      "permission_body_resolved": 1,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [
+        {
+          "endpoint": "/",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/RadioController.php"
+        }
+      ],
+      "admin_cap_routes": [],
+      "logged_in_routes": []
+    },
+    "database": {
+      "tables_owned_or_defined": [],
+      "tables_referenced": [
+        "apollo_radio",
+        "apollo_radio_json_cdn",
+        "apollo_radio_json_fallback",
+        "apollo_radio_main",
+        "apollo_radio_playlist_",
+        "apollo_radio_rate_",
+        "apollo_radio_sc_client_id",
+        "apollo_radio_sc_proxy_url",
+        "apollo_radio_settings",
+        "apollo_radio_stream_"
+      ],
+      "tables_for_registry": [],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_radio",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_radio_json_cdn",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_radio_json_fallback",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_radio_main",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_radio_playlist_",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_radio_rate_",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_radio_sc_client_id",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_radio_sc_proxy_url",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_radio_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_radio_stream_",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 0,
+      "user_count": 0,
+      "term_count": 0,
+      "post_keys": [],
+      "user_keys": [],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [],
+      "query_vars": [],
+      "pages_derived": []
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 1,
+      "listened_count": 6,
+      "apollo_fired": [
+        "apollo/radio/initialized"
+      ],
+      "apollo_listened": [
+        "apollo/core/initialized"
+      ],
+      "critical_wp_listened": [
+        "admin_init",
+        "admin_menu",
+        "plugins_loaded",
+        "rest_api_init",
+        "wp_enqueue_scripts"
+      ]
+    },
+    "ajax": {
+      "priv": [],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [
+      "apollo_radio"
+    ],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [
+        "apollo-cdn",
+        "apollo-radio-engine"
+      ],
+      "styles": [
+        "apollo-radio"
+      ]
+    },
+    "options": [
+      "apollo_radio_json_cdn",
+      "apollo_radio_json_fallback",
+      "apollo_radio_sc_client_id",
+      "apollo_radio_sc_proxy_url"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_RADIO_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_RADIO_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_RADIO_PATH",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_RADIO_URL",
+        "value": "plugin_dir_url( __FILE__"
+      }
+    ],
+    "security": {
+      "php_files": 9,
+      "abspath_guard_files": 8,
+      "abspath_coverage_pct": 89,
+      "wpdb_prepare_calls": 1,
+      "wpdb_query_calls": 1,
+      "prepare_to_query_ratio": 1,
+      "nonce_checks": 1,
+      "current_user_can_calls": 1,
+      "raw_superglobal": {
+        "get": 0,
+        "post": 0,
+        "request": 0
+      },
+      "permission_callback_return_true": 4,
+      "escape_helpers": 7,
+      "echo_statements": 7,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 1,
+      "risk_score": 27,
+      "risk_band": "MEDIUM",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 1,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 1
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core"
+      ],
+      "signals": [
+        "apollo-core"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": "1.0.0",
+      "new_version": "1.0.1",
+      "version_changed": true,
+      "old_rest": 4,
+      "live_rest": 1,
+      "old_pages": 0,
+      "live_pages": 0,
+      "new_plugin": false
+    }
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 9,
+    "php_loc": 955,
+    "rest_routes_found": 1,
+    "cpts_found": [],
+    "tables_found": [],
+    "shortcodes_found": [
+      "apollo_radio"
+    ]
+  }
+}

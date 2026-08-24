@@ -1,0 +1,170 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-suppliers",
+    "owner": "apollo-suppliers",
+    "wrap": "plugins.apollo-suppliers",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-suppliers",
+  "namespace": "Apollo\\Suppliers",
+  "priority": 2,
+  "status": "LOCKED_NEXT_VERSION",
+  "release_block": true,
+  "reason": "dependency apollo-cena unavailable",
+  "description": "Suppliers: Internal industry catalogue (restricted access)",
+  "dependencies": [
+    "apollo-core",
+    "apollo-cena"
+  ],
+  "provides": [
+    "supplier-cpt",
+    "supplier-catalogue"
+  ],
+  "access": "industry-only",
+  "cpts": [
+    {
+      "slug": "supplier",
+      "rewrite": "fornecedor",
+      "archive": "fornecedores",
+      "rest_base": "suppliers",
+      "public": false,
+      "supports": [
+        "title",
+        "editor",
+        "thumbnail"
+      ],
+      "labels": {
+        "singular": "Fornecedor",
+        "plural": "Fornecedores"
+      }
+    }
+  ],
+  "taxonomies": [
+    {
+      "slug": "supplier_category",
+      "rewrite": "categoria-fornecedor",
+      "object_types": [
+        "supplier"
+      ],
+      "hierarchical": true,
+      "labels": {
+        "singular": "Categoria",
+        "plural": "Categorias"
+      }
+    },
+    {
+      "slug": "supplier_service",
+      "rewrite": "servico-fornecedor",
+      "object_types": [
+        "supplier"
+      ],
+      "hierarchical": false,
+      "labels": {
+        "singular": "ServiÃ§o",
+        "plural": "ServiÃ§os"
+      }
+    }
+  ],
+  "tables": [],
+  "meta": {
+    "supplier": {
+      "_supplier_company": {
+        "type": "string"
+      },
+      "_supplier_cnpj": {
+        "type": "string"
+      },
+      "_supplier_contact_name": {
+        "type": "string"
+      },
+      "_supplier_contact_email": {
+        "type": "string",
+        "format": "email"
+      },
+      "_supplier_contact_phone": {
+        "type": "string"
+      },
+      "_supplier_website": {
+        "type": "string",
+        "format": "url"
+      },
+      "_supplier_address": {
+        "type": "string"
+      },
+      "_supplier_verified": {
+        "type": "bool"
+      },
+      "_supplier_rating": {
+        "type": "float",
+        "min": 0,
+        "max": 5
+      }
+    }
+  },
+  "rest": [
+    {
+      "endpoint": "/suppliers",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "description": "List/Create suppliers",
+      "auth": "industry"
+    },
+    {
+      "endpoint": "/suppliers/{id}",
+      "methods": [
+        "GET",
+        "PUT",
+        "DELETE"
+      ],
+      "description": "CRUD supplier",
+      "auth": "industry"
+    },
+    {
+      "endpoint": "/suppliers/search",
+      "methods": [
+        "GET"
+      ],
+      "description": "Search suppliers",
+      "auth": "industry"
+    },
+    {
+      "endpoint": "/suppliers/categories",
+      "methods": [
+        "GET"
+      ],
+      "description": "List categories",
+      "auth": "industry"
+    }
+  ],
+  "pages": [
+    {
+      "slug": "fornecedores",
+      "title": "Fornecedores",
+      "template": "archive-supplier.php",
+      "type": "archive",
+      "access": "industry-only"
+    },
+    {
+      "slug": "fornecedor/{slug}",
+      "title": "Fornecedor",
+      "template": "single-supplier.php",
+      "type": "single",
+      "access": "industry-only"
+    }
+  ],
+  "shortcodes": [
+    {
+      "tag": "apollo_suppliers",
+      "description": "Supplier listing (industry only)",
+      "attrs": [
+        "category",
+        "service"
+      ]
+    }
+  ],
+  "$disk_status": "ABSENT",
+  "$disk_note": "No folder at plugins/apollo-suppliers on 2026-07-28. Entry PRESERVED (not deleted) — either planned/not-yet-built or removed. Resolve before treating as live."
+}

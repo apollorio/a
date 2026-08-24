@@ -1,0 +1,564 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-comment",
+    "owner": "apollo-comment",
+    "wrap": "plugins.apollo-comment",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-comment",
+  "namespace": "Apollo\\Comment",
+  "priority": 3,
+  "status": "IMPLEMENTED",
+  "description": "WordPress comments relabeled as \"Depoimentos\" — testimonial-style cards with avatar, badge, groups.",
+  "dependencies": [
+    "apollo-core"
+  ],
+  "provides": [
+    "depoimento-system",
+    "comment-relabel"
+  ],
+  "FORBIDDEN": [
+    "comment",
+    "review"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [],
+  "meta": {
+    "post": {},
+    "user": {},
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_items",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/DepoimentoController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PATCH",
+        "POST",
+        "PUT"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_item",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/DepoimentoController.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "pages": [],
+  "shortcodes": [
+    {
+      "tag": "apollo_depoimento_form",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_depoimentos",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "version": "1.0.1",
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [
+    "apollo/comment/initialized",
+    "apollo/depoimento/allowed_post_types",
+    "apollo/depoimento/created",
+    "apollo/depoimento/deleted",
+    "apollo/depoimento/query_args",
+    "apollo/depoimento/updated"
+  ],
+  "hooks_listened": [
+    "apollo/comment/render_depoimento_form",
+    "apollo/depoimento/allowed_post_types"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [
+      "apollo-depoimento"
+    ],
+    "styles": [
+      "apollo-depoimento"
+    ]
+  },
+  "options": [],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 22,
+    "abspath_coverage_pct": 90,
+    "rest_open_routes": 2,
+    "rest_critical_write_public": 2,
+    "rest_open_non_intentional": 2,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 2,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 1
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_get_membership_badge_html",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [],
+  "query_vars": [],
+  "php_surface": {
+    "files": 10,
+    "loc": 1659,
+    "classes": 6,
+    "functions": 0
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:47.708Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 33,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-comment",
+    "main_file": "apollo-comment.php",
+    "plugin_header": {
+      "plugin_name": "Apollo — Depoimentos",
+      "plugin_uri": "https://apollo.rio.br",
+      "description": "WordPress comments relabeled as \"Depoimentos\" — testimonial-style cards with avatar, badge, groups.",
+      "version": "1.0.1",
+      "author": "Apollo",
+      "author_uri": "https://apollo.rio.br",
+      "license": null,
+      "text_domain": "apollo-comment",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": null
+    },
+    "composer": {
+      "name": "apollo/comment",
+      "namespaces": [
+        "Apollo\\Comment"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 10,
+        ".css": 1,
+        ".js": 1,
+        ".json": 1,
+        ".md": 1
+      },
+      "by_top_directory": {
+        "(root)": 4,
+        "assets": 2,
+        "src": 6,
+        "templates": 2
+      },
+      "total_bytes": 68961
+    },
+    "php": {
+      "files": 10,
+      "loc": 1659,
+      "classes": 6,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 0
+    },
+    "architecture": {
+      "namespace": "Apollo\\Comment",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "DepoimentoController",
+          "fqcn": "Apollo\\Comment\\API\\DepoimentoController",
+          "extends": "\\WP_REST_Controller",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/DepoimentoController.php"
+        },
+        {
+          "kind": "class",
+          "name": "CommentLabels",
+          "fqcn": "Apollo\\Comment\\CommentLabels",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/CommentLabels.php"
+        },
+        {
+          "kind": "class",
+          "name": "Depoimento",
+          "fqcn": "Apollo\\Comment\\Depoimento",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Depoimento.php"
+        },
+        {
+          "kind": "class",
+          "name": "FrontendForm",
+          "fqcn": "Apollo\\Comment\\FrontendForm",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/FrontendForm.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Comment\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "Shortcodes",
+          "fqcn": "Apollo\\Comment\\Shortcodes",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Shortcodes.php"
+        }
+      ],
+      "public_functions": []
+    },
+    "rest": {
+      "count": 2,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "GET",
+            "POST"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_items",
+          "file": "src/API/DepoimentoController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "DELETE",
+            "GET",
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_item",
+          "file": "src/API/DepoimentoController.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 2,
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "PUBLIC_UNAUTHENTICATED": 2
+      },
+      "permission_body_resolved": 2,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 2,
+      "open_routes": [
+        {
+          "endpoint": "/",
+          "methods": [
+            "GET",
+            "POST"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/DepoimentoController.php"
+        },
+        {
+          "endpoint": "/",
+          "methods": [
+            "DELETE",
+            "GET",
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/DepoimentoController.php"
+        }
+      ],
+      "admin_cap_routes": [],
+      "logged_in_routes": []
+    },
+    "database": {
+      "tables_owned_or_defined": [],
+      "tables_referenced": [
+        "apollo_get_membership_badge_html"
+      ],
+      "tables_for_registry": [],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_get_membership_badge_html",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 0,
+      "user_count": 0,
+      "term_count": 0,
+      "post_keys": [],
+      "user_keys": [],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [],
+      "query_vars": [],
+      "pages_derived": []
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 6,
+      "listened_count": 17,
+      "apollo_fired": [
+        "apollo/comment/initialized",
+        "apollo/depoimento/allowed_post_types",
+        "apollo/depoimento/created",
+        "apollo/depoimento/deleted",
+        "apollo/depoimento/query_args",
+        "apollo/depoimento/updated"
+      ],
+      "apollo_listened": [
+        "apollo/comment/render_depoimento_form",
+        "apollo/depoimento/allowed_post_types"
+      ],
+      "critical_wp_listened": [
+        "admin_menu",
+        "plugins_loaded",
+        "rest_api_init",
+        "wp_enqueue_scripts"
+      ]
+    },
+    "ajax": {
+      "priv": [],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [
+      "apollo_depoimento_form",
+      "apollo_depoimentos"
+    ],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [
+        "apollo-depoimento"
+      ],
+      "styles": [
+        "apollo-depoimento"
+      ]
+    },
+    "options": [],
+    "constants": [
+      {
+        "name": "APOLLO_COMMENT_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_COMMENT_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_COMMENT_PATH",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_COMMENT_URL",
+        "value": "plugin_dir_url( __FILE__"
+      }
+    ],
+    "security": {
+      "php_files": 10,
+      "abspath_guard_files": 9,
+      "abspath_coverage_pct": 90,
+      "wpdb_prepare_calls": 1,
+      "wpdb_query_calls": 1,
+      "prepare_to_query_ratio": 1,
+      "nonce_checks": 2,
+      "current_user_can_calls": 2,
+      "raw_superglobal": {
+        "get": 0,
+        "post": 0,
+        "request": 0
+      },
+      "permission_callback_return_true": 2,
+      "escape_helpers": 38,
+      "echo_statements": 42,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 22,
+      "risk_band": "LOW",
+      "rest_permission_critical": 2,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 0,
+      "rest_open_critical": 2,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 2
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core"
+      ],
+      "signals": [
+        "apollo-core"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": false,
+      "register_deactivation_hook": false,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.0.1",
+      "version_changed": false,
+      "old_rest": 2,
+      "live_rest": 2,
+      "old_pages": 0,
+      "live_pages": 0,
+      "new_plugin": false
+    }
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 10,
+    "php_loc": 1649,
+    "rest_routes_found": 1,
+    "cpts_found": [],
+    "tables_found": [],
+    "shortcodes_found": [
+      "apollo_depoimento_form",
+      "apollo_depoimentos"
+    ]
+  }
+}

@@ -1,0 +1,1027 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-dashboard",
+    "owner": "apollo-dashboard",
+    "wrap": "plugins.apollo-dashboard",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-dashboard",
+  "namespace": "Apollo\\Dashboard",
+  "priority": 4,
+  "status": "IMPLEMENTED",
+  "description": "Dashboard: User dashboard settings, template definitions, widgets",
+  "dependencies": [
+    "apollo-core",
+    "apollo-groups",
+    "apollo-templates",
+    "apollo-users"
+  ],
+  "provides": [
+    "dashboard-settings",
+    "dashboard-templates",
+    "dashboard-widgets"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [
+    "apollo_activity",
+    "apollo_connections",
+    "apollo_favs",
+    "apollo_group_members",
+    "apollo_groups"
+  ],
+  "meta": {
+    "post": {
+      "_event_loc_id": {
+        "_source": "deep_scan"
+      },
+      "_event_start_date": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {
+      "_apollo_avatar_url": {
+        "_source": "deep_scan"
+      },
+      "_apollo_dashboard_layout": {
+        "_source": "deep_scan"
+      },
+      "_apollo_dashboard_settings": {
+        "_source": "deep_scan"
+      },
+      "_apollo_genre": {
+        "_source": "deep_scan"
+      },
+      "_apollo_location": {
+        "_source": "deep_scan"
+      },
+      "_apollo_nucleos": {
+        "_source": "deep_scan"
+      },
+      "_apollo_pref_dark": {
+        "_source": "deep_scan"
+      },
+      "_apollo_pref_email_notif": {
+        "_source": "deep_scan"
+      },
+      "_apollo_pref_notifications": {
+        "_source": "deep_scan"
+      },
+      "_apollo_pref_sound": {
+        "_source": "deep_scan"
+      },
+      "_apollo_pref_visible": {
+        "_source": "deep_scan"
+      },
+      "_apollo_social_name": {
+        "_source": "deep_scan"
+      }
+    },
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/dashboard",
+      "methods": [
+        "GET"
+      ],
+      "description": "Dashboard data",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "check_logged_in",
+      "permission_binding": "Plugin::check_logged_in",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_dashboard",
+      "rest_namespace": "apollo/v1",
+      "file": "includes/class-plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/dashboard/widgets",
+      "methods": [
+        "GET"
+      ],
+      "description": "Available widgets",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "check_logged_in",
+      "permission_binding": "Plugin::check_logged_in",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_list_widgets",
+      "rest_namespace": "apollo/v1",
+      "file": "includes/class-plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/dashboard/settings",
+      "methods": [
+        "?"
+      ],
+      "description": "Dashboard settings",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "check_logged_in",
+      "permission_binding": "Plugin::check_logged_in",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_dashboard_settings",
+      "rest_namespace": "apollo/v1",
+      "file": "includes/class-plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/dashboard/layout",
+      "methods": [
+        "?"
+      ],
+      "description": "Widget layout",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "check_logged_in",
+      "permission_binding": "Plugin::check_logged_in",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_dashboard_layout",
+      "rest_namespace": "apollo/v1",
+      "file": "includes/class-plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "pages": [
+    {
+      "slug": "painel/eventos",
+      "rewrite": "^painel/eventos/?$",
+      "query": "index.php?apollo_dashboard_page=dashboard&apollo_dashboard_tab=eventos",
+      "query_vars": [
+        "apollo_dashboard_page=dashboard",
+        "apollo_dashboard_tab=eventos"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "painel/favoritos",
+      "rewrite": "^painel/favoritos/?$",
+      "query": "index.php?apollo_dashboard_page=dashboard&apollo_dashboard_tab=favoritos",
+      "query_vars": [
+        "apollo_dashboard_page=dashboard",
+        "apollo_dashboard_tab=favoritos"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "painel/grupos",
+      "rewrite": "^painel/grupos/?$",
+      "query": "index.php?apollo_dashboard_page=dashboard&apollo_dashboard_tab=comunas",
+      "query_vars": [
+        "apollo_dashboard_page=dashboard",
+        "apollo_dashboard_tab=comunas"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "painel/configuracoes",
+      "rewrite": "^painel/configuracoes/?$",
+      "query": "index.php?apollo_dashboard_page=dashboard&apollo_dashboard_tab=configuracoes",
+      "query_vars": [
+        "apollo_dashboard_page=dashboard",
+        "apollo_dashboard_tab=configuracoes"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "painel",
+      "rewrite": "^painel/?$",
+      "query": "index.php?apollo_dashboard_page=dashboard&apollo_dashboard_tab=feed",
+      "query_vars": [
+        "apollo_dashboard_page=dashboard",
+        "apollo_dashboard_tab=feed"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    }
+  ],
+  "shortcodes": [
+    {
+      "tag": "apollo_dashboard",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_dashboard_menu",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "version": "1.1.0",
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [
+    "apollo_dashboard_widgets"
+  ],
+  "hooks_listened": [],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [
+      "apollo-dashboard"
+    ],
+    "styles": [
+      "apollo-dashboard"
+    ]
+  },
+  "options": [
+    "apollo_dashboard_page_id",
+    "apollo_dashboard_settings",
+    "apollo_dashboard_version",
+    "apollo_dashboard_widgets"
+  ],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 0,
+    "abspath_coverage_pct": 94,
+    "rest_open_routes": 0,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 0,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 4,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 0.94
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_activity",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_connections",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_dashboard_cache_refresh",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_dashboard_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_favs",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_group_members",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_groups",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [
+    {
+      "pattern": "^painel/eventos/?$",
+      "query": "index.php?apollo_dashboard_page=dashboard&apollo_dashboard_tab=eventos"
+    },
+    {
+      "pattern": "^painel/favoritos/?$",
+      "query": "index.php?apollo_dashboard_page=dashboard&apollo_dashboard_tab=favoritos"
+    },
+    {
+      "pattern": "^painel/grupos/?$",
+      "query": "index.php?apollo_dashboard_page=dashboard&apollo_dashboard_tab=comunas"
+    },
+    {
+      "pattern": "^painel/configuracoes/?$",
+      "query": "index.php?apollo_dashboard_page=dashboard&apollo_dashboard_tab=configuracoes"
+    },
+    {
+      "pattern": "^painel/?$",
+      "query": "index.php?apollo_dashboard_page=dashboard&apollo_dashboard_tab=feed"
+    }
+  ],
+  "query_vars": [
+    "apollo_dashboard_page",
+    "apollo_dashboard_tab"
+  ],
+  "php_surface": {
+    "files": 16,
+    "loc": 4358,
+    "classes": 3,
+    "functions": 2
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:48.198Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 94,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-dashboard",
+    "main_file": "apollo-dashboard.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Dashboard",
+      "plugin_uri": "https://apollo.rio.br/plugins/apollo-dashboard",
+      "description": "Dashboard: User dashboard settings, template definitions, widgets",
+      "version": "1.0.1",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "Proprietary",
+      "text_domain": "apollo-dashboard",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": "false"
+    },
+    "composer": {
+      "name": "apollo/apollo-dashboard",
+      "namespaces": [
+        "Apollo\\Dashboard"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 16,
+        ".css": 1,
+        ".js": 1,
+        ".json": 1,
+        ".md": 1,
+        ".ffs_db": 1
+      },
+      "by_top_directory": {
+        "(root)": 5,
+        "assets": 2,
+        "includes": 3,
+        "src": 3,
+        "templates": 8
+      },
+      "total_bytes": 128847
+    },
+    "php": {
+      "files": 16,
+      "loc": 4358,
+      "classes": 3,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 2
+    },
+    "architecture": {
+      "namespace": "Apollo\\Dashboard",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Dashboard\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "includes/class-plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Dashboard\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Deactivation",
+          "fqcn": "Apollo\\Dashboard\\Deactivation",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Deactivation.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_dashboard_check_dependencies",
+          "file": "apollo-dashboard.php"
+        },
+        {
+          "name": "apollo_dashboard_init",
+          "file": "apollo-dashboard.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 4,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/dashboard",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "check_logged_in",
+            "target": "Plugin",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "Plugin::check_logged_in",
+              "method_file": "includes/class-plugin.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "rest_get_dashboard",
+          "file": "includes/class-plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/dashboard/widgets",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "check_logged_in",
+            "target": "Plugin",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "Plugin::check_logged_in",
+              "method_file": "includes/class-plugin.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "rest_list_widgets",
+          "file": "includes/class-plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/dashboard/settings",
+          "methods": [
+            "?"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "check_logged_in",
+            "target": "Plugin",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "Plugin::check_logged_in",
+              "method_file": "includes/class-plugin.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "rest_dashboard_settings",
+          "file": "includes/class-plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/dashboard/layout",
+          "methods": [
+            "?"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "check_logged_in",
+            "target": "Plugin",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "Plugin::check_logged_in",
+              "method_file": "includes/class-plugin.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "rest_dashboard_layout",
+          "file": "includes/class-plugin.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 0,
+        "MEDIUM": 4,
+        "LOW": 0,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "LOGGED_IN_ONLY": 4
+      },
+      "permission_body_resolved": 4,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [],
+      "admin_cap_routes": [],
+      "logged_in_routes": [
+        "/dashboard",
+        "/dashboard/widgets",
+        "/dashboard/settings",
+        "/dashboard/layout"
+      ]
+    },
+    "database": {
+      "tables_owned_or_defined": [
+        "apollo_activity",
+        "apollo_connections",
+        "apollo_favs",
+        "apollo_group_members",
+        "apollo_groups"
+      ],
+      "tables_referenced": [
+        "apollo_activity",
+        "apollo_connections",
+        "apollo_dashboard_cache_refresh",
+        "apollo_dashboard_settings",
+        "apollo_favs",
+        "apollo_group_members",
+        "apollo_groups"
+      ],
+      "tables_for_registry": [
+        "apollo_activity",
+        "apollo_connections",
+        "apollo_favs",
+        "apollo_group_members",
+        "apollo_groups"
+      ],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_activity",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_connections",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_dashboard_cache_refresh",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_dashboard_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_favs",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_group_members",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_groups",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 2,
+      "user_count": 12,
+      "term_count": 0,
+      "post_keys": [
+        "_event_loc_id",
+        "_event_start_date"
+      ],
+      "user_keys": [
+        "_apollo_avatar_url",
+        "_apollo_dashboard_layout",
+        "_apollo_dashboard_settings",
+        "_apollo_genre",
+        "_apollo_location",
+        "_apollo_nucleos",
+        "_apollo_pref_dark",
+        "_apollo_pref_email_notif",
+        "_apollo_pref_notifications",
+        "_apollo_pref_sound",
+        "_apollo_pref_visible",
+        "_apollo_social_name"
+      ],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [
+        {
+          "pattern": "^painel/eventos/?$",
+          "query": "index.php?apollo_dashboard_page=dashboard&apollo_dashboard_tab=eventos",
+          "position": "top",
+          "file": "includes/class-plugin.php"
+        },
+        {
+          "pattern": "^painel/favoritos/?$",
+          "query": "index.php?apollo_dashboard_page=dashboard&apollo_dashboard_tab=favoritos",
+          "position": "top",
+          "file": "includes/class-plugin.php"
+        },
+        {
+          "pattern": "^painel/grupos/?$",
+          "query": "index.php?apollo_dashboard_page=dashboard&apollo_dashboard_tab=comunas",
+          "position": "top",
+          "file": "includes/class-plugin.php"
+        },
+        {
+          "pattern": "^painel/configuracoes/?$",
+          "query": "index.php?apollo_dashboard_page=dashboard&apollo_dashboard_tab=configuracoes",
+          "position": "top",
+          "file": "includes/class-plugin.php"
+        },
+        {
+          "pattern": "^painel/?$",
+          "query": "index.php?apollo_dashboard_page=dashboard&apollo_dashboard_tab=feed",
+          "position": "top",
+          "file": "includes/class-plugin.php"
+        }
+      ],
+      "query_vars": [
+        "apollo_dashboard_page",
+        "apollo_dashboard_tab"
+      ],
+      "pages_derived": [
+        {
+          "slug": "painel/eventos",
+          "rewrite": "^painel/eventos/?$",
+          "query": "index.php?apollo_dashboard_page=dashboard&apollo_dashboard_tab=eventos",
+          "query_vars": [
+            "apollo_dashboard_page=dashboard",
+            "apollo_dashboard_tab=eventos"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "painel/favoritos",
+          "rewrite": "^painel/favoritos/?$",
+          "query": "index.php?apollo_dashboard_page=dashboard&apollo_dashboard_tab=favoritos",
+          "query_vars": [
+            "apollo_dashboard_page=dashboard",
+            "apollo_dashboard_tab=favoritos"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "painel/grupos",
+          "rewrite": "^painel/grupos/?$",
+          "query": "index.php?apollo_dashboard_page=dashboard&apollo_dashboard_tab=comunas",
+          "query_vars": [
+            "apollo_dashboard_page=dashboard",
+            "apollo_dashboard_tab=comunas"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "painel/configuracoes",
+          "rewrite": "^painel/configuracoes/?$",
+          "query": "index.php?apollo_dashboard_page=dashboard&apollo_dashboard_tab=configuracoes",
+          "query_vars": [
+            "apollo_dashboard_page=dashboard",
+            "apollo_dashboard_tab=configuracoes"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "painel",
+          "rewrite": "^painel/?$",
+          "query": "index.php?apollo_dashboard_page=dashboard&apollo_dashboard_tab=feed",
+          "query_vars": [
+            "apollo_dashboard_page=dashboard",
+            "apollo_dashboard_tab=feed"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        }
+      ]
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 1,
+      "listened_count": 7,
+      "apollo_fired": [
+        "apollo_dashboard_widgets"
+      ],
+      "apollo_listened": [],
+      "critical_wp_listened": [
+        "admin_menu",
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "template_redirect"
+      ]
+    },
+    "ajax": {
+      "priv": [],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [
+      "apollo_dashboard",
+      "apollo_dashboard_menu"
+    ],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [
+        "apollo-dashboard"
+      ],
+      "styles": [
+        "apollo-dashboard"
+      ]
+    },
+    "options": [
+      "apollo_dashboard_page_id",
+      "apollo_dashboard_settings",
+      "apollo_dashboard_version",
+      "apollo_dashboard_widgets"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_DASHBOARD_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_DASHBOARD_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_DASHBOARD_DIR",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_DASHBOARD_URL",
+        "value": "plugin_dir_url( __FILE__"
+      },
+      {
+        "name": "APOLLO_DASHBOARD_BASENAME",
+        "value": "plugin_basename( __FILE__"
+      },
+      {
+        "name": "APOLLO_DASHBOARD_REST_NAMESPACE",
+        "value": "apollo/v1"
+      }
+    ],
+    "security": {
+      "php_files": 16,
+      "abspath_guard_files": 15,
+      "abspath_coverage_pct": 94,
+      "wpdb_prepare_calls": 17,
+      "wpdb_query_calls": 18,
+      "prepare_to_query_ratio": 0.94,
+      "nonce_checks": 4,
+      "current_user_can_calls": 0,
+      "raw_superglobal": {
+        "get": 0,
+        "post": 0,
+        "request": 0
+      },
+      "permission_callback_return_true": 0,
+      "escape_helpers": 84,
+      "echo_statements": 95,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 0,
+      "risk_band": "LOW",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 0,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 0
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core",
+        "apollo-groups",
+        "apollo-templates",
+        "apollo-users"
+      ],
+      "signals": [
+        "apollo-core",
+        "apollo-groups",
+        "apollo-templates",
+        "apollo-users"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.0.1",
+      "version_changed": false,
+      "old_rest": 4,
+      "live_rest": 4,
+      "old_pages": 5,
+      "live_pages": 5,
+      "new_plugin": false
+    }
+  },
+  "security_remediation": {
+    "note": "P1: /dashboard/widgets requires login",
+    "last_updated": "2026-07-20"
+  },
+  "canvas_contract": {
+    "variant": "plus",
+    "action": "FIXED",
+    "shape": "trait-switch",
+    "audited": "2026-07-28",
+    "ref": "$canvas_shell.plugins.apollo-dashboard"
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 16,
+    "php_loc": 4343,
+    "rest_routes_found": 4,
+    "cpts_found": [],
+    "tables_found": [
+      "apollo_activity",
+      "apollo_connections",
+      "apollo_favs",
+      "apollo_group_members",
+      "apollo_groups"
+    ],
+    "shortcodes_found": [
+      "apollo_dashboard",
+      "apollo_dashboard_menu"
+    ]
+  }
+}

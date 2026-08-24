@@ -1,0 +1,2178 @@
+﻿/* ═══════════════════════════════════════════════════════════════════
+   APOLLO::RIO — new_home.css  v3.0.1
+   /casa landing — uni.theme v2 compliant (tokens via core.js)
+   Scrollable landing page — no panel engine
+
+   ── OWNERSHIP ────────────────────────────────────────────────────
+   This cell OWNS every `.nh-*`, `.a-eve-*`, `.xp-*` and `.aprio-ft-v2`
+   selector on /casa, plus the page's section rhythm (--nh-section-pad,
+   .container, .section) and the ≤767px mobile-app-first pass at the
+   foot of the file, which is the declared LAST WORD on mobile spacing.
+
+   This cell does NOT own:
+     · `:root` tokens .................. core.js (#cdn-apollo)
+     · `.ax-*` topbar shell ............ template-parts/apollo-plus/topbar-styles.php
+     · `.ax-aside`, `.ax-main` ......... template-parts/apollo-plus/aside-styles.php
+   Both `.ax-*` cells are currently NOT loaded on /casa; page-home.php's
+   inline <style id="apollo-home-styles"> holds a partial private copy.
+   That fork is tracked as F-01 in _inventory/CASA-MAP-2026-08-08.md and
+   is the reason `.ax-top` appears in two files at ≤767px. Do not extend
+   the copy — close it.
+
+   Gate: node apollo-templates/_sandbox/build-casa-harness.mjs
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Tokens: core.js #cdn-apollo + uni.css — page-local extras only */
+:root {
+  --nh-ease-out: cubic-bezier(.22, 1, .36, 1);
+  --nh-section-pad: clamp(72px, 10vw, 120px);
+}
+
+/* DS components size via calc(N * var(--fsx)); core.js injects --fs-u/--fs-r but not --fsx */
+body.ax-body,
+#apollo-home {
+  --fsx: var(--fs-u, var(--fs-r, 1));
+}
+
+/* ─── BASE (respect core.js html/body/* — additive only) ─────────── */
+#apollo-home {
+  background: var(--surface, #fff);
+  color: var(--txt-body, var(--black-1));
+}
+
+
+/* ─── LAYOUT ─────────────────────────────────────────────────────── */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 48px); }
+.section { padding: var(--nh-section-pad) 0; }
+.return-back {
+  font-family: var(--ff-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+@media (min-width: 768px) {
+  .container { padding: 0 clamp(32px, 5vw, 56px); }
+}
+
+
+/* ═══════════════
+   NAVBAR — ultra-discreet pill, invisible on hero / refined on scroll
+   Compact height — elements inside stay same size, just less padding
+   ═══════════════ */
+.nh-navbar {
+  position: fixed;
+  /* F-02: fallback is NOT optional. --safe-top comes from core.js (CDN); an
+     unresolved custom property makes the whole declaration invalid at
+     computed-value time, so `top` would revert to `auto` and a fixed element
+     would land at its static position. Same guard as lines 315/375. */
+  top: calc(18px + var(--safe-top, 0px));
+  left: 46%;
+  transform: translateX(-50%);
+  z-index: 9000;
+  width: calc(80% - 28px);
+  max-width: 60dvw;
+  height: 44px;        /* 50px − 6px freed from nav-btn margin halving */
+  max-height: 44px;
+  padding: 0 4px 0 0;               /* buttons own their padding — navbar just contains */
+  background: rgba(var(--rgb-t),0.04) !important;
+  backdrop-filter: blur(10px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(200%) !important;
+  border: none !important;
+  border-radius: 41px !important;
+  corner-shape: squircle;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background .5s var(--ease-smooth), border-color .5s var(--ease-smooth), box-shadow .5s var(--ease-smooth);
+  will-change: background, border-color;
+}
+.nh-navbar.scrolled {
+  background: rgba(var(--rgb-t),0.25) !important;
+  border-color: transparent !important;
+}
+/* Logo = apollo icon only, no text */
+.nh-nav-logo {
+  max-height: fit-content;
+  display: flex;
+  align-items: center;
+  color: rgba(var(--rgb-t),0.871);
+  transition: color .4s;
+  user-select: none;
+  margin: 0 !important;
+  padding: 0 0 2.5px 15px!important;
+  & > i {
+    font-size: calc(var(--fs-u, 1) * 28px) !important;
+    line-height: 1;
+    padding: 7px;
+    margin: -2px 3px 4px 10px;   /* left 10px = breathing room from pill left edge */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+.nh-navbar.scrolled .nh-nav-logo { color: var(--gray-5); text-shadow: inset 10px 10px 30px rgba(var(--rgb-diff), 0.9); }
+.nh-nav-actions { display: flex; gap: 0; align-items: center; }
+.nh-nav-btn {
+  /*
+   * Right nav btns (chat, notif, profile)
+   * icon: 20px  |  padding: 7px (was 10, -3 = 1/3 moved to margin)
+   * margin: 6px vertical / 5px horizontal (added the 1/3 from padding)
+   * Touch area: 7+20+7 = 34px btn + 6px margins each = 46px ≤ 50px navbar
+   * Logo icon stays at 24px with full 10px padding — intentionally larger
+   */
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  border-radius: 50% !important;
+  background: rgba(var(--rgb-t),0.09);
+  color: rgba(var(--rgb-t),0.78);
+  transition: background .3s, color .3s, transform .2s var(--ease-spring);
+  position: relative !important;
+  overflow: visible !important;
+  font-size: calc(var(--fs-u, 1) * 21px) !important;  /* +1px from padding: 7→6 */
+  padding: 6px !important;
+  margin: 3px 3px !important;  /* halved from 6px 5px; freed px removed from navbar height */
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: unset !important;
+  min-height: unset !important;
+  max-width: unset !important;
+  max-height: unset !important;
+}
+
+.nh-nav-icon { width: 20px; height: 20px; display: block; flex-shrink: 0; }
+.nh-navbar.scrolled .nh-nav-btn { background: transparent; color: var(--text-secondary); }
+@media (hover: hover) {
+  .nh-nav-btn:hover { background: rgba(var(--rgb-t),0.18); transform: scale(1.06); }
+  .nh-navbar.scrolled .nh-nav-btn:hover { background: var(--onyx-700); color: var(--text); }
+}
+.nh-nav-btn:active { transform: scale(0.93)!important; }
+.nh-notif-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px; height: 4px;
+  background: var(--alert-warning); border-radius: 50%;
+  border: none; pointer-events: none;
+  box-shadow: none;
+  animation: nh-pulse-dot 2s ease infinite;
+  /* centering is baked into keyframes — do NOT use transform here */
+}
+.nh-notif-dot[data-notif="false"] { display: none; }
+@keyframes nh-pulse-dot {
+  0%,100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  50%     { transform: translate(-50%, -50%) scale(1.9); opacity: 0; }
+}
+
+
+/* ═══════════════
+   MENU APP FAB — ALWAYS VISIBLE, fixed bottom-right circle
+   Single button. Click opens upward sheet.
+   ═══════════════ */
+.nh-menu-fab {
+  position: fixed !important;
+  bottom: calc(16px + var(--safe-bottom, 0px)) !important; /* F-02 — see .nh-navbar */
+  right: 20px !important;
+  z-index: 9100 !important;
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--black-1);
+  color: var(--white-1, #fff);
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: calc(var(--fs-u, 1) * 20px);
+  line-height: 1;
+  box-shadow: inset 0 0 0 1px rgba(var(--rgb-t), .08);
+  transition: transform .35s var(--nh-ease-out), background .3s, box-shadow .3s;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  will-change: transform;
+  visibility: visible !important;
+}
+/* FAB apollicon: 17 × 1.2 = 20px — 20% bigger than nav action icons, difference expressed via button padding */
+.nh-menu-fab i,
+.nh-menu-fab svg { pointer-events: none; display: block; flex-shrink: 0; transition: transform .3s var(--ease-spring); }
+.nh-menu-fab.is-open i,
+.nh-menu-fab.is-open svg { transform: rotate(45deg); }
+@media (hover: hover) {
+  .nh-menu-fab:hover {
+    background: var(--black-2, var(--black-1));
+    transform: scale(1.06);
+    box-shadow: inset 0 0 0 1px var(--accent);
+  }
+}
+.nh-menu-fab:active { transform: scale(0.91); box-shadow: none; }
+
+/* Upward sheet */
+/* Menu sheet — monochrome, ultra-clean */
+.nh-menu-sheet {
+  position: fixed;
+  /* F-02 — without the fallback this becomes `bottom:auto` whenever core.js is
+     slow or blocked, and the mobile menu opens over the hero instead of above
+     the burger. This is the sheet /casa actually uses. */
+  bottom: calc(78px + var(--safe-bottom, 0px));
+  right: 14px;
+  z-index: 9090;
+  width: 210px;
+  background: rgba(var(--rgb-t),0.25);
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: none;
+  border-radius: var(--r, 16px);
+  box-shadow: none;
+  padding: 6px;
+  opacity: 0;
+  transform: translateY(14px) scale(0.95);
+  transform-origin: bottom right;
+  pointer-events: none;
+  transition: opacity .26s var(--ease, cubic-bezier(.16, 1, .3, 1)), transform .26s var(--ease, cubic-bezier(.16, 1, .3, 1));
+}
+
+html.dark-mode .nh-menu-sheet {
+  background: rgba(18,18,20,0.22);
+  border-color: transparent;
+  box-shadow: none;
+}
+.nh-menu-sheet.is-open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.nh-sheet-item {
+  display: flex; align-items: center; gap: 11px;
+  padding: 10px 12px;
+  border-radius: var(--r-sm, 10px);
+  font-size: 0.84rem; font-weight: 500;
+  color: var(--txt-color, rgba(19,21,23,0.77));
+  cursor: pointer;
+  transition: background .17s var(--ease, cubic-bezier(.16, 1, .3, 1)), color .17s var(--ease, cubic-bezier(.16, 1, .3, 1));
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+.nh-sheet-item i { font-size: calc(var(--fs-u, 1) * 15px); color: var(--muted, rgba(19,21,23,0.45)); width: 20px; text-align: center; flex-shrink: 0; transition: color .17s; }
+@media (hover: hover) {
+  .nh-sheet-item:hover { background: rgba(var(--rgb-diff),0.04); color: var(--txt-color-hover, rgba(19,21,23,0.92)); }
+  .nh-sheet-item:hover i { color: var(--black-1, #121214); }
+}
+.nh-sheet-item:active { background: rgba(var(--rgb-diff),0.06); }
+.nh-sheet-divider { height: 1px; background: var(--border, rgba(var(--rgb-diff),0.10)); margin: 4px 5px; }
+/* Login CTA — accent in dark sheet */
+.nh-sheet-item--cta {
+  background: var(--black-1, #121214);
+  color: var(--bg, #fff);
+  margin-top: 2px;
+  border: 1px solid transparent;
+}
+.nh-sheet-item--cta i { color: currentColor; opacity: 0.65; }
+@media (hover: hover) {
+  .nh-sheet-item--cta:hover { opacity: 0.85; background: var(--black-1, #121214); border-color: transparent; }
+  .nh-sheet-item--cta:hover i { color: currentColor; opacity: 0.9; }
+}
+
+
+/* ═══════════════
+   NAVBAR v2 — AVATAR INITIALS
+   ═══════════════ */
+.nh-avatar-initials {
+  display: flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  font-size: 0.55rem; font-weight: 700; letter-spacing: 0.02em;
+  color: rgba(var(--rgb-t),0.95);
+  background: linear-gradient(135deg, #333, #1a1a1a);
+  line-height: 1; user-select: none; flex-shrink: 0;
+}
+.nh-nav-btn--avatar { padding: 5px !important; }
+.nh-avatar-initials--lg {
+  width: 36px; height: 36px;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+/* ═══════════════
+   NAVBAR v2 — DROPDOWN BASE (Apps + Profile)
+   Shared base — positioned below navbar pill, glass surface
+   ═══════════════ */
+.nh-dropdown {
+  position: fixed;
+  z-index: 9100;
+  background: rgba(var(--rgb-t),0.25);
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: none;
+  border-radius: var(--r, 16px);
+  box-shadow: none;
+  padding: 6px;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.96);
+  transform-origin: top center;
+  pointer-events: none;
+  transition: opacity .22s var(--ease, cubic-bezier(.16, 1, .3, 1)),
+              transform .22s var(--ease, cubic-bezier(.16, 1, .3, 1));
+  max-height: 80dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+html.dark-mode .nh-dropdown {
+  background: rgba(18,18,20,0.22);
+  border-color: transparent;
+  box-shadow: none;
+}
+.nh-dropdown.is-open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.nh-dropdown::-webkit-scrollbar { width: 4px; }
+.nh-dropdown::-webkit-scrollbar-thumb { background: rgba(var(--rgb-t),0.12); border-radius: 2px; }
+
+/* ─── Apps Dropdown ─── */
+.nh-dropdown--apps {
+  top: calc(70px + var(--safe-top, 0px));
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px) scale(0.96);
+  transform-origin: top center;
+  width: 300px;
+  padding: 12px;
+}
+.nh-dropdown--apps.is-open {
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+.nh-dropdown__header {
+  padding: 6px 8px 10px;
+}
+.nh-dropdown__title {
+  font-family: var(--ff-mono, "Space Mono", monospace);
+  font-size: 0.65rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--muted, rgba(19,21,23,0.45));
+}
+.nh-dropdown__footer { padding: 4px 0 2px; }
+
+/* ─── Apps Grid ─── */
+.nh-apps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 0 4px;
+}
+.nh-app-item {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 6px; padding: 8px 4px;
+  border-radius: var(--r-sm, 10px);
+  transition: background .15s var(--ease, cubic-bezier(.16, 1, .3, 1)), transform .15s var(--ease, cubic-bezier(.16, 1, .3, 1));
+  text-decoration: none;
+  user-select: none;
+}
+@media (hover: hover) {
+  .nh-app-item:hover { background: rgba(var(--rgb-diff),0.04); transform: translateY(-2px); }
+}
+.nh-app-item:active { transform: scale(0.94); }
+.nh-app-icon {
+  width: 42px; height: 42px;
+  border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.15rem; color: #fff;
+  box-shadow: none;
+}
+.nh-app-icon i { font-size: 1.2rem; line-height: 1; }
+.nh-app-label {
+  font-size: 0.65rem; color: var(--txt-color, rgba(19,21,23,0.77));
+  text-align: center; max-width: 64px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+html.dark-mode .nh-app-label {
+  color: var(--txt-color, rgba(var(--rgb-t),0.77));
+}
+
+/* ─── Profile Dropdown ─── */
+.nh-dropdown--profile {
+  top: calc(70px + var(--safe-top, 0px));
+  right: max(14px, calc(50% - 200px));
+  width: 240px;
+  transform-origin: top right;
+}
+.nh-dropdown--profile .nh-sheet-item { color: var(--txt-color, rgba(19,21,23,0.77)); }
+
+/* Profile header (logged in) */
+.nh-profile-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 10px 8px;
+}
+.nh-profile-info { display: flex; flex-direction: column; overflow: hidden; }
+.nh-profile-name {
+  font-size: 0.88rem; font-weight: 600; color: var(--txt-color-hover, rgba(19,21,23,0.92));
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.nh-profile-handle {
+  font-size: 0.7rem; color: var(--muted, rgba(19,21,23,0.45));
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Danger item */
+.nh-sheet-item--danger { color: color-mix(in srgb, var(--alert-icon) 65%, black) !important; }
+.nh-sheet-item--danger i { color: color-mix(in srgb, var(--alert-icon) 65%, black) !important; opacity: 0.65; }
+
+@media (hover: hover) {
+  .nh-sheet-item--danger:hover { background: rgba(229,57,53,0.08); color: color-mix(in srgb, var(--alert-icon) 65%, black) !important; }
+  .nh-sheet-item--danger:hover i { color: color-mix(in srgb, var(--alert-icon) 65%, black) !important; opacity: 0.9; }
+}
+
+html.dark-mode .nh-sheet-divider {
+  background: var(--border, rgba(var(--rgb-t),0.10));
+}
+
+html.dark-mode .nh-sheet-item:hover {
+  background: rgba(var(--rgb-t),0.06);
+}
+
+html.dark-mode .nh-sheet-item:active {
+  background: rgba(var(--rgb-t),0.09);
+}
+
+html.dark-mode .nh-sheet-item--danger,
+html.dark-mode .nh-sheet-item--danger i {
+  color: var(--alert-icon) !important;
+}
+
+html.dark-mode .nh-sheet-item--danger:hover {
+  background: rgba(229,57,53,0.14);
+}
+
+/* Menu badge (count pill inside menu items) */
+.nh-menu-badge {
+  margin-left: auto;
+  font-size: 0.6rem; font-weight: 700;
+  background: rgba(var(--rgb-diff), 0.65); color: #fff;
+  min-width: 18px; text-align: center;
+  line-height: 1.4;
+}
+
+/* ═══════════════
+   NAVBAR v2 — LOGIN FORM (guest profile dropdown)
+   ═══════════════ */
+.nh-login-section { padding: 14px 10px 10px; }
+.nh-login-header { text-align: center; margin-bottom: 14px; }
+.nh-login-title {
+  display: block;
+  font-size: 1rem; font-weight: 600; color: #fff;
+  letter-spacing: -0.01em;
+}
+.nh-login-subtitle {
+  display: block;
+  font-size: 0.7rem; color: rgba(var(--rgb-t),0.4);
+  margin-top: 2px;
+}
+.nh-input-group { margin-bottom: 10px; }
+.nh-input-label {
+  display: block;
+  font-size: 0.6rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: rgba(var(--rgb-t),0.35);
+  margin-bottom: 4px; padding-left: 2px;
+}
+.nh-input-field {
+  width: 100%;
+  padding: 9px 0;
+  font-size: 0.84rem;
+  font-family: inherit;
+  color: #fff;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(var(--rgb-t),0.2);
+  border-radius: 0;
+  outline: none;
+  transition: border-color .2s;
+  box-sizing: border-box;
+}
+.nh-input-field::placeholder { color: rgba(var(--rgb-t),0.35); }
+.nh-input-field:focus {
+  border-bottom-color: rgba(var(--rgb-diff), 0.35);
+}
+/* Checkbox */
+.nh-checkbox-group {
+  display: flex; align-items: center; gap: 8px;
+  margin: 10px 0; cursor: pointer; user-select: none;
+}
+.nh-checkbox-input { position: absolute; opacity: 0; width: 0; height: 0; }
+.nh-checkbox-custom {
+  width: 16px; height: 16px;
+  border: 1.5px solid rgba(var(--rgb-t),0.2);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s; flex-shrink: 0;
+}
+.nh-checkbox-custom svg {
+  width: 10px; height: 10px; stroke: #fff; stroke-width: 2.5;
+  opacity: 0; transform: scale(0.5); transition: all .15s;
+}
+.nh-checkbox-input:checked + .nh-checkbox-custom {
+  background: rgba(var(--rgb-diff), 0.65); border-color: rgba(var(--rgb-diff), 0.65);
+}
+.nh-checkbox-input:checked + .nh-checkbox-custom svg {
+  opacity: 1; transform: scale(1);
+}
+.nh-checkbox-label { font-size: 0.75rem; color: rgba(var(--rgb-t),0.55); }
+/* Login Button */
+.nh-login-btn {
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 0.84rem; font-weight: 600; font-family: inherit;
+  color: #fff;
+  background: linear-gradient(135deg, #333, #1a1a1a);
+  border: none; border-radius: 10px;
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+  position: relative; overflow: hidden;
+}
+.nh-login-btn:hover { transform: translateY(-1px); box-shadow: none; }
+.nh-login-btn:active { transform: translateY(0); }
+.nh-login-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+.nh-spinner {
+  display: none;
+  width: 16px; height: 16px;
+  border: 2px solid rgba(var(--rgb-t),0.3); border-top-color: #fff;
+  border-radius: 50%;
+  animation: nhSpin .6s linear infinite;
+  margin: 0 auto;
+}
+.nh-login-btn.loading .nh-btn-text { opacity: 0; }
+.nh-login-btn.loading .nh-spinner {
+  display: block; position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+}
+@keyframes nhSpin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+/* Login Links */
+.nh-login-links {
+  margin-top: 12px;
+  display: flex; flex-direction: column; gap: 6px; text-align: center;
+}
+.nh-login-link {
+  font-size: 0.7rem; color: rgba(var(--rgb-t),0.4);
+  transition: color .2s; text-decoration: none;
+}
+.nh-login-link:hover { color: rgba(var(--rgb-diff), 0.65) !important; }
+.nh-login-link--register { font-weight: 600; color: rgba(var(--rgb-t),0.65); }
+
+/* ═══════════════
+   NAVBAR v2 — RESPONSIVE
+   ═══════════════ */
+@media (max-width: 640px) {
+  .nh-dropdown--apps,
+  .nh-dropdown--profile {
+    left: 10px; right: 10px;
+    width: auto; max-width: none;
+    transform: translateY(-8px) scale(0.96);
+  }
+  .nh-dropdown--apps.is-open,
+  .nh-dropdown--profile.is-open {
+    transform: translateY(0) scale(1);
+  }
+  .nh-apps-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ═══════════════
+   FAB/TAF — Desktop hide (aside-gated via body class)
+   Matches navbar.v2.css logic: mobile-only when aside present
+   ═══════════════ */
+.nh-menu-fab,
+.nh-menu-sheet {
+  display: none !important;
+}
+
+@media (max-width: 1023px) {
+  body.has-apollo-aside .nh-menu-fab {
+    display: flex !important;
+  }
+
+  body.has-apollo-aside .nh-menu-sheet {
+    display: block !important;
+  }
+
+  /* /casa: burger opens nh-menu-sheet via hidden FAB — sheet must stay in DOM */
+  body[data-apollo-page="landing"] .nh-menu-sheet {
+    display: block !important;
+  }
+}
+
+
+/* ═══════════════ HERO ═══════════════ */
+.nh-hero {
+  position: relative; width: 100%; height: 100dvh; min-height: 560px;
+  background: var(--onyx-800); overflow: hidden;
+  margin: 0; padding: 0; top: 0; /* flush to top — no offset */
+  transform: translateY(-15%); /* hero section shifted up (not the video) */
+}
+.nh-hero-vid {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; opacity: 0.78; z-index: 0;
+  pointer-events: none; /* no browser chrome overlay */
+}
+/* Kill ALL browser-injected video controls (Chrome, Safari, Edge) */
+.nh-hero-vid::-webkit-media-controls,
+.nh-hero-vid::-webkit-media-controls-enclosure,
+.nh-hero-vid::-webkit-media-controls-overlay-enclosure,
+.nh-hero-vid::-webkit-media-controls-panel,
+.nh-hero-vid::-internal-media-controls-overlay-cast-button,
+video::-webkit-media-controls { display: none !important; opacity: 0 !important; }
+.nh-hero-overlay {
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(var(--rgb-diff),0.14) 0%, rgba(var(--rgb-diff),0) 30%, rgba(var(--rgb-diff),0.08) 55%, rgba(var(--rgb-diff),0.88) 100%);
+}
+.nh-hero-overlay::after {
+  content: ''; position: absolute; inset: 0; opacity: 0.5; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  background-size: 128px;
+}
+.nh-hero-content { position: absolute; z-index: 2; left: 35px; bottom: 40px; right: 20px; color: #fff; width: auto; max-width: none; }
+.nh-hero-title {
+  margin: 0 0 14px;
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  font-size: clamp(2.5rem, 8vw, 5.5rem);
+  line-height: 0.95;
+  text-transform: none;
+  color: #fff; /* hero text ALWAYS white over the video — never token/dark */
+}
+
+/* ── Hero typing/flip rotator (item 002) ──
+   Fixed 2-row box (em-based → tracks the clamp() font-size at any viewport,
+   no JS measuring). Per-character cascade is GSAP+SplitText driven — inline
+   styles only, no CSS animation classes needed; see new-home.js "hero
+   phrase rotator". prefers-reduced-motion is handled in JS (plain swap). */
+.nh-hero-typer {
+  position: relative;
+  height: calc(2em * 0.95); /* 2 rows * this element's own line-height */
+  overflow: hidden;
+}
+.nh-hero-typer-view {
+  display: block;
+}
+.nh-hero-sub {
+  margin: 0;
+  color: rgba(255, 255, 255, .58); /* white, dimmed — less bright over video */
+  font-weight: 400;
+  font-family: var(--ff-main);
+  font-size: clamp(1rem, 2.2vw, 1.25rem);
+  max-width: 36rem;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+}
+.nh-scroll-hint {
+  position: absolute;
+  bottom: 0;
+  right: 50px;
+  z-index: 2;
+  pointer-events: none;
+}
+/* Luxury scroll/slide line — tokens from core.js only (--bg, --muted) */
+.nh-hero .scroll-line {
+  position: relative;
+  height: calc(5vw * 3);
+  min-height: 200px;
+  max-height: 300px;
+  width: 0.7px;
+  overflow: hidden;
+  background-color: var(--muted);
+  animation: nhScrollPulseColor 6s linear infinite;
+}
+.nh-hero .scroll-line-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(0deg, var(--bg) 0%, var(--muted) 100%);
+  transform: translateY(-100%);
+  animation: nhScrollSlideFill 6s linear infinite;
+}
+@keyframes nhScrollSlideFill {
+  0%   { transform: translateY(-100%); }
+  2%   { transform: translateY(-100%); }
+  40%  { transform: translateY(100%); }
+  100% { transform: translateY(100%); }
+}
+@keyframes nhScrollPulseColor {
+  0%   { background-color: var(--muted); }
+  50%  { background-color: var(--muted); }
+  58%  { background: var(--bg); }
+  70%  { background-color: var(--muted); }
+  100% { background-color: var(--muted); }
+}
+@media (min-width: 768px) {
+  .nh-hero-content { left: 52px; bottom: 60px; right: 52px; }
+  .nh-hero-sub { font-size: 1.2rem; line-height: 1; max-width: 480px; }
+  .nh-scroll-hint { bottom: 0; right: 50px; }
+}
+
+
+/* ═══════════════ MARQUEE ═══════════════ */
+.nh-marquee-wrap {
+  position: relative; z-index: 1;
+  width: 100%; overflow: hidden;
+  border-bottom: 1px solid var(--border);
+  padding: 22px 0;
+  /* item 003: .nh-hero is shifted translateY(-15%) (15dvh of its 100dvh box);
+     that transform doesn't affect normal-flow layout, so the marquee used to
+     start 15dvh below hero's now-higher visual bottom edge, leaving a gap.
+     Pulling the marquee up by the same amount closes it — marquee now
+     visually touches the end of the hero, and everything after it in flow
+     shifts up to match (no dead space introduced). */
+  margin-top: -15dvh;
+  background: var(--surface);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+}
+.nh-marquee-content {
+  display: flex; width: max-content;
+  gap: 100px; white-space: nowrap;
+  animation: nh-marquee 300s linear infinite;
+  will-change: transform;
+}
+.nh-marquee-item {
+  flex-shrink: 0;
+  font-family: var(--ff-mono); text-transform: uppercase;
+  font-size: clamp(1.3rem, 1.8vw, 1.7rem) !important;
+  letter-spacing: -0.02em; line-height: 1;
+  display: inline-flex; align-items: center; gap: 16px;
+  color: var(--gray-1); font-weight: 100;
+  transition: all 0.64s ease-in-out; cursor: pointer !important;
+}
+
+/* Ticker items are real links to their news post now — kill the UA anchor
+   chrome so the strip reads exactly as it did when it was inert text. */
+a.nh-marquee-item { text-decoration: none; }
+a.nh-marquee-item:focus-visible {
+  outline: none;
+  color: rgba(var(--rgb-diff), .85);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.nh-marquee-item:hover { color: rgba(var(--rgb-diff),.85); font-weight:800!important;}
+
+.nh-marquee-item:hover > i { color: var(--accent)!important;  opacity: .5!important; }
+
+.nh-marquee-item i {
+  font-size: 1.15em !important;
+  flex-shrink: 0;
+  opacity: .4!important;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1;
+  color: rgba(var(--rgb-diff),.35)!important;
+  transition: all 0.6s ease; 
+}
+/* News marquee: icon + DD/MM date + title, three distinct parts (item gap
+   above already spaces them via .nh-marquee-item's 16px flex gap). */
+.nh-marquee-date {
+  font-size: 0.62em;
+  opacity: 0.55;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+.nh-marquee-title { letter-spacing: -0.02em; }
+/* F-09 · the 0% frame read `translate3d(var(--rgb-diff))` — --rgb-diff is an RGB
+   triplet (`19,21,23`), so the arguments were unitless and the entire keyframe
+   was dropped by the parser. The loop only worked because browsers interpolate
+   from the element's own base transform. */
+@keyframes nh-marquee { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
+/* Marquee icon colors: removed — all icons inherit default muted color */
+@media (max-width: 767px) {
+  .nh-marquee-content { gap: 48px; animation-duration: 32s; }
+}
+
+
+/* ═══════════════ SECTION HEADS ═══════════════ */
+.nh-section-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: clamp(28px, 4vw, 44px); flex-wrap: wrap; gap: 12px; }
+.nh-section-head h2 {
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  text-transform: none;
+  color: var(--txt-heading, var(--black-1));
+}
+/* F-09 · `.nh-section-head::before` was grouped in here but carries no `content`,
+   so it is never generated. Left in place it was a loaded gun: .nh-section-head
+   is a `space-between` flex row, and the moment anything gave that pseudo a
+   `content` it would become a THIRD flex item and break every section header on
+   the page. The real element is .tref-sec-lbl. */
+.nh-section-head .tref-sec-lbl {
+  display: block;
+  font-size: var(--fs-xs, 0.72rem);
+  font-family: var(--ff-mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.nh-section-head .grouped-left { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.nh-section-head a, .nh-section-head .link-all {
+  font-family: var(--ff-mono); font-size: 0.7rem;
+  color: var(--muted); transition: color .25s; letter-spacing: 0.02em;
+}
+@media (hover: hover) { .nh-section-head a:hover { color: var(--primary); } }
+
+.nh-month-dropdown {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative; /* anchor for drop-up */
+}
+.nh-month-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: fit-content;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 4px 12px;
+  cursor: pointer;
+  font-family: var(--ff-main);
+  font-size: clamp(1.6rem, 4.5vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--white-3);
+  -webkit-text-stroke: 1px var(--white-15);
+  transition: all .3s;
+}
+@media (hover: hover) {
+  .nh-month-trigger:hover {
+    color: var(--text);
+    -webkit-text-stroke-color: var(--text);
+  }
+  .nh-month-trigger:hover i,
+  .nh-month-trigger:hover svg { color: var(--text); }
+}
+.nh-month-trigger i,
+.nh-month-trigger svg {
+  font-size: calc(var(--fs-u, 1) * 12px);
+  color: var(--white-15);
+  width: 12px; height: 12px;
+  flex-shrink: 0;
+  transition: color .3s;
+}
+/* ── MONTH ROW: Mobile-first = absolute drop-UP, glass morphism ── */
+.nh-month-row {
+  /* position */
+  position: absolute;
+  bottom: calc(100% + 10px); /* opens ABOVE the trigger ↑ */
+  left: 0;
+  z-index: 9999;
+  /* layout */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  list-style: none;
+  padding: 12px 18px;
+  margin: 0;
+  min-width: 170px;
+  height: fit-content;
+  /* glass morphism — matches .nh-navbar.scrolled */
+  background: rgba(var(--rgb-t), 0.04) !important;
+  isolation: isolate;
+  /* F-03: `transform: translateZ(0)` used to sit here and was silently killed by
+     the `transform: translateY(6px)` further down this same rule — last
+     declaration wins. will-change already does the compositor promotion. */
+  will-change: transform, opacity, backdrop-filter;
+  
+  -webkit-backdrop-filter: blur(20px) saturate(200%) !important;
+  backdrop-filter: blur(20px) saturate(200%) !important;
+  
+    border: 1px solid rgba(var(--rgb-t), 0.10) !important;
+  border-radius: var(--r-sm);
+  /* animate: hidden state */
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);   /* mobile: slight down entry → slides up to position */
+  transition: opacity .35s var(--ease-out), transform .35s var(--ease-out);
+  /* F-03: `margin-top: 10px` was here, fighting the `bottom: calc(100% + 10px)`
+     anchor above it. The anchor owns the offset; the margin was double-counting
+     it in the opposite direction. */
+}
+.nh-month-row.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+/* Desktop 600px+: switch to inline horizontal row */
+@media (min-width: 600px) {
+  .nh-month-row {
+    position: static;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+    padding: 0;
+    min-width: auto;
+    height: fit-content;
+    max-height: 25px;
+    background: transparent;
+    backdrop-filter: blur(20px) saturate(200%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(200%) !important;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    transform: translateX(10px);  /* side-slide on desktop */
+  }
+  .nh-month-row.is-visible { transform: translateX(0); }
+}
+.nh-month-row li a.nh-portal-link::before { display: none; }
+@media (min-width: 600px) {
+  .nh-month-row li a.nh-portal-link::before { display: block; }
+}
+.nh-month-row li a {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--muted);
+  font-family: var(--ff-main);
+  font-size: 1.313rem;
+  font-weight: 500;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color .25s;
+  cursor: pointer;
+  white-space: nowrap;
+}
+/* Month dropdown: divider between month items and portal CTA links */
+.nh-month-row li:has(a.nh-portal-link) {
+  margin-top: 8px;
+  padding-top: 10px;
+  position: relative;
+  width: 100%;
+}
+.nh-month-row li:has(a.nh-portal-link)::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 7.5%; right: 7.5%;  /* 85% width centred */
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(var(--rgb-t),0.18) 25%, rgba(var(--rgb-t),0.18) 75%, transparent);
+}
+/* Desktop: inline row — hide the divider (already has ::before separator) */
+@media (min-width: 600px) {
+  .nh-month-row li:has(a.nh-portal-link)::before { display: none; }
+  .nh-month-row li:has(a.nh-portal-link) { margin-top: 0; padding-top: 0; width: auto; }
+}
+.nh-month-row li a.active { color: var(--primary); }
+.nh-month-row li a:hover { color: var(--text); }
+
+/* 2. Base styles for the portal links */
+.nh-month-row li a.nh-portal-link {
+  color: rgba(var(--rgb-diff),.8) !important;
+  font-size: 0.9rem;
+  font-family: var(--ff-main) !important;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+/* 3. Fixed Hover State (Standard CSS, not nested) */
+.nh-month-row li a.nh-portal-link:hover {
+  color: rgba(168, 43, 3, .8) !important;
+}
+
+/* 4. Fixed Icon Margin (What your &:first-child was trying to do) */
+.nh-month-row li a.nh-portal-link i:first-child {
+  margin-right: 9px !important;
+}
+
+/* 5. Your existing ::before styling */
+.nh-month-row li a.nh-portal-link::before {
+  content: '';
+  width: 1px;
+  height: 14px;
+  background: var(--border);
+  margin-right: 10px;
+}
+
+/* ═══════════════ BADGES ═══════════════ */
+.nh-badge {
+  font-family: var(--ff-mono); font-size: 0.67rem; padding: 3px 9px;
+  border: 1.5px solid var(--border); border-radius: var(--r-pill);
+  text-transform: uppercase; display: inline-flex; align-items: center;
+  font-weight: 600; letter-spacing: 0.05em;
+  background: rgba(var(--rgb-t),0.9); backdrop-filter: blur(6px); white-space: nowrap;
+}
+.nh-badge--accent  { background: var(--primary);     color: #fff;        border-color: var(--primary); }
+.nh-badge--sold    { background: var(--text);         color: #fff;        border-color: var(--text); }
+.nh-badge--verified{ background: var(--accent-lime);  border-color: rgba(var(--rgb-diff),0.14); color: var(--text); }
+.nh-badge--filled {
+  background: var(--text); color: #fff; border-color: var(--text);
+  padding: 10px 24px; font-size: 0.68rem;
+  transition: background .3s var(--ease-out), border-color .3s;
+}
+@media (hover: hover) {
+  .nh-badge--filled:hover { background: var(--primary); border-color: var(--primary); transform: translateY(-1px); }
+}
+
+
+/* ═══════════════ TRACKS — single-row horizontal scroll ═══════════════ */
+.nh-tracks-grid {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  overflow-x: auto;
+  overflow-y: clip;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 14px;
+  scrollbar-width: none;
+  /* Bleed to edge on mobile — let container clip */
+  margin-left: -18px; margin-right: -18px;
+  padding-left: 18px; padding-right: 18px;
+}
+.nh-tracks-grid::-webkit-scrollbar { display: none; }
+/* F-04 · the bleed must equal .container's gutter EXACTLY, at every width.
+   It was a flat -40px against a gutter of clamp(32px,5vw,56px) — which is
+   38.4px at 768px, so the rail was 1.6px wider than its container on each side
+   through the whole 768–800px band, and above 767px nothing clips it (the
+   overflow-x guards live in the ≤767px block). Deriving both from the same
+   expression makes the two impossible to drift apart again. */
+@media (min-width: 768px) {
+  .nh-tracks-grid {
+    margin-left:  calc(-1 * clamp(32px, 5vw, 56px));
+    margin-right: calc(-1 * clamp(32px, 5vw, 56px));
+    padding-left:  clamp(32px, 5vw, 56px);
+    padding-right: clamp(32px, 5vw, 56px);
+  }
+}
+
+.nh-track-card {
+  display: block;
+  flex: 0 0 110px;
+  width: 110px;
+  height: 175px;
+  scroll-snap-align: start;
+  background: var(--card);
+  border: 1px solid var(--border-ultra);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  position: relative;
+  min-width: 0; /* flex child shrink guard */
+  transition: transform .4s var(--ease-out), box-shadow .4s var(--ease-out);
+}
+/* Explore card in track grid — sizing only; color from shared .nh-explore-card block */
+.nh-tracks-grid .nh-explore-card {
+  flex: 0 0 110px; width: 110px;
+  height: 175px;
+  border-radius: var(--r-sm) !important;
+}
+@media (hover: hover) { .nh-track-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); } }
+
+/* Artwork — Spotify-style circular blur (blurred bg + sharp disc + rings) */
+.nh-track-artwork {
+  width: 100%;
+  aspect-ratio: 1;
+  background: var(--onyx-700);
+  overflow: hidden;
+  position: relative;
+}
+.nh-track-blur {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 140%;
+  height: 140%;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  filter: blur(40px);
+  z-index: 1;
+  pointer-events: none;
+  user-select: none;
+}
+.nh-track-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  height: 50%;
+  border-radius: 50% !important;
+  corner-shape: round !important;
+  object-fit: cover;
+  z-index: 3;
+  transform: translate(-50%, -50%);
+  transition: transform .4s var(--ease-out);
+}
+@media (hover: hover) {
+  .nh-track-card:hover .nh-track-image { transform: translate(-50%, -50%) scale(1.04); }
+}
+.nh-track-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 67%;
+  height: 67%;
+  border-radius: 50% !important;
+  corner-shape: round !important;
+  z-index: 2;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(0, 0, 0, 0) 20%,
+    rgba(0, 0, 0, 0) 80%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  box-shadow:
+    4px 0 2px -4px rgba(255, 255, 255, 0.9),
+    -4px 0 2px -4px rgba(255, 255, 255, 0.9);
+}
+.nh-track-ring--outer { width: 83%; height: 83%; }
+
+.nh-track-play-overlay {
+  position: absolute; inset: 0; z-index: 4;
+  background: rgba(var(--rgb-diff),0.46);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .3s var(--ease-out); backdrop-filter: blur(3px);
+}
+@media (hover: hover) { .nh-track-card:hover .nh-track-play-overlay { opacity: 1; } }
+.nh-track-card.is-guest .nh-track-play-overlay { opacity: .55; }
+@media (hover: hover) { .nh-track-card.is-guest:hover .nh-track-play-overlay { opacity: 1; } }
+
+.nh-track-play-btn {
+  width: 40px; height: 40px; border-radius: 50%; background: #fff; color: var(--text);
+  display: flex; align-items: center; justify-content: center; padding: 0;
+  transform: scale(0.75); transition: transform .3s var(--ease-spring); font-size: calc(var(--fs-u, 1) * 17px);
+}
+@media (hover: hover) { .nh-track-card:hover .nh-track-play-btn { transform: scale(1); } }
+.nh-track-card.is-guest .nh-track-play-btn { transform: scale(0.9); cursor: pointer; }
+
+.nh-track-info { padding: 8px 10px 10px; min-width: 0; overflow: hidden; }
+.nh-track-info h4 { font-size: 0.9rem; margin: 0 0 2px; margin-block: 0 2px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: none; line-height: 1.3; }
+.nh-track-artist { font-size: 0.76rem; color: var(--muted); font-family: var(--ff-mono); margin: 0 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
+.nh-track-meta { display: flex; gap: 8px; font-size: 0.68rem; color: var(--muted-light); font-family: var(--ff-mono); white-space: nowrap; overflow: hidden; }
+.nh-track-meta span { display: inline-flex; align-items: center; gap: 3px; flex-shrink: 0; }
+.nh-track-meta i { font-size: calc(var(--fs-u, 1) * 10px); }
+.nh-track-card.is-guest { cursor: pointer; }
+.nh-track-locked-lbl {
+  color: var(--muted) !important;
+  font-family: var(--ff-mono, monospace);
+  letter-spacing: .12em;
+  font-weight: 600;
+  user-select: none;
+}
+
+@media (max-width: 500px) {
+  .nh-track-info { padding: 6px 7px 8px; }
+  .nh-track-info h4 { font-size: 0.8rem; }
+  .nh-track-artist { font-size: 0.65rem; }
+  .nh-track-meta { font-size: 0.56rem; }
+}
+
+/* ── TYPOGRAPHY SCALE: Tablet 768px+ ── */
+@media (min-width: 768px) {
+  .nh-track-info h4   { font-size: 1rem; }
+  .nh-track-artist    { font-size: 0.82rem; }
+  .nh-track-meta      { font-size: 0.72rem; }
+  .a-eve-meta         { font-size: 0.78rem; }
+}
+
+/* ── TYPOGRAPHY SCALE: Desktop 1024px+ ── */
+@media (min-width: 1024px) {
+  .nh-track-card,
+  .nh-tracks-grid .nh-explore-card { flex: 0 0 130px; width: 130px; height: 200px; }
+  .nh-track-info h4   { font-size: 1.08rem; }
+  .nh-track-artist    { font-size: 0.88rem; }
+  .nh-track-meta      { font-size: 0.76rem; }
+  .a-eve-date-day     { font-size: 2.6rem; }
+  .a-eve-date-month   { font-size: 1.5rem; }
+  .a-eve-date         { width: 78px; height: 70px; }
+  .a-eve-media        { --x: 64px; --y: 58px; }
+  .a-eve-title        { font-size: 1.5rem; }
+  .a-eve-meta         { font-size: 0.84rem; }
+  .a-eve-meta i       { font-size: 0.9rem; }
+  .xp-icon            { font-size: 2.8rem; }
+  .xp-all             { font-size: 3.2rem; }
+  .a-eve-explore .xp-inner { padding: 36px 18px; }
+}
+
+/* ── TYPOGRAPHY SCALE: Large Desktop 1400px+ ── */
+@media (min-width: 1400px) {
+  .nh-track-card,
+  .nh-tracks-grid .nh-explore-card { flex: 0 0 148px; width: 148px; height: 224px; }
+  .nh-track-info h4   { font-size: 1.12rem; }
+  .nh-track-artist    { font-size: 0.92rem; }
+  .nh-track-meta      { font-size: 0.78rem; }
+  .a-eve-date-day     { font-size: 3rem; }
+  .a-eve-date-month   { font-size: 1.7rem; }
+  .a-eve-date         { width: 88px; height: 78px; }
+  .a-eve-media        { --x: 74px; --y: 66px; }
+  .a-eve-title        { font-size: 1.65rem; }
+  .a-eve-meta         { font-size: 0.9rem; }
+  .a-eve-meta i       { font-size: 1rem; }
+  .xp-icon            { font-size: 2.8rem; }
+  .xp-all             { font-size: 3rem; }
+}
+
+/* ── Explore CTA card — dark luxury redesign ── */
+.nh-explore-card,
+.a-eve-explore {
+  background: var(--onyx-700) !important;
+  border: 1px solid rgba(var(--rgb-t),0.07) !important;
+  color: #fff !important;
+  display: flex!important;
+  align-items: center; justify-content: center;
+  overflow-x: hidden;
+  overflow-y: clip;
+  position: relative;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .35s, border-color .35s, transform .45s var(--ease-spring), box-shadow .45s var(--ease-out) !important;
+}
+/* Inner layout */
+.xp-inner {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 6px; text-align: center;
+  padding: 16px 10px; width: 100%;
+}
+.a-eve-explore .xp-inner { padding: 28px 14px; }
+.xp-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 50px; height: 50px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: calc(var(--fs-u, 1) * 22px);
+  color: rgba(var(--rgb-t),0.22);
+  transition: transform .5s var(--ease-spring), color .35s;
+  line-height: 1;
+  will-change: transform;
+}
+.xp-inner { position: relative; width: 100%; } /* scopes xp-icon absolute */
+.xp-all {
+  font-size: 4.5rem; font-weight: 900;
+  letter-spacing: -0.07em; line-height: 0.88;
+  color: #fff; text-transform: uppercase;
+  transition: letter-spacing .45s var(--ease-out), color .35s;
+  font-family: var(--ff-main);
+}
+.xp-label {
+  font-family: var(--ff-mono);
+  font-size: 1.15rem; letter-spacing: 0.14em;
+  text-transform: uppercase; font-weight:700;
+  color: rgba(var(--rgb-t),0.45);
+  transition: color .35s; line-height: 1.4;
+  margin-top: 4px;
+}
+/* Hover */
+@media (hover: hover) {
+  .nh-explore-card:hover,
+  .a-eve-explore:hover {
+    background: var(--onyx-600) !important;
+    border-color: rgba(255,107,53,0.3) !important;
+    transform: translateY(-8px) scale(1.02) !important;
+    box-shadow: 0 24px 56px rgba(var(--rgb-diff),0.035), 0 0 0 1px rgba(255,107,53,0.05) !important;
+  }
+  .nh-explore-card:hover .xp-icon,
+  .a-eve-explore:hover .xp-icon {
+    transform: rotate(42deg) scale(1.25);
+    color: var(--primary);
+  }
+  .nh-explore-card:hover .xp-all,
+  .a-eve-explore:hover .xp-all {
+    letter-spacing: -0.03em;
+    color: var(--primary);
+  }
+  .nh-explore-card:hover .xp-label,
+  .a-eve-explore:hover .xp-label { color: rgba(var(--rgb-t),0.65); }
+}
+/* Kill old label & card internals */
+.nh-explore-label { display: none !important; }
+.nh-explore-card::before, .nh-explore-card::after { display: none !important; }
+.nh-explore-card .nh-crash-img-wrap,
+.nh-explore-card .nh-crash-info { display: none !important; }
+
+
+/* ═══════════════ EVENTS — a-eve-card (Apollo Design System) ═══════════════ */
+
+/* Events container: balanced mobile padding, mild right-bias on tablet+ */
+/* #events .container uses standard .container padding — matches tracks section */
+
+/* :root REMOVED: Now using universal :root injected inline */
+.nh-events-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+/* Contract wrapper <article class="app-market eve"> (see eveCardHTML() in
+   app-portal-eventos.js) — kept out of layout flow so .a-eve-card remains
+   the true grid item, unchanged from before the wrapper was added. */
+.nh-events-grid > .app-market.eve { display: contents; }
+@media (max-width: 320px)  { .nh-events-grid { grid-template-columns: 1fr; } }
+@media (min-width: 600px)  { .nh-events-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
+@media (min-width: 900px)  { .nh-events-grid { grid-template-columns: repeat(4, 1fr); gap: 18px; } }
+
+.a-eve-card {
+  display: block; position: relative; width: 100%;
+  text-decoration: none; cursor: pointer;
+  transition: transform .4s var(--ease-out);
+  background: transparent; color: var(--txt-color-hover);
+  corner-shape: round;
+  /* Mobile-first: no horizontal margin — grid gap handles spacing.
+     Vertical margin only so rows breathe without overflow. */
+  margin: 14px 0;
+}
+@media (hover: hover) { .a-eve-card:hover { transform: translateY(-5px); } }
+
+/* Date cutout box */
+.a-eve-date {
+  position: absolute; top: 5px; left: 7px;
+  width: 68px; height: 62px;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  text-align: center; line-height: 1;
+  z-index: 2; pointer-events: none;
+  transform-origin: top left;
+  transition: transform .45s var(--ease-spring);
+  will-change: transform;
+}
+@media (hover: hover) { .a-eve-card:hover .a-eve-date { transform: scale(1.3) translate(-9px,-9px); } }
+.a-eve-date-day {
+  font-size: 2.2rem; font-weight: 800;
+  color: var(--a-eve-text-primary); display: block;
+  letter-spacing: -0.03em;
+}
+.a-eve-date-month {
+  font-size: 1rem; font-weight: 700;
+  text-transform: uppercase; color: var(--a-eve-text-sec);
+}
+
+/* Media / image with corner-cutout mask */
+.a-eve-media {
+  height: 0; padding-bottom: 125%; /* 4:5 ratio */
+  position: relative; overflow: hidden;
+  border-radius: var(--a-eve-r);
+  /* global `corner-shape: squircle` (core.js) exaggerates the plain
+     border-radius corners — force back to standard circular arcs so
+     they stay tight/consistent with the manual notch-mask corner below,
+     which is pixel-exact via gradients and unaffected by corner-shape. */
+  corner-shape: round;
+  border: 1px solid var(--a-eve-border);
+  box-shadow: 0 10px 30px var(--a-eve-shadow);
+  transition: box-shadow .4s var(--ease-out);
+  background: var(--onyx-700);
+  /* Corner-notch mask for date */
+  --r: 12px; --s: 12px; --x: 56px; --y: 50px;
+  --_m: /calc(2*var(--r)) calc(2*var(--r)) radial-gradient(#000 70%, #0000 72%);
+  --_g: conic-gradient(at var(--r) var(--r), #000 75%, #0000 0);
+  --_d: (var(--s) + var(--r));
+  mask:
+    calc(var(--_d) + var(--x)) 0 var(--_m),
+    0 calc(var(--_d) + var(--y)) var(--_m),
+    radial-gradient(var(--s) at 0 0, #0000 99%, #000 calc(100% + 1px)) calc(var(--r) + var(--x)) calc(var(--r) + var(--y)),
+    var(--_g) calc(var(--_d) + var(--x)) 0,
+    var(--_g) 0 calc(var(--_d) + var(--y));
+  mask-repeat: no-repeat;
+  -webkit-mask:
+    calc(var(--_d) + var(--x)) 0 var(--_m),
+    0 calc(var(--_d) + var(--y)) var(--_m),
+    radial-gradient(var(--s) at 0 0, #0000 99%, #000 calc(100% + 1px)) calc(var(--r) + var(--x)) calc(var(--r) + var(--y)),
+    var(--_g) calc(var(--_d) + var(--x)) 0,
+    var(--_g) 0 calc(var(--_d) + var(--y));
+  -webkit-mask-repeat: no-repeat;
+}
+@media (hover: hover) { .a-eve-card:hover .a-eve-media { box-shadow: 0 15px 40px var(--a-eve-shadow-hover); } }
+.a-eve-media img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform .5s var(--ease-out); display: block;
+  filter: contrast(1.05) saturate(1.1);
+}
+/* Dark gradient overlay for artistic depth */
+.a-eve-media::after {
+  content: '';
+  position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(180deg, transparent 30%, rgba(var(--rgb-diff),0.35) 85%, rgba(var(--rgb-diff),0.55) 100%);
+  border-radius: var(--a-eve-r);
+  pointer-events: none;
+}
+@media (hover: hover) { .a-eve-card:hover .a-eve-media img { transform: scale(1.25); } }
+
+/* Tags overlay */
+.a-eve-tags {
+  position: absolute; bottom: 10px; right: 10px;
+  display: flex; gap: 6px; z-index: 4; pointer-events: none;
+}
+.a-eve-tag {
+  padding: 3px 9px; border-radius: 4px;
+  border: 1px solid rgba(var(--rgb-t),0.2);
+  background: linear-gradient(30deg, rgba(var(--rgb-t),0.08) -49%, rgba(var(--rgb-t),0.32) 160%);
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  font-size: 0.58rem; color: #fff; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  font-family: var(--ff-mono);
+}
+
+/* Content section */
+.a-eve-content { padding: 0.9em 0.45rem 0.5em; width: 100%; }
+.a-eve-title {
+  font-size: 1.75rem; font-weight: 800;
+  color: var(--a-eve-text-primary); line-height: 1.6;
+  margin: 0 0 0.8rem; margin-block: 0 0.8rem; letter-spacing: -0.03em;
+  overflow: hidden; text-overflow: ellipsis;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; text-transform: none;
+  transform-origin: left center;
+  transition: transform .45s var(--ease-spring);
+  will-change: transform;
+}
+@media (hover: hover) { .a-eve-card:hover .a-eve-title { transform: scale(1.15); } }
+.a-eve-meta {
+  color: var(--txt-color); font-size: .85rem;
+  display: flex; align-items: center; gap: 7px;
+  margin-bottom: 0.25rem; font-family: var(--ff-main);
+  letter-spacing: 0.01em;font-weight:200;
+}
+/* eve-meta icons: slightly darker (opacity ↑ from 0.55 → 0.72) for modular readiness */
+.a-eve-meta i { font-size: 1.12rem; color: var(--txt-color-hover); flex-shrink: 0; opacity: 0.72; }
+.a-eve-meta span {
+  overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Explore CTA in event grid — inherits dark from .nh-explore-card block above.
+   Grid items stretch to the row's tallest sibling by default (align-items:
+   stretch), which was pulling this card to the FULL event-card height
+   (date+media+content). aspect-ratio + align-self:start makes it match only
+   .a-eve-media's own 4:5 box, not the whole card. */
+.a-eve-explore {
+  display: flex !important; flex-direction: column;
+  align-items: center; justify-content: center;
+  border-radius: var(--a-eve-r) !important;
+  corner-shape: round;
+  aspect-ratio: 4 / 5;
+  align-self: start;
+  min-height: 0;
+}
+/* Kill media/date/content in explore CTA */
+.a-eve-explore .a-eve-media,
+.a-eve-explore .a-eve-date,
+.a-eve-explore .a-eve-content { display: none !important; }
+
+@media (max-width: 599px) {
+  /* ── Event date box: proportional with card width ── */
+  .a-eve-date { width: clamp(44px, 13dvw, 58px); height: clamp(38px, 11dvw, 50px); top: 4px; left: 5px; }
+  .a-eve-date-day  { font-size: clamp(1.3rem, 5dvw, 1.8rem); }
+  /* month fits inside same ~13dvw date box → proportional */
+  .a-eve-date-month { font-size: clamp(0.52rem, 2dvw, 0.72rem); font-weight: 700; }
+  .a-eve-media { --x: clamp(34px, 10dvw, 46px); --y: clamp(30px, 9dvw, 42px); }
+
+  /* ── Card: remove vertical margin — grid gap handles spacing ── */
+  .a-eve-card { margin: 0 !important; }
+
+  /* ── Content: tighter but readable ── */
+  .a-eve-content { padding: 0.6em 0.45rem 0.35em; }
+
+  /* ── Title: smaller + less heavy on small screens ── */
+  .a-eve-title {
+    font-size: clamp(0.82rem, 3.5dvw, 1.05rem);
+    font-weight: 700;
+    -webkit-line-clamp: 2;
+    margin-bottom: 0.5rem;
+  }
+
+  /* ── Meta: compact ── */
+  .a-eve-meta { font-size: clamp(0.62rem, 2.4dvw, 0.72rem); gap: 4px; }
+  .a-eve-meta i { font-size: clamp(0.72rem, 2.6dvw, 0.82rem); }
+
+  .a-eve-tag { font-size: 0.5rem; padding: 2px 6px; }
+
+  /* ── Events grid: no offset, fluid gap ── */
+  .nh-events-grid {
+    margin-left: 0;
+    gap: clamp(8px, 2.5dvw, 14px);
+    grid-auto-rows: auto;
+  }
+}
+
+
+/* ═══════════════ CLASSIFIEDS ═══════════════ */
+.nh-resale-intro { font-family: var(--ff-mono); font-size: 0.95rem; color: var(--muted); margin-bottom: 28px; line-height: 1.7; }
+.nh-resale-list { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+.nh-resale-row {
+  display: grid; grid-template-columns: 60px 1fr auto;
+  align-items: center; padding: 20px 22px;
+  border-bottom: 1px solid var(--border-ultra);
+  gap: 14px; text-decoration: none; color: inherit;
+  transition: background .2s, padding-left .3s var(--ease-out);
+}
+.nh-resale-row:last-child { border-bottom: none; }
+@media (hover: hover) { .nh-resale-row:hover { background: var(--onyx-700); padding-left: 28px; } }
+.nh-resale-time { font-family: var(--ff-mono); font-size: 0.78rem; color: var(--muted-light); font-weight: 600; }
+.nh-resale-details h3 { font-size: 1.1rem; margin: 0 0 2px; margin-block: 0 2px; font-weight: 600; text-transform: none; letter-spacing: -0.01em; }
+/* Seller hidden — just show muted dots, no login text */
+.nh-resale-seller-hidden {
+  font-family: var(--ff-mono); font-size: 0.64rem; color: var(--muted-light);
+  display: flex; align-items: center; gap: 4px; letter-spacing: 0.1em;
+}
+.nh-resale-seller-hidden i { display: none; }
+.nh-resale-seller-hidden .nh-seller-text { display: none; }
+.nh-resale-price-wrap { display: flex; gap: 9px; align-items: center; }
+.nh-resale-price { font-family: var(--ff-mono); font-size: 1.4rem !important; font-weight: 900 !important; white-space: nowrap; letter-spacing: -0.02em; }
+/* Disclaimer — luxury side-accent card */
+.nh-disclaimer {
+  margin-top: 36px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  padding: 0;
+}
+.nh-disclaimer-accent {
+  width: 4px; flex-shrink: 0;
+  background: linear-gradient(180deg, var(--primary) 0%, rgba(255,59,48,0.25) 100%);
+}
+.nh-disclaimer-body { padding: 20px 22px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.nh-disclaimer-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 8px;
+}
+.nh-disclaimer-header i {
+  font-size: calc(var(--fs-u, 1) * 28px);
+  flex-shrink: 0;
+  color: var(--primary);
+  opacity: 0.75;
+  line-height: 1;
+  align-self: center;              /* vertically center next to h4 */
+}
+.nh-disclaimer h4 {
+  font-size: clamp(1.2rem, 3dvw, 1.6rem); font-weight: 700;
+  text-transform: none; letter-spacing: -0.015em; line-height: 1.1;
+  color: var(--text);
+  margin: 0 !important; margin-block: 0 !important;
+  padding-block: 0 !important;
+  align-self: center;              /* vertically center with icon */
+}
+.nh-disclaimer p {
+  font-family: var(--ff-mono); font-size: 0.8rem; font-weight: 300;
+  color: var(--muted); line-height: 1.75; margin-block: 0;
+}
+@media (max-width: 500px) {
+  .nh-resale-row { grid-template-columns: 1fr auto; padding: 13px 16px; }
+  .nh-resale-time { display: none; }
+
+  /* ── Resale ALL row: half height on mobile ── */
+  .nh-resale-row--all { padding: 12px 18px !important; }
+  .nh-rall-title { font-size: 0.7rem; margin-block-end: 0 !important; letter-spacing: -0.02em; }
+  .nh-rall-label { font-size: 0.55rem; margin-bottom: 2px; }
+  .nh-rall-icon { font-size: 1.2rem; }
+
+  /* ── Disclaimer card: compact on mobile ── */
+  .nh-disclaimer h4 { font-size: clamp(1rem, 4dvw, 1.3rem); line-height: 1.05; }
+  .nh-disclaimer p  { font-size: 0.78rem; line-height: 1.65; }
+  .nh-disclaimer-body { padding: 14px 16px; }
+  .nh-disclaimer-header { gap: 10px; margin-bottom: 6px; }
+  .nh-disclaimer-header i { font-size: calc(var(--fs-u, 1) * 22px); margin-top: 2px; }
+}
+
+
+/* ═══════════════ CRASH / SLEEP — card type="home" ═══════════════ */
+.nh-crash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
+@media (min-width: 768px) { .nh-crash-grid { gap: 20px; } }
+.nh-crash-card {
+  border: 1px solid var(--border-light); border-radius: var(--r);
+  overflow: hidden; background: var(--card);
+  transition: transform .4s var(--ease-out), box-shadow .4s var(--ease-out);
+  text-decoration: none; color: inherit; display: block;
+}
+@media (hover: hover) { .nh-crash-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); } }
+.nh-crash-img-wrap { position: relative; overflow: hidden; }
+.nh-crash-img { display: block; width: 100%; height: 200px; object-fit: cover; background: var(--onyx-700); transition: transform .6s var(--ease-out); }
+@media (hover: hover) { .nh-crash-card:hover .nh-crash-img { transform: scale(1.05); } }
+/* Crash host hint — no text, just a subtle lock icon area on hover */
+.nh-crash-login-hint {
+  position: absolute; bottom: 0; left: 0; right: 0; padding: 8px 12px;
+  background: linear-gradient(to top, rgba(var(--rgb-diff),0.5), transparent);
+  color: rgba(var(--rgb-t),0.6); font-size: 0.62rem;
+  display: flex; align-items: center; justify-content: flex-end; gap: 4px;
+  opacity: 0; transition: opacity .3s;
+  pointer-events: none;
+}
+.nh-crash-login-hint i { font-size: calc(var(--fs-u, 1) * 13px); }
+/* Text inside hint is hidden — CSS ensures no text shows */
+.nh-crash-login-hint span { display: none; }
+@media (hover: hover) { .nh-crash-card:hover .nh-crash-login-hint { opacity: 1; } }
+.nh-crash-info { padding: 16px 18px; }
+.nh-crash-info-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; gap: 8px; }
+.nh-crash-info h3 { font-size: 1.1rem; font-weight: 700; text-transform: none; letter-spacing: -0.02em; margin: 0; margin-block: 0; }
+.nh-crash-price { font-family: var(--ff-mono); font-size: 1.05rem; font-weight: 700; white-space: nowrap; }
+.nh-crash-meta { font-family: var(--ff-mono); font-size: 0.82rem; color: var(--muted); }
+/* ── Host CTA card — black bg, hover primary, clean luxury ── */
+.nh-crash-card--cta {
+  background: var(--onyx-800) !important; color: #fff !important;
+  border-color: rgba(var(--rgb-t),0.07) !important;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; min-height: 270px;
+  position: relative; overflow: hidden;
+  transition: background .4s var(--ease-out), transform .4s var(--ease-out), box-shadow .4s var(--ease-out);
+}
+@media (hover: hover) { .nh-crash-card--cta:hover { background: var(--primary) !important; transform: translateY(-5px); box-shadow: var(--shadow-lg); } }
+
+.nh-cta-title {
+  font-size: 1.35rem; font-weight: 800; letter-spacing: -0.04em;
+  text-transform: uppercase; line-height: 1.1;
+  margin-bottom: 10px; padding: 0 16px;
+}
+.nh-cta-sub {
+  font-family: var(--ff-mono); font-size: 0.75rem;
+  opacity: 0.55; letter-spacing: 0.06em;
+  padding: 0 18px;
+}
+.nh-cta-ptbr {
+  font-family: var(--ff-mono); font-size: 0.75rem; /* F-09 — was unitless, declaration dropped */
+  opacity: 0.35; margin-top: 10px; letter-spacing: 0.05em;
+  text-transform: none;
+}
+
+/* ALL Tickets Re-sell CTA row */
+.nh-resale-row--all {
+  grid-template-columns: 1fr auto !important;
+  background: var(--text);
+  color: #fff;
+  padding: 24px 26px !important;
+  align-items: center;
+  border-bottom: none !important;
+  transition: background .35s var(--ease-out), padding-left .35s var(--ease-out) !important;
+}
+@media (hover: hover) {
+  .nh-resale-row--all:hover { background: var(--primary); padding-left: 34px !important; }
+  .nh-resale-row--all:hover .nh-rall-icon { transform: rotate(-45deg) scale(1.2); opacity: 1; }
+}
+.nh-rall-label {
+  font-family: var(--ff-mono); font-size: 0.7rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  opacity: 0.45; margin-bottom: 5px; color: #fff;
+}
+.nh-rall-title {
+  font-size: 1.5rem; font-weight: 900;
+  letter-spacing: -0.04em; line-height: 1;
+  text-transform: uppercase; color: #fff;
+  margin-block-end: 0 !important;
+}
+.nh-rall-icon {
+  font-size: 2.2rem; opacity: 0.65;
+  transition: transform .4s var(--ease-spring), opacity .3s;
+  flex-shrink: 0;
+}
+
+
+/* ═══════════════ MAP ═══════════════ */
+
+/* Map wrapper with rounded corners + border */
+.nh-map-wrap {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  border-radius: var(--r);
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+}
+@media (min-width: 768px) { .nh-map-wrap { height: 480px; } }
+
+/* Leaflet canvas fills wrapper */
+.nh-map-canvas {
+  width: 100%;
+  height: 100%;
+  background: var(--platinum-400);
+}
+
+/* Hide Leaflet attribution + zoom controls */
+.nh-map-canvas .leaflet-control-zoom,
+.nh-map-canvas .leaflet-control-attribution { display: none !important; }
+
+/* ── Event hot-zone markers — fixed core dot + expanding pulse rings ── */
+.nh-map-pulse-wrap {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+/* Fixed permanent dot — always visible at the pin centre */
+/* REMOVED ::before pin dot — user wants only gradient circle, no pin */
+
+/* Base state = fixed 52px gradient circle, always visible (no animation) */
+.nh-map-pulse-ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 52px; height: 52px;
+  background: radial-gradient(
+    circle,
+    rgba(var(--primary-rgb), 0.45) 0%,
+    rgba(var(--primary-rgb), 0.025) 100%
+  );
+  pointer-events: none;
+  border-radius: 9999px !important;
+  corner-shape: round !important;
+}
+.nh-pulse-a {
+  border-radius: 9999px !important;
+  animation: nhMapPulseA 2.4s ease-out infinite;
+  animation-delay: var(--delay, 0ms);
+}
+.nh-pulse-b {
+  border-radius: 9999px !important;
+  animation: nhMapPulseB 3.1s ease-out infinite;
+  animation-delay: calc(var(--delay, 0ms) + 600ms);
+}
+
+@keyframes nhMapPulseA {
+  0%   { width: 52px; height: 52px; opacity: 0.75; transform: translate(-50%,-50%); }
+  100% { width: 90px; height: 90px; opacity: 0;    transform: translate(-50%,-50%); }
+}
+@keyframes nhMapPulseB {
+  0%   { width: 52px; height: 52px; opacity: 0.55; transform: translate(-50%,-50%); }
+  100% { width: 80px; height: 80px; opacity: 0;    transform: translate(-50%,-50%); }
+}
+
+/* Every marker gets a unique --delay via nth-child */
+.leaflet-marker-icon:nth-child(1)  { --delay:    0ms; }
+.leaflet-marker-icon:nth-child(2)  { --delay:  300ms; }
+.leaflet-marker-icon:nth-child(3)  { --delay:  600ms; }
+.leaflet-marker-icon:nth-child(4)  { --delay:  900ms; }
+.leaflet-marker-icon:nth-child(5)  { --delay: 1200ms; }
+.leaflet-marker-icon:nth-child(6)  { --delay: 1500ms; }
+.leaflet-marker-icon:nth-child(7)  { --delay: 1800ms; }
+.leaflet-marker-icon:nth-child(8)  { --delay: 2100ms; }
+.leaflet-marker-icon:nth-child(9)  { --delay: 2400ms; }
+.leaflet-marker-icon:nth-child(10) { --delay: 2700ms; }
+.leaflet-marker-icon .nh-pulse-a { animation-delay: var(--delay, 0ms); }
+.leaflet-marker-icon .nh-pulse-b { animation-delay: calc(var(--delay, 0ms) + 400ms); }
+
+/* ── Popup ── */
+.nh-leaflet-popup .leaflet-popup-content-wrapper {
+  background: #fff;
+  border-radius: 12px;
+  padding: 0;
+  box-shadow: 0 8px 24px rgba(var(--rgb-diff),0.10);
+  overflow: hidden;
+}
+.nh-leaflet-popup .leaflet-popup-tip { background: #fff; }
+.nh-leaflet-popup .leaflet-popup-content { margin: 0; }
+.nh-map-popup {
+  padding: 12px 16px;
+  font-family: 'Space Grotesk', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.nh-map-popup-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--onyx-800);
+  white-space: nowrap;
+}
+.nh-map-popup-tag {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #FF6925;
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 0.04em;
+}
+
+/* F-09 · this was declared four times — once bare and once inside each of three
+   non-overlapping media queries, all with the same value. One owner is enough. */
+section #map { padding-bottom: 0 !important; }
+
+/* ── Legend chip — removed from HTML, kept for potential future use ── */
+
+
+/* ═══════════════ SVG LOGO FOOTER (aprio-ft-v2) ═══════════════
+   This div is the FIRST child inside <footer class="nh-footer">.
+   It fills the footer absolutely (inset: 0) as a pure bg layer.
+   All text content (.container) sits on top via z-index: 1.
+   footer itself has NO background — transparency lets page bg show.
+   ═══════════════════════════════════════════════════════════════ */
+.aprio-ft-v2 {
+  position: absolute;
+  inset: 0;               /* fills entire footer */
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  /* subtle fade so SVG blends with page bg seamlessly */
+  background: linear-gradient(180deg, transparent 0%, rgba(var(--rgb-diff),0.018) 100%);
+}
+.aprio-ft-v2 svg {
+  position: absolute;
+  bottom: -35%;           /* mostly hidden — only top portion bleeds into footer */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 105vw;
+  height: 400px;
+  fill: rgba(var(--rgb-diff),0.055);
+  stroke: rgba(var(--rgb-diff),0.125);
+  stroke-width: 0.33px;
+  mix-blend-mode: hard-light;
+  pointer-events: none;
+  display: block;
+}
+
+/* ═══════════════ TEXT FOOTER ═══════════════ */
+.nh-footer {
+  position: relative;    /* stacking context for .aprio-ft-v2 absolute */
+  height: 400px;         /* matches SVG height; clips overflow cleanly */
+  overflow: hidden;
+  background: transparent;
+  margin: 0 !important;  /* footer must touch bottom = 0px, no trailing gap */
+}
+/* Footer text content sits above the SVG z-layer */
+.nh-footer > .container {
+  position: relative;
+  z-index: 1;
+  padding-top: 52px;
+  padding-bottom: 24px;
+}
+/* APOLLO::RIO wordmark — visual handled by .aprio-ft-v2 SVG; text is small accessible label */
+.nh-footer-wordmark {
+  font-family: var(--ff-mono); font-size: 0.62rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); opacity: 0.45; margin-bottom: 10px;
+}
+.nh-footer-brand p { font-family: var(--ff-mono); font-size: .75rem; color: var(--muted); max-width: 340px; line-height: 1.75; }
+.nh-footer-links ul { display: flex; flex-direction: column; gap: 12px; list-style: none; }
+.nh-footer-links a { font-family: var(--ff-mono); font-size: .7rem; font-weight: 400; transition: color .25s; }
+@media (hover: hover) { .nh-footer-links a:hover { color: var(--primary); } }
+/* mobile-first footer — stacked by default, side-by-side on wider screens */
+.nh-footer-grid {
+  display: grid; grid-template-columns: 1fr;
+  gap: 28px; padding-bottom: 0px;
+  margin-bottom: 0px; 
+}
+@media (min-width: 768px) {
+  .aprio-ft-v2 svg { bottom: -35%; width: 105vw; height: 400px; } /* desktop: exact original values */
+  .nh-footer-grid { grid-template-columns: 1fr auto; gap: 48px; }
+}
+/* Events section heading: keep EVENTS label smoothly smaller than global h2 */
+#events-title { font-size: clamp(1.5rem, 3.5vw, 2.4rem) !important; }
+.nh-footer-bottom {
+  display: flex; position:absolute; bottom:7px; flex-direction: column; gap: 8px;
+  font-family: var(--ff-mono); font-size: 0.75rem; color: var(--muted);
+}
+@media (min-width: 768px) {
+  .nh-footer-bottom { flex-direction: row; justify-content: space-between; }
+}
+
+
+/* ═══════════════ MAIN CONTENT ═══════════════ */
+#apollo-home {
+  display: block;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* ═══════════════ GSAP ai UTILITY ═══════════════ */
+/*
+  MOBILE-FIRST CRITICAL FIX:
+  .ai elements start invisible for GSAP reveal. But if CDN (core.js) is slow/blocked
+  on mobile, GSAP never loads = all content stays hidden.
+
+  Solution: CSS animation fallback fires after 2.5s.
+  When GSAP DOES load, it sets inline styles (higher specificity) before this fires,
+  overriding the animation. Win/win — content ALWAYS becomes visible.
+*/
+#apollo-home .ai,
+#apollo-home .nh-reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity .55s var(--nh-ease-out), transform .55s var(--nh-ease-out);
+}
+#apollo-home .ai.is-visible,
+#apollo-home .nh-reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+/* GSAP ScrollTrigger owns these — never let .ai / .reveal-up transitions fight scrub */
+#apollo-home .nh-st-drive {
+  transition: none !important;
+  animation: none !important;
+}
+#apollo-home .nh-st-drive.is-visible {
+  opacity: 1;
+  transform: none;
+}
+/* CSS animation fallback if JS is slow */
+@keyframes nh-ai-reveal {
+  from { opacity: 0;  transform: translateY(14px); }
+  to   { opacity: 1;  transform: translateY(0); }
+}
+/* CSS backstop: IntersectionObserver drives the real scroll-reveal; this only
+   catches anything still hidden ~3s in (JS-off, or content never scrolled to).
+   3s gives IO room to reveal on scroll before this blanket-reveals the rest. */
+#apollo-home .ai:not(.is-visible) {
+  animation: nh-ai-reveal 0.6s var(--nh-ease-out) forwards;
+  animation-delay: 3s;
+}
+/* Hero text must NEVER stay hidden — reveal fast regardless. */
+.nh-hero .ai {
+  animation-delay: 0.4s;
+}
+
+
+/* ═══════════════ REDUCED MOTION ═══════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .a-eve-media img, .nh-track-artwork img, .nh-crash-img { transition: none !important; }
+  .nh-marquee-content { animation: none !important; }
+  .nh-hero .scroll-line,
+  .nh-hero .scroll-line-fill { animation: none !important; }
+  #apollo-home .ai, #apollo-home .nh-reveal { opacity: 1 !important; transform: none !important; animation: none !important; }
+  .nh-menu-fab, .nh-menu-sheet { transition: none !important; }
+}
+
+/* ═══════════════ MOBILE-FIRST SAFETY NET ═══════════════
+   Covers cases where the Apollo CDN core.js is slow or blocked
+   on mobile networks. Ensures nothing stays invisible forever.
+   ═══════════════ */
+@media (max-width: 480px) {
+  /* Reduce heavy section padding on small phones (72px is too much at 320px) */
+  .section { padding: 52px 0; }
+}
+
+/* ── Resale time: only restore display on mid-range phones, NOT below 500px
+   Below 500px the grid drops the time column (1fr auto), so showing the
+   element would break the layout. Scoped to 501-767px only. */
+@media (min-width: 501px) and (max-width: 767px) {
+  .nh-resale-time { display: block; font-size: 0.7rem; }
+}
+
+@media (max-width: 767px) {
+  /* Events grid: 2-col is fine on portrait phone */
+  .nh-events-grid { margin-left: 0; }
+  /* Prevent any absolute-positioned element from causing X-overflow */
+  .nh-section-head { position: relative; overflow: visible; }
+
+  /* ── Crash / accommodation grid: 2-col on mobile ── */
+  .nh-crash-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .nh-crash-img { height: clamp(110px, 30dvw, 160px); }
+  .nh-crash-info { padding: 10px 12px; }
+  .nh-crash-info h3 { font-size: clamp(0.78rem, 3dvw, 0.95rem); font-weight: 700; }
+  .nh-crash-meta { font-size: 0.68rem; }
+  .nh-crash-price { font-size: clamp(0.8rem, 3dvw, 0.95rem); }
+  .nh-crash-card--cta { min-height: clamp(140px, 35dvw, 200px); }
+  .nh-cta-title { font-size: clamp(0.88rem, 3.5dvw, 1.15rem); }
+  .nh-cta-sub { font-size: 0.62rem; }
+
+  /* ── Map: show correctly on mobile + fix height ── */
+  .nh-map-wrap {
+    height: clamp(280px, 70dvw, 380px);
+    display: block;
+  }
+
+  /* Footer mobile treatment fully superseded by the dedicated
+     "FOOTER — MOBILE-APP-FIRST" @media (max-width:767px) block below —
+     removed here to avoid two conflicting mobile footer rules. */
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   "EM BREVE.." EMPTY STATE — shown when CPT has 0 published posts
+   ═══════════════════════════════════════════════════════════════════ */
+.nh-empty-state {
+  display: block!important; ;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 48px 24px; 
+  text-align: center;
+  min-width: 100%;
+}
+.nh-empty-state i {
+  font-size: 2rem;
+  color: var(--primary, #FF6B35);
+  opacity: 0.6;
+}
+.nh-empty-state p {
+  font-family: var(--ff-fun, "Syne", sans-serif);
+  font-size: 1.25rem;
+  color: var(--txt-color-hover, rgba(19,21,23,0.9)); /* F-09 — was four hyphens */
+  margin: 0;
+}
+.nh-empty-sub {
+  font-family: var(--ff-mono, "Space Mono", monospace);
+  font-size: 0.72rem;
+  color: var(--muted, rgba(19,21,23,0.35));
+  letter-spacing: 0.02em;
+  max-width: 320px;
+}
+
+/* ═══ GUEST INTRO GATE — REMOVED ═══
+   The splash overlay / "Enter" button / preloader were permanently removed.
+   Landing renders immediately. Do NOT re-add .apollo-intro-* or
+   .apollo-home-loading visibility rules here. */
+/* ═══════════════════════════════════════════════════════════════════
+   NON-CLICKABLE IMAGE MARQUEE — tickets (Classificados) + accommodations
+   (Acomoda::Rio). Images scroll only; the sole interactive control is a
+   Chat/Message button that is LOCKED for guests (only logged users can
+   reach the person). No card is a link on /casa. Tokens via core.js.
+   ═══════════════════════════════════════════════════════════════════ */
+.nh-mq { position: relative; overflow: hidden; margin-top: 18px;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%); }
+.nh-mq-track { display: flex; gap: 14px; width: max-content; animation: nh-mq-scroll 46s linear infinite; }
+.nh-mq:hover .nh-mq-track { animation-play-state: paused; }
+@keyframes nh-mq-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.nh-mq-card { position: relative; flex: 0 0 auto; width: 260px; border-radius: 16px; overflow: hidden;
+  background: var(--surface); box-shadow: inset 0 0 0 1px var(--border); aspect-ratio: 4/5; cursor: default; }
+.nh-mq-card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; user-select: none; }
+.nh-mq-veil { position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.72) 100%); }
+.nh-mq-body { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px; display: flex;
+  align-items: flex-end; justify-content: space-between; gap: 10px; }
+.nh-mq-meta { min-width: 0; color: #fff; }
+.nh-mq-title { font: 700 14px/1.15 var(--ff-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nh-mq-sub { font: 500 11px/1.2 var(--ff-mono); color: rgba(255,255,255,.62); margin-top: 3px; }
+.nh-mq-chat { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 13px;
+  border-radius: var(--r-pill, 999px); border: 0; font: 600 12px/1 var(--ff-main); cursor: pointer;
+  background: rgba(255,255,255,.16); color: #fff; backdrop-filter: blur(6px); text-decoration: none; white-space: nowrap; }
+.nh-mq-chat i { font-size: calc(var(--fs-u, 1) * 15px); }
+.nh-mq-chat[disabled], .nh-mq-chat.is-locked {
+  background: rgba(255,255,255,.14); color: rgba(255,255,255,.72); cursor: not-allowed; backdrop-filter: blur(4px); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   MOBILE-APP-FIRST POLISH (≤767px) — native rhythm, safe areas, taps.
+   Phone is the primary target: tighter section cadence, notch-safe
+   topbar/hero, decluttered chrome, ≥44px touch targets. Appended last
+   so it wins without editing the rules above.
+   ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  :root { --nh-section-pad: clamp(42px, 11vw, 72px); }
+
+  /* edge-to-edge app gutters */
+  .container { padding: 0 18px; }
+
+  /* topbar clears the notch; symmetric inset (no asymmetric right offset) */
+  .ax-top {
+    top: calc(8px + env(safe-area-inset-top, 0px));
+    left: 0;
+    right: 0;
+    padding-left: max(12px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .ax-top-blur { height: calc(58px + env(safe-area-inset-top, 0px)); }
+
+  /* hero: full-bleed, text clears the home indicator, punchier scale */
+  .nh-hero-content { left: 20px; right: 18px; bottom: calc(30px + env(safe-area-inset-bottom, 0px)); width: auto; }
+  .nh-hero-title { font-size: clamp(2.7rem, 15vw, 3.8rem); line-height: .9; margin-bottom: 12px; }
+  .nh-hero-sub { font-size: .95rem; line-height: 1.5; max-width: 92%; }
+  .nh-scroll-hint { display: none; } /* declutter — no room on a phone */
+
+  /* section headers: app-like — title left, action a tappable chip */
+  .nh-section-head { align-items: center; margin-bottom: 18px; }
+  .nh-section-head h2 { font-size: clamp(1.6rem, 7vw, 2.1rem) !important; }
+  .nh-section-head a { display: inline-flex; align-items: center; min-height: 40px; font-size: .8rem; white-space: nowrap; }
+
+  /* ≥44px touch targets on all interactive chrome */
+  .ax-burger { min-width: 46px; min-height: 46px; }
+  .nh-menu-fab { width: 54px !important; height: 54px !important; }
+  .nh-mq-chat, .ax-login { min-height: 40px; }
+
+  /* image marquees: phone-sized cards, momentum untouched (auto-scroll) */
+  .nh-mq { margin-top: 14px; }
+  .nh-mq-card { width: min(260px, 66vw); }
+  .nh-mq-body { padding: 12px; }
+
+  /* tracks + any horizontal rail: snap for that native carousel feel */
+  .nh-tracks-grid { scroll-snap-type: x proximity; }
+  .nh-tracks-grid > * { scroll-snap-align: start; }
+
+  /* kill any residual horizontal overflow (app pages never scroll sideways) */
+  html, body.ax-body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+  #apollo-home, .section, .container, .nh-hero, .nh-marquee-wrap, .nh-mq {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+  /* Tracks rail: negative bleed overflows 320px viewports */
+  .nh-tracks-grid {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+    max-width: 100%;
+  }
+  .nh-menu-sheet {
+    right: max(12px, env(safe-area-inset-right, 0px));
+    max-width: calc(100vw - 24px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+  }
+  /* ── F-03 · month drop-up: anchor to the section head, not to the trigger ──
+     .nh-month-row is absolute with left:0 and a VIEWPORT-relative max-width.
+     Its containing block was .nh-month-dropdown, which sits mid-row (after the
+     h2), so the right edge landed at trigger-left + (100vw − 36px) — roughly
+     150px past the right edge of a 360px phone. No scrollbar appeared because
+     #apollo-home{overflow-x:clip} cropped it: the picker was simply cut in half.
+
+     Making the dropdown `static` hands the containing block to .nh-section-head
+     (already position:relative at this breakpoint, line ~1910). Its left edge IS
+     the container gutter — which is exactly what calc(100vw − 36px) assumes. */
+  .nh-month-dropdown { position: static; }
+  .nh-month-row {
+    left: 0;
+    right: auto;
+    max-width: calc(100vw - 36px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+  }
+  .nh-section-head { min-width: 0; }
+  .nh-section-head h2 { min-width: 0; overflow-wrap: anywhere; }
+  .nh-empty-state { min-width: 0; width: 100%; }
+  .xp-all { font-size: clamp(2rem, 12vw, 3.2rem); }
+  .a-eve-explore .xp-all { font-size: clamp(1.8rem, 10vw, 2.8rem); }
+  .nh-map-wrap, .nh-map-canvas, #nhMap { max-width: 100%; }
+}
+
+/* Larger tap comfort on coarse pointers regardless of width */
+@media (pointer: coarse) {
+  .nh-section-head a, .ax-login, .nh-mq-chat { touch-action: manipulation; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   MAP PREVIEW → OPEN FULL MAP SITE (whole surface is the tap target).
+   Overlay sits above every Leaflet pane so a tap opens mapa.apollo.rio.br.
+   ═══════════════════════════════════════════════════════════════════ */
+.nh-map-open { position: absolute; inset: 0; z-index: 1000; display: flex; align-items: flex-end;
+  justify-content: flex-end; padding: 14px; cursor: pointer; text-decoration: none; }
+.nh-map-open-chip { display: inline-flex; align-items: center; gap: 7px; height: 38px; padding: 0 15px;
+  border-radius: var(--r-pill, 999px); background: rgba(10,10,10,.72); color: #fff;
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); font: 600 12.5px/1 var(--ff-main);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); transition: background .3s ease; }
+.nh-map-open-chip i { font-size: calc(var(--fs-u, 1) * 16px); }
+.nh-map-open:hover .nh-map-open-chip { background: rgba(10,10,10,.92); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   FOOTER — MOBILE-APP-FIRST (≤767px). Kill the fixed 400px clip + the
+   absolute bottom bar that overlapped; flow it as a clean app footer.
+   translateY(18%) tucks it partially below the fold — mobile-app style
+   "peeking" footer, shifted down/inside toward the bottom edge.
+   ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  .nh-footer { height: auto !important; min-height: 0; overflow: visible !important; transform: translateY(32%); }
+  .nh-footer > .container { padding-top: 38px; padding-bottom: calc(26px + env(safe-area-inset-bottom, 0px)); }
+  .nh-footer-grid { grid-template-columns: 1fr; gap: 22px; margin-bottom: 0; }
+  .nh-footer-wordmark { font-size: .6rem; margin-bottom: 8px; opacity: .5; }
+  .nh-footer-brand p { font-size: .84rem; line-height: 1.6; max-width: 100%; color: var(--muted); }
+  .nh-footer-links ul { flex-direction: row; flex-wrap: wrap; gap: 12px 20px; }
+  .nh-footer-links a { font-size: .92rem; font-weight: 600; }
+  .nh-footer-bottom { position: static !important; flex-direction: row; justify-content: space-between;
+    flex-wrap: wrap; gap: 4px 14px; margin-top: 24px; font-size: .68rem; }
+  .aprio-ft-v2 svg { bottom: -14%; height: 260px; }
+}

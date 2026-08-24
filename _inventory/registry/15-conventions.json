@@ -1,0 +1,139 @@
+{
+  "$chapter": {
+    "id": "15-conventions",
+    "owner": "apollo-core",
+    "keys": [
+      "roles",
+      "timeDisplay",
+      "namingRules",
+      "constants"
+    ],
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "roles": {
+    "standard": {
+      "administrator": {
+        "display": "apollo",
+        "level": 10
+      },
+      "editor": {
+        "display": "MOD",
+        "level": 7
+      },
+      "author": {
+        "display": "cena+",
+        "level": 5
+      },
+      "contributor": {
+        "display": "cena",
+        "level": 3
+      },
+      "subscriber": {
+        "display": "clubber",
+        "level": 1
+      }
+    },
+    "membership_types": {
+      "note": "Membership != Role. Membership is visual badge via _apollo_membership meta",
+      "types": [
+        "nao-verificado",
+        "apollo",
+        "prod",
+        "dj",
+        "host",
+        "govern",
+        "business-pers"
+      ]
+    },
+    "formLevels": {
+      "0": {
+        "role": null,
+        "access": "none"
+      },
+      "1": {
+        "role": "subscriber",
+        "access": "basic"
+      },
+      "2": {
+        "role": "contributor",
+        "access": "enhanced"
+      },
+      "3": {
+        "role": "author",
+        "access": "enhanced"
+      },
+      "4": {
+        "role": "administrator",
+        "access": "full"
+      }
+    }
+  },
+  "timeDisplay": {
+    "STANDARD": "MANDATORY across ALL Apollo plugins â€” no 'ago', no 'atrÃ¡s', no 'X days ago'",
+    "format": "icon + number + unit_abbreviation",
+    "php_function": "apollo_time_ago( $datetime )  â†’ returns compact string e.g. '53min'",
+    "php_html_function": "apollo_time_ago_html( $datetime )  â†’ returns full HTML block (use wp_kses_post())",
+    "js_helper": "tempoHTML(str)  â†’ splits '53min' â†’ icon+span render",
+    "html_output": "<i class=\"tempo-v\"></i>&nbsp;<span class=\"time-ago\">N</span><span class=\"when-ago\">unit</span>",
+    "icon_class": "tempo-v",
+    "span_classes": {
+      "time-ago": "the numeric value (53, 2, 7)",
+      "when-ago": "the unit abbreviation"
+    },
+    "units": {
+      "s": "seconds  (< 60s)",
+      "min": "minutes  (< 1h)",
+      "h": "hours    (< 1d)",
+      "d": "days     (< 1w)",
+      "w": "weeks    (< 1y)",
+      "y": "years    (â‰¥ 1y)"
+    },
+    "examples": [
+      "0s",
+      "53min",
+      "2h",
+      "7d",
+      "3w",
+      "1y"
+    ],
+    "FORBIDDEN": [
+      "human_time_diff() + ' atrÃ¡s'",
+      "human_time_diff() + ' ago'",
+      "Xd atrÃ¡s",
+      "Xh atrÃ¡s",
+      "Xmin atrÃ¡s",
+      "2 days ago",
+      "1 hour ago",
+      "X minutes ago"
+    ],
+    "FORBIDDEN_REASON": "Destroys the compact icon-first standard and breaks CSS targeting via .time-ago/.when-ago"
+  },
+  "namingRules": {
+    "FORBIDDEN_TERMS": {
+      "venue": "USE 'loc' INSTEAD",
+      "local": "USE 'loc' INSTEAD (except in Portuguese text)",
+      "location": "USE 'loc' INSTEAD",
+      "interesse": "USE 'fav' INSTEAD",
+      "interessado": "USE 'fav' INSTEAD",
+      "interest": "USE 'fav' INSTEAD",
+      "bookmark": "USE 'fav' INSTEAD",
+      "like": "USE 'wow' INSTEAD",
+      "heart": "USE 'wow' INSTEAD",
+      "reaction": "USE 'wow' INSTEAD",
+      "comment": "USE 'depoimento' INSTEAD",
+      "review": "USE 'depoimento' INSTEAD",
+      "cult": "USE 'cena' INSTEAD",
+      "document": "USE 'doc' INSTEAD",
+      "/user/": "USE '/id/' INSTEAD"
+    }
+  },
+  "constants": {
+    "APOLLO_VERSION": "6.0.0",
+    "APOLLO_MIN_WP": "6.4",
+    "APOLLO_MIN_PHP": "8.1",
+    "APOLLO_REST_NAMESPACE": "apollo/v1",
+    "APOLLO_TABLE_PREFIX": "apollo_",
+    "APOLLO_CDN_URL": "https://cdn.apollo.rio.br/v1.0.0/"
+  }
+}

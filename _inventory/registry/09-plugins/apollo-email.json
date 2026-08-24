@@ -1,0 +1,2329 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-email",
+    "owner": "apollo-email",
+    "wrap": "plugins.apollo-email",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-email",
+  "namespace": "Apollo\\Email",
+  "priority": 3,
+  "status": "IMPLEMENTED",
+  "description": "Motor de email transacional e marketing integrado ao ecossistema Apollo — templates, fila de envio, logging, SMTP/SES/SendGrid, tracking, merge tags, automação de gatilhos e administração completa via wp-admin.",
+  "dependencies": [
+    "apollo-admin",
+    "apollo-core",
+    "apollo-events",
+    "apollo-gestor",
+    "apollo-login",
+    "apollo-membership",
+    "apollo-users"
+  ],
+  "provides": [
+    "email-templates",
+    "email-queue",
+    "email-sending",
+    "email-log"
+  ],
+  "integration_hooks_apollo_login": {
+    "description": "apollo-email listens on WordPress actions fired by apollo-login RegisterHandler / AuthController — not via registry JSON.",
+    "required_actions": [
+      "apollo/login/registered — welcome email after signup",
+      "apollo/login/verification_email — verification link email (user_id, verify_url)",
+      "apollo/login/password_reset_requested — password reset flow"
+    ],
+    "optional": [
+      "apollo/login/send_email — generic templated send pipeline"
+    ]
+  },
+  "cpts": [
+    "email_aprio"
+  ],
+  "taxonomies": [],
+  "tables": [
+    "apollo_cron_execution_log",
+    "apollo_email_log",
+    "apollo_email_queue",
+    "apollo_newsletter_subscribers"
+  ],
+  "meta": {
+    "post": {
+      "_email_subject": {
+        "_source": "deep_scan"
+      },
+      "_email_type": {
+        "_source": "deep_scan"
+      },
+      "_email_variables": {
+        "_source": "deep_scan"
+      },
+      "_event_loc_name": {
+        "_source": "deep_scan"
+      },
+      "_event_start_date": {
+        "_source": "deep_scan"
+      },
+      "_event_start_time": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {
+      "_apollo_chat_status": {
+        "_source": "deep_scan"
+      },
+      "_apollo_email_prefs": {
+        "_source": "deep_scan"
+      },
+      "_apollo_email_unsub_at": {
+        "_source": "deep_scan"
+      },
+      "_apollo_email_unsubscribed": {
+        "_source": "deep_scan"
+      },
+      "_apollo_membership": {
+        "_source": "deep_scan"
+      },
+      "_apollo_social_name": {
+        "_source": "deep_scan"
+      },
+      "_apollo_verification_token": {
+        "_source": "deep_scan"
+      },
+      "_apollo_verification_token_expiry": {
+        "_source": "deep_scan"
+      }
+    },
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/email/send",
+      "methods": [
+        "POST"
+      ],
+      "description": "Send email",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "check_admin",
+      "permission_binding": "EmailController::check_admin",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if (! current_user_can('manage_options')) { return new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403)); } return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "send_email",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EmailController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/email/test",
+      "methods": [
+        "POST"
+      ],
+      "description": "Send test email",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "check_admin",
+      "permission_binding": "EmailController::check_admin",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if (! current_user_can('manage_options')) { return new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403)); } return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "send_test",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EmailController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/email/stats",
+      "methods": [
+        "GET"
+      ],
+      "description": "Email dashboard stats",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "check_admin",
+      "permission_binding": "EmailController::check_admin",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if (! current_user_can('manage_options')) { return new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403)); } return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_stats",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EmailController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/email/queue",
+      "methods": [
+        "GET"
+      ],
+      "description": "View queue",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "check_admin",
+      "permission_binding": "EmailController::check_admin",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if (! current_user_can('manage_options')) { return new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403)); } return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_queue",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EmailController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/email/queue/(?P<id>\\d+)/cancel",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (ADMIN_CAPABILITY)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "check_admin",
+      "permission_binding": "EmailController::check_admin",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if (! current_user_can('manage_options')) { return new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403)); } return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "cancel_queue_item",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EmailController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/email/queue/(?P<id>\\d+)/retry",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (ADMIN_CAPABILITY)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "check_admin",
+      "permission_binding": "EmailController::check_admin",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if (! current_user_can('manage_options')) { return new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403)); } return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "retry_queue_item",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EmailController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/email/queue/purge",
+      "methods": [
+        "POST"
+      ],
+      "description": "Purge email queue",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "check_admin",
+      "permission_binding": "EmailController::check_admin",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if (! current_user_can('manage_options')) { return new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403)); } return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "purge_queue",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EmailController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/email/templates",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "description": "List/Create templates",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "check_admin",
+      "permission_binding": "EmailController::check_admin",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if (! current_user_can('manage_options')) { return new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403)); } return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_templates",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EmailController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/email/templates/(?P<id>\\d+)",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "description": "Live apollo/v1 (ADMIN_CAPABILITY)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "check_admin",
+      "permission_binding": "EmailController::check_admin",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if (! current_user_can('manage_options')) { return new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403)); } return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_template",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EmailController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/email/log",
+      "methods": [
+        "GET"
+      ],
+      "description": "View log",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "check_admin",
+      "permission_binding": "EmailController::check_admin",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if (! current_user_can('manage_options')) { return new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403)); } return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_log",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EmailController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/email/log/purge",
+      "methods": [
+        "POST"
+      ],
+      "description": "Purge email log",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "check_admin",
+      "permission_binding": "EmailController::check_admin",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if (! current_user_can('manage_options')) { return new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403)); } return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "purge_log",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EmailController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/email/track/open/(?P<token>[a-zA-Z0-9]+)",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "track_open",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EmailController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/email/track/click/(?P<token>[a-zA-Z0-9]+)",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "track_click",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EmailController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/email/preferences",
+      "methods": [
+        "GET",
+        "PUT"
+      ],
+      "description": "User email prefs",
+      "auth": "LOGGED_IN_PLUS",
+      "permission_risk": "MEDIUM",
+      "permission_method": "check_logged_in",
+      "permission_binding": "EmailController::check_logged_in",
+      "permission_summary": "is_user_logged_in present; may have extra checks",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "if (! is_user_logged_in()) { return new WP_Error('apollo_rest_unauthorized', __('Login necessário.', 'apollo-email'), array('status' => 401)); } return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_preferences",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EmailController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/newsletter/subscribe",
+      "methods": [
+        "POST"
+      ],
+      "description": "Subscribe to newsletter (migrated from apollo-shortcodes v6.4.0)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo/v1",
+      "file": "src/Newsletter.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/newsletter/subscribers",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (ADMIN_CAPABILITY)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can('manage_options');",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo/v1",
+      "file": "src/Newsletter.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "pages": [],
+  "shortcodes": [
+    {
+      "tag": "apollo_email_prefs",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_newsletter",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "version": "1.0.1",
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [
+    "apollo_five_minutes"
+  ],
+  "hooks_fired": [
+    "apollo/email/before_send",
+    "apollo/email/failed",
+    "apollo/email/from_address",
+    "apollo/email/from_name",
+    "apollo/email/headers",
+    "apollo/email/init",
+    "apollo/email/loaded",
+    "apollo/email/opened",
+    "apollo/email/queue_processed",
+    "apollo/email/queued",
+    "apollo/email/retry_delay_base",
+    "apollo/email/sent",
+    "apollo/email/template_data",
+    "apollo/email/unsubscribed",
+    "apollo_newsletter_subscriber_confirmed"
+  ],
+  "hooks_listened": [
+    "apollo/chat/message_sent",
+    "apollo/email/digest/chat",
+    "apollo/email/digest/comuna",
+    "apollo/email/digest/event_match",
+    "apollo/email/digest/fav_events",
+    "apollo/email/digest/news",
+    "apollo/email/digest/notifications",
+    "apollo/email/digest/social",
+    "apollo/email/headers",
+    "apollo/email/loaded",
+    "apollo/event/reminder",
+    "apollo/gestor/task_reminder",
+    "apollo/groups/user_invited",
+    "apollo/login/password_reset_requested",
+    "apollo/login/registered",
+    "apollo/login/verification_email",
+    "apollo/membership/achievement_awarded",
+    "apollo/notif/digest",
+    "apollo_newsletter_send_scheduled"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [
+      "apollo-email-admin",
+      "wp-codemirror"
+    ],
+    "styles": [
+      "apollo-email-admin",
+      "wp-codemirror"
+    ]
+  },
+  "options": [
+    "apollo_admin_settings",
+    "apollo_email_cpt_href_repair_v1",
+    "apollo_email_db_version",
+    "apollo_email_installed_at",
+    "apollo_email_logo_png_v1",
+    "apollo_email_settings",
+    "apollo_email_transactional_shell_v2",
+    "apollo_newsletter_db_version",
+    "apollo_newsletter_settings"
+  ],
+  "security": {
+    "risk_band": "MEDIUM",
+    "risk_score": 27,
+    "abspath_coverage_pct": 100,
+    "rest_open_routes": 3,
+    "rest_critical_write_public": 1,
+    "rest_open_non_intentional": 3,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 16,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 0.83
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_admin_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_cron_execution_log",
+      "column_count": 11,
+      "columns": [
+        "id:BIGINT UNSIGNED NOT",
+        "cron_hook:VARCHAR(100) NOT NULL",
+        "execution_start:DATETIME NOT NULL",
+        "execution_end:DATETIME DEFAULT NULL",
+        "duration_ms:INT UNSIGNED DEFAULT",
+        "status:ENUM(",
+        "items_processed:INT UNSIGNED DEFAULT",
+        "items_failed:INT UNSIGNED DEFAULT",
+        "recipients:TEXT DEFAULT NULL",
+        "error_log:TEXT DEFAULT NULL",
+        "meta:JSON DEFAULT NULL"
+      ],
+      "indexes": [
+        "KEY idx_hook (cron_hook)",
+        "KEY idx_start (execution_start)",
+        "KEY idx_status (status)",
+        "PRIMARY KEY (id)"
+      ],
+      "source": "create_var_prefix",
+      "ref_only": false,
+      "defined": true,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_email_brand_logo_url",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_email_default_logo_url",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_email_log",
+      "column_count": 13,
+      "columns": [
+        "id:BIGINT UNSIGNED NOT",
+        "to_email:VARCHAR(255) NOT NULL",
+        "subject:VARCHAR(500) NOT NULL",
+        "template:VARCHAR(100) DEFAULT NULL",
+        "email_type:ENUM(",
+        "status:ENUM(",
+        "transport:VARCHAR(50) DEFAULT",
+        "sent_at:DATETIME NOT NULL",
+        "opened_at:DATETIME DEFAULT NULL",
+        "clicked_at:DATETIME DEFAULT NULL",
+        "track_token:VARCHAR(64) DEFAULT NULL",
+        "error_message:TEXT DEFAULT NULL",
+        "meta:JSON DEFAULT NULL"
+      ],
+      "indexes": [
+        "KEY idx_email (to_email)",
+        "KEY idx_status (status)",
+        "KEY idx_sent (sent_at)",
+        "KEY idx_type (email_type)",
+        "KEY idx_template (template)",
+        "PRIMARY KEY (id)"
+      ],
+      "source": "create_var_prefix",
+      "ref_only": false,
+      "defined": true,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_email_logo_png_v1",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_email_process_queue",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_email_purge_log",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_email_purge_queue",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_email_queue",
+      "column_count": 15,
+      "columns": [
+        "id:BIGINT UNSIGNED NOT",
+        "to_email:VARCHAR(255) NOT NULL",
+        "to_name:VARCHAR(255) DEFAULT",
+        "subject:VARCHAR(500) NOT NULL",
+        "body:LONGTEXT NOT NULL",
+        "template:VARCHAR(100) DEFAULT NULL",
+        "template_data:JSON DEFAULT NULL",
+        "priority:INT NOT NULL",
+        "status:ENUM(",
+        "attempts:INT NOT NULL",
+        "max_attempts:INT NOT NULL",
+        "scheduled_at:DATETIME NOT NULL",
+        "sent_at:DATETIME DEFAULT NULL",
+        "error_message:TEXT DEFAULT NULL",
+        "created_at:DATETIME NOT NULL"
+      ],
+      "indexes": [
+        "KEY idx_status (status)",
+        "KEY idx_scheduled (scheduled_at)",
+        "KEY idx_priority (priority, scheduled_at)",
+        "KEY idx_template (template)",
+        "PRIMARY KEY (id)"
+      ],
+      "source": "create_var_prefix",
+      "ref_only": false,
+      "defined": true,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_email_queue_action",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_email_queue_lock",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_email_refresh_templates",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_email_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_newsletter_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_newsletter_subscribers",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_refresh_templates",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_verify",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [],
+  "query_vars": [],
+  "php_surface": {
+    "files": 46,
+    "loc": 10836,
+    "classes": 19,
+    "functions": 9
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:48.738Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 91,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-email",
+    "main_file": "apollo-email.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Email",
+      "plugin_uri": "https://apollo.rio.br",
+      "description": "Motor de email transacional e marketing integrado ao ecossistema Apollo — templates, fila de envio, logging, SMTP/SES/SendGrid, tracking, merge tags, automação de gatilhos e administração completa via wp-admin.",
+      "version": "1.0.1",
+      "author": "Apollo Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "GPL-2.0-or-later",
+      "text_domain": "apollo-email",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": null
+    },
+    "composer": {
+      "name": "apollo/email",
+      "namespaces": [
+        "Apollo\\Email"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 46,
+        ".css": 1,
+        ".png": 1,
+        ".js": 1,
+        ".json": 1,
+        ".md": 2
+      },
+      "by_top_directory": {
+        "(root)": 10,
+        "assets": 4,
+        "includes": 2,
+        "src": 19,
+        "templates": 11,
+        "views": 6
+      },
+      "total_bytes": 1466031
+    },
+    "php": {
+      "files": 46,
+      "loc": 10836,
+      "classes": 19,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 9
+    },
+    "architecture": {
+      "namespace": "Apollo\\Email",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Email\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "AdminPage",
+          "fqcn": "Apollo\\Email\\Admin\\AdminPage",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Admin/AdminPage.php"
+        },
+        {
+          "kind": "class",
+          "name": "EmailController",
+          "fqcn": "Apollo\\Email\\API\\EmailController",
+          "extends": "\\WP_REST_Controller",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/EmailController.php"
+        },
+        {
+          "kind": "class",
+          "name": "EmailCommand",
+          "fqcn": "Apollo\\Email\\CLI\\EmailCommand",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/CLI/EmailCommand.php"
+        },
+        {
+          "kind": "class",
+          "name": "CPT",
+          "fqcn": "Apollo\\Email\\Core\\CPT",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Core/CPT.php"
+        },
+        {
+          "kind": "class",
+          "name": "Cron",
+          "fqcn": "Apollo\\Email\\Core\\Cron",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Core/Cron.php"
+        },
+        {
+          "kind": "class",
+          "name": "CronLogger",
+          "fqcn": "Apollo\\Email\\Core\\CronLogger",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Core/CronLogger.php"
+        },
+        {
+          "kind": "class",
+          "name": "Deactivation",
+          "fqcn": "Apollo\\Email\\Deactivation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Deactivation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Logger",
+          "fqcn": "Apollo\\Email\\Log\\Logger",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Log/Logger.php"
+        },
+        {
+          "kind": "class",
+          "name": "Message",
+          "fqcn": "Apollo\\Email\\Mailer\\Message",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Mailer/Message.php"
+        },
+        {
+          "kind": "class",
+          "name": "Queue",
+          "fqcn": "Apollo\\Email\\Mailer\\Queue",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Mailer/Queue.php"
+        },
+        {
+          "kind": "class",
+          "name": "Sender",
+          "fqcn": "Apollo\\Email\\Mailer\\Sender",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Mailer/Sender.php"
+        },
+        {
+          "kind": "class",
+          "name": "SmtpDelivery",
+          "fqcn": "Apollo\\Email\\Mailer\\SmtpDelivery",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Mailer/SmtpDelivery.php"
+        },
+        {
+          "kind": "class",
+          "name": "Native_Newsletter",
+          "fqcn": "Apollo\\Email\\Native_Newsletter",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Newsletter.php"
+        },
+        {
+          "kind": "class",
+          "name": "Newsletter_Widget",
+          "fqcn": "Apollo\\Email\\Newsletter_Widget",
+          "extends": "\\WP_Widget",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Newsletter.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Email\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "MergeTagRegistry",
+          "fqcn": "Apollo\\Email\\Template\\MergeTagRegistry",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Template/MergeTagRegistry.php"
+        },
+        {
+          "kind": "class",
+          "name": "StyleInliner",
+          "fqcn": "Apollo\\Email\\Template\\StyleInliner",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Template/StyleInliner.php"
+        },
+        {
+          "kind": "class",
+          "name": "TemplateEngine",
+          "fqcn": "Apollo\\Email\\Template\\TemplateEngine",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Template/TemplateEngine.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_send_email",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_queue_email",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_process_email_queue",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_email_template",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_render_email",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_email_template_href",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_email_template_link_display",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_email_default_logo_url",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_email_brand_logo_url",
+          "file": "includes/functions.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 16,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/email/send",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "check_admin",
+            "target": "EmailController",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403))",
+                  "true"
+                ]
+              },
+              "body_preview": "if (! current_user_can('manage_options')) { return new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403)); } return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "EmailController::check_admin",
+              "method_file": "src/API/EmailController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "send_email",
+          "file": "src/API/EmailController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/email/test",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "check_admin",
+            "target": "EmailController",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403))",
+                  "true"
+                ]
+              },
+              "body_preview": "if (! current_user_can('manage_options')) { return new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403)); } return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "EmailController::check_admin",
+              "method_file": "src/API/EmailController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "send_test",
+          "file": "src/API/EmailController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/email/stats",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "check_admin",
+            "target": "EmailController",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403))",
+                  "true"
+                ]
+              },
+              "body_preview": "if (! current_user_can('manage_options')) { return new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403)); } return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "EmailController::check_admin",
+              "method_file": "src/API/EmailController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_stats",
+          "file": "src/API/EmailController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/email/queue",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "check_admin",
+            "target": "EmailController",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403))",
+                  "true"
+                ]
+              },
+              "body_preview": "if (! current_user_can('manage_options')) { return new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403)); } return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "EmailController::check_admin",
+              "method_file": "src/API/EmailController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_queue",
+          "file": "src/API/EmailController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/email/queue/(?P<id>\\d+)/cancel",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "check_admin",
+            "target": "EmailController",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403))",
+                  "true"
+                ]
+              },
+              "body_preview": "if (! current_user_can('manage_options')) { return new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403)); } return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "EmailController::check_admin",
+              "method_file": "src/API/EmailController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "cancel_queue_item",
+          "file": "src/API/EmailController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/email/queue/(?P<id>\\d+)/retry",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "check_admin",
+            "target": "EmailController",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403))",
+                  "true"
+                ]
+              },
+              "body_preview": "if (! current_user_can('manage_options')) { return new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403)); } return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "EmailController::check_admin",
+              "method_file": "src/API/EmailController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "retry_queue_item",
+          "file": "src/API/EmailController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/email/queue/purge",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "check_admin",
+            "target": "EmailController",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403))",
+                  "true"
+                ]
+              },
+              "body_preview": "if (! current_user_can('manage_options')) { return new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403)); } return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "EmailController::check_admin",
+              "method_file": "src/API/EmailController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "purge_queue",
+          "file": "src/API/EmailController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/email/templates",
+          "methods": [
+            "GET",
+            "POST"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "check_admin",
+            "target": "EmailController",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403))",
+                  "true"
+                ]
+              },
+              "body_preview": "if (! current_user_can('manage_options')) { return new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403)); } return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "EmailController::check_admin",
+              "method_file": "src/API/EmailController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_templates",
+          "file": "src/API/EmailController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/email/templates/(?P<id>\\d+)",
+          "methods": [
+            "DELETE",
+            "GET",
+            "PUT"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "check_admin",
+            "target": "EmailController",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403))",
+                  "true"
+                ]
+              },
+              "body_preview": "if (! current_user_can('manage_options')) { return new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403)); } return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "EmailController::check_admin",
+              "method_file": "src/API/EmailController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_template",
+          "file": "src/API/EmailController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/email/log",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "check_admin",
+            "target": "EmailController",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403))",
+                  "true"
+                ]
+              },
+              "body_preview": "if (! current_user_can('manage_options')) { return new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403)); } return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "EmailController::check_admin",
+              "method_file": "src/API/EmailController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_log",
+          "file": "src/API/EmailController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/email/log/purge",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "check_admin",
+            "target": "EmailController",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403))",
+                  "true"
+                ]
+              },
+              "body_preview": "if (! current_user_can('manage_options')) { return new WP_Error('apollo_rest_forbidden', __('Acesso negado.', 'apollo-email'), array('status' => 403)); } return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "EmailController::check_admin",
+              "method_file": "src/API/EmailController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "purge_log",
+          "file": "src/API/EmailController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/email/track/open/(?P<token>[a-zA-Z0-9]+)",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "track_open",
+          "file": "src/API/EmailController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/email/track/click/(?P<token>[a-zA-Z0-9]+)",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "track_click",
+          "file": "src/API/EmailController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/email/preferences",
+          "methods": [
+            "GET",
+            "PUT"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_PLUS",
+            "risk": "MEDIUM",
+            "method": "check_logged_in",
+            "target": "EmailController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_PLUS",
+              "risk": "MEDIUM",
+              "summary": "is_user_logged_in present; may have extra checks",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "new WP_Error('apollo_rest_unauthorized', __('Login necessário.', 'apollo-email'), array('status' => ",
+                  "true"
+                ]
+              },
+              "body_preview": "if (! is_user_logged_in()) { return new WP_Error('apollo_rest_unauthorized', __('Login necessário.', 'apollo-email'), array('status' => 401)); } return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "EmailController::check_logged_in",
+              "method_file": "src/API/EmailController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_preferences",
+          "file": "src/API/EmailController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/newsletter/subscribe",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": null,
+          "file": "src/Newsletter.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/newsletter/subscribers",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": null,
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can('manage_options')"
+                ]
+              },
+              "body_preview": "return current_user_can('manage_options');",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": null,
+          "file": "src/Newsletter.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 1,
+        "HIGH": 2,
+        "MEDIUM": 1,
+        "LOW": 12,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "ADMIN_CAPABILITY": 12,
+        "PUBLIC_UNAUTHENTICATED": 3,
+        "LOGGED_IN_PLUS": 1
+      },
+      "permission_body_resolved": 16,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 1,
+      "open_routes": [
+        {
+          "endpoint": "/email/track/open/(?P<token>[a-zA-Z0-9]+)",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/EmailController.php"
+        },
+        {
+          "endpoint": "/email/track/click/(?P<token>[a-zA-Z0-9]+)",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/EmailController.php"
+        },
+        {
+          "endpoint": "/newsletter/subscribe",
+          "methods": [
+            "POST"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/Newsletter.php"
+        }
+      ],
+      "admin_cap_routes": [
+        "/email/send",
+        "/email/test",
+        "/email/stats",
+        "/email/queue",
+        "/email/queue/(?P<id>\\d+)/cancel",
+        "/email/queue/(?P<id>\\d+)/retry",
+        "/email/queue/purge",
+        "/email/templates",
+        "/email/templates/(?P<id>\\d+)",
+        "/email/log",
+        "/email/log/purge",
+        "/newsletter/subscribers"
+      ],
+      "logged_in_routes": [
+        "/email/preferences"
+      ]
+    },
+    "database": {
+      "tables_owned_or_defined": [
+        "apollo_cron_execution_log",
+        "apollo_email_log",
+        "apollo_email_queue",
+        "apollo_newsletter_subscribers"
+      ],
+      "tables_referenced": [
+        "apollo_admin_settings",
+        "apollo_cron_execution_log",
+        "apollo_email_brand_logo_url",
+        "apollo_email_default_logo_url",
+        "apollo_email_log",
+        "apollo_email_logo_png_v1",
+        "apollo_email_process_queue",
+        "apollo_email_purge_log",
+        "apollo_email_purge_queue",
+        "apollo_email_queue",
+        "apollo_email_queue_action",
+        "apollo_email_queue_lock",
+        "apollo_email_refresh_templates",
+        "apollo_email_settings",
+        "apollo_newsletter_settings",
+        "apollo_newsletter_subscribers",
+        "apollo_refresh_templates",
+        "apollo_verify"
+      ],
+      "tables_for_registry": [
+        "apollo_cron_execution_log",
+        "apollo_email_log",
+        "apollo_email_queue",
+        "apollo_newsletter_subscribers"
+      ],
+      "schemas_with_columns": 3,
+      "schemas": [
+        {
+          "table": "apollo_admin_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_cron_execution_log",
+          "column_count": 11,
+          "columns": [
+            "id:BIGINT UNSIGNED NOT",
+            "cron_hook:VARCHAR(100) NOT NULL",
+            "execution_start:DATETIME NOT NULL",
+            "execution_end:DATETIME DEFAULT NULL",
+            "duration_ms:INT UNSIGNED DEFAULT",
+            "status:ENUM(",
+            "items_processed:INT UNSIGNED DEFAULT",
+            "items_failed:INT UNSIGNED DEFAULT",
+            "recipients:TEXT DEFAULT NULL",
+            "error_log:TEXT DEFAULT NULL",
+            "meta:JSON DEFAULT NULL"
+          ],
+          "indexes": [
+            "KEY idx_hook (cron_hook)",
+            "KEY idx_start (execution_start)",
+            "KEY idx_status (status)",
+            "PRIMARY KEY (id)"
+          ],
+          "source": "create_var_prefix",
+          "ref_only": false,
+          "defined": true,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_email_brand_logo_url",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_email_default_logo_url",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_email_log",
+          "column_count": 13,
+          "columns": [
+            "id:BIGINT UNSIGNED NOT",
+            "to_email:VARCHAR(255) NOT NULL",
+            "subject:VARCHAR(500) NOT NULL",
+            "template:VARCHAR(100) DEFAULT NULL",
+            "email_type:ENUM(",
+            "status:ENUM(",
+            "transport:VARCHAR(50) DEFAULT",
+            "sent_at:DATETIME NOT NULL",
+            "opened_at:DATETIME DEFAULT NULL",
+            "clicked_at:DATETIME DEFAULT NULL",
+            "track_token:VARCHAR(64) DEFAULT NULL",
+            "error_message:TEXT DEFAULT NULL",
+            "meta:JSON DEFAULT NULL"
+          ],
+          "indexes": [
+            "KEY idx_email (to_email)",
+            "KEY idx_status (status)",
+            "KEY idx_sent (sent_at)",
+            "KEY idx_type (email_type)",
+            "KEY idx_template (template)",
+            "PRIMARY KEY (id)"
+          ],
+          "source": "create_var_prefix",
+          "ref_only": false,
+          "defined": true,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_email_logo_png_v1",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_email_process_queue",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_email_purge_log",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_email_purge_queue",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_email_queue",
+          "column_count": 15,
+          "columns": [
+            "id:BIGINT UNSIGNED NOT",
+            "to_email:VARCHAR(255) NOT NULL",
+            "to_name:VARCHAR(255) DEFAULT",
+            "subject:VARCHAR(500) NOT NULL",
+            "body:LONGTEXT NOT NULL",
+            "template:VARCHAR(100) DEFAULT NULL",
+            "template_data:JSON DEFAULT NULL",
+            "priority:INT NOT NULL",
+            "status:ENUM(",
+            "attempts:INT NOT NULL",
+            "max_attempts:INT NOT NULL",
+            "scheduled_at:DATETIME NOT NULL",
+            "sent_at:DATETIME DEFAULT NULL",
+            "error_message:TEXT DEFAULT NULL",
+            "created_at:DATETIME NOT NULL"
+          ],
+          "indexes": [
+            "KEY idx_status (status)",
+            "KEY idx_scheduled (scheduled_at)",
+            "KEY idx_priority (priority, scheduled_at)",
+            "KEY idx_template (template)",
+            "PRIMARY KEY (id)"
+          ],
+          "source": "create_var_prefix",
+          "ref_only": false,
+          "defined": true,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_email_queue_action",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_email_queue_lock",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_email_refresh_templates",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_email_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_newsletter_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_newsletter_subscribers",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_refresh_templates",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_verify",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 6,
+      "user_count": 8,
+      "term_count": 0,
+      "post_keys": [
+        "_email_subject",
+        "_email_type",
+        "_email_variables",
+        "_event_loc_name",
+        "_event_start_date",
+        "_event_start_time"
+      ],
+      "user_keys": [
+        "_apollo_chat_status",
+        "_apollo_email_prefs",
+        "_apollo_email_unsub_at",
+        "_apollo_email_unsubscribed",
+        "_apollo_membership",
+        "_apollo_social_name",
+        "_apollo_verification_token",
+        "_apollo_verification_token_expiry"
+      ],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [],
+      "query_vars": [],
+      "pages_derived": []
+    },
+    "cpts": [
+      {
+        "slug": "email_aprio",
+        "registered_locally": true,
+        "public": false,
+        "show_in_rest": true,
+        "menu_icon": null
+      }
+    ],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 17,
+      "listened_count": 40,
+      "apollo_fired": [
+        "apollo/email/before_send",
+        "apollo/email/failed",
+        "apollo/email/from_address",
+        "apollo/email/from_name",
+        "apollo/email/headers",
+        "apollo/email/init",
+        "apollo/email/loaded",
+        "apollo/email/opened",
+        "apollo/email/queue_processed",
+        "apollo/email/queued",
+        "apollo/email/retry_delay_base",
+        "apollo/email/sent",
+        "apollo/email/template_data",
+        "apollo/email/unsubscribed",
+        "apollo_newsletter_subscriber_confirmed"
+      ],
+      "apollo_listened": [
+        "apollo/chat/message_sent",
+        "apollo/email/digest/chat",
+        "apollo/email/digest/comuna",
+        "apollo/email/digest/event_match",
+        "apollo/email/digest/fav_events",
+        "apollo/email/digest/news",
+        "apollo/email/digest/notifications",
+        "apollo/email/digest/social",
+        "apollo/email/headers",
+        "apollo/email/loaded",
+        "apollo/event/reminder",
+        "apollo/gestor/task_reminder",
+        "apollo/groups/user_invited",
+        "apollo/login/password_reset_requested",
+        "apollo/login/registered",
+        "apollo/login/verification_email",
+        "apollo/membership/achievement_awarded",
+        "apollo/notif/digest",
+        "apollo_newsletter_send_scheduled"
+      ],
+      "critical_wp_listened": [
+        "admin_init",
+        "admin_menu",
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "save_post_email_aprio",
+        "wp_enqueue_scripts"
+      ]
+    },
+    "ajax": {
+      "priv": [],
+      "nopriv": []
+    },
+    "cron": [
+      "apollo_five_minutes"
+    ],
+    "shortcodes": [
+      "apollo_email_prefs",
+      "apollo_newsletter"
+    ],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [
+        "apollo-email-admin",
+        "wp-codemirror"
+      ],
+      "styles": [
+        "apollo-email-admin",
+        "wp-codemirror"
+      ]
+    },
+    "options": [
+      "apollo_admin_settings",
+      "apollo_email_cpt_href_repair_v1",
+      "apollo_email_db_version",
+      "apollo_email_installed_at",
+      "apollo_email_logo_png_v1",
+      "apollo_email_settings",
+      "apollo_email_transactional_shell_v2",
+      "apollo_newsletter_db_version",
+      "apollo_newsletter_settings"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_EMAIL_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_EMAIL_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_EMAIL_PATH",
+        "value": "plugin_dir_path(__FILE__"
+      },
+      {
+        "name": "APOLLO_EMAIL_URL",
+        "value": "plugin_dir_url(__FILE__"
+      },
+      {
+        "name": "APOLLO_EMAIL_BASENAME",
+        "value": "plugin_basename(__FILE__"
+      },
+      {
+        "name": "APOLLO_EMAIL_SLUG",
+        "value": "apollo-email"
+      },
+      {
+        "name": "APOLLO_EMAIL_DB_VERSION",
+        "value": "1.0.0"
+      },
+      {
+        "name": "APOLLO_EMAIL_MIN_PHP",
+        "value": "8.1"
+      },
+      {
+        "name": "APOLLO_EMAIL_MIN_WP",
+        "value": "6.4"
+      },
+      {
+        "name": "APOLLO_EMAIL_CRON_HOOK",
+        "value": "apollo_email_process_queue"
+      },
+      {
+        "name": "APOLLO_EMAIL_BATCH_SIZE",
+        "value": "50"
+      },
+      {
+        "name": "APOLLO_EMAIL_MAX_RETRIES",
+        "value": "1"
+      }
+    ],
+    "security": {
+      "php_files": 46,
+      "abspath_guard_files": 46,
+      "abspath_coverage_pct": 100,
+      "wpdb_prepare_calls": 24,
+      "wpdb_query_calls": 29,
+      "prepare_to_query_ratio": 0.83,
+      "nonce_checks": 12,
+      "current_user_can_calls": 9,
+      "raw_superglobal": {
+        "get": 36,
+        "post": 21,
+        "request": 1
+      },
+      "permission_callback_return_true": 3,
+      "escape_helpers": 257,
+      "echo_statements": 285,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 27,
+      "risk_band": "MEDIUM",
+      "rest_permission_critical": 1,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 2,
+      "rest_open_critical": 1,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 3
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-admin",
+        "apollo-core",
+        "apollo-events",
+        "apollo-gestor",
+        "apollo-login",
+        "apollo-membership",
+        "apollo-users"
+      ],
+      "signals": [
+        "apollo-admin",
+        "apollo-core",
+        "apollo-events",
+        "apollo-gestor",
+        "apollo-login",
+        "apollo-membership",
+        "apollo-users"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.0.1",
+      "version_changed": false,
+      "old_rest": 14,
+      "live_rest": 16,
+      "old_pages": 0,
+      "live_pages": 0,
+      "new_plugin": false
+    }
+  },
+  "security_remediation": {
+    "note": "P2: ABSPATH guards added; declare order fixed",
+    "last_updated": "2026-07-20"
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 46,
+    "php_loc": 10790,
+    "rest_routes_found": 16,
+    "cpts_found": [
+      "email_aprio"
+    ],
+    "tables_found": [
+      "apollo_",
+      "apollo_cron_execution_log",
+      "apollo_email_log",
+      "apollo_email_queue",
+      "apollo_newsletter_subscribers"
+    ],
+    "shortcodes_found": [
+      "apollo_email_prefs",
+      "apollo_newsletter"
+    ]
+  }
+}

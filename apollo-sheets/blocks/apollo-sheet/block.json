@@ -1,0 +1,86 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "apollo-sheets/sheet",
+	"version": "1.0.0",
+	"title": "Apollo Sheet",
+	"category": "widgets",
+	"icon": "grid-view",
+	"description": "Insere uma Apollo Sheet (tabela) no conteúdo.",
+	"keywords": ["table", "sheet", "apollo", "tabela"],
+	"textdomain": "apollo-sheets",
+	"attributes": {
+		"id": {
+			"type": "string",
+			"default": ""
+		},
+		"use_datatables": {
+			"type": "boolean",
+			"default": true
+		},
+		"datatables_sort": {
+			"type": "boolean",
+			"default": true
+		},
+		"datatables_filter": {
+			"type": "boolean",
+			"default": true
+		},
+		"datatables_paginate": {
+			"type": "boolean",
+			"default": true
+		},
+		"paginate_entries": {
+			"type": "integer",
+			"default": 10
+		},
+		"table_head": {
+			"type": "string",
+			"default": "first_row"
+		},
+		"show_rows": {
+			"type": "string",
+			"default": ""
+		},
+		"hide_columns": {
+			"type": "string",
+			"default": ""
+		},
+		"alternating_colors": {
+			"type": "boolean",
+			"default": true
+		},
+		"responsive": {
+			"type": "boolean",
+			"default": false
+		},
+		"evaluate_formulas": {
+			"type": "boolean",
+			"default": true
+		},
+		"convert_line_breaks": {
+			"type": "boolean",
+			"default": false
+		},
+		"column_widths": {
+			"type": "string",
+			"default": ""
+		},
+		"extra_css": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": ["wide", "full"],
+		"color": false,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"render": "render.php",
+	"editorScript": "file:./editor.js",
+	"style": "apollo-sheets"
+}

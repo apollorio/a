@@ -1,0 +1,30 @@
+{
+  "generated": "2026-07-21",
+  "method": "static code + registry cross-check (no WP-CLI runtime in this session → bootstrap = NOT_RUNTIME_VERIFIED)",
+  "primary_cpt_owners": [
+    { "cpt": "event", "owner": "apollo-events", "registered_once": true, "registration": "apollo-events/src/Registry.php (register_post_type slug 'evento', rest_base 'events')", "status": "REGISTERED+PRESENT" },
+    { "cpt": "dj", "owner": "apollo-djs", "registered_once": true, "registration": "apollo-djs/src/Registry.php (slug 'dj', rest_base 'djs')", "status": "REGISTERED+PRESENT" },
+    { "cpt": "local", "owner": "apollo-loc", "registered_once": true, "registration": "apollo-loc/src/Registry.php (slug 'local')", "status": "REGISTERED+PRESENT" }
+  ],
+  "participating_plugins": [
+    { "plugin": "apollo-core", "role": "CPT/meta/tax registries, blank-canvas doc head, route helpers", "status": "PRESENT" },
+    { "plugin": "apollo-events", "role": "event CPT + REST /apollo/v1/eventos + create/dashboard singles", "status": "PRESENT" },
+    { "plugin": "apollo-djs", "role": "dj CPT + REST /apollo/v1/djs + single-dj-v3 (active via APOLLO_DJ_DEFAULT_STYLE=apollo-v3)", "status": "PRESENT" },
+    { "plugin": "apollo-loc", "role": "local CPT + REST /apollo/v1/local + admin metaboxes + single-local", "status": "PRESENT" },
+    { "plugin": "apollo-templates", "role": "FrontendEditor (dj/local edit save handler), navbar, routing", "status": "PRESENT" },
+    { "plugin": "apollo-coauthor", "role": "event co-author byline filters", "status": "PRESENT" },
+    { "plugin": "apollo-seo", "role": "apollo/seo/head → meta + Event/MusicGroup JSON-LD on blank canvas", "status": "PRESENT" },
+    { "plugin": "apollo-comment", "role": "depoimentos (referenced by local.depoimentos storage.key)", "status": "PRESENT" }
+  ],
+  "cross_plugin_endpoints_consumed_by_singles_and_forms": [
+    { "endpoint": "apollo/v1/eventos", "owner": "apollo-events", "verb": "GET/POST/PUT", "live_observed": "GET 200 (event id 25) on apollo.rio.br" },
+    { "endpoint": "apollo/v1/djs", "owner": "apollo-djs", "verb": "GET", "live_observed": "GET 200 (bernardo-campos) on apollo.rio.br" },
+    { "endpoint": "apollo/v1/local", "owner": "apollo-loc", "verb": "GET", "live_observed": "NOT_RUNTIME_VERIFIED this session" }
+  ],
+  "findings": {
+    "DUPLICATE_RESPONSIBILITY": "none for the 3 primary CPTs (each registered exactly once)",
+    "UNKNOWN_OWNERSHIP": "none — code-confirmed owners match expected",
+    "BROKEN_DEPENDENCY": "none observed",
+    "ORPHANED_CODE": "apollo-loc/templates/single-local.php is an alt template; active render is styles/base/single-local.php via TemplateLoader (default_style apollo-v1 → no folder → base fallback)"
+  }
+}

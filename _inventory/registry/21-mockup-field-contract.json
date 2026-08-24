@@ -1,0 +1,345 @@
+{
+  "$chapter": {
+    "id": "21-mockup-field-contract",
+    "owner": "apollo-core",
+    "keys": [
+      "$mockup_field_contract"
+    ],
+    "source": "Node-by-node audit of screen/single cpt/dj/dj-single-page.html and screen/single cpt/location/loc-single-page.html against apollo-core MetaRegistry, 09-plugins/apollo-djs.json, 09-plugins/apollo-loc.json and data-registry.json — 2026-08-08.",
+    "merge": "deep_merge_last_wins",
+    "note": "REGISTER-BEFORE-BUILD list. Every entry is something the mockup PRINTS that no registered meta key, taxonomy or derivation can currently supply. Nothing here is registered yet — this chapter is the decision queue, and each item must land in apollo-core/src/Core/MetaRegistry.php (the ONLY legal registrar, per 02-header.CRITICAL_apollo_core_centralization) before the template that reads it ships. Companion annotations live as <!-- @field --> comments in the two mockups."
+  },
+  "$mockup_field_contract": {
+    "date": "2026-08-08",
+    "method": "Every text node and every media src in both mockups was traced to a storage kind. Three outcomes: MAPPED (a registered key supplies it), DERIVED (computable from registered data — the derivation is named), or MISSING (nothing supplies it — listed below).",
+    "registrar": "apollo-core/src/Core/MetaRegistry.php",
+    "hard_rule": "NO direct register_post_meta / register_post_type / register_taxonomy outside apollo-core. See 02-header.CRITICAL_apollo_core_centralization.",
+
+    "$philosophy_violations": {
+      "severity": "CRITICAL",
+      "note": "These are not missing fields. They are fields that must NEVER be created, because 01-philosophy forbids the concept. Building storage for them would make the violation permanent. Fix the mockup, do not register the key.",
+      "items": [
+        {
+          "id": "VIO-01",
+          "cpt": "dj",
+          "where": "dj-single-page.html — .hero-pills, second pill",
+          "prints": "4.1k · Seguidores",
+          "violates": "$philosophy.NO_EGO_COUNTERS + FORBIDDEN_CONCEPTS[\"followers count\"]",
+          "verdict": "REMOVE. A follower count is the exact metric the platform is built against. No meta key. Replace with a third derived fact from event history (e.g. anos em atividade, from first played event) or drop the pill to two.",
+          "status": "OPEN"
+        },
+        {
+          "id": "VIO-02",
+          "cpt": "dj + local",
+          "where": "both mockups — #dockFollow",
+          "prints": "aria-label=\"Seguir\" title=\"Seguir\" with <i class=\"ri-heart-3-line\">",
+          "violates": "$philosophy.NO_SELECTIVE_FOLLOW + FORBIDDEN_CONCEPTS[\"follow button\"]; namingRules.FORBIDDEN_TERMS.heart → USE 'wow'; .like → USE 'wow'",
+          "verdict": "RENAME to favoritar (apollo-fav). Icon becomes ri-shining-2-line / ri-shining-2-fill per 07-icons.plugins['apollo-fav']. Storage already exists — apollo_favorites / apollo_favs tables. No new key.",
+          "status": "OPEN"
+        },
+        {
+          "id": "VIO-03",
+          "cpt": "local",
+          "where": "loc-single-page.html — .ag-empty copy",
+          "prints": "Siga o local e seja avisado quando a próxima data cair.",
+          "violates": "$philosophy.NO_SELECTIVE_FOLLOW — 'siga' is the follow verb in Portuguese",
+          "verdict": "REWRITE to the fav vocabulary: 'Favorite o local e a gente te avisa quando a próxima data cair.'",
+          "status": "OPEN"
+        },
+        {
+          "id": "VIO-04",
+          "cpt": "local",
+          "where": "loc-single-page.html — .map-note",
+          "prints": "Lat -23.5265 · Lng -46.6664 — meta do CPT events_local",
+          "violates": "$apollo_rule.data_flow.production ('no debug output, no helper attributes') — an internal meta name is printed to the visitor, and `events_local` is not even a real CPT slug (the slug is `local`)",
+          "verdict": "REMOVE the note entirely, or reduce to the coordinate pair without the storage hint.",
+          "status": "OPEN"
+        }
+      ]
+    },
+
+    "dj": {
+      "cpt": "dj",
+      "owner_plugin": "apollo-djs",
+      "mockup": "screen/single cpt/dj/dj-single-page.html",
+      "payload": "APOLLO_DJ",
+      "context_fn": "apollo_get_dj_context( $dj_id )",
+      "missing": [
+        {
+          "id": "dj.hero_eyebrow",
+          "prints": "Rio de Janeiro — Hard Groove & Peak Time",
+          "ui": ".hero-eyebrow .lbl",
+          "proposed_key": "_dj_eyebrow",
+          "kind": "meta",
+          "type": "string",
+          "preferred": "DERIVED",
+          "derivation": "apollo_dj_home_city($id) . ' — ' . implode(' & ', first 2 terms of taxonomy `sound`)",
+          "why_not_meta": "Two of the three parts already exist as data; a free-text key would let them drift apart. Register the key only as an editorial OVERRIDE, empty by default.",
+          "empty_behavior": "fallback to derivation",
+          "blocker": "apollo_dj_home_city() does not exist — the dj CPT has NO city/base meta at all. See dj.home_city below."
+        },
+        {
+          "id": "dj.home_city",
+          "prints": "(the 'Rio de Janeiro' in the eyebrow, and '9 Cidades' needs a home to count against)",
+          "ui": ".hero-eyebrow, .hero-pills",
+          "proposed_key": "_dj_home_city",
+          "kind": "meta",
+          "type": "string",
+          "preferred": "META",
+          "why": "There is genuinely no city on the dj CPT. `_loc_city` appears in apollo-djs' meta.post list but it is an event/loc key that leaked into the deep scan, not a dj field. A DJ's base city is a fact about the artist, not derivable from their gig history (a Rio DJ who mostly plays SP would read as an SP artist).",
+          "empty_behavior": "hide the city segment"
+        },
+        {
+          "id": "dj.booking_status",
+          "prints": "Booking aberto · 2026",
+          "ui": ".hero-live",
+          "proposed_key": "_dj_booking_status",
+          "kind": "meta",
+          "type": "enum",
+          "enum": ["open", "selective", "closed"],
+          "preferred": "META",
+          "why": "`_dj_booking` holds the CONTACT (an email). Whether the artist is currently taking bookings is a separate, changing fact, and the mockup renders it as a live dot — a state, not a link. The year is derived from current_time('Y').",
+          "empty_behavior": "hide the pill",
+          "i18n": "open → 'Booking aberto', selective → 'Booking seletivo', closed → 'Agenda fechada'"
+        },
+        {
+          "id": "dj.name_lines",
+          "prints": "LEO / JANEIRO as two stacked display lines",
+          "ui": "#heroName .hn-line ×2",
+          "proposed_key": "_dj_name_lines",
+          "kind": "meta",
+          "type": "string[]",
+          "preferred": "DERIVED",
+          "derivation": "explode(' ', _dj_name) — first token line 1, remainder line 2",
+          "why_key_still_needed": "The derivation breaks on one-word names (renders one line, hero collapses) and on three-word names (line 2 overflows). Register as an override so an artist can set the break point.",
+          "empty_behavior": "fallback to derivation"
+        },
+        {
+          "id": "dj.statement_accent",
+          "prints": "the single gold word — <em class=\"gold\">solta</em>",
+          "ui": "#stmtTxt em.gold",
+          "proposed_key": "_dj_statement_accent",
+          "kind": "meta",
+          "type": "string",
+          "preferred": "MARKUP-IN-META",
+          "verdict": "Do NOT add a second key. Allow a single <em> in _dj_statement and run it through wp_kses( $v, ['em'=>['class'=>[]]] ). One field, one truth; a separate 'which word is gold' key is a foot-gun the moment the statement is edited.",
+          "empty_behavior": "render statement with no accent"
+        },
+        {
+          "id": "dj.stats_labels",
+          "prints": "'Eventos tocados no circuito Apollo' · 'Casas e promotoras diferentes que já bookaram' · 'Cidades — do Rio a Belo Horizonte' · 'Amanheceres que a pista se recusou a soltar'",
+          "ui": ".nums .num-l ×4",
+          "kind": "static",
+          "preferred": "STATIC + one DERIVED",
+          "verdict": "Labels 1–3 are template copy and belong in the PHP partial, not the database. Label 3 hardcodes 'do Rio a Belo Horizonte' — that must become the actual min/max city pair from event history or drop the suffix.",
+          "blocker": "Metric 4, 'Amanheceres', has NO computable source. apollo_dj_compute_stats() cannot produce it: nothing records an event's end hour on the dj side. Either register `_event_end_time` as a required event field and count events ending after 05:00, or REMOVE the fourth metric.",
+          "status": "DECISION_REQUIRED"
+        },
+        {
+          "id": "dj.media_kit_meta",
+          "prints": "28 MB · Arquivo zip / 12 fotos · 300 dpi / Rider v3 · PDF / 4 promos · Inéditas",
+          "ui": ".kit-meta > div ×4",
+          "proposed_key": "_dj_media_kit_stats",
+          "kind": "meta",
+          "type": "array of {value:string, label:string}",
+          "max_rows": 4,
+          "preferred": "META",
+          "why": "`_dj_media_kit_url` is a Google Drive folder. Nothing on the Apollo side can introspect a Drive folder's size, photo count or file list, so none of these four numbers is derivable — they are claims the artist makes about their own kit. Four hardcoded numbers on a press page that contractors read is exactly the kind of thing that goes stale silently.",
+          "empty_behavior": "hide the .kit-meta row entirely",
+          "sanitizer_note": "Mirror the _dj_tracks pattern: one apollo_dj_sanitize_kit_stats() used by BOTH the REST path and the apollo-lux-panels metabox, per 20-meta-schemas write_paths."
+        },
+        {
+          "id": "dj.media_kit_title",
+          "prints": "Kit de Imprensa 2026",
+          "ui": ".kit-t",
+          "kind": "derived",
+          "preferred": "DERIVED",
+          "derivation": "__('Kit de Imprensa') . ' ' . current_time('Y')",
+          "verdict": "No key. The year must never be hardcoded — a 2026 label still reading 2026 in 2027 is the single most common rot on a press page."
+        },
+        {
+          "id": "dj.media_kit_desc",
+          "prints": "Fotos em alta resolução, rider técnico, logos e promos inéditas — tudo em uma pasta só…",
+          "ui": ".kit-p",
+          "proposed_key": "_dj_media_kit_desc",
+          "kind": "meta",
+          "type": "string",
+          "preferred": "STATIC",
+          "verdict": "Template copy. Register a key ONLY if artists must customise it; default to the static string."
+        },
+        {
+          "id": "dj.footer_image",
+          "prints": "images.unsplash.com/photo-1492684223066 — a stock crowd photo",
+          "ui": "#footImg",
+          "proposed_key": "_dj_footer_image",
+          "kind": "meta",
+          "type": "attachment_id|url",
+          "preferred": "DERIVED then META",
+          "derivation": "newest cover from dj.playedOn (a real crowd shot from a night this artist actually played)",
+          "why": "A stock photo on an artist's own card is the one thing that reads as unfinished. The derivation gives every DJ a real image for free; the key is the override.",
+          "empty_behavior": "hide the footer figure — never ship the placeholder"
+        },
+        {
+          "id": "dj.footer_caption",
+          "prints": "O Rio não fecha",
+          "ui": ".foot-img-ov small",
+          "kind": "static",
+          "preferred": "STATIC",
+          "verdict": "Brand copy. Belongs in the PHP partial. Note it is Rio-specific and this CPT is not — decide whether it is per-city (then derive from _dj_home_city) or global."
+        }
+      ],
+      "registered_but_never_rendered": {
+        "note": "The reverse gap. These keys exist in apollo-core and have an input surface in apollo-lux-panels, but no node in the mockup reads them — so an artist can fill them and see nothing. Every one is either a missing section or a key to retire.",
+        "keys": [
+          "_dj_verified",
+          "_dj_rider_url",
+          "_dj_beatport",
+          "_dj_tiktok",
+          "_dj_facebook",
+          "_dj_website",
+          "_dj_youtube",
+          "_dj_mixcloud",
+          "_dj_resident_advisor",
+          "_dj_gallery",
+          "_dj_original_project_1",
+          "_dj_original_project_2",
+          "_dj_original_project_3",
+          "_dj_set_url",
+          "_dj_bio_short"
+        ],
+        "highest_priority": "_dj_verified — 07-icons.badges.user_verified is defined (ri-shield-check-fill) and data-registry marks dj.verified as a live field, but the mockup renders no badge anywhere. A verification system nobody can see is a verification system nobody trusts.",
+        "second": "_dj_gallery and _dj_original_project_1..3 have a metabox and no section at all. The DJ page has no gallery and no projects block — either build them or retire four keys."
+      },
+      "unwired_links": [
+        {
+          "ui": "footer .socials a[aria-label=\"Instagram\"]",
+          "prints": "href=\"#\"",
+          "fix": "bind to _dj_instagram — the key exists and is already in APOLLO_DJ's sibling fields"
+        }
+      ]
+    },
+
+    "local": {
+      "cpt": "local",
+      "owner_plugin": "apollo-loc",
+      "mockup": "screen/single cpt/location/loc-single-page.html",
+      "payload": "APOLLO_LOC",
+      "legacy_prefix": "_ap_* → live _local_* (see data-registry.cpts.local.mockup_legacy_prefix)",
+      "missing": [
+        {
+          "id": "local.tagline",
+          "prints": "Templo do Techno desde 2003",
+          "ui": ".hero-kick — trailing segment",
+          "proposed_key": "_local_tagline",
+          "kind": "meta",
+          "type": "string",
+          "preferred": "META",
+          "why": "data-registry maps local.hero_kicker as DERIVED from _local_city + _local_state + 'copy'. That 'copy' is this string, and it is pure editorial — nothing derives 'Templo do Techno'.",
+          "empty_behavior": "render city · area only"
+        },
+        {
+          "id": "local.founded_year",
+          "prints": "23+ · Anos de pista — templo desde 2003",
+          "ui": ".facts .fact:nth-child(2)",
+          "proposed_key": "_local_founded_year",
+          "kind": "meta",
+          "type": "integer",
+          "preferred": "META",
+          "why": "Two printed numbers (23 and 2003) are the same fact stated twice. Store the year, derive the span — otherwise the '23' is wrong on 1 January.",
+          "derivation": "(int) current_time('Y') - _local_founded_year",
+          "empty_behavior": "hide the fact card"
+        },
+        {
+          "id": "local.rooms",
+          "prints": "3 · Ambientes — pista, lounge & rooftop",
+          "ui": ".facts .fact:nth-child(3)",
+          "proposed_key": "_local_rooms",
+          "kind": "meta",
+          "type": "string[]",
+          "preferred": "META",
+          "why": "Count AND names are printed; both are venue facts with no source. Store the names, derive the count. `_local_capacity` exists but is explicitly NOT this — and the mockup's own comment says capacity must never be shown.",
+          "derivation": "count($rooms) for the number; wp_sprintf_l() for the list",
+          "empty_behavior": "hide the fact card"
+        },
+        {
+          "id": "local.venue_format",
+          "prints": "Clube eletrônico · Multi-ambiente",
+          "ui": ".hero-meta .hmeta:nth-child(2)",
+          "kind": "taxonomy + derived",
+          "preferred": "DERIVED",
+          "derivation": "term name from taxonomy `local_type` . ' · ' . (count(_local_rooms) > 1 ? 'Multi-ambiente' : 'Ambiente único')",
+          "verdict": "No new key once local.rooms lands. `local_type` already supplies the first half."
+        },
+        {
+          "id": "local.description_accent",
+          "prints": "the italic run — <em>intensas, escuras e experimentais</em>",
+          "ui": "#stmtTxt em",
+          "preferred": "MARKUP-IN-META",
+          "verdict": "Same call as dj.statement_accent: allow a single <em> inside _local_description via wp_kses, do not add a second key."
+        },
+        {
+          "id": "local.name_accent",
+          "prints": "D-<em>EDGE</em> — second half of the name in the serif italic",
+          "ui": "#heroName .ln em",
+          "preferred": "DERIVED",
+          "derivation": "split _local_name on the last hyphen or space; accent the remainder",
+          "blocker": "Breaks on single-token names. Same shape as dj.name_lines — resolve both with one convention, not two."
+        },
+        {
+          "id": "local.footer_image",
+          "prints": "dedge-stage2-001.jpg",
+          "ui": "#footImg",
+          "kind": "meta",
+          "preferred": "DERIVED",
+          "derivation": "_local_image_2 (gallery slot 2), falling back to _local_image_1",
+          "verdict": "No new key — the gallery already holds five images and the footer is asking for one of them."
+        },
+        {
+          "id": "local.footer_caption",
+          "prints": "Barra Funda nunca dorme / TE VEMOS NA PISTA",
+          "ui": ".foot-img-ov small + strong",
+          "preferred": "DERIVED + STATIC",
+          "derivation": "small = taxonomy local_area term name . ' nunca dorme'; strong = static brand copy",
+          "note": "The area term already exists (`local_area`). Only the verb is copy."
+        },
+        {
+          "id": "local.testimonials",
+          "prints": "#depoTrack cards",
+          "key": "_local_testimonials",
+          "kind": "meta",
+          "status": "STILL_BROKEN — pre-existing, carried from data-registry.gaps",
+          "verdict": "The key is READ by single-local.php:231 and WRITTEN by nobody: it is not in MetaRegistrar and has no metabox. Either route depoimentos through apollo-comment (the registered vocabulary — namingRules maps comment/review → depoimento) and retire the meta, or register it with a writer. Shipping a section fed by a key with no input path is how the mockup ends up permanently empty in production."
+        }
+      ],
+      "registered_but_never_rendered": {
+        "keys": [
+          "_local_country",
+          "_local_postal",
+          "_local_price_range",
+          "_local_visit_count",
+          "_local_image_3",
+          "_local_image_4",
+          "_local_image_5"
+        ],
+        "note": "_local_postal IS printed inside .map-addr as 'CEP 01156-001' but hardcoded, not bound. _local_image_3..5 have metabox inputs (GalleryMetabox renders 1..5) and the mockup's #gal is JS-built — confirm the builder consumes all five, not two."
+      }
+    },
+
+    "naming_tension": {
+      "severity": "LOW",
+      "finding": "namingRules.FORBIDDEN_TERMS maps `venue` → 'USE loc' and `local` → 'USE loc (except in Portuguese text)'. The live meta prefix is `_local_`, the CPT slug is `local`, and the mockup payload still calls it `meta._ap_venue_name`.",
+      "verdict": "Do not rename anything. The rule is about NEW vocabulary; `_local_*` is the shipped, registered prefix across 32 keys and renaming it would be a migration with no user-visible benefit. Record the tension so the next reader does not 'fix' it. The mockup annotation should say `_local_name`, not `_ap_venue_name`."
+    },
+
+    "next_actions": [
+      "1. Resolve the four $philosophy_violations in the mockups. No code, no keys — copy and icon changes only.",
+      "2. Decide dj.stats_labels metric 4 ('Amanheceres') — register _event_end_time as required, or cut the metric.",
+      "3. Register the 6 META-verdict keys in apollo-core MetaRegistry: _dj_home_city, _dj_booking_status, _dj_media_kit_stats, _local_tagline, _local_founded_year, _local_rooms.",
+      "4. Register the 3 override keys as nullable with documented fallbacks: _dj_eyebrow, _dj_name_lines, _dj_footer_image.",
+      "5. Widen wp_kses on _dj_statement and _local_description to allow a single <em>.",
+      "6. Decide _local_testimonials: apollo-comment, or a writer.",
+      "7. Build or retire: _dj_verified badge, _dj_gallery section, _dj_original_project_1..3.",
+      "8. Bump apollo-core AND its version constant together — 19-ssot-audit records apollo-core already sitting at 6.2.3 with uncommitted contract changes."
+    ]
+  }
+}

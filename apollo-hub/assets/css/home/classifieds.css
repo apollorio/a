@@ -1,0 +1,71 @@
+/* ═══════════════════════════════════════════════════════════════
+   APOLLO::RIO — HOME / classifieds.css
+   Ticket resale marketplace rows + disclaimer
+   ═══════════════════════════════════════════════════════════════ */
+.nh-resale-intro { font-family: var(--ff-mono); font-size: 0.95rem; color: var(--muted); margin-bottom: 28px; line-height: 1.7; }
+.nh-resale-list { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+.nh-resale-row {
+    display: grid; grid-template-columns: 60px 1fr auto;
+    align-items: center; padding: 20px 22px;
+    border-bottom: 1px solid var(--border-ultra);
+    gap: 14px; text-decoration: none; color: inherit;
+    transition: background .2s, padding-left .3s var(--ease-out);
+}
+.nh-resale-row:last-child { border-bottom: none; }
+@media (hover: hover) { .nh-resale-row:hover { background: var(--bg-deep); padding-left: 28px; } }
+.nh-resale-time { font-family: var(--ff-mono); font-size: 0.78rem; color: var(--muted-light); font-weight: 600; }
+.nh-resale-details h3 { font-size: 1.1rem; margin: 0 0 2px; margin-block: 0 2px; font-weight: 600; text-transform: none; letter-spacing: -0.01em; }
+.nh-resale-seller-hidden {
+    font-family: var(--ff-mono); font-size: 0.64rem; color: var(--muted-light);
+    display: flex; align-items: center; gap: 4px; letter-spacing: 0.1em;
+}
+.nh-resale-seller-hidden i,
+.nh-resale-seller-hidden .nh-seller-text { display: none; }
+.nh-resale-price-wrap { display: flex; gap: 9px; align-items: center; }
+.nh-resale-price { font-family: var(--ff-mono); font-size: 1.1rem; font-weight: 700; white-space: nowrap; }
+
+/* Disclaimer card */
+.nh-disclaimer {
+    margin-top: 36px; background: var(--card);
+    border: 1px solid var(--border); border-radius: var(--r);
+    position: relative; overflow: hidden; display: flex; padding: 0;
+}
+.nh-disclaimer-accent { width: 4px; flex-shrink: 0; background: linear-gradient(180deg, var(--primary) 0%, rgba(255,59,48,0.25) 100%); }
+.nh-disclaimer-body { padding: 20px 22px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.nh-disclaimer-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 10px; }
+.nh-disclaimer-header i { font-size: 28px; margin-top: 3px; flex-shrink: 0; color: var(--primary); opacity: 0.75; line-height: 1; }
+.nh-disclaimer h4 { font-size: clamp(1.4rem,3.5dvw,1.9rem); font-weight: 700; text-transform: none; letter-spacing: -0.015em; line-height: 1.05; color: var(--text); margin: 0; margin-block: 0; }
+.nh-disclaimer p { font-family: var(--ff-mono); font-size: .92rem; font-weight: 300; min-width: 100%; color: var(--muted); line-height: 1.8; }
+
+/* ALL Tickets Re-sell CTA row */
+.nh-resale-row--all {
+    grid-template-columns: 1fr auto !important;
+    background: var(--text); color: #fff;
+    padding: 24px 26px !important; align-items: center;
+    border-bottom: none !important;
+    transition: background .35s var(--ease-out), padding-left .35s var(--ease-out) !important;
+}
+@media (hover: hover) {
+    .nh-resale-row--all:hover { background: var(--primary); padding-left: 34px !important; }
+    .nh-resale-row--all:hover .nh-rall-icon { transform: rotate(-45deg) scale(1.2); opacity: 1; }
+}
+.nh-rall-label { font-family: var(--ff-mono); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.45; margin-bottom: 5px; color: #fff; }
+.nh-rall-title { font-size: 1.5rem; font-weight: 900; letter-spacing: -0.04em; line-height: 1; text-transform: uppercase; color: #fff; margin-block-end: 0 !important; }
+.nh-rall-icon { font-size: 2.2rem; opacity: 0.65; transition: transform .4s var(--ease-spring), opacity .3s; flex-shrink: 0; }
+
+@media (max-width: 500px) {
+    .nh-resale-row { grid-template-columns: 1fr auto; padding: 13px 16px; }
+    .nh-resale-time { display: none; }
+    .nh-resale-row--all { padding: 12px 18px !important; }
+    .nh-rall-title { font-size: 1rem; margin-block-end: 0 !important; }
+    .nh-rall-label { font-size: 0.6rem; margin-bottom: 3px; }
+    .nh-rall-icon { font-size: 1.5rem; }
+    .nh-disclaimer h4 { font-size: clamp(1rem,4dvw,1.3rem); line-height: 1.05; }
+    .nh-disclaimer p { font-size: 0.78rem; line-height: 1.65; }
+    .nh-disclaimer-body { padding: 14px 16px; }
+    .nh-disclaimer-header { gap: 10px; margin-bottom: 6px; }
+    .nh-disclaimer-header i { font-size: 22px; margin-top: 2px; }
+}
+@media (min-width: 501px) and (max-width: 767px) {
+    .nh-resale-time { display: block; font-size: 0.7rem; }
+}

@@ -1,0 +1,970 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-gestor",
+    "owner": "apollo-gestor",
+    "wrap": "plugins.apollo-gestor",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-gestor",
+  "namespace": "Apollo\\Gestor",
+  "priority": 4,
+  "status": "IMPLEMENTED",
+  "version": "1.0.1",
+  "description": "Gestor de Projetos — tarefas, time, financeiro, fornecedores, cronograma, kanban. Gestão de produção para a indústria cultural do Rio.",
+  "dependencies": [
+    "apollo-core",
+    "apollo-email"
+  ],
+  "provides": [
+    "proj",
+    "task",
+    "task-kanban",
+    "task-by-user",
+    "task-by-proj",
+    "proj-team",
+    "proj-finance",
+    "proj-gantt",
+    "proj-board",
+    "proj-equip",
+    "proj-staff",
+    "editor",
+    "pdf",
+    "mural",
+    "calculator",
+    "cmd-palette",
+    "role-access",
+    "task-reminder-cron",
+    "activity-log"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [
+    "apollo_gestor_activity",
+    "apollo_gestor_income",
+    "apollo_gestor_milestones",
+    "apollo_gestor_payments",
+    "apollo_gestor_reminder_log",
+    "apollo_gestor_staff",
+    "apollo_gestor_tasks",
+    "apollo_gestor_team"
+  ],
+  "meta": {
+    "post": {
+      "_event_budget": {
+        "_source": "deep_scan"
+      },
+      "_event_loc_id": {
+        "_source": "deep_scan"
+      },
+      "_event_start_date": {
+        "_source": "deep_scan"
+      },
+      "_event_status": {
+        "_source": "deep_scan"
+      },
+      "_event_supplier_ids": {
+        "_source": "deep_scan"
+      },
+      "_gestor_docs": {
+        "_source": "deep_scan"
+      },
+      "_gestor_equipment": {
+        "_source": "deep_scan"
+      },
+      "_supplier_category": {
+        "_source": "deep_scan"
+      },
+      "_supplier_email": {
+        "_source": "deep_scan"
+      },
+      "_supplier_phone": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {
+      "_apollo_email_prefs": {
+        "_source": "deep_scan"
+      }
+    },
+    "term": {}
+  },
+  "options": [
+    "apollo_gestor_db_version",
+    "apollo_gestor_settings"
+  ],
+  "rest": [],
+  "ajax": {
+    "priv": [
+      "apollo_gestor_save_permissions",
+      "apollo_gestor_{$action}"
+    ],
+    "nopriv": []
+  },
+  "cron": [
+    "apollo_five_minutes"
+  ],
+  "hooks_fired": [
+    "apollo/gestor/event_status_changed",
+    "apollo/gestor/income_before_delete",
+    "apollo/gestor/income_created",
+    "apollo/gestor/initialized",
+    "apollo/gestor/milestone_before_delete",
+    "apollo/gestor/milestone_created",
+    "apollo/gestor/milestone_toggled",
+    "apollo/gestor/modules_loaded",
+    "apollo/gestor/payment_before_delete",
+    "apollo/gestor/payment_created",
+    "apollo/gestor/payment_updated",
+    "apollo/gestor/task_before_delete",
+    "apollo/gestor/task_created",
+    "apollo/gestor/task_reminder",
+    "apollo/gestor/task_updated",
+    "apollo/gestor/team_member_added",
+    "apollo/gestor/team_member_before_remove",
+    "apollo/gestor/team_member_updated"
+  ],
+  "hooks_listened": [
+    "apollo/core/initialized"
+  ],
+  "modules": [
+    "projetos",
+    "tarefas",
+    "proj-finance",
+    "proj-team",
+    "proj-staff",
+    "proj-gantt",
+    "proj-board",
+    "proj-equip",
+    "editor",
+    "pdf"
+  ],
+  "role_matrix": {
+    "adm": {
+      "level": 10,
+      "wp_role": "administrator",
+      "can_manage": true,
+      "can_view_finance": true,
+      "description": "Full access â€” event owner / admin"
+    },
+    "gestor": {
+      "level": 7,
+      "wp_role": "editor",
+      "can_manage": true,
+      "can_view_finance": true,
+      "description": "Project manager â€” full ops access"
+    },
+    "tgestor": {
+      "level": 5,
+      "wp_role": "author",
+      "can_manage": false,
+      "can_view_finance": true,
+      "description": "Finance viewer â€” can see budget but not manage"
+    },
+    "team": {
+      "level": 1,
+      "wp_role": "subscriber",
+      "can_manage": false,
+      "can_view_finance": false,
+      "description": "Team member â€” tasks and board only"
+    }
+  },
+  "staff_vs_team": {
+    "staff": {
+      "table": "apollo_gestor_staff",
+      "requires_wp_user": false,
+      "description": "External people (freelancers, contractors) â€” no WordPress account needed",
+      "fields": [
+        "name",
+        "pix_key",
+        "price_deal",
+        "job_function",
+        "contact_info"
+      ],
+      "payment_tracking": "Tracked via apollo_gestor_payments with payee_type='staff'"
+    },
+    "team": {
+      "table": "apollo_gestor_team",
+      "requires_wp_user": true,
+      "description": "Project members â€” must be registered WordPress users",
+      "fields": [
+        "user_id",
+        "role",
+        "job_function",
+        "pix_key"
+      ],
+      "selection_ui": "Autocomplete user search via ajax_search_users"
+    }
+  },
+  "income_categories": [
+    "ingressos",
+    "bar",
+    "patrocinio",
+    "cobertura",
+    "outros"
+  ],
+  "payment_statuses": [
+    "pending",
+    "paid",
+    "late"
+  ],
+  "pages": [
+    {
+      "slug": "apollo-gestor",
+      "title": "Gestor de Projetos",
+      "template": "gestor.php",
+      "type": "admin",
+      "auth": true
+    }
+  ],
+  "shortcodes": [],
+  "admin_menus": [
+    {
+      "page_title": "Gestor de Projetos",
+      "menu_title": "Gestor",
+      "capability": "read",
+      "menu_slug": "apollo-gestor"
+    }
+  ],
+  "assets": {
+    "scripts": [],
+    "styles": [
+      "apollo-gestor"
+    ]
+  },
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 0,
+    "abspath_coverage_pct": 98,
+    "rest_open_routes": 0,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 0,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 0,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 0.81
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_gestor_activity",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_gestor_income",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_gestor_milestones",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_gestor_payments",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_gestor_reminder_log",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_gestor_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_gestor_staff",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_gestor_tasks",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_gestor_team",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [],
+  "query_vars": [],
+  "php_surface": {
+    "files": 46,
+    "loc": 6890,
+    "classes": 24,
+    "functions": 2
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:49.727Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 212,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-gestor",
+    "main_file": "apollo-gestor.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Gestor",
+      "plugin_uri": "https://apollo.rio.br/plugins/apollo-gestor",
+      "description": "Gestor de Projetos — tarefas, time, financeiro, fornecedores, cronograma, kanban. Gestão de produção para a indústria cultural do Rio.",
+      "version": "1.0.1",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "Proprietary",
+      "text_domain": "apollo-gestor",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": "false"
+    },
+    "composer": {
+      "name": "apollo/gestor",
+      "namespaces": [
+        "Apollo\\Gestor"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 46,
+        ".css": 1,
+        ".js": 23,
+        ".json": 1
+      },
+      "by_top_directory": {
+        "(root)": 3,
+        "assets": 24,
+        "includes": 21,
+        "src": 12,
+        "templates": 11
+      },
+      "total_bytes": 513441
+    },
+    "php": {
+      "files": 46,
+      "loc": 6890,
+      "classes": 24,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 2
+    },
+    "architecture": {
+      "namespace": "Apollo\\Gestor",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Base_Module",
+          "fqcn": "Apollo\\Gestor\\Core\\Base_Module",
+          "extends": null,
+          "implements": [],
+          "modifiers": "abstract",
+          "file": "includes/core/Base_Module.php"
+        },
+        {
+          "kind": "class",
+          "name": "Module_Manager",
+          "fqcn": "Apollo\\Gestor\\Core\\Module_Manager",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "includes/core/Module_Manager.php"
+        },
+        {
+          "kind": "class",
+          "name": "Editor",
+          "fqcn": "Apollo\\Gestor\\Modules\\Editor",
+          "extends": "Base_Module",
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/modules/editor/backend/Editor.php"
+        },
+        {
+          "kind": "class",
+          "name": "Pdf",
+          "fqcn": "Apollo\\Gestor\\Modules\\Pdf",
+          "extends": "Base_Module",
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/modules/pdf/backend/Pdf.php"
+        },
+        {
+          "kind": "class",
+          "name": "Proj_Board",
+          "fqcn": "Apollo\\Gestor\\Modules\\Proj_Board",
+          "extends": "Base_Module",
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/modules/proj-board/backend/Proj_Board.php"
+        },
+        {
+          "kind": "class",
+          "name": "Proj_Equip",
+          "fqcn": "Apollo\\Gestor\\Modules\\Proj_Equip",
+          "extends": "Base_Module",
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/modules/proj-equip/backend/Proj_Equip.php"
+        },
+        {
+          "kind": "class",
+          "name": "Proj_Finance",
+          "fqcn": "Apollo\\Gestor\\Modules\\Proj_Finance",
+          "extends": "Base_Module",
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/modules/proj-finance/backend/Proj_Finance.php"
+        },
+        {
+          "kind": "class",
+          "name": "Proj_Gantt",
+          "fqcn": "Apollo\\Gestor\\Modules\\Proj_Gantt",
+          "extends": "Base_Module",
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/modules/proj-gantt/backend/Proj_Gantt.php"
+        },
+        {
+          "kind": "class",
+          "name": "Proj_Staff",
+          "fqcn": "Apollo\\Gestor\\Modules\\Proj_Staff",
+          "extends": "Base_Module",
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/modules/proj-staff/backend/Proj_Staff.php"
+        },
+        {
+          "kind": "class",
+          "name": "Proj_Team",
+          "fqcn": "Apollo\\Gestor\\Modules\\Proj_Team",
+          "extends": "Base_Module",
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/modules/proj-team/backend/Proj_Team.php"
+        },
+        {
+          "kind": "class",
+          "name": "Projetos",
+          "fqcn": "Apollo\\Gestor\\Modules\\Projetos",
+          "extends": "Base_Module",
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/modules/projetos/backend/Projetos.php"
+        },
+        {
+          "kind": "class",
+          "name": "Tarefas",
+          "fqcn": "Apollo\\Gestor\\Modules\\Tarefas",
+          "extends": "Base_Module",
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/modules/tarefas/backend/Tarefas.php"
+        },
+        {
+          "kind": "class",
+          "name": "Controller",
+          "fqcn": "Apollo\\Gestor\\Admin\\Controller",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Admin/Controller.php"
+        },
+        {
+          "kind": "class",
+          "name": "RoleAccess",
+          "fqcn": "Apollo\\Gestor\\Admin\\RoleAccess",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/RoleAccess.php"
+        },
+        {
+          "kind": "class",
+          "name": "TaskReminderCron",
+          "fqcn": "Apollo\\Gestor\\Cron\\TaskReminderCron",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Cron/TaskReminderCron.php"
+        },
+        {
+          "kind": "class",
+          "name": "Database",
+          "fqcn": "Apollo\\Gestor\\Database",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Database.php"
+        },
+        {
+          "kind": "class",
+          "name": "Activity",
+          "fqcn": "Apollo\\Gestor\\Model\\Activity",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Model/Activity.php"
+        },
+        {
+          "kind": "class",
+          "name": "Income",
+          "fqcn": "Apollo\\Gestor\\Model\\Income",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Model/Income.php"
+        },
+        {
+          "kind": "class",
+          "name": "Milestone",
+          "fqcn": "Apollo\\Gestor\\Model\\Milestone",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Model/Milestone.php"
+        },
+        {
+          "kind": "class",
+          "name": "Payment",
+          "fqcn": "Apollo\\Gestor\\Model\\Payment",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Model/Payment.php"
+        },
+        {
+          "kind": "class",
+          "name": "Staff",
+          "fqcn": "Apollo\\Gestor\\Model\\Staff",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Model/Staff.php"
+        },
+        {
+          "kind": "class",
+          "name": "Task",
+          "fqcn": "Apollo\\Gestor\\Model\\Task",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Model/Task.php"
+        },
+        {
+          "kind": "class",
+          "name": "Team",
+          "fqcn": "Apollo\\Gestor\\Model\\Team",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Model/Team.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Gestor\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_gestor_check_dependencies",
+          "file": "apollo-gestor.php"
+        },
+        {
+          "name": "apollo_gestor_init",
+          "file": "apollo-gestor.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 0,
+      "routes": [],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {},
+      "permission_body_resolved": 0,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [],
+      "admin_cap_routes": [],
+      "logged_in_routes": []
+    },
+    "database": {
+      "tables_owned_or_defined": [
+        "apollo_gestor_activity",
+        "apollo_gestor_income",
+        "apollo_gestor_milestones",
+        "apollo_gestor_payments",
+        "apollo_gestor_reminder_log",
+        "apollo_gestor_staff",
+        "apollo_gestor_tasks",
+        "apollo_gestor_team"
+      ],
+      "tables_referenced": [
+        "apollo_gestor_activity",
+        "apollo_gestor_income",
+        "apollo_gestor_milestones",
+        "apollo_gestor_payments",
+        "apollo_gestor_reminder_log",
+        "apollo_gestor_settings",
+        "apollo_gestor_staff",
+        "apollo_gestor_tasks",
+        "apollo_gestor_team"
+      ],
+      "tables_for_registry": [
+        "apollo_gestor_activity",
+        "apollo_gestor_income",
+        "apollo_gestor_milestones",
+        "apollo_gestor_payments",
+        "apollo_gestor_reminder_log",
+        "apollo_gestor_staff",
+        "apollo_gestor_tasks",
+        "apollo_gestor_team"
+      ],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_gestor_activity",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_gestor_income",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_gestor_milestones",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_gestor_payments",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_gestor_reminder_log",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_gestor_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_gestor_staff",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_gestor_tasks",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_gestor_team",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 10,
+      "user_count": 1,
+      "term_count": 0,
+      "post_keys": [
+        "_event_budget",
+        "_event_loc_id",
+        "_event_start_date",
+        "_event_status",
+        "_event_supplier_ids",
+        "_gestor_docs",
+        "_gestor_equipment",
+        "_supplier_category",
+        "_supplier_email",
+        "_supplier_phone"
+      ],
+      "user_keys": [
+        "_apollo_email_prefs"
+      ],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [],
+      "query_vars": [],
+      "pages_derived": []
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 18,
+      "listened_count": 9,
+      "apollo_fired": [
+        "apollo/gestor/event_status_changed",
+        "apollo/gestor/income_before_delete",
+        "apollo/gestor/income_created",
+        "apollo/gestor/initialized",
+        "apollo/gestor/milestone_before_delete",
+        "apollo/gestor/milestone_created",
+        "apollo/gestor/milestone_toggled",
+        "apollo/gestor/modules_loaded",
+        "apollo/gestor/payment_before_delete",
+        "apollo/gestor/payment_created",
+        "apollo/gestor/payment_updated",
+        "apollo/gestor/task_before_delete",
+        "apollo/gestor/task_created",
+        "apollo/gestor/task_reminder",
+        "apollo/gestor/task_updated",
+        "apollo/gestor/team_member_added",
+        "apollo/gestor/team_member_before_remove",
+        "apollo/gestor/team_member_updated"
+      ],
+      "apollo_listened": [
+        "apollo/core/initialized"
+      ],
+      "critical_wp_listened": [
+        "admin_init",
+        "admin_menu",
+        "plugins_loaded"
+      ]
+    },
+    "ajax": {
+      "priv": [
+        "apollo_gestor_save_permissions",
+        "apollo_gestor_{$action}"
+      ],
+      "nopriv": []
+    },
+    "cron": [
+      "apollo_five_minutes"
+    ],
+    "shortcodes": [],
+    "admin_menus": [
+      {
+        "page_title": "Gestor de Projetos",
+        "menu_title": "Gestor",
+        "capability": "read",
+        "menu_slug": "apollo-gestor"
+      }
+    ],
+    "assets": {
+      "scripts": [],
+      "styles": [
+        "apollo-gestor"
+      ]
+    },
+    "options": [
+      "apollo_gestor_db_version",
+      "apollo_gestor_settings"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_GESTOR_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_GESTOR_DB_VERSION",
+        "value": "4"
+      },
+      {
+        "name": "APOLLO_GESTOR_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_GESTOR_DIR",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_GESTOR_URL",
+        "value": "plugin_dir_url( __FILE__"
+      },
+      {
+        "name": "APOLLO_GESTOR_BASENAME",
+        "value": "plugin_basename( __FILE__"
+      }
+    ],
+    "security": {
+      "php_files": 46,
+      "abspath_guard_files": 45,
+      "abspath_coverage_pct": 98,
+      "wpdb_prepare_calls": 30,
+      "wpdb_query_calls": 37,
+      "prepare_to_query_ratio": 0.81,
+      "nonce_checks": 4,
+      "current_user_can_calls": 6,
+      "raw_superglobal": {
+        "get": 0,
+        "post": 15,
+        "request": 0
+      },
+      "permission_callback_return_true": 0,
+      "escape_helpers": 31,
+      "echo_statements": 20,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 0,
+      "risk_band": "LOW",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 0,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 0
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core",
+        "apollo-email"
+      ],
+      "signals": [
+        "apollo-core",
+        "apollo-email"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": "1.0.0",
+      "new_version": "1.0.1",
+      "version_changed": true,
+      "old_rest": 0,
+      "live_rest": 0,
+      "old_pages": 1,
+      "live_pages": 0,
+      "new_plugin": false
+    }
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 46,
+    "php_loc": 6844,
+    "rest_routes_found": 0,
+    "cpts_found": [],
+    "tables_found": [
+      "apollo_gestor_activity",
+      "apollo_gestor_income",
+      "apollo_gestor_milestones",
+      "apollo_gestor_payments",
+      "apollo_gestor_reminder_log",
+      "apollo_gestor_staff",
+      "apollo_gestor_tasks",
+      "apollo_gestor_team"
+    ],
+    "shortcodes_found": []
+  }
+}

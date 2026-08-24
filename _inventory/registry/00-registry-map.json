@@ -1,0 +1,340 @@
+{
+  "$schema": "https://apollo.rio/schemas/registry-map-v1.json",
+  "$version": "1.5.0",
+  "$generated": "2026-07-28",
+  "$description": "Apollo Ecosystem Modular Registry Map — breaks the monolith apollo-registry.json into a chaptered SSOT. Lossless: rebuilding every chapter in load_order reproduces the monolith exactly.",
+  "$canonical_monolith": "plugins/_inventory/apollo-registry.json",
+  "$chapters_dir": "plugins/_inventory/registry/",
+  "$runtime_path": "wp-content/apollo-registry.json",
+  "$build_command": "wp apollo registry build",
+  "$build_script": "plugins/_inventory/registry/build.js",
+  "$philosophy_ref": "01-philosophy.json",
+  "$adjustments_from_base_v1": {
+    "plugin_count": "Base listed 42 plugin files; the monolith holds 45. Added apollo-calendar, apollo-classifieds, apollo-shortcodes.",
+    "nested_vs_top_level": "Base named FORBIDDEN_CONCEPTS, skeleton_structure_file, routes_registry_file, integration_map_file, data_flow, audit_verificator, development_guidelines, security_audit, remediations, last_full_technical_audit, ecosystem_hook_spine, nav_header_v6, layers, total_plugins as top-level keys. They are all NESTED inside their parents ($philosophy, $header, $apollo_rule, $audit, $GLOBAL_ARCHITECTURE, cdn, architecture) and are owned via the parent.",
+    "keys_not_present": "MASTER_REGISTRY (exists as architecture.master_registry), js_data_contract, js_modules_map, PluginInventorySync — not present in the monolith; dropped rather than invented.",
+    "deep_audit_split": "coupling_edges/high_risk_plugins (10) and open_rest_total/remediations_applied (11) live inside $deep_audit, not at top level. $deep_audit is split four ways across 04-audit, 04-audit-reports, 10-coupling, 11-security and deep-merged back on build.",
+    "orphan_chapters_added": "Base covered no chapter for roles, timeDisplay, namingRules, constants, summary, quick_lookup, divergences, $routing_canonical, $mu_plugins, $third_party_plugins, $to_be_done. Chapters 14-17 were added so the split is lossless.",
+    "chapter_added_18": "18-canvas-shell records the Blank Canvas Apollo / Apollo+ migration completed 2026-07-28."
+  },
+  "chapters": {
+    "01-philosophy": {
+      "file": "01-philosophy.json",
+      "keys": [
+        "$philosophy"
+      ],
+      "owner": "apollo-core",
+      "bytes": 1139,
+      "priority": 0
+    },
+    "02-header": {
+      "file": "02-header.json",
+      "keys": [
+        "$schema",
+        "$version",
+        "$generated",
+        "$description",
+        "$header"
+      ],
+      "owner": "apollo-core",
+      "bytes": 2570,
+      "note": "Also carries the four root scalars ($schema/$version/$generated/$description)."
+    },
+    "03-apollo-rule": {
+      "file": "03-apollo-rule.json",
+      "keys": [
+        "$apollo_rule"
+      ],
+      "owner": "apollo-core",
+      "bytes": 4498,
+      "critical": true
+    },
+    "04-audit": {
+      "file": "04-audit.json",
+      "keys": [
+        "$audit",
+        "$deep_audit.generated",
+        "$deep_audit.duration_ms",
+        "$deep_audit.targets"
+      ],
+      "owner": "apollo-core",
+      "bytes": 13212
+    },
+    "04-audit-reports": {
+      "file": "04-audit-reports.json",
+      "keys": [
+        "$deep_audit.reports"
+      ],
+      "owner": "apollo-core",
+      "bytes": 42258,
+      "note": "Carved out of 04-audit: 39 per-plugin deep-audit reports."
+    },
+    "05-global-architecture": {
+      "file": "05-global-architecture.json",
+      "keys": [
+        "$GLOBAL_ARCHITECTURE"
+      ],
+      "owner": "apollo-core",
+      "bytes": 1290
+    },
+    "06-cdn": {
+      "file": "06-cdn.json",
+      "keys": [
+        "cdn"
+      ],
+      "owner": "apollo-templates",
+      "bytes": 12336
+    },
+    "07-icons": {
+      "file": "07-icons.json",
+      "keys": [
+        "icons"
+      ],
+      "owner": "apollo-core",
+      "bytes": 4945
+    },
+    "08-architecture-layers": {
+      "file": "08-architecture-layers.json",
+      "keys": [
+        "architecture"
+      ],
+      "owner": "apollo-core",
+      "bytes": 1879
+    },
+    "09-plugins": {
+      "dir": "09-plugins/",
+      "pattern": "{slug}.json",
+      "wrap": "plugins.{slug}",
+      "owner": "each-plugin",
+      "count": 47,
+      "files": [
+        "apollo-admin",
+        "apollo-adverts",
+        "apollo-calendar",
+        "apollo-cena",
+        "apollo-chat",
+        "apollo-classifieds",
+        "apollo-coauthor",
+        "apollo-comment",
+        "apollo-core",
+        "apollo-dashboard",
+        "apollo-dj-sync",
+        "apollo-djs",
+        "apollo-docs",
+        "apollo-elementor",
+        "apollo-elementor-pro",
+        "apollo-email",
+        "apollo-events",
+        "apollo-fav",
+        "apollo-gestor",
+        "apollo-groups",
+        "apollo-hub",
+        "apollo-journal",
+        "apollo-loc",
+        "apollo-login",
+        "apollo-lux-panels",
+        "apollo-maps",
+        "apollo-membership",
+        "apollo-mod",
+        "apollo-notif",
+        "apollo-pane-engine",
+        "apollo-pwa",
+        "apollo-radio",
+        "apollo-remind",
+        "apollo-runtime",
+        "apollo-scheduler",
+        "apollo-seo",
+        "apollo-sheets",
+        "apollo-shortcodes",
+        "apollo-sign",
+        "apollo-social",
+        "apollo-soundcloud",
+        "apollo-statistics",
+        "apollo-suppliers",
+        "apollo-telegram",
+        "apollo-templates",
+        "apollo-users",
+        "apollo-wow"
+      ],
+      "on_disk": 41,
+      "absent_from_disk": [
+        "apollo-cena",
+        "apollo-classifieds",
+        "apollo-pwa",
+        "apollo-runtime",
+        "apollo-shortcodes",
+        "apollo-suppliers"
+      ]
+    },
+    "10-coupling": {
+      "file": "10-coupling.json",
+      "keys": [
+        "$deep_audit.coupling_edges",
+        "$deep_audit.high_risk_plugins"
+      ],
+      "owner": "apollo-core",
+      "bytes": 23412
+    },
+    "11-security": {
+      "file": "11-security.json",
+      "keys": [
+        "$deep_audit.open_rest_total",
+        "$deep_audit.remediations_applied"
+      ],
+      "owner": "apollo-login",
+      "bytes": 392
+    },
+    "12-data-sync": {
+      "file": "12-data-sync.json",
+      "keys": [
+        "$data_registry_sync"
+      ],
+      "owner": "apollo-core",
+      "bytes": 1376
+    },
+    "13-runtime": {
+      "file": "13-runtime.json",
+      "keys": [
+        "runtime_wordpress_packages"
+      ],
+      "owner": "apollo-runtime",
+      "bytes": 903
+    },
+    "14-routing": {
+      "file": "14-routing.json",
+      "keys": [
+        "$routing_canonical",
+        "$mu_plugins",
+        "$third_party_plugins"
+      ],
+      "owner": "apollo-core",
+      "bytes": 5321
+    },
+    "15-conventions": {
+      "file": "15-conventions.json",
+      "keys": [
+        "roles",
+        "timeDisplay",
+        "namingRules",
+        "constants"
+      ],
+      "owner": "apollo-core",
+      "bytes": 3713
+    },
+    "16-summary": {
+      "file": "16-summary.json",
+      "keys": [
+        "summary",
+        "quick_lookup",
+        "divergences"
+      ],
+      "owner": "apollo-core",
+      "bytes": 9046
+    },
+    "17-backlog": {
+      "file": "17-backlog.json",
+      "keys": [
+        "$to_be_done"
+      ],
+      "owner": "apollo-core",
+      "bytes": 11943
+    },
+    "18-canvas-shell": {
+      "file": "18-canvas-shell.json",
+      "keys": [
+        "$canvas_shell"
+      ],
+      "owner": "apollo-templates",
+      "bytes": 6786,
+      "critical": true
+    },
+    "19-ssot-audit": {
+      "file": "19-ssot-audit.json",
+      "keys": [
+        "$ssot_audit"
+      ],
+      "owner": "apollo-core",
+      "bytes": 5459,
+      "critical": true
+    },
+    "20-meta-schemas": {
+      "file": "20-meta-schemas.json",
+      "keys": [
+        "$meta_schemas"
+      ],
+      "owner": "apollo-core",
+      "bytes": 6335,
+      "critical": true
+    },
+    "21-mockup-field-contract": {
+      "file": "21-mockup-field-contract.json",
+      "keys": [
+        "$mockup_field_contract"
+      ],
+      "owner": "apollo-core",
+      "bytes": 20264,
+      "critical": true,
+      "note": "Register-before-build queue: every node the dj/local single-page mockups print that no registered key can supply, plus four 01-philosophy violations that must NOT be given storage."
+    }
+  },
+  "load_order": [
+    "01-philosophy",
+    "02-header",
+    "03-apollo-rule",
+    "05-global-architecture",
+    "08-architecture-layers",
+    "09-plugins",
+    "06-cdn",
+    "07-icons",
+    "04-audit",
+    "04-audit-reports",
+    "10-coupling",
+    "11-security",
+    "12-data-sync",
+    "13-runtime",
+    "14-routing",
+    "15-conventions",
+    "16-summary",
+    "17-backlog",
+    "18-canvas-shell",
+    "19-ssot-audit",
+    "20-meta-schemas",
+    "21-mockup-field-contract"
+  ],
+  "build_rules": {
+    "merge_strategy": "deep_merge_last_wins",
+    "array_strategy": "replace",
+    "strip_key": "$chapter",
+    "validate_on_build": true,
+    "forbid_direct_meta_cpt": true,
+    "require_apollo_core_master": true,
+    "validations": [
+      "every chapter file in load_order exists and parses",
+      "no two chapters own the same top-level key (except the declared $deep_audit split)",
+      "plugin file count == chapters['09-plugins'].count",
+      "rebuilt monolith deep-equals plugins/_inventory/apollo-registry.json"
+    ],
+    "output": {
+      "monolith": "plugins/_inventory/apollo-registry.json",
+      "runtime": "wp-content/apollo-registry.json",
+      "mirror": "plugins/_inventory/apollo-registry-2.json"
+    }
+  },
+  "$known_divergences": [
+    "6 registry entries have no plugin folder on disk (flagged $disk_status=ABSENT, preserved not deleted): apollo-cena, apollo-classifieds, apollo-pwa, apollo-runtime, apollo-shortcodes, apollo-suppliers.",
+    "Chapter 13-runtime names apollo-runtime as owner; that plugin does not exist yet — ownership is nominal.",
+    "Layers L8_industry, L9_pwa and L12_runtime contain only absent plugins and are effectively empty.",
+    "apollo-registry-2.json is a STALE mirror: identical except plugins.{events,djs,loc}.meta and it lacks $data_registry_sync. apollo-registry.json is canonical.",
+    "apollo-core source was edited for the canvas contract but its version stayed 6.2.3.",
+    "_dj_tracks v2: both write paths (REST + admin metabox) are now consistent (apollo-core 6.2.4, apollo-djs 1.0.3, apollo-lux-panels 1.0.1). Front-end read path (apollo_dj_get_tracks() + out-now templates) still on v1 — see 20-meta-schemas.json known_gap.",
+    "Found + fixed: apollo-djs' plain Admin\\Metabox duplicated apollo-lux-panels' DjPanel field-for-field (two competing _dj_tracks editors on one screen). Guarded behind class_exists() rather than deleted.",
+    "apollo-templates: docblock/constant version split found and fixed (1.3.2 vs 1.3.5, both now 1.3.6) while closing /casa to-dos 002/003/004."
+  ],
+  "$last_ssot_audit": {
+    "date": "2026-07-28",
+    "chapter": "19-ssot-audit",
+    "ground_truth": "audit/ground-truth.json",
+    "findings": "audit/registry-ssot-audit.json",
+    "scope": "40 plugin folders, 1327 PHP files, ~259k LOC"
+  }
+}

@@ -1,0 +1,212 @@
+{
+  "$schema": "https://apollo.rio/schemas/pane-engine-v1.json",
+  "$version": "1.0.0",
+  "$description": "Pane Engine manifest — maps all 52 Apollo registry page slugs to REST endpoint groups and route modules for the /casa aquarium bubble.",
+
+  "panes": {
+    "casa": {
+      "position": "center",
+      "static": true,
+      "title": "Casa",
+      "icon": "ri-home-smile-2-line",
+      "module": "casa.module.js",
+      "description": "Central dashboard — health, overview, sounds, search"
+    },
+    "left": {
+      "position": "left",
+      "transform": "translateX(-100%)",
+      "title": "Navegação",
+      "description": "Slide-in navigation panel"
+    },
+    "up": {
+      "position": "up",
+      "transform": "translateY(-100%)",
+      "title": "Overlay",
+      "description": "Slide-up overlay/modal"
+    },
+    "down": {
+      "position": "down",
+      "transform": "translateY(100%)",
+      "title": "Drawer",
+      "description": "Slide-down drawer for details"
+    }
+  },
+
+  "routes": {
+    "casa": {
+      "slug": "/casa",
+      "module": "casa.module.js",
+      "pane": "center",
+      "auth": true,
+      "title": "Casa",
+      "icon": "ri-home-smile-2-line",
+      "rest": [
+        { "key": "health", "path": "/health", "method": "GET", "auth": false },
+        { "key": "pane_plugins", "path": "/pane/plugins", "method": "GET", "auth": false },
+        { "key": "sounds", "path": "/sounds", "method": "GET", "auth": false },
+        { "key": "sounds_popular", "path": "/sounds/popular", "method": "GET", "auth": false },
+        { "key": "search", "path": "/search", "method": "GET", "auth": false },
+        { "key": "registry_status", "path": "/registry/status", "method": "GET", "auth": "admin" },
+        { "key": "radio_status", "path": "/radio/status", "method": "GET", "auth": false },
+        { "key": "radio_now", "path": "/radio/now", "method": "GET", "auth": false }
+      ]
+    },
+
+    "gigs": {
+      "slug": "/casa/gigs",
+      "module": "gigs.module.js",
+      "pane": "center",
+      "auth": true,
+      "title": "Gigs",
+      "icon": "ri-calendar-line",
+      "rest": [
+        { "key": "events", "path": "/events", "method": "GET", "auth": false },
+        { "key": "events_upcoming", "path": "/events/upcoming", "method": "GET", "auth": false },
+        { "key": "events_today", "path": "/events/today", "method": "GET", "auth": false },
+        { "key": "events_past", "path": "/events/past", "method": "GET", "auth": false },
+        { "key": "events_search", "path": "/events/search", "method": "GET", "auth": false },
+        { "key": "cena_rio", "path": "/cena-rio", "method": "GET", "auth": false },
+        { "key": "cena_rio_destaques", "path": "/cena-rio/destaques", "method": "GET", "auth": false },
+        { "key": "classifieds", "path": "/classifieds", "method": "GET", "auth": false },
+        { "key": "classifieds_search", "path": "/classifieds/search", "method": "GET", "auth": false }
+      ]
+    },
+
+    "sounds": {
+      "slug": "/casa/sounds",
+      "module": "sounds.module.js",
+      "pane": "center",
+      "auth": true,
+      "title": "Sounds",
+      "icon": "ri-sound-module-line",
+      "rest": [
+        { "key": "djs", "path": "/djs", "method": "GET", "auth": false },
+        { "key": "djs_search", "path": "/djs/search", "method": "GET", "auth": false },
+        { "key": "sounds_all", "path": "/sounds", "method": "GET", "auth": false },
+        { "key": "sounds_popular", "path": "/sounds/popular", "method": "GET", "auth": false },
+        { "key": "sounds_user", "path": "/sounds/user", "method": "GET", "auth": true },
+        { "key": "radio_status", "path": "/radio/status", "method": "GET", "auth": false },
+        { "key": "radio_now", "path": "/radio/now", "method": "GET", "auth": false },
+        { "key": "radio_playlist", "path": "/radio/playlist", "method": "GET", "auth": false }
+      ]
+    },
+
+    "spots": {
+      "slug": "/casa/spots",
+      "module": "spots.module.js",
+      "pane": "center",
+      "auth": true,
+      "title": "Spots",
+      "icon": "ri-map-pin-line",
+      "rest": [
+        { "key": "local", "path": "/local", "method": "GET", "auth": false },
+        { "key": "local_nearby", "path": "/local/nearby", "method": "GET", "auth": false },
+        { "key": "map_explorer", "path": "/map/explorer", "method": "GET", "auth": false },
+        { "key": "events", "path": "/events", "method": "GET", "auth": false }
+      ]
+    },
+
+    "social": {
+      "slug": "/casa/social",
+      "module": "social.module.js",
+      "pane": "center",
+      "auth": true,
+      "title": "Social",
+      "icon": "ri-global-line",
+      "rest": [
+        { "key": "feed", "path": "/feed", "method": "GET", "auth": true },
+        { "key": "members", "path": "/members", "method": "GET", "auth": false },
+        { "key": "members_suggestions", "path": "/members/suggestions", "method": "GET", "auth": true },
+        { "key": "groups", "path": "/groups", "method": "GET", "auth": false },
+        { "key": "groups_nucleos", "path": "/groups/nucleos", "method": "GET", "auth": false },
+        { "key": "groups_comunas", "path": "/groups/comunas", "method": "GET", "auth": false },
+        { "key": "notifications", "path": "/notifications", "method": "GET", "auth": true },
+        { "key": "notifications_unread", "path": "/notifications/unread-count", "method": "GET", "auth": true },
+        { "key": "chat_threads", "path": "/chat/threads", "method": "GET", "auth": true },
+        { "key": "chat_unread", "path": "/chat/unread", "method": "GET", "auth": true },
+        { "key": "favs", "path": "/favs", "method": "GET", "auth": true },
+        { "key": "blocks", "path": "/blocks", "method": "GET", "auth": true }
+      ]
+    },
+
+    "tools": {
+      "slug": "/casa/tools",
+      "module": "tools.module.js",
+      "pane": "center",
+      "auth": true,
+      "title": "Tools",
+      "icon": "ri-tools-line",
+      "rest": [
+        { "key": "dashboard", "path": "/dashboard", "method": "GET", "auth": true },
+        { "key": "dashboard_widgets", "path": "/dashboard/widgets", "method": "GET", "auth": false },
+        { "key": "users_me", "path": "/users/me", "method": "GET", "auth": true },
+        { "key": "membership_summary", "path": "/membership/user-summary", "method": "GET", "auth": true },
+        { "key": "membership_leaderboard", "path": "/membership/leaderboard", "method": "GET", "auth": false },
+        { "key": "achievements", "path": "/membership/achievements", "method": "GET", "auth": false },
+        { "key": "points", "path": "/membership/points", "method": "GET", "auth": true },
+        { "key": "stats_overview", "path": "/stats/overview", "method": "GET", "auth": "admin" },
+        { "key": "stats_health", "path": "/stats/health", "method": "GET", "auth": "admin" },
+        { "key": "templates", "path": "/templates", "method": "GET", "auth": false },
+        { "key": "hubs", "path": "/hubs", "method": "GET", "auth": false },
+        { "key": "seo_home", "path": "/seo/home", "method": "GET", "auth": false }
+      ]
+    }
+  },
+
+  "navigation": [
+    { "key": "casa",   "icon": "ri-home-smile-2-line",  "label": "Casa",   "route": "casa" },
+    { "key": "gigs",   "icon": "ri-calendar-line",      "label": "Gigs",   "route": "gigs" },
+    { "key": "sounds", "icon": "ri-sound-module-line",   "label": "Sounds", "route": "sounds" },
+    { "key": "spots",  "icon": "ri-map-pin-line",        "label": "Spots",  "route": "spots" },
+    { "key": "social", "icon": "ri-global-line",          "label": "Social", "route": "social" },
+    { "key": "tools",  "icon": "ri-tools-line",           "label": "Tools",  "route": "tools" }
+  ],
+
+  "rest_prefix_map": {
+    "/pane/*":            "apollo-pane-engine",
+    "/health":            "apollo-core",
+    "/registry/*":        "apollo-core",
+    "/sounds/*":          "apollo-core",
+    "/search/*":          "apollo-core",
+    "/auth/*":            "apollo-login",
+    "/users/*":           "apollo-users",
+    "/membership/*":      "apollo-membership",
+    "/events/*":          "apollo-events",
+    "/cena-rio/*":        "apollo-events",
+    "/djs/*":             "apollo-djs",
+    "/local/*":           "apollo-loc",
+    "/map/*":             "apollo-maps",
+    "/classifieds/*":     "apollo-adverts",
+    "/suppliers/*":       "apollo-suppliers",
+    "/feed/*":            "apollo-social",
+    "/activity/*":        "apollo-social",
+    "/followers/*":       "apollo-social",
+    "/following/*":       "apollo-social",
+    "/members/*":         "apollo-social",
+    "/blocks":            "apollo-social",
+    "/block/*":           "apollo-social",
+    "/groups/*":          "apollo-groups",
+    "/favs/*":            "apollo-fav",
+    "/wows/*":            "apollo-wow",
+    "/depoimentos/*":     "apollo-comment",
+    "/notifications/*":   "apollo-notif",
+    "/email/*":           "apollo-email",
+    "/chat/*":            "apollo-chat",
+    "/docs/*":            "apollo-docs",
+    "/signatures/*":      "apollo-sign",
+    "/templates/*":       "apollo-templates",
+    "/dashboard/*":       "apollo-dashboard",
+    "/hubs/*":            "apollo-hub",
+    "/stats/*":           "apollo-statistics",
+    "/track/*":           "apollo-statistics",
+    "/cena/*":            "apollo-cena",
+    "/sheets/*":          "apollo-sheets",
+    "/radio/*":           "apollo-radio",
+    "/journal/*":         "apollo-journal",
+    "/pwa/*":             "apollo-pwa",
+    "/seo/*":             "apollo-seo",
+    "/mod/*":             "apollo-mod",
+    "/settings/*":        "apollo-admin",
+    "/coauthors/*":       "apollo-coauthor"
+  }
+}

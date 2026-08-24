@@ -1,0 +1,196 @@
+/*
+   ═══════════════════════════════════════════════════════════════════════════
+   APOLLO::RIO · ADMIN + MODERATION · admin.css  (PAGE EXTRAS ONLY)
+   ───────────────────────────────────────────────────────────────────────────
+   Tokens + shell + component classes come from core.js (uni.theme.v2.1.css).
+   This file NEVER redeclares :root and adds NO external borders / drop shadows —
+   depth is the inset hairline only, exactly like the design system.
+   Everything here is scoped to the admin dashboard's own structures.
+   ═══════════════════════════════════════════════════════════════════════════
+*/
+
+/* ── View routing ─────────────────────────────────────────────────────────── */
+.admin-view { display: none; }
+.admin-view.is-active { display: block; animation: admFade .45s var(--ease, cubic-bezier(.16,1,.3,1)); }
+.is-hidden { display: none !important; }
+@keyframes admFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+/* ── Section head (title + role context + actions) ────────────────────────── */
+.adm-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 22px; flex-wrap: wrap; }
+.adm-head .adm-head-x { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.adm-eyebrow { font-family: var(--ff-mono); font-size: var(--fs-caption); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; display: block; }
+
+/* ── Role switch (topbar) — demonstrates admin ⇄ mod gating live ──────────── */
+.role-switch { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border-radius: var(--r-pill); background: var(--surface); box-shadow: inset 0 1px 0 0 rgba(var(--rgb-theme),.2), inset 0 0 0 1px rgba(var(--rgb-theme),.075); border: 1px solid rgba(var(--rgb-diff),.04); }
+.role-switch button { corner-shape: round; height: 30px; padding: 0 13px; border-radius: var(--r-pill); font-family: var(--ff-main); font-size: var(--fs-caption); font-weight: 650; color: var(--muted); background: transparent; cursor: pointer; transition: color .3s var(--ease), background .3s var(--ease); }
+.role-switch button.is-on { color: var(--txt-heading); background: var(--card); box-shadow: inset 0 1px 0 0 rgba(var(--rgb-theme),.2), inset 0 0 0 1px rgba(var(--rgb-theme),.075); }
+.role-switch button i { margin-right: 5px; }
+
+/* ── Stat grid ────────────────────────────────────────────────────────────── */
+.adm-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3); }
+@media (min-width: 720px)  { .adm-stat-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1100px) { .adm-stat-grid { grid-template-columns: repeat(3, 1fr); } }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MOD CARDS — the ONLY surface tint in the whole (white) dashboard.
+   Everything a moderator sees carries .mod-card → var(--surface) background.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.mod-card { background: var(--surface) !important; }
+
+/* ── Generic admin card head ─────────────────────────────────────────────── */
+.adm-card-hd { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.adm-card-hd h4 { font-size: var(--fs-h5); color: var(--txt-heading); font-weight: 700; letter-spacing: -.01em; }
+.adm-card-hd .cnt-pill { font-family: var(--ff-mono); font-size: var(--fs-caption); color: var(--muted); background: var(--white-3); padding: 2px 9px; border-radius: var(--r-pill); }
+
+/* ── Row list (members / queue / audit) ──────────────────────────────────── */
+.adm-row { display: flex; align-items: center; gap: 14px; padding: 13px 4px; border-bottom: 1px solid var(--white-3); }
+.adm-row:last-child { border-bottom: 0; }
+.adm-row .av { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: var(--surface); box-shadow: var(--img-border); }
+.adm-row .adm-row-main { flex: 1; min-width: 0; }
+.adm-row .adm-row-name { font-size: var(--fs-body-sm); font-weight: 650; color: var(--txt-heading); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.adm-row .adm-row-sub { font-family: var(--ff-mono); font-size: var(--fs-caption); color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.adm-row .adm-row-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+/* status / severity dots + chips */
+.dot { width: 8px; height: 8px; border-radius: 50%; corner-shape: round; display: inline-block; flex-shrink: 0; }
+.dot.high   { background: var(--alert-red); }
+.dot.medium { background: var(--alert-warning); }
+.dot.low    { background: var(--muted); }
+.chip { font-family: var(--ff-mono); font-size: var(--fs-caption); letter-spacing: .04em; padding: 3px 9px; border-radius: var(--r-pill); background: var(--white-3); color: var(--txt-color); text-transform: uppercase; white-space: nowrap; }
+.chip.ok   { color: var(--alert-success); background: color-mix(in srgb, var(--alert-success) 12%, transparent); }
+.chip.warn { color: var(--alert-warning); background: color-mix(in srgb, var(--alert-warning) 14%, transparent); }
+.chip.bad  { color: var(--alert-red);     background: color-mix(in srgb, var(--alert-red) 12%, transparent); }
+
+/* ── Membership tiers (grant grid) ───────────────────────────────────────── */
+.mg-grid { display: grid; grid-template-columns: 1fr; gap: var(--s-3); }
+@media (min-width: 720px) { .mg-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1100px) { .mg-grid { grid-template-columns: repeat(3, 1fr); } }
+.mg-tier { padding: 18px; border-radius: var(--r); position: relative; box-shadow: inset 0 1px 0 0 rgba(var(--rgb-theme),.2), inset 0 0 0 1px rgba(var(--rgb-theme),.075); border: 1px solid rgba(var(--rgb-diff),.04); }
+.mg-tier.is-locked { opacity: .5; }
+.mg-tier-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.mg-swatch { width: 34px; height: 34px; border-radius: 10px; corner-shape: squircle; display: grid; place-items: center; color: #fff; font-size: 17px; }
+.mg-tier-name { font-size: var(--fs-h6); font-weight: 750; color: var(--txt-heading); }
+.mg-tier-price { font-family: var(--ff-mono); font-size: var(--fs-caption); color: var(--muted); }
+.mg-perks { margin: 12px 0 16px; display: grid; gap: 6px; }
+.mg-perks li { display: flex; align-items: center; gap: 8px; font-size: var(--fs-body-sm); color: var(--txt-color); }
+.mg-perks li i { color: var(--muted); font-size: 14px; }
+.mg-lock-note { font-family: var(--ff-mono); font-size: var(--fs-caption); color: var(--muted); display: flex; align-items: center; gap: 6px; }
+
+/* member picker inside grant flow */
+.mg-picker { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.mg-picker .apollo-input, .mg-picker .apollo-select { flex: 1; min-width: 160px; }
+
+/* ── Permission matrix (Funções — admin only) ────────────────────────────── */
+.perm-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 13px 2px; border-bottom: 1px solid var(--white-3); }
+.perm-row:last-child { border-bottom: 0; }
+.perm-row .perm-label { display: flex; align-items: center; gap: 10px; font-size: var(--fs-body-sm); color: var(--txt-heading); }
+.perm-row .perm-label .mg-swatch { width: 26px; height: 26px; font-size: 13px; border-radius: 8px; }
+.perm-hint { font-size: var(--fs-caption); color: var(--muted); margin-top: 2px; }
+
+/* ── Audit / timeline ─────────────────────────────────────────────────────── */
+.audit-row { display: grid; grid-template-columns: 58px 1fr auto; gap: 12px; align-items: center; padding: 11px 2px; border-bottom: 1px solid var(--white-3); }
+.audit-row:last-child { border-bottom: 0; }
+.audit-row .audit-t { font-family: var(--ff-mono); font-size: var(--fs-caption); color: var(--muted); }
+.audit-row .audit-act { font-size: var(--fs-body-sm); color: var(--txt-heading); }
+.audit-row .audit-act b { color: var(--txt-heading); }
+.audit-row .audit-tgt { font-family: var(--ff-mono); font-size: var(--fs-caption); color: var(--muted); }
+
+/* ── Empty state ──────────────────────────────────────────────────────────── */
+.adm-empty { text-align: center; padding: 40px 20px; color: var(--muted); }
+.adm-empty i { font-size: 30px; opacity: .5; display: block; margin-bottom: 10px; }
+
+/* content column */
+.ax-main.adm-main { padding-top: 5px !important;  }
+.adm-content { max-width: 920px; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MULTI-LEVEL SLIDING BURGER DRAWER — L1 plugins ⇄ L2 sub-links
+   ═══════════════════════════════════════════════════════════════════════════ */
+.s { display: flex; flex-direction: column; }
+.nav-stack { display: flex; width: 200%; flex: 1 1 auto; min-height: 0; transition: transform .42s var(--ease, cubic-bezier(.16,1,.3,1)); }
+.nav-stack.is-l2 { transform: translateX(-50%); }
+.nav-pane { width: 50%; display: flex; flex-direction: column; min-height: 0; }
+.nav-pane .ax-aside-scroll { flex: 1 1 auto; min-height: 0; }
+
+/* L1 father item chevron + admin lock */
+.ni-chev { margin-left: auto; opacity: .35; font-size: 18px; transition: all .65s ease !important; }
+.ni:hover .ni-chev { opacity: .88; transform: translateX(13px);  font-weight: 100 !important; stroke-width: 0.1px !important; }
+.ni-lock { color: var(--accent); font-size: 10px; margin-left: 0px; display: inline-flex; }
+.ni .cnt + .ni-chev { margin-left: 0px; }
+.ri-arrow-right-s-line { font-size: 10px !important; opacity:.28 ; font-weight: 100 !important; stroke-width: 0.1px !important; }
+
+/* L2 header (back + plugin name) */
+.nav-l2-hd { display: flex; align-items: center; gap: 9px; padding: 18px 12px 10px; flex-wrap: wrap; }
+.nav-back { corner-shape: round; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--white-3); color: var(--txt-heading); cursor: pointer; flex-shrink: 0; font-size: 20px; }
+.nav-back:hover { background: var(--white-5); }
+.nav-l2-title { font-size: var(--fs-h6); font-weight: 800; color: var(--txt-heading); letter-spacing: -.02em; }
+.nav-l2-eyebrow { order: 3; width: 100%; padding-left: 44px; margin-top: -6px; font-family: var(--ff-mono); font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+
+/* sub-link (shared by drawer L2 and the horizontal subtab strip) */
+.adm-sub { corner-shape: squircle; display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 12px; margin: 0 6px; border-radius: var(--r-sm); background: transparent; color: var(--txt-color); font-family: var(--ff-main); font-size: var(--fs-body-sm); text-align: left; cursor: pointer; position: relative; transition: background .3s var(--ease), color .3s var(--ease); }
+.adm-sub i { font-size: 16px; opacity: .5; flex-shrink: 0; }
+.adm-sub:hover { background: rgba(var(--rgb-diff), .03); color: var(--txt-heading); }
+.adm-sub:hover i { opacity: .9; }
+.adm-sub.on { background: rgba(var(--rgb-diff), .05); color: var(--txt-heading); box-shadow: inset 0 1px 0 0 rgba(var(--rgb-theme),.2), inset 0 0 0 1px rgba(var(--rgb-theme),.075); }
+.adm-sub.on i { opacity: 1; }
+.adm-sub.on::before { content: ''; position: absolute; left: -6px; top: 50%; transform: translateY(-50%); width: 3px; height: 16px; background: var(--accent); border-radius: 0 4px 4px 0; }
+.adm-sub-lock { margin-left: auto; color: var(--accent); font-size: 12px; opacity: .9; }
+
+/* horizontal subtab strip in the content header */
+.adm-subtabs { display: flex; gap: 6px; overflow-x: auto; padding: 0 0 25px !important; scrollbar-width: none; }
+.adm-subtabs::-webkit-scrollbar { display: none; }
+.adm-subtabs .adm-sub { width: auto; margin: 0; white-space: nowrap; border-radius: var(--r-pill); padding: 8px 15px; flex: 0 0 auto; box-shadow: none; background: var(--white-2); }
+.adm-subtabs .adm-sub.on { background: var(--black-1); color: var(--bg); }
+.adm-subtabs .adm-sub.on i, .adm-subtabs .adm-sub.on .adm-sub-lock { opacity: 1; color: currentColor; }
+.adm-subtabs .adm-sub.on::before { display: none; }
+
+/* ── scope chip (WHERE IS ADMIN / WHERE IS MOD) ── */
+.adm-scope { margin-top: 9px; }
+.scope-chip { display: inline-flex; align-items: center; gap: 6px; font-family: var(--ff-mono); font-size: var(--fs-caption); letter-spacing: .04em; padding: 4px 11px; border-radius: var(--r-pill); }
+.scope-admin { color: var(--accent); background: color-mix(in srgb, var(--accent) 13%, transparent); }
+.scope-both { color: var(--txt-color); background: var(--white-3); }
+
+/* mod perspective: subtle tint on the whole content column too */
+body.is-mod .adm-content { --_mod: 1; }
+
+/* group type chips */
+.chip.nucleo { color: #fff; background: #0f0f11; display: inline-flex; align-items: center; gap: 5px; }
+.chip.comuna { color: var(--accent); background: color-mix(in srgb, var(--accent) 13%, transparent); display: inline-flex; align-items: center; gap: 5px; }
+
+/* ── small swatches / icons used in rows ── */
+.mini-swatch { display: inline-block; width: 12px; height: 12px; border-radius: 4px; corner-shape: squircle; vertical-align: -1px; }
+.mini-swatch.lg { width: 26px; height: 26px; border-radius: 8px; }
+.mg-swatch.sm { width: 26px; height: 26px; font-size: 13px; border-radius: 8px; }
+.adm-ico { width: 34px; height: 34px; border-radius: 10px; corner-shape: squircle; display: grid; place-items: center; flex-shrink: 0; background: var(--white-3); color: var(--muted); font-size: 16px; }
+.adm-ord { font-family: var(--ff-mono); font-size: var(--fs-caption); font-weight: 700; color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); border-radius: var(--r-pill); min-width: 26px; height: 22px; display: inline-grid; place-items: center; flex-shrink: 0; }
+.mg-tier.is-feat { box-shadow: inset 0 1px 0 0 rgba(var(--rgb-theme),.2), inset 0 0 0 1px rgba(var(--rgb-accent),.4); }
+
+/* ── ApolloDJ membership list ── */
+.dj-mem-list { display: grid; gap: 8px; }
+.dj-mem { padding: 13px 15px; border-radius: var(--r-sm); cursor: pointer; box-shadow: inset 0 1px 0 0 rgba(var(--rgb-theme),.2), inset 0 0 0 1px rgba(var(--rgb-theme),.075); border: 1px solid rgba(var(--rgb-diff),.04); transition: background .3s var(--ease); }
+.dj-mem:hover { background: var(--white-3); }
+.dj-mem.active { background: var(--white-4); box-shadow: inset 0 1px 0 0 rgba(var(--rgb-theme),.2), inset 0 0 0 1px rgba(var(--rgb-accent),.35); }
+.dj-mem-name { font-size: var(--fs-body-sm); font-weight: 700; color: var(--txt-heading); }
+.dj-mem-meta { font-size: var(--fs-caption); color: var(--muted); margin-top: 3px; }
+
+/* Topbar nav icon glyphs — 22px em box (/modera uses core.js shell, not topbar-styles.php) */
+.ax-top .ax-burger,
+.ax-top .ax-top-r .ax-ic,
+.ax-top .ax-top-r .ax-login { font-size: calc(var(--fs-r, 1) * 22px); }
+.ax-top .ax-burger > svg,
+.ax-top .ax-burger > i,
+.ax-top .ax-top-r .ax-ic > svg,
+.ax-top .ax-top-r .ax-ic > i,
+.ax-top .ax-top-r .ax-login > svg,
+.ax-top .ax-top-r .ax-login > i { width: 1em; height: 1em; font-size: inherit; flex-shrink: 0; display: block; line-height: 1; }
+
+/* ── capability matrix table ── */
+.table-wrap { overflow-x: auto; scrollbar-width: none; }
+.table-wrap::-webkit-scrollbar { display: none; }
+.adm-matrix { width: 100%; border-collapse: collapse; font-size: var(--fs-body-sm); }
+.adm-matrix th { text-align: center; font-family: var(--ff-mono); font-size: var(--fs-caption); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; padding: 8px 10px; border-bottom: 1px solid var(--white-4); }
+.adm-matrix th:first-child { text-align: left; }
+.adm-matrix td { text-align: center; padding: 11px 10px; border-bottom: 1px solid var(--white-3); color: var(--txt-heading); }
+.adm-matrix td:first-child { text-align: left; }
+.adm-matrix tr:last-child td { border-bottom: 0; }
+.adm-check { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }

@@ -1,0 +1,135 @@
+/*
+   DEPRECATED — DO NOT LOAD ON /modera (or anywhere).
+   core.js already auto-injects script.theme.js, which binds these exact
+   ids (#burger #ax-aside #ax-overlay #ic-act #ic-pf #ic-apps #apps-pop
+   #aside-pill, .panel-tab, [data-modal]/[data-modal-close]) in CAPTURE
+   phase. Loading this file too double-binds the same clicks — script.
+   theme.js's own changelog documents fixing exactly that failure mode
+   (double-toggle on #ic-apps/#burger/#aside-pill). It also persists
+   dark-mode to a localStorage key ('apollo-dark') core.js's pre-paint
+   boot never reads, so it silently breaks theme persistence too.
+   Replaced by assets/modera/js/modera.behavior.js, which supplies ONLY
+   the admin-specific extras core's generic shell doesn't cover: dynamic
+   toast(msg,icon), the L1⇄L2 aside slide, and state-only close helpers.
+   Kept on disk (renamed, unloaded) purely for reference — original body
+   below is untouched.
+   ───────────────────────────────────────────────────────────────────────
+   APOLLO::RIO · ADMIN · shell.admin.js
+   Shell behaviour: drawer, panels, apps popup, dark-mode pill, panel tabs,
+   toast + modal helpers. Contract ids (#burger #ax-aside #ax-overlay #ic-act
+   #ic-apps #ic-pf #apps-pop #aside-pill) match the design-system shell.
+   Exposes window.AdminShell = { toast, modal }.
+*/
+(function (w, d) {
+  'use strict';
+  var $  = function (s, c) { return (c || d).querySelector(s); };
+  var $$ = function (s, c) { return Array.prototype.slice.call((c || d).querySelectorAll(s)); };
+
+  var aside   = $('#ax-aside');
+  var overlay = $('#ax-overlay');
+  var navStack = $('#nav-stack');
+
+  /* ── Multi-level slide (L1 plugins ⇄ L2 sub-links) ── */
+  function drawerToL2() { if (navStack) navStack.classList.add('is-l2'); }
+  function drawerToL1() { if (navStack) navStack.classList.remove('is-l2'); }
+  var navBack = $('#nav-back'); if (navBack) navBack.addEventListener('click', drawerToL1);
+
+  /* ── Drawer ── */
+  function openAside()  { if (aside) aside.classList.add('open'); if (overlay) overlay.classList.add('on'); drawerToL1(); }
+  function closeAside() { if (aside) aside.classList.remove('open'); if (overlay) overlay.classList.remove('on'); }
+  function toggleAside(){ (aside && aside.classList.contains('open')) ? closeAside() : openAside(); }
+
+  var burger = $('#burger');
+  if (burger) burger.addEventListener('click', toggleAside);
+  var asideClose = $('.ax-aside-close');
+  if (asideClose) asideClose.addEventListener('click', closeAside);
+
+  /* ── Right panels (activities / profile) ── */
+  function closePanels() {
+    $$('.panel-r').forEach(function (p) { p.classList.remove('open'); p.setAttribute('aria-hidden', 'true'); });
+    closeApps();
+    if (!(aside && aside.classList.contains('open'))) { if (overlay) overlay.classList.remove('on'); }
+  }
+  function openPanel(id) {
+    closePanels();
+    var p = $('#' + id);
+    if (!p) return;
+    p.classList.add('open'); p.setAttribute('aria-hidden', 'false');
+    if (overlay) overlay.classList.add('on');
+  }
+  var icAct = $('#ic-act'); if (icAct) icAct.addEventListener('click', function () { openPanel('panel-act'); });
+  var icPf  = $('#ic-pf');  if (icPf)  icPf.addEventListener('click',  function () { openPanel('panel-profile'); });
+  $$('[data-close]').forEach(function (b) { b.addEventListener('click', closePanels); });
+
+  /* ── Apps popup ── */
+  var appsPop = $('#apps-pop');
+  function openApps()  { if (appsPop) { appsPop.classList.add('open'); appsPop.setAttribute('aria-hidden', 'false'); if (overlay) overlay.classList.add('on'); } }
+  function closeApps() { if (appsPop) { appsPop.classList.remove('open'); appsPop.setAttribute('aria-hidden', 'true'); } }
+  var icApps = $('#ic-apps');
+  if (icApps) icApps.addEventListener('click', function (e) {
+    e.stopPropagation();
+    (appsPop && appsPop.classList.contains('open')) ? closePanels() : (closePanels(), openApps());
+  });
+  var appsClose = $('[data-close-apps]'); if (appsClose) appsClose.addEventListener('click', closePanels);
+
+  /* ── Overlay click closes everything ── */
+  if (overlay) overlay.addEventListener('click', function () { closeAside(); closePanels(); });
+  d.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeAside(); closePanels(); } });
+
+  /* ── Panel tabs (Notificações / Mensagens) ── */
+  $$('.panel-tab').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      var host = tab.closest('.panel-r');
+      $$('.panel-tab', host).forEach(function (t) { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+      $$('.panel-tab-pane', host).forEach(function (p) { p.classList.remove('active'); p.hidden = true; });
+      tab.classList.add('active'); tab.setAttribute('aria-selected', 'true');
+      var pane = $('#' + tab.getAttribute('data-ptab'), host);
+      if (pane) { pane.classList.add('active'); pane.hidden = false; }
+    });
+  });
+
+  /* ── Dark-mode pill (core.js reads html.dark-mode pre-paint) ── */
+  var pill = $('#aside-pill');
+  if (pill) pill.addEventListener('click', function () {
+    var on = d.documentElement.classList.toggle('dark-mode');
+    pill.classList.toggle('on', on);
+    pill.setAttribute('aria-pressed', on ? 'true' : 'false');
+    try { localStorage.setItem('apollo-dark', on ? '1' : '0'); } catch (e) {}
+  });
+  try { if (localStorage.getItem('apollo-dark') === '1') { d.documentElement.classList.add('dark-mode'); if (pill) { pill.classList.add('on'); pill.setAttribute('aria-pressed', 'true'); } } } catch (e) {}
+
+  /* ── Toast helper ── */
+  var toastPanel = $('#toast-panel'), toastText = $('#toast-text'), toastX = $('#toast-x'), toastTimer = null;
+  function toast(msg, icon) {
+    if (!toastPanel) return;
+    if (toastText) toastText.textContent = msg;
+    var ic = toastPanel.querySelector('.toast-icon i');
+    if (ic) ic.className = icon || 'ri-checkbox-circle-line';
+    toastPanel.style.display = 'flex';
+    requestAnimationFrame(function () { toastPanel.classList.add('show'); });
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(hideToast, 2600);
+  }
+  function hideToast() { if (!toastPanel) return; toastPanel.classList.remove('show'); setTimeout(function () { toastPanel.style.display = 'none'; }, 350); }
+  if (toastX) toastX.addEventListener('click', hideToast);
+
+  /* ── Modal helper ── */
+  var modal = $('#adm-modal'), modalTitle = $('#adm-modal-title'), modalBody = $('#adm-modal-body'), modalOk = $('#adm-modal-ok');
+  var onOk = null;
+  function openModal(opts) {
+    if (!modal) return;
+    if (modalTitle) modalTitle.textContent = opts.title || 'Confirmar';
+    if (modalBody)  modalBody.innerHTML = opts.body || '';
+    if (modalOk)    modalOk.textContent = opts.okLabel || 'Confirmar';
+    onOk = opts.onOk || null;
+    modal.classList.add('is-open');
+  }
+  function closeModal() { if (modal) modal.classList.remove('is-open'); onOk = null; }
+  if (modal) {
+    $$('[data-modal-close]', modal).forEach(function (b) { b.addEventListener('click', closeModal); });
+    modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+    if (modalOk) modalOk.addEventListener('click', function () { var cb = onOk; closeModal(); if (cb) cb(); });
+  }
+
+  w.AdminShell = { toast: toast, modal: openModal, closePanels: closePanels, closeAside: closeAside, drawerToL2: drawerToL2, drawerToL1: drawerToL1 };
+})(window, document);

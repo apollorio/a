@@ -1,0 +1,35 @@
+/* ===========================================
+   MARKETPLACE — Grid View (Filtered Mode)
+   =========================================== */
+
+.grid-view {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
+    gap: 24px !important;
+    height: auto !important;
+    margin-top: 0 !important;
+    margin-bottom: 80px !important;
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+    overflow: visible !important;
+    pointer-events: auto !important;
+}
+
+.grid-view article[type=ticket].carousel-item {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    margin: 0 !important;
+    width: 100% !important;
+    transform: none !important;
+    opacity: 1 !important;
+    z-index: 1 !important;
+    box-shadow: 0 4px 20px rgba(var(--rgb-d), 0.05) !important;
+    transition: transform 0.3s var(--ease-lux),
+                box-shadow 0.3s var(--ease-lux) !important;
+}
+
+.grid-view article[type=ticket].carousel-item:hover {
+    transform: translateY(0) !important;
+    box-shadow: 0 12px 30px rgba(var(--rgb-d), 0.1) !important;
+}

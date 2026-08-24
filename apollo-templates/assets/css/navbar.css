@@ -1,0 +1,1313 @@
+/**
+ * Apollo Navbar Styles
+ *
+ * Frontend styles for the Apollo navigation bar with apps modal.
+ *
+ * @package Apollo_Core
+ * @since 1.9.0
+ */
+
+/* ========================================
+   CSS VARIABLES
+   ======================================== */
+:root {
+  --ap-font-primary: "Space Grotesk", system-ui, -apple-system, sans-serif;
+  --ap-bg-main: #fff;
+  --ap-bg-surface: #f4f4f580!important;
+  --ap-text-primary: #121214a6;
+  --ap-text-secondary: #121214e0;
+  --ap-text-muted: #12121466;
+  --ap-orange-500: #FF9820;
+  --ap-orange-600: #d65400;
+  --glass-surface: #ffffffeb;
+  --glass-border: #e4e4e7cc;
+  --glass-shadow: 0 12px 40px #1212141f;
+  --item-hover: #1212140a;
+  --card-bg: #fff;
+  --nav-height: 60px;
+  --menu-width: 380px;
+  --menu-radius: 20px;
+}
+
+html {
+padding-top:var(--nav-height)!important;
+}
+
+/* Dark mode overrides */
+[data-theme="dark"],
+.dark-mode {
+  --ap-bg-main: #121214;
+  --ap-bg-surface: #1e1e2266;
+  --ap-text-primary: #a1a1aa;
+  --ap-text-secondary: #e4e4e7;
+  --ap-text-muted: #71717a;
+  --glass-surface: #1e1e22eb;
+  --glass-border: #27272acc;
+  --glass-shadow: 0 12px 40px #0000004d;
+  --item-hover: #ffffff0a;
+  --card-bg: #1e1e22;
+}
+
+/* ========================================
+   NAVBAR BASE
+   ======================================== */
+.apollo-navbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 1.5rem;
+  height: var(--nav-height);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 99999 !important;
+  gap: 8px;
+  /* Clean glass navbar - visible on all pages */
+  -webkit-backdrop-filter:blur(8px);
+  backdrop-filter:blur(8px);
+  background:linear-gradient(to bottom,rgb(253 253 253 / .35) 0%,rgb(253 253 253 / .1) 50%,#fff0 100%);
+  -webkit-mask:linear-gradient(to bottom,rgb(0 0 0) 0%,rgb(0 0 0 / .8) 40%,rgb(0 0 0 / .3) 70%,#fff0 100%);
+  mask:linear-gradient(to bottom,rgb(0 0 0) 0%,rgb(0 0 0 / .8) 40%,rgb(0 0 0 / .3) 70%,#fff0 100%);
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+  font-family: var(--ap-font-primary);
+}
+
+/* Re-enable pointer events for interactive children */
+.apollo-navbar > * {
+  pointer-events: auto;
+}
+
+/* WordPress admin bar offset */
+.admin-bar .apollo-navbar {
+  top: 32px;
+}
+
+@media screen and (max-width: 782px) {
+  .admin-bar .apollo-navbar {
+    top: 46px;
+  }
+}
+
+/* ========================================
+   CLOCK
+   ======================================== */
+.clock-pill {
+  padding: .4rem 1rem;
+  border-radius: 99px;
+  background: transparent;
+  font-size: .75rem;
+  font-weight: 300;
+  color: var(--ap-text-primary);
+  cursor: default;
+  letter-spacing: .02em;
+  transition: all .3s ease;
+}
+
+/* Guest: clock more prominent */
+.apollo-navbar[data-auth="guest"] .clock-pill {
+  font-size: .8rem;
+  font-weight: 400;
+  color: var(--ap-text-secondary);
+  letter-spacing: .03em;
+}
+
+/* ========================================
+   NAV BUTTONS
+   ======================================== */
+.nav-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ap-text-primary);
+  transition: all .2s ease;
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav-btn:hover,
+.nav-btn[aria-expanded="true"] {
+  background: var(--item-hover);
+  color: var(--ap-orange-500);
+  transform: scale(1.05);
+}
+
+.nav-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+.avatar-btn {
+  appearance: button;
+  background-color: var(--ap-bg-surface);
+  border: 1px solid var(--glass-border);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--ap-text-primary);
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: all 0.2s ease;
+  position: relative;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+
+/* Guest: subtle apps button */
+.apollo-navbar[data-auth="guest"] .nav-btn {
+  opacity: .8;
+}
+
+.apollo-navbar[data-auth="guest"] .nav-btn:hover {
+  opacity: 1;
+}
+
+/* Hide elements based on auth state */
+.apollo-navbar[data-auth="guest"] [data-auth-require="logged"] {
+  display: none !important;
+}
+
+.apollo-navbar[data-auth="logged"] [data-auth-require="guest"] {
+  display: none !important;
+}
+
+/* ========================================
+   NOTIFICATION BADGE - OFFICIAL POSITION
+   ========================================
+
+   OFFICIAL BADGE POSITION (DO NOT CHANGE):
+   - top: 18px (positioned at upper-left of broadcast/radar icon)
+   - left: 18px (positioned at upper-left of broadcast/radar icon)
+   - width: 5px, height: 5px
+   - This is the CANONICAL Apollo notification badge style
+
+   REFERENCE: The badge is positioned to appear at the upper-left
+   corner of the notification icon (broadcast/radar), creating a
+   subtle but visible notification indicator.
+
+   ======================================== */
+.nav-btn {
+  position: relative;
+}
+
+.nav-btn .badge,
+#notif-badge {
+  position: absolute;
+  /* OFFICIAL POSITION: top-left of icon (DO NOT USE transform centering) */
+  top: 18px;
+  left: 18px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  z-index: 99;
+  pointer-events: none;
+  transition: background-color .2s ease, box-shadow .2s ease, opacity .2s ease;
+}
+
+.nav-btn .badge[data-notif="true"],
+#notif-badge[data-notif="true"] {
+  background: #ff8c00;
+  box-shadow: 0 0 20px #ff8c00, 0 0 40px #ffc13b, 0 0 60px #ffaa3b, 0 0 100px #ff8d3b;
+  opacity: .8;
+  animation: pulsar 2s infinite ease-in;
+}
+
+.nav-btn .badge[data-notif="false"],
+#notif-badge[data-notif="false"] {
+  background: transparent;
+  box-shadow: none;
+  animation: none;
+  opacity: 0;
+}
+
+@keyframes pulsar {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 #ff8c00b3;
+  }
+  100% {
+    transform: scale(1.1);
+    filter: brightness(1.3) saturate(1.5);
+    box-shadow: 0 0 0 15px #ff8c0000;
+  }
+}
+
+/* ========================================
+   GLOBAL NOTIFICATION TRIGGER OVERRIDE
+   Any element with [data-apollo-notif-trigger] opens the navbar notification modal
+   ======================================== */
+[data-apollo-notif-trigger] {
+  cursor: pointer;
+}
+
+/* Hide any standalone notification badges that are not in navbar */
+.ap-notification-badge,
+.apollo-badge-pulse,
+.header-btn .badge:not(#notif-badge) {
+  display: none !important;
+}
+
+/* ========================================
+   DROPDOWN MENUS (shared)
+   ======================================== */
+.dropdown-menu {
+  display: none;
+  position: fixed;
+  top: var(--nav-height);
+  right: 30px;
+  width: var(--menu-width);
+  max-width: 90vw;
+  max-height: 90dvh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--glass-surface);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--menu-r);
+  box-shadow: var(--glass-shadow);
+  z-index: 9998;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(-10px) scale(0.98);
+  transform-origin: top right;
+  transition: opacity .25s cubic-bezier(0.16,1,0.3,1), transform .25s cubic-bezier(0.16,1,0.3,1);
+  overscroll-behavior: contain;
+  font-family: var(--ap-font-primary);
+}
+
+/* WordPress admin bar offset */
+.admin-bar .dropdown-menu {
+  top: calc(var(--nav-height) + 32px + 10px);
+}
+
+@media screen and (max-width: 782px) {
+  .admin-bar .dropdown-menu {
+    top: calc(var(--nav-height) + 46px + 10px);
+  }
+}
+
+.dropdown-menu.active {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.dropdown-menu::-webkit-scrollbar {
+  width: 4px;
+}
+
+.dropdown-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dropdown-menu::-webkit-scrollbar-thumb {
+  background: #0000001a;
+  border-radius: 4px;
+}
+
+.section-title {
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--ap-text-muted);
+  font-weight: 700;
+  padding: 1rem 1.25rem .5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.section-title:first-child {
+  padding-top: 1.25rem;
+}
+
+.ario-see-all {
+  font-size: .7rem;
+  font-weight: 400;
+  color: var(--ap-orange-500);
+  cursor: pointer;
+  text-transform: none;
+  letter-spacing: 0;
+  text-decoration: none;
+}
+
+.ario-see-all:hover {
+  text-decoration: underline;
+}
+
+/* ========================================
+   NOTIFICATIONS MENU
+   ======================================== */
+#menu-notif {
+  padding: .5rem 0;
+}
+
+.notif-item {
+  padding: .75rem 1.25rem;
+  display: flex;
+  gap: .75rem;
+  transition: background .15s ease;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.notif-item:hover {
+  background: var(--item-hover);
+}
+
+.notif-item:active {
+  background: #0f172a12;
+  transform: scale(0.98);
+}
+
+.notif-icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .8rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.notif-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.notif-title {
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--ap-text-secondary);
+}
+
+.notif-desc {
+  font-size: .8rem;
+  color: var(--ap-text-primary);
+  line-height: 1.3;
+}
+
+.notif-time {
+  font-size: .7rem;
+  color: var(--ap-text-muted);
+  margin-top: 2px;
+}
+
+.empty-state {
+  padding: 3rem 1rem;
+  text-align: center;
+  color: var(--ap-text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .5rem;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.empty-state svg {
+  width: 32px;
+  height: 32px;
+  opacity: .5;
+}
+
+/* ========================================
+   APPS MENU
+   ======================================== */
+#menu-app {
+  padding: 0 1rem 1.25rem;
+  width: 340px;
+}
+
+.apps-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  padding: 0 .25rem;
+}
+
+.app-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .5rem;
+  transition: transform .15s ease;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  text-decoration: none;
+}
+
+.app-item:hover {
+  transform: translateY(-3px);
+}
+
+.app-item:active {
+  transform: scale(0.95);
+}
+
+.app-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.25rem;
+  box-shadow: 0 4px 10px #0000000d;
+  position: relative;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+}
+
+.app-icon i {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.app-label {
+  font-size: .7rem;
+  color: var(--ap-text-secondary);
+  text-align: center;
+  max-width: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ========================================
+   SCROLL ROW (horizontal cards)
+   ======================================== */
+.scroll-row {
+  display: flex;
+  gap: .75rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: .5rem .25rem;
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  margin: 0 .75rem;
+}
+
+.scroll-row::-webkit-scrollbar {
+  height: 4px;
+}
+
+.scroll-row::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scroll-row::-webkit-scrollbar-thumb {
+  background: #0000001a;
+  border-radius: 2px;
+}
+
+.scroll-row.scroll-active {
+  outline: 2px solid var(--ap-orange-500);
+  outline-offset: -2px;
+  border-radius: 12px;
+}
+
+/* ========================================
+   MESSAGE CARDS
+   ======================================== */
+.msg-card {
+  flex: 0 0 13rem;
+  background: var(--card);
+  border: 1px solid var(--glass-border);
+  border-radius: .9rem;
+  padding: .8rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  transition: all .2s cubic-bezier(0.25,0.8,0.25,1);
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  scroll-snap-align: start;
+  touch-action: pan-x pan-y;
+}
+
+.msg-card:hover {
+  background: #fff;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px -5px #0000001a;
+}
+
+.msg-card:active {
+  transform: scale(0.97);
+  box-shadow: 0 4px 10px -3px #0000001a;
+}
+
+.msg-card.empty-card {
+  justify-content: center;
+  align-items: center;
+  min-width: 12rem;
+  background: #00000005;
+  cursor: default;
+}
+
+.msg-card.empty-card:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.msg-header {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.msg-avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: #334155;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .7rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.msg-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  overflow: hidden;
+}
+
+.msg-name {
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--ap-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.msg-time {
+  font-size: .65rem;
+  color: var(--ap-text-muted);
+}
+
+.msg-preview {
+  font-size: .75rem;
+  color: var(--ap-text-primary);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.msg-preview.me {
+  font-style: italic;
+  color: var(--ap-text-muted);
+}
+
+.load-more-card {
+  justify-content: center;
+  align-items: center;
+  background: #00000005;
+  border-style: dashed;
+  min-width: 8rem;
+  flex: 0 0 8rem;
+}
+
+.load-more-card:hover {
+  background: #0000000a;
+}
+
+.load-more-card:active {
+  background: #00000012;
+}
+
+.load-more-text {
+  font-weight: 600;
+  color: var(--ap-orange-500);
+  font-size: .85rem;
+}
+
+/* ========================================
+   PROFILE MENU
+   ======================================== */
+#menu-profile {
+  padding: .5rem;
+  min-width: 180px;
+  width: auto;
+}
+
+.profile-link {
+  padding: .6rem .75rem;
+  border-radius: 8px;
+  font-size: .85rem;
+  color: var(--ap-text-secondary);
+  display: block;
+  transition: all .15s ease;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  text-decoration: none;
+}
+
+.profile-link:hover {
+  background: var(--item-hover);
+}
+
+.profile-link:active {
+  background: #0f172a12;
+}
+
+.profile-link.danger {
+  color: #ef4444;
+}
+
+.profile-link.txt-orange {
+  color: var(--ap-orange-500) !important;
+}
+
+.menu-divider {
+  height: 1px;
+  background: var(--glass-border);
+  margin: .5rem 0;
+}
+
+/* ========================================
+   LOGIN SECTION
+   ======================================== */
+.login-section {
+  padding: 1.25rem;
+  transition: all .4s cubic-bezier(0.16,1,0.3,1);
+}
+
+.login-section.fade-out {
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+}
+
+.login-section.hidden {
+  display: none;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.login-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ap-text-secondary);
+  margin-bottom: .25rem;
+  letter-spacing: -.01em;
+}
+
+.login-subtitle {
+  font-size: .75rem;
+  color: var(--ap-text-muted);
+  font-weight: 400;
+}
+
+/* Input Group */
+.input-group {
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.input-label {
+  display: block;
+  font-size: .65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--ap-text-muted);
+  margin-bottom: .4rem;
+  padding-left: .125rem;
+}
+
+.input-field {
+  width: 100%;
+  padding: .75rem 0;
+  font-size: .875rem;
+  font-family: var(--ap-font-primary);
+  color: var(--ap-text-secondary);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--glass-border);
+  border-radius: 0;
+  outline: none;
+  transition: border-color .2s ease;
+}
+
+.input-field::placeholder {
+  color: var(--ap-text-muted);
+  opacity: .6;
+}
+
+.input-field:hover {
+  border-bottom-color: rgba(var(--rgb-d),0.25);
+}
+
+.input-field:focus {
+  border-bottom-color: var(--ap-orange-500);
+}
+
+/* Checkbox */
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin: 1rem 0;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.checkbox-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.checkbox-custom {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--glass-border);
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .2s ease;
+  flex-shrink: 0;
+}
+
+.checkbox-custom svg {
+  width: 12px;
+  height: 12px;
+  stroke: #fff;
+  stroke-width: 2.5;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all .15s ease;
+}
+
+.checkbox-input:checked + .checkbox-custom {
+  background: var(--ap-orange-500);
+  border-color: var(--ap-orange-500);
+}
+
+.checkbox-input:checked + .checkbox-custom svg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.checkbox-input:focus + .checkbox-custom {
+  box-shadow: 0 0 0 3px #ff692515;
+}
+
+.checkbox-label {
+  font-size: .8rem;
+  color: var(--ap-text-primary);
+}
+
+/* Login Button */
+.login-btn {
+  width: 100%;
+  padding: .875rem 1.5rem;
+  font-size: .875rem;
+  font-weight: 600;
+  font-family: var(--ap-font-primary);
+  color: #fff;
+  background: linear-gradient(135deg, var(--ap-orange-500), var(--ap-orange-600));
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all .2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -5px #ff692540;
+}
+
+.login-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px -3px #ff692540;
+}
+
+.login-btn:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.login-btn .spinner {
+  display: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ffffff40;
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .6s linear infinite;
+  margin: 0 auto;
+}
+
+.login-btn.loading .btn-text {
+  opacity: 0;
+}
+
+.login-btn.loading .spinner {
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Login Links */
+.login-links {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  text-align: center;
+}
+
+.login-link {
+  font-size: .75rem;
+  color: var(--ap-text-muted);
+  transition: color .2s ease;
+  text-decoration: none;
+}
+
+.login-link:hover {
+  color: var(--ap-orange-500) !important;
+}
+
+.login-link.register {
+  font-weight: 600;
+  color: var(--ap-text-secondary);
+}
+
+/* Login Divider */
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.25rem 0;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--glass-border);
+}
+
+.login-divider span {
+  font-size: .65rem;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--ap-text-muted);
+}
+
+/* ========================================
+   LOGGED CONTENT
+   ======================================== */
+.logged-content {
+  transition: all .4s cubic-bezier(0.16,1,0.3,1);
+}
+
+.logged-content.hidden {
+  display: none;
+}
+
+.logged-content.reveal-up {
+  animation: revealUp .5s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+
+@keyframes revealUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   BACKGROUND COLOR UTILITIES
+   ======================================== */
+.bg-blue { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+.bg-green { background: linear-gradient(135deg, #22c55e, #16a34a); }
+.bg-orange { background: linear-gradient(135deg, #f97316, #ea580c); }
+.bg-purple { background: linear-gradient(135deg, #a855f7, #9333ea); }
+.bg-red { background: linear-gradient(135deg, #ef4444, #dc2626); }
+.bg-gray { background: #64748b; }
+.bg-pink { background: linear-gradient(135deg, #ec4899, #db2777); }
+.bg-yellow { background: linear-gradient(135deg, #eab308, #ca8a04); }
+.bg-cyan { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+.bg-indigo { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+
+/* ========================================
+   TOUCH ENHANCEMENTS
+   ======================================== */
+@media (hover: none) and (pointer: coarse) {
+  .nav-btn:hover {
+    background: none;
+    transform: none;
+  }
+
+  .nav-btn:active {
+    background: var(--item-hover);
+    transform: scale(1.05);
+  }
+
+  .msg-card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .msg-card:active {
+    transform: scale(0.97);
+    background: var(--ap-bg-surface);
+  }
+
+  .app-item:hover {
+    transform: none;
+  }
+
+  .app-item:active {
+    transform: scale(0.95);
+  }
+
+  .login-btn:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .login-btn:active {
+    transform: scale(0.98);
+  }
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 640px) {
+  .apollo-navbar {
+    padding: 0 1rem;
+  }
+
+  .dropdown-menu {
+    left: 10px;
+    right: 10px;
+    width: auto;
+    max-width: none;
+  }
+
+  #menu-app {
+    width: auto;
+  }
+
+  .apps-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: .75rem;
+  }
+
+  .app-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .app-label {
+    font-size: .65rem;
+  }
+}
+
+/* ========================================
+   BODY PADDING FOR FIXED NAVBAR
+   ======================================== */
+
+.admin-bar body {
+  padding-top: calc(var(--nav-height) + 32px);
+}
+
+@media screen and (max-width: 782px) {
+  .admin-bar body {
+    padding-top: calc(var(--nav-height) + 46px);
+  }
+}
+
+/* ========================================
+   UNIFIED NOTIFICATION SYSTEM
+   All notification buttons across site must trigger navbar modal
+   ======================================== */
+
+/* Apollo nav button with badge - ensure relative positioning */
+.apollo-nav-btn,
+.apollo-navbar-btn,
+.nav-btn,
+[data-apollo-notif-trigger] {
+  position: relative !important;
+}
+
+/* Badge inside any notification trigger button - OFFICIAL POSITION */
+[data-apollo-notif-trigger] .badge,
+.apollo-nav-btn .badge {
+  position: absolute;
+  /* OFFICIAL: top-left of icon (18px/18px) - DO NOT USE transform centering */
+  top: 18px;
+  left: 18px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  z-index: 99;
+  pointer-events: none;
+}
+
+/* Suppress ALL standalone notification badges outside navbar */
+.ap-notification-badge,
+.apollo-badge-pulse,
+.notif-dot:not(#notif-badge),
+.notification-dot,
+.header-btn .notification-badge {
+  display: none !important;
+}
+
+/* Visual indicator for notification trigger buttons (subtle hover effect) */
+[data-apollo-notif-trigger]:hover {
+  color: var(--ap-orange-500) !important;
+}
+
+/* Ensure only ONE notification modal exists - hide duplicates */
+#menu-notif ~ #menu-notif,
+.dropdown-menu[id="menu-notif"] ~ .dropdown-menu[id="menu-notif"] {
+  display: none !important;
+}
+
+/* ========================================
+   NOTIFICATION SVG ICONS STANDARDIZATION
+   ======================================== */
+.nav-btn svg {
+  width: 24px;
+  height: 24px;
+  color: var(--ap-text-secondary);
+  transition: color .2s ease;
+}
+
+.nav-btn:hover svg {
+  color: var(--ap-orange-500);
+}
+
+/* Notification badge positioning for SVG icons */
+.nav-btn:has(svg) .badge,
+.nav-btn:has(svg) #notif-badge {
+  /* Center the badge on the SVG icon */
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+}
+
+/* ========================================
+   ADMIN LOGO BUTTON
+   ======================================== */
+.apollo-logo-btn {
+  margin-right: auto;
+  width: 36px;
+  height: 36px;
+}
+
+.apollo-logo-btn svg {
+  width: 22px;
+  height: 22px;
+  transition: color .2s ease, transform .2s ease;
+}
+
+.apollo-logo-btn:hover svg,
+.apollo-logo-btn[aria-expanded="true"] svg {
+  color: var(--ap-orange-500);
+  transform: scale(1.1);
+}
+
+/* ========================================
+   ADMIN DROPDOWN MENU
+   ======================================== */
+.dropdown-menu--admin {
+  left: 16px;
+  right: auto;
+  width: 280px;
+  transform-origin: top left;
+  padding: .5rem 0;
+}
+
+.admin-bar .dropdown-menu--admin {
+  top: calc(var(--nav-height) + 32px + 10px);
+}
+
+@media screen and (max-width: 782px) {
+  .admin-bar .dropdown-menu--admin {
+    top: calc(var(--nav-height) + 46px + 10px);
+  }
+}
+
+/* Admin menu items */
+.admin-menu-item {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .6rem 1.25rem;
+  color: var(--ap-text-secondary);
+  text-decoration: none;
+  font-size: .82rem;
+  font-weight: 500;
+  transition: background .15s ease, color .15s ease;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+}
+
+.admin-menu-item:hover {
+  background: var(--item-hover);
+  color: var(--ap-orange-500);
+}
+
+.admin-menu-item i:first-child {
+  font-size: 1rem;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.admin-menu-item--primary {
+  color: var(--ap-orange-500);
+  font-weight: 600;
+}
+
+.admin-menu-item--primary:hover {
+  background: rgba(244, 95, 0, .08);
+}
+
+/* Admin badge (pending count) */
+.admin-badge {
+  margin-left: auto;
+  background: var(--ap-orange-500);
+  color: #fff;
+  font-size: .65rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 99px;
+  line-height: 1.2;
+}
+
+/* Chevron for submenu */
+.admin-chevron {
+  margin-left: auto;
+  font-size: .85rem;
+  transition: transform .2s ease;
+}
+
+.has-submenu.expanded .admin-chevron {
+  transform: rotate(90deg);
+}
+
+/* Submenu accordion */
+.admin-submenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(var(--rgb-d),.02);
+}
+
+[data-theme="dark"] .admin-submenu,
+.dark-mode .admin-submenu {
+  background: rgba(var(--rgb-t),.03);
+}
+
+.admin-submenu.open {
+  max-height: 600px;
+}
+
+.admin-submenu-item {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .45rem 1.25rem .45rem 2.5rem;
+  color: var(--ap-text-primary);
+  text-decoration: none;
+  font-size: .78rem;
+  font-weight: 400;
+  transition: background .15s ease, color .15s ease;
+}
+
+.admin-submenu-item:hover {
+  background: var(--item-hover);
+  color: var(--ap-orange-500);
+}
+
+.admin-submenu-item i {
+  font-size: .85rem;
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+  opacity: .7;
+}
+
+/* Menu divider inside admin */
+.dropdown-menu--admin .menu-divider {
+  height: 1px;
+  background: var(--glass-border);
+  margin: .35rem 1rem;
+}

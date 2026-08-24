@@ -1,0 +1,25 @@
+{
+  "generated": "2026-07-21",
+  "event": {
+    "route": "/evento/{slug}",
+    "pipeline": "CPT single → TemplateLoader → styles/base/single-event.php → template-parts/single/* → apollo_event_build_access_payload + apollo_event_get_loc/get_djs",
+    "mock_data": "NONE (verified: banner falls back to assets.apollo.rio.br grain-001, not stock)",
+    "dynamic_slots": "hero/date/time/loc/lineup/timetable/sounds/about/ticket-widget/access(coupon,listaCta)/gallery/video — all from post/meta/tax/relation",
+    "live": "GET /evento/dismantle-2 → 200 full render"
+  },
+  "dj": {
+    "route": "/dj/{slug}",
+    "pipeline": "single-dj-v3.php (ACTIVE, APOLLO_DJ_DEFAULT_STYLE=apollo-v3) → parts/dj-v3/* ; hero/statement/bio/about read _dj_* meta",
+    "mock_data": "NONE (4 former hardcoded gaps — bio_short/statement/hero_image/bio — now dynamic; stats derived by design)",
+    "dynamic_slots": "hero(_dj_banner,_dj_name,_dj_bio_short,_dj_verified) / statement(_dj_statement) / bio(_dj_bio) / marquee+metrics(_dj_original_project_1..3) / sounds(tax) / epk+gallery(_dj_gallery) / agenda(events by _event_dj_ids)",
+    "live": "GET /dj/bernardo-campos → 200 v3 render"
+  },
+  "local": {
+    "route": "/local/{slug}",
+    "pipeline": "TemplateLoader → styles/base/single-local.php",
+    "mock_data_FIXED": "single-local.php:109 hero fallback changed unsplash stock → assets.apollo.rio.br/img/bg/grain-001.jpg (this session)",
+    "dynamic_slots": "name/address/city/state/lat-lng(map)/description/capacity/phone/price_range/hours/amenities(marquee)/agenda(events by _event_loc_id) — all dynamic",
+    "unpopulatable_but_dynamic": "_local_image_1..5 (hero/gallery) and _local_testimonials read dynamically but no input surface — see form-matrix gaps",
+    "live": "NOT_RUNTIME_VERIFIED this session"
+  }
+}

@@ -1,0 +1,2211 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-templates",
+    "owner": "apollo-templates",
+    "wrap": "plugins.apollo-templates",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-templates",
+  "namespace": "Apollo\\Templates",
+  "priority": 4,
+  "status": "IMPLEMENTED",
+  "description": "Templates: Page builder canvas, calendar types (01, 02...), PWA templates, all template variations",
+  "dependencies": [
+    "apollo-admin",
+    "apollo-adverts",
+    "apollo-chat",
+    "apollo-coauthor",
+    "apollo-comment",
+    "apollo-core",
+    "apollo-dashboard",
+    "apollo-djs",
+    "apollo-docs",
+    "apollo-email",
+    "apollo-events",
+    "apollo-fav",
+    "apollo-groups",
+    "apollo-hub",
+    "apollo-loc",
+    "apollo-login",
+    "apollo-membership",
+    "apollo-mod",
+    "apollo-notif",
+    "apollo-radio",
+    "apollo-sign",
+    "apollo-social",
+    "apollo-statistics",
+    "apollo-users",
+    "apollo-wow"
+  ],
+  "provides": [
+    "page-builder",
+    "canvas",
+    "calendar-templates",
+    "template-variations"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [],
+  "meta": {
+    "post": {
+      "_apollo_canvas_data": {
+        "_source": "deep_scan"
+      },
+      "_apollo_template": {
+        "_source": "deep_scan"
+      },
+      "_classified_loc": {
+        "_source": "deep_scan"
+      },
+      "_classified_negotiable": {
+        "_source": "deep_scan"
+      },
+      "_classified_price": {
+        "_source": "deep_scan"
+      },
+      "_coupon_code": {
+        "_source": "deep_scan"
+      },
+      "_dj_artist": {
+        "_source": "deep_scan"
+      },
+      "_dj_bio_short": {
+        "_source": "deep_scan"
+      },
+      "_dj_role": {
+        "_source": "deep_scan"
+      },
+      "_dj_soundcloud": {
+        "_source": "deep_scan"
+      },
+      "_event_banner": {
+        "_source": "deep_scan"
+      },
+      "_event_date": {
+        "_source": "deep_scan"
+      },
+      "_event_dj_ids": {
+        "_source": "deep_scan"
+      },
+      "_event_end_date": {
+        "_source": "deep_scan"
+      },
+      "_event_end_time": {
+        "_source": "deep_scan"
+      },
+      "_event_loc_id": {
+        "_source": "deep_scan"
+      },
+      "_event_local_name": {
+        "_source": "deep_scan"
+      },
+      "_event_name": {
+        "_source": "deep_scan"
+      },
+      "_event_organizer": {
+        "_source": "deep_scan"
+      },
+      "_event_start_date": {
+        "_source": "deep_scan"
+      },
+      "_event_start_time": {
+        "_source": "deep_scan"
+      },
+      "_event_status": {
+        "_source": "deep_scan"
+      },
+      "_event_ticket_price": {
+        "_source": "deep_scan"
+      },
+      "_event_ticket_url": {
+        "_source": "deep_scan"
+      },
+      "_instagram_handle": {
+        "_source": "deep_scan"
+      },
+      "_loc": {
+        "_source": "deep_scan"
+      },
+      "_local_address": {
+        "_source": "deep_scan"
+      },
+      "_local_lat": {
+        "_source": "deep_scan"
+      },
+      "_local_lng": {
+        "_source": "deep_scan"
+      },
+      "_local_price_range": {
+        "_source": "deep_scan"
+      },
+      "_neighborhood": {
+        "_source": "deep_scan"
+      },
+      "_original_price": {
+        "_source": "deep_scan"
+      },
+      "_press_kit_url": {
+        "_source": "deep_scan"
+      },
+      "_price": {
+        "_source": "deep_scan"
+      },
+      "_price_per_night": {
+        "_source": "deep_scan"
+      },
+      "_soundcloud_url": {
+        "_source": "deep_scan"
+      },
+      "_ticket_type": {
+        "_source": "deep_scan"
+      },
+      "_ticket_url": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {
+      "_apollo_favorite_events": {
+        "_source": "deep_scan"
+      },
+      "_apollo_social_name": {
+        "_source": "deep_scan"
+      },
+      "_apollo_sound_preferences": {
+        "_source": "deep_scan"
+      }
+    },
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/templates",
+      "methods": [
+        "GET"
+      ],
+      "description": "List templates",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_list_templates",
+      "rest_namespace": "apollo/v1",
+      "file": "includes/class-plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/templates/calendars",
+      "methods": [
+        "GET"
+      ],
+      "description": "Calendar types",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_list_calendar_templates",
+      "rest_namespace": "apollo/v1",
+      "file": "includes/class-plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/canvas/save",
+      "methods": [
+        "POST"
+      ],
+      "description": "Save canvas page",
+      "auth": "CAPABILITY_CHECK",
+      "permission_risk": "LOW",
+      "permission_method": "check_edit_permission",
+      "permission_binding": "Plugin::check_edit_permission",
+      "permission_summary": "Requires capability: edit_posts",
+      "permission_capabilities": [
+        "edit_posts"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can('edit_posts');",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_save_canvas",
+      "rest_namespace": "apollo/v1",
+      "file": "includes/class-plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/canvas/blocks",
+      "methods": [
+        "GET"
+      ],
+      "description": "Available blocks",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_list_blocks",
+      "rest_namespace": "apollo/v1",
+      "file": "includes/class-plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "ajax": {
+    "priv": [
+      "apollo_frontend_delete_image",
+      "apollo_frontend_save",
+      "apollo_frontend_upload",
+      "apollo_navbar_reset_defaults",
+      "apollo_navbar_upload_image",
+      "apollo_refresh_weather",
+      "apollo_save_test_spreadsheet",
+      "apollo_suggest_event",
+      "nopriv_apollo_navbar_login",
+      "nopriv_apollo_panel_login",
+      "nopriv_apollo_suggest_event"
+    ],
+    "nopriv": [
+      "apollo_navbar_login",
+      "apollo_panel_login",
+      "apollo_suggest_event"
+    ]
+  },
+  "pages": [
+    {
+      "slug": "casa",
+      "rewrite": "^casa/?$",
+      "query": "index.php?apollo_home_page=1",
+      "query_vars": [
+        "apollo_home_page=1"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "home",
+      "rewrite": "^home/?$",
+      "query": "index.php?apollo_home_redirect=1",
+      "query_vars": [
+        "apollo_home_redirect=1"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "feed",
+      "rewrite": "^feed/?$",
+      "query": "index.php?apollo_feed_page=1",
+      "query_vars": [
+        "apollo_feed_page=1"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "sobre",
+      "rewrite": "^sobre/?$",
+      "query": "index.php?apollo_sobre_page=1",
+      "query_vars": [
+        "apollo_sobre_page=1"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "about-us",
+      "rewrite": "^about-us/?$",
+      "query": "index.php?apollo_about_redirect=1",
+      "query_vars": [
+        "apollo_about_redirect=1"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "explore",
+      "rewrite": "^explore/?$",
+      "query": "index.php?apollo_explore_redirect=1",
+      "query_vars": [
+        "apollo_explore_redirect=1"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "mural",
+      "rewrite": "^mural/?$",
+      "query": "index.php?apollo_mural_redirect=1",
+      "query_vars": [
+        "apollo_mural_redirect=1"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "test",
+      "rewrite": "^test/?$",
+      "query": "index.php?apollo_test_page=1",
+      "query_vars": [
+        "apollo_test_page=1"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "editar/{param}/{param}",
+      "rewrite": "^editar/(' . $cpt_regex . ')/([0-9]+)/?$",
+      "query": "index.php?apollo_edit_cpt=$matches[1]&apollo_edit_id=$matches[2]",
+      "query_vars": [
+        "apollo_edit_cpt=$matches[1]",
+        "apollo_edit_id=$matches[2]"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "editar/{param}",
+      "rewrite": "^editar/(' . $cpt_regex . ')/?$",
+      "query": "index.php?apollo_edit_cpt=$matches[1]&apollo_edit_id=0",
+      "query_vars": [
+        "apollo_edit_cpt=$matches[1]",
+        "apollo_edit_id=0"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    }
+  ],
+  "shortcodes": [
+    {
+      "tag": "apollo_calendar",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_event",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_event_form",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_events",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "version": "1.5.1",
+  "cron": [],
+  "hooks_fired": [
+    "apollo/adverts/render_create_form",
+    "apollo/canvas/head",
+    "apollo/chat/render_list",
+    "apollo/chat/render_panel",
+    "apollo/chat/render_thread",
+    "apollo/comment/render_depoimento_form",
+    "apollo/detail/render_panel",
+    "apollo/dynamic/after_content",
+    "apollo/events/render_create_form",
+    "apollo/events/suggestion_created",
+    "apollo/explore/after_feed",
+    "apollo/feed/after_content",
+    "apollo/forms/extra_nav_items",
+    "apollo/forms/extra_sections",
+    "apollo/groups/render_create_form",
+    "apollo/home/after_content",
+    "apollo/home/before_content",
+    "apollo/home/head",
+    "apollo/home/marquee_items",
+    "apollo/login/render_panel",
+    "apollo/mapa/after_content",
+    "apollo/mapa/head",
+    "apollo/mod/render_report_form",
+    "apollo/mural/after_content",
+    "apollo/notif/render_panel",
+    "apollo/seo/head",
+    "apollo/social/render_feed",
+    "apollo/templates/has_aside",
+    "apollo_after_home_content",
+    "apollo_after_mural_content",
+    "apollo_after_template_part",
+    "apollo_before_home_content",
+    "apollo_before_template_part",
+    "apollo_editable_post_types",
+    "apollo_editor_after_fields",
+    "apollo_editor_after_save_{$post_type}",
+    "apollo_editor_after_section_{$section_key}",
+    "apollo_editor_before_fields",
+    "apollo_editor_before_section_{$section_key}",
+    "apollo_editor_can_create_{$post_type}",
+    "apollo_editor_can_edit_{$post_type}",
+    "apollo_editor_config_{$post_type}",
+    "apollo_editor_draft_created_{$post_type}",
+    "apollo_editor_field_visible_{$name}",
+    "apollo_editor_footer",
+    "apollo_editor_head",
+    "apollo_editor_render_field_{$type}",
+    "apollo_frontend_fields_{$post_type}",
+    "apollo_locate_template",
+    "apollo_mural_ticker_items",
+    "apollo_mural_weather_condition",
+    "apollo_mural_weather_icon",
+    "apollo_mural_weather_location",
+    "apollo_mural_weather_temp",
+    "apollo_mural_weather_video"
+  ],
+  "hooks_listened": [
+    "apollo/templates/initialized",
+    "apollo_editable_post_types",
+    "apollo_editor_config_dj",
+    "apollo_frontend_fields_dj",
+    "apollo_frontend_fields_{cpt}",
+    "apollo_mural_weather_condition",
+    "apollo_mural_weather_icon",
+    "apollo_mural_weather_temp"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [
+      "apollo-frontend-editor",
+      "apollo-navbar",
+      "apollo-navbar-settings",
+      "apollo-templates"
+    ],
+    "styles": [
+      "apollo-event-card",
+      "apollo-frontend-editor",
+      "apollo-navbar",
+      "apollo-navbar-settings",
+      "apollo-templates",
+      "apollo-v2-design-system"
+    ]
+  },
+  "options": [
+    "apollo_templates_settings",
+    "apollo_test_spreadsheet"
+  ],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 19,
+    "abspath_coverage_pct": 96,
+    "rest_open_routes": 3,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 3,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 4,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 1
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_acesso_login",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_after_home_content",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_after_mural_content",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_before_home_content",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_canvas_blocks",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_editor_after_fields",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_editor_before_fields",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_events",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_frontend_fields_dj",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_action",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_ajax",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_nonce",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_page",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_navbar_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_panel_login",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_radio",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_refresh_weather",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_templates_cache_refresh",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_templates_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [
+    {
+      "pattern": "^casa/?$",
+      "query": "index.php?apollo_home_page=1"
+    },
+    {
+      "pattern": "^home/?$",
+      "query": "index.php?apollo_home_redirect=1"
+    },
+    {
+      "pattern": "^feed/?$",
+      "query": "index.php?apollo_feed_page=1"
+    },
+    {
+      "pattern": "^sobre/?$",
+      "query": "index.php?apollo_sobre_page=1"
+    },
+    {
+      "pattern": "^about-us/?$",
+      "query": "index.php?apollo_about_redirect=1"
+    },
+    {
+      "pattern": "^explore/?$",
+      "query": "index.php?apollo_explore_redirect=1"
+    },
+    {
+      "pattern": "^mural/?$",
+      "query": "index.php?apollo_mural_redirect=1"
+    },
+    {
+      "pattern": "^test/?$",
+      "query": "index.php?apollo_test_page=1"
+    },
+    {
+      "pattern": "^editar/(' . $cpt_regex . ')/([0-9]+)/?$",
+      "query": "index.php?apollo_edit_cpt=$matches[1]&apollo_edit_id=$matches[2]"
+    },
+    {
+      "pattern": "^editar/(' . $cpt_regex . ')/?$",
+      "query": "index.php?apollo_edit_cpt=$matches[1]&apollo_edit_id=0"
+    }
+  ],
+  "query_vars": [
+    "apollo_about_redirect",
+    "apollo_edit_cpt",
+    "apollo_edit_id",
+    "apollo_explore_redirect",
+    "apollo_feed_page",
+    "apollo_home_page",
+    "apollo_home_redirect",
+    "apollo_login_page",
+    "apollo_mural_redirect",
+    "apollo_sobre_page",
+    "apollo_test_page"
+  ],
+  "php_surface": {
+    "files": 77,
+    "loc": 19530,
+    "classes": 9,
+    "functions": 24
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:46.395Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 207,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-templates",
+    "main_file": "apollo-templates.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Templates",
+      "plugin_uri": "https://apollo.rio.br/plugins/apollo-templates",
+      "description": "Templates: Page builder canvas, calendar types (01, 02...), PWA templates, all template variations",
+      "version": "1.0.4",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "Proprietary",
+      "text_domain": "apollo-templates",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": "false"
+    },
+    "composer": {
+      "name": "apollo/templates",
+      "namespaces": [
+        "Apollo\\Templates"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 77,
+        ".css": 11,
+        ".js": 8,
+        ".json": 1,
+        ".md": 5,
+        ".html": 2,
+        ".bak": 2
+      },
+      "by_top_directory": {
+        "(root)": 9,
+        "assets": 20,
+        "includes": 13,
+        "src": 6,
+        "templates": 58
+      },
+      "total_bytes": 1199841
+    },
+    "php": {
+      "files": 77,
+      "loc": 19530,
+      "classes": 9,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 24
+    },
+    "architecture": {
+      "namespace": "Apollo\\Templates",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "NavbarSettings",
+          "fqcn": "Apollo\\Templates\\NavbarSettings",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "includes/class-navbar-settings.php"
+        },
+        {
+          "kind": "class",
+          "name": "PersistentUI",
+          "fqcn": "Apollo\\Templates\\PersistentUI",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/class-persistent-ui.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Templates\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "includes/class-plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "Shortcodes",
+          "fqcn": "Apollo\\Templates\\Shortcodes",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "includes/class-shortcodes.php"
+        },
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Templates\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Deactivation",
+          "fqcn": "Apollo\\Templates\\Deactivation",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Deactivation.php"
+        },
+        {
+          "kind": "class",
+          "name": "FrontendEditor",
+          "fqcn": "Apollo\\Templates\\FrontendEditor",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/FrontendEditor.php"
+        },
+        {
+          "kind": "class",
+          "name": "FrontendFields",
+          "fqcn": "Apollo\\Templates\\FrontendFields",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/FrontendFields.php"
+        },
+        {
+          "kind": "class",
+          "name": "FrontendRouter",
+          "fqcn": "Apollo\\Templates\\FrontendRouter",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/FrontendRouter.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_templates_check_dependencies",
+          "file": "apollo-templates.php"
+        },
+        {
+          "name": "apollo_templates_enqueue_navbar_assets",
+          "file": "apollo-templates.php"
+        },
+        {
+          "name": "apollo_templates_inject_navbar_footer",
+          "file": "apollo-templates.php"
+        },
+        {
+          "name": "apollo_templates_register_page_templates",
+          "file": "apollo-templates.php"
+        },
+        {
+          "name": "apollo_templates_template_redirect",
+          "file": "apollo-templates.php"
+        },
+        {
+          "name": "apollo_navbar_login",
+          "file": "apollo-templates.php"
+        },
+        {
+          "name": "apollo_panel_login",
+          "file": "apollo-templates.php"
+        },
+        {
+          "name": "apollo_suggest_event",
+          "file": "apollo-templates.php"
+        },
+        {
+          "name": "apollo_templates_init",
+          "file": "apollo-templates.php"
+        },
+        {
+          "name": "apollo_locate_template",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_template",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_template_html",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_templates_purge_guest_home_cache",
+          "file": "includes/guest-home-guard.php"
+        },
+        {
+          "name": "apollo_templates_ensure_guest_home_htaccess",
+          "file": "includes/guest-home-guard.php"
+        },
+        {
+          "name": "apollo_templates_brutal_guest_home_repair",
+          "file": "includes/guest-home-guard.php"
+        },
+        {
+          "name": "apollo_render_navbar",
+          "file": "includes/navbar-api.php"
+        },
+        {
+          "name": "apollo_get_navbar",
+          "file": "includes/navbar-api.php"
+        },
+        {
+          "name": "apollo_templates_create_pages",
+          "file": "includes/pages.php"
+        },
+        {
+          "name": "apollo_templates_add_rewrite_rules",
+          "file": "includes/pages.php"
+        },
+        {
+          "name": "apollo_templates_parse_request",
+          "file": "includes/pages.php"
+        },
+        {
+          "name": "apollo_templates_neutralize_core_feed_query",
+          "file": "includes/pages.php"
+        },
+        {
+          "name": "apollo_save_test_spreadsheet",
+          "file": "includes/pages.php"
+        },
+        {
+          "name": "apollo_templates_activate_pages",
+          "file": "includes/pages.php"
+        },
+        {
+          "name": "apollo_build_marquee_items",
+          "file": "templates/template-parts/new-home/marquee.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 4,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/templates",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "rest_list_templates",
+          "file": "includes/class-plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/templates/calendars",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "rest_list_calendar_templates",
+          "file": "includes/class-plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/canvas/save",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "CAPABILITY_CHECK",
+            "risk": "LOW",
+            "method": "check_edit_permission",
+            "target": "Plugin",
+            "analysis": {
+              "effective_class": "CAPABILITY_CHECK",
+              "risk": "LOW",
+              "summary": "Requires capability: edit_posts",
+              "capabilities": [
+                "edit_posts"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can('edit_posts')"
+                ]
+              },
+              "body_preview": "return current_user_can('edit_posts');",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "Plugin::check_edit_permission",
+              "method_file": "includes/class-plugin.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "rest_save_canvas",
+          "file": "includes/class-plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/canvas/blocks",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "rest_list_blocks",
+          "file": "includes/class-plugin.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 3,
+        "MEDIUM": 0,
+        "LOW": 1,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "PUBLIC_UNAUTHENTICATED": 3,
+        "CAPABILITY_CHECK": 1
+      },
+      "permission_body_resolved": 4,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [
+        {
+          "endpoint": "/templates",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "includes/class-plugin.php"
+        },
+        {
+          "endpoint": "/templates/calendars",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "includes/class-plugin.php"
+        },
+        {
+          "endpoint": "/canvas/blocks",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "includes/class-plugin.php"
+        }
+      ],
+      "admin_cap_routes": [],
+      "logged_in_routes": []
+    },
+    "database": {
+      "tables_owned_or_defined": [],
+      "tables_referenced": [
+        "apollo_acesso_login",
+        "apollo_after_home_content",
+        "apollo_after_mural_content",
+        "apollo_before_home_content",
+        "apollo_canvas_blocks",
+        "apollo_editor_after_fields",
+        "apollo_editor_before_fields",
+        "apollo_events",
+        "apollo_frontend_fields_dj",
+        "apollo_login_action",
+        "apollo_login_ajax",
+        "apollo_login_nonce",
+        "apollo_login_page",
+        "apollo_navbar_settings",
+        "apollo_panel_login",
+        "apollo_radio",
+        "apollo_refresh_weather",
+        "apollo_templates_cache_refresh",
+        "apollo_templates_settings"
+      ],
+      "tables_for_registry": [],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_acesso_login",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_after_home_content",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_after_mural_content",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_before_home_content",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_canvas_blocks",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_editor_after_fields",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_editor_before_fields",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_events",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_frontend_fields_dj",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_action",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_ajax",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_nonce",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_page",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_navbar_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_panel_login",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_radio",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_refresh_weather",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_templates_cache_refresh",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_templates_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 38,
+      "user_count": 3,
+      "term_count": 0,
+      "post_keys": [
+        "_apollo_canvas_data",
+        "_apollo_template",
+        "_classified_loc",
+        "_classified_negotiable",
+        "_classified_price",
+        "_coupon_code",
+        "_dj_artist",
+        "_dj_bio_short",
+        "_dj_role",
+        "_dj_soundcloud",
+        "_event_banner",
+        "_event_date",
+        "_event_dj_ids",
+        "_event_end_date",
+        "_event_end_time",
+        "_event_loc_id",
+        "_event_local_name",
+        "_event_name",
+        "_event_organizer",
+        "_event_start_date",
+        "_event_start_time",
+        "_event_status",
+        "_event_ticket_price",
+        "_event_ticket_url",
+        "_instagram_handle",
+        "_loc",
+        "_local_address",
+        "_local_lat",
+        "_local_lng",
+        "_local_price_range",
+        "_neighborhood",
+        "_original_price",
+        "_press_kit_url",
+        "_price",
+        "_price_per_night",
+        "_soundcloud_url",
+        "_ticket_type",
+        "_ticket_url"
+      ],
+      "user_keys": [
+        "_apollo_favorite_events",
+        "_apollo_social_name",
+        "_apollo_sound_preferences"
+      ],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [
+        {
+          "pattern": "^casa/?$",
+          "query": "index.php?apollo_home_page=1",
+          "position": "top",
+          "file": "includes/pages.php"
+        },
+        {
+          "pattern": "^home/?$",
+          "query": "index.php?apollo_home_redirect=1",
+          "position": "top",
+          "file": "includes/pages.php"
+        },
+        {
+          "pattern": "^feed/?$",
+          "query": "index.php?apollo_feed_page=1",
+          "position": "top",
+          "file": "includes/pages.php"
+        },
+        {
+          "pattern": "^sobre/?$",
+          "query": "index.php?apollo_sobre_page=1",
+          "position": "top",
+          "file": "includes/pages.php"
+        },
+        {
+          "pattern": "^about-us/?$",
+          "query": "index.php?apollo_about_redirect=1",
+          "position": "top",
+          "file": "includes/pages.php"
+        },
+        {
+          "pattern": "^explore/?$",
+          "query": "index.php?apollo_explore_redirect=1",
+          "position": "top",
+          "file": "includes/pages.php"
+        },
+        {
+          "pattern": "^mural/?$",
+          "query": "index.php?apollo_mural_redirect=1",
+          "position": "top",
+          "file": "includes/pages.php"
+        },
+        {
+          "pattern": "^test/?$",
+          "query": "index.php?apollo_test_page=1",
+          "position": "top",
+          "file": "includes/pages.php"
+        },
+        {
+          "pattern": "^editar/(' . $cpt_regex . ')/([0-9]+)/?$",
+          "query": "index.php?apollo_edit_cpt=$matches[1]&apollo_edit_id=$matches[2]",
+          "position": "top",
+          "file": "src/FrontendRouter.php"
+        },
+        {
+          "pattern": "^editar/(' . $cpt_regex . ')/?$",
+          "query": "index.php?apollo_edit_cpt=$matches[1]&apollo_edit_id=0",
+          "position": "top",
+          "file": "src/FrontendRouter.php"
+        }
+      ],
+      "query_vars": [
+        "apollo_about_redirect",
+        "apollo_edit_cpt",
+        "apollo_edit_id",
+        "apollo_explore_redirect",
+        "apollo_feed_page",
+        "apollo_home_page",
+        "apollo_home_redirect",
+        "apollo_login_page",
+        "apollo_mural_redirect",
+        "apollo_sobre_page",
+        "apollo_test_page"
+      ],
+      "pages_derived": [
+        {
+          "slug": "casa",
+          "rewrite": "^casa/?$",
+          "query": "index.php?apollo_home_page=1",
+          "query_vars": [
+            "apollo_home_page=1"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "home",
+          "rewrite": "^home/?$",
+          "query": "index.php?apollo_home_redirect=1",
+          "query_vars": [
+            "apollo_home_redirect=1"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "feed",
+          "rewrite": "^feed/?$",
+          "query": "index.php?apollo_feed_page=1",
+          "query_vars": [
+            "apollo_feed_page=1"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "sobre",
+          "rewrite": "^sobre/?$",
+          "query": "index.php?apollo_sobre_page=1",
+          "query_vars": [
+            "apollo_sobre_page=1"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "about-us",
+          "rewrite": "^about-us/?$",
+          "query": "index.php?apollo_about_redirect=1",
+          "query_vars": [
+            "apollo_about_redirect=1"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "explore",
+          "rewrite": "^explore/?$",
+          "query": "index.php?apollo_explore_redirect=1",
+          "query_vars": [
+            "apollo_explore_redirect=1"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "mural",
+          "rewrite": "^mural/?$",
+          "query": "index.php?apollo_mural_redirect=1",
+          "query_vars": [
+            "apollo_mural_redirect=1"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "test",
+          "rewrite": "^test/?$",
+          "query": "index.php?apollo_test_page=1",
+          "query_vars": [
+            "apollo_test_page=1"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "editar/{param}/{param}",
+          "rewrite": "^editar/(' . $cpt_regex . ')/([0-9]+)/?$",
+          "query": "index.php?apollo_edit_cpt=$matches[1]&apollo_edit_id=$matches[2]",
+          "query_vars": [
+            "apollo_edit_cpt=$matches[1]",
+            "apollo_edit_id=$matches[2]"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "editar/{param}",
+          "rewrite": "^editar/(' . $cpt_regex . ')/?$",
+          "query": "index.php?apollo_edit_cpt=$matches[1]&apollo_edit_id=0",
+          "query_vars": [
+            "apollo_edit_cpt=$matches[1]",
+            "apollo_edit_id=0"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        }
+      ]
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 56,
+      "listened_count": 36,
+      "apollo_fired": [
+        "apollo/adverts/render_create_form",
+        "apollo/canvas/head",
+        "apollo/chat/render_list",
+        "apollo/chat/render_panel",
+        "apollo/chat/render_thread",
+        "apollo/comment/render_depoimento_form",
+        "apollo/detail/render_panel",
+        "apollo/dynamic/after_content",
+        "apollo/events/render_create_form",
+        "apollo/events/suggestion_created",
+        "apollo/explore/after_feed",
+        "apollo/feed/after_content",
+        "apollo/forms/extra_nav_items",
+        "apollo/forms/extra_sections",
+        "apollo/groups/render_create_form",
+        "apollo/home/after_content",
+        "apollo/home/before_content",
+        "apollo/home/head",
+        "apollo/home/marquee_items",
+        "apollo/login/render_panel",
+        "apollo/mapa/after_content",
+        "apollo/mapa/head",
+        "apollo/mod/render_report_form",
+        "apollo/mural/after_content",
+        "apollo/notif/render_panel",
+        "apollo/seo/head",
+        "apollo/social/render_feed",
+        "apollo/templates/has_aside",
+        "apollo_after_home_content",
+        "apollo_after_mural_content",
+        "apollo_after_template_part",
+        "apollo_before_home_content",
+        "apollo_before_template_part",
+        "apollo_editable_post_types",
+        "apollo_editor_after_fields",
+        "apollo_editor_after_save_{$post_type}",
+        "apollo_editor_after_section_{$section_key}",
+        "apollo_editor_before_fields",
+        "apollo_editor_before_section_{$section_key}",
+        "apollo_editor_can_create_{$post_type}",
+        "apollo_editor_can_edit_{$post_type}",
+        "apollo_editor_config_{$post_type}",
+        "apollo_editor_draft_created_{$post_type}",
+        "apollo_editor_field_visible_{$name}",
+        "apollo_editor_footer",
+        "apollo_editor_head",
+        "apollo_editor_render_field_{$type}",
+        "apollo_frontend_fields_{$post_type}",
+        "apollo_locate_template",
+        "apollo_mural_ticker_items",
+        "apollo_mural_weather_condition",
+        "apollo_mural_weather_icon",
+        "apollo_mural_weather_location",
+        "apollo_mural_weather_temp",
+        "apollo_mural_weather_video"
+      ],
+      "apollo_listened": [
+        "apollo/templates/initialized",
+        "apollo_editable_post_types",
+        "apollo_editor_config_dj",
+        "apollo_frontend_fields_dj",
+        "apollo_frontend_fields_{cpt}",
+        "apollo_mural_weather_condition",
+        "apollo_mural_weather_icon",
+        "apollo_mural_weather_temp"
+      ],
+      "critical_wp_listened": [
+        "admin_init",
+        "admin_menu",
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "template_redirect",
+        "wp_enqueue_scripts"
+      ]
+    },
+    "ajax": {
+      "priv": [
+        "apollo_frontend_delete_image",
+        "apollo_frontend_save",
+        "apollo_frontend_upload",
+        "apollo_navbar_reset_defaults",
+        "apollo_navbar_upload_image",
+        "apollo_refresh_weather",
+        "apollo_save_test_spreadsheet",
+        "apollo_suggest_event",
+        "nopriv_apollo_navbar_login",
+        "nopriv_apollo_panel_login",
+        "nopriv_apollo_suggest_event"
+      ],
+      "nopriv": [
+        "apollo_navbar_login",
+        "apollo_panel_login",
+        "apollo_suggest_event"
+      ]
+    },
+    "cron": [],
+    "shortcodes": [
+      "apollo_calendar",
+      "apollo_event",
+      "apollo_event_form",
+      "apollo_events"
+    ],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [
+        "apollo-frontend-editor",
+        "apollo-navbar",
+        "apollo-navbar-settings",
+        "apollo-templates"
+      ],
+      "styles": [
+        "apollo-event-card",
+        "apollo-frontend-editor",
+        "apollo-navbar",
+        "apollo-navbar-settings",
+        "apollo-templates",
+        "apollo-v2-design-system"
+      ]
+    },
+    "options": [
+      "apollo_templates_settings",
+      "apollo_test_spreadsheet"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_TEMPLATES_VERSION",
+        "value": "1.0.4"
+      },
+      {
+        "name": "APOLLO_TEMPLATES_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_TEMPLATES_DIR",
+        "value": "plugin_dir_path(__FILE__"
+      },
+      {
+        "name": "APOLLO_TEMPLATES_URL",
+        "value": "plugin_dir_url(__FILE__"
+      },
+      {
+        "name": "APOLLO_TEMPLATES_BASENAME",
+        "value": "plugin_basename(__FILE__"
+      },
+      {
+        "name": "APOLLO_TEMPLATES_BOOTSTRAPPED",
+        "value": "true"
+      },
+      {
+        "name": "APOLLO_TEMPLATES_REST_NAMESPACE",
+        "value": "apollo/v1"
+      }
+    ],
+    "security": {
+      "php_files": 77,
+      "abspath_guard_files": 74,
+      "abspath_coverage_pct": 96,
+      "wpdb_prepare_calls": 1,
+      "wpdb_query_calls": 1,
+      "prepare_to_query_ratio": 1,
+      "nonce_checks": 24,
+      "current_user_can_calls": 9,
+      "raw_superglobal": {
+        "get": 4,
+        "post": 29,
+        "request": 0
+      },
+      "permission_callback_return_true": 3,
+      "escape_helpers": 480,
+      "echo_statements": 559,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 2,
+      "risk_score": 19,
+      "risk_band": "LOW",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 3,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 3
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-admin",
+        "apollo-adverts",
+        "apollo-chat",
+        "apollo-coauthor",
+        "apollo-comment",
+        "apollo-core",
+        "apollo-dashboard",
+        "apollo-djs",
+        "apollo-docs",
+        "apollo-email",
+        "apollo-events",
+        "apollo-fav",
+        "apollo-groups",
+        "apollo-hub",
+        "apollo-loc",
+        "apollo-login",
+        "apollo-membership",
+        "apollo-mod",
+        "apollo-notif",
+        "apollo-radio",
+        "apollo-sign",
+        "apollo-social",
+        "apollo-statistics",
+        "apollo-users",
+        "apollo-wow"
+      ],
+      "signals": [
+        "apollo-admin",
+        "apollo-adverts",
+        "apollo-chat",
+        "apollo-coauthor",
+        "apollo-comment",
+        "apollo-core",
+        "apollo-dashboard",
+        "apollo-djs",
+        "apollo-docs",
+        "apollo-email",
+        "apollo-events",
+        "apollo-fav",
+        "apollo-groups",
+        "apollo-hub",
+        "apollo-loc",
+        "apollo-login",
+        "apollo-membership",
+        "apollo-mod",
+        "apollo-notif",
+        "apollo-radio",
+        "apollo-sign",
+        "apollo-social",
+        "apollo-statistics",
+        "apollo-users",
+        "apollo-wow"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.0.4",
+      "version_changed": false,
+      "old_rest": 4,
+      "live_rest": 4,
+      "old_pages": 5,
+      "live_pages": 10,
+      "new_plugin": false
+    }
+  },
+  "security_remediation": {
+    "note": "P3: examples gated by APOLLO_LOAD_TEMPLATE_EXAMPLES (default off)",
+    "last_updated": "2026-07-20"
+  },
+  "canvas_contract": {
+    "variant": "owner",
+    "action": "FIXED",
+    "shape": "canonical-shell",
+    "audited": "2026-07-28",
+    "ref": "$canvas_shell.plugins.apollo-templates"
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 85,
+    "php_loc": 21445,
+    "rest_routes_found": 6,
+    "cpts_found": [],
+    "tables_found": [],
+    "shortcodes_found": [
+      "apollo_calendar",
+      "apollo_event",
+      "apollo_event_form",
+      "apollo_events",
+      "apollo_user_badge",
+      "apollo_user_ranking"
+    ]
+  },
+  "$casa_todo_2026_07_28": {
+    "date": "2026-07-28",
+    "scope": "/casa landing page — remaining backlog items 002/003/004 (001 was already complete).",
+    "001": {
+      "status": "VERIFIED ALREADY DONE",
+      "note": "page-home.php lines ~434-510 already match the exact spec: #cecece->#aaa rest/scrolled, #666666CC->#66666680 login icon, 1.25vh threshold, !important on all listed selectors."
+    },
+    "002": {
+      "status": "DONE",
+      "what": "Hero title now rotates through 9 supplied PT/EN phrases using an n3xt()-style flip/slide swap (adapted from the user-supplied reference script). Fixed 2-row height via em-based calc(2em*0.95) — tracks the existing clamp() font-size at any viewport, no JS measuring.",
+      "files": [
+        "templates/template-parts/new-home/hero.php",
+        "assets/css/new-home.css (.nh-hero-typer + .t3xt keyframes)",
+        "assets/js/new-home.js (hero phrase rotator IIFE)"
+      ],
+      "side_effect_fixed": "The existing casa-hero ScrollTrigger tweened per-character .split-char spans queried once at page load; since the title text now changes every ~3s, those spans would go stale after the first swap and the scroll-collapse effect would silently animate detached nodes. Retargeted that tween to the stable .nh-hero-typer wrapper as one unit — same visual effect, safe against the rotating content."
+    },
+    "003": {
+      "status": "DONE",
+      "what": ".nh-hero has transform: translateY(-15%) (15dvh of its own 100dvh box); that doesn't affect normal-flow layout, so .nh-marquee-wrap used to start 15dvh below the hero's new, higher visual bottom edge. Added margin-top: -15dvh to close the gap.",
+      "file": "assets/css/new-home.css"
+    },
+    "004": {
+      "status": "VERIFIED",
+      "scroll_triggers": [
+        "casa-hero",
+        "casa-events",
+        "casa-events-title",
+        "casa-crash"
+      ],
+      "count": 4,
+      "requirement": ">= 3 — met",
+      "lenis": "confirmed wired via window.Apollo.whenLenisReady() -> lenis.on('scroll', ScrollTrigger.update)",
+      "note": "Broader 'luxury refine to match showcase' was not re-scoped with new concrete asks this pass; existing mobile-first/scroll-reveal polish from prior turns stands. Not touched further to avoid inventing unscoped changes."
+    },
+    "version_drift_fixed": "docblock said 1.3.2, APOLLO_TEMPLATES_VERSION constant said 1.3.5 (pre-existing split from earlier in this project, unrelated to today's changes) — both now 1.3.6."
+  },
+  "$casa_luxury_pass_2026_07_28b": {
+    "date": "2026-07-28",
+    "scope": "/casa — footer, login icon, event-card reveal-up, core.js token compliance, real out-now tracks. Bumped 1.3.7 -> 1.3.8.",
+    "footer": {
+      "status": "DONE",
+      "what": ".nh-footer given margin:0 !important (touches bottom = 0px); #apollo-home given margin/padding-bottom:0 !important; mobile (<=767px) .nh-footer given transform: translateY(18%). Removed a fully-superseded duplicate mobile .nh-footer block (an earlier @media (max-width:767px) rule set height:400px/overflow:hidden, entirely overridden by the later dedicated mobile-footer block — deleted to stop the two from contradicting each other).",
+      "file": "assets/css/new-home.css"
+    },
+    "login_icon": {
+      "status": "DONE",
+      "what": "Removed the visible <span>Entrar</span> from the canonical guest .ax-login control in templates/template-parts/app-shell.php (line 97) — now icon-only site-wide (aria-label=\"Entrar\" preserved), matching the pattern already used in apollo-core/includes/blank-canvas-templates.php.",
+      "file": "templates/template-parts/app-shell.php"
+    },
+    "event_cards_reveal_up": {
+      "status": "DONE",
+      "what": "Event cards (.a-eve-card) were getting .reveal-up stripped by prepStDrive() and GSAP-scrubbed instead (ST2). Re-targeted ST2's scrub to the section head only (.nh-section-head) so cards keep .reveal-up untouched and are driven purely by reveal-up.js's own IntersectionObserver + auto-stagger (--ap-d, 115ms/sibling, per the uploaded reveal-up.js) — matches the user's exact ask. /casa still holds >=3 ScrollTriggers (casa-hero, casa-events [now on the head], casa-crash). Also removed leftover __casaDbg/runCasaAudit debug-fetch instrumentation (was POSTing to 127.0.0.1:7623 on every real visitor's browser) as part of the luxury-grade cleanup.",
+      "file": "assets/js/new-home.js"
+    },
+    "token_compliance_audit": {
+      "status": "DONE",
+      "what": "Audited new-home.css against core.js's :root block. Fixed exact/near-exact hex matches to tokens (--alert-warning, --alert-icon, --onyx-600/700/800, --platinum-400) and color-mix()-derived danger-hover shades from --alert-icon (matching the --alert-card precedent already in core.js). Fixed 5 usages of var(--bg-deep) — a token that does not exist in core.js or locally, silently resolving to nothing — to var(--onyx-700). Converted ~14 raw px icon/UI font-sizes to calc(var(--fs-u, 1) * Npx) so they respect the user's font-scale preference like the rem-based sizes already do (rem was left as-is: html's font-size is var(--fs-p), which already bakes in --fs-u, so rem values were already compliant).",
+      "deliberately_left_unchanged": "var(--token, #hexfallback) CSS-fallback patterns; #000/transparent mask-image gradient stops (mask math, not color); .nh-hero-title's literal #fff (documented: hero text always white over video); the many literal #fff on badges/chips/explore-card/marquee (fixed-white-on-fixed-color-or-photo surfaces — forcing these to theme-relative tokens like --white-1 would break contrast in dark mode, since --white-1 flips with theme); a #333/#1a1a1a decorative gradient and a map-popup #FF6925 tag accent with no corresponding core.js token.",
+      "file": "assets/css/new-home.css"
+    },
+    "out_now_tracks": {
+      "status": "DONE",
+      "what": "tracks.php now calls apollo_get_latest_dj_tracks(5) (new aggregator in apollo-djs) and renders real tracks (newest release first, across all DJs) when any exist; falls back to the existing simulated placeholder covers only pre-launch (zero real tracks). Added a small top-right 'Ver Todos ->' link in the section head (href to /lancamentos, page intentionally not built yet), matching events.php's existing header-link pattern/styling exactly (.nh-section-head a — already generic + already small).",
+      "closes_gap": "This also closes the front-end read-path KNOWN GAP recorded in $dj_tracks_schema_v2 / registry/20-meta-schemas.json#_dj_tracks — see apollo-djs.json for the apollo_dj_get_tracks() migration.",
+      "files": [
+        "templates/template-parts/new-home/tracks.php",
+        "apollo-djs/includes/functions.php (apollo_dj_get_tracks migration + new apollo_get_latest_dj_tracks)"
+      ]
+    }
+  },
+  "$casa_hero_rotator_fix_2026_07_28": {
+    "date": "2026-07-28",
+    "scope": "Live-site follow-up after $casa_luxury_pass_2026_07_28b — user checked https://apollo.rio.br/casa/ and reported the hero phrase rotator wasn't running. Bumped 1.3.8 -> 1.3.9.",
+    "finding": "$casa_todo_2026_07_28.002 had marked the item-002 hero rotator DONE in an earlier phase, and the CSS scaffolding (.nh-hero-typer/.t3xt-out/.t3xt-in/@keyframes nhTyperOut/nhTyperIn) was genuinely present in new-home.css with a comment pointing at 'new-home.js hero phrase rotator' — but that JS block did not actually exist in new-home.js. Registry claim did not match disk state; confirmed via grep before writing anything.",
+    "fix": "Added a heroPhraseRotator() IIFE to new-home.js (top of file, after NAVBAR SCROLL) driving .nh-hero-typer-view through the 9 supplied PT/EN phrases via the existing n3xt()-style .t3xt-out/.t3xt-in swap. Phrases contain inline HTML (<br>, <small>, <em>, <font>) so swaps use innerHTML, not textContent. Respects prefers-reduced-motion (falls back to a plain non-animated swap on the same cadence). Pure CSS-animation driven, no GSAP dependency — starts on DOMContentLoaded regardless of GSAP load state.",
+    "scroll_trigger_adjustment": {
+      "what": "casa-hero ScrollTrigger start changed from 'top top' to 'center top'. Hero sits at document position 0, so 'top top' was satisfied at scrollY=0 (page load) — no visible before/after contrast, matching the user's 'moment 0 of viewport, impossible to see' diagnosis. 'center top' gives a static first half-screen of scroll before the video-scale + title-collapse scrub kicks in over the second half.",
+      "file": "assets/js/new-home.js",
+      "caveat": "Not verified in a live browser (no browser automation available in this environment) — reasoned from the ScrollTrigger start/end semantics and the hero's document position. Flagged for the user to confirm visually."
+    },
+    "file": "assets/js/new-home.js"
+  },
+  "$hero_rotator_quality_pass_2026_07_28": {
+    "date": "2026-07-28",
+    "reason": "User feedback on the first rotator pass: block-flip swap read as too fast / low quality ('chatgpt + magic ui'). Asked for a refined, luxury-grade letter-by-letter animation instead. Bumped 1.3.9 -> 1.3.10.",
+    "fix": "Replaced the whole-block .t3xt-out/.t3xt-in CSS-keyframe swap with a GSAP + SplitText per-CHARACTER cascade: outgoing phrase's chars drift up + fade (0.4s, stagger 0.012, power2.in), then incoming phrase's chars rise + fade in (0.7s, stagger 0.02, power3.out). Cadence slowed from 2.8s to 4.2s between transitions. Gated on window.Apollo.whenReady (SplitText only settles after apollo:ready, same gate the ScrollTrigger luxury pass uses) with a poll-then-degrade fallback to a plain non-animated swap if GSAP/SplitText never load, plus a separate reduced-motion path — the hero is never left stuck on one phrase.",
+    "cleanup": "Removed the now-fully-unreferenced .t3xt/.t3xt-out/.t3xt-in classes, @keyframes nhTyperOut/nhTyperIn, and .nh-hero-typer's perspective:700px (no 3D rotateX in the new design) from new-home.css — the char-level animation is pure inline-style GSAP, no CSS animation classes needed.",
+    "files": [
+      "assets/js/new-home.js",
+      "assets/css/new-home.css"
+    ]
+  },
+  "$event_card_contract_fix_2026_07_28": {
+    "date": "2026-07-28",
+    "reason": "User pointed at the canonical mockup source (D:/dev/_dev web/screen/_official_layout/js/app-portal-eventos.js, eveCardHTML()) and said the live event card structure was wrong. Compared byte-for-byte against that function's own documented contract comment ('CARTÃO DE EVENTO — CONTRATO DE MARKUP DA DESIGN SYSTEM').",
+    "findings": [
+      "Missing outer <article class=\"app-market eve\" data-listing=\"ID\"> wrapper around <a class=\"a-eve-card\">.",
+      "The three .a-eve-meta rows were wrong: card rendered start_time (not part of the contract at all) + venue, and never rendered line-up or genres even though $lineup_text/$genres_text were already being computed in the file and just never output.",
+      ".a-eve-tags was showing 'Hoje'/'Amanhã'/weekday-name date badges; contract defines this slot as up to 2 genre pills.",
+      "<img> was missing decoding=\"async\"; <a class=\"a-eve-card\"> was missing aria-label."
+    ],
+    "fix": "events.php now wraps each card in <article class=\"app-market eve\" data-listing=\"{ID}\">, renders the three .a-eve-meta rows as line-up (ri-sound-module-fill, falls back to 'Line-up a confirmar') -> venue (ri-map-pin-2-line, falls back to 'Local a anunciar') -> genres (ri-music-2-line, falls back to '—'), in that exact order, and populates .a-eve-tags with up to 2 genre pills (plus a 'Cancelado' tag when the event's status is cancelled). Added decoding=\"async\" and aria-label. Added .nh-events-grid > .app-market.eve { display: contents } in new-home.css so the new wrapper doesn't become the grid item in place of .a-eve-card — zero visual/layout change from the wrapper itself.",
+    "known_tradeoff": "The 'Hoje'/'Amanhã'/weekday-name badges are gone — that slot now shows genre pills per the contract. If that info was valued, it needs a new home outside .a-eve-tags (not done here — flagged, not invented).",
+    "preserved_intentionally": "The guest-vs-logged-in href logic (data-to/data-dir/data-id vs. real permalink) is Apollo/WordPress-specific routing, not part of the mockup's own client-side data-pev-open modal system — kept as-is, it's a legitimate platform adaptation, not a contract violation.",
+    "files": [
+      "templates/template-parts/new-home/events.php",
+      "assets/css/new-home.css"
+    ]
+  },
+  "$casa_bugfix_batch_2026_07_28c": {
+    "date": "2026-07-28",
+    "reason": "User reported 6 concrete defects on the live /casa page after the event-card-contract fix, several caused by side effects of prior fixes (blunt, itemized feedback with a corner-notch screenshot).",
+    "fixes": [
+      "Footer: mobile .nh-footer transform pushed from translateY(18%) to translateY(32%) — user said the prior value wasn't enough.",
+      ".ax-login icon: removed the stray `font: 600 13px/1 var(--ff-main)` shorthand in templates/page-home.php's inline <style> that was sizing the icon down to 13px. That rule was written for the now-removed <span>Entrar</span> text label; since .ax-login also carries the .ax-ic class, removing its own font-size lets it inherit .ax-ic's canonical calc(var(--fs-r,1)*1.15rem) sizing (defined in apollo-events/styles/base/template-parts/shared/shell-styles.php, shared site-wide) — now visually identical to #ic-apps/#ic-act/#ic-pf.",
+      "Event card corners: root cause was core.js's global `* { corner-shape: squircle; }` interacting with .a-eve-media's plain border-radius corners (the ones NOT covered by the manual mask/gradient corner-notch trick), exaggerating them beyond the intended --a-eve-r radius. The notch corner near the date badge is pixel-exact via the mask gradients and was unaffected — matches the user's red(wrong)/green(correct) screenshot exactly. Added `corner-shape: round;` to .a-eve-media, .a-eve-card, and .a-eve-explore in new-home.css to force standard circular arcs, consistent with the existing corner-shape:round pattern already used elsewhere in this codebase (e.g. apollo-admin/assets/modera/css/modera.css .role-switch button).",
+      ".a-eve-explore (\"ALL Eventos\" CTA): was stretching to the full height of a real event card (date+media+content) because CSS Grid's default align-items:stretch pulls every item in a row to the tallest sibling's height, and the card's own min-height:280px never actually constrained it. Replaced min-height:280px with aspect-ratio:4/5 (matching .a-eve-media's own height:0;padding-bottom:125% ratio) + align-self:start, so it now matches only the image-area height instead of the full card.",
+      "Dropdowns forced to backdrop-filter: blur(20px) !important (both prefixed and unprefixed) across every live floating/glass panel on /casa: .nh-menu-sheet, .nh-dropdown (covers --apps/--profile variants, which don't declare their own backdrop-filter), .nh-month-row (both the mobile floating state, previously blur(13px), and the >=600px inline-row state, which previously explicitly disabled blur with `backdrop-filter:none`), and .apps-pop in the shared apollo-events/styles/base/template-parts/shared/shell-styles.php (previously blur(128px), now standardized to 20px like the rest). Left .panel-r/.ax-aside/.ax-overlay untouched — those are solid slide-in side panels / dimming scrims, a different UI pattern from the floating glass dropdowns the user's example (.nh-month-row) represents.",
+      "Marquee: apollo_build_marquee_items() in marquee.php rewritten to pull ONLY news/journal `post` titles (was 6 sources: news, community joins, DJ tracks, events, classifieds, local/accommodation). Bumped the transient cache key from v2 to v3 so stale mixed-source cache isn't served post-deploy; kept the >=6-item padding and empty-state fallback logic, now news-only."
+    ],
+    "files": [
+      "assets/css/new-home.css",
+      "templates/page-home.php",
+      "templates/template-parts/new-home/marquee.php",
+      "apollo-templates.php (version bump)",
+      "../apollo-events/styles/base/template-parts/shared/shell-styles.php (shared file, .apps-pop blur)"
+    ]
+  },
+  "$marquee_format_2026_07_28d": {
+    "date": "2026-07-28",
+    "reason": "User specified the exact required shape for each news marquee item: newspaper icon + DD/MM publish date + title, three distinct parts (item text was previously just the title with no date).",
+    "fix": "apollo_build_marquee_items() in marquee.php now builds each item with separate 'date' (get_the_date('d/m')) and 'title' keys instead of one combined 'text' string; the fallback items and the >=6-item padding logic were updated to match. Cache key bumped v3 -> v4 so the old text-only shape isn't served stale from transient cache. Output markup now renders icon + <span class=\"nh-marquee-date\"> + <span class=\"nh-marquee-title\"> as three real elements (not string-concatenated) so they can be styled independently; added .nh-marquee-date (small, dim, tabular-nums) and .nh-marquee-title rules to new-home.css.",
+    "files": [
+      "templates/template-parts/new-home/marquee.php",
+      "assets/css/new-home.css",
+      "apollo-templates.php (version bump 1.3.11 -> 1.3.12)"
+    ]
+  },
+  "$marquee_links_and_auth_lightbox_2026_07_28": {
+    "date": "2026-07-28",
+    "reason": "User asked that (a) clicking a marquee news item open that news post, and (b) clicking Out-Now! tracks, resale-ticket adverts or accommodation adverts open a lightbox styled like the hub.rio screen, with the exact 'Opa, seu nome não tá na lista...' copy they supplied.",
+    "marquee": "template-parts/new-home/marquee.php -- items now carry a permalink and render as <a class='nh-marquee-item'>. The wrapper's blanket aria-hidden was REMOVED (it made every link unreachable to assistive tech); instead the ticker's second pass -- the visual duplicate that makes the CSS loop seamless -- is what carries aria-hidden + tabindex=-1, so each headline is announced and tabbable exactly once. Fallback items (no posts published yet) have an empty url and still render as inert divs. Transient cache key bumped v4 -> v5 because the cached item shape changed. new-home.css got a.nh-marquee-item text-decoration/focus-visible rules.",
+    "auth_lightbox": "NEW template-parts/new-home/auth-lightbox.php -- the shared guest gate. Markup is the user's supplied .hub-hero/.hub-tag/.hub-notice block; styles are ported from screen/_official_layout/js/view.hub.js's own STYLE array, re-scoped .hub-screen -> .nh-authbox, so the gate is visually identical to the Hub.rio screen users already know. Self-skips entirely for logged-in users (renders nothing). Exposes window.apolloAuthBox.{open,close}.",
+    "gate_rewiring": "page-home.php's [data-auth-required] handler previously hard-redirected to /acesso, which threw the visitor off the page with no explanation. It now opens the lightbox in place and only the overlay's own 'Entrar' button navigates to /acesso; the old redirect is kept as a fallback if the overlay didn't render. Enter/Space support added because the gated cards are role=button, not real buttons, so browsers fire no synthetic click for them.",
+    "gated_surfaces": "tracks.php already carried data-auth-required (unchanged). classifieds.php (resale) and crash.php (accommodation) had a DISABLED lock button, which swallowed the click -- exactly the click that now has to open the gate; the disabled attribute was removed and data-auth-required added to both the button and the whole card. Padlock icon retained on both so the lock is visible before the click.",
+    "hostel_exception": "crash.php honours the new _classified_hostel switch: hostels render an outbound 'Reservar' link and are never gated for anyone; everything else keeps the padlock, masked subtitle and the gate. See the open_divergence note in 09-plugins/apollo-adverts.json -- this strip lists the `local` CPT while the meta is registered against `classified`, so until a `local` post carries the flag every stay here stays locked.",
+    "verification": "Brace/paren/bracket balance plus PHP alt-syntax if/endif + foreach/endforeach pairing checked on all 12 touched files (all balanced); node --check on both new inline <script> blocks; cross-layer grep confirming each of the six new meta keys appears in apollo-core's registry, apollo-adverts' constants, and both the metabox render and save paths; sanitizer-coverage check confirming every declared meta 'type' resolves to an existing apollo_adverts_sanitize_meta_* function. No PHP binary in this session's sandbox, so php -l was not available.",
+    "files": [
+      "templates/template-parts/new-home/marquee.php",
+      "templates/template-parts/new-home/auth-lightbox.php (new)",
+      "templates/template-parts/new-home/classifieds.php",
+      "templates/template-parts/new-home/crash.php",
+      "templates/page-home.php",
+      "assets/css/new-home.css",
+      "apollo-templates.php (version bump 1.3.12 -> 1.3.13)"
+    ]
+  },
+  "$phase_001_feed_apollo_plus_2026_07_28": {
+    "date": "2026-07-28",
+    "phase": "001 — FEED on /feed",
+    "reason": "User opened an 11-phase programme to convert every mockup screen (FEED, EVENTOS, MARKETPLACE, COMUNA, HUB.RIO, REDUCAO DE DANOS, MAPA + the 5 'meus/minhas' dashboards) into modular template-parts mounted on the Blank Canvas Apollo+ page template, with the Design System aside links fixed. Phase 001 is the Feed.",
+    "shell_foundation": "This phase deliberately builds the SHARED foundation every later phase reuses, not just the Feed. New includes/apollo-plus-api.php exposes apollo_plus_open() / apollo_plus_close() / apollo_plus_part(). A screen is now a mount point: open the shell, render its layout part, close. apollo_plus_part() resolves child theme -> parent theme -> plugin, so any screen or widget can be overridden without touching the plugin that ships it.",
+    "aside_built": "THE GAP FLAGGED EARLIER IS NOW CLOSED. app-shell.php only ever rendered the topbar (.ax-top); the .ax-aside sidebar -- the 'mandatory header' the user meant -- did not exist in WordPress at all. Built as template-parts/apollo-plus/aside.php + aside-styles.php, CSS ported verbatim from layout.html (.ax-aside/.s/.nb/.ni/.si/.fs/.ft/.adj/.urow). Renders for GUESTS AND MEMBERS alike (primary nav is chrome, not a member feature); only the Gestor group and user row are auth-gated.",
+    "aside_links_fixed": "Mockup hash routes (#/feed, #/anuncios ...) replaced with REAL WordPress URLs resolved against the registry: /feed, /eventos, /anuncios, /comunas, /hub, /mapa, plus Reducao de Danos as an external target=_blank to https://sos.apollo.rio.br/. The active row is resolved SERVER-SIDE from the request path (exact segment or path-prefix, never substring, so /eventos/meus lights up Eventos but /anuncios never matches /anu) -- correct on first paint, no JS, no flash.",
+    "labels_enforced": "Suporte button carries data-apollo-suporte (the ecosystem-wide hook apollo-suporte.js binds to). The preferences row is labelled 'Ajustes' with icon ri-compasses-2-line, replacing the mockup's 'Preferencias' + flask SVG -- per the user's standing rule that every preferences/settings/config surface uses that label and icon.",
+    "feed_modularised": "page-feed.php went from a 1131-line monolith to a 58-line mount point. Extracted into parts: apollo-plus/aside, feed/styles (the monolith's 14KB style block preserved verbatim so the visual result is unchanged), feed/layout, feed/header, feed/composer, feed/stream, feed/post, and six sidebar widgets under feed/widgets/. The monolith is kept at templates/_legacy/page-feed.monolith.php for rollback.",
+    "no_simulated_data": "MANDATORY CONSTRAINT HONOURED: simulated.data.js is NOT ported. Only the SHAPE of its globals is honoured so the mockup's structure and scripts keep working, while every value comes from WordPress via the new includes/feed-data.php (apollo_feed_greeting/news/events/market/trending/nucleos/stats). Each provider returns [] when its source CPT/taxonomy does not exist yet, so a widget renders its empty state instead of inventing content -- the feed stream in particular has NO fixture fallback by design: an empty scene shows an empty state, never invented activity.",
+    "widget_contract": "Sidebar widgets keep the mockup's [app=\"app-widget-*\"] mount attribute even though they are now server-rendered, so the ported runtime scripts can re-hydrate the same node in place later without a markup change. Class contract (.sb-card/.sb-title/.sb-news-item/.news-cat/.news-title/.news-time/.sb-see-more/.sb-status) copied from app-widget-*.js so feed.css applies unchanged.",
+    "privacy_carried_forward": "The marketplace widget prints title + price ONLY, never the seller -- the site-wide advert seller-privacy rule established earlier this session must not be undone by a new surface.",
+    "verification": "Brace/paren/bracket + PHP alt-syntax balance on all 17 new/changed files (all balanced). Deployed via RealTimeSync (34s wait) and confirmed https://apollo.rio.br/casa still renders fully, which proves apollo-templates 1.4.0 -- including the two new requires -- loads with no fatal. /feed itself CANNOT be verified anonymously: it is auth:true and redirects guests to /acesso, which is exactly the documented behaviour. Logged-in rendering of the Feed screen is still UNVERIFIED and should be eyeballed by the user while signed in.",
+    "next_phases": "002 EVENTOS (/eventos + /portal) can now reuse apollo_plus_open()/aside directly -- the Portal de Eventos built earlier this session should be re-mounted onto the shell. 003 Marketplace, 004 Comuna, 005 Hub.rio + Reducao de Danos, 006 Mapa (apollo-maps has no page/route yet -- real build gap), 007-011 the dashboards. Comuna/Hub-directory/Mapa remain genuine build gaps with no existing WP template.",
+    "files": [
+      "includes/apollo-plus-api.php (new)",
+      "includes/feed-data.php (new)",
+      "templates/template-parts/apollo-plus/aside.php (new)",
+      "templates/template-parts/apollo-plus/aside-styles.php (new)",
+      "templates/template-parts/feed/{layout,header,composer,stream,post,styles}.php (new)",
+      "templates/template-parts/feed/widgets/{news,events,trending,nucleos,market,stats}.php (new)",
+      "templates/page-feed.php (rewritten, 1131 -> 58 lines)",
+      "templates/_legacy/page-feed.monolith.php (rollback copy)",
+      "apollo-templates.php (version bump 1.3.13 -> 1.4.0)"
+    ]
+  },
+  "$aside_review_fixes_2026_07_28": {
+    "date": "2026-07-28",
+    "reason": "Two defects reported against the phase-001 aside during the phase-002 review.",
+    "fix_suporte_hitarea": "REPORTED: 'suporte HAS NO data-apollo-suporte on the entire clickable area of Suporte'. Correct: the attribute sat only on the <button>, while the icon and the label are what the pointer actually lands on -- so if the support runtime matches the event TARGET rather than walking up to the nearest [data-apollo-suporte] ancestor, clicks on the glyph or on the word 'Suporte' hit nothing. FIX: children are made click-transparent in CSS (.supportBTN>i,>svg,>.sn{pointer-events:none}) AND carry the hook themselves, so the whole row is live regardless of which selector strategy the runtime uses -- belt and braces, because the runtime lives in another file and its strategy can change.",
+    "fix_ajustes_gating": "REPORTED: 'Ajustes is shown only for logged users true'. It was rendering for guests too. FIX: the whole .adj row (Ajustes link + dark-mode pill) is now inside the $apl_logged branch -- there is nothing for a guest to adjust and /ajustes requires a session, so showing it only offered a dead end. The primary nav above it stays guest-visible, unchanged.",
+    "files": [
+      "templates/template-parts/apollo-plus/aside.php",
+      "templates/template-parts/apollo-plus/aside-styles.php",
+      "apollo-templates.php (version bump 1.4.0 -> 1.4.1)"
+    ]
+  },
+  "$listing_header_block_2026_08_08": {
+    "date": "2026-08-08",
+    "scope": "NEW SHARED BLOCK — apollo_listing_header(). Version bump 1.5.0 -> 1.5.1.",
+    "what": "The month/search/filter band at the top of an archive-style Apollo screen, shipped as a reusable template-part block. Ported from the approved lab file screen/portal/header listing/header-of-listing-events.html, section 'Header 02 · Kinetic Mask · Apple' (the second of the three variants in that file).",
+    "why_here_and_not_in_apollo_events": "It is page chrome that more than one listing will want, and 18-canvas-shell puts Apollo+ chrome plus the apollo_plus_part() include API in apollo-templates. Putting it in the first plugin that happened to need it (apollo-events) would have made every future listing depend on the events plugin for its header.",
+    "not_a_fourth_shell": "IMPORTANT given $unification_2026_08_05 in 18-canvas-shell: this is a BLOCK, not a shell. It emits no <head>, no <body>, no topbar and no aside. It renders inside whatever container the caller already opened — normally .ax-main from apollo_plus_open() — and it does not call any shell function.",
+    "api": {
+      "file": "includes/listing-header-api.php (required from apollo-templates.php)",
+      "functions": [
+        "apollo_listing_header( array $args = [] ) — render",
+        "apollo_get_listing_header( array $args = [] ) — same, returns HTML",
+        "apollo_listing_header_months( array $counts = [] ) — twelve localized rows ready for the 'months' arg",
+        "apollo_listing_header_args() / apollo_listing_header_groups() — normalisers, public so a caller can pre-validate"
+      ],
+      "one_line_use": "apollo_listing_header();",
+      "filter": "apollo/listing_header/skins — register another skin without touching the block"
+    },
+    "structure": {
+      "templates/template-parts/listing-header/index.php": "orchestrator — the only part a page includes; guards the shared layers so N headers on one page emit kernel CSS/JS once",
+      "kernel-styles.php": "overlay + filter primitives shared by every skin",
+      "kernel-scripts.php": "window.ApolloListingHeader — instance registry, circular clip-path wipe, month mask-swap, CustomEvents",
+      "skins/apple.php": "the Header 02 look; a skin only restyles, the markup contract is skin-independent",
+      "parts/{actions,month,scrub}.php": "the header row, the kinetic month/year, the 12-segment scrubber",
+      "parts/{overlay-search,overlay-filter,filter-group}.php": "the two full-viewport panels; overlays are siblings of <header> so they are not trapped in its stacking context"
+    },
+    "controlled_component": "The block never fetches, never filters and never knows what a month contains. It emits apollo:lh:{month,search,filter,clear} and accepts state back through setMonth()/setMonths(). The screen owns the data — that is what makes it reusable.",
+    "data_flow_rule_honoured": "The lab built its filter chips in JS from a hard-coded APOLLO_TAXONOMY literal. That was NOT ported: per 03-apollo-rule.$apollo_rule.data_flow the PHP array is the source of truth, so chips are server-rendered from terms the caller passes. A group with zero options is dropped; zero groups prints one empty state. Nothing is invented.",
+    "conventions": {
+      "icons": "bare <i class=\"ri-*\"> only — core.js's icon runtime hydrates them; no hand-written SVG",
+      "tokens": ":root is never redeclared; the block's own variables are scoped to .alh",
+      "script_payloads": "config goes through apollo_json_for_script() (HEX flags), because month labels and term names are author-influenced text inside a <script>"
+    },
+    "first_consumer": "apollo-events /eventos — see 09-plugins/apollo-events.json $portal_header_swap_2026_08_08.",
+    "files": [
+      "includes/listing-header-api.php (new)",
+      "templates/template-parts/listing-header/{index,kernel-styles,kernel-scripts,boot}.php (new)",
+      "templates/template-parts/listing-header/skins/apple.php (new)",
+      "templates/template-parts/listing-header/parts/{actions,month,scrub,overlay-search,overlay-filter,filter-group}.php (new)",
+      "apollo-templates.php (require + version bump 1.5.0 -> 1.5.1)"
+    ]
+  },
+  "$fsx_token_compat_2026_07_28": {
+    "date": "2026-07-28",
+    "severity": "ROOT CAUSE — explains the majority of 'one ton of elements' wrong across every Apollo+ screen",
+    "finding": "The Design System component CSS (ds-components.css / market.css, verbatim from uni.theme.v2.1.css) sizes nearly everything through calc(Npx * var(--fsx)): .a-eve-title, .a-eve-date-day, .a-eve-tag, .date-day, .date-month, .event-action .status, .stat-value and dozens more. core.js injects --fs-u and --fs-r but NOT --fsx -- in the mockup that token comes from the page's own :root, which we deliberately do not port. Every one of those calc() expressions was therefore INVALID, and CSS drops an invalid declaration entirely, so each element silently fell back to inherited sizing.",
+    "measured_proof": "Verified in a real browser (Claude in Chrome, cache-busted URL, logged-in session): getComputedStyle(document.documentElement) returned --fsx as MISSING while --fs-u was 1; .event-action .status computed to 17.69px where the DS specifies calc(var(--fsx) * .58rem) ~ 9px. Before/after screenshots confirm the same DOM going from truncated title + oversized badge + hidden venue meta to correct scale.",
+    "why_it_looked_like_many_bugs": "A single missing token degrades every sized element at once, which reads as 'the whole screen is wrong' rather than one defect. Three previous rounds chased individual symptoms (card background, arrows, badge) because the shared cause was invisible without computing styles in a real browser.",
+    "fix": "New apollo-plus-token-compat style block in aside-styles.php: .ax-body,.ax-shell,body{--fsx: var(--fs-u, var(--fs-r, 1))}. Declared on the shell's own classes, NOT on :root -- core.js owns :root and that rule stands. It inherits to every descendant so it repairs the whole component set at once, and defers automatically to a real --fsx the moment core.js ships one.",
+    "applies_to": "Every phase. Any screen in 003-011 that renders DS components depends on this token; without it they would each have reproduced the same failure.",
+    "files": [
+      "templates/template-parts/apollo-plus/aside-styles.php",
+      "apollo-templates.php (version bump 1.4.1 -> 1.4.2)"
+    ]
+  }
+}

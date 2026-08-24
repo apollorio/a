@@ -1,0 +1,2405 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-chat",
+    "owner": "apollo-chat",
+    "wrap": "plugins.apollo-chat",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-chat",
+  "namespace": "Apollo\\Chat",
+  "priority": 3,
+  "status": "IMPLEMENTED",
+  "version": "2.0.1",
+  "description": "Premium instant messaging — real-time polling, typing indicators, read receipts, file/voice attachments, emoji reactions, message editing, reply-to threading, search, groups, user presence, notifications, mute/unmute, pinned messages, message forwarding, user info panels.",
+  "dependencies": [
+    "apollo-core",
+    "apollo-notif",
+    "apollo-users"
+  ],
+  "provides": [
+    "instant-messaging",
+    "real-time-chat",
+    "typing-indicators",
+    "read-receipts",
+    "file-attachments",
+    "voice-messages",
+    "emoji-reactions",
+    "message-editing",
+    "reply-threading",
+    "chat-search",
+    "group-chat",
+    "user-presence",
+    "mute-unmute",
+    "pinned-messages",
+    "message-forwarding",
+    "user-blocking",
+    "cross-tab-sync",
+    "browser-notifications"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [
+    "apollo_chat_attachments",
+    "apollo_chat_blocks",
+    "apollo_chat_messages",
+    "apollo_chat_participants",
+    "apollo_chat_presence",
+    "apollo_chat_reactions",
+    "apollo_chat_reports",
+    "apollo_chat_threads",
+    "apollo_chat_typing"
+  ],
+  "meta": {
+    "post": {},
+    "user": {
+      "apollo_chat_email_notify": {
+        "_source": "deep_scan"
+      }
+    },
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/chat/threads",
+      "methods": [
+        "GET"
+      ],
+      "description": "List user's threads / Create new thread",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_threads",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/threads/(?P<id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_thread",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/send",
+      "methods": [
+        "POST"
+      ],
+      "description": "Send message (flat route â€” used alongside /chat/threads/{id}/messages)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_send_message",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/unread",
+      "methods": [
+        "GET"
+      ],
+      "description": "Get unread message count",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_unread_count",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/poll",
+      "methods": [
+        "GET"
+      ],
+      "description": "Poll for new messages/updates (3s interval)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_poll",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/more",
+      "methods": [
+        "GET"
+      ],
+      "description": "Load more threads (pagination)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_more_threads",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/threads/(?P<id>\\d+)",
+      "methods": [
+        "DELETE"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_delete_thread",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/typing",
+      "methods": [
+        "POST"
+      ],
+      "description": "Send typing indicator (ephemeral, 3s TTL)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_typing",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/threads/(?P<id>\\d+)/read",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_mark_read",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/messages/(?P<id>\\d+)",
+      "methods": [
+        "PUT"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_edit_message",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/messages/(?P<id>\\d+)",
+      "methods": [
+        "DELETE"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_delete_message",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/messages/(?P<id>\\d+)/react",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_react_message",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/search",
+      "methods": [
+        "GET"
+      ],
+      "description": "Search messages across all threads",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_search",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/block/(?P<user_id>\\d+)",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_block_user",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/block/(?P<user_id>\\d+)",
+      "methods": [
+        "DELETE"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_unblock_user",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/presence",
+      "methods": [
+        "POST"
+      ],
+      "description": "Update user presence status (online/away/busy/offline)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_presence",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/threads/(?P<id>\\d+)/older",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_older_messages",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/threads/(?P<id>\\d+)/members",
+      "methods": [
+        "?"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_thread_members",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/threads/(?P<id>\\d+)/mute",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_mute_thread",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/messages/(?P<id>\\d+)/forward",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_forward_message",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/threads/(?P<id>\\d+)/pin",
+      "methods": [
+        "?"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_pin_message",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/threads/(?P<id>\\d+)/pinned",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_pinned",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/thread-for-context",
+      "methods": [
+        "POST"
+      ],
+      "description": "Find or create thread by context (classified/event integration)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_thread_for_context",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/gif-search",
+      "methods": [
+        "GET"
+      ],
+      "description": "GIF search via Tenor proxy (keeps API key server-side)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_gif_search",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/messages/(?P<id>\\d+)/report",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_report_message",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/threads/(?P<id>\\d+)/export",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_export_thread",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/reports",
+      "methods": [
+        "GET"
+      ],
+      "description": "Admin: list spam reports",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can('manage_options');",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_reports",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/reports/(?P<id>\\d+)/action",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (ADMIN_CAPABILITY)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can('manage_options');",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_resolve_report",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/chat/upload",
+      "methods": [
+        "POST"
+      ],
+      "description": "Upload file/image/audio/video attachment",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_upload",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "pages": [
+    {
+      "slug": "mensagens",
+      "rewrite": "^mensagens/?$",
+      "query": "index.php?apollo_chat_page=inbox",
+      "query_vars": [
+        "apollo_chat_page=inbox"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "mensagens/{param}",
+      "rewrite": "^mensagens/(\\d+)/?$",
+      "query": "index.php?apollo_chat_page=thread&apollo_thread_id=$matches[1]",
+      "query_vars": [
+        "apollo_chat_page=thread",
+        "apollo_thread_id=$matches[1]"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    }
+  ],
+  "shortcodes": [],
+  "NOTE": "No shortcodes â€” Chat works via virtual pages (/mensagens) + REST API + AJAX polling. BroadcastChannel enables real-time sync across browser tabs.",
+  "features": {
+    "real_time": "AJAX polling every 3s + BroadcastChannel cross-tab sync",
+    "typing_indicators": "3s debounce with ephemeral storage",
+    "read_receipts": "3-state: sent â†’ delivered â†’ read",
+    "attachments": "Drag-drop + paste support for images/files/audio/video",
+    "voice_messages": "MediaRecorder API for voice recording",
+    "emoji_picker": "Native Unicode emoji picker",
+    "message_editing": "Edit sent messages with edit timestamp",
+    "message_threading": "Reply-to quotes with thread visualization",
+    "user_presence": "Online/away/busy/offline status with last seen",
+    "message_search": "Full-text search across all threads",
+    "notifications": "Sound + browser push notifications",
+    "group_chat": "Multi-participant conversations",
+    "user_blocking": "Block users from sending messages",
+    "message_pinning": "Pin important messages in threads",
+    "message_forwarding": "Forward messages to other threads"
+  },
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [
+    "apollo/chat/bad_words",
+    "apollo/chat/flood_max_messages",
+    "apollo/chat/flood_window_seconds",
+    "apollo/chat/message_sent"
+  ],
+  "hooks_listened": [
+    "apollo_chat_cleanup"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [],
+    "styles": []
+  },
+  "options": [
+    "apollo_chat_bad_words_enabled",
+    "apollo_chat_flood_max",
+    "apollo_chat_quota_",
+    "apollo_chat_retention_days",
+    "apollo_chat_version",
+    "apollo_tenor_api_key"
+  ],
+  "security": {
+    "risk_band": "MEDIUM",
+    "risk_score": 30,
+    "abspath_coverage_pct": 89,
+    "rest_open_routes": 0,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 0,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 2,
+    "permission_methods_unresolved": 27,
+    "prepare_ratio": 0.95
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_chat_attachments",
+      "column_count": 11,
+      "columns": [
+        "id:BIGINT UNSIGNED NOT",
+        "message_id:BIGINT UNSIGNED DEFAULT",
+        "user_id:BIGINT UNSIGNED NOT",
+        "wp_attachment_id:BIGINT UNSIGNED DEFAULT",
+        "file_url:VARCHAR(500) NOT NULL",
+        "file_name:VARCHAR(255) NOT NULL",
+        "file_type:VARCHAR(20) DEFAULT",
+        "mime_type:VARCHAR(100) DEFAULT",
+        "file_size:BIGINT UNSIGNED DEFAULT",
+        "thumb_url:VARCHAR(500) DEFAULT",
+        "created_at:DATETIME NOT NULL"
+      ],
+      "indexes": [
+        "PRIMARY KEY (id)",
+        "KEY message_id (message_id)",
+        "KEY user_id (user_id)"
+      ],
+      "source": "create_var_prefix",
+      "ref_only": false,
+      "defined": true,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_chat_blocks",
+      "column_count": 4,
+      "columns": [
+        "id:BIGINT UNSIGNED NOT",
+        "blocker_id:BIGINT UNSIGNED NOT",
+        "blocked_id:BIGINT UNSIGNED NOT",
+        "created_at:DATETIME NOT NULL"
+      ],
+      "indexes": [
+        "PRIMARY KEY (id)",
+        "UNIQUE KEY blocker_blocked (blocker_id, blocked_id)",
+        "KEY blocked_id (blocked_id)"
+      ],
+      "source": "create_var_prefix",
+      "ref_only": false,
+      "defined": true,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_chat_messages",
+      "column_count": 11,
+      "columns": [
+        "id:BIGINT UNSIGNED NOT",
+        "thread_id:BIGINT UNSIGNED NOT",
+        "sender_id:BIGINT UNSIGNED NOT",
+        "message:LONGTEXT NOT NULL",
+        "message_type:VARCHAR(20) DEFAULT",
+        "reply_to_id:BIGINT UNSIGNED DEFAULT",
+        "attachment_id:BIGINT UNSIGNED DEFAULT",
+        "is_deleted:TINYINT(1) DEFAULT 0",
+        "edited_at:DATETIME DEFAULT NULL",
+        "updated_at:DATETIME DEFAULT NULL",
+        "created_at:DATETIME NOT NULL"
+      ],
+      "indexes": [
+        "PRIMARY KEY (id)",
+        "KEY thread_id (thread_id)",
+        "KEY sender_id (sender_id)",
+        "KEY created_at (created_at)",
+        "KEY reply_to_id (reply_to_id)",
+        "KEY message_type (message_type)"
+      ],
+      "source": "create_var_prefix",
+      "ref_only": false,
+      "defined": true,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_chat_participants",
+      "column_count": 10,
+      "columns": [
+        "id:BIGINT UNSIGNED NOT",
+        "thread_id:BIGINT UNSIGNED NOT",
+        "user_id:BIGINT UNSIGNED NOT",
+        "unread_count:INT UNSIGNED DEFAULT",
+        "is_deleted:TINYINT(1) DEFAULT 0",
+        "is_muted:TINYINT(1) DEFAULT 0",
+        "last_read_at:DATETIME",
+        "last_read_message_id:BIGINT UNSIGNED DEFAULT",
+        "role:VARCHAR(20) DEFAULT",
+        "created_at:DATETIME NOT NULL"
+      ],
+      "indexes": [
+        "PRIMARY KEY (id)",
+        "UNIQUE KEY thread_user (thread_id, user_id)",
+        "KEY user_id (user_id)",
+        "KEY unread_count (unread_count)"
+      ],
+      "source": "create_var_prefix",
+      "ref_only": false,
+      "defined": true,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_chat_presence",
+      "column_count": 3,
+      "columns": [
+        "user_id:BIGINT UNSIGNED NOT",
+        "status:VARCHAR(20) DEFAULT",
+        "last_seen:DATETIME NOT NULL"
+      ],
+      "indexes": [
+        "PRIMARY KEY (user_id)",
+        "KEY last_seen (last_seen)"
+      ],
+      "source": "create_var_prefix",
+      "ref_only": false,
+      "defined": true,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_chat_reactions",
+      "column_count": 5,
+      "columns": [
+        "id:BIGINT UNSIGNED NOT",
+        "message_id:BIGINT UNSIGNED NOT",
+        "user_id:BIGINT UNSIGNED NOT",
+        "emoji:VARCHAR(32) NOT NULL",
+        "created_at:DATETIME NOT NULL"
+      ],
+      "indexes": [
+        "PRIMARY KEY (id)",
+        "UNIQUE KEY msg_user_emoji (message_id, user_id, emoji)",
+        "KEY message_id (message_id)",
+        "KEY user_id (user_id)"
+      ],
+      "source": "create_var_prefix",
+      "ref_only": false,
+      "defined": true,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_chat_reports",
+      "column_count": 8,
+      "columns": [
+        "id:BIGINT UNSIGNED NOT",
+        "message_id:BIGINT UNSIGNED NOT",
+        "reporter_id:BIGINT UNSIGNED NOT",
+        "reason:VARCHAR(255) DEFAULT",
+        "status:VARCHAR(20) DEFAULT",
+        "resolved_by:BIGINT UNSIGNED DEFAULT",
+        "resolved_at:DATETIME DEFAULT NULL",
+        "created_at:DATETIME NOT NULL"
+      ],
+      "indexes": [
+        "PRIMARY KEY (id)",
+        "UNIQUE KEY msg_reporter (message_id, reporter_id)",
+        "KEY status (status)",
+        "KEY created_at (created_at)"
+      ],
+      "source": "create_var_prefix",
+      "ref_only": false,
+      "defined": true,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_chat_threads",
+      "column_count": 12,
+      "columns": [
+        "id:BIGINT UNSIGNED NOT",
+        "subject:VARCHAR(255) DEFAULT",
+        "is_group:TINYINT(1) DEFAULT 0",
+        "group_name:VARCHAR(255) DEFAULT",
+        "group_avatar:VARCHAR(500) DEFAULT",
+        "context:VARCHAR(100) DEFAULT",
+        "last_message_id:BIGINT UNSIGNED DEFAULT",
+        "last_sender_id:BIGINT UNSIGNED DEFAULT",
+        "last_message_at:DATETIME",
+        "last_message_preview:VARCHAR(255) DEFAULT",
+        "created_by:BIGINT UNSIGNED DEFAULT",
+        "created_at:DATETIME NOT NULL"
+      ],
+      "indexes": [
+        "PRIMARY KEY (id)",
+        "KEY last_message_at (last_message_at)",
+        "KEY created_by (created_by)",
+        "KEY idx_context (context)"
+      ],
+      "source": "create_var_prefix",
+      "ref_only": false,
+      "defined": true,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_chat_typing",
+      "column_count": 4,
+      "columns": [
+        "id:BIGINT UNSIGNED NOT",
+        "thread_id:BIGINT UNSIGNED NOT",
+        "user_id:BIGINT UNSIGNED NOT",
+        "updated_at:DATETIME NOT NULL"
+      ],
+      "indexes": [
+        "PRIMARY KEY (id)",
+        "UNIQUE KEY thread_user (thread_id, user_id)",
+        "KEY updated_at (updated_at)"
+      ],
+      "source": "create_var_prefix",
+      "ref_only": false,
+      "defined": true,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_get_user_badge",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_queue_email",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [
+    {
+      "pattern": "^mensagens/?$",
+      "query": "index.php?apollo_chat_page=inbox"
+    },
+    {
+      "pattern": "^mensagens/(\\d+)/?$",
+      "query": "index.php?apollo_chat_page=thread&apollo_thread_id=$matches[1]"
+    }
+  ],
+  "query_vars": [
+    "apollo_chat_page",
+    "apollo_thread_id"
+  ],
+  "php_surface": {
+    "files": 9,
+    "loc": 4272,
+    "classes": 3,
+    "functions": 46
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:47.589Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 88,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-chat",
+    "main_file": "apollo-chat.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Chat",
+      "plugin_uri": "https://apollo.rio.br",
+      "description": "Premium instant messaging — real-time polling, typing indicators, read receipts, file/voice attachments, emoji reactions, message editing, reply-to threading, search, groups, user presence, notifications, mute/unmute, pinned messages, message forwarding, user info panels.",
+      "version": "2.0.1",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "GPL-2.0-or-later",
+      "text_domain": "apollo-chat",
+      "domain_path": null,
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": null
+    },
+    "composer": {
+      "name": "apollo/chat",
+      "namespaces": [
+        "Apollo\\Chat"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 9,
+        ".css": 2,
+        ".js": 2,
+        ".json": 1,
+        ".md": 1
+      },
+      "by_top_directory": {
+        "(root)": 4,
+        "assets": 4,
+        "includes": 1,
+        "src": 3,
+        "templates": 3
+      },
+      "total_bytes": 351829
+    },
+    "php": {
+      "files": 9,
+      "loc": 4272,
+      "classes": 3,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 46
+    },
+    "architecture": {
+      "namespace": "Apollo\\Chat",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Chat\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Deactivation",
+          "fqcn": "Apollo\\Chat\\Deactivation",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Deactivation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Chat\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_send_message",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_user_threads",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_thread_messages",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_unread_message_count",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_delete_thread_for_user",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_message_reactions",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_toggle_reaction",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_set_typing",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_get_typing",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_update_presence",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_is_online",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_get_online_contacts",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_mark_read",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_get_read_receipts",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_edit_message",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_delete_message",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_reply_preview",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_search_messages",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_block_user",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_unblock_user",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_is_blocked_in_thread",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_get_thread_members",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_add_thread_members",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_remove_thread_member",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_get_older_messages",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_get_attachment",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_get_thread_meta",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_toggle_mute",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_is_muted",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_forward_message",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_pin_message",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_unpin_message",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_find_or_create_thread",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_thread_url",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_get_user_badge_html",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_get_pinned_messages",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_check_flood",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_filter_bad_words",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_count_bad_words",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_report_message",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_get_reports",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_resolve_report",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_maybe_notify_by_email",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_cleanup_old_messages",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_is_over_quota",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_chat_export_thread_csv",
+          "file": "includes/functions.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 29,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/threads",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_get_threads",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/threads/(?P<id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_get_thread",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/send",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_send_message",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/unread",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_unread_count",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/poll",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_poll",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/more",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_more_threads",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/threads/(?P<id>\\d+)",
+          "methods": [
+            "DELETE"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_delete_thread",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/typing",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_typing",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/threads/(?P<id>\\d+)/read",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_mark_read",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/messages/(?P<id>\\d+)",
+          "methods": [
+            "PUT"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_edit_message",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/messages/(?P<id>\\d+)",
+          "methods": [
+            "DELETE"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_delete_message",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/messages/(?P<id>\\d+)/react",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_react_message",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/search",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_search",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/block/(?P<user_id>\\d+)",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_block_user",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/block/(?P<user_id>\\d+)",
+          "methods": [
+            "DELETE"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_unblock_user",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/presence",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_presence",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/threads/(?P<id>\\d+)/older",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_older_messages",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/threads/(?P<id>\\d+)/members",
+          "methods": [
+            "?"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_thread_members",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/threads/(?P<id>\\d+)/mute",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_mute_thread",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/messages/(?P<id>\\d+)/forward",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_forward_message",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/threads/(?P<id>\\d+)/pin",
+          "methods": [
+            "?"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_pin_message",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/threads/(?P<id>\\d+)/pinned",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_get_pinned",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/thread-for-context",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth,\r\n                "
+            }
+          },
+          "callback": "rest_thread_for_context",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/gif-search",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth,\r\n                "
+            }
+          },
+          "callback": "rest_gif_search",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/messages/(?P<id>\\d+)/report",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_report_message",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/threads/(?P<id>\\d+)/export",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_export_thread",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/reports",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": null,
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can('manage_options')"
+                ]
+              },
+              "body_preview": "return current_user_can('manage_options');",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_get_reports",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/reports/(?P<id>\\d+)/action",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": null,
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can('manage_options')"
+                ]
+              },
+              "body_preview": "return current_user_can('manage_options');",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_resolve_report",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/chat/upload",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $auth"
+            }
+          },
+          "callback": "rest_upload",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 2,
+        "REVIEW": 27
+      },
+      "effective_class_counts": {
+        "OTHER": 27,
+        "ADMIN_CAPABILITY": 2
+      },
+      "permission_body_resolved": 2,
+      "permission_body_unresolved": 27,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [],
+      "admin_cap_routes": [
+        "/chat/reports",
+        "/chat/reports/(?P<id>\\d+)/action"
+      ],
+      "logged_in_routes": []
+    },
+    "database": {
+      "tables_owned_or_defined": [
+        "apollo_chat_attachments",
+        "apollo_chat_blocks",
+        "apollo_chat_messages",
+        "apollo_chat_participants",
+        "apollo_chat_presence",
+        "apollo_chat_reactions",
+        "apollo_chat_reports",
+        "apollo_chat_threads",
+        "apollo_chat_typing"
+      ],
+      "tables_referenced": [
+        "apollo_chat_attachments",
+        "apollo_chat_blocks",
+        "apollo_chat_messages",
+        "apollo_chat_participants",
+        "apollo_chat_presence",
+        "apollo_chat_reactions",
+        "apollo_chat_reports",
+        "apollo_chat_threads",
+        "apollo_chat_typing",
+        "apollo_membership_get_user_badge",
+        "apollo_queue_email"
+      ],
+      "tables_for_registry": [
+        "apollo_chat_attachments",
+        "apollo_chat_blocks",
+        "apollo_chat_messages",
+        "apollo_chat_participants",
+        "apollo_chat_presence",
+        "apollo_chat_reactions",
+        "apollo_chat_reports",
+        "apollo_chat_threads",
+        "apollo_chat_typing"
+      ],
+      "schemas_with_columns": 9,
+      "schemas": [
+        {
+          "table": "apollo_chat_attachments",
+          "column_count": 11,
+          "columns": [
+            "id:BIGINT UNSIGNED NOT",
+            "message_id:BIGINT UNSIGNED DEFAULT",
+            "user_id:BIGINT UNSIGNED NOT",
+            "wp_attachment_id:BIGINT UNSIGNED DEFAULT",
+            "file_url:VARCHAR(500) NOT NULL",
+            "file_name:VARCHAR(255) NOT NULL",
+            "file_type:VARCHAR(20) DEFAULT",
+            "mime_type:VARCHAR(100) DEFAULT",
+            "file_size:BIGINT UNSIGNED DEFAULT",
+            "thumb_url:VARCHAR(500) DEFAULT",
+            "created_at:DATETIME NOT NULL"
+          ],
+          "indexes": [
+            "PRIMARY KEY (id)",
+            "KEY message_id (message_id)",
+            "KEY user_id (user_id)"
+          ],
+          "source": "create_var_prefix",
+          "ref_only": false,
+          "defined": true,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_chat_blocks",
+          "column_count": 4,
+          "columns": [
+            "id:BIGINT UNSIGNED NOT",
+            "blocker_id:BIGINT UNSIGNED NOT",
+            "blocked_id:BIGINT UNSIGNED NOT",
+            "created_at:DATETIME NOT NULL"
+          ],
+          "indexes": [
+            "PRIMARY KEY (id)",
+            "UNIQUE KEY blocker_blocked (blocker_id, blocked_id)",
+            "KEY blocked_id (blocked_id)"
+          ],
+          "source": "create_var_prefix",
+          "ref_only": false,
+          "defined": true,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_chat_messages",
+          "column_count": 11,
+          "columns": [
+            "id:BIGINT UNSIGNED NOT",
+            "thread_id:BIGINT UNSIGNED NOT",
+            "sender_id:BIGINT UNSIGNED NOT",
+            "message:LONGTEXT NOT NULL",
+            "message_type:VARCHAR(20) DEFAULT",
+            "reply_to_id:BIGINT UNSIGNED DEFAULT",
+            "attachment_id:BIGINT UNSIGNED DEFAULT",
+            "is_deleted:TINYINT(1) DEFAULT 0",
+            "edited_at:DATETIME DEFAULT NULL",
+            "updated_at:DATETIME DEFAULT NULL",
+            "created_at:DATETIME NOT NULL"
+          ],
+          "indexes": [
+            "PRIMARY KEY (id)",
+            "KEY thread_id (thread_id)",
+            "KEY sender_id (sender_id)",
+            "KEY created_at (created_at)",
+            "KEY reply_to_id (reply_to_id)",
+            "KEY message_type (message_type)"
+          ],
+          "source": "create_var_prefix",
+          "ref_only": false,
+          "defined": true,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_chat_participants",
+          "column_count": 10,
+          "columns": [
+            "id:BIGINT UNSIGNED NOT",
+            "thread_id:BIGINT UNSIGNED NOT",
+            "user_id:BIGINT UNSIGNED NOT",
+            "unread_count:INT UNSIGNED DEFAULT",
+            "is_deleted:TINYINT(1) DEFAULT 0",
+            "is_muted:TINYINT(1) DEFAULT 0",
+            "last_read_at:DATETIME",
+            "last_read_message_id:BIGINT UNSIGNED DEFAULT",
+            "role:VARCHAR(20) DEFAULT",
+            "created_at:DATETIME NOT NULL"
+          ],
+          "indexes": [
+            "PRIMARY KEY (id)",
+            "UNIQUE KEY thread_user (thread_id, user_id)",
+            "KEY user_id (user_id)",
+            "KEY unread_count (unread_count)"
+          ],
+          "source": "create_var_prefix",
+          "ref_only": false,
+          "defined": true,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_chat_presence",
+          "column_count": 3,
+          "columns": [
+            "user_id:BIGINT UNSIGNED NOT",
+            "status:VARCHAR(20) DEFAULT",
+            "last_seen:DATETIME NOT NULL"
+          ],
+          "indexes": [
+            "PRIMARY KEY (user_id)",
+            "KEY last_seen (last_seen)"
+          ],
+          "source": "create_var_prefix",
+          "ref_only": false,
+          "defined": true,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_chat_reactions",
+          "column_count": 5,
+          "columns": [
+            "id:BIGINT UNSIGNED NOT",
+            "message_id:BIGINT UNSIGNED NOT",
+            "user_id:BIGINT UNSIGNED NOT",
+            "emoji:VARCHAR(32) NOT NULL",
+            "created_at:DATETIME NOT NULL"
+          ],
+          "indexes": [
+            "PRIMARY KEY (id)",
+            "UNIQUE KEY msg_user_emoji (message_id, user_id, emoji)",
+            "KEY message_id (message_id)",
+            "KEY user_id (user_id)"
+          ],
+          "source": "create_var_prefix",
+          "ref_only": false,
+          "defined": true,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_chat_reports",
+          "column_count": 8,
+          "columns": [
+            "id:BIGINT UNSIGNED NOT",
+            "message_id:BIGINT UNSIGNED NOT",
+            "reporter_id:BIGINT UNSIGNED NOT",
+            "reason:VARCHAR(255) DEFAULT",
+            "status:VARCHAR(20) DEFAULT",
+            "resolved_by:BIGINT UNSIGNED DEFAULT",
+            "resolved_at:DATETIME DEFAULT NULL",
+            "created_at:DATETIME NOT NULL"
+          ],
+          "indexes": [
+            "PRIMARY KEY (id)",
+            "UNIQUE KEY msg_reporter (message_id, reporter_id)",
+            "KEY status (status)",
+            "KEY created_at (created_at)"
+          ],
+          "source": "create_var_prefix",
+          "ref_only": false,
+          "defined": true,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_chat_threads",
+          "column_count": 12,
+          "columns": [
+            "id:BIGINT UNSIGNED NOT",
+            "subject:VARCHAR(255) DEFAULT",
+            "is_group:TINYINT(1) DEFAULT 0",
+            "group_name:VARCHAR(255) DEFAULT",
+            "group_avatar:VARCHAR(500) DEFAULT",
+            "context:VARCHAR(100) DEFAULT",
+            "last_message_id:BIGINT UNSIGNED DEFAULT",
+            "last_sender_id:BIGINT UNSIGNED DEFAULT",
+            "last_message_at:DATETIME",
+            "last_message_preview:VARCHAR(255) DEFAULT",
+            "created_by:BIGINT UNSIGNED DEFAULT",
+            "created_at:DATETIME NOT NULL"
+          ],
+          "indexes": [
+            "PRIMARY KEY (id)",
+            "KEY last_message_at (last_message_at)",
+            "KEY created_by (created_by)",
+            "KEY idx_context (context)"
+          ],
+          "source": "create_var_prefix",
+          "ref_only": false,
+          "defined": true,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_chat_typing",
+          "column_count": 4,
+          "columns": [
+            "id:BIGINT UNSIGNED NOT",
+            "thread_id:BIGINT UNSIGNED NOT",
+            "user_id:BIGINT UNSIGNED NOT",
+            "updated_at:DATETIME NOT NULL"
+          ],
+          "indexes": [
+            "PRIMARY KEY (id)",
+            "UNIQUE KEY thread_user (thread_id, user_id)",
+            "KEY updated_at (updated_at)"
+          ],
+          "source": "create_var_prefix",
+          "ref_only": false,
+          "defined": true,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_get_user_badge",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_queue_email",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 0,
+      "user_count": 1,
+      "term_count": 0,
+      "post_keys": [],
+      "user_keys": [
+        "apollo_chat_email_notify"
+      ],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [
+        {
+          "pattern": "^mensagens/?$",
+          "query": "index.php?apollo_chat_page=inbox",
+          "position": "top",
+          "file": "src/Plugin.php"
+        },
+        {
+          "pattern": "^mensagens/(\\d+)/?$",
+          "query": "index.php?apollo_chat_page=thread&apollo_thread_id=$matches[1]",
+          "position": "top",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "query_vars": [
+        "apollo_chat_page",
+        "apollo_thread_id"
+      ],
+      "pages_derived": [
+        {
+          "slug": "mensagens",
+          "rewrite": "^mensagens/?$",
+          "query": "index.php?apollo_chat_page=inbox",
+          "query_vars": [
+            "apollo_chat_page=inbox"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "mensagens/{param}",
+          "rewrite": "^mensagens/(\\d+)/?$",
+          "query": "index.php?apollo_chat_page=thread&apollo_thread_id=$matches[1]",
+          "query_vars": [
+            "apollo_chat_page=thread",
+            "apollo_thread_id=$matches[1]"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        }
+      ]
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 4,
+      "listened_count": 6,
+      "apollo_fired": [
+        "apollo/chat/bad_words",
+        "apollo/chat/flood_max_messages",
+        "apollo/chat/flood_window_seconds",
+        "apollo/chat/message_sent"
+      ],
+      "apollo_listened": [
+        "apollo_chat_cleanup"
+      ],
+      "critical_wp_listened": [
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "template_redirect"
+      ]
+    },
+    "ajax": {
+      "priv": [],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [],
+      "styles": []
+    },
+    "options": [
+      "apollo_chat_bad_words_enabled",
+      "apollo_chat_flood_max",
+      "apollo_chat_quota_",
+      "apollo_chat_retention_days",
+      "apollo_chat_version",
+      "apollo_tenor_api_key"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_CHAT_VERSION",
+        "value": "2.0.1"
+      },
+      {
+        "name": "APOLLO_CHAT_PATH",
+        "value": "plugin_dir_path(__FILE__"
+      },
+      {
+        "name": "APOLLO_CHAT_URL",
+        "value": "plugin_dir_url(__FILE__"
+      },
+      {
+        "name": "APOLLO_CHAT_FILE",
+        "value": "__FILE__"
+      }
+    ],
+    "security": {
+      "php_files": 9,
+      "abspath_guard_files": 8,
+      "abspath_coverage_pct": 89,
+      "wpdb_prepare_calls": 56,
+      "wpdb_query_calls": 59,
+      "prepare_to_query_ratio": 0.95,
+      "nonce_checks": 2,
+      "current_user_can_calls": 2,
+      "raw_superglobal": {
+        "get": 0,
+        "post": 0,
+        "request": 0
+      },
+      "permission_callback_return_true": 0,
+      "escape_helpers": 9,
+      "echo_statements": 6,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 30,
+      "risk_band": "MEDIUM",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 27,
+      "rest_open_high": 0,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 0
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core",
+        "apollo-notif",
+        "apollo-users"
+      ],
+      "signals": [
+        "apollo-core"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": "2.0.0",
+      "new_version": "2.0.1",
+      "version_changed": true,
+      "old_rest": 33,
+      "live_rest": 29,
+      "old_pages": 2,
+      "live_pages": 2,
+      "new_plugin": false
+    }
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 9,
+    "php_loc": 4263,
+    "rest_routes_found": 26,
+    "cpts_found": [],
+    "tables_found": [
+      "apollo_",
+      "apollo_chat_attachments",
+      "apollo_chat_blocks",
+      "apollo_chat_messages",
+      "apollo_chat_participants",
+      "apollo_chat_presence",
+      "apollo_chat_threads",
+      "apollo_chat_typing"
+    ],
+    "shortcodes_found": []
+  }
+}

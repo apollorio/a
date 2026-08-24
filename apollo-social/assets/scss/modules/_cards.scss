@@ -1,0 +1,214 @@
+/**
+ * Card styles — event cards, ticket cards, classified
+ *
+ * @package Apollo\Social
+ */
+
+@import '../scss/variables';
+
+// ─ Event Share Card ─
+.event-share {
+    display: flex;
+    overflow: hidden;
+    border-radius: var(--r);
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: border-color 0.3s;
+
+    &:hover {
+        border-color: var(--border-hover);
+    }
+
+    .ev-date-col {
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-right: 1px solid var(--border);
+        min-width: 80px;
+        background: var(--card);
+    }
+
+    .ev-month {
+        font-family: var(--ff-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        color: var(--primary);
+        font-weight: 700;
+        letter-spacing: 0.08em;
+    }
+
+    .ev-day {
+        font-size: 26px;
+        font-weight: 800;
+        color: var(--black-4);
+        line-height: 1;
+        margin-top: 2px;
+    }
+
+    .ev-info-col {
+        padding: 20px 24px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .ev-title {
+        font-size: 19.5px;
+        font-weight: 700;
+        color: var(--black-4);
+        line-height: 1.1;
+        margin-bottom: 4px;
+    }
+
+    .ev-venue {
+        font-family: var(--ff-mono);
+        font-size: 11px;
+        color: var(--muted);
+    }
+
+    .ev-tags-row {
+        display: flex;
+        margin-top: 2px;
+    }
+
+    .ev-tag {
+        font-family: var(--ff-mono);
+        font-size: 9px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        padding-right: 7px;
+        color: var(--muted);
+    }
+}
+
+// ─ Ticket Card ─
+article[type="ticket"] {
+    width: 100%;
+    background: var(--glass);
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--r-sm);
+    overflow: hidden;
+    margin-bottom: 20px;
+
+    .top {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .ticket-img {
+        width: calc(100% + 40px);
+        height: 180px;
+        margin: 0 -20px;
+        object-fit: cover;
+        transition: filter 0.4s, transform 0.4s;
+    }
+
+    .post:hover & .ticket-img {
+        transform: scale(1.02);
+    }
+
+    .ticket-deetz {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+
+    .ticket-event-title {
+        font-family: var(--ff-main);
+        font-weight: 800;
+        font-size: 22px;
+        line-height: 1;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+    }
+
+    .ticket-meta-row {
+        font-family: var(--ff-mono);
+        font-size: 11px;
+        color: var(--muted);
+        text-transform: uppercase;
+    }
+
+    .ticket-price-tag {
+        font-family: var(--ff-mono);
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--black-4);
+    }
+
+    .rip {
+        height: 20px;
+        margin: 0 12px;
+        position: relative;
+        background: repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 6px,
+            var(--border) 6px,
+            var(--border) 12px
+        );
+
+        &:before,
+        &:after {
+            content: "";
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            top: 50%;
+            background-color: #fff;
+            border-radius: 100%;
+            z-index: 1;
+        }
+
+        &:before { left: -25px; transform: translateY(-50%); }
+        &:after { right: -25px; transform: translateY(-50%); }
+    }
+
+    .bottom {
+        display: grid;
+        grid-template-columns: 1fr 48px;
+        gap: 12px;
+        padding: 14px 20px 20px;
+        align-items: center;
+    }
+}
+
+.barcode {
+    height: 45px;
+    width: 100%;
+    opacity: 0.16;
+    border-radius: 4px;
+    background: repeating-linear-gradient(
+        90deg,
+        var(--black-4) 0px,
+        var(--black-4) 3px,
+        transparent 2px,
+        transparent 5px
+    );
+}
+
+.btn-chat-ticket {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--black-4);
+    color: #fff;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    font-size: 18px;
+    transition: all 0.3s;
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--primary);
+    }
+}

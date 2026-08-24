@@ -1,0 +1,34 @@
+{
+  "$chapter": {
+    "id": "02-header",
+    "owner": "apollo-core",
+    "keys": [
+      "$schema",
+      "$version",
+      "$generated",
+      "$description",
+      "$header"
+    ],
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "$schema": "https://apollo.rio/schemas/registry-v3.json",
+  "$version": "6.6.1",
+  "$generated": "2026-07-20",
+  "$description": "Apollo Ecosystem — LIVE DEEP AUDIT (2026-07-20) after P1/P2/P3 remediations — 39 plugins. Permission-body REST analysis + filesystem SSOT. Canonical: plugins/_inventory/apollo-registry.json (mirror: apollo-registry-2.json).",
+  "$header": {
+    "skeleton_structure_file": "plugins/_inventory/SKELETON.md",
+    "all_standard_icon_file": "plugins/_inventory/icon.apollo.md",
+    "routes_registry_file": "plugins/_inventory/APOLLO_ALL_ROUTES.json",
+    "integration_map_file": "plugins/_inventory/INTEGRATION_MAP.md",
+    "reports_summary_file": "plugins/_inventory/Reports summary.md",
+    "IMPORTANT_runtime_alignment": "MANDATORY: EVERY platform update MUST keep apollo-runtime aligned with all active plugins/contracts.",
+    "runtime_plugin": "apollo-runtime",
+    "runtime_layer": "L12_runtime",
+    "runtime_sync_required": true,
+    "CRITICAL_apollo_core_centralization": "MANDATORY: ALL meta keys, CPTs, and taxonomies MUST be registered EXCLUSIVELY through apollo-core. NO direct register_post_meta/register_post_type/register_taxonomy calls anywhere else. apollo-core owns MASTER_REGISTRY + GLOBAL BRIDGE pattern.",
+    "apollo_registry_runtime_file": "wp-content/apollo-registry.json (constant APOLLO_REGISTRY_PATH set by apollo-brain)",
+    "registry_deploy_workflow": "Phase 0 (interim): 1) Edit plugins/_inventory/apollo-registry.json (monolith canonical). 2) Copy to wp-content/apollo-registry.json. 3) Registry::clear_cache() or bump mu-plugins/apollo-route-setup.php apollo_route_setup_version. 4) Save permalinks if rewrite rules changed. 5) Optional: POST /apollo/v1/registry/inventory-sync to refresh runtime_wordpress_packages. 6) Never merge apolloDJ desktop JSON into WordPress. Phase 2: modular chapters + wp apollo registry build will replace steps 1-2 — see plugins/_inventory/_plans/PHASE2-DEFERRED-OPTION-A.md",
+    "desktop_app_registry_note": "apolloDJ desktop SSOT: build/_inventory apolloDJ/apolloDJ-registry.json (separate product; not loaded by WordPress). WP REST: apollo-login owns /apollo/v1/app/* and GET /dj/config + GET /dj/permissions; apollo-dj-sync owns POST /apollo/v1/dj/session only (divergence D1)."
+  }
+}

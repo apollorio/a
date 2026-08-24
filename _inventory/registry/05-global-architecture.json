@@ -1,0 +1,20 @@
+{
+  "$chapter": {
+    "id": "05-global-architecture",
+    "owner": "apollo-core",
+    "keys": [
+      "$GLOBAL_ARCHITECTURE"
+    ],
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "$GLOBAL_ARCHITECTURE": {
+    "CRITICAL": "apollo-core is MASTER REGISTRY - ALL CPTs, Taxonomies, Meta Keys, Tables defined centrally",
+    "CPTs": "10 CPTs with FALLBACK system - if owner plugin not active, core registers",
+    "Taxonomies": "13 taxonomies ALL GLOBAL - available to ALL CPTs as BRIDGE",
+    "Meta": "100+ meta keys defined centrally with validation",
+    "Tables": "22 tables ALL created by apollo-core on activation",
+    "RULE": "NOTHING restricted to specific plugins - everything is GLOBAL BRIDGE",
+    "ecosystem_hook_spine": "apollo/brain/* (MU) → apollo_core_bootstrap (plugins_loaded P1) → ApolloHook::CORE_INITIALIZED → apollo/login/registered | apollo/login/verification_email (apollo-email) → REST namespace apollo/v1: apollo-login AppAuthController (/app/auth, /app/verify, /app/revoke, GET /dj/config, GET /dj/permissions), apollo-dj-sync POST /dj/session only. Active apollo-* inventory: POST /apollo/v1/registry/inventory-sync (PluginInventorySync). See globals/08-architecture-layers.json external_companion."
+  }
+}

@@ -1,0 +1,35 @@
+/**
+ * Typography styles
+ *
+ * @package Apollo\Social
+ */
+
+@import '../scss/variables';
+@import '../scss/mixins';
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: $ff-mono;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(----txt-color-hover);
+}
+
+h1 { font-size: $fs-h1; }
+h2 { font-size: $fs-h2; }
+h3 { font-size: $fs-h3; }
+h4 { font-size: $fs-h4; }
+h5 { font-size: $fs-h5; }
+
+p {
+    font-size: $fs-p;
+    line-height: 1.6;
+    color: var(--txt-color);
+}
+
+.muted {
+    color: var(--muted);
+    font-size: 11px;
+    font-family: $ff-mono;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}

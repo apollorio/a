@@ -1,0 +1,112 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-soundcloud",
+    "owner": "apollo-soundcloud",
+    "wrap": "plugins.apollo-soundcloud",
+    "source": "created 2026-08-17",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-soundcloud",
+  "namespace": "Apollo\\SoundCloud",
+  "priority": 40,
+  "status": "IMPLEMENTED",
+  "description": "One SoundCloud player for the whole ecosystem. Apollo's own UI driving a hidden Widget-API iframe, with preview (25-65%) and full modes. Replaces seven hand-rolled implementations.",
+  "version": "1.0.0",
+  "layer": "L6_frontend",
+  "dependencies": [
+    "apollo-core"
+  ],
+  "required": false,
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [],
+  "meta": {
+    "post": [],
+    "user": [],
+    "term": []
+  },
+  "rest": [],
+  "pages": [],
+  "shortcodes": [
+    "apollo_soundcloud"
+  ],
+  "options": [
+    "apollo_sc_client_id"
+  ],
+  "assets": {
+    "scripts": [
+      "apollo-sc"
+    ],
+    "styles": [
+      "apollo-sc"
+    ]
+  },
+  "provides": [
+    "apollo_soundcloud_player",
+    "apollo_soundcloud_resolve",
+    "apollo_soundcloud_meta",
+    "apollo_soundcloud_is",
+    "apollo_sc_provider",
+    "ApolloSC (JS)"
+  ],
+  "hooks_fired": [
+    "apollo/soundcloud/provider",
+    "apollo:sc:play",
+    "apollo:sc:pause",
+    "apollo:sc:ready"
+  ],
+  "hooks_listened": [
+    "apollo:audio:play"
+  ],
+  "$disk_status": "PRESENT",
+  "$created_2026_08_17": {
+    "date": "2026-08-17",
+    "action": "PLUGIN_CREATED",
+    "plan": "_inventory/PLAN-apollo-soundcloud.md",
+    "why": {
+      "seven_implementations_found": [
+        "apollo-djs/assets/js/dj-single.js:41 — full SC.Widget with vinyl binding",
+        "apollo-djs/assets/js/dj-card-single.js:138 — sets iframe.src directly, NO widget",
+        "apollo-djs/styles/base/template-parts/single/scripts.php:154 — sets iframe.src directly, NO widget",
+        "apollo-users/templates/single-profile.php:3815-3859 — full SC.Widget INLINE in a template",
+        "apollo-users/assets/js/profile.js:202-236 — ANOTHER SC.Widget in the same plugin",
+        "apollo-hub/assets/js/home/radio.js:29-74 — lazy api.js + its own SC.Widget",
+        "apollo-events/styles/apollo-v2/single-dj.php:278 — hardcoded iframe, no control"
+      ],
+      "compounding_defects": [
+        "api.js loaded from THREE places (single-dj.php:162, single-profile.php:103, lazily in radio.js) — a page carrying two of them loads the SDK twice.",
+        "The widget-URL string was assembled by hand FOUR times with different colours, auto_play values and chrome toggles, so one track looked and behaved differently depending on which screen you found it on.",
+        "TWO HARDCODED TRACK IDS shipping in production: apollo-dashboard/.../panel-feed.php:211 -> 1293057640 and apollo-hub/.../radio.php:28 -> 293. Neither comes from data.",
+        "Seven independent widgets cannot enforce 'only one thing plays at a time' — none of them knew the others existed. That is a requirement for a social network, not a nicety."
+      ],
+      "same_defect_shape": "Identical to the four accommodation cards and the five Out Now sections: no single owner. See STRATEGY-integration.md §1."
+    },
+    "api_access_reality": {
+      "finding": "SoundCloud CLOSED open API registration. Access is application-only through a form on developers.soundcloud.com, reviewed manually, selective, and can take weeks. Credentials cannot be assumed.",
+      "verified": "Web search 2026-08-17 — developers.soundcloud.com, soundcloud/api issue #219, publicapis.io/soundcloud-api.",
+      "consequence": "The Widget API is the PRIMARY architecture here, NOT a fallback. It needs no credentials, works for everyone today, and is the only way to implement a percentage-based preview at all — that requires getDuration(), which a bare iframe cannot report. oEmbed likewise needs no credentials and supplies title/author/artwork.",
+      "the_seam": "apollo_sc_provider() returns 'widget' today and 'api' if credentials ever arrive. Direct stream URLs would then replace the iframe with ZERO call-site changes. That seam is why the closed registration is an inconvenience rather than a blocker.",
+      "on_the_selfhosted_repos": "Navidrome, Koel, Ampache and Funkwhale are excellent self-hosted MUSIC SERVERS — they host your own audio and none of them plays a SoundCloud track. They answer a different question ('host our own catalogue') and would slot in as a second provider behind the same seam if that becomes the goal. They do not substitute for SoundCloud playback."
+    },
+    "architecture": {
+      "public_api": "apollo_soundcloud_player( $url, [mode, variant, start_pct, end_pct, autoplay] ) — the only entry point. Consumers never know which transport is active.",
+      "modes": "preview = start_pct..end_pct of duration (default 25-65). full = 0..100.",
+      "preview_enforcement": "There is no SoundCloud API for 'play from A to B'. READY -> getDuration() -> compute window -> seekTo(start) -> play() -> watch PLAY_PROGRESS and pause at end. Implemented in the runtime, not in PHP, because duration is only knowable after READY.",
+      "short_track_floor": "Tracks under APOLLO_SC_PREVIEW_MIN_SECONDS (20s) play whole even in preview mode — a 4-second ID clip has no meaningful middle 40%.",
+      "lazy_everything": "The SDK loads once on first play (replacing three eager loads), the iframe is created on first play (fifteen players on /casa would otherwise mean fifteen SoundCloud connections before anyone clicked), and metadata is fetched after paint.",
+      "single_active_player": "The runtime holds one `current` reference and stops it before starting another; it also listens for apollo:audio:play so a catbox/YouTube track preview silences it.",
+      "progress_bar_is_honest": "In preview mode the bar shows the WHOLE track with the window marked, not a 0-100% bar of the excerpt. A bar that fills completely on a 40% slice tells the listener they heard the whole thing, which is false.",
+      "degrades_honestly": "If the SDK is blocked — ad blockers and privacy extensions block w.soundcloud.com often enough that this is a normal path — the hidden transport is revealed as the real, visible embed and the Apollo button is hidden. A dead play button is worse than SoundCloud's own chrome appearing. <noscript> carries the same embed."
+    },
+    "verification": "URL resolution tested against 12 cases (track, set, user, api.soundcloud.com resources, on.soundcloud.com and snd.sc short links, m. subdomain, and four fail-closed non-SoundCloud inputs). Preview window maths verified incl. the short-track floor and percentage clamping (inverted pairs, out-of-range values). No PHP binary here — php -l unrun; the live pass belongs to the operator.",
+    "not_yet_done": "S2 — replacing the seven existing implementations. Deliberately NOT done in the same pass: /dj/{id}, /perfil, /hub and the dashboard all play audio today, and a bad swap fails SILENTLY (nothing plays) rather than loudly. Each is replaced individually, with the old implementation kept until its replacement is confirmed on that page. S3 wires SoundCloud into apollo_track_preview() as a fourth provider alongside catbox/archive/youtube.",
+    "files": [
+      "apollo-soundcloud.php",
+      "includes/resolve.php",
+      "includes/meta.php",
+      "includes/render.php",
+      "assets/js/apollo-sc.js",
+      "assets/css/apollo-sc.css"
+    ]
+  }
+}

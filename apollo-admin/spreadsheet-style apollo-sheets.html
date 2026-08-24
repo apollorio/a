@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apollo Users | Mobile Optimized</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+:root {
+  /* --- LAW 1: CANVAS & INK --- */
+  --bg-body: #ffffff;
+  --bg-sheet: #ffffff;
+  
+  --ink-solid: #121214;
+  --ink-smoke: #666666;
+  --ink-ghost: #999999;
+  --ink-mist:  #bbbbbb;
+  
+  /* --- LAW 2: PRECIOUS ACCENT --- */
+  --primary: FF9820; /* Apollo Orange */
+  
+  /* --- LAW 3: STRUCTURE --- */
+  --border: rgba(var(--rgb-d),0.08);
+  --border-h: rgba(var(--rgb-d),0.16);
+  --hover-bg: #fafafa;
+  --focus-bg: #ffffff;
+  
+  --r-pill: 100px;
+  --radius-card: 12px;
+  
+  --ff-main: "Space Grotesk", system-ui, sans-serif;
+  --ff-mono: "Space Mono", monospace;
+}
+
+* { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background-color: var(--bg-body);
+  font-family: var(--ff-main);
+  color: var(--ink-solid);
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden; /* App-like structure */
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========================================= */
+/* 1. RESPONSIVE HEADER (WP CLASSES)         */
+/* ========================================= */
+.area-apollo-test {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0;
+}
+
+/* Header Container */
+.apollo-bulk-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    background: rgba(var(--rgb-t),0.96);
+    backdrop-filter: blur(10px);
+    z-index: 50;
+    flex-shrink: 0;
+}
+
+.apollo-bulk-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1 1 auto; /* Allow growth */
+}
+
+/* Back Button */
+.apollo-bulk-back {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--border);
+    color: var(--ink-smoke);
+    text-decoration: none;
+    transition: 0.2s;
+}
+.apollo-bulk-back:hover { border-color: var(--ink-solid); color: var(--ink-solid); }
+
+/* Title */
+.wp-heading-inline {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.apollo-bulk-badge {
+    font-family: var(--ff-mono);
+    font-size: 10px;
+    background: var(--hover-bg);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: var(--r-pill);
+    color: var(--ink-smoke);
+}
+
+/* Search Composite (Responsive) */
+.apollo-search-composite {
+    display: flex;
+    align-items: center;
+    background: var(--hover-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--r-pill);
+    padding: 2px;
+    flex: 1 1 300px; /* Grow, but min-width 300px */
+    max-width: 400px;
+}
+/* On very small screens, make search full width */
+@media (max-width: 600px) {
+    .apollo-search-composite { order: 3; min-width: 100%; max-width: 100%; margin-top: 6px; }
+}
+
+.apollo-composite-select-wrap {
+    position: relative;
+    border-right: 1px solid var(--border);
+}
+.apollo-composite-select {
+    appearance: none; border: none; background: transparent;
+    font-family: var(--ff-mono); font-size: 11px;
+    padding: 6px 20px 6px 12px;
+    color: var(--ink-solid); cursor: pointer;
+}
+.apollo-composite-select-wrap::after {
+    content: ''; position: absolute; right: 6px; top: 50%;
+    border: 3px solid transparent; border-top-color: var(--ink-mist);
+    transform: translateY(-20%); pointer-events: none;
+}
+.apollo-composite-input {
+    flex: 1; border: none; background: transparent;
+    padding: 6px 10px; font-size: 13px; font-family: var(--ff-main);
+    color: var(--ink-solid); min-width: 0; /* Fix flex overflow */
+}
+.apollo-composite-btn {
+    width: 28px; height: 28px;
+    background: var(--ink-solid);
+    color: #fff; border: none; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+}
+
+/* ========================================= */
+/* 2. TOOLBAR (ACTIONS)                      */
+/* ========================================= */
+.apollo-bulk-toolbar {
+    padding: 8px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-body);
+    flex-shrink: 0;
+}
+
+.apollo-bulk-toolbar-left, .apollo-bulk-toolbar-right {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+
+/* Button Classes */
+.button {
+    height: 30px;
+    padding: 0 12px;
+    border-radius: var(--r-pill);
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: var(--ff-main);
+}
+.button i { font-size: 14px; }
+
+.button-primary {
+    background: var(--ink-solid); color: #fff; border: 1px solid var(--ink-solid);
+}
+.button-primary:hover { background: var(--primary); border-color: var(--primary); }
+
+.button-secondary {
+    background: #fff; color: var(--ink-solid); border: 1px solid var(--border);
+}
+.button-secondary:hover { border-color: var(--ink-solid); }
+
+/* Pagination & Per Page */
+.apollo-bulk-per-page-select {
+    height: 30px; border: 1px solid var(--border); border-radius: var(--r-pill);
+    padding: 0 10px; font-family: var(--ff-mono); font-size: 11px;
+    background: #fff; cursor: pointer;
+}
+
+.apollo-bulk-pagination {
+    display: flex; align-items: center; gap: 4px;
+    background: var(--hover-bg); padding: 2px; border-radius: var(--r-pill);
+    border: 1px solid var(--border);
+}
+.apollo-bulk-pagination button {
+    width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border);
+    background: #fff; color: var(--ink-smoke); display: flex; align-items: center; justify-content: center;
+}
+.apollo-bulk-page-input {
+    width: 30px; height: 20px; border: none; background: transparent;
+    text-align: center; font-family: var(--ff-mono); font-size: 11px;
+}
+
+/* Column Menu */
+.col-toggle-wrapper { position: relative; }
+.col-menu {
+    position: absolute; top: 100%; right: 0; margin-top: 8px;
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 8px; padding: 6px; z-index: 100;
+    display: none; flex-direction: column; width: 150px;
+    box-shadow: 0 4px 12px rgba(var(--rgb-d),0.05);
+}
+.col-menu.active { display: flex; }
+.col-option {
+    font-size: 11px; padding: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px;
+}
+.col-option:hover { background: var(--hover-bg); }
+.col-check {
+    width: 12px; height: 12px; border: 1px solid var(--border); border-radius: 2px;
+}
+.col-option.checked .col-check { background: var(--ink-solid); border-color: var(--ink-solid); }
+
+/* ========================================= */
+/* 3. THE SHEET (Mobile Fixed)               */
+/* ========================================= */
+.apollo-sheets-container {
+    flex: 1;
+    overflow: auto; /* Internal scroll */
+    background: var(--bg-body);
+    padding: 0;
+    position: relative;
+}
+
+.apollo-sheets {
+    /* KEY FIX: Fit Content width, but min-width 100% so bg covers screen */
+    width: max-content;
+    min-width: 100%; 
+    background: var(--bg-sheet);
+    position: relative;
+    padding-bottom: 40px;
+}
+
+table {
+    /* KEY FIX: Don't force 100% width. Let columns be natural. */
+    width: auto; 
+    border-spacing: 0;
+    border-collapse: separate;
+}
+
+/* Sticky Header */
+thead {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--bg-sheet);
+}
+thead::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0;
+    height: 1px; background: var(--border);
+}
+
+th {
+    text-align: left;
+    font-family: var(--ff-mono);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--ink-mist);
+    padding: 12px 16px;
+    white-space: nowrap; /* Prevent wrapping */
+    background: var(--bg-sheet); /* For sticky coverage */
+    user-select: none;
+}
+
+/* Column Resizer (Visual only) */
+.resize-handle {
+    display: inline-block; width: 2px; height: 10px;
+    background: var(--border); margin-left: 8px; vertical-align: middle;
+}
+
+/* Sticky ID Column */
+th:first-child, td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 25; /* Higher than normal cells */
+    background: var(--bg-sheet);
+    border-right: 1px solid var(--border);
+    width: 50px;
+    text-align: center;
+    padding: 0;
+}
+th:first-child { z-index: 30; }
+
+/* Rows & Inputs */
+tr { transition: 0.2s; }
+
+td {
+    border-bottom: 1px solid var(--border);
+    padding: 0 12px;
+    height: 44px; /* Touch friendly height */
+    vertical-align: middle;
+    background: var(--bg-sheet);
+}
+
+table input {
+    width: 100%;
+    min-width: 120px; /* Prevent Inputs from collapsing too small */
+    border: none;
+    background: transparent;
+    font-family: var(--ff-main);
+    font-size: 13px;
+    color: var(--ink-solid);
+    padding: 4px 0;
+}
+
+/* ========================================= */
+/* 4. GHOST MODE (Focus Effects)             */
+/* ========================================= */
+
+/* When inside table, blur everything inactive */
+.apollo-sheets:hover tbody tr,
+.apollo-sheets:focus-within tbody tr {
+    filter: blur(2px);
+    opacity: 0.5;
+    transition: 0.3s ease;
+}
+
+/* Active Row is Sharp */
+.apollo-sheets tbody tr:hover,
+.apollo-sheets tbody tr:focus-within {
+    filter: blur(0) !important;
+    opacity: 1 !important;
+    background: #fff;
+    box-shadow: 0 4px 20px rgba(var(--rgb-d),0.06);
+    z-index: 10;
+    position: relative;
+}
+
+/* Fix sticky ID column on active row */
+.apollo-sheets tbody tr:hover td:first-child,
+.apollo-sheets tbody tr:focus-within td:first-child {
+    background: #fff;
+    color: var(--ink-solid);
+    font-weight: 700;
+}
+
+/* Active Input Text Color */
+table input:focus {
+    color: var(--primary);
+}
+
+/* ========================================= */
+/* 5. CONSOLE (Notifications)                */
+/* ========================================= */
+.console-wrapper {
+    position: fixed; bottom: 20px; right: 20px; z-index: 100;
+    display: flex; flex-direction: column; gap: 8px; pointer-events: none;
+}
+.apollo-bulk-console {
+    pointer-events: auto;
+    background: #fff; border: 1px solid var(--border);
+    border-left: 3px solid var(--ink-solid);
+    padding: 10px 14px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(var(--rgb-d),0.08);
+    font-size: 12px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    min-width: 240px;
+}
+.apollo-bulk-console .msg-type { font-weight: 700; text-transform: uppercase; font-size: 10px; margin-right: 6px; }
+.apollo-bulk-console.error { border-left-color: #dc2626; }
+
+</style>
+</head>
+<body>
+
+<main class="area-apollo-test">
+    
+    <div class="apollo-bulk-header">
+        <div class="apollo-bulk-header-left">
+            <a href="#" class="apollo-bulk-back"><i class="ri-arrow-left-s-line"></i></a>
+            <h1 class="wp-heading-inline">Usuários <span class="apollo-bulk-badge">102</span></h1>
+        </div>
+        
+        <div class="apollo-search-composite">
+            <div class="apollo-composite-select-wrap">
+                <select class="apollo-composite-select">
+                    <option value="">All</option>
+                    <option value="administrator">Admin</option>
+                    <option value="editor">Editor</option>
+                </select>
+            </div>
+            <input type="text" placeholder="Search..." class="apollo-input apollo-composite-input">
+            <button class="apollo-composite-btn"><i class="ri-search-line"></i></button>
+        </div>
+    </div>
+
+    <div class="apollo-bulk-toolbar">
+        <div class="apollo-bulk-toolbar-left">
+            <button class="button button-primary"><i class="ri-save-3-fill"></i> Save</button>
+            <button class="button button-secondary"><i class="ri-file-download-line"></i> Export</button>
+        </div>
+        
+        <div class="apollo-bulk-toolbar-right">
+            <select id="bulk-per-page" class="apollo-bulk-per-page-select">
+                <option value="50">50</option>
+                <option value="100" selected="">100</option>
+            </select>
+
+            <div class="col-toggle-wrapper">
+                <button class="button button-secondary" onclick="toggleColMenu()">
+                    <i class="ri-layout-column-line"></i> Columns
+                </button>
+                <div class="col-menu" id="colMenu">
+                    </div>
+            </div>
+
+            <div class="apollo-bulk-pagination">
+                <button disabled><i class="ri-arrow-left-s-line"></i></button>
+                <span style="font-size:10px; padding:0 6px;">
+                   Page <input type="number" value="1" class="apollo-input apollo-bulk-page-input"> / 12
+                </span>
+                <button><i class="ri-arrow-right-s-line"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="console-wrapper">
+        <div class="apollo-bulk-console error">
+            <div><span class="msg-type">Error</span> Connection lost.</div>
+            <button class="console-close"><i class="ri-close-line"></i></button>
+        </div>
+        <div class="apollo-bulk-console info">
+            <div><span class="msg-type">Info</span> Auto-saved 3 drafts.</div>
+            <button class="console-close"><i class="ri-close-line"></i></button>
+        </div>
+    </div>
+
+    <div class="apollo-sheets-container">
+        <div class="apollo-sheets">
+            <table role="grid" id="mainGrid">
+                <thead>
+                    <tr>
+                        <th>ID</th> 
+                        <th>Nome <span class="resize-handle"></span></th>
+                        <th>Email <span class="resize-handle"></span></th>
+                        <th>Role <span class="resize-handle"></span></th>
+                        <th>Membership <span class="resize-handle"></span></th>
+                        <th>Last Login <span class="resize-handle"></span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>01</td>
+                        <td><input aria-label="name" type="text" value="Emily Hoffman" class="apollo-input"></td>
+                        <td><input aria-label="email" type="email" value="emhoff3245@msn.com" class="apollo-input"></td>
+                        <td><input type="text" value="Administrator" class="apollo-input"></td>
+                        <td><input type="text" value="Paid" class="apollo-input"></td>
+                        <td><input type="text" value="Out 24, 2023" class="apollo-input"></td>
+                    </tr>
+                    <tr>
+                        <td>02</td>
+                        <td><input aria-label="name" type="text" value="Michel Lewin" class="apollo-input"></td>
+                        <td><input aria-label="email" type="email" value="michel@lewin.dev" class="apollo-input"></td>
+                        <td><input type="text" value="Editor" class="apollo-input"></td>
+                        <td><input type="text" value="Unconfirmed" class="apollo-input"></td>
+                        <td><input type="text" value="Out 22, 2023" class="apollo-input"></td>
+                    </tr>
+                    <tr>
+                        <td>03</td>
+                        <td><input aria-label="name" type="text" value="Tessa Dietrich" class="apollo-input"></td>
+                        <td><input aria-label="email" type="email" value="tessa@pixelcraft.com" class="apollo-input"></td>
+                        <td><input type="text" value="Subscriber" class="apollo-input"></td>
+                        <td><input type="text" value="Confirmed" class="apollo-input"></td>
+                        <td><input type="text" value="Set 15, 2023" class="apollo-input"></td>
+                    </tr>
+                    <tr>
+                        <td>04</td>
+                        <td><input value="Valle"></td>
+                        <td><input value="valle@apollo.rio"></td>
+                        <td><input value="Gestor"></td>
+                        <td><input value="True"></td>
+                        <td><input value="Now"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</main>
+
+<script>
+/* ========================================= */
+/* JS LOGIC (Preserved & Functional)         */
+/* ========================================= */
+
+document.addEventListener('DOMContentLoaded', () => {
+    const table = document.getElementById('mainGrid');
+    const headers = table.querySelectorAll('th');
+    
+    // --- KEYBOARD NAV ---
+    table.addEventListener('keydown', (e) => {
+        if (!['ArrowUp', 'ArrowDown'].includes(e.key)) return;
+        const input = document.activeElement;
+        if (input.tagName !== 'INPUT') return;
+        
+        const td = input.closest('td');
+        const tr = td.closest('tr');
+        const cellIndex = Array.from(tr.children).indexOf(td);
+        const rows = Array.from(table.querySelectorAll('tbody tr'));
+        const rowIndex = rows.indexOf(tr);
+
+        let targetRow;
+        if (e.key === 'ArrowUp' && rowIndex > 0) targetRow = rows[rowIndex - 1];
+        if (e.key === 'ArrowDown' && rowIndex < rows.length - 1) targetRow = rows[rowIndex + 1];
+
+        if (targetRow) {
+            e.preventDefault();
+            const targetInput = targetRow.children[cellIndex].querySelector('input');
+            if (targetInput) targetInput.focus();
+        }
+    });
+
+    // --- COL TOGGLE ---
+    const colMenu = document.getElementById('colMenu');
+    headers.forEach((th, index) => {
+        if(index === 0) return; 
+        const label = th.innerText.replace('','').trim(); // clean text
+        const option = document.createElement('div');
+        option.className = 'col-option checked';
+        option.innerHTML = `<span class="col-check"></span> ${label}`;
+        
+        option.addEventListener('click', () => {
+            const isChecked = option.classList.contains('checked');
+            if (isChecked) {
+                option.classList.remove('checked');
+                th.style.display = 'none';
+                toggleColumnCells(index, true);
+            } else {
+                option.classList.add('checked');
+                th.style.display = '';
+                toggleColumnCells(index, false);
+            }
+        });
+        colMenu.appendChild(option);
+    });
+    
+    function toggleColumnCells(index, hide) {
+        const rows = table.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            const cell = row.children[index];
+            if(cell) cell.style.display = hide ? 'none' : '';
+        });
+    }
+
+    // Close menu
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.col-toggle-wrapper')) {
+            colMenu.classList.remove('active');
+        }
+    });
+    
+    // Console Close
+    document.querySelectorAll('.console-close').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.target.closest('.apollo-bulk-console').style.display = 'none';
+        });
+    });
+});
+
+function toggleColMenu() {
+    document.getElementById('colMenu').classList.toggle('active');
+}
+</script>
+
+</body>
+</html><!-- apollo-cdn-fallback — auto-injected -->
+<script>
+(function(){
+  if(typeof window.ApolloCore!=='undefined')return;
+  var s=document.createElement('script');
+  s.src='https://cdn.apollo.rio.br/v1.0.0/core.min.js';
+  s.setAttribute('fetchpriority','high');
+  document.head?document.head.insertBefore(s,document.head.firstChild):document.addEventListener('DOMContentLoaded',function(){document.head.insertBefore(s,document.head.firstChild);});
+})();
+</script>
+<!-- apollo-form-css-fallback -->
+<style id="apollo-form-css-fallback">
+.input-group{position:relative;margin-bottom:35px;}
+.apollo-label{position:absolute;top:12px;left:0;font-family:var(--ff-mono,'Space Mono',monospace);font-size:12px;color:var(--muted,#888);pointer-events:none;transition:all .4s cubic-bezier(0.16,1,.3,1);text-transform:uppercase;}
+.apollo-input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--border,rgba(var(--rgb-d),.15));padding:12px 0;font-family:var(--ff-main,'Space Grotesk',system-ui,sans-serif);font-size:16px;color:var(--black-1,#121214);border-radius:0;transition:border-color .4s;outline:none;}
+.apollo-input:focus{border-bottom-color:var(--primary,FF9820);}
+.apollo-input::placeholder{color:transparent;}
+.apollo-input:focus~.apollo-label,.apollo-input:not(:placeholder-shown)~.apollo-label{top:-10px;font-size:10px;color:var(--primary,FF9820);}
+.apollo-textarea{width:100%;background:transparent;border:none;border-bottom:1px solid var(--border,rgba(var(--rgb-d),.15));padding:12px 0;font-family:var(--ff-main,'Space Grotesk',system-ui,sans-serif);font-size:16px;color:var(--black-1,#121214);border-radius:0;outline:none;min-height:100px;resize:vertical;}
+.apollo-textarea:focus{border-bottom-color:var(--primary,FF9820);}
+.custom-checkbox,.custom-radio{display:inline-flex;align-items:center;cursor:pointer;user-select:none;font-family:var(--ff-mono,'Space Mono',monospace);font-size:12px;color:var(--muted,#888);text-transform:uppercase;transition:color .3s;}
+.custom-checkbox input[type="checkbox"],.custom-radio input[type="radio"]{display:none;}
+.custom-checkbox .checkmark,.custom-radio .checkmark{width:1rem;height:1rem;border:1px solid rgba(18,18,20,.3);display:flex;align-items:center;justify-content:center;margin-right:10px;transition:background .3s,border-color .3s,transform .3s;}
+.custom-checkbox .checkmark{border-radius:4px;}
+.custom-radio .checkmark{border-radius:999px;}
+.custom-checkbox .checkmark::before,.custom-radio .checkmark::before{content:"¹3";font-size:16px;color:transparent;transition:color .3s;}
+.custom-checkbox input:checked+.checkmark,.custom-radio input:checked+.checkmark{background:#333;border-color:#333;transform:scale(1.1);}
+.custom-checkbox input:checked+.checkmark::before,.custom-radio input:checked+.checkmark::before{color:#fff;}
+.toggle-wrap{display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none;}
+.toggle-input{position:absolute;opacity:0;width:0;height:0;pointer-events:none;}
+.toggle-track{position:relative;width:44px;height:24px;background:rgba(var(--rgb-d),.14);border-radius:24px;border:1.5px solid var(--border,rgba(var(--rgb-d),.15));transition:background .35s,border-color .35s;flex-shrink:0;}
+.toggle-track::after{content:'';position:absolute;left:2px;top:50%;transform:translateY(-50%);width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(var(--rgb-d),.22);transition:transform .35s,width .2s;}
+.toggle-input:checked+.toggle-track{background:#121214;border-color:#121214;}
+.toggle-input:checked+.toggle-track::after{transform:translateY(-50%) translateX(20px);}
+</style>

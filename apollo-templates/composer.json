@@ -1,0 +1,18 @@
+{
+    "name": "apollo/templates",
+    "description": "Apollo Templates: frontend template engine for all CPTs",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Apollo\\Templates\\": "src/"
+        }
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true
+    }
+}

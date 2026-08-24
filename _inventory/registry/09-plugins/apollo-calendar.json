@@ -1,0 +1,804 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-calendar",
+    "owner": "apollo-calendar",
+    "wrap": "plugins.apollo-calendar",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-calendar",
+  "namespace": "Apollo\\Calendar",
+  "priority": 50,
+  "status": "IMPLEMENTED",
+  "version": "1.1.0",
+  "description": "Per-user personal calendar — aggregates private appointments, event RSVPs, scheduler bookings and BR/Rio holidays into one diamond-level planner at /agenda.",
+  "dependencies": [
+    "apollo-core",
+    "apollo-remind"
+  ],
+  "provides": [
+    "calendar",
+    "rest-api",
+    "db"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [],
+  "meta": {
+    "post": {
+      "_apollo_appointment_end": {
+        "_source": "deep_scan"
+      },
+      "_apollo_appointment_service_title": {
+        "_source": "deep_scan"
+      },
+      "_apollo_appointment_start": {
+        "_source": "deep_scan"
+      },
+      "_event_end_date": {
+        "_source": "deep_scan"
+      },
+      "_event_end_time": {
+        "_source": "deep_scan"
+      },
+      "_event_location": {
+        "_source": "deep_scan"
+      },
+      "_event_start_date": {
+        "_source": "deep_scan"
+      },
+      "_event_start_time": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {
+      "_apollo_calendar_prefs": {
+        "_source": "deep_scan"
+      },
+      "_apollo_calendar_timezone": {
+        "_source": "deep_scan"
+      }
+    },
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/calendar",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "is_logged_in",
+      "permission_binding": null,
+      "permission_summary": "Method is_logged_in() not found in index; name implies logged-in check",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_calendar",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/CalendarController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/calendar/appointments",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "is_logged_in",
+      "permission_binding": null,
+      "permission_summary": "Method is_logged_in() not found in index; name implies logged-in check",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "create_appointment",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/CalendarController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/calendar/appointments/(?P<id>\\d+)",
+      "methods": [
+        "DELETE",
+        "PATCH",
+        "POST",
+        "PUT"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "is_logged_in",
+      "permission_binding": null,
+      "permission_summary": "Method is_logged_in() not found in index; name implies logged-in check",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "update_appointment",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/CalendarController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/calendar/holidays",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_holidays",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/CalendarController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/calendar/ical",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "is_logged_in",
+      "permission_binding": null,
+      "permission_summary": "Method is_logged_in() not found in index; name implies logged-in check",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_ical",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/CalendarController.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "pages": [
+    {
+      "slug": "agenda",
+      "rewrite": "^agenda/?$",
+      "query": "index.php?apollo_calendar_page=1",
+      "query_vars": [
+        "apollo_calendar_page=1"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    }
+  ],
+  "shortcodes": [],
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [
+    "yearly"
+  ],
+  "hooks_fired": [],
+  "hooks_listened": [
+    "apollo/event/rsvp",
+    "apollo/event/rsvp_cancelled",
+    "apollo/scheduler/booked",
+    "apollo/scheduler/rescheduled",
+    "apollo_calendar_seed_holidays",
+    "apollo_core_register_user_meta"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [],
+    "styles": []
+  },
+  "options": [
+    "apollo_calendar_db_version",
+    "apollo_calendar_version"
+  ],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 15,
+    "abspath_coverage_pct": 94,
+    "rest_open_routes": 1,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 1,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 1,
+    "permission_methods_unresolved": 4,
+    "prepare_ratio": 0.82
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_user_appointments",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [
+    {
+      "pattern": "^agenda/?$",
+      "query": "index.php?apollo_calendar_page=1"
+    }
+  ],
+  "query_vars": [
+    "apollo_calendar_page"
+  ],
+  "php_surface": {
+    "files": 16,
+    "loc": 2883,
+    "classes": 12,
+    "functions": 2
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:47.500Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 93,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-calendar",
+    "main_file": "apollo-calendar.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Calendar",
+      "plugin_uri": "https://apollo.rio.br/plugins/apollo-calendar",
+      "description": "Per-user personal calendar — aggregates private appointments, event RSVPs, scheduler bookings and BR/Rio holidays into one diamond-level planner at /agenda.",
+      "version": "1.0.1",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "Proprietary",
+      "text_domain": "apollo-calendar",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": "false"
+    },
+    "composer": {
+      "name": "apollo/apollo-calendar",
+      "namespaces": [
+        "Apollo\\Calendar"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 16,
+        ".json": 1
+      },
+      "by_top_directory": {
+        "(root)": 3,
+        "src": 12,
+        "templates": 2
+      },
+      "total_bytes": 100796
+    },
+    "php": {
+      "files": 16,
+      "loc": 2883,
+      "classes": 12,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 2
+    },
+    "architecture": {
+      "namespace": "Apollo\\Calendar",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Calendar\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "HolidaysAdmin",
+          "fqcn": "Apollo\\Calendar\\Admin\\HolidaysAdmin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/HolidaysAdmin.php"
+        },
+        {
+          "kind": "class",
+          "name": "CalendarController",
+          "fqcn": "Apollo\\Calendar\\API\\CalendarController",
+          "extends": "RestBase",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/API/CalendarController.php"
+        },
+        {
+          "kind": "class",
+          "name": "CacheBuster",
+          "fqcn": "Apollo\\Calendar\\CacheBuster",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/CacheBuster.php"
+        },
+        {
+          "kind": "class",
+          "name": "CalendarAggregator",
+          "fqcn": "Apollo\\Calendar\\CalendarAggregator",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/CalendarAggregator.php"
+        },
+        {
+          "kind": "class",
+          "name": "Deactivation",
+          "fqcn": "Apollo\\Calendar\\Deactivation",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Deactivation.php"
+        },
+        {
+          "kind": "class",
+          "name": "CalendarPage",
+          "fqcn": "Apollo\\Calendar\\Frontend\\CalendarPage",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Frontend/CalendarPage.php"
+        },
+        {
+          "kind": "class",
+          "name": "HolidayModel",
+          "fqcn": "Apollo\\Calendar\\Holidays\\HolidayModel",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Holidays/HolidayModel.php"
+        },
+        {
+          "kind": "class",
+          "name": "Seeder",
+          "fqcn": "Apollo\\Calendar\\Holidays\\Seeder",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Holidays/Seeder.php"
+        },
+        {
+          "kind": "class",
+          "name": "AppointmentModel",
+          "fqcn": "Apollo\\Calendar\\Models\\AppointmentModel",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Models/AppointmentModel.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Calendar\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "Registry",
+          "fqcn": "Apollo\\Calendar\\Registry",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Registry.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_calendar_check_dependencies",
+          "file": "apollo-calendar.php"
+        },
+        {
+          "name": "apollo_calendar_init",
+          "file": "apollo-calendar.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 5,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/calendar",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "is_logged_in",
+            "target": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Method is_logged_in() not found in index; name implies logged-in check",
+              "resolved": false,
+              "method": "is_logged_in",
+              "target": null,
+              "body_preview": null
+            }
+          },
+          "callback": "get_calendar",
+          "file": "src/API/CalendarController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/calendar/appointments",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "is_logged_in",
+            "target": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Method is_logged_in() not found in index; name implies logged-in check",
+              "resolved": false,
+              "method": "is_logged_in",
+              "target": null,
+              "body_preview": null
+            }
+          },
+          "callback": "create_appointment",
+          "file": "src/API/CalendarController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/calendar/appointments/(?P<id>\\d+)",
+          "methods": [
+            "DELETE",
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "is_logged_in",
+            "target": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Method is_logged_in() not found in index; name implies logged-in check",
+              "resolved": false,
+              "method": "is_logged_in",
+              "target": null,
+              "body_preview": null
+            }
+          },
+          "callback": "update_appointment",
+          "file": "src/API/CalendarController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/calendar/holidays",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_holidays",
+          "file": "src/API/CalendarController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/calendar/ical",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "is_logged_in",
+            "target": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Method is_logged_in() not found in index; name implies logged-in check",
+              "resolved": false,
+              "method": "is_logged_in",
+              "target": null,
+              "body_preview": null
+            }
+          },
+          "callback": "get_ical",
+          "file": "src/API/CalendarController.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 1,
+        "MEDIUM": 4,
+        "LOW": 0,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "LOGGED_IN_ONLY": 4,
+        "PUBLIC_UNAUTHENTICATED": 1
+      },
+      "permission_body_resolved": 1,
+      "permission_body_unresolved": 4,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [
+        {
+          "endpoint": "/calendar/holidays",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/CalendarController.php"
+        }
+      ],
+      "admin_cap_routes": [],
+      "logged_in_routes": [
+        "/calendar",
+        "/calendar/appointments",
+        "/calendar/appointments/(?P<id>\\d+)",
+        "/calendar/ical"
+      ]
+    },
+    "database": {
+      "tables_owned_or_defined": [],
+      "tables_referenced": [
+        "apollo_user_appointments"
+      ],
+      "tables_for_registry": [],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_user_appointments",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 8,
+      "user_count": 2,
+      "term_count": 0,
+      "post_keys": [
+        "_apollo_appointment_end",
+        "_apollo_appointment_service_title",
+        "_apollo_appointment_start",
+        "_event_end_date",
+        "_event_end_time",
+        "_event_location",
+        "_event_start_date",
+        "_event_start_time"
+      ],
+      "user_keys": [
+        "_apollo_calendar_prefs",
+        "_apollo_calendar_timezone"
+      ],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [
+        {
+          "pattern": "^agenda/?$",
+          "query": "index.php?apollo_calendar_page=1",
+          "position": "top",
+          "file": "src/Activation.php"
+        }
+      ],
+      "query_vars": [
+        "apollo_calendar_page"
+      ],
+      "pages_derived": [
+        {
+          "slug": "agenda",
+          "rewrite": "^agenda/?$",
+          "query": "index.php?apollo_calendar_page=1",
+          "query_vars": [
+            "apollo_calendar_page=1"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        }
+      ]
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 0,
+      "listened_count": 16,
+      "apollo_fired": [],
+      "apollo_listened": [
+        "apollo/event/rsvp",
+        "apollo/event/rsvp_cancelled",
+        "apollo/scheduler/booked",
+        "apollo/scheduler/rescheduled",
+        "apollo_calendar_seed_holidays",
+        "apollo_core_register_user_meta"
+      ],
+      "critical_wp_listened": [
+        "admin_menu",
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "template_redirect"
+      ]
+    },
+    "ajax": {
+      "priv": [],
+      "nopriv": []
+    },
+    "cron": [
+      "yearly"
+    ],
+    "shortcodes": [],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [],
+      "styles": []
+    },
+    "options": [
+      "apollo_calendar_db_version",
+      "apollo_calendar_version"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_CALENDAR_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_CALENDAR_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_CALENDAR_DIR",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_CALENDAR_URL",
+        "value": "plugin_dir_url( __FILE__"
+      },
+      {
+        "name": "APOLLO_CALENDAR_BASENAME",
+        "value": "plugin_basename( __FILE__"
+      }
+    ],
+    "security": {
+      "php_files": 16,
+      "abspath_guard_files": 15,
+      "abspath_coverage_pct": 94,
+      "wpdb_prepare_calls": 9,
+      "wpdb_query_calls": 11,
+      "prepare_to_query_ratio": 0.82,
+      "nonce_checks": 5,
+      "current_user_can_calls": 3,
+      "raw_superglobal": {
+        "get": 6,
+        "post": 4,
+        "request": 0
+      },
+      "permission_callback_return_true": 1,
+      "escape_helpers": 25,
+      "echo_statements": 29,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 15,
+      "risk_band": "LOW",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 4,
+      "rest_open_high": 1,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 1
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core",
+        "apollo-remind"
+      ],
+      "signals": [
+        "apollo-core",
+        "apollo-remind"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": false,
+      "old_status": null,
+      "old_version": null,
+      "new_version": "1.0.1",
+      "version_changed": false,
+      "old_rest": 0,
+      "live_rest": 5,
+      "old_pages": 0,
+      "live_pages": 1,
+      "new_plugin": true
+    }
+  },
+  "canvas_contract": {
+    "variant": "plus",
+    "action": "FIXED",
+    "shape": "trait-switch+body-helper",
+    "audited": "2026-07-28",
+    "ref": "$canvas_shell.plugins.apollo-calendar"
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 16,
+    "php_loc": 2877,
+    "rest_routes_found": 5,
+    "cpts_found": [],
+    "tables_found": [],
+    "shortcodes_found": []
+  }
+}

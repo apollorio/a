@@ -1,0 +1,103 @@
+{
+  "audit": {
+    "title": "Apollo CPT single-page alignment audit",
+    "date": "2026-07-21",
+    "layers_compared": ["db_meta_registration", "wp_admin_metabox", "mockup_data_contract", "live_php_template"],
+    "cpts_audited": ["event", "dj", "local"],
+    "method": "sequential, one CPT at a time"
+  },
+  "cross_cutting_findings": [
+    {"id": "X1", "severity": "MEDIUM", "finding": "Namespace drift: mockups annotate _ap_* keys that do not exist; production uses _event_*/_dj_*/_local_*"},
+    {"id": "X2", "severity": "MEDIUM", "finding": "MASTER_REGISTRY violated by all three (direct register_post_meta); event meta double-registered in apollo-core/config/meta.php AND apollo-events/Registry.php with drift"},
+    {"id": "X3", "severity": "HIGH", "finding": "Metabox coverage uneven: event comprehensive, location strong, DJ wp-admin severely under-built (11 fields)"},
+    {"id": "X4", "severity": "MEDIUM", "finding": "Orphan reads: event _event_ticket_btn_style/_event_list_btn_style; dj _dj_gallery; loc _local_amenities/_local_hours"},
+    {"id": "X5", "severity": "HIGH", "finding": "Live debug artifact: single-event.php file_put_contents debug-e031aa.log on every render + echoed version marker (universe V-02)"}
+  ],
+  "cpts": {
+    "event": {
+      "route": "/evento/{id}",
+      "cpt_internal": "event",
+      "owner": "apollo-events",
+      "mockup": "event/single-event/event-single-page.html",
+      "verdict": "Healthy",
+      "core_data_coverage": "excellent",
+      "mockup_fidelity": "very_high",
+      "template_parts": ["hero","facts","rsvp","marquee","lineup","timetable","gallery","about","venue","access","footer-visual","chat"],
+      "meta_registered_count": 31,
+      "metabox_fields_approx": 30,
+      "cross_cpt_join": "venue via _event_loc_id -> loc",
+      "live_only_sections": ["rsvp avatars (apollo_event_rsvp table)", "chat (chat integration)"],
+      "findings": [
+        {"id": "E1", "severity": "CRITICAL", "type": "production_hygiene", "loc": "single-event.php:73-95", "finding": "live agent-log file_put_contents(debug-e031aa.log) per render + echoed HTML version marker"},
+        {"id": "E2", "severity": "HIGH", "type": "data_loss", "loc": "Metabox::save() lines ~526-532", "finding": "lineup badge collected in render JSON + read by lineup.php but stripped on save (only dj_id/start_time/end_time persisted)"},
+        {"id": "E3", "severity": "MEDIUM", "type": "orphan_read", "finding": "_event_ticket_btn_style/_event_list_btn_style read by orchestrator, no metabox field"},
+        {"id": "E4", "severity": "LOW", "type": "fidelity", "finding": "venue.php falls back to Rio-center coords; mockup hides map when coords absent"},
+        {"id": "E5", "severity": "LOW", "type": "registry", "finding": "_event_budget in core config only (gestor-owned); earlybird/lista keys only in apollo-events Registry"}
+      ],
+      "data_path_security": "solid: nonce + autosave guard + current_user_can(edit_post) + per-type sanitize; escaping consistent; only defect is debug log"
+    },
+    "dj": {
+      "route": "/dj/{id}",
+      "cpt_internal": "dj",
+      "owner": "apollo-djs",
+      "mockup": "dj/dj-single-page.html",
+      "verdict": "Warning",
+      "core_data_coverage": "partial_via_admin_full_via_frontend",
+      "mockup_fidelity": "high_structurally_but_admin_cannot_fill",
+      "meta_registered_count": 19,
+      "metabox_wpadmin_fields": 11,
+      "frontend_form_fields_approx": 25,
+      "namespace_note": "mockup _ap_* vs real _dj_*",
+      "derived_sections": ["playedOn (reverse WP_Query event via _event_dj_ids)", "playedWith (co-lineup)"],
+      "findings": [
+        {"id": "D1", "severity": "HIGH", "type": "data_entry_gap", "finding": "wp-admin metabox exposes 11 keys; bandcamp/booking/media_kit/long-bio/set-mix-url/sounds/facebook/twitter/tiktok/beatport/RA/gallery only settable via frontend self-edit form"},
+        {"id": "D2", "severity": "MEDIUM", "type": "fidelity", "finding": "mockup tracks[] repeater degrades to single _dj_set_url/_dj_mix_url + SoundCloud shelf; no per-track title/meta/url authoring"},
+        {"id": "D3", "severity": "MEDIUM", "type": "orphan_read", "finding": "_dj_gallery read by dj-v3/gallery.php but not registered or editable"},
+        {"id": "D4", "severity": "LOW", "type": "fidelity", "finding": "no distinct about-photo; mockup requires aboutPhoto != hero, production only has _dj_image + _dj_banner"},
+        {"id": "D5", "severity": "POSITIVE", "finding": "booking richer than mockup: real form + _dj_booking_nonce vs mockup mailto"},
+        {"id": "D6", "severity": "PRIVACY", "finding": "confirm _dj_user_id and _dj_booking are show_in_rest=false (DJsController has 5 public __return_true routes)"}
+      ],
+      "data_path_security": "solid but narrow: nonce + autosave + cap + sanitize; risk is coverage + REST exposure of _dj_user_id"
+    },
+    "local": {
+      "route": "/loc/{id}",
+      "cpt_internal": "local",
+      "owner": "apollo-loc",
+      "mockup": "location/loc-single-page.html",
+      "verdict": "Warning",
+      "core_data_coverage": "strong",
+      "mockup_fidelity": "high_minus_amenities_hours",
+      "meta_registered_count": 19,
+      "metabox_fields": 16,
+      "metabox_structure": ["AddressMetabox","ContactMetabox","DetailsMetabox","MetaboxSaver"],
+      "namespace_note": "mockup _ap_geo (single pair) vs production _local_lat + _local_lng split",
+      "derived_sections": ["eventsHosted count", "events[] reverse query via _event_loc_id", "depoimentos via apollo-comment"],
+      "findings": [
+        {"id": "L1", "severity": "MEDIUM", "type": "orphan_read", "finding": "_local_amenities and _local_hours read by single-local.php but no metabox field; amenities section unauthorable"},
+        {"id": "L2", "severity": "MEDIUM", "type": "design_conflict", "finding": "production collects+renders _local_capacity/_local_price_range; mockup explicitly forbids capacity/lotacao by design philosophy"},
+        {"id": "L3", "severity": "LOW", "type": "fidelity", "finding": "no marquee repeater; _ap_marquee_tags derived from _local_types/_local_areas taxonomies"},
+        {"id": "L4", "severity": "POSITIVE", "finding": "best core-data alignment: address/geo/contact fully authored; gallery via LocalSchema (<=5 attached media)"}
+      ],
+      "data_path_security": "consistent nonce+cap+sanitize via MetaboxSaver; LocalSchema bounds gallery to 5; escaping consistent"
+    }
+  },
+  "remediation_plan": {
+    "P1_production_hygiene": ["remove single-event.php:73-95 agent-log + delete debug-e031aa.log"],
+    "P2_data_entry_compliance": [
+      "build out DJ wp-admin metabox (bandcamp/booking/media_kit/long-bio/set-mix/sounds/socials/about-photo) or document frontend form as SSOT",
+      "add DJ _dj_tracks repeater or accept single-URL degradation",
+      "add loc _local_amenities + _local_hours fields or stop reading them",
+      "fix event lineup badge in Metabox::save()"
+    ],
+    "P3_registry_namespace": [
+      "consolidate meta registration into apollo-core (remove event double-registration)",
+      "reconcile _ap_* mockup annotations with real keys",
+      "remove orphan reads or add fields (event btn_style, dj gallery)"
+    ],
+    "P4_design_doctrine": [
+      "resolve loc capacity conflict (drop from render or amend philosophy)",
+      "align event venue map fallback with graceful-hide law",
+      "confirm _dj_user_id/_dj_booking not show_in_rest"
+    ]
+  }
+}

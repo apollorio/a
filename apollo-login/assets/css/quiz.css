@@ -1,0 +1,129 @@
+/**
+ * Apollo Quiz - Styles
+ *
+ * @package Apollo\Login
+ */
+
+/* === QUIZ OVERLAY === */
+.apollo-quiz-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(var(--rgb-d), 0.9);
+	z-index: 99999;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+}
+
+.apollo-quiz-container {
+	background: white;
+	border-radius: 16px;
+	padding: 40px;
+	max-width: 700px;
+	width: 100%;
+	max-height: 90vh;
+	overflow-y: auto;
+}
+
+.apollo-quiz-header {
+	text-align: center;
+	margin-bottom: 30px;
+}
+
+.apollo-quiz-header h2 {
+	font-size: 28px;
+	color: #333;
+	margin: 0 0 10px 0;
+}
+
+.apollo-quiz-header p {
+	color: #666;
+	font-size: 14px;
+	margin: 0;
+}
+
+/* === PROGRESS BAR === */
+.apollo-quiz-progress {
+	width: 100%;
+	height: 6px;
+	background: #e0e0e0;
+	border-radius: 3px;
+	margin-bottom: 30px;
+	overflow: hidden;
+}
+
+.apollo-quiz-progress-bar {
+	height: 100%;
+	background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+	transition: width 0.5s ease;
+}
+
+/* === QUIZ STAGES === */
+.apollo-quiz-stage {
+	animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+	from { opacity: 0; transform: translateY(20px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+.apollo-quiz-stage h3 {
+	font-size: 22px;
+	color: #333;
+	margin: 0 0 20px 0;
+}
+
+/* === QUIZ REQUIRED NOTICE === */
+.apollo-quiz-required-notice {
+	text-align: center;
+	padding: 30px;
+	background: #f8f9fa;
+	border-radius: 8px;
+	margin: 20px 0;
+}
+
+.apollo-quiz-required-notice p {
+	font-size: 16px;
+	color: #333;
+	margin: 0 0 20px 0;
+}
+
+.apollo-btn-quiz {
+	background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+	color: white;
+	padding: 14px 32px;
+	font-size: 18px;
+	font-weight: 700;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.apollo-btn-quiz:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 10px 30px rgba(245, 87, 108, 0.4);
+}
+
+/* === QUIZ COMPLETE === */
+.apollo-quiz-complete {
+	text-align: center;
+	padding: 40px 20px;
+}
+
+.apollo-quiz-complete h3 {
+	font-size: 32px;
+	color: #28a745;
+	margin: 0 0 20px 0;
+}
+
+.apollo-quiz-score {
+	font-size: 18px;
+	color: #666;
+	margin: 20px 0;
+}

@@ -1,0 +1,282 @@
+{
+  "$chapter": {
+    "id": "06-cdn",
+    "owner": "apollo-templates",
+    "keys": [
+      "cdn"
+    ],
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "cdn": {
+    "url": "https://cdn.apollo.rio.br/v1.0.0/core.js?v=Random.x.1",
+    "version": "1.0.0",
+    "mandatory": true,
+    "load_priority": "high",
+    "includes": [
+      "apollo-stylesheet",
+      "gsap-3.13.0",
+      "remixicon",
+      "jquery-3.7.1",
+      "popper",
+      "dark-theme",
+      "reveal-up",
+      "translate-2.2.4",
+      "tracker",
+      "logo-morphing"
+    ],
+    "global_objects": {
+      "ApolloTrack": {
+        "methods": [
+          "event",
+          "pageview",
+          "eventView"
+        ],
+        "description": "Analytics tracker"
+      },
+      "Translate": {
+        "version": "2.2.4",
+        "methods": [
+          "get",
+          "has",
+          "apply",
+          "observe",
+          "register",
+          "load"
+        ],
+        "description": "i18n translation system"
+      }
+    },
+    "html_load": "<script src=\"https://cdn.apollo.rio.br/v1.0.0/core.min.js\" fetchpriority=\"high\"></script>",
+    "wp_enqueue": {
+      "handle": "apollo-cdn",
+      "src": "https://cdn.apollo.rio.br/v1.0.0/core.min.js",
+      "deps": [],
+      "ver": "1.0.0",
+      "in_footer": false
+    },
+    "nav_header_v6": {
+      "DESCRIPTION": "Apollo Nav v6 â€” Luxury Minimalist Header. Source of truth: _library/_dev working/_current/header.html",
+      "STATUS": "DOCUMENTED â€” 13 PHP template part comment blocks embedded in header.html",
+      "php_conversion_notes": "header.html contains extreme inline PHP conversion comments. Any dev can convert to template parts without prior Apollo knowledge.",
+      "template_parts_owner": "apollo-templates",
+      "template_parts_base_path": "apollo-templates/templates/parts/header/",
+      "entry_point_php": "apollo-templates/templates/header.php",
+      "wp_hook": "wp_body_open",
+      "load_order": "data.php MUST be first script after <body> â€” engine.php depends on window.ApolloNavData",
+      "template_parts": [
+        {
+          "file": "head.php",
+          "content": "<head> contents: meta, CDN core.js (wp_enqueue_script blocking fetchpriority=high), CORS shield inline, CSS (extract to nav-v6.css)",
+          "wp_functions": [
+            "wp_enqueue_script",
+            "wp_add_inline_script",
+            "wp_enqueue_style",
+            "wp_script_add_data"
+          ],
+          "hooks": [
+            "apollo/header/before_head",
+            "apollo/header/after_head"
+          ]
+        },
+        {
+          "file": "overlay.php",
+          "content": "div#aprio-overlay + div.aprio-header-blur â€” zero PHP vars, static. JS controls via .on class.",
+          "wp_functions": [],
+          "hooks": []
+        },
+        {
+          "file": "nav-engine.php",
+          "content": "Inline <script> motor JS dev-verbose: Panel, DM (KEY=apollo-dark-mode), Clock, BurgerArrow, Nav, Renderer, Morphism, NavFX, LazyList, boot()",
+          "wp_functions": [
+            "wp_enqueue_script OR readfile inline"
+          ],
+          "CRITICAL": "Use nav-engine.php in SCRIPT_DEBUG mode, engine.php in production. NEVER both simultaneously.",
+          "external_file_future": "lib.apollo.rio.br/aprio.v2/header.nav.js",
+          "hooks": [
+            "apollo/header/before_nav_engine",
+            "apollo/header/after_nav_engine"
+          ]
+        },
+        {
+          "file": "panel-nav.php",
+          "content": "<nav#pn-nav> burger slide-in panel. #nav-list is EMPTY in PHP â€” JS injectAsideToBurger() clones from <aside> on open. DO NOT populate server-side.",
+          "wp_functions": [
+            "esc_attr_e"
+          ],
+          "hooks": []
+        },
+        {
+          "file": "panel-activity.php",
+          "content": "div#pn-act â€” messages (#msg-list) + notifications (#notif-list). Both empty in PHP, populated by LazyList JS from ApolloNavData.",
+          "wp_functions": [
+            "esc_attr_e",
+            "esc_url",
+            "home_url"
+          ],
+          "rest_sources": [
+            "GET apollo/v1/chat/threads (apollo-chat)",
+            "GET apollo/v1/notifications (apollo-notif)"
+          ],
+          "hooks": []
+        },
+        {
+          "file": "panel-apps.php",
+          "content": "div#pn-apps bento grid. #bento-apps empty in PHP, populated by Renderer.renderApps() from ApolloNavData.APPS[].",
+          "wp_functions": [
+            "esc_attr_e",
+            "apply_filters"
+          ],
+          "filter": "apollo/nav/apps",
+          "hooks": []
+        },
+        {
+          "file": "panel-profile.php",
+          "content": "div#pn-pf user profile panel. #pf-hero + #pf-menu empty in PHP, populated by Renderer.renderProfile() from ApolloNavData.PROFILE.",
+          "wp_functions": [
+            "wp_get_current_user",
+            "get_avatar_url",
+            "apply_filters",
+            "wp_logout_url",
+            "home_url",
+            "esc_attr_e"
+          ],
+          "filter": "apollo/nav/profile",
+          "profile_url_pattern": "/id/{user_login}",
+          "dm_toggle_id": "dm",
+          "hooks": []
+        },
+        {
+          "file": "topbar.php",
+          "content": "<header.tb> full top bar. Dynamic: avatar URL, unread badge .dot.on, clock #agoraH (live via JS Clock).",
+          "wp_functions": [
+            "wp_get_current_user",
+            "get_avatar_url",
+            "esc_url",
+            "esc_attr_e"
+          ],
+          "apollo_functions_needed": [
+            "apollo_has_unread_activity(int $user_id): bool â€” query apollo_notifications table"
+          ],
+          "hooks": [
+            "apollo/header/topbar_left_after_brand",
+            "apollo/header/topbar_right_before_close"
+          ]
+        },
+        {
+          "file": "shell-aside.php",
+          "content": "<aside.da> SOURCE OF TRUTH for sidebar nav. JS injectAsideToBurger() clones its <li> items to burger panel. Populate from WP nav menu registered as 'apollo-sidebar'.",
+          "wp_functions": [
+            "register_nav_menus",
+            "wp_get_nav_menu_items",
+            "esc_url",
+            "esc_html",
+            "esc_attr"
+          ],
+          "current_class": ".ni.on â€” can be pre-set server-side for active page",
+          "nav_anchor_class": ".na â€” MANDATORY on every <a>, JS event delegates on this class",
+          "hooks": [
+            "apollo/shell/before_aside",
+            "apollo/shell/after_aside"
+          ]
+        },
+        {
+          "file": "shell-main.php",
+          "content": "<main#main-content> + div.cg#cards-grid. Cards grid empty in PHP, populated by Renderer.renderCards() from ApolloNavData.CARDS[].",
+          "wp_functions": [
+            "the_title",
+            "the_content",
+            "apply_filters"
+          ],
+          "filter": "apollo/nav/cards",
+          "hooks": [
+            "apollo/shell/before_main",
+            "apollo/shell/main_content"
+          ]
+        },
+        {
+          "file": "data.php",
+          "content": "MOST CRITICAL part. Defines window.ApolloNavData={APPS,PROFILE,CARDS,MESSAGES,NOTIFICATIONS}. MUST be first script in <body>. All arrays built server-side via apply_filters.",
+          "wp_functions": [
+            "wp_json_encode",
+            "apply_filters",
+            "wp_get_current_user",
+            "get_avatar_url",
+            "wp_logout_url",
+            "home_url",
+            "wp_cache_get",
+            "wp_cache_set"
+          ],
+          "SECURITY": "ALWAYS wp_json_encode() â€” NEVER raw json_encode(). Sanitize all values before including in array.",
+          "PERFORMANCE": "Cache per user_id with wp_cache_set($key, $data, 'apollo', 320)",
+          "filters": [
+            "apollo/nav/apps",
+            "apollo/nav/profile",
+            "apollo/nav/profile_menu",
+            "apollo/nav/cards",
+            "apollo/nav/messages",
+            "apollo/nav/notifications"
+          ],
+          "nonce_for_rest": "wp_localize_script('apollo-data','apolloNonce',wp_create_nonce('wp_rest'))"
+        },
+        {
+          "file": "engine.php",
+          "content": "Production-minified boot engine. Same modules as nav-engine.php but compact. Use: SCRIPT_DEBUG=false â†’ engine.php, SCRIPT_DEBUG=true â†’ nav-engine.php. NEVER both simultaneously.",
+          "wp_functions": [
+            "wp_enqueue_script OR readfile"
+          ],
+          "hooks": []
+        },
+        {
+          "file": "patch.php",
+          "content": "Lazy-load patch: hydrates #msg-list and #notif-list, injects NavFX wave picker. Uses MutationObserver with disconnect() after success. Can use defer.",
+          "wp_functions": [
+            "wp_enqueue_script (defer)",
+            "wp_localize_script"
+          ],
+          "future": "Replace ApolloNavData.MESSAGES with REST fetch to apollo/v1/chat/threads using X-WP-Nonce header",
+          "hooks": []
+        },
+        {
+          "file": "footer-scripts.php",
+          "content": "GSAP bundle (async, fetchpriority=high) + morphism.js (defer). Must enqueue via wp_enqueue_script â€” NOT inline â€” to prevent duplication across plugins.",
+          "wp_functions": [
+            "wp_enqueue_script",
+            "wp_script_add_data"
+          ],
+          "enqueue_gsap": "wp_enqueue_script('apollo-gsap-bundle', APOLLO_CDN_URL.'js/gsap-bundle-plugins.v3.14.2.min.js', [], null, ['strategy'=>'async','in_footer'=>false])",
+          "enqueue_morphism": "wp_enqueue_script('apollo-morphism', APOLLO_CDN_URL.'js/morphism.v1.0.3.min.js', ['apollo-gsap-bundle'], null, ['strategy'=>'defer','in_footer'=>false])",
+          "hooks": []
+        }
+      ],
+      "js_data_contract": {
+        "object": "window.ApolloNavData",
+        "APPS": "Array â€” {icon:string(ri-class), label:string, href:string, accent:bool}",
+        "PROFILE": "Object|null â€” {name, role, avatar, menu[]}. null when logged out.",
+        "CARDS": "Array â€” {id, title, body, tag, pri:bool}",
+        "MESSAGES": "Array â€” {unread:bool, avatar, name, text, time}. Consumed in batches of 10 by LazyList.",
+        "NOTIFICATIONS": "Array â€” {type:'alert'|'highlight'|'info', isNew:bool, icon, iconColor, text, cta, time}. Batches of 10."
+      },
+      "js_modules_map": {
+        "DM": "Dark mode. KEY must be 'apollo-dark-mode'. Syncs with script.js DM_KEY.",
+        "Clock": "Live clock updating #agoraH every 1s.",
+        "BurgerArrow": "Animates #bm burgerâ†’arrow on panel open.",
+        "Panel": "Master panel manager for all .pn elements + overlay #ov.",
+        "injectAsideToBurger": "Clones <aside> li items into #nav-list with animation classes.",
+        "Nav": "Marks .ni.on on anchor click, closes panel on mobile.",
+        "Renderer": "renderApps(), renderProfile(), renderCards() â€” all from ApolloNavData.",
+        "Morphism": "Lazy init of window.ApolloMorphism SVG icon system, retries 12Ã—.",
+        "NavFX": "_observer stored in NavFX._observer, disconnected on beforeunload.",
+        "LazyList": "Infinite scroll for msgs and notifs. Ghost card triggers load-more.",
+        "boot": "DOMContentLoaded entry point. Calls all .init() methods."
+      },
+      "dark_mode_key": "apollo-dark-mode",
+      "FORBIDDEN_dark_mode_key": "apollo-dm â€” DO NOT USE. Diverges from script.js DM_KEY='apollo-dark-mode'.",
+      "icon_system": "icon.v1.0.3.min.js â€” translates ri-* classes to inline SVG. DO NOT load remixicon.css alongside â€” causes icon duplication (font glyph + SVG rendered simultaneously).",
+      "FORBIDDEN_remixicon_css": "NEVER load remixicon@4.x CSS font when icon.js is active. Root cause of icon duplication bug.",
+      "cors_shield": "Use capture-phase addEventListener('error') for resource load failures only. NEVER window.onerror with broad apollo.rio.br domain suppression â€” hides real JS bugs.",
+      "script_src_inline_rule": "A <script> tag with src= attribute IGNORES all inline content per HTML spec. Nav engine MUST be pure inline <script> without src=.",
+      "observer_rule": "ALL MutationObserver instances MUST store reference and call .disconnect() on beforeunload with {once:true}."
+    }
+  }
+}

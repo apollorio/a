@@ -1,0 +1,670 @@
+/**
+ * Base Style — Apollo Events
+ * Estilo base minimalista, herda variáveis CSS do tema/apollo-core.
+ *
+ * @package Apollo\Event
+ */
+
+:root {
+	--a-eve-primary: #2d2d2d;
+	--a-eve-secondary: #666;
+	--a-eve-accent: #e74c3c;
+	--a-eve-bg: #fff;
+	--a-eve-bg-alt: #f9f9f9;
+	--a-eve-border: #e0e0e0;
+	--a-eve-radius: 8px;
+	--a-eve-shadow: 0 2px 8px rgba(var(--rgb-d),.08);
+	--a-eve-gap: 16px;
+	--a-eve-font: inherit;
+}
+
+/* ─── Card ──────────────────────────────────────────────────────────── */
+.a-eve-card {
+	background: var(--a-eve-bg);
+	border: 1px solid var(--a-eve-border);
+	border-radius: var(--a-eve-r);
+	box-shadow: var(--a-eve-shadow);
+	overflow: hidden;
+	transition: transform .2s, box-shadow .2s;
+	display: flex;
+	flex-direction: column;
+}
+
+.a-eve-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 16px rgba(var(--rgb-d),.12);
+}
+
+.a-eve-card__banner {
+	position: relative;
+	overflow: hidden;
+	aspect-ratio: 16/9;
+}
+
+.a-eve-card__banner img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.a-eve-card__status {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	background: var(--a-eve-accent);
+	color: #fff;
+	padding: 2px 10px;
+	border-radius: 4px;
+	font-size: .75rem;
+	font-weight: 600;
+	text-transform: uppercase;
+}
+
+.a-eve-card__status--cancelled { background: #95a5a6; text-decoration: line-through; }
+.a-eve-card__status--postponed { background: #f39c12; }
+.a-eve-card__status--ongoing   { background: #27ae60; }
+.a-eve-card__status--finished  { background: #7f8c8d; }
+
+.a-eve-card__body {
+	padding: var(--a-eve-gap);
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.a-eve-card__date {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: .85rem;
+	color: var(--a-eve-accent);
+	font-weight: 600;
+}
+
+.a-eve-card__title {
+	margin: 0;
+	font-size: 1.1rem;
+	font-weight: 700;
+	line-height: 1.3;
+}
+
+.a-eve-card__title a {
+	color: var(--a-eve-primary);
+	text-decoration: none;
+}
+
+.a-eve-card__title a:hover {
+	color: var(--a-eve-accent);
+}
+
+.a-eve-card__meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 16px;
+	font-size: .85rem;
+	color: var(--a-eve-secondary);
+}
+
+.a-eve-card__meta-item {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.a-eve-card__meta-icon {
+	width: 16px;
+	height: 16px;
+	opacity: .6;
+}
+
+.a-eve-card__sounds {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+
+.a-eve-card__sound-tag {
+	background: var(--a-eve-bg-alt);
+	border: 1px solid var(--a-eve-border);
+	padding: 2px 8px;
+	border-radius: 12px;
+	font-size: .75rem;
+	color: var(--a-eve-secondary);
+}
+
+.a-eve-card__footer {
+	padding: 8px var(--a-eve-gap);
+	border-top: 1px solid var(--a-eve-border);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.a-eve-card__ticket {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	background: var(--a-eve-accent);
+	color: #fff;
+	padding: 6px 14px;
+	border-radius: 4px;
+	font-size: .85rem;
+	font-weight: 600;
+	text-decoration: none;
+	transition: opacity .2s;
+}
+
+.a-eve-card__ticket:hover { opacity: .85; color: #fff; }
+
+.a-eve-card__price {
+	font-size: .9rem;
+	font-weight: 600;
+	color: var(--a-eve-primary);
+}
+
+/* ─── Gone (expirado) ───────────────────────────────────────────────── */
+.a-eve-gone {
+	opacity: .55;
+	filter: grayscale(.5);
+	pointer-events: auto;
+}
+
+.a-eve-gone .a-eve-card__status {
+	background: #bdc3c7;
+}
+
+.a-eve-gone .a-eve-card__status::after {
+	content: " · Encerrado";
+}
+
+/* ─── List ──────────────────────────────────────────────────────────── */
+.a-eve-list-item {
+	display: flex;
+	gap: var(--a-eve-gap);
+	padding: var(--a-eve-gap);
+	border-bottom: 1px solid var(--a-eve-border);
+	align-items: center;
+	transition: background .2s;
+}
+
+.a-eve-list-item:hover {
+	background: var(--a-eve-bg-alt);
+}
+
+.a-eve-list-item__date-block {
+	text-align: center;
+	min-width: 60px;
+	flex-shrink: 0;
+}
+
+.a-eve-list-item__day {
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: var(--a-eve-accent);
+	line-height: 1;
+}
+
+.a-eve-list-item__month {
+	font-size: .75rem;
+	text-transform: uppercase;
+	color: var(--a-eve-secondary);
+	font-weight: 600;
+}
+
+.a-eve-list-item__info {
+	flex: 1;
+}
+
+.a-eve-list-item__title {
+	margin: 0 0 4px;
+	font-size: 1rem;
+	font-weight: 600;
+}
+
+.a-eve-list-item__title a {
+	color: var(--a-eve-primary);
+	text-decoration: none;
+}
+
+.a-eve-list-item__details {
+	display: flex;
+	gap: 12px;
+	font-size: .85rem;
+	color: var(--a-eve-secondary);
+}
+
+/* ─── Map Marker ────────────────────────────────────────────────────── */
+.a-eve-map-popup {
+	max-width: 250px;
+}
+
+.a-eve-map-popup__title {
+	font-weight: 700;
+	margin-bottom: 4px;
+}
+
+.a-eve-map-popup__date {
+	font-size: .85rem;
+	color: var(--a-eve-secondary);
+}
+
+/* ─── Grid Layout ───────────────────────────────────────────────────── */
+.a-eve-events--card {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: var(--a-eve-gap);
+}
+
+.a-eve-events--list {
+	display: flex;
+	flex-direction: column;
+}
+
+.a-eve-events--map {
+	display: none; /* Cards hidden in map mode, only map shows */
+}
+
+/* ─── Empty ─────────────────────────────────────────────────────────── */
+.a-eve-empty {
+	text-align: center;
+	padding: 40px 20px;
+	color: var(--a-eve-secondary);
+	font-size: 1rem;
+}
+
+/* ─── Integrations ──────────────────────────────────────────────────── */
+.a-eve-fav-wrap,
+.a-eve-wow-wrap {
+	display: inline-flex;
+	align-items: center;
+}
+
+/* ─── Responsive ────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+	.a-eve-events--card {
+		grid-template-columns: 1fr;
+	}
+
+	.a-eve-list-item {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.a-eve-list-item__date-block {
+		display: flex;
+		gap: 6px;
+		align-items: baseline;
+	}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   TICKET RESALE — Marketplace cards for user ticket resales
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.a-eve-resale {
+	margin-top: 48px;
+	padding-top: 32px;
+	border-top: 1px solid var(--a-eve-border);
+}
+
+.a-eve-resale__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 24px;
+}
+
+.a-eve-resale__title {
+	font-size: 1.1rem;
+	font-weight: 700;
+	color: var(--a-eve-primary);
+	margin: 0;
+}
+
+.a-eve-resale__count {
+	font-size: .8rem;
+	font-weight: 600;
+	color: var(--a-eve-secondary);
+	background: var(--a-eve-bg-alt);
+	padding: 4px 12px;
+	border-radius: 100px;
+	border: 1px solid var(--a-eve-border);
+}
+
+.a-eve-resale__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	gap: 16px;
+}
+
+.a-eve-resale__card {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 20px;
+	background: var(--a-eve-bg);
+	border: 1px solid var(--a-eve-border);
+	border-radius: var(--a-eve-r);
+	text-decoration: none;
+	color: inherit;
+	transition: transform .2s, box-shadow .2s, border-color .2s;
+}
+
+.a-eve-resale__card:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 8px 24px rgba(var(--rgb-d),.06);
+	border-color: var(--a-eve-primary);
+}
+
+.a-eve-resale__card-top {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.a-eve-resale__avatar {
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 1px solid var(--a-eve-border);
+}
+
+.a-eve-resale__seller {
+	display: flex;
+	flex-direction: column;
+}
+
+.a-eve-resale__seller-name {
+	font-size: .85rem;
+	font-weight: 600;
+	color: var(--a-eve-primary);
+	line-height: 1.2;
+}
+
+.a-eve-resale__seller-time {
+	font-size: .75rem;
+	color: var(--a-eve-secondary);
+}
+
+.a-eve-resale__card-title {
+	font-size: .95rem;
+	font-weight: 600;
+	color: var(--a-eve-primary);
+	margin: 0;
+	line-height: 1.3;
+}
+
+.a-eve-resale__card-bottom {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-top: auto;
+}
+
+.a-eve-resale__price {
+	font-size: 1rem;
+	font-weight: 700;
+	color: var(--a-eve-primary);
+	letter-spacing: -.02em;
+}
+
+.a-eve-resale__neg {
+	font-size: .7rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+	color: #27ae60;
+	background: #27ae600d;
+	border: 1px solid #27ae6033;
+	padding: 2px 8px;
+	border-radius: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   DEPOIMENTOS — Timeline style (comment=depoimento)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.a-eve-depoimentos {
+	margin-top: 48px;
+	padding-top: 32px;
+	border-top: 1px solid var(--a-eve-border);
+}
+
+.a-eve-depo__header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 28px;
+}
+
+.a-eve-depo__title {
+	font-size: 1.1rem;
+	font-weight: 700;
+	color: var(--a-eve-primary);
+	margin: 0;
+}
+
+.a-eve-depo__count {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 28px;
+	height: 28px;
+	padding: 0 8px;
+	font-size: .8rem;
+	font-weight: 700;
+	color: var(--a-eve-secondary);
+	background: var(--a-eve-bg-alt);
+	border: 1px solid var(--a-eve-border);
+	border-radius: 100px;
+}
+
+/* ─── Timeline Structure ──────────────────────────────────────────── */
+
+.a-eve-depo__timeline {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+}
+
+.a-eve-depo__item {
+	display: flex;
+	gap: 16px;
+	position: relative;
+}
+
+.a-eve-depo__line {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	flex-shrink: 0;
+	width: 20px;
+	padding-top: 6px;
+}
+
+.a-eve-depo__dot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: var(--a-eve-border);
+	border: 2px solid var(--a-eve-bg);
+	box-shadow: 0 0 0 2px var(--a-eve-border);
+	flex-shrink: 0;
+	z-index: 1;
+}
+
+.a-eve-depo__item.is-latest .a-eve-depo__dot {
+	background: var(--a-eve-accent);
+	box-shadow: 0 0 0 2px var(--a-eve-accent);
+}
+
+.a-eve-depo__connector {
+	width: 2px;
+	flex: 1;
+	background: var(--a-eve-border);
+	margin-top: 4px;
+}
+
+/* ─── Comment Card ────────────────────────────────────────────────── */
+
+.a-eve-depo__card {
+	flex: 1;
+	background: var(--a-eve-bg);
+	border: 1px solid var(--a-eve-border);
+	border-radius: var(--a-eve-r);
+	padding: 16px 20px;
+	margin-bottom: 16px;
+	transition: box-shadow .2s, border-color .2s;
+}
+
+.a-eve-depo__item.is-latest .a-eve-depo__card {
+	border-color: var(--a-eve-accent);
+	box-shadow: 0 2px 12px rgba(231, 76, 60, .06);
+}
+
+.a-eve-depo__card:hover {
+	box-shadow: 0 4px 16px rgba(var(--rgb-d),.05);
+}
+
+.a-eve-depo__card-header {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 10px;
+}
+
+.a-eve-depo__avatar {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 1px solid var(--a-eve-border);
+}
+
+.a-eve-depo__meta {
+	display: flex;
+	flex-direction: column;
+}
+
+.a-eve-depo__author {
+	font-size: .85rem;
+	font-weight: 600;
+	color: var(--a-eve-primary);
+	line-height: 1.2;
+}
+
+.a-eve-depo__time {
+	font-size: .72rem;
+	color: var(--a-eve-secondary);
+}
+
+.a-eve-depo__text {
+	font-size: .9rem;
+	color: var(--a-eve-primary);
+	line-height: 1.55;
+	margin: 0;
+}
+
+/* ─── Comment Form ────────────────────────────────────────────────── */
+
+.a-eve-depo__form-wrap {
+	margin-top: 24px;
+	padding-top: 20px;
+	border-top: 1px solid var(--a-eve-border);
+}
+
+.a-eve-depo__form .comment-form-comment {
+	margin: 0;
+}
+
+.a-eve-depo__input-wrap {
+	width: 100%;
+}
+
+.a-eve-depo__input {
+	width: 100%;
+	padding: 14px 16px;
+	border: 1px solid var(--a-eve-border);
+	border-radius: var(--a-eve-r);
+	font-family: inherit;
+	font-size: .9rem;
+	line-height: 1.5;
+	color: var(--a-eve-primary);
+	background: var(--a-eve-bg-alt);
+	resize: vertical;
+	transition: border-color .2s, box-shadow .2s;
+}
+
+.a-eve-depo__input:focus {
+	border-color: var(--a-eve-accent);
+	box-shadow: 0 0 0 3px rgba(231, 76, 60, .08);
+	outline: none;
+}
+
+.a-eve-depo__input::placeholder {
+	color: var(--a-eve-secondary);
+	opacity: .7;
+}
+
+.a-eve-depo__submit {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 12px;
+	padding: 10px 28px;
+	background: var(--a-eve-primary);
+	color: #fff;
+	border: none;
+	border-radius: var(--a-eve-r);
+	font-family: inherit;
+	font-size: .85rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: opacity .2s, transform .15s;
+}
+
+.a-eve-depo__submit:hover {
+	opacity: .88;
+	transform: translateY(-1px);
+}
+
+.a-eve-depo__login-cta {
+	text-align: center;
+	padding: 20px;
+	margin-top: 20px;
+	font-size: .9rem;
+	border: 1px dashed var(--a-eve-border);
+	border-radius: var(--a-eve-r);
+	background: var(--a-eve-bg-alt);
+}
+
+.a-eve-depo__login-cta a {
+	color: var(--a-eve-accent);
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.a-eve-depo__login-cta a:hover {
+	text-decoration: underline;
+}
+
+/* ─── Resale & Depoimentos Responsive ──────────────────────────────── */
+
+@media (max-width: 768px) {
+	.a-eve-resale__grid {
+		grid-template-columns: 1fr;
+	}
+
+	.a-eve-resale__header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 8px;
+	}
+
+	.a-eve-depo__card {
+		padding: 14px 16px;
+	}
+}

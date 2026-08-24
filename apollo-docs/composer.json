@@ -1,0 +1,26 @@
+{
+    "name": "apollo/docs",
+    "description": "Apollo Docs — Document lifecycle management, file manager, versioning, folders, PDF, storage, download control.",
+    "type": "wordpress-plugin",
+    "version": "1.0.0",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Apollo Platform",
+            "homepage": "https://apollo.rio.br"
+        }
+    ],
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Apollo\\Docs\\": "src/"
+        }
+    },
+    "extra": {
+        "wordpress-plugin": true,
+        "apollo-layer": "L5",
+        "apollo-depends": ["apollo-core"]
+    }
+}

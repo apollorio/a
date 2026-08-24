@@ -1,0 +1,540 @@
+/* =================================================================
+   DJ Single Page — Apollo Artist Profile
+   Dark substrate · Silver-first · --accent: #FF5C00
+   Scoped under .ae-dj-page
+   ================================================================= */
+
+.ae-dj-page {
+	--accent: #FF5C00;
+	--ff-heading: 'Syne', system-ui, sans-serif;
+	--ff-main: 'Space Grotesk', system-ui, sans-serif;
+	--ff-mono: 'Space Mono', monospace;
+	--dark-bg: #0a0a0a;
+	--dark-surface: rgba(255, 255, 255, 0.04);
+	--dark-surface-2: rgba(255, 255, 255, 0.07);
+	--dark-edge: rgba(255, 255, 255, 0.06);
+	--light: rgba(255, 255, 255, 0.92);
+	--muted: rgba(255, 255, 255, 0.45);
+	--dimmed: rgba(255, 255, 255, 0.22);
+	--primary-gradient: linear-gradient(to bottom right, rgba(255, 255, 255, 0.92), rgba(192, 192, 192, 0.55));
+	--primary-shadow: 0 8px 24px rgba(120, 120, 120, 0.12);
+
+	width: 100%;
+	max-width: 100%;
+	overflow-x: hidden;
+	background: var(--dark-bg);
+	color: var(--light);
+}
+
+.ae-dj-page *,
+.ae-dj-page *::before,
+.ae-dj-page *::after {
+	transition: all 0.65s ease;
+}
+
+/* progress */
+.ae-dj-progress {
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 2px;
+	background: var(--accent);
+	z-index: 9999;
+	width: 0%;
+	transition: width 0.08s linear !important;
+	pointer-events: none;
+}
+
+/* hero */
+.ae-dj-hero {
+	position: relative;
+	width: 100%;
+	min-height: 92svh;
+	overflow: hidden;
+	background: #070707;
+	isolation: isolate;
+}
+
+.ae-dj-hero-img {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	filter: saturate(0.75) brightness(0.82);
+}
+
+.ae-dj-hero-grad {
+	position: absolute;
+	inset: 0;
+	background:
+		radial-gradient(110% 55% at 50% 0%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.28) 65%, rgba(0, 0, 0, 0.58) 100%),
+		linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, transparent 20%, transparent 42%, rgba(0, 0, 0, 0.97) 100%);
+}
+
+.ae-dj-hero-card {
+	position: absolute;
+	left: 22px;
+	right: 22px;
+	bottom: calc(env(safe-area-inset-bottom, 0px) + 38px);
+	display: grid;
+	gap: 14px;
+	z-index: 3;
+}
+
+.ae-dj-eyebrow {
+	font-family: var(--ff-mono);
+	font-size: 10px;
+	letter-spacing: 0.26em;
+	text-transform: uppercase;
+	color: rgba(255, 255, 255, 0.52);
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.ae-dj-eyebrow::before {
+	content: "";
+	width: 28px;
+	height: 1px;
+	background: rgba(255, 255, 255, 0.32);
+}
+
+.ae-dj-title {
+	font-family: var(--ff-heading);
+	font-size: clamp(3.2rem, 14vw, 8rem);
+	font-weight: 700;
+	line-height: 0.88;
+	letter-spacing: -0.04em;
+	color: #fff;
+	max-width: 10ch;
+}
+
+.ae-dj-stamp {
+	display: inline-flex;
+	align-items: center;
+	gap: 14px;
+	padding-top: 4px;
+}
+
+.ae-dj-avatar {
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	object-fit: cover;
+	flex-shrink: 0;
+	background: var(--primary-gradient);
+	box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1), var(--primary-shadow);
+}
+
+.ae-dj-stamp-meta {
+	display: grid;
+	gap: 6px;
+}
+
+.ae-dj-name-line {
+	font-family: var(--ff-main);
+	font-size: clamp(1rem, 4vw, 1.25rem);
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	color: #fff;
+	line-height: 1;
+}
+
+.ae-dj-role-line {
+	font-family: var(--ff-mono);
+	font-size: 10px;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: rgba(255, 255, 255, 0.46);
+}
+
+/* marquee */
+.ae-dj-marquee-wrap {
+	overflow: hidden;
+	background: rgba(255, 255, 255, 0.025);
+	padding: 14px 0;
+	box-shadow: 0 1px 0 var(--dark-edge) inset, 0 -1px 0 var(--dark-edge) inset;
+}
+
+.ae-dj-marquee-track {
+	display: flex;
+	align-items: center;
+	width: max-content;
+	animation: aeDjMarquee 38s linear infinite;
+}
+
+@keyframes aeDjMarquee {
+	0% { transform: translateX(0); }
+	100% { transform: translateX(-50%); }
+}
+
+.ae-dj-genre-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	padding: 0 22px;
+	font-family: var(--ff-mono);
+	font-size: 11px;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: var(--muted);
+	white-space: nowrap;
+}
+
+.ae-dj-genre-pill::after {
+	content: "·";
+	opacity: 0.28;
+	font-size: 20px;
+	line-height: 1;
+	margin-left: 4px;
+}
+
+/* meta-strip */
+.ae-dj-meta {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	background: rgba(255, 255, 255, 0.018);
+}
+
+.ae-dj-meta-cell {
+	padding: 24px 16px 22px;
+	display: grid;
+	gap: 6px;
+	text-align: center;
+	position: relative;
+}
+
+.ae-dj-meta-cell + .ae-dj-meta-cell::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 18%;
+	height: 64%;
+	width: 1px;
+	background: var(--dark-edge);
+}
+
+.ae-dj-meta-k {
+	font-family: var(--ff-mono);
+	font-size: 9px;
+	letter-spacing: 0.22em;
+	text-transform: uppercase;
+	color: var(--dimmed);
+}
+
+.ae-dj-meta-v {
+	font-family: var(--ff-main);
+	font-size: 1.05rem;
+	font-weight: 600;
+	color: var(--light);
+	letter-spacing: -0.01em;
+	line-height: 1.1;
+}
+
+.ae-dj-meta-sub {
+	font-family: var(--ff-mono);
+	font-size: 9px;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--dimmed);
+}
+
+/* frame */
+.ae-dj-frame {
+	max-width: 940px;
+	margin: 0 auto;
+	padding: clamp(52px, 8vw, 96px) clamp(20px, 5vw, 44px);
+	display: grid;
+	gap: clamp(56px, 7.5vw, 96px);
+}
+
+.ae-dj-block-label {
+	font-family: var(--ff-mono);
+	font-size: 10px;
+	letter-spacing: 0.22em;
+	text-transform: uppercase;
+	color: var(--dimmed);
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 14px;
+}
+
+.ae-dj-block-label::before {
+	content: "";
+	width: 24px;
+	height: 1px;
+	background: rgba(255, 255, 255, 0.25);
+}
+
+.ae-dj-block h2 {
+	font-family: var(--ff-heading);
+	font-size: clamp(1.9rem, 4.4vw, 3rem);
+	font-weight: 700;
+	letter-spacing: -0.033em;
+	color: var(--light);
+	line-height: 1.03;
+	margin-bottom: 14px;
+}
+
+.ae-dj-block-lead {
+	font-family: var(--ff-main);
+	font-size: 15px;
+	color: var(--muted);
+	line-height: 1.64;
+	max-width: 580px;
+}
+
+/* bento */
+.ae-dj-bento {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 9px;
+	margin-top: 34px;
+}
+
+@media (min-width: 620px) {
+	.ae-dj-bento { grid-template-columns: repeat(3, 1fr); }
+	.ae-dj-bento-wide { grid-column: span 2; }
+}
+
+.ae-dj-bento-cell {
+	background: var(--dark-surface);
+	border-radius: 20px;
+	padding: 24px 20px 22px;
+	display: flex;
+	flex-direction: column;
+	gap: 11px;
+}
+
+.ae-dj-bento-cell:hover { background: var(--dark-surface-2); }
+
+.ae-dj-bento-kicker {
+	font-family: var(--ff-mono);
+	font-size: 9.5px;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: var(--dimmed);
+}
+
+.ae-dj-bento-num {
+	font-family: var(--ff-heading);
+	font-size: clamp(2.4rem, 6.5vw, 4rem);
+	font-weight: 700;
+	letter-spacing: -0.04em;
+	color: var(--light);
+	line-height: 0.9;
+}
+
+.ae-dj-bento-body {
+	font-family: var(--ff-main);
+	font-size: 13px;
+	color: var(--muted);
+	line-height: 1.55;
+	margin: 0;
+}
+
+.ae-dj-bento-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 5px;
+	margin-top: 4px;
+}
+
+.ae-dj-bento-tag {
+	font-family: var(--ff-mono);
+	font-size: 9px;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--muted);
+	background: rgba(255, 255, 255, 0.06);
+	border-radius: 100px;
+	padding: 4px 10px;
+}
+
+.ae-dj-played-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-top: 6px;
+}
+
+.ae-dj-dj-link {
+	font-family: var(--ff-main);
+	font-size: 12px;
+	font-weight: 500;
+	color: rgba(255, 255, 255, 0.65);
+	background: rgba(255, 255, 255, 0.05);
+	border-radius: 100px;
+	padding: 5px 12px;
+	text-decoration: none;
+	display: inline-block;
+}
+
+.ae-dj-dj-link:hover {
+	background: rgba(255, 92, 0, 0.14);
+	color: var(--accent);
+}
+
+/* about */
+.ae-dj-about-grid {
+	display: grid;
+	grid-template-columns: 1fr 1.15fr;
+	gap: 44px;
+	align-items: start;
+	margin-top: 32px;
+}
+
+@media (max-width: 620px) {
+	.ae-dj-about-grid { grid-template-columns: 1fr; }
+}
+
+.ae-dj-about-img {
+	width: 100%;
+	aspect-ratio: 4 / 5;
+	object-fit: cover;
+	border-radius: 20px;
+	filter: saturate(0.55) brightness(0.88);
+}
+
+.ae-dj-about-body {
+	display: grid;
+	gap: 20px;
+}
+
+.ae-dj-about-body p {
+	font-family: var(--ff-main);
+	font-size: 15px;
+	color: var(--muted);
+	line-height: 1.7;
+	margin: 0;
+}
+
+.ae-dj-genre-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 7px;
+}
+
+.ae-dj-genre-chip {
+	font-family: var(--ff-mono);
+	font-size: 10px;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: var(--muted);
+	background: rgba(255, 255, 255, 0.06);
+	border-radius: 100px;
+	padding: 6px 14px;
+}
+
+/* booking-cta */
+.ae-dj-booking {
+	background: rgba(255, 92, 0, 0.05);
+	border-radius: 20px;
+	padding: clamp(40px, 7vw, 80px) clamp(22px, 5vw, 56px);
+	text-align: center;
+	position: relative;
+	overflow: hidden;
+}
+
+.ae-dj-booking::before {
+	content: "";
+	position: absolute;
+	top: -30%;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 50%;
+	height: 60%;
+	background: radial-gradient(circle, rgba(255, 92, 0, 0.09) 0%, transparent 72%);
+	pointer-events: none;
+}
+
+.ae-dj-booking p {
+	font-family: var(--ff-main);
+	font-size: 14px;
+	color: var(--muted);
+	line-height: 1.62;
+	max-width: 400px;
+	margin: 0 auto 28px;
+}
+
+.ae-dj-btn-row {
+	display: flex;
+	gap: 10px;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+
+.ae-dj-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 14px 26px;
+	border-radius: 100px;
+	font-family: var(--ff-main);
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	border: none;
+	text-decoration: none;
+	color: #fff;
+}
+
+.ae-dj-btn.ae-accent-bg {
+	background: var(--accent);
+	box-shadow: 0 6px 20px rgba(255, 92, 0, 0.28);
+}
+
+.ae-dj-btn.ae-accent-bg:hover {
+	background: #ff6f1c;
+	transform: translateY(-1px);
+}
+
+.ae-dj-btn-ghost {
+	background: rgba(255, 255, 255, 0.06);
+	color: var(--muted);
+}
+
+.ae-dj-btn-ghost:hover {
+	background: rgba(255, 255, 255, 0.1);
+	color: var(--light);
+}
+
+/* footer */
+.ae-dj-footer {
+	max-width: 940px;
+	margin: 0 auto;
+	padding: 30px clamp(20px, 5vw, 44px) calc(env(safe-area-inset-bottom, 0px) + 30px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+}
+
+.ae-dj-footer::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: clamp(20px, 5vw, 44px);
+	right: clamp(20px, 5vw, 44px);
+	height: 1px;
+	background: var(--dark-edge);
+}
+
+.ae-dj-footer-brand {
+	font-family: var(--ff-mono);
+	font-size: 10px;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: var(--dimmed);
+}
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce) {
+	.ae-dj-page *,
+	.ae-dj-page *::before,
+	.ae-dj-page *::after { transition: none !important; animation: none !important; }
+	.ae-dj-hero-img { opacity: 1 !important; transform: none !important; }
+	.ae-dj-marquee-track { animation: none !important; }
+}

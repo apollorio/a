@@ -1,0 +1,4484 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light" class="ax-body">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SANDBOX · Portal de Eventos — listing header + hero fallback</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+<style id="sandbox-token-stub">
+:root{
+  --rgb-theme:255,255,255; --rgb-diff:10,10,10; --rgb-accent:255,107,53;
+  --bg:#fff; --card:#fff; --surface:#f7f6f4; --surface-hover:#efeeea;
+  --txt-color:#2b2b2b; --txt-heading:#0a0a0a; --muted:#8a8a8a;
+  --muted-txt:#8a8a8a; --muted-bg:#e8e8e8;
+  --accent:#ff6b35; --primary:#ff6b35; --alert-red:#ff6b6b;
+  --white-1:#fff; --white-2:rgba(10,10,10,.02); --white-3:rgba(10,10,10,.04);
+  --white-6:rgba(10,10,10,.10); --white-7:rgba(10,10,10,.12); --white-13:rgba(10,10,10,.24);
+  --gray-18:#5a5a5a; --black-1:#121214; --orange-700:#e2551f;
+  --ff-main:"Space Grotesk",system-ui,sans-serif; --ff-heading:"Space Grotesk",system-ui,sans-serif;
+  --ff-mono:"Space Mono",ui-monospace,monospace;
+  --fs-h1:clamp(2.15rem,8.5vw,3.1rem); --fs-h6:1rem; --fs-body-sm:.875rem;
+  --fs-r:1; --fs-u:1;
+  --r:16px; --r-lg:20px; --r-sm:12px; --r-xs:8px; --r-pill:999px;
+  --ease:cubic-bezier(.4,0,.2,1); --ease-snappy:cubic-bezier(.34,1.16,.64,1); --ease-smooth:cubic-bezier(.16,1,.3,1);
+  --safe-top:0px; --safe-bottom:0px;
+  --card-hover:#f2f1ee;
+}
+html,body{margin:0}
+body{background:var(--bg);font-family:var(--ff-main);-webkit-font-smoothing:antialiased}
+/* Sandbox-only ruler: paints the header band so overlap is visible by eye. */
+body.show-rail .alh{outline:1px dashed rgba(255,0,128,.55);outline-offset:-1px}
+body.show-rail .pev-hero{outline:1px dashed rgba(0,140,255,.55);outline-offset:-1px}
+</style>
+<style id="sandbox-btn-stub">
+button, .btn { border: none; background: none; cursor: pointer; font-family: inherit; }
+.pev, .ax-main { --fsx: var(--fs-u, 1); }
+.btn { corner-shape: squircle; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 7px 14px; border-radius: var(--r-pill); font-family: var(--ff-main); font-size: var(--fs-body-sm); font-weight: 500; color: var(--txt-heading); background: var(--surface); cursor: pointer; position: relative; overflow: hidden; white-space: nowrap; }
+.btn-secondary { corner-shape: squircle; background: var(--card); color: var(--txt-heading); border: 1px solid rgba(var(--rgb-diff), .04); box-shadow: inset 0 1px 0 0 rgba(var(--rgb-theme), .2), inset 0 0 0 1px rgba(var(--rgb-theme), .075); }
+.btn:active { transform: scale(.97); }
+.btn-secondary:hover { background: var(--card-hover); transform: translateY(-1px); }
+.ax-body .btn, .ax-ff-section .btn { font-family: var(--ff-main) !important; }
+.ax-main .btn { font-size: calc(var(--fsx) * 11px) !important; font-weight: 400 !important; }
+.btn.btn { background: var(--surface); }
+.btn.btn-secondary { background: var(--card); border: 1px solid rgba(var(--rgb-diff), .04); }
+.btn.btn-secondary:hover { background: var(--card-hover); }
+</style>
+<style id="apollo-plus-topbar">
+/* ═══ APP SHELL — estrutura EXATA de apollo.theme.showcase.html ═══ */
+.ax-body { padding-top: 56px; }
+.ax-top-blur { position: fixed; inset: 0 0 auto 0; height: 78px; z-index: 9900; pointer-events: none; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); background: linear-gradient(to bottom, rgba(var(--rgb-theme),1) 0%, rgba(var(--rgb-theme),.4) 50%, transparent 100%); -webkit-mask: linear-gradient(to bottom, #000 0%, rgba(0,0,0,.7) 45%, transparent 100%); mask: linear-gradient(to bottom, #000 0%, rgba(0,0,0,.7) 45%, transparent 100%); }
+.ax-top { position: fixed; top: 2px; left: 0; right: 13px; z-index: 9901; height: 56px; display: flex; align-items: center; gap: 6px; padding: 0 clamp(8px,2vw,16px); padding-top: var(--safe-top); }
+.ax-top-l, .ax-top-r { display: flex; align-items: center; }
+.ax-top-r { margin-left: auto; gap: 2px; }
+.ax-burger { display: flex; width: 44px; height: 44px; border-radius: var(--r-pill); align-items: center; justify-content: center; color: var(--txt-heading); cursor: pointer; }
+.ax-burger:hover { background: var(--surface); }
+.ax-burger i { font-size: calc(var(--fs-r, 1) * 1.4rem); }
+.ax-brand { display: flex; align-items: center; gap: 7px; font-family: var(--ff-mono); font-size: calc(var(--fs-r, 1) * .75rem); font-weight: 800; text-transform: uppercase; letter-spacing: .12em; color: var(--txt-heading); }
+.ax-brand i { color: var(--txt-heading); font-size: calc(var(--fs-r, 1) * 1.1rem); }
+.ax-brand b { color: var(--muted); }
+.ax-ic { width: calc(var(--fs-r, 1) * 1.75rem); aspect-ratio: 1/1; height: auto; border-radius: var(--r-pill); display: flex; align-items: center; justify-content: center; color: var(--txt-color); cursor: pointer; position: relative; font-size: calc(var(--fs-r, 1) * 1.15rem); transition: all .35s var(--ease); }
+#ic-apps { margin: 0 8px 0 0px!important; }
+#ic-pf { transform: scale(1.2)!important; }
+.ax-ic:hover { color: var(--txt-heading); background: var(--surface); }
+/* Topbar nav icon glyphs — 22px em box (header only; .ax-ic in panels untouched) */
+.ax-top .ax-burger,
+.ax-top .ax-top-r .ax-ic,
+.ax-top .ax-top-r .ax-login { font-size: calc(var(--fs-r, 1) * 22px); }
+.ax-top .ax-burger > svg,
+.ax-top .ax-burger > i,
+.ax-top .ax-top-r .ax-ic > svg,
+.ax-top .ax-top-r .ax-ic > i,
+.ax-top .ax-top-r .ax-login > svg,
+.ax-top .ax-top-r .ax-login > i { width: 1em; height: 1em; font-size: inherit; flex-shrink: 0; display: block; line-height: 1; }
+.ax-dot { position: absolute; top: calc(var(--fs-r, 1) * .73rem); right: calc(var(--fs-r, 1) * .755rem); width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 0 rgba(255,122,0,.8); animation: pulse 5.5s infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255,122,0,.5); filter: brightness(1.35); } 35% { box-shadow: 0 0 0 13px rgba(255,122,0,0); } 100% { box-shadow: 0 0 0 13px rgba(255,122,0,0); filter: brightness(1); } }
+.ax-avb { width: 34px; height: 34px; border-radius: 50%; overflow: hidden; margin-left: 4px; cursor: pointer; background: var(--card); flex-shrink: 0; border: 1px solid rgba(5,5,5,.04); box-shadow: rgba(0,0,0,.12) 0px 0px 0px 1px inset, rgba(0,0,0,.25) 0px 1px 0px 0px inset; display: flex; align-items: center; justify-content: center; }
+.ax-avb img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); box-shadow: none; }
+.ax-avb:hover img { filter: grayscale(0); }
+.ax-avb-init { font-family: var(--ff-mono); font-size: calc(var(--fs-r, 1) * 10px); font-weight: 700; color: var(--txt-heading); text-transform: uppercase; letter-spacing: .04em; }
+.ax-top-brand { display: flex; align-items: center; gap: 9px; }
+.ax-top-logo { width: 20px; height: 20px; border-radius: 50%; background: var(--black-1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ax-top-logo i { font-size: calc(var(--fs-r, 1) * 12px); color: var(--bg); }
+.ax-top-wm { font-size: calc(var(--fs-r, 1) * 18.5px); font-weight: 500; color: rgba(var(--rgb-diff),.90); letter-spacing: .01em; font-family: var(--ff-main); }
+.ax-top-wm b { color: var(--muted); font-weight: 700; }
+@media (min-width: 1000px) { .ax-top-brand { display: none; } }
+
+.ax-shell { position: relative; }
+.ax-overlay { position: fixed; inset: 0; z-index: 9899; background: rgba(var(--rgb-diff),.18); backdrop-filter: blur(6px); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .4s var(--ease), visibility .4s; }
+.ax-overlay.on { opacity: 1; visibility: visible; pointer-events: auto; }
+
+/* ═══ TOPBAR PANELS · APPS · PROFILE (exatos do showcase) ═══ */
+.panel-r { position: fixed; top: 56px; right: 0; bottom: 0; width: clamp(300px,92vw,396px); z-index: 9800; background: var(--bg); display: flex; flex-direction: column; transform: translateX(100%); transition: transform .48s var(--ease); box-shadow: -4px 0 32px rgba(var(--rgb-diff),.06); }
+.panel-r.open { transform: translateX(0); }
+.panel-r-hd { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 0px; flex-shrink: 0; }
+.panel-r-title { font-family: var(--ff-heading); font-size: calc(var(--fs-r, 1) * var(--fs-h6)); color: var(--txt-heading); font-weight: 700; }
+.panel-r-body { flex: 1; overflow-y: auto; padding: 0px 8px 40px; scrollbar-width: none; -ms-overflow-style: none; }
+.panel-r-body::-webkit-scrollbar { display: none; width: 0; height: 0; }
+.apps-pop { position: fixed; top: calc(56px + 6px); right: 6px; width: 420px; max-width: calc(100vw - 12px); background: rgba(var(--rgb-theme),.25)!important; backdrop-filter: blur(20px) saturate(180%) !important; -webkit-backdrop-filter: blur(20px) saturate(180%) !important; box-shadow: inset 0 1px 0 0 rgba(var(--rgb-theme),.9), inset 0 0 0 1px rgba(var(--rgb-theme),.4); border: 1px solid rgba(var(--rgb-diff),.04); border-radius: var(--r); z-index: 9801; padding: 10px 8px 12px; transform: translateY(-8px) scale(.97); opacity: 0; pointer-events: none; transition: transform .28s var(--ease), opacity .22s var(--ease); }
+.apps-pop.open { transform: translateY(0) scale(1); opacity: 1; pointer-events: auto; }
+.apps-pop-hd { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.apps-pop-close { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: 0; border-radius: var(--r-pill); background: transparent; color: var(--muted); cursor: pointer; font-size: calc(var(--fs-r, 1) * 15px); }
+.apps-pop-close:hover { background: var(--surface); color: var(--txt-heading); }
+.apps-pop-title { font-family: var(--ff-mono); font-size: calc(var(--fs-r, 1) * 9px); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); padding: 2px 6px 9px; }
+.apps-grid { display: grid; grid-template-columns: repeat(4,24.9%); gap: 3px; }
+.app-cell { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 9px 4px; border-radius: var(--r-sm); cursor: pointer; text-decoration: none; color: var(--txt-color); transition: background .25s var(--ease), color .2s var(--ease); }
+.app-cell:hover > .app-icon { background: var(--surface-hover); color: var(--txt-heading); }
+.app-icon { aspect-ratio: 1/1; width: 100%; height: auto; border-radius: var(--r-sm); background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: calc(var(--fs-r, 1) * 17px); color: var(--txt-heading); box-shadow: inset 0 1px 0 0 rgba(var(--rgb-theme),.9), inset 0 0 0 1px rgba(var(--rgb-theme),.4); border: 1px solid rgba(var(--rgb-diff),.04); }
+.app-cell span { font-family: var(--ff-mono); font-size: calc(var(--fs-r, 1) * 9.5px); text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.profile-panel-top { padding: 0px 18px 16px; text-align: center; }
+.profile-panel-av { width: 120px; height: 120px; border-radius: 50%; background: var(--surface); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; font-family: var(--ff-mono); font-size: calc(var(--fs-r, 1) * 16px); font-weight: 700; color: var(--txt-heading); box-shadow: inset 0 1px 0 0 rgba(var(--rgb-theme),.9), inset 0 0 0 1px rgba(var(--rgb-theme),.4); border: 1px solid rgba(var(--rgb-diff),.04); }
+.profile-panel-name { font-family: var(--ff-heading); font-size: calc(var(--fs-r, 1) * 16px); color: var(--txt-heading); font-weight: 700; }
+.profile-panel-role { font-size: calc(var(--fs-r, 1) * 12px); color: var(--muted); margin-top: 2px; }
+.profile-panel-actions { display: flex; flex-direction: column; gap: 2px; padding: 10px 10px 28px; }
+.profile-action { display: flex; align-items: center; gap: 11px; padding: 10px 12px; border-radius: var(--r-sm); cursor: pointer; color: var(--txt-color); font-size: calc(var(--fs-r, 1) * 12.5px); transition: background .28s var(--ease), color .28s var(--ease); }
+.profile-action i, .profile-action svg { font-size: calc(var(--fs-r, 1) * 17px); width: calc(var(--fs-r, 1) * 17px); color: var(--muted); flex-shrink: 0; transition: color .28s var(--ease); }
+.profile-action:hover { background: var(--surface-hover); color: var(--txt-heading); }
+.profile-action:hover i { color: var(--txt-heading); }
+.profile-action.danger:hover { background: rgba(255,107,107,.07); color: var(--alert-red); }
+.profile-action.danger:hover i { color: var(--alert-red); }
+/* .profile-action is a <button> for the Suporte trigger — strip UA chrome so it
+   sits flush with its <a> siblings (showcase renders them identically). */
+button.profile-action { width: 100%; border: 0; background: none; font-family: inherit; text-align: left; }
+</style>
+<style> block
+ * (the .ax-aside / .s / .nb / .ni / .si / .fs / .ft / .adj / .urow rules).
+ * Values are unchanged — this is the Design System's own sidebar, not a
+ * re-interpretation of it. Tokens only; core.js owns :root.
+ *
+ * Loaded once per page by apollo-plus/shell.php. Idempotent via the
+ * APOLLO_PLUS_ASIDE_STYLES guard so a screen that renders the shell twice
+ * (or a nested part that defensively calls it) can never duplicate the CSS.
+ *
+ * @package Apollo\Templates
+ * @since   1.4.0
+ */
+
+if (! defined('ABSPATH')) {
+    exit;
+}
+
+if (defined('APOLLO_PLUS_ASIDE_STYLES')) {
+    return;
+}
+define('APOLLO_PLUS_ASIDE_STYLES', true);
+?>
+<style id="apollo-plus-aside">
+/* ── Shell frame ─────────────────────────────────────────────────────────── */
+.ax-aside{position:fixed;top:0;left:0;width:100vw;height:100dvh;z-index:9902;background:rgba(var(--rgb-theme),.8);backdrop-filter:blur(100px);-webkit-backdrop-filter:blur(100px);display:flex;transform:translateX(-100%);transition:transform .45s var(--ease-snappy)}
+.ax-aside.open{transform:translateX(0)}
+.ax-main{padding:0;width:100%;max-width:none;min-width:0;box-sizing:border-box;overflow-x:clip;--ax-pad-x:0px;margin-left:0;margin-right:0;padding-left:0!important}
+
+/* Kill the legacy 601px "desktop" offset — the aside only pins at 1000px+ */
+@media (min-width:601px) and (max-width:999px){
+  .ax-main{padding-left:0!important;padding-right:0!important;margin-left:0!important;margin-right:0!important;width:100%!important;--ax-pad-x:0px!important}
+}
+@media (min-width:1000px){
+  .ax-burger{display:none}
+  .ax-shell,.ax-body{--aside-w:clamp(200px,20vw,225px)}
+  .ax-aside{top:0;left:0;bottom:0;height:100dvh;width:var(--aside-w);transform:none}
+  .ax-overlay{display:none}
+  .ax-main{margin-left:calc(12px + var(--aside-w) + clamp(24px,5vw,52px));margin-right:clamp(28px,4.5vw,64px);width:auto!important;max-width:none!important;min-width:0;padding-left:0!important}
+}
+
+/* ── Sidebar body ────────────────────────────────────────────────────────── */
+.s{display:flex;flex-direction:column;width:100%;height:100dvh;min-height:100%;font-size:calc(var(--fs-r,1)*11px);color:rgba(var(--rgb-diff),.66);text-align:left;overflow:hidden;position:relative;--aside-pad-x:12px;--aside-row-gap:9px}
+.s .ni,.s .si,.s .fr,.s .fni,.s .adj,.s .urow{min-width:0;max-width:100%;box-sizing:border-box}
+.s .sn,.s .fn,.s .un,.s .uro{display:block;min-width:0;flex:1 1 auto;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.si,.fr{width:100%;max-width:100%}
+.si .cnt,.fr .fd,.s .ni>i,.s .si>i,.s .fr>i,.s .fni>i,.s .um,.s .pill,.tog{flex-shrink:0}
+.si .cnt{margin-left:auto}
+@media (max-width:1000px){.s{border-radius:0}}
+
+.s .hd{padding:20px 14px 15px 20px;display:flex;align-items:center;gap:9px;flex-shrink:0}
+.s .lg{display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.s .lg i{font-size:calc(var(--fs-r,1)*22px);transform:translateY(2px);color:var(--white-7)}
+.s .lg i svg{width:1em;height:1em;display:inline-block}
+.s .wm{font-size:calc(var(--fs-r,1)*16.5px);font-weight:500;color:var(--gray-18);letter-spacing:.01em}
+.s .wm b{color:var(--white-13);font-size:80%;font-weight:900;font-family:sans-serif}
+
+.ax-aside-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;scrollbar-width:none;-ms-overflow-style:none}
+.ax-aside-scroll::-webkit-scrollbar{display:none;width:0;height:0}
+
+/* ── Primary nav ─────────────────────────────────────────────────────────── */
+.nb{padding:5px 8px}
+.ni{display:flex;align-items:center;gap:var(--aside-row-gap);padding:8px var(--aside-pad-x);cursor:pointer;margin-bottom:2px;color:rgba(var(--rgb-diff),.60);font-size:calc(var(--fs-r,1)*13px);border-radius:var(--r-sm);position:relative;text-decoration:none}
+.ni .sn{font-size:inherit;color:inherit;font-weight:inherit}
+.ni i{font-size:calc(var(--fs-r,1)*16px);flex-shrink:0;opacity:.46}
+.ni:hover{color:rgba(var(--rgb-diff),.90);background:rgba(var(--rgb-diff),.03)}
+.ni:hover i{opacity:.9}
+.ni.on{color:rgba(var(--rgb-diff),.90);background:rgba(var(--rgb-diff),.04);box-shadow:inset 0 1px 0 0 rgba(var(--rgb-theme),.35),inset 0 0 0 1px rgba(var(--rgb-theme),.085)}
+.ni.on i{opacity:1}
+.ni.on::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:16px;background:var(--accent);border-radius:0 4px 4px 0}
+
+/* ── Collapsible sections ────────────────────────────────────────────────── */
+.sh{display:flex;align-items:center;justify-content:space-between;padding:8px var(--aside-pad-x) 2px;cursor:pointer;user-select:none}
+.sh:hover{opacity:.72}
+.slbl{font-family:var(--ff-mono);font-size:calc(var(--fs-r,1)*9.5px);letter-spacing:.12em;text-transform:uppercase;color:rgba(var(--rgb-diff),.35)}
+.tog{transition:transform .3s var(--ease)}
+.sh.shut .tog{transform:rotate(-90deg)}
+.col{overflow:hidden;height:auto;min-height:0;transition:height .35s var(--ease)}
+.col.shut{height:0!important}
+.inn{min-height:0;overflow:hidden}
+.si{display:flex;align-items:center;gap:var(--aside-row-gap);padding:7px var(--aside-pad-x);cursor:pointer;font-size:calc(var(--fs-r,1)*12.5px);color:rgba(var(--rgb-diff),.60);border-radius:var(--r-xs);margin:0 4px;text-decoration:none}
+.si i{font-size:calc(var(--fs-r,1)*15px);flex-shrink:0;opacity:.46}
+.si:hover{color:rgba(var(--rgb-diff),.85);background:rgba(var(--rgb-diff),.03)}
+.si.on,.si.active{color:rgba(var(--rgb-diff),.90);background:rgba(var(--rgb-diff),.04)}
+.si.on i,.si.active i{opacity:1}
+.cnt{font-family:var(--ff-mono);font-size:calc(var(--fs-r,1)*9px);padding:2px 6px;border-radius:var(--r-pill);background:var(--white-3);color:rgba(var(--rgb-diff),.42)}
+
+/* ── Radar rows ──────────────────────────────────────────────────────────── */
+.fs{padding:0 8px 4px}
+.fr{display:flex;align-items:center;gap:var(--aside-row-gap);padding:2px var(--aside-pad-x);cursor:pointer;border-radius:var(--r-xs);margin:0 4px;color:rgba(var(--rgb-diff),.60);text-decoration:none}
+.fr:hover{color:rgba(var(--rgb-diff),.90);background:rgba(var(--rgb-diff),.03)}
+.fr.on{color:rgba(var(--rgb-diff),.90);background:rgba(var(--rgb-diff),.04)}
+.fr i{font-size:calc(var(--fs-r,1)*14px);flex-shrink:0;opacity:.55}
+.fr .fd{flex-shrink:0;width:2.75em;min-width:2.75em;text-align:left;font-family:var(--ff-mono);font-size:calc(var(--fs-r,1)*8.5px);color:rgba(var(--rgb-diff),.35);white-space:nowrap}
+.fr .fn{font-size:calc(var(--fs-r,1)*11.5px);color:inherit;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.va{display:block;text-align:right;font-size:calc(var(--fs-r,1)*10px);color:rgba(var(--rgb-diff),.35);cursor:pointer;padding:4px var(--aside-pad-x) 0;font-family:var(--ff-mono);text-transform:uppercase;letter-spacing:.06em;flex-shrink:0;text-decoration:none}
+.va:hover{color:rgba(var(--rgb-diff),.90)}
+.muted-hover{opacity:.55}
+.fr:hover .muted-hover{opacity:.9}
+.dv{height:1px;background:rgba(var(--rgb-diff),.06);margin:6px 0}
+
+.ax-aside-close{display:none;position:absolute;top:calc(var(--safe-top,0px) + 10px);right:8px;width:36px;height:36px;border-radius:var(--r-pill);align-items:center;justify-content:center;color:var(--muted);cursor:pointer;font-size:calc(var(--fs-r,1)*18px);z-index:2;border:none;background:transparent}
+.ax-aside-close:hover{background:var(--surface);color:var(--txt-heading)}
+@media (max-width:1000px){.ax-aside-close{display:flex}}
+
+/* ── Footer: Suporte · Ajustes · user ────────────────────────────────────── */
+.ft{padding:8px 8px calc(12px + var(--safe-bottom,0px));flex-shrink:0}
+.fni .sn{font-size:inherit;color:inherit}
+.fni i,.adjl svg,.adjl i{font-size:calc(var(--fs-r,1)*16px);opacity:.46}
+.adj,.fni{padding:4px var(--aside-pad-x);display:flex;align-items:center;gap:var(--aside-row-gap);cursor:pointer;font-size:calc(var(--fs-r,1)*13px);color:rgba(var(--rgb-diff),.60);border-radius:var(--r-sm);border:none;background:none;width:100%;box-sizing:border-box;font-family:inherit;text-align:left}
+.fni:hover,.supportBTN:hover,.supportBTN:hover>i,.supportBTN:hover>svg{color:var(--orange-700)!important;background:rgba(var(--rgb-diff),.03)}
+.adj:hover{color:rgba(var(--rgb-diff),.85);background:rgba(var(--rgb-diff),.03)}
+.adjl{display:flex;align-items:center;gap:var(--aside-row-gap);min-width:0;flex:1 1 auto;overflow:hidden;border:none;background:none;padding:0;margin:0;font:inherit;color:inherit;cursor:pointer;text-align:left;text-decoration:none}
+.adjl .sn{font-size:inherit;color:inherit}
+.adj .pill{border:none;cursor:pointer;font:inherit;box-shadow:rgba(0,0,0,.12) 0 0 0 1px inset,rgba(0,0,0,.25) 0 1px 0 0 inset}
+.adjl i{font-size:calc(var(--fs-r,1)*16px);opacity:.46;flex-shrink:0}
+.pill{width:30px;height:16px;border-radius:var(--r-pill);display:flex;align-items:center;padding:2px;flex-shrink:0;background:var(--white-6);transition:background .35s var(--ease)}
+.pill.on{background:var(--primary)}
+.pill .th{width:12px;height:12px;border-radius:50%;background:var(--bg);transition:transform .35s var(--ease-snappy)}
+.pill.on .th{transform:translateX(15px)}
+.urow{display:flex;align-items:center;gap:var(--aside-row-gap);padding:10px var(--aside-pad-x);margin-top:4px;cursor:pointer;border-radius:var(--r-sm);text-decoration:none}
+.urow:hover{background:rgba(var(--rgb-diff),.03)}
+.avw{position:relative;flex-shrink:0}
+.av{width:45px;height:45px;border-radius:50%;background:var(--surface-hover);display:flex;align-items:center;justify-content:center;font-size:calc(var(--fs-r,1)*11px);font-weight:600;color:var(--txt-heading);overflow:hidden;position:relative}
+.av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s;box-shadow:none}
+.aon{width:8px;height:8px;border-radius:50%;background:#34C759;position:absolute;bottom:-1px;right:-1px}
+.ui{flex:1 1 auto;min-width:0;overflow:hidden}
+.ui>.un{font-size:calc(var(--fs-r,1)*12.5px);font-weight:500;color:rgba(var(--rgb-diff),.85)}
+.ui>.uro{font-size:calc(var(--fs-r,1)*10px);color:rgba(var(--rgb-diff),.35)}
+.um i{font-size:calc(var(--fs-r,1)*14px);color:rgba(var(--rgb-diff),.35)}
+</style>
+<style id="apollo-plus-aside-fixes">
+/* Suporte: the row is the target. Children never intercept the pointer, so a
+   click on the glyph or the label reaches the button that carries
+   [data-apollo-suporte]. */
+.supportBTN{width:100%;text-align:left;cursor:pointer}
+.supportBTN>i,.supportBTN>svg,.supportBTN>.sn{pointer-events:none}
+</style>
+<style id="apollo-pev-base">
+.pev-host,
+.pev {
+  color: var(--txt-color);
+  font-family: var(--ff-main);
+  position: relative;
+  overflow: visible !important;
+  padding-bottom: 80px;
+  box-sizing: border-box;
+}
+</style>
+<style id="apollo-pev-btn-force">
+/* Alias so .ax-main .btn calcs resolve on this page family. */
+.pev,
+.ax-main {
+  --fsx: var(--fs-u, 1);
+}
+
+.btn {
+  corner-shape: squircle;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: var(--r-pill);
+  font-family: var(--ff-main);
+  font-size: var(--fs-body-sm);
+  font-weight: 500;
+  color: var(--txt-heading);
+  background: var(--surface);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.btn-secondary {
+  corner-shape: squircle;
+  background: var(--card);
+  color: var(--txt-heading);
+  border: 1px solid rgba(var(--rgb-diff), .04);
+  box-shadow:
+    inset 0 1px 0 0 rgba(var(--rgb-theme), .2),
+    inset 0 0 0 1px rgba(var(--rgb-theme), .075);
+}
+.btn:active {
+  transform: scale(.97);
+}
+.btn-secondary:hover {
+  background: var(--card-hover);
+  transform: translateY(-1px);
+}
+.btn.btn {
+  background: var(--surface);
+}
+.btn.btn-secondary {
+  background: var(--card);
+  border: 1px solid rgba(var(--rgb-diff), .04);
+}
+.btn.btn-secondary:hover {
+  background: var(--card-hover);
+}
+.ax-body .btn,
+.ax-ff-section .btn {
+  font-family: var(--ff-main) !important;
+}
+
+/* ONLY exception vs the shared 12.5px / weight-from-.btn paste. */
+.ax-main .btn {
+  font-size: calc(var(--fsx) * 11px) !important;
+  font-weight: 400 !important;
+}
+</style>
+<style id="apollo-pev-ds">
+   /* PORT-TIME SUBSTITUTION (the only edit to this verbatim copy):
+   the Design System handoff sizes through calc(Npx * var(--fs-u, 1)). core.js —
+   the single source of :root tokens on every Apollo page — ships --fs-u, not
+   --fsx (verified in production on /casa and /portal). An undefined token makes
+   every one of those calc() expressions invalid, and CSS drops invalid
+   declarations outright, so each element silently fell back to inherited
+   sizing. var(--fs-u, 1) is therefore rewritten to var(--fs-u, 1) here. No token is
+   declared anywhere: this maps the copy onto the token system that actually
+   exists. If core.js ever ships --fsx, revert this substitution. */
+   /* ============================================================
+   APOLLO::RIO -- DS component CSS, copied VERBATIM from
+   uni.theme.v2.1.css (Design System handoff) -- the exact
+   component classes missing from this shell's own inline style:
+   .stat-card, .cta-card, .event-row (+date-box/-details/-meta/
+   -action), .gallery-card (+--alt), .a-eve-card (+date/-media/
+   -tags/-content/-title/-meta), .pagination, .grid-pair,
+   .field-input.
+   NOTHING here is invented -- every rule below is a byte-for-byte
+   copy of the approved Design System file referenced above.
+   ============================================================ */
+   /* ── EVENT CARD (.a-eve-card) — o cartão OFICIAL de evento da Design System.
+   Nunca confundir com .gallery-card (genérico, editorial/listagens) — todo
+   card que representa um EVENTO usa este componente, ponto. Cutout do bloco
+   de data é geometria pura via mask/-webkit-mask, sem tokens. ── */
+   .a-eve-card {
+      display: block;
+      position: relative;
+      width: 100%;
+      max-width: 320px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform .4s var(--ease);
+      background: transparent;
+   }
+
+   .a-eve-card:hover {
+      transform: translateY(-5px);
+   }
+
+   .a-eve-date {
+      position: absolute;
+      top: -5px;
+      left: -2px;
+      width: 60px;
+      height: 54px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      line-height: 1;
+      z-index: 2;
+      pointer-events: none;
+   }
+
+   .a-eve-date-day {
+      font-family: var(--ff-heading);
+      font-size: calc(22px * var(--fs-u, 1));
+      font-weight: 700;
+      color: var(--txt-heading);
+      display: block;
+   }
+
+   .a-eve-date-month {
+      font-family: var(--ff-mono);
+      font-size: calc(10px * var(--fs-u, 1));
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--muted);
+   }
+
+   .a-eve-media {
+      height: 450px;
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--r-lg);
+      border: 1px solid rgba(var(--rgb-diff), .04);
+      box-shadow: inset 0 1px 0 0 rgba(var(--rgb-theme), .2), inset 0 0 0 1px rgba(var(--rgb-theme), .075);
+      transition: box-shadow .4s var(--ease);
+      background: var(--surface-hover);
+      --r: 12px;
+      --s: 12px;
+      --x: 48px;
+      --y: 42px;
+      --_m: /calc(2*var(--r)) calc(2*var(--r)) radial-gradient(#000 70%, #0000 72%);
+      --_g: conic-gradient(at var(--r) var(--r), #000 75%, #0000 0);
+      --_d: (var(--s) + var(--r));
+      mask: calc(var(--_d) + var(--x)) 0 var(--_m), 0 calc(var(--_d) + var(--y)) var(--_m), radial-gradient(var(--s) at 0 0, #0000 99%, #000 calc(100% + 1px)) calc(var(--r) + var(--x)) calc(var(--r) + var(--y)), var(--_g) calc(var(--_d) + var(--x)) 0, var(--_g) 0 calc(var(--_d) + var(--y));
+      mask-repeat: no-repeat;
+      -webkit-mask: calc(var(--_d) + var(--x)) 0 var(--_m), 0 calc(var(--_d) + var(--y)) var(--_m), radial-gradient(var(--s) at 0 0, #0000 99%, #000 calc(100% + 1px)) calc(var(--r) + var(--x)) calc(var(--r) + var(--y)), var(--_g) calc(var(--_d) + var(--x)) 0, var(--_g) 0 calc(var(--_d) + var(--y));
+      -webkit-mask-repeat: no-repeat;
+   }
+
+   .a-eve-card:hover .a-eve-media {
+      box-shadow: inset 0 1px 0 0 rgba(var(--rgb-theme), .35), inset 0 0 0 1px rgba(var(--rgb-theme), .12);
+   }
+
+   .a-eve-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .4s var(--ease);
+      display: block;
+      border: none;
+      box-shadow: none;
+   }
+
+   .a-eve-card:hover .a-eve-media img {
+      transform: scale(1.05);
+   }
+
+   .a-eve-tags {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      display: flex;
+      gap: 8px;
+      z-index: 3;
+      pointer-events: none;
+   }
+
+   .a-eve-tag {
+      corner-shape: squircle;
+      padding: 4px 10px;
+      border-radius: var(--r-xs);
+      border: 1px solid rgba(var(--rgb-theme), .2);
+      background: linear-gradient(30deg, rgba(var(--rgb-theme), .1) -49%, rgba(var(--rgb-theme), .35) 160%);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      font-family: var(--ff-mono);
+      font-size: calc(8px * var(--fs-u, 1));
+      color: rgba(var(--rgb-theme), 1);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+   }
+
+   .a-eve-content {
+      padding: 9px .5rem;
+      width: 100%;
+   }
+
+   .a-eve-title {
+      font-family: var(--ff-heading);
+      font-size: calc(16px * var(--fs-u, 1));
+      font-weight: 700;
+      color: var(--txt-heading);
+      line-height: 1.3;
+      margin-bottom: .5rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+   }
+
+   .a-eve-meta {
+      color: var(--txt-color);
+      font-size: calc(12px * var(--fs-u, 1));
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: .4rem;
+   }
+
+   .a-eve-meta i {
+      font-size: calc(13px * var(--fs-u, 1));
+      flex-shrink: 0;
+      opacity: .8;
+      color: var(--muted);
+   }
+
+   .a-eve-meta span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+   }
+
+   .field-input,
+   .apollo-input,
+   .apollo-select {
+      width: 100%;
+      padding: 11px 14px;
+      font-size: calc(var(--fs-u, 1) * 13px);
+      color: var(--txt-heading);
+      background: var(--surface);
+      border-radius: var(--r-sm);
+      border: 1px solid rgba(var(--rgb-diff), .04);
+      box-shadow: inset 0 1px 0 0 rgba(var(--rgb-theme), .2), inset 0 0 0 1px rgba(var(--rgb-theme), .075);
+      transition: box-shadow .35s var(--ease), background .35s var(--ease);
+   }
+
+   .field-input::placeholder,
+   .apollo-input::placeholder {
+      color: var(--muted);
+   }
+
+   .field-input:focus,
+   .apollo-input:focus,
+   .apollo-select:focus {
+      background: var(--white-2);
+      box-shadow: inset 0 1px 0 0 rgba(var(--rgb-theme), .2), inset 0 0 0 1px rgba(var(--rgb-theme), .075), inset 0 0 0 1px var(--white-10);
+   }
+
+   .gallery-card>img,
+   .card>img,
+   .cta-card>img,
+   .stat-card>img,
+   .media-widget>img,
+   .media-widget>.media-cover-art img {
+      filter: grayscale(.8);
+      transition: transform .25s ease, filter .65s ease .1s !important;
+   }
+
+   .gallery-card:hover>img,
+   .card:hover>img,
+   .cta-card:hover>img,
+   .stat-card:hover>img,
+   .media-widget:hover>img,
+   .media-widget:hover>.media-cover-art img {
+      filter: grayscale(0);
+   }
+
+   .media-widget {
+      background: var(--card);
+      border-radius: var(--r-lg);
+      padding: var(--s-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-4);
+      box-shadow: inset 0 1px 0 0 rgba(var(--rgb-theme), .2), inset 0 0 0 1px rgba(var(--rgb-theme), .075);
+      border: 1px solid rgba(var(--rgb-diff), .04);
+   }
+
+   .media-cover-art {
+      width: 100%;
+      aspect-ratio: 16/10;
+      border-radius: var(--r);
+      overflow: hidden;
+   }
+
+   .media-cover-art img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .6s var(--ease-smooth), filter .6s var(--ease);
+   }
+
+   .media-widget:hover .media-cover-art img {
+      transform: scale(1.04);
+      filter: grayscale(0);
+   }
+
+   .media-info h3 {
+      font-family: var(--ff-heading);
+      font-size: var(--fs-h5);
+      color: var(--txt-heading);
+   }
+
+   .media-info p {
+      font-size: calc(var(--fs-u, 1) * 13px);
+      color: var(--muted);
+      margin-top: 2px;
+   }
+
+   .media-progress {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--ff-mono);
+      font-size: calc(var(--fs-u, 1) * 11px);
+      color: var(--muted);
+   }
+
+   .progress-bar-container {
+      position: relative;
+      flex: 1;
+      height: 4px;
+      border-radius: var(--r-pill);
+      background: var(--white-5);
+   }
+
+   .progress-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 33%;
+      border-radius: var(--r-pill);
+      background: var(--txt-heading);
+   }
+
+   .progress-knob {
+      position: absolute;
+      left: 33%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--bg);
+      box-shadow: var(--img-border);
+   }
+
+   .media-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--s-4);
+   }
+
+   .ctrl-btn {
+      color: var(--muted);
+      font-size: calc(var(--fs-u, 1) * 22px);
+      transition: color .3s var(--ease), transform .3s var(--ease-snappy);
+   }
+
+   .ctrl-btn:hover {
+      color: var(--txt-heading);
+      transform: scale(1.1);
+   }
+
+   .play-pause-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--black-1);
+      color: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: calc(var(--fs-u, 1) * 26px);
+   }
+
+   .play-pause-btn:hover {
+      transform: scale(1.05);
+   }
+
+   .stat-card {
+      background: var(--card);
+      border-radius: var(--r);
+      padding: var(--s-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-4);
+      box-shadow: inset 0 1px 0 0 rgba(var(--rgb-theme), .2), inset 0 0 0 1px rgba(var(--rgb-theme), .075);
+      border: 1px solid rgba(var(--rgb-diff), .04);
+   }
+
+   .stat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+   }
+
+   .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--r-sm);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: calc(var(--fs-u, 1) * 18px);
+      color: var(--txt-heading);
+   }
+
+   .stat-value {
+      font-family: var(--ff-heading);
+      font-size: var(--fs-h3);
+      color: var(--txt-heading);
+      font-weight: 700;
+      letter-spacing: -.02em;
+   }
+
+   .stat-label {
+      font-size: calc(var(--fs-u, 1) * 11px);
+      color: var(--muted);
+      margin-top: 2px;
+   }
+
+   .stat-trend {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-family: var(--ff-mono);
+      font-size: calc(var(--fs-u, 1) * 11px);
+      margin-top: var(--s-2);
+   }
+
+   .trend-up {
+      color: #34C759;
+   }
+
+   .trend-down {
+      color: var(--alert-red);
+   }
+
+   .cta-card {
+      background: var(--black-1);
+      color: var(--bg);
+      border-radius: var(--r);
+      padding: var(--s-4);
+   }
+
+   .cta-card h4 {
+      font-family: var(--ff-heading);
+      color: var(--bg);
+   }
+
+   .cta-card p {
+      font-size: calc(var(--fs-u, 1) * 13px);
+      color: rgba(var(--rgb-theme), .6);
+   }
+
+   /* EVENTS · GALLERY · PAGINATION · IDENTITY */
+   .event-list-container {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-2);
+   }
+
+   .event-row {
+      display: flex;
+      align-items: center;
+      gap: var(--s-3);
+      padding: var(--s-3);
+      border-radius: var(--r);
+      background: none;
+      cursor: pointer;
+   }
+
+   /* v2.1.1: transparente em repouso */
+   .event-row:hover {
+      transform: translateX(4px);
+      background: var(--card);
+   }
+
+   .event-row.featured {
+      box-shadow: inset 0 1px 0 0 rgba(var(--rgb-theme), .2), inset 0 0 0 1px rgba(var(--rgb-theme), .075);
+      border: 1px solid rgba(var(--rgb-diff), .04);
+   }
+
+   .event-row.soldout {
+      opacity: .5;
+   }
+
+   .date-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 54px;
+      height: 54px;
+      border-radius: var(--r-sm);
+      background: var(--card);
+      flex-shrink: 0;
+   }
+
+   .date-day {
+      font-family: var(--ff-heading);
+      font-size: calc(var(--fs-u, 1) * 1.35rem);
+      font-weight: 700;
+      color: var(--txt-heading);
+      line-height: 1;
+   }
+
+   .date-month {
+      font-family: var(--ff-mono);
+      font-size: calc(var(--fs-u, 1) * .6rem);
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 2px;
+   }
+
+   .event-details {
+      flex: 1;
+      min-width: 0;
+   }
+
+   .event-details h4 {
+      font-family: var(--ff-heading);
+      font-size: var(--fs-h6);
+      color: var(--txt-heading);
+   }
+
+   .event-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 4px;
+   }
+
+   .event-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: calc(var(--fs-u, 1) * 11px);
+      color: var(--muted);
+   }
+
+   .event-action .status {
+      font-family: var(--ff-mono);
+      font-size: calc(var(--fs-u, 1) * .58rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      padding: 5px 10px;
+      background: var(--surface);
+      border-radius: var(--r-pill);
+      color: var(--muted);
+   }
+
+   .event-action .status.active {
+      background: var(--surface);
+      color: var(--txt-heading);
+   }
+
+   .gallery-card {
+      background: var(--bg);
+      border-radius: var(--r);
+      overflow: hidden;
+      position: relative;
+   }
+
+   .gallery-card:hover {
+      transform: translateY(-3px);
+   }
+
+   .gallery-card img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      filter: grayscale(.8) contrast(1.05);
+      transition: filter .6s var(--ease-smooth), transform .6s var(--ease-smooth);
+      box-shadow: var(--img-border);
+   }
+
+   .gallery-card:hover img {
+      filter: grayscale(0) contrast(1);
+      transform: scale(1.04);
+   }
+
+   .gallery-card-body {
+      padding: var(--s-3) var(--s-1);
+   }
+
+   .gallery-card-body h4 {
+      font-family: var(--ff-heading);
+      font-size: calc(var(--fs-u, 1) * 1rem);
+      color: var(--txt-heading);
+      margin-bottom: 4px;
+   }
+
+   .gallery-card-body p {
+      color: var(--muted);
+      font-size: calc(var(--fs-u, 1) * 11px);
+   }
+
+   #pagination,
+   .pagination {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      align-items: center;
+      justify-content: center;
+      padding: var(--s-4) 0;
+   }
+
+   #pagination li a,
+   .pagination li a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 38px;
+      height: 38px;
+      padding: 0 6px;
+      border-radius: var(--r-sm);
+      font-family: var(--ff-mono);
+      font-size: calc(var(--fs-u, 1) * 11px);
+      color: var(--muted);
+      transition: background .3s var(--ease), color .3s var(--ease);
+   }
+
+   #pagination li a:hover,
+   .pagination li a:hover {
+      background: var(--surface);
+      color: var(--txt-heading);
+   }
+
+   #pagination li a.current-page,
+   .pagination li a.current-page {
+      background: var(--black-1);
+      color: var(--bg);
+   }
+
+   .gallery-card--alt {
+      background: var(--card);
+      border-radius: var(--r-lg);
+      box-shadow: inset 0 1px 0 0 rgba(var(--rgb-theme), .2), inset 0 0 0 1px rgba(var(--rgb-theme), .075);
+      border: 1px solid rgba(var(--rgb-diff), .04);
+   }
+
+   .gallery-card--alt img {
+      aspect-ratio: 1/1;
+      filter: none;
+   }
+
+   .gallery-card--alt .gallery-card-body {
+      padding: var(--s-3);
+   }
+
+   .gallery-card--alt:hover img {
+      transform: scale(1.02);
+   }
+
+   .grid-pair {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+   }
+
+   /* variante para hosts .grid-3 (ex.: galeria --alt): 2-por-linha até o desktop,
+   3-por-linha volta a valer em ≥1000px (regra original preservada). */
+   @media (max-width: 999px) {
+      .grid-3.grid-pair--m {
+         grid-template-columns: repeat(2, 1fr);
+      }
+   }
+
+   /* Anúncio a custo zero → "FREE" no lugar do preço (acomodação cedida / cortesia).
+   Usado por app-market.js em .ticket-price-tag e .accom-price. */
+   .mk-free {
+      color: var(--accent);
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+   }
+
+   .accom-price .mk-free {
+      font-family: var(--ff-mono);
+      font-size: calc(var(--fs-u, 1) * 12px);
+   }
+
+
+   /* ── from market.css — section headers (VERBATIM) ────────────────────────── */
+   .section-header {
+      padding-left: 16px !important;
+      padding-right: 16px !important;
+   }
+
+   #view-anuncios .carousel,
+   #view-anuncios .accom-carousel,
+   #view-anuncios #ticketCarousel,
+   #view-anuncios-meus .carousel {
+      width: 100% !important;
+      max-width: 100% !important;
+      left: auto !important;
+      right: auto !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+   }
+   }
+
+   .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin: 0px;
+      border: none !important;
+      padding-bottom: 10px;
+   }
+
+   .section-title {
+      font-size: calc(24px * var(--fs-u));
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      letter-spacing: -0.03em;
+   }
+
+   .section-title i {
+      color: var(--accent);
+   }
+
+   .section-count {
+      font-family: var(--ff-mono);
+      font-size: calc(12px * var(--fs-u));
+      color: var(--gray-8);
+      text-transform: uppercase;
+   }
+
+   /* View-toggle icon next to the "Repasses" / "Acomodações" titles —
+           ONE icon, not a muted/active pair: its class (and title/aria-label)
+           is swapped between ri-gallery-view-2 ("Ver anúncios sem efeito") and
+           ri-carousel-view ("Ver anúncios em efeito fluido") in JS
+           (setViewToggleState) to reflect whichever mode is CURRENTLY active,
+           so there's never a
+           second, unused icon sitting there for "muted" styling to apply to.
+           Scoped two-deep — the rest of this sentence, and the rule it
+           described, were lost before 2026-08-20. The comment therefore
+           never closed and swallowed everything down to the market.css
+           header below. Closing it here changes no rendered output (both
+           spans were comment either way) and makes the next edit here
+           safe. Portal harness E24. */
+
+/* ── from market.css — the card grid (VERBATIM) ──────────────────────────── */
+   .grid-layout {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 16px !important;
+      margin-bottom: 80px !important;
+      height: auto !important;
+      overflow: visible !important;
+      position: relative !important;
+   }
+
+   @media (min-width: 999px) {
+      .grid-layout {
+         grid-template-columns: repeat(4, 1fr) !important;
+         gap: 24px !important;
+         margin-bottom: 160px !important;
+      }
+   }
+
+   /* ── shell fit ───────────────────────────────────────────────────────────────
+   Two rules the mockup gets from its own page frame and this screen does not:
+   (1) the DS card caps at max-width:320px and centres inside its grid cell;
+   (2) .eve-body/.eve-section are portal-only wrappers with no DS definition. */
+   .grid-layout>.app-market.eve {
+      min-width: 0;
+      display: block;
+   }
+
+   .grid-layout .a-eve-card {
+      max-width: none;
+   }
+
+   .eve-section {
+      position: relative;
+   }
+</style>
+<style id="apollo-pev-browse">
+/* ── Fileira de taxonomia / gênero ───────────────────────────────────────────
+   Os chips SÃO `.btn.btn-secondary` (app.php). A superfície do botão mora em
+   styles-btn-force.php. Este bloco declara APENAS: scroller, truncamento e
+   estado `.is-on`. NÃO redeclare padding/raio/tipo/fundo de idle chip. */
+.pev-tax {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: visible;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  /* O padding-block é folga de rolagem: `.btn-secondary:hover` levanta o chip
+     1px e o :focus-visible do core desenha um anel para fora da caixa; sem essa
+     folga o overflow-x cortaria os dois. As margens negativas devolvem os
+     mesmos 16px, então a folga não ocupa espaço no fluxo: a fileira mede a
+     altura dos chips.
+
+     Uma linha só, de propósito. Até 2026-08-09 isto era `margin:-4px 0 -16px`
+     mais um `.pev-browse .pev-tax{margin-top:-16px}` logo abaixo, que vencia
+     por especificidade — o -4px nunca foi aplicado e o comentário descrevia um
+     espaçamento que a página não tinha. */
+  margin-block: -16px;
+  padding-block: 16px;
+  padding-inline: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+.pev-tax::-webkit-scrollbar { display: none; }
+
+/* Delta 1 · a fileira é um scroller: um chip não pode encolher para caber. */
+.pev-tax-btn { flex: 0 0 auto; }
+
+/* Delta 2 · o rótulo trunca em vez de esticar a fileira. `.btn` já é
+   white-space:nowrap e o span herda; `overflow`/`text-overflow` precisam estar
+   no elemento que tem o texto, e é só por isso que este seletor existe. */
+.pev-tax-btn .pev-tax-label {
+  max-width: 22ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Delta 3 · selected chip: never accent. Smooth invert to black / white.
+   Escrito sob `.pev-tax` de propósito: `.btn.btn-secondary:hover` do core
+   pesa 0-3-0, então um `.pev-tax-btn.is-on` solto perderia o fundo no hover. */
+.pev-tax .pev-tax-btn {
+  transition:
+    background .65s var(--ease, ease),
+    color .65s var(--ease, ease),
+    border-color .65s var(--ease, ease),
+    box-shadow .65s var(--ease, ease),
+    transform .25s var(--ease-snappy, ease);
+}
+.pev-tax .pev-tax-btn.is-on {
+  background: var(--black, var(--black-1, #0a0a0a)) !important;
+  color: var(--white, var(--white-1, #fff)) !important;
+  border-color: var(--black, var(--black-1, #0a0a0a));
+  box-shadow: none;
+}
+.pev-tax .pev-tax-btn.is-on:hover {
+  background: var(--black, var(--black-1, #0a0a0a)) !important;
+  color: var(--white, var(--white-1, #fff)) !important;
+  border-color: var(--black, var(--black-1, #0a0a0a));
+}
+.pev-tax .pev-tax-btn.is-on .pev-tax-label {
+  color: var(--white, var(--white-1, #fff)) !important;
+}
+
+/* ── Chip de busca ativa ─────────────────────────────────────────────────────
+   Quando o usuário busca pelo cabeçalho (apollo_listing_header), o termo entra
+   como o primeiro chip desta fileira, com um X. Ele é o mesmo botão dos chips
+   de temporada/gênero de propósito — mas ganha um teto de largura maior,
+   porque um termo digitado é mais longo que "Underground" e truncar em 22ch
+   esconderia justamente o que o usuário precisa reconhecer. O `gap` entre
+   rótulo e X é o de `.btn`. */
+.pev-tax-btn[data-pev-search-clear] .pev-tax-label { max-width: 26ch; }
+/* Só opacidade. O X é uma affordance secundária dentro do chip, não um segundo
+   tamanho de tipo: `font-size`/`line-height` saíram daqui em 2026-08-09 porque
+   o ícone herda a escala do botão e o core já normaliza `i[class*="ri-"]` — dois
+   donos para o tamanho do glifo é como o chip volta a divergir de `.btn`. */
+.pev-tax-btn[data-pev-search-clear] i { opacity: .7; }
+.pev-tax-btn[data-pev-search-clear]:hover i { opacity: 1; }
+
+.pev-browse {
+  padding: 0 16px 8px;
+  box-sizing: border-box;
+}
+.pev-dynamic {
+  margin-top: 16px;
+}
+/* cabeçalho de seção — título + badge numérico + toggle grade/lista (inline). */
+.pev .section-title {
+  font-family: var(--ff-heading);
+  color: var(--txt-heading);
+  font-size: calc(17px * var(--fs-u, 1));
+  margin: 25px 0 10px 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  letter-spacing: -.02em;
+}
+/* O ícone do título é uma marca d'água, não um rótulo: o traço praticamente
+   some (alpha .15 sobre --rgb-diff) e o preenchimento fica no cinza de apoio,
+   então quem carrega a hierarquia é o texto. `stroke-width: 0` é obrigatório —
+   o runtime de ícones do core.js hidrata o <i> num <svg> que herda o traço e,
+   sem isso, o contorno reapareceria por cima do fill apagado. */
+.pev .section-title > i,
+.pev .section-title > i svg {
+  color: rgba(var(--rgb-diff), .15) !important;
+  fill: var(--muted-txt) !important;
+  font-weight: 100 !important;
+  stroke-width: 0px !important;
+}
+.pev .section-title small.pev-section-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 5px;
+  border-radius: var(--r-pill, 999px);
+  font-family: var(--ff-mono);
+  font-size: calc(9.5px * var(--fs-u, 1));
+  font-weight: 600;
+  letter-spacing: .04em;
+  line-height: 1.2;
+  background: var(--white-3);
+  color: var(--white-10);
+  transition: font-size .35s var(--ease), color .35s var(--ease), background .35s var(--ease);
+}
+.pev-view-toggle {
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+}
+.pev .section-title .pev-view-toggle > i,
+.pev .section-title .pev-view-toggle > i svg {
+  color: var(--muted-txt) !important;
+  fill: var(--muted-txt) !important;
+  cursor: pointer;
+  font-size: 19px !important;
+  width: 19px !important;
+  height: 19px !important;
+  transition: color .2s var(--ease);
+}
+.pev .section-title .pev-view-toggle > i:hover,
+.pev .section-title .pev-view-toggle > i:hover svg {
+  color: var(--accent) !important;
+  fill: var(--accent) !important;
+}
+/* Custom Apollo icon fallbacks for view-toggle icons */
+.ri-list-check-2::before {
+  content: "";
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background-color: currentColor;
+  -webkit-mask-image: url('https://assets.apollo.rio.br/i/list-check-2.svg');
+  mask-image: url('https://assets.apollo.rio.br/i/list-check-2.svg');
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+.ri-gallery-view::before {
+  content: "";
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background-color: currentColor;
+  -webkit-mask-image: url('https://assets.apollo.rio.br/i/function-v.svg');
+  mask-image: url('https://assets.apollo.rio.br/i/function-v.svg');
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+.pev .eve-body.is-list-view .pev-list-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+@media (min-width: 1000px) {
+  .pev .section-title { font-size: calc(22px * var(--fs-u, 1)); }
+}
+</style>
+<style id="apollo-pev-hero">
+/* ── Layout: mobile column → desktop hero+sidebar ──────────────────────────
+   Gaps and gutters come from the `--pev-*` rhythm contract in
+   styles-rhythm.php (era styles-masthead.php até 1.7.0) — do not hard-code
+   them here. ── */
+.pev-layout {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.pev-hero {
+  position: relative;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  min-height: clamp(232px, 54vw, 292px);
+  background: var(--surface);
+  border: 1px solid rgba(var(--rgb-diff), .04);
+  box-shadow: inset 0 1px 0 0 rgba(var(--rgb-theme), .9), inset 0 0 0 1px rgba(var(--rgb-theme), .4);
+  cursor: pointer;
+  isolation: isolate;
+}
+.pev-hero-cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(.35);
+  transition: filter .5s var(--ease), transform .6s var(--ease-smooth);
+}
+.pev-hero:hover .pev-hero-cover { filter: grayscale(0); transform: scale(1.03); }
+
+/* ── FALLBACK · última camada quando não há destaque ────────────────────────
+   Ordem de empilhamento explícita. Antes, o <iframe> e o véu compartilhavam
+   z-index:0 e dependiam da ordem do DOM; qualquer reordenação silenciosa do
+   markup escondia a mensagem atrás do próprio véu. Agora:
+       0 · fundo degradê (sobrevive se o iframe não carregar)
+       1 · iframe do CDN
+       2 · véu
+       3 · corpo da mensagem
+   O fundo é a REDE DE SEGURANÇA final: se assets.apollo.rio.br estiver fora do
+   ar, o cartão continua legível em vez de virar um retângulo vazio. ── */
+.pev-hero.is-fallback {
+  cursor: default;
+  background:
+    radial-gradient(120% 90% at 12% 0%, rgba(255, 255, 255, .05) 0%, transparent 62%),
+    linear-gradient(168deg, #1b1b1b 0%, #131313 46%, #0d0d0d 100%);
+}
+.pev-hero-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  pointer-events: none;
+  color-scheme: dark;
+  /* Starts invisible, fades in once 'load' fires (app.php's onload handler).
+     This cannot detect an X-Frame-Options block — see the KNOWN LIMITATION
+     note in app.php's heroFallbackHTML() — it only removes the flash of blank
+     white on first paint while the frame is still resolving. */
+  opacity: 0;
+  transition: opacity .5s var(--ease);
+}
+.pev-hero-fallback.is-ready { opacity: 1; }
+.pev-hero-fallback-shade {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  /* Top stop is NOT fully transparent (2026-08-01): if the iframe is blocked
+     by the CDN's own X-Frame-Options header (see app.php), the browser paints
+     it plain white top-to-bottom. A shade that only darkens the bottom 80%
+     left that white showing through the top — this floor keeps the whole card
+     toned even when layer 1 never actually renders anything. */
+  background:
+    linear-gradient(rgba(var(--rgb-diff), .16) 0%, rgba(var(--rgb-diff), .70) 100%),
+    radial-gradient(120% 80% at 50% 120%, rgba(0, 0, 0, .34) 0%, transparent 70%);
+  pointer-events: none;
+}
+.pev-hero.is-fallback .pev-hero-body { z-index: 3; }
+
+/* ── HERO SLIDER · destaques (highlight:true) ───────────────────────────────
+   Slides empilhados no mesmo box: só o .is-on aparece, com cross-fade + um
+   leve zoom-out de entrada (Ken Burns curto) que dá vida sem chamar atenção
+   pra si. O clique/foco continua indo pro evento do slide ativo. ── */
+.pev-hero.is-slider { display: grid; }
+.pev-hero-slide {
+  grid-area: 1 / 1;
+  position: relative;
+  min-height: inherit;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .7s var(--ease), visibility .7s var(--ease);
+}
+.pev-hero-slide.is-on {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+.pev-hero-slide.is-on .pev-hero-cover { animation: pevHeroDrift 7s var(--ease-smooth) both; }
+@keyframes pevHeroDrift {
+  from { transform: scale(1.07); }
+  to   { transform: scale(1); }
+}
+.pev-hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  align-self: flex-start;
+  font-family: var(--ff-mono);
+  font-size: calc(var(--fs-r, 1) * 8.5px);
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  color: rgba(var(--rgb-theme), .78);
+  margin-bottom: 2px;
+}
+.pev-hero-kicker i { color: var(--accent); font-size: 1.15em; }
+
+/* Bolinhas = barras de progresso. O trilho é a bolinha; o ::after/​.fill enche
+   no ritmo exato do --pev-hero-dwell. Slide já visto fica cheio (is-done). */
+.pev-hero-dots {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 12px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pev-hero-dot {
+  position: relative;
+  flex: 1 1 0;
+  height: 3px;
+  max-width: 46px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: rgba(var(--rgb-theme), .28);
+  overflow: hidden;
+  cursor: pointer;
+  transition: background .3s var(--ease), max-width .45s var(--ease);
+}
+.pev-hero-dot::before {
+  /* alvo de toque de 24px sem engordar o traço visível */
+  content: "";
+  position: absolute;
+  inset: -11px -3px;
+}
+.pev-hero-dot:hover { background: rgba(var(--rgb-theme), .45); }
+.pev-hero-dot.is-on { max-width: 76px; }
+.pev-hero-dot-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: inherit;
+  background: var(--white-1, #fff);
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+.pev-hero-dot.is-done .pev-hero-dot-fill { transform: scaleX(1); }
+.pev-hero-dot.is-on .pev-hero-dot-fill {
+  animation: pevHeroFill var(--pev-hero-dwell, 6200ms) linear both;
+}
+.pev-hero.is-paused .pev-hero-dot.is-on .pev-hero-dot-fill { animation-play-state: paused; }
+@keyframes pevHeroFill {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+.pev-hero-dot:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+/* com slider, o corpo abre espaço pras barras não encostarem no texto */
+.pev-hero.is-slider .pev-hero-body { padding-bottom: 30px; }
+@media (prefers-reduced-motion: reduce) {
+  .pev-hero-slide.is-on .pev-hero-cover { animation: none; }
+  .pev-hero-dot.is-on .pev-hero-dot-fill { animation: none; transform: scaleX(1); }
+}
+.pev-hero-fade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(transparent 20%, rgba(var(--rgb-diff), .72) 100%);
+  pointer-events: none;
+}
+.pev-hero-body {
+  position: relative;
+  z-index: 1;
+  padding: 24px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: inherit;
+  height: 100%;
+  gap: 8px;
+  box-sizing: border-box;
+}
+.pev-hero-body h1 {
+  font-family: var(--ff-heading);
+  font-size: calc(var(--fs-r, 1) * clamp(1.35rem, 5vw, 2rem));
+  font-weight: 800;
+  color: var(--white-1);
+  letter-spacing: -.03em;
+  line-height: 1.05;
+  margin: 0;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, .45);
+}
+.pev-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  font-size: calc(var(--fs-r, 1) * 12px);
+  color: rgba(var(--rgb-theme), .85);
+}
+.pev-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  font-family: var(--ff-mono);
+  font-size: calc(var(--fs-r, 1) * 9px);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  background: rgba(var(--rgb-theme), .14);
+  color: var(--white-1);
+  backdrop-filter: blur(8px);
+}
+.pev-chip.is-hot { background: rgba(var(--rgb-accent), .85); color: var(--bg); }
+.pev-chip.is-gone { background: rgba(var(--rgb-diff), .55); }
+
+/* ── Coluna irmã do hero · "Últimos eventos registrados" ────────────────────
+   SINGLE OWNER (2026-08-01). This box used to be declared by three cells at
+   once — hero (flex column), rails (overflow guard) and responsive (scroll
+   height). Consolidated here, with the hero, because it is the hero band's
+   sibling column and its height is a function of the hero's. ── */
+.pev-recent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  overflow-x: hidden !important;
+}
+.pev-recent .event-list-container {
+  overflow-x: hidden !important;
+  max-width: 100%;
+}
+.pev-recent-title {
+  font-family: var(--ff-mono);
+  font-size: calc(var(--fs-r, 1) * 10px);
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--muted);
+  margin: 20px 0 4px;
+}
+.pev-recent .event-list-container {
+  max-height: none;
+}
+.pev-recent .event-action {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* ── Empty hero ──────────────────────────────────────────────────────────────
+   BUGFIX (mantido): .pev-hero-body's type is designed to sit OVER a cover image
+   behind the .pev-hero-fade scrim, so it uses var(--white-1) plus a dark
+   text-shadow. The empty state has no photograph — but it DOES sit on the dark
+   fallback canvas, so the over-image treatment is correct here; what was wrong
+   was inheriting it onto the light --surface panel. The `.is-fallback` canvas
+   above guarantees the dark ground, so the white type is now always legible.
+
+   Tone: this is a normal, honest state — no event is marked highlight:true for
+   this month — not an error. It reads as a quiet editorial note, not an alert. */
+.pev-hero-body.is-empty {
+  justify-content: flex-end;
+  align-items: flex-start;
+  text-align: left;
+  gap: 10px;
+}
+.pev-hero-body.is-empty .pev-hero-kicker {
+  color: rgba(var(--rgb-theme), .55);
+  letter-spacing: .18em;
+  margin-bottom: 0;
+}
+.pev-hero-body.is-empty .pev-hero-kicker i { color: rgba(var(--rgb-theme), .42); }
+.pev-hero-body.is-empty h1 {
+  color: var(--white-1);
+  font-size: calc(var(--fs-r, 1) * clamp(1.2rem, 4.4vw, 1.7rem));
+  letter-spacing: -.028em;
+  opacity: .92;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, .45);
+}
+.pev-hero-body.is-empty .pev-chip {
+  background: rgba(var(--rgb-theme), .10);
+  color: rgba(var(--rgb-theme), .82);
+  box-shadow: inset 0 0 0 1px rgba(var(--rgb-theme), .14);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* ── Coluna "Últimos eventos registrados" ───────────────────────────────────
+   No desktop ela é irmã do hero numa grade `align-items:stretch`, então precisa
+   ser uma coluna de altura total com a lista rolando por dentro — senão a linha
+   inteira cresce junto com a lista e o hero estica sem motivo. ── */
+@media (min-width: 1000px) {
+  .pev-hero { min-height: clamp(300px, 26vw, 348px); }
+  .pev-hero-body { padding: 32px; }
+  .pev-recent {
+    min-height: 0;
+    padding: 4px 2px 4px 0;
+  }
+  .pev-recent .event-list-container { min-height: 0; flex: 1 1 auto; }
+}
+</style>
+<style id="apollo-pev-rails">
+/* Compact event rows — recent, prox rail, lightbox */
+/* Hover translateX must never spawn a horizontal scrollbar — clip the parent.
+   `.pev-recent` and `.pev-recent .event-list-container` were ALSO listed here;
+   they moved to styles-hero.php, which owns the whole hero band including its
+   sibling column. `.pev .event-list-container` below already covers the recent
+   list, since .pev-recent lives inside .pev — the extra selector was redundant
+   AND it made three cells co-own one box. */
+.pev .event-list-container,
+.pev .pev-rail-rows {
+  overflow-x: hidden !important;
+  max-width: 100%;
+}
+.pev .event-row {
+  gap: 8px !important;
+  padding: 6px 4px !important;
+  align-items: center;
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.pev .event-row:hover { transform: translateX(2px); }
+.pev .date-box {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px;
+}
+.pev .date-box .date-day {
+  font-size: calc(15px * var(--fs-u, 1));
+  line-height: 1;
+}
+.pev .date-box .date-month {
+  font-size: calc(9px * var(--fs-u, 1));
+  line-height: 1;
+  margin-top: 1px;
+}
+.pev .event-details {
+  min-width: 0;
+  flex: 1;
+}
+.pev .event-details h4 {
+  font-size: calc(13px * var(--fs-u, 1));
+  line-height: 1.15;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pev .event-meta {
+  display: flex;
+  flex-wrap: nowrap !important;
+  gap: 6px !important;
+  margin-top: 1px !important;
+  overflow: hidden;
+  min-width: 0;
+}
+.pev .event-meta span {
+  gap: 3px !important;
+  font-size: calc(10.5px * var(--fs-u, 1));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.pev .event-meta span:last-child { min-width: 0; flex: 1; }
+.pev .event-action { margin-left: 4px; }
+.pev-rail-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── Dynamic + legacy rails (no arrow nav) ── */
+.pev-rails {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 8px 16px 40px;
+  margin: 35px 0 0;
+  box-sizing: border-box;
+}
+/* v3: a grade não sangra pra fora como o trilho fazia — o padding lateral
+   fica no container e vale pra cabeçalho e cartões de uma vez só. */
+
+.pev-rail { position: relative; }
+
+/* ── TROCA DE MÊS — o par padrão entra e sai ───────────────────────────────
+   Dono único destas três regras: este cell. `renderRails()` em app.php as
+   dirige, mas quem as declara é aqui — 'neste-fds' e 'prox-fds' são trilhos, e
+   trilho é assunto de styles-rails.php.
+
+   `[hidden]` é o estado de REPOUSO, não a animação. O `.pev-rails` é uma coluna
+   flex com `gap: var(--pev-band)`: uma seção de altura 0 ainda cobra a banda
+   inteira de espaçamento, então animar só a altura deixaria exatamente o buraco
+   que se queria evitar. `display: none` é o que tira o item do flex — e com ele
+   o gap. A altura anima antes; isto só encerra.
+
+   `.is-exiting` existe pela mesma razão: a altura só clipa o conteúdo se a
+   caixa clipar, e `.pev-rail` é `position: relative` sem overflow. Vale nos
+   dois sentidos — sair e voltar usam a mesma clipagem. */
+.pev .pev-rail[hidden] { display: none; }
+.pev .pev-rail.is-exiting {
+  overflow: hidden;
+  will-change: height, opacity;
+}
+
+/* Alvo da máscara de troca de título (morphRailTitle, mesma receita do mês no
+   cabeçalho). `inline-block` é obrigatório: `clip-path` num box inline recorta
+   contra as caixas de linha, não contra o texto, e o rótulo pisca em vez de
+   varrer. O <span> é filho de um flex container, então não há reflow. */
+.pev [data-rail-title] {
+  display: inline-block;
+  will-change: clip-path;
+}
+
+/* ── "Ver todos" — a ÚLTIMA LINHA da lista, não uma laje embaixo dela ───────
+   O rodapé é filho da .event-list-container (app.php::skeleton), que é uma
+   coluna flex: `align-self: flex-end` faz a caixa encolher até o tamanho do
+   botão em vez de ocupar a largura toda, e o padding lateral repete o das
+   .event-row pra ação nascer alinhada com o trilho de conteúdo. Sem margem
+   de topo: quem separa é o `gap` da própria coluna, senão a ação descola e
+   volta a parecer um bloco à parte. ── */
+.pev-recent-footer {
+  display: flex;
+  align-self: flex-end;
+  align-items: center;
+  max-width: 100%;
+  padding: 0 4px;
+}
+.pev-rail-more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  width: auto;
+  /* Continua um alvo de toque honesto mesmo sem largura cheia. */
+  min-height: 40px;
+  margin-top: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-pill);
+  font-family: var(--ff-mono);
+  font-size: calc(var(--fs-r, 1) * 9px);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--txt-heading);
+  background: none;
+  box-shadow: none;
+  cursor: pointer;
+  transition: color .25s var(--ease), opacity .25s var(--ease), transform .2s var(--ease-snappy);
+}
+/* chevron desenhado em CSS — nada de codepoint de fonte chutado aqui */
+.pev-rail-more::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+  opacity: .5;
+  transition: transform .25s var(--ease), opacity .25s var(--ease);
+}
+.pev-rail-more:hover::after { transform: translateX(2px) rotate(-45deg); opacity: .8; }
+.pev-rail-more:hover {
+  background: none;
+  box-shadow: none;
+  opacity: .85;
+}
+.pev-rail-more:active { transform: scale(.985); }
+.pev-recent-footer:empty { display: none; }
+
+/* ── Reveal-up dos itens carregados em rolagem infinita ─────────────────────
+   Estado inicial só existe entre a inserção e o fim da transição: o JS remove
+   as classes no transitionend, então nada de estilo residual grudado no
+   cartão depois que ele já apareceu. ── */
+.pev-reveal {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  transition: opacity .6s var(--ease), transform .6s var(--ease);
+  will-change: opacity, transform;
+}
+.pev-reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+.pev-sentinel {
+  width: 100%;
+  min-height: 1px;
+  grid-column: 1 / -1; /* dentro da .grid-layout não pode virar uma célula */
+}
+@media (prefers-reduced-motion: reduce) {
+  .pev-reveal { opacity: 1; transform: none; transition: none; }
+}
+
+.pev-rail-modal { z-index: 9965; }
+.pev-rail-modal-body {
+  padding: 22px 18px 12px;
+}
+.pev-rail-modal-body h2 {
+  font-family: var(--ff-heading);
+  font-size: calc(20px * var(--fs-u, 1));
+  font-weight: 800;
+  letter-spacing: -.03em;
+  color: var(--txt-heading);
+  margin: 0 0 4px;
+}
+.pev-rail-modal-sub {
+  margin: 0 0 14px;
+  font-family: var(--ff-mono);
+  font-size: calc(var(--fs-r, 1) * 11px);
+  color: var(--muted-txt, var(--muted));
+}
+.pev-rail-modal .event-list-container {
+  max-height: min(60dvh, 520px);
+  overflow-y: auto;
+}
+
+/* ── EVENTOS EM GRADE · MOBILE APP FIRST ────────────────────────────────────
+   Todo cartão de evento do portal é o componente OFICIAL .a-eve-card
+   (ds-components.css), dentro do stub <article class="app-market eve"> —
+   mesmo contrato de markup do showcase. A grade é .grid-layout (2 por linha
+   no mobile, 4 no ≥1000px, já definida em market.css); as regras abaixo são
+   cópia byte-a-byte do bloco "#eveGrid.grid-layout" do uni.theme.v2.1.css,
+   só re-escopadas para a classe .eve-grid (o portal tem várias grades, não
+   um único #eveGrid). Nada de trilho horizontal: no celular ele empurrava o
+   conteúdo pra fora da tela. ── */
+.eve-grid.grid-layout .app-market.eve { min-width: 0; }
+.eve-grid.grid-layout .a-eve-card { max-width: none; }
+.eve-grid.grid-layout .a-eve-media { height: clamp(160px, 46vw, 240px); border-radius: var(--r); --x: 40px; --y: 34px; }
+/* ── Escala de tipo do cartão (2026-08-01) ──────────────────────────────────
+   Bloco de data 1.65x e conteúdo 1.18x, conforme pedido. Os multiplicadores
+   ficam EXPLÍCITOS em vez de virarem números já calculados, pra que a próxima
+   pessoa veja a intenção ("1.65x do original") e não um 28.05px sem história.
+   A caixa da data cresce junto, senão o dia estoura a moldura. ── */
+.eve-grid.grid-layout .a-eve-date { width: 76px; height: 68px; }
+.eve-grid.grid-layout .a-eve-date-day { font-size: calc(17px * 1.65 * var(--fs-u, 1)); }
+.eve-grid.grid-layout .a-eve-date-month { font-size: calc(9px * 1.65 * var(--fs-u, 1)); }
+.eve-grid.grid-layout .a-eve-title { font-size: calc(13px * 1.18 * var(--fs-u, 1)); }
+.eve-grid.grid-layout .a-eve-meta { font-size: calc(10.5px * 1.18 * var(--fs-u, 1)); margin-bottom: .25rem; }
+.eve-grid.grid-layout .a-eve-content { font-size: calc(1em * 1.18); }
+.eve-grid.grid-layout .a-eve-tag { font-size: calc(7px * 1.18 * var(--fs-u, 1)); padding: 3px 7px; }
+@media (min-width: 1000px) { .eve-grid.grid-layout .a-eve-media { height: 280px; } }
+/* wrapper do showcase — contém qualquer sangramento sem virar scroll-x */
+.pev .eve-body { position: relative; overflow-x: clip; overflow-y: visible; }
+/* a grade já traz margin-bottom 60px do DS; dentro do portal o espaçamento
+   entre seções é do .pev-rails, então zeramos pra não dobrar */
+.pev .eve-body .grid-layout { margin-bottom: 0 !important; }
+
+.pev-empty {
+  flex: 0 0 auto;
+  min-width: 200px;
+  padding: 28px 18px;
+  color: var(--muted);
+  font-size: calc(var(--fs-r, 1) * 12px);
+  text-align: center;
+}
+</style>
+<style id="apollo-pev-browse-mini">
+/* ── Mini event cards · standalone component · .pev-browse only ─────────── */
+.pev-browse .eve-body {
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: visible;
+  max-width: 100%;
+}
+
+.pev-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.pev-mini {
+  display: block;
+  min-width: 0;
+}
+
+.pev-mini-card {
+  display: block;
+  position: relative;
+  width: 100%;
+  text-decoration: none;
+  cursor: pointer;
+  background: transparent;
+  transition: transform .35s var(--ease);
+}
+.pev-mini-card:hover { transform: translateY(-3px); }
+
+.pev-mini-date {
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  width: 30px;
+  height: 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  line-height: 1;
+  z-index: 2;
+  pointer-events: none;
+}
+.pev-mini-day {
+  font-family: var(--ff-heading);
+  font-size: calc(13px * var(--fs-u, 1));
+  font-weight: 700;
+  color: var(--txt-heading);
+  display: block;
+  line-height: .95;
+}
+.pev-mini-month {
+  font-family: var(--ff-mono);
+  font-size: calc(7.5px * var(--fs-u, 1));
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--muted);
+  line-height: 1;
+}
+
+.pev-mini-media {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: var(--r);
+  border: 1px solid rgba(var(--rgb-diff), .04);
+  box-shadow:
+    inset 0 1px 0 0 rgba(var(--rgb-theme), .2),
+    inset 0 0 0 1px rgba(var(--rgb-theme), .075);
+  background: var(--surface-hover);
+  transition: box-shadow .35s var(--ease);
+  --r: 6px;
+  --s: 6px;
+  --x: 24px;
+  --y: 20px;
+  --_m: /calc(2 * var(--r)) calc(2 * var(--r)) radial-gradient(#000 70%, #0000 72%);
+  --_g: conic-gradient(at var(--r) var(--r), #000 75%, #0000 0);
+  --_d: (var(--s) + var(--r));
+  mask:
+    calc(var(--_d) + var(--x)) 0 var(--_m),
+    0 calc(var(--_d) + var(--y)) var(--_m),
+    radial-gradient(var(--s) at 0 0, #0000 99%, #000 calc(100% + 1px)) calc(var(--r) + var(--x)) calc(var(--r) + var(--y)),
+    var(--_g) calc(var(--_d) + var(--x)) 0,
+    var(--_g) 0 calc(var(--_d) + var(--y));
+  mask-repeat: no-repeat;
+  -webkit-mask:
+    calc(var(--_d) + var(--x)) 0 var(--_m),
+    0 calc(var(--_d) + var(--y)) var(--_m),
+    radial-gradient(var(--s) at 0 0, #0000 99%, #000 calc(100% + 1px)) calc(var(--r) + var(--x)) calc(var(--r) + var(--y)),
+    var(--_g) calc(var(--_d) + var(--x)) 0,
+    var(--_g) 0 calc(var(--_d) + var(--y));
+  -webkit-mask-repeat: no-repeat;
+}
+.pev-mini-card:hover .pev-mini-media {
+  box-shadow:
+    inset 0 1px 0 0 rgba(var(--rgb-theme), .35),
+    inset 0 0 0 1px rgba(var(--rgb-theme), .12);
+}
+.pev-mini-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border: none;
+  box-shadow: none;
+  transition: transform .35s var(--ease);
+}
+.pev-mini-card:hover .pev-mini-media img { transform: scale(1.05); }
+
+.pev-mini-tags {
+  display: none;
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  gap: 4px;
+  z-index: 3;
+  pointer-events: none;
+}
+.pev-mini-tag {
+  padding: 2px 5px;
+  border-radius: var(--r-xs);
+  border: 1px solid rgba(var(--rgb-theme), .2);
+  background: linear-gradient(30deg, rgba(var(--rgb-theme), .1) -49%, rgba(var(--rgb-theme), .35) 160%);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  font-family: var(--ff-mono);
+  font-size: calc(6px * var(--fs-u, 1));
+  color: rgba(var(--rgb-theme), 1);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+
+.pev-mini-body {
+  padding: .55rem .2rem .4rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+.pev-mini-title {
+  font-family: var(--ff-heading);
+  font-size: calc(10.5px * var(--fs-u, 1));
+  font-weight: 700;
+  color: var(--txt-heading);
+  line-height: 1.22;
+  margin: 0 0 .3rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.pev-mini-meta {
+  color: var(--txt-color);
+  font-size: calc(9px * var(--fs-u, 1));
+  line-height: 1.25;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 0 .2rem;
+  min-width: 0;
+}
+.pev-mini-meta i {
+  font-size: calc(10px * var(--fs-u, 1));
+  flex-shrink: 0;
+  opacity: .8;
+  color: var(--muted);
+}
+.pev-mini-meta span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* Mobile: title + location only — lineup/genres/tags from tablet up */
+.pev-mini-meta--wide { display: none; }
+
+@media (min-width: 640px) {
+  .pev-mini-grid { gap: 10px; }
+  .pev-mini-day { font-size: calc(15px * var(--fs-u, 1)); }
+  .pev-mini-month { font-size: calc(8.5px * var(--fs-u, 1)); }
+  .pev-mini-title { font-size: calc(12px * var(--fs-u, 1)); }
+  .pev-mini-meta { font-size: calc(10px * var(--fs-u, 1)); }
+  .pev-mini-meta i { font-size: calc(11px * var(--fs-u, 1)); }
+  .pev-mini-meta--wide { display: flex; }
+  .pev-mini-tags { display: flex; }
+}
+
+@media (min-width: 1000px) {
+  .pev-mini-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .pev-mini-date {
+    width: 36px;
+    height: 32px;
+    top: 4px;
+    left: 5px;
+  }
+  .pev-mini-media {
+    --r: 7px;
+    --s: 7px;
+    --x: 28px;
+    --y: 24px;
+  }
+}
+</style>
+<style id="apollo-pev-modals">
+/* ── Detail modal ── */
+.pev-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9960;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(var(--rgb-diff), .45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .3s var(--ease), visibility .3s;
+  padding: 0;
+}
+.pev-modal.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+.pev-modal-card {
+  width: 100%;
+  max-width: 560px;
+  max-height: min(88dvh, 720px);
+  overflow-y: auto;
+  background: var(--bg);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  box-shadow: inset 0 1px 0 0 rgba(var(--rgb-theme), .9), inset 0 0 0 1px rgba(var(--rgb-theme), .4);
+  border: 1px solid rgba(var(--rgb-diff), .04);
+  transform: translateY(24px);
+  transition: transform .35s var(--ease);
+  padding-bottom: calc(20px + var(--safe-bottom, 0px));
+}
+.pev-modal.is-open .pev-modal-card { transform: translateY(0); }
+.pev-modal-cover {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+.pev-modal-body { padding: 18px 18px 8px; }
+.pev-modal-body h2 {
+  font-family: var(--ff-heading);
+  font-size: calc(var(--fs-r, 1) * 1.35rem);
+  font-weight: 800;
+  color: var(--txt-heading);
+  margin: 0 0 8px;
+  letter-spacing: -.02em;
+}
+.pev-modal-body p {
+  font-size: calc(var(--fs-r, 1) * 13px);
+  color: var(--txt-color);
+  line-height: 1.55;
+  margin: 0 0 14px;
+}
+.pev-modal-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: calc(var(--fs-r, 1) * 12px);
+  color: var(--txt-heading);
+}
+.pev-modal-meta span { display: flex; align-items: center; gap: 8px; }
+.pev-modal-meta i { color: var(--muted); font-size: 16px; }
+.pev-lineup {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.pev-lineup li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--r-xs);
+  background: var(--surface);
+  font-size: calc(var(--fs-r, 1) * 12px);
+  color: var(--txt-heading);
+}
+.pev-lineup li small { font-family: var(--ff-mono); color: var(--muted); }
+.pev-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 18px 18px;
+}
+.pev-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-pill);
+  background: rgba(var(--rgb-diff), .55);
+  color: var(--white-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  font-size: 18px;
+  border: 0;
+}
+.pev-modal-card { position: relative; }
+
+@media (min-width: 720px) {
+  .pev-modal { align-items: center; padding: 24px; }
+  .pev-modal-card {
+    border-radius: var(--r-lg);
+    max-height: min(90dvh, 780px);
+  }
+}
+</style>
+<style id="apollo-pev-responsive">
+/* Desktop ≥1000px — hero + sidebar; modes absolute 45vw */
+@media (min-width: 1000px) {
+  /* Nenhum override de cabeçalho aqui, e isso é uma regra, não uma omissão.
+     O cabeçalho de /eventos é o bloco apollo_listing_header() (apollo-templates,
+     skin 'apple'), que traz o próprio breakpoint. Antes de 2026-08-08 esta
+     célula mexia em .pev-chrome/.pev-month-row enquanto styles-masthead.php
+     mexia nos mesmos seletores — dois donos, cascata decidida por ordem de
+     carga, e foi assim que o mês foi parar em cima do hero.
+
+     `.pev-tax{margin-top:14px}` saiu daqui em 2026-08-09 pelo mesmo motivo: a
+     fileira sempre nasce dentro de `.pev-browse`, e styles-browse.php declara
+     `.pev-browse .pev-tax{margin-top:-16px}` (0-2-0). Media query não soma
+     especificidade, então este seletor (0-1-0) nunca ganhou em nenhuma largura
+     — era um segundo dono que só existia para ser ignorado. A margem da fileira
+     tem um dono só, e ele é styles-browse.php. */
+  .pev-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.62fr) minmax(272px, .78fr);
+    align-items: stretch;
+  }
+  /* `.pev-recent .event-list-container` REMOVED — styles-hero.php owns the
+     hero band and its sibling column at every breakpoint. Gutters and gaps come
+     from the rhythm contract in styles-rhythm.php (.ax-main already supplies
+     the page margins). */
+}
+
+/* ── WP host page offsets — MOVED, do not re-add here ────────────────────────
+   This file used to end with .pev-host{padding-top:78px} + .pev-chrome{top:64px}
+   under the note "this page has no SPA aside/topbar … sits directly under
+   apollo_get_navbar()'s fixed top bar". Both statements went stale at PHASE
+   002, when /eventos became a Blank Canvas Apollo+ mount point (it now has
+   .ax-aside and the canonical fixed .ax-top).
+
+   Worse, styles.php's own #apollo-pev-shell-fit block — loaded AFTER this
+   file — declared the same two selectors with different values, so whatever
+   was written here was dead CSS that silently lost the cascade. Two owners for
+   one offset is how the 70px topbar compensation survived long past the day it
+   was needed.
+
+   Both values now live in exactly one place: the shell-fit block at the bottom
+   of styles.php. Edit them there. */
+</style>
+<style id="apollo-pev-rhythm">
+/* ═══════════════════════════════════════════════════════════════════════════
+   1 · CONTRATO DE RITMO
+   Uma escala para a tela inteira. Bandas são as batidas grandes (hero → rails
+   → browse); stacks são as batidas pequenas dentro de uma banda.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.pev {
+  --pev-gutter: clamp(16px, 4vw, 20px);
+  --pev-band:   clamp(26px, 5vw, 40px);
+  --pev-stack:  clamp(12px, 2.4vw, 18px);
+  --pev-hairline: rgba(var(--rgb-diff), .06);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2 · RITMO APLICADO — as faixas abaixo do cabeçalho
+   ═══════════════════════════════════════════════════════════════════════════ */
+.pev-layout  { gap: var(--pev-stack); padding-left: var(--pev-gutter); padding-right: var(--pev-gutter); }
+.pev-rails   { gap: var(--pev-band); padding: 0 var(--pev-gutter) var(--pev-band); margin: var(--pev-band) 0 0; }
+.pev-browse  { padding: 0 var(--pev-gutter) var(--pev-stack); }
+.pev-dynamic { margin-top: var(--pev-stack); }
+.pev .section-title { margin: var(--pev-band) 0 var(--pev-stack); }
+.pev-rails .pev-rail:first-child .section-title { margin-top: 0; }
+
+/* O cabeçalho já tem o próprio respiro inferior (padding 22/18/16 da skin
+   apple), então a primeira faixa não repete a distância. */
+.pev > .pev-layout:first-child { margin-top: 0; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3 · DESKTOP ≥1000px — o aside está fixado e .ax-main é dono dos gutters
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (min-width: 1000px) {
+  /* .ax-main já fornece os gutters horizontais neste breakpoint; o portal
+     somar os dele dobraria a distância. */
+  .pev-layout,
+  .pev-browse,
+  .pev-rails { padding-left: 0; padding-right: 0; }
+  .pev-rails { padding-bottom: var(--pev-band); }
+}
+</style>
+<style id="apollo-pev-lightbox">
+/* ═══ 0 · WHY EVERY SELECTOR BELOW IS DOUBLED ═════════════════════════════
+   LOAD ORDER IS AGAINST US. This cell ships in <head> (archive-event.php
+   buffers portal/styles.php into $extra_head), but the base sheet it overrides,
+   assets/css/apollo-single-event.css, is printed by apollo_event_lightbox_boot()
+   near the END OF <body>. Later in document order wins a specificity tie, so a
+   plain `.ev-lb { z-index: 10500 }` here would be silently beaten by the base
+   `.ev-lb { z-index: 9900 }` — the override would look correct in the source
+   and do nothing on screen.
+
+   So overrides are written one class heavier (`.ev-lb.ev-lb`, `.ev-lb .ev-lb-x`)
+   which wins on SPECIFICITY and is therefore immune to load order. This is
+   deliberate, not a typo — do not "clean up" the repetition. Anything that
+   must beat the base sheet needs the doubled form; anything genuinely new
+   (no base rule to fight) can stay single.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ═══ 1 · FULL VIEWPORT ═══════════════════════════════════════════════════
+   MEASURED Z-INDEX MAP of everything this must clear (2026-08-01 audit):
+
+     .panel-r        9800   topbar profile drawer   ┐
+     .apps-pop       9801   apps popup              │ apollo-plus/
+     .ax-overlay     9899   shell scrim             │ topbar-styles.php
+     .ax-top-blur    9900   topbar blur veil        │ + aside-styles.php
+     .ax-top         9901   topbar                  │
+     .ax-aside       9902   nav drawer  ← ceiling   ┘
+     .pev-rail-modal 9965   portal rail lightbox      styles-rails.php
+     .alh-ov--filter 9970   listing-header filter     apollo-templates
+     .alh-ov--search 9975   listing-header search     listing-header/kernel-styles.php
+
+   REVISED 2026-08-08: the old top of this table was `.pev-masthead 10070
+   (only while filter open)`, from styles-masthead.php. That file and that
+   markup are gone — /eventos now uses the apollo_listing_header() block, whose
+   two wipe overlays sit at 9970/9975. They are full-screen panels and must
+   clear the shell chrome, but they are still page controls, so they stay under
+   the single-event reader.
+
+   Highest competitor is now 9975, so 10500 clears the ecosystem with headroom.
+   BUT THE NUMBER WAS NEVER THE PROBLEM: the shell is printed inside
+   <main class="ax-main">, whose `overflow-x: clip` both clips fixed
+   descendants and scopes their stacking context — so .ev-lb was competing
+   against .ax-main's children, not against .ax-top. apollo-event-lightbox.js
+   now re-parents the shell to <body> on first open (see the PORTAL THE SHELL
+   comment there); this z-index only decides the outcome once that is true. */
+.ev-lb.ev-lb {
+  z-index: 10500;
+  align-items: stretch;
+  justify-content: stretch;
+  --ev-lb-w: 100vw;
+  --ev-vw: 100vw;
+  /* Root-context overlay: nothing inside may leak out of it either. */
+  isolation: isolate;
+}
+.ev-lb.ev-lb .ev-lb-panel {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: 100dvh;
+  border-radius: 0;
+  /* Entry is a lift + settle, not a slide-up sheet: at full-bleed a large
+     translate reads as the page lurching. Short, damped, deliberate. */
+  transform: scale(.985);
+  opacity: 0;
+  transition:
+    transform .52s var(--ease-smooth, cubic-bezier(.16, 1, .3, 1)),
+    opacity .3s var(--ease, ease);
+  will-change: transform, opacity;
+
+  /* ── SOLID WHITE READER, BOTH THEMES (2026-08-17) ───────────────────────
+     REQUIREMENT: the surface behind a fragment is always solid #fff. Never a
+     token that can flip, never rgba with alpha, never a blur that lets the
+     page behind read through.
+
+     WHY A LITERAL AND NOT var(--ev-bg). Traced through the live cascade:
+
+       .ev-lb-panel{background:var(--ev-bg)}   apollo-single-event.css:1042
+       --ev-bg: var(--white-1)                 apollo-single-event.css:43
+       html.dark-mode{--white-1:#0b0b0d}       theme
+       html.dark-mode{--rgb-diff:255,255,255}  apollo-auth-uni.css:121
+       --ev-ink: rgba(var(--rgb-diff),1)       apollo-single-event.css:45
+
+     So in dark mode the panel was #0b0b0d — near black — and the requirement
+     was silently violated on half the installs.
+
+     THE TRAP THIS BLOCK EXISTS TO AVOID: pinning `background` alone gives
+     WHITE TEXT ON WHITE, because --ev-ink inverts independently of --ev-bg.
+     That renders as a blank panel with a working ✕ — the exact symptom the
+     2026-08-07 session chased through two rounds of "verified on disk" fixes
+     before finding the stale-asset cause. The whole local --ev-* block has to
+     be pinned together or not at all.
+
+     These are COMPONENT-SCOPED custom properties, which the design system
+     explicitly blesses (`.pev { --pev-band: … }`). This is not a :root entry
+     and must never become one — :root belongs to core.js.
+
+     Values are the light-theme literals from apollo-single-event.css:43-49,
+     resolved (--rgb-diff → 10,10,10) rather than referenced, so a theme flip
+     cannot reach them.
+
+     TRADE-OFF, STATED: dark-mode readers get a light document panel. That is
+     deliberate — the fragment is a document, not chrome. Revisit here, in one
+     block, if it ever changes. */
+  --ev-bg:    #fff;
+  --ev-ink:   rgba(10, 10, 10, 1);
+  --ev-mute:  rgba(10, 10, 10, .48);
+  --ev-faint: rgba(10, 10, 10, .28);
+  --ev-line:  rgba(10, 10, 10, .07);
+  --ev-line2: rgba(10, 10, 10, .12);
+  --ev-soft:  rgba(10, 10, 10, .035);
+  background: #fff;
+}
+.ev-lb.ev-lb.is-open .ev-lb-panel { transform: none; opacity: 1; }
+
+/* The base sheet's own @media (min-width:720px) re-centres and re-rounds the
+   panel into a 560px card. At full-bleed neither applies — and this must
+   out-specify it, not merely follow it. */
+@media (min-width: 720px) {
+  .ev-lb.ev-lb { align-items: stretch; }
+  .ev-lb.ev-lb .ev-lb-panel {
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+/* Backdrop: OPAQUE WHITE, no alpha, no blur.
+   The old value was rgba(var(--rgb-diff),.72). The comment above it claimed
+   "nothing shows through a full-bleed panel" — true once the panel is open,
+   false for the ~520ms it is still transitioning from opacity:0. During those
+   frames the backdrop IS the surface, and at .72 alpha the page underneath
+   read through it. Same requirement as the panel, same reason, same literal. */
+.ev-lb.ev-lb .ev-lb-bd {
+  background: #fff;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* ═══ 2 · CLOSE CONTROL — bare glyph, auto-inverting ══════════════════════
+   Your call, and it is the right one. `mix-blend-mode: difference` with a
+   white glyph subtracts the backdrop from white, so the ✕ renders as the exact
+   photographic inverse of whatever is behind it: black on the white DJ section,
+   white on the dark hero, always separated — with no plate, no scrim and no
+   drop-shadow. It cannot be low-contrast, because "same colour as the
+   backdrop" would require the backdrop to be mid-grey in every channel at
+   once, and even then grayscale(1) keeps the result neutral rather than
+   letting a saturated cover tint the glyph.
+
+   Two requirements this depends on, both satisfied:
+     · Blending needs a stacking context to blend WITHIN, or it would reach
+       past the panel — .ev-lb now sets `isolation: isolate`.
+     · `filter` and `mix-blend-mode` on one element compose in that order
+       (filter first, then blend), which is what we want. The old
+       drop-shadow is gone — a shadow under an inverting glyph fights it. */
+.ev-lb.ev-lb .ev-lb-x {
+  top: calc(14px + var(--ev-st, 0px) + var(--safe-top, 0px));
+  right: clamp(12px, 2.4vw, 22px);
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  background-color: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+  color: #fff;
+  font-size: 28px;
+  line-height: 1;
+  mix-blend-mode: difference;
+  filter: grayscale(1);
+  transition:
+    transform .28s var(--ease-snappy, cubic-bezier(.34, 1.16, .64, 1)),
+    opacity .2s var(--ease, ease);
+}
+/* Safari < 15.4 ignores mix-blend-mode on a filtered element; the glyph would
+   render plain white. A hairline text-shadow keeps it legible there without
+   affecting browsers where the blend works (difference swallows it). */
+@supports not (mix-blend-mode: difference) {
+  .ev-lb.ev-lb .ev-lb-x { text-shadow: 0 1px 6px rgba(0, 0, 0, .6); }
+}
+.ev-lb.ev-lb .ev-lb-x i,
+.ev-lb.ev-lb .ev-lb-x svg { font-size: inherit; color: inherit; fill: currentColor; }
+.ev-lb.ev-lb .ev-lb-x:hover { transform: scale(1.1); opacity: .82; background: none; }
+.ev-lb.ev-lb .ev-lb-x:active { transform: scale(.92); }
+.ev-lb.ev-lb .ev-lb-x:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 75%, transparent);
+  outline-offset: 4px;
+  border-radius: var(--r-sm);
+}
+
+/* ═══ 3 · SCROLL SURFACE ══════════════════════════════════════════════════ */
+/* The panel is its OWN scroll container and carries data-lenis-prevent (see
+   apollo_event_lightbox_shell()), so Lenis leaves its wheel/touch events alone
+   and the browser scrolls it natively.
+   · overscroll-behavior:contain — reaching the end must not chain out and
+     scroll the locked document behind.
+   · touch-action:pan-y — iOS Safari otherwise hands vertical drags to the
+     page once Lenis has released them.
+   · scroll-behavior:auto — a CSS smooth-scroll here would fight both the
+     native momentum and ScrollTrigger's measurements. */
+.ev-lb.ev-lb .ev-lb-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  scroll-behavior: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.ev-lb.ev-lb .ev-lb-scroll::-webkit-scrollbar { width: 0; height: 0; display: none; }
+.ev-lb.ev-lb .ev-lb-scroll:focus { outline: none; }
+/* Nothing inside may trap the gesture with its own scroll container. */
+.ev-lb.ev-lb .ev-lb-body { min-height: 100%; }
+
+/* ── Content entry ───────────────────────────────────────────────────────────
+   Pairs with the two-rAF class flip in apollo-event-lightbox.js's inject().
+   The PANEL glides in empty while the fragment is still in flight; without
+   this the fragment then paints in one frame and the eye reads a hard cut
+   mid-glide ("stairs"). A short rise+fade on the filled body turns the seam
+   into one continuous movement.
+
+   Deliberately SHORT (.34s) and small (10px): the panel is already moving, so
+   a long content animation would read as two competing motions rather than
+   one. filter/blur is avoided — it would repaint the whole fragment every
+   frame on a panel that may hold a map and a slider. */
+.ev-lb.ev-lb .ev-lb-body {
+  opacity: 0;
+  transform: translate3d(0, 10px, 0);
+  transition:
+    opacity .34s var(--ease, ease),
+    transform .34s var(--ease-smooth, cubic-bezier(.16, 1, .3, 1));
+  will-change: opacity, transform;
+}
+.ev-lb.ev-lb .ev-lb-body.is-entered {
+  opacity: 1;
+  transform: none;
+}
+/* Once settled, drop the compositor hint — the panel can hold a Leaflet map
+   and a GSAP rail, and a permanent will-change on their container keeps a
+   layer alive for the whole session. */
+.ev-lb.ev-lb .ev-lb-body.is-entered { will-change: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ev-lb.ev-lb .ev-lb-body { transition: none; opacity: 1; transform: none; }
+}
+
+/* ═══ 4 · NO TEXT SELECTION ANYWHERE INSIDE ══════════════════════════════ */
+/* The lightbox is an app surface, not a document: drag-select produced blue
+   highlight smears across the hero and the fact rows during scroll gestures.
+   Inputs and textareas are deliberately exempt — a form the user cannot type
+   into is a worse bug than the one being fixed. */
+.ev-lb.ev-lb,
+.ev-lb.ev-lb * {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none;
+}
+.ev-lb.ev-lb input,
+.ev-lb.ev-lb textarea,
+.ev-lb.ev-lb [contenteditable="true"],
+.ev-lb.ev-lb [contenteditable="true"] * {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
+}
+
+/* ═══ 5 · REVEALS MUST NEVER STRAND CONTENT ══════════════════════════════ */
+/* .ev-reveal ships opacity:0 + translateY(28px) and depends on ScrollTrigger
+   to clear it. Inside the panel the scroller is not the window, so a trigger
+   that never resolves used to leave whole sections permanently invisible —
+   content present in the DOM, unreadable on screen.
+   The panel gets a CSS floor: once .is-open settles, reveals are visible by
+   default. GSAP still animates them (inline styles win over this rule), so the
+   motion is unchanged when it works — this only guarantees the end state. */
+/* GENERATED FROM APOLLO_EVENT_REVEAL_FLOOR (P3, 2026-08-07).
+   This block used to be a hand-maintained copy of a selector list that also
+   lived in apollo-single-event.js and bootstrap.php, each carrying a "keep in
+   sync" comment. It is now emitted from the PHP constant those two also read
+   at runtime, so adding a part to the single-event template cannot leave the
+   floor behind. Contract + rationale: includes/render-single.php.
+
+   NOTE this is the pre-mount / belt-and-braces layer only. The root fix is
+   apollo-single-event.js passing `scroller` to every ScrollTrigger it creates
+   so reveals resolve against this panel instead of the window. GSAP writes
+   inline styles, which outrank this rule, so enter/leave motion is unaffected
+   — this only guarantees the element is never stranded unreadable. */
+.ev-lb.ev-lb.is-open .ev-reveal,
+.ev-lb.ev-lb.is-open .ev-fact,
+.ev-lb.ev-lb.is-open .ev-panel,
+.ev-lb.ev-lb.is-open [data-ev="access"],
+.ev-lb.ev-lb.is-open [data-ev="about"],
+.ev-lb.ev-lb.is-open .ev-spotify,
+.ev-lb.ev-lb.is-open .ev-gallery,
+.ev-lb.ev-lb.is-open .v-slider,
+.ev-lb.ev-lb.is-open .ev-map,
+.ev-lb.ev-lb.is-open .ev-vbody,
+.ev-lb.ev-lb.is-open .ev-dj,
+.ev-lb.ev-lb.is-open [data-reveal-word] { opacity: 1; transform: none; }
+/* Belt and braces: bootstrap.php adds this after mount if anything is still
+   stranded, and it outranks a stuck inline opacity. */
+.ev-lb.ev-lb .ev-force-visible,
+.ev-lb.ev-lb .ev-force-visible * {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+}
+
+/* At full-bleed the embedded hero can use the real viewport again, instead of
+   the 78dvh compromise the 560px sheet needed. */
+.ev-lb.ev-lb .ev-root.is-embed .ev-hero { height: 92dvh; min-height: 520px; }
+.ev-lb.ev-lb .ev-root.is-embed .ev-hero-top { padding-right: 76px; }
+
+/* ═══ 6 · READING COLUMN — the "old mobile" fix ═══════════════════════════
+   THE WHITE BAND BELOW THE DJ BLOCK WAS NOT A BUG, IT WAS THE DESIGN — seen
+   at the wrong size. apollo-single-event.css is a mobile-first document:
+
+     :root { --ev-max: 440px }                  ·· 500px above 540px wide
+     .ev-wrap { width: min(100%, var(--ev-max)); margin-inline: auto }
+
+   On /evento/{slug} at phone width that column IS the page. Inside a
+   full-viewport lightbox on a 1440px screen the same rule pins every section
+   to a 500px strip centred on --ev-bg (which is white in the light theme), so
+   the DJ block down to the footer reads as a narrow phone layout stranded in a
+   white void. Nothing was broken; it was a 500px page in a 1440px window.
+
+   --ev-max is a plain custom property, so re-declaring it on .ev-lb re-scopes
+   it for everything inside WITHOUT touching :root and without affecting the
+   real single page. Component scope, exactly like --pev-band. The column grows
+   with the viewport and stops at a sane measure — past ~900px running text
+   becomes hard to track, so this widens the layout without wrecking legibility.
+
+   Full-bleed blocks (.v-slider, .ev-map) key off --ev-vw, already set to 100vw
+   above, so they still break out edge-to-edge over the wider column. */
+@media (min-width: 720px) {
+  .ev-lb.ev-lb { --ev-max: clamp(560px, 62vw, 900px); --ev-pad: clamp(28px, 3.4vw, 44px); }
+}
+@media (min-width: 1200px) {
+  .ev-lb.ev-lb { --ev-max: clamp(720px, 58vw, 980px); }
+}
+
+/* ═══ 7 · THE "SPARK" ON SCROLL ══════════════════════════════════════════
+   `.ev-wrap > * { transition: all .66s ease }` in the base sheet animates
+   EVERY animatable property on every direct child. Combined with the reveal
+   pass and a late-decoding hero, any layout change — width, height, colour,
+   transform, background — cross-fades over 0.66s at once, which is the flash
+   of white and the "spark then content appears" during scroll.
+
+   `transition: all` is also a per-frame cost: the engine must diff every
+   computed property on every child. Narrowed here to the two properties the
+   reveal actually animates. Scoped to the lightbox so /evento/{slug} keeps
+   its current behaviour until this is proven there too. */
+.ev-lb.ev-lb .ev-wrap > * {
+  transition:
+    opacity .5s var(--ease, cubic-bezier(.16, 1, .3, 1)),
+    transform .5s var(--ease, cubic-bezier(.16, 1, .3, 1));
+}
+/* A section whose media has not decoded must not collapse to zero and snap
+   back — that snap is the other half of the flicker. */
+.ev-lb.ev-lb .ev-wrap > * { backface-visibility: hidden; }
+.ev-lb.ev-lb img { background: var(--ev-soft, rgba(0, 0, 0, .04)); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ev-lb.ev-lb .ev-lb-panel { transition: opacity .2s linear; transform: none; }
+  .ev-lb.ev-lb.is-open .ev-lb-panel { transform: none; }
+  .ev-lb.ev-lb .ev-lb-x { transition: none; }
+}
+</style>
+<style id="apollo-pev-shell-fit">
+.pev-host{padding-top:8px}
+</style>
+</head>
+<body class="ax-shell show-rail">
+<div class="ax-top-blur" aria-hidden="true"></div>
+<header class="ax-top" role="banner">
+  <div class="ax-top-l">
+    <button class="ax-burger" id="burger" aria-label="Menu"><i class="ri-menu-line"></i></button>
+    <a class="ax-top-brand" href="#"><span class="ax-top-wm">apollo<b>::rio</b></span></a>
+  </div>
+  <div class="ax-top-r">
+    <button class="ax-ic" id="ic-apps" aria-label="Apps"><i class="ri-apps-2-line"></i></button>
+    <button class="ax-avb" id="ic-pf" aria-label="Perfil"><span class="ax-avb-init">VA</span></button>
+  </div>
+</header>
+<aside class="ax-aside" id="ax-aside"><div class="s"><div class="hd"><span class="wm">apollo<b>::rio</b></span></div></div></aside>
+<div class="ax-overlay" id="ax-overlay" aria-hidden="true"></div>
+
+<main class="ax-main" id="axMain" data-screen="eventos">
+<!-- listing header NOT rendered: php not runnable: spawnSync php ENOENT -->
+  <div id="apollo-portal-root" class="pev-host" data-today="2026-08-01"></div>
+</main>
+
+<script>window.APOLLO_EVENTS = [
+  {
+    "id": "e1",
+    "title": "Dismantle 2",
+    "startDate": "2026-08-26",
+    "startTime": "23:00",
+    "season": "winter",
+    "genres": [
+      "techno"
+    ],
+    "status": "active",
+    "tickets": "available",
+    "cover": "",
+    "venue": {
+      "name": "Fundição Progresso"
+    }
+  },
+  {
+    "id": "e2",
+    "title": "Noite Carioca",
+    "startDate": "2026-09-05",
+    "startTime": "22:00",
+    "season": "winter",
+    "genres": [
+      "house",
+      "disco"
+    ],
+    "status": "active",
+    "tickets": "free",
+    "cover": "",
+    "venue": {
+      "name": "Circo Voador"
+    }
+  },
+  {
+    "id": "e3",
+    "title": "Subsolo",
+    "startDate": "2026-09-12",
+    "startTime": "23:30",
+    "season": "winter",
+    "genres": [
+      "techno"
+    ],
+    "status": "active",
+    "tickets": "soldout_soon",
+    "cover": "",
+    "venue": {
+      "name": "Lapa 40"
+    }
+  },
+  {
+    "id": "d1",
+    "title": "Réveillon Aterro",
+    "startDate": "2026-12-24",
+    "startTime": "22:00",
+    "season": "summer",
+    "genres": [
+      "house"
+    ],
+    "status": "active",
+    "tickets": "available",
+    "cover": "",
+    "venue": {
+      "name": "Aterro do Flamengo"
+    }
+  },
+  {
+    "id": "d2",
+    "title": "Solstício",
+    "startDate": "2026-12-05",
+    "startTime": "23:00",
+    "season": "summer",
+    "genres": [
+      "techno"
+    ],
+    "status": "active",
+    "tickets": "free",
+    "cover": "",
+    "venue": {
+      "name": "Pedra do Sal"
+    }
+  },
+  {
+    "id": "d3",
+    "title": "Virada",
+    "startDate": "2026-12-31",
+    "startTime": "21:00",
+    "season": "summer",
+    "genres": [
+      "disco"
+    ],
+    "status": "active",
+    "tickets": "available",
+    "cover": "",
+    "venue": {
+      "name": "Copacabana"
+    }
+  }
+];</script>
+<script>
+
+/* APOLLO::RIO · portal-data.js (ported from simulated.data-portal.js)
+   Portal Netflix calendar helpers — derives ONLY from window.APOLLO_EVENTS.
+   Load order: (inline APOLLO_EVENTS) → portal-data.js → app-portal-eventos.js
+*/
+(function (w) {
+  'use strict';
+
+  var MES_FULL = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+  var SEASON_LABEL = {
+    summer: 'Verão',
+    winter: 'Inverno',
+    rockinrio: 'Rock in Rio',
+    nye: 'Réveillon',
+    carnival: 'Carnaval',
+    /* delta #1 — see file header: real events derive a calendar season with
+       no equivalent in the mockup's hand-authored fixture set. */
+    outono: 'Outono',
+    primavera: 'Primavera'
+  };
+
+  var GENRE_LABEL = {
+    house: 'House',
+    disco: 'Disco',
+    techno: 'Techno',
+    trance: 'Trance',
+    tech_house: 'Tech House',
+    melodic: 'Melodic'
+  };
+
+  function yyShort(y) { return "' " + String(y).slice(-2); }
+
+  /** Banner under month — Festa Julina window 01-06 → 01-08 of year */
+  function seasonBanner(ym) {
+    var p = parseYm(ym);
+    var start = new Date(p.y, p.m, 1);
+    var julinaStart = new Date(p.y, 5, 1);  /* Jun 1 */
+    var julinaEnd = new Date(p.y, 7, 1);    /* Aug 1 exclusive */
+    if (start >= julinaStart && start < julinaEnd) {
+      return "Season de Festa Julina " + yyShort(p.y);
+    }
+    /* Dominant season among events in month, else calendar heuristic */
+    var pool = byMonth(ym);
+    var counts = {};
+    pool.forEach(function (e) {
+      var s = e.season || 'winter';
+      counts[s] = (counts[s] || 0) + 1;
+    });
+    var best = null, n = 0;
+    Object.keys(counts).forEach(function (k) {
+      if (counts[k] > n) { n = counts[k]; best = k; }
+    });
+    if (best) return (SEASON_LABEL[best] || best) + ' ' + yyShort(p.y);
+    /* BR seasons rough */
+    var m = p.m;
+    if (m >= 11 || m <= 1) return 'Verão ' + yyShort(p.y);
+    if (m >= 2 && m <= 4) return 'Outono ' + yyShort(p.y);
+    if (m >= 5 && m <= 7) return 'Inverno ' + yyShort(p.y);
+    return 'Primavera ' + yyShort(p.y);
+  }
+
+  function monthNameOnly(ym) {
+    var p = parseYm(ym);
+    return MES_FULL[p.m] || '—';
+  }
+
+  /** Square filter chips: seasons + genres present in data */
+  function taxChips() {
+    var chips = [];
+    var seasons = {};
+    var genres = {};
+    events().forEach(function (e) {
+      var s = e.season || 'winter';
+      seasons[s] = true;
+      (e.genres || []).forEach(function (g) { genres[g] = true; });
+    });
+    /* Special festa julina chip always available for the window.
+       CSP AUDIT (2026-08-01): icon WAS 'ri-fireworks-line', which is not a
+       real Remixicon glyph (the set core.js loads has no "fireworks" icon).
+       core.js's icon runtime falls back to fetching a custom apolloIcons SVG
+       at assets.apollo.rio.br/i/fireworks-v.svg for any unrecognized class,
+       that file 404s, and the CDN's 404 handler has no CORS headers — the
+       exact 'blocked by CORS policy' console error reported on /eventos.
+       'ri-fire-line' is a real Remixicon icon and reads well for São João/
+       Festa Junina bonfires anyway. */
+    chips.push({
+      key: 'festajulina',
+      kind: 'season',
+      label: 'Festa Julina',
+      icon: 'ri-fire-line',
+      filter: function (e) {
+        var d = parseISO(e.startDate);
+        var y = d.getFullYear();
+        return d >= new Date(y, 5, 1) && d < new Date(y, 7, 1);
+      }
+    });
+    Object.keys(seasons).forEach(function (s) {
+      chips.push({
+        key: 'season-' + s,
+        kind: 'taxonomy',
+        label: SEASON_LABEL[s] || s,
+        icon: 'ri-calendar-event-line',
+        filter: function (e) { return (e.season || '') === s; }
+      });
+    });
+    Object.keys(genres).forEach(function (g) {
+      chips.push({
+        key: 'genre-' + g,
+        kind: 'genre',
+        label: GENRE_LABEL[g] || g.replace(/_/g, ' '),
+        icon: 'ri-disc-line',
+        filter: function (e) { return (e.genres || []).indexOf(g) !== -1; }
+      });
+    });
+    return chips;
+  }
+
+  function eventsForTax(chipKey, ym) {
+    var chips = taxChips();
+    var chip = chips.find(function (c) { return c.key === chipKey; });
+    var base = byMonth(ym);
+    if (!chip) return base;
+    var hit = events().filter(chip.filter).sort(sortByStart);
+    /* Prefer month overlap; if empty show all matching tax */
+    var inMonth = hit.filter(function (e) {
+      return String(e.startDate || '').slice(0, 7) === ym;
+    });
+    return inMonth.length ? inMonth : hit;
+  }
+
+  function events() { return w.APOLLO_EVENTS || []; }
+
+  function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function parseISO(iso) {
+    var p = String(iso || '').split('-');
+    return new Date(+p[0], (+p[1] || 1) - 1, +p[2] || 1);
+  }
+
+  function todayStart() {
+    var t = new Date();
+    return new Date(t.getFullYear(), t.getMonth(), t.getDate());
+  }
+
+  function ymKey(d) {
+    return d.getFullYear() + '-' + pad2(d.getMonth() + 1);
+  }
+
+  function ymFromParts(y, m0) {
+    return y + '-' + pad2(m0 + 1);
+  }
+
+  function parseYm(ym) {
+    var p = String(ym || '').split('-');
+    return { y: +p[0] || todayStart().getFullYear(), m: (+p[1] || 1) - 1 };
+  }
+
+  function sortByStart(a, b) {
+    return String(a.startDate || '').localeCompare(String(b.startDate || ''));
+  }
+
+  function addDays(fromDate, n) {
+    var d = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
+    d.setDate(d.getDate() + (n || 0));
+    return d;
+  }
+
+  /** Inclusive local-midnight window: startOffset..endOffset days from `from`. */
+  function dayWindow(fromDate, startOffset, endOffset) {
+    var base = fromDate instanceof Date ? fromDate : todayStart();
+    return {
+      start: addDays(base, startOffset || 0),
+      end: addDays(base, endOffset == null ? 0 : endOffset)
+    };
+  }
+
+  function inRange(ev, start, end) {
+    var s = parseISO(ev.startDate);
+    return s >= start && s <= end;
+  }
+
+  /** Neste FDS: today → today+4 inclusive. Prox: after today+4 → today+40. */
+  function inRangeAfter(ev, afterExclusive, endInclusive) {
+    var s = parseISO(ev.startDate);
+    return s > afterExclusive && s <= endInclusive;
+  }
+
+  function byMonth(ym) {
+    var key = ym || ymKey(todayStart());
+    return events()
+      .filter(function (e) { return String(e.startDate || '').slice(0, 7) === key; })
+      .slice()
+      .sort(sortByStart);
+  }
+
+  function filterByMode(mode, cursorDate, list) {
+    var src = (list || events()).slice();
+    var today = todayStart();
+    var cursor = cursorDate instanceof Date ? cursorDate : todayStart();
+    var modeKey = mode || 'mes';
+
+    if (modeKey === 'passados') {
+      return src.filter(function (e) { return parseISO(e.startDate) < today; }).sort(sortByStart).reverse();
+    }
+    if (modeKey === 'neste-fds') {
+      var w0 = dayWindow(today, 0, 4);
+      return src.filter(function (e) { return inRange(e, w0.start, w0.end); }).sort(sortByStart);
+    }
+    if (modeKey === 'prox-fds') {
+      var cut = addDays(today, 4);
+      var end40 = addDays(today, 40);
+      return src.filter(function (e) { return inRangeAfter(e, cut, end40); }).sort(sortByStart);
+    }
+    if (modeKey === 'proximos') {
+      return src.filter(function (e) { return parseISO(e.startDate) >= today; }).sort(sortByStart);
+    }
+    /* mes — calendar month of cursor */
+    var key = ymKey(cursor);
+    return src.filter(function (e) { return String(e.startDate || '').slice(0, 7) === key; }).sort(sortByStart);
+  }
+
+  function featured(ym) {
+    var pool = byMonth(ym);
+    if (!pool.length) {
+      pool = events().filter(function (e) { return parseISO(e.startDate) >= todayStart(); }).sort(sortByStart);
+    }
+    if (!pool.length) pool = events().slice().sort(sortByStart);
+    /* Prefer active + available/soldout_soon */
+    var ranked = pool.slice().sort(function (a, b) {
+      var score = function (e) {
+        var s = 0;
+        if (e.status === 'active') s += 10;
+        if (e.tickets === 'soldout_soon') s += 5;
+        if (e.tickets === 'available') s += 3;
+        if (e.tickets === 'free') s += 2;
+        return s;
+      };
+      return score(b) - score(a) || sortByStart(a, b);
+    });
+    return ranked[0] || null;
+  }
+
+  /* Destaques do hero: eventos FUTUROS marcados com highlight:true no CPT.
+     Sem nenhum marcado, cai no melhor ranqueado do mês (featured) pra que o
+     topo da tela nunca fique vazio. */
+  function highlights(limit) {
+    var list = events().filter(function (e) {
+      return e.highlight === true &&
+        e.status !== 'canceled' && e.status !== 'cancelled' &&
+        parseISO(e.startDate) >= todayStart();
+    }).sort(sortByStart);
+    /* BUGFIX (phase 002 review): this used to fall back to featured() -- the
+       best-ranked event of the month -- whenever nothing carried
+       highlight:true, and the hero then labelled that event "Destaque". On a
+       demo that keeps the screen full; on a real site it asserts an editorial
+       decision nobody made. (Reported as: "Dismantle 2 is highlighted true? I
+       dont remember tagging as meta cpt event of highlight TRUE".)
+       No _event_highlighted, no highlight. The hero renders its own honest
+       empty state instead. */
+    return limit ? list.slice(0, limit) : list;
+  }
+
+  function recent(limit) {
+    var n = limit || 6;
+    return events().slice().sort(sortByStart).reverse().slice(0, n);
+  }
+
+  function monthLabel(ym) {
+    var p = parseYm(ym);
+    return MES_FULL[p.m] + ' ' + p.y;
+  }
+
+  function shiftMonth(ym, delta) {
+    var p = parseYm(ym);
+    var d = new Date(p.y, p.m + (delta || 0), 1);
+    return ymFromParts(d.getFullYear(), d.getMonth());
+  }
+
+  function idsOf(list) {
+    return (list || []).map(function (e) { return e.id; });
+  }
+
+  function resolveIds(ids) {
+    var map = {};
+    events().forEach(function (e) { map[e.id] = e; });
+    return (ids || []).map(function (id) { return map[id]; }).filter(Boolean);
+  }
+
+  function buildRails(ym, mode, cursorDate) {
+    var filtered = filterByMode(mode === 'mes' ? 'mes' : mode, cursorDate || parseISO(ym + '-01'), events());
+    /* When mode is mes, filterByMode uses cursor month; align with ym */
+    if (!mode || mode === 'mes') filtered = byMonth(ym);
+
+    var upcoming = events().filter(function (e) {
+      return parseISO(e.startDate) >= todayStart() && e.status !== 'canceled' && e.status !== 'cancelled';
+    }).sort(sortByStart);
+
+    var rails = [];
+    var today = todayStart();
+
+    /* ── REGIME DO PAR PADRÃO: mês corrente vs. mês navegado ───────────────────
+       Até aqui `ym` chegava e não era usado por estes dois trilhos: as duas
+       janelas eram relativas a HOJE, então agosto, setembro e dezembro
+       devolviam exatamente a mesma lista sob os mesmos rótulos. "Esse FDS" em
+       dezembro é uma afirmação falsa sobre a tela, não um rótulo genérico.
+
+       Agora há DOIS regimes e `ym` decide qual vale:
+
+         corrente  → recortes relativos a hoje (hoje→+4, hoje+4→+40). É a tela
+                     de quem chega: o que rola já, e o que vem logo depois.
+         navegado  → o mês inteiro, dia 01 → fim do mês, via byMonth(ym) (que
+                     já ordena ascendente — esse é o contrato de ordem). Não
+                     existe "próximo" dentro de um mês que o usuário escolheu
+                     olhar, então o segundo trilho não fica vazio: ele sai.
+
+       As CHAVES não se mexem em nenhum dos dois regimes — 'neste-fds' e
+       'prox-fds' são contrato de dados (data-pev-mode, o grupo de período do
+       cabeçalho, filterByMode(), state.sectionViews e a lightbox casam por
+       elas). Só título, piscina e visibilidade são cientes do mês. ── */
+    var currentYm = ymKey(today);
+    var isCurrent = !ym || ym === currentYm;
+
+    rails.push({
+      key: 'neste-fds',
+      /* Rótulo é "Esse FDS"; a CHAVE continua 'neste-fds' porque é contrato de
+         dados — data-pev-mode, o grupo de período do cabeçalho e filterByMode()
+         casam por ela. Renomear a chave junto com o texto quebraria os três. */
+      title: isCurrent ? 'Esse FDS' : 'Neste mês',
+      subtitle: isCurrent ? 'hoje → +4 dias' : '01 → fim do mês',
+      eventIds: idsOf(
+        isCurrent
+          ? filterByMode('neste-fds', today, events())
+          : byMonth(ym)
+      ),
+      visible: true
+    });
+
+    rails.push({
+      key: 'prox-fds',
+      title: 'Próximos eventos',
+      subtitle: 'hoje+4 → +40 dias',
+      /* Fora do mês corrente a piscina é vazia E a seção é invisível — as duas
+         coisas, não uma. Só esvaziar deixaria a moldura, o título e o estado
+         vazio ocupando uma banda inteira de rolagem por nada. */
+      eventIds: isCurrent ? idsOf(filterByMode('prox-fds', today, events())) : [],
+      visible: isCurrent
+    });
+
+    rails.push({
+      key: 'revelacoes',
+      title: 'Revelações',
+      subtitle: 'os novos eventos do circuito',
+      eventIds: idsOf(upcoming.slice().reverse()).slice(0, 8)
+    });
+
+    var seasons = {};
+    events().forEach(function (e) {
+      var s = e.season || 'winter';
+      if (!seasons[s]) seasons[s] = [];
+      seasons[s].push(e);
+    });
+    Object.keys(seasons).forEach(function (s) {
+      var list = seasons[s].slice().sort(sortByStart);
+      if (!list.length) return;
+      rails.push({
+        key: 'season-' + s,
+        title: 'Taxonomy ' + (SEASON_LABEL[s] || s).toUpperCase(),
+        subtitle: SEASON_LABEL[s] || s,
+        eventIds: idsOf(list)
+      });
+    });
+
+    /* Genre density rails */
+    var genres = {};
+    events().forEach(function (e) {
+      (e.genres || []).forEach(function (g) {
+        if (!genres[g]) genres[g] = [];
+        genres[g].push(e);
+      });
+    });
+    Object.keys(genres).forEach(function (g) {
+      if (genres[g].length < 2) return;
+      rails.push({
+        key: 'genre-' + g,
+        title: g.replace(/_/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); }),
+        subtitle: 'por gênero',
+        eventIds: idsOf(genres[g].slice().sort(sortByStart))
+      });
+    });
+
+    return rails;
+  }
+
+  function ticketLabel(tickets) {
+    return ({
+      free: 'Gratuito',
+      available: 'Disponível',
+      soldout_soon: 'Sold-out soon',
+      sold_out: 'Sold-out'
+    })[tickets] || tickets || '';
+  }
+
+  w.APOLLO_PORTAL = {
+    MES_FULL: MES_FULL,
+    SEASON_LABEL: SEASON_LABEL,
+    GENRE_LABEL: GENRE_LABEL,
+    ymKey: ymKey,
+    parseYm: parseYm,
+    monthLabel: monthLabel,
+    monthNameOnly: monthNameOnly,
+    seasonBanner: seasonBanner,
+    shiftMonth: shiftMonth,
+    byMonth: byMonth,
+    featured: featured,
+    highlights: highlights,
+    recent: recent,
+    filterByMode: filterByMode,
+    buildRails: buildRails,
+    taxChips: taxChips,
+    eventsForTax: eventsForTax,
+    resolveIds: resolveIds,
+    ticketLabel: ticketLabel,
+    todayStart: todayStart,
+    parseISO: parseISO
+  };
+})(window);
+</script>
+<script>
+/* APOLLO::RIO · app-portal-eventos.js (ported from
+   screen/_official_layout/js/app-portal-eventos.js — Netflix-style portal calendar)
+   Depends on: APOLLO_EVENTS, APOLLO_PORTAL, Remix icons (core.js), GSAP not
+   required here (this file doesn't use it — core.js still loads it globally
+   for the rest of the page).
+*/
+(function (w, d) {
+  'use strict';
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c];
+    });
+  }
+
+  function P() { return w.APOLLO_PORTAL || {}; }
+
+  function reducedMotion() {
+    return !!(w.matchMedia && w.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+
+  function radar() { return w.APOLLO_RADAR = w.APOLLO_RADAR || []; }
+  function radarOf(id) {
+    var list = radar();
+    for (var i = 0; i < list.length; i++) if (list[i].eventId === id) return list[i];
+    return null;
+  }
+  function setRsvp(id, state) {
+    var r = radarOf(id);
+    var list = radar();
+    if (r && r.rsvp === state) list.splice(list.indexOf(r), 1);
+    else if (r) r.rsvp = state;
+    else list.push({ eventId: id, rsvp: state, since: new Date().toISOString().slice(0, 10) });
+    d.dispatchEvent(new CustomEvent('apollo:radar-change'));
+  }
+
+  function ticketChip(tickets) {
+    var label = (P().ticketLabel && P().ticketLabel(tickets)) || tickets || '';
+    var hot = tickets === 'soldout_soon';
+    var gone = tickets === 'sold_out';
+    var cls = 'pev-chip' + (hot ? ' is-hot' : '') + (gone ? ' is-gone' : '');
+    return label ? '<span class="' + cls + '">' + esc(label) + '</span>' : '';
+  }
+
+  var MES_SHORT = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+
+  function dateShort(iso) {
+    var p = String(iso || '').split('-');
+    return (p[2] || '--') + ' ' + (MES_SHORT[(+p[1] || 1) - 1] || '');
+  }
+
+  function dateBits(iso) {
+    var p = String(iso || '').split('-');
+    return { d: p[2] || '--', m: MES_SHORT[(+p[1] || 1) - 1] || '---' };
+  }
+
+  function ticketStatus(tickets) {
+    if (tickets === 'sold_out') return { cls: 'soldout', html: '<span class="status">Sold-out</span>' };
+    if (tickets === 'soldout_soon') return { cls: 'featured', html: '<span class="status active">Sold-out soon</span>' };
+    if (tickets === 'free') return { cls: '', html: '<span class="status active">Gratuito</span>' };
+    return { cls: '', html: '<span class="status">' + esc((P().ticketLabel && P().ticketLabel(tickets)) || 'Ingressos') + '</span>' };
+  }
+
+  function prettyGenre(g) {
+    return String(g || '').replace(/_/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+  }
+
+  /* ── CARTÃO DE EVENTO — CONTRATO DE MARKUP DA DESIGN SYSTEM ──────────────
+     Stub externo SEMPRE <article class="app-market eve" data-listing="ID">;
+     o miolo é EXATAMENTE o que eveInnerHTML() de app-market.js imprime
+     (<a class="a-eve-card"> > .a-eve-date + .a-eve-media + .a-eve-content com
+     as TRÊS linhas .a-eve-meta: line-up · local · gêneros). As classes são o
+     contrato — este SSR local existe só porque o portal lê APOLLO_EVENTS
+     (CPT event) em vez de APOLLO_EVENT_LISTINGS, mas o HTML é idêntico byte a
+     byte, então CSS e comportamento nunca divergem do showcase.
+     Os <i class="ri-*"> ficam crus de propósito: o runtime de ícones do
+     core.js os hidrata em <svg> sozinho — nunca escrever SVG na mão aqui.
+     ──────────────────────────────────────────────────────────────────────── */
+  function eveCardHTML(e) {
+    if (!e) return '';
+    var db = dateBits(e.startDate);
+    var venue = (e.venue && e.venue.name) || 'Local a anunciar';
+    var lineup = (e.lineup || []).map(function (l) { return l.name; }).join(', ');
+    var sounds = (e.genres || []).map(prettyGenre).join(', ');
+    var tags = (e.genres || []).slice(0, 2).map(function (g) {
+      return '<span class="a-eve-tag">' + esc(prettyGenre(g)) + '</span>';
+    }).join('');
+    /* Um beacon de depuração vivia aqui: POST para http://127.0.0.1:7514 a cada
+       cartão sem capa. Removido pelo mesmo motivo já documentado em
+       bootstrap.php — subrecurso http:// numa página https:// é bloqueado,
+       o .catch() escondia a rejeição, e o ruído caía exatamente onde um erro
+       real de render apareceria. Telemetria de dev tem que ser opt-in e
+       same-origin, decidida no PHP, nunca emitida-e-engolida no cliente. */
+    return '<article class="app-market eve" data-listing="' + esc(e.id) + '" data-ev-open="' + esc(e.id) + '">' +
+      '<a href="' + esc(e.url || '#') + '" class="a-eve-card" aria-label="' + esc(e.title) + '">' +
+        '<div class="a-eve-date">' +
+          '<span class="a-eve-date-day">' + esc(db.d) + '</span>' +
+          '<span class="a-eve-date-month">' + esc(db.m) + '</span>' +
+        '</div>' +
+        '<div class="a-eve-media">' +
+          '<img src="' + esc(e.cover || '') + '" alt="' + esc(e.title) + '" loading="lazy" decoding="async">' +
+          (tags ? '<div class="a-eve-tags">' + tags + '</div>' : '') +
+        '</div>' +
+        '<div class="a-eve-content">' +
+          '<h2 class="a-eve-title">' + esc(e.title) + '</h2>' +
+          '<p class="a-eve-meta"><i class="ri-sound-module-fill"></i><span>' + esc(lineup || 'Line-up a confirmar') + '</span></p>' +
+          '<p class="a-eve-meta"><i class="ri-map-pin-2-line"></i><span>' + esc(venue) + '</span></p>' +
+          '<p class="a-eve-meta"><i class="ri-music-2-line"></i><span>' + esc(sounds || '—') + '</span></p>' +
+        '</div>' +
+      '</a>' +
+    '</article>';
+  }
+
+  /* ── MINI CARD — .pev-browse tax feed only ────────────────────────────────
+     Own class tree (.pev-mini-*), never .a-eve-* / .app-market.eve. Rails keep
+     eveCardHTML() full-size. Clicks run off [data-ev-open] — the documented
+     lightbox contract — like every other event surface. ── */
+  function eveCardMiniHTML(e) {
+    if (!e) return '';
+    var db = dateBits(e.startDate);
+    var venue = (e.venue && e.venue.name) || 'Local a anunciar';
+    var lineup = (e.lineup || []).map(function (l) { return l.name; }).join(', ');
+    var sounds = (e.genres || []).map(prettyGenre).join(', ');
+    var tags = (e.genres || []).slice(0, 2).map(function (g) {
+      return '<span class="pev-mini-tag">' + esc(prettyGenre(g)) + '</span>';
+    }).join('');
+    return '<article class="pev-mini" data-listing="' + esc(e.id) + '" data-ev-open="' + esc(e.id) + '">' +
+      '<a href="' + esc(e.url || '#') + '" class="pev-mini-card" aria-label="' + esc(e.title) + '">' +
+        '<div class="pev-mini-date">' +
+          '<span class="pev-mini-day">' + esc(db.d) + '</span>' +
+          '<span class="pev-mini-month">' + esc(db.m) + '</span>' +
+        '</div>' +
+        '<div class="pev-mini-media">' +
+          '<img src="' + esc(e.cover || '') + '" alt="' + esc(e.title) + '" loading="lazy" decoding="async">' +
+          (tags ? '<div class="pev-mini-tags">' + tags + '</div>' : '') +
+        '</div>' +
+        '<div class="pev-mini-body">' +
+          '<h3 class="pev-mini-title">' + esc(e.title) + '</h3>' +
+          '<p class="pev-mini-meta pev-mini-meta--wide"><i class="ri-sound-module-fill"></i><span>' + esc(lineup || 'Line-up a confirmar') + '</span></p>' +
+          '<p class="pev-mini-meta"><i class="ri-map-pin-2-line"></i><span>' + esc(venue) + '</span></p>' +
+          '<p class="pev-mini-meta pev-mini-meta--wide"><i class="ri-music-2-line"></i><span>' + esc(sounds || '—') + '</span></p>' +
+        '</div>' +
+      '</a>' +
+    '</article>';
+  }
+
+  /** Cabeçalho de seção: título + badge numérico + toggle grade/lista (inline). */
+  function sectionHeadHTML(title, icon, countNum, feedKey, viewMode) {
+    var view = viewMode === 'list' ? 'list' : 'grid';
+    var toggleIcon = view === 'list' ? 'ri-gallery-view' : 'ri-list-check-2';
+    var toggleLabel = view === 'list' ? 'Ver em grade' : 'Ver em lista';
+    var toggle = feedKey
+      ? '<span class="pev-view-toggle" data-target="' + esc(feedKey) + '">' +
+          '<i class="' + toggleIcon + '" data-view="' + view + '" role="button" tabindex="0" title="' + toggleLabel + '" aria-label="' + toggleLabel + '"></i>' +
+        '</span>'
+      : '';
+    /* O texto do título é um <span> próprio, não um nó de texto solto: é o alvo
+       da máscara clip-path quando o mês muda (morphRailTitle). Um nó de texto
+       não pode ser animado nem substituído sem reescrever o <h2> inteiro — e
+       reescrever o <h2> levaria junto o badge e o toggle, que não mudaram. */
+    return '<h2 class="section-title">' +
+      '<i class="' + esc(icon || 'ri-calendar-event-fill') + '" aria-hidden="true"></i> ' +
+      '<span data-rail-title>' + esc(title) + '</span>' +
+      ' <small class="pev-section-count">' + esc(String(countNum == null ? 0 : countNum)) + '</small>' +
+      toggle +
+    '</h2>';
+  }
+
+  function feedContainerHTML(feedKey, hasItems, viewMode) {
+    if (!hasItems) return emptyRail();
+    var view = viewMode === 'list' ? 'list' : 'grid';
+    if (view === 'list') {
+      return '<div class="pev-list-feed event-list-container pev-rail-rows" data-feed="' + esc(feedKey) + '"></div>';
+    }
+    /* Browse tax feed uses the standalone mini grid — never .grid-layout.eve-grid */
+    if (feedKey === 'tax') {
+      return '<div class="pev-mini-grid" data-feed="' + esc(feedKey) + '"></div>';
+    }
+    return '<div class="grid-layout eve-grid" data-feed="' + esc(feedKey) + '"></div>';
+  }
+
+  /* ── LINHA DE LISTAGEM (.event-row) — estrutura canônica da Design System:
+     .event-row > .date-box(.date-day + .date-month) + .event-details(h4 +
+     .event-meta > span > i + texto) + .event-action > .status[.active].
+     Evento on-line troca o pino de mapa por ri-wifi-line (mesma regra do
+     showcase). Ícones ficam crus — o core.js hidrata em <svg> sozinho. ── */
+  function eventRowHTML(e) {
+    if (!e) return '';
+    var db = dateBits(e.startDate);
+    var st = ticketStatus(e.tickets);
+    var rowCls = 'event-row' + (st.cls ? ' ' + st.cls : '');
+    var place = (e.venue && e.venue.name) || 'Local a anunciar';
+    var online = /on-?line|remoto|streaming/i.test(place);
+    return '<div class="' + rowCls + '" tabindex="0" role="button" data-ev-open="' + esc(e.id) + '">' +
+      '<div class="date-box"><span class="date-day">' + esc(db.d) + '</span><span class="date-month">' + esc(db.m) + '</span></div>' +
+      '<div class="event-details"><h4>' + esc(e.title) + '</h4>' +
+      '<div class="event-meta">' +
+      '<span><i class="ri-time-line"></i>' + esc(e.startTime || '—') + '</span>' +
+      '<span><i class="' + (online ? 'ri-wifi-line' : 'ri-map-pin-2-line') + '"></i>' + esc(place) + '</span>' +
+      '</div></div>' +
+      '<div class="event-action">' + st.html + '</div>' +
+      '</div>';
+  }
+
+  function emptyRail() {
+    return '<div class="pev-empty">Nenhum evento neste recorte</div>';
+  }
+
+  function plural(n, one, many) {
+    return n + ' ' + (n === 1 ? one : (many || one + 's'));
+  }
+
+  /* ── MOTOR DE CARGA INFINITA + REVEAL ───────────────────────────────────────
+     Injeta a lista em páginas: um sentinela no fim do container dispara a
+     página seguinte quando entra na viewport. Cada item novo nasce com
+     .pev-reveal e sobe com atraso escalonado (delay por índice dentro da
+     página, nunca acumulando pela lista inteira — senão o último cartão de uma
+     lista longa levaria minutos pra aparecer).
+     "Morre" de verdade quando acaba: o observer é desconectado, o sentinela é
+     removido do DOM e as classes de reveal saem do elemento no transitionend,
+     pra não sobrar estilo inline nem listener pendurado.
+     Devolve um handle com .destroy() — chamado a cada re-render pra nunca
+     empilhar observers órfãos. ── */
+  function mountInfinite(container, list, renderItem, opts) {
+    if (!container) return { destroy: function () {} };
+    var o = opts || {};
+    var pageSize = o.pageSize || 8;
+    var step = o.stagger || 55;
+    var i = 0;
+    var dead = false;
+    var io = null;
+
+    var sentinel = d.createElement('div');
+    sentinel.className = 'pev-sentinel';
+    sentinel.setAttribute('aria-hidden', 'true');
+
+    function settle(el) {
+      var done = function () {
+        el.classList.remove('pev-reveal', 'is-in');
+        el.style.transitionDelay = '';
+        el.removeEventListener('transitionend', done);
+      };
+      el.addEventListener('transitionend', done);
+      /* rede de segurança: se a transição não disparar (aba oculta, motion
+         reduzido), limpa mesmo assim */
+      setTimeout(done, 1200);
+    }
+
+    function page() {
+      if (dead) return;
+      var slice = list.slice(i, i + pageSize);
+      if (!slice.length) return finish();
+      var frag = d.createDocumentFragment();
+      slice.forEach(function (item, n) {
+        var holder = d.createElement('div');
+        holder.innerHTML = renderItem(item);
+        var el = holder.firstElementChild;
+        if (!el) return;
+        el.classList.add('pev-reveal');
+        el.style.transitionDelay = (n * step) + 'ms';
+        frag.appendChild(el);
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            el.classList.add('is-in');
+            settle(el);
+          });
+        });
+      });
+      container.insertBefore(frag, sentinel);
+      i += pageSize;
+      if (i >= list.length) finish();
+    }
+
+    function finish() {
+      dead = true;
+      if (io) { io.disconnect(); io = null; }
+      if (sentinel.parentNode) sentinel.parentNode.removeChild(sentinel);
+    }
+
+    container.appendChild(sentinel);
+
+    if ('IntersectionObserver' in w) {
+      io = new IntersectionObserver(function (entries) {
+        if (entries.some(function (e) { return e.isIntersecting; })) page();
+      }, { root: o.scrollRoot || null, rootMargin: '240px 0px' });
+      io.observe(sentinel);
+      page(); /* primeira dobra imediata — nunca esperar o scroll pra ter conteúdo */
+    } else {
+      while (!dead) page(); /* sem IO: entrega tudo de uma vez */
+    }
+
+    return { destroy: finish };
+  }
+
+  function findChip(key) {
+    var chips = (P().taxChips && P().taxChips()) || [];
+    for (var i = 0; i < chips.length; i++) if (chips[i].key === key) return chips[i];
+    return null;
+  }
+
+  /* BUGFIX (2026-08-01) — "no events for August" in the browse grid.
+     taxChips() always pushes the 'festajulina' chip FIRST (chips[0]), because
+     that window (Jun 1–Aug 1) needs to be selectable year-round even in months
+     with none of its own events. This function used to fall through to
+     `chips[0].key` for every month that ISN'T inside the julina window — i.e.
+     eleven months of the year — which pinned #pevDynamic to the Festa Julina
+     taxonomy by default even in, say, August. eventsForTax('festajulina', ym)
+     then correctly returns nothing for an August cursor (its own filter is
+     Jun–Aug exclusive), so the grid looked empty even with published August
+     events in window.APOLLO_EVENTS — they just weren't in the section HTML
+     was displaying by default.
+
+     Fix: outside the julina window, default to whichever season chip actually
+     has the most events in the cursor month — the browse grid should open on
+     "this month's events", not on an unrelated fixed taxonomy. */
+  function defaultTaxKey(ym) {
+    var banner = P().seasonBanner ? P().seasonBanner(ym) : '';
+    if (/Festa Julina/i.test(banner)) return 'festajulina';
+
+    var monthPool = (P().byMonth && P().byMonth(ym)) || [];
+    var counts = {};
+    monthPool.forEach(function (e) {
+      var s = e.season || '';
+      if (s) counts[s] = (counts[s] || 0) + 1;
+    });
+    var bestSeason = null, n = 0;
+    Object.keys(counts).forEach(function (k) {
+      if (counts[k] > n) { n = counts[k]; bestSeason = k; }
+    });
+    if (bestSeason) {
+      var seasonChip = findChip('season-' + bestSeason);
+      if (seasonChip) return seasonChip.key;
+    }
+
+    var chips = (P().taxChips && P().taxChips()) || [];
+    return chips.length ? chips[0].key : 'festajulina';
+  }
+
+  function AppPortalEventos() {
+    var root = null;
+    /* feeds de carga infinita vivos — destruídos a cada re-render pra nunca
+       acumular IntersectionObserver órfão apontando pra DOM já descartado */
+    var feedsByKey = {};
+    var lightboxFeed = null;
+    var heroTimer = null;
+    /* Último resultado de buildRails() pro par padrão, indexado por chave.
+       A lightbox de "ver todos" consome isto — antes ela recalculava o título e
+       a janela de dias sozinha, o que a tornava um SEGUNDO dono da mesma regra:
+       o dia em que buildRails passou a conhecer o mês, a lightbox continuaria
+       anunciando "Esse FDS · hoje → +4 dias" por cima da lista de dezembro. */
+    var lastDefaultRails = {};
+    function killFeed(key) {
+      if (feedsByKey[key] && feedsByKey[key].destroy) feedsByKey[key].destroy();
+      delete feedsByKey[key];
+    }
+    function killFeeds() {
+      Object.keys(feedsByKey).forEach(killFeed);
+      feedsByKey = {};
+    }
+    function setFeed(key, handle) {
+      killFeed(key);
+      feedsByKey[key] = handle;
+    }
+    var state = {
+      mode: 'mes',
+      ym: null,
+      tax: null,
+      /* Escritos só pelo cabeçalho, via setFilters/setSearch. `search` fica
+         sempre em minúsculas porque é comparado contra um haystack minúsculo. */
+      tags: [],
+      sounds: [],
+      search: '',
+      heroIndex: 0,
+      sectionViews: { 'neste-fds': 'grid', 'prox-fds': 'grid', tax: 'grid' }
+    };
+
+    function cursorDate() {
+      var p = P().parseYm(state.ym);
+      return new Date(p.y, p.m, 1);
+    }
+
+    /* ── SEM MASTHEAD ─────────────────────────────────────────────────────────
+       Até 1.7.0 o skeleton abria com `<header class="pev-masthead">`: mês,
+       setas de navegação e um dropdown de período, tudo montado aqui dentro
+       como string de JS. Isso saiu inteiro.
+
+       O cabeçalho de /eventos agora é o bloco apollo_listing_header() —
+       "Header 02 · Kinetic Mask · Apple", renderizado em PHP por
+       template-parts/archive/portal/header.php ANTES de #apollo-portal-root, e
+       ligado a este runtime por header-bridge.php via CustomEvent.
+
+       Três consequências que valem o registro, porque são o motivo da troca:
+       o cabeçalho passa a existir no primeiro paint (não depende deste
+       runtime); vira reutilizável por qualquer listagem do ecossistema; e o
+       filtro deixa de ser só "período" — o painel full-viewport carrega
+       período + categorias + tipos + tags + sons, todos de termos reais.
+
+       Este arquivo, portanto, não desenha mais cabeçalho nenhum. Ele expõe
+       setMonth/setFilters/setSearch e obedece. ─────────────────────────────── */
+    function skeleton() {
+      return '' +
+        '<div class="pev" data-apollo-portal="1">' +
+          '<div class="pev-layout">' +
+            '<section class="pev-hero" id="pevHero" data-ev-open="" tabindex="0" role="button" aria-label="Evento em destaque"></section>' +
+            '<aside class="pev-recent">' +
+              '<h2 class="pev-recent-title">Últimos eventos registrados</h2>' +
+              /* O rodapé "Ver todos" vive DENTRO da lista, não embaixo dela: a
+                 .event-list-container é uma coluna flex, então o botão entra
+                 como o último item dessa mesma coluna e o olho lê uma lista só
+                 terminando numa ação — e não um bloco solto de largura cheia.
+                 renderRecent() reescreve o innerHTML da lista inteira, rodapé
+                 incluído, para o id nunca ficar órfão. */
+              '<div class="event-list-container" id="pevRecent">' +
+                '<div class="pev-recent-footer" id="pevRecentFooter"></div>' +
+              '</div>' +
+            '</aside>' +
+          '</div>' +
+          '<div class="pev-rails" id="pevRails"></div>' +
+          '<div class="pev-browse">' +
+            '<div class="pev-tax" id="pevTax" role="tablist" aria-label="Temporada e gênero"></div>' +
+            '<div class="pev-dynamic eve-section" id="pevDynamic"></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="pev-modal" id="pevModal" aria-hidden="true">' +
+          '<div class="pev-modal-card" role="dialog" aria-modal="true" aria-labelledby="pevModalTitle">' +
+            '<button type="button" class="pev-modal-close" data-pev-close aria-label="Fechar"><i class="ri-close-line"></i></button>' +
+            '<div id="pevModalInner"></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="pev-modal pev-rail-modal" id="pevRailModal" aria-hidden="true">' +
+          '<div class="pev-modal-card pev-rail-modal-card" role="dialog" aria-modal="true" aria-labelledby="pevRailModalTitle">' +
+            '<button type="button" class="pev-modal-close" data-pev-rail-close aria-label="Fechar"><i class="ri-close-line"></i></button>' +
+            '<div class="pev-rail-modal-body">' +
+              '<h2 id="pevRailModalTitle">Próximos eventos</h2>' +
+              '<p class="pev-rail-modal-sub" id="pevRailModalSub"></p>' +
+              '<div class="event-list-container" id="pevRailModalList"></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+    }
+
+    /* ── REFINO: filtros de taxonomia + busca ─────────────────────────────────
+       O cabeçalho (apollo_listing_header) manda intenção; o refino acontece
+       aqui, sobre as MESMAS linhas que o portal já tem em memória — nenhuma
+       ida ao servidor, nenhuma segunda fonte de verdade.
+
+       Casamento de campos, definido por header.php e transportado por
+       header-bridge.php:
+         state.tags   ↔ e.tags    (NOMES de termo: categoria + tipo + tag,
+                                   fundidos numa lista só por archive-event.php)
+         state.sounds ↔ e.genres  (SLUGS da taxonomia sound)
+       Grupo vazio não filtra nada — OR dentro do grupo, AND entre grupos, que
+       é o que um painel de chips comunica visualmente. */
+    function hitsAny(haystack, needles) {
+      if (!needles || !needles.length) return true;
+      var pool = haystack || [];
+      for (var i = 0; i < needles.length; i++) {
+        if (pool.indexOf(needles[i]) !== -1) return true;
+      }
+      return false;
+    }
+
+    function matchesSearch(e) {
+      if (!state.search) return true;
+      var hay = [
+        e.title || '',
+        (e.venue && e.venue.name) || '',
+        (e.lineup || []).map(function (l) { return l.name || ''; }).join(' '),
+        (e.genres || []).join(' '),
+        (e.tags || []).join(' ')
+      ].join(' ').toLowerCase();
+      return hay.indexOf(state.search) !== -1;
+    }
+
+    /** Aplica busca + chips a qualquer lista de eventos do portal. */
+    function refine(list) {
+      if (!state.search && !state.tags.length && !state.sounds.length) return list || [];
+      return (list || []).filter(function (e) {
+        return hitsAny(e.tags, state.tags) &&
+          hitsAny(e.genres, state.sounds) &&
+          matchesSearch(e);
+      });
+    }
+
+    function renderTax() {
+      var host = root.querySelector('#pevTax');
+      if (!host) return;
+      var chips = (P().taxChips && P().taxChips()) || [];
+      if (!state.tax || !findChip(state.tax)) state.tax = defaultTaxKey(state.ym);
+      /* Busca ativa vira o primeiro chip da fileira, com um X. O termo tem que
+         estar visível na tela que ele está filtrando — senão o usuário vê uma
+         lista curta e não sabe por quê. */
+      /* `btn btn-secondary` é o botão universal do core.js. Os chips de
+         taxonomia SÃO botões secundários — antes eram uma cápsula própria com
+         borda em gradiente e rótulo mono maiúsculo, que reimplementava (e
+         contradizia) o mesmo componente. `pev-tax-btn` sobrou só como gancho
+         para os deltas da fileira (não encolher, rótulo com reticências) e
+         `is-on` para o estado selecionado, que o core não tem. */
+      var taxBtnClass = 'btn btn-secondary pev-tax-btn';
+      var searchChip = state.search
+        ? '<button type="button" class="' + taxBtnClass + ' is-on" data-pev-search-clear title="Limpar busca">' +
+            '<span class="pev-tax-label">Busca · ' + esc(state.search) + '</span>' +
+            '<i class="ri-close-line" aria-hidden="true"></i>' +
+          '</button>'
+        : '';
+      host.innerHTML = searchChip + chips.map(function (c) {
+        return '<button type="button" class="' + taxBtnClass + (c.key === state.tax ? ' is-on' : '') + '" data-pev-tax="' + esc(c.key) + '" title="' + esc(c.label) + '">' +
+          '<span class="pev-tax-label">' + esc(c.label) + '</span>' +
+          '</button>';
+      }).join('');
+    }
+
+    function poolForTax() {
+      var list = (P().eventsForTax && P().eventsForTax(state.tax, state.ym)) || [];
+      if (state.mode && state.mode !== 'mes') {
+        list = (P().filterByMode && P().filterByMode(state.mode, cursorDate(), list)) || list;
+      }
+      return refine(list);
+    }
+
+    function listForFeed(feedKey) {
+      if (feedKey === 'tax') return poolForTax();
+      var rails = (P().buildRails && P().buildRails(state.ym, state.mode, cursorDate())) || [];
+      for (var i = 0; i < rails.length; i++) {
+        if (rails[i].key === feedKey) {
+          /* refine() aqui também: trocar grade↔lista não pode ressuscitar
+             eventos que os chips do cabeçalho tinham acabado de excluir. */
+          return refine((P().resolveIds && P().resolveIds(rails[i].eventIds)) || []);
+        }
+      }
+      return [];
+    }
+
+    function setPevViewToggleState(feedKey) {
+      if (!root) return;
+      var icon = root.querySelector('.pev-view-toggle[data-target="' + feedKey + '"] [data-view]');
+      if (!icon) return;
+      var view = state.sectionViews[feedKey] || 'grid';
+      icon.classList.remove('ri-list-check-2', 'ri-gallery-view');
+      icon.classList.add(view === 'list' ? 'ri-gallery-view' : 'ri-list-check-2');
+      icon.setAttribute('data-view', view);
+      var label = view === 'list' ? 'Ver em grade' : 'Ver em lista';
+      icon.setAttribute('title', label);
+      icon.setAttribute('aria-label', label);
+    }
+
+    function mountSectionFeed(feedKey, list) {
+      var el = root.querySelector('[data-feed="' + feedKey + '"]');
+      if (!el || !list.length) return;
+      var view = state.sectionViews[feedKey] || 'grid';
+      var renderer = view === 'list'
+        ? eventRowHTML
+        : (feedKey === 'tax' ? eveCardMiniHTML : eveCardHTML);
+      var pageSize = feedKey === 'tax' ? 12 : 8;
+      setFeed(feedKey, mountInfinite(el, list, renderer, { pageSize: pageSize, stagger: 60 }));
+    }
+
+    function toggleSectionView(feedKey) {
+      if (!feedKey) return;
+      var cur = state.sectionViews[feedKey] || 'grid';
+      state.sectionViews[feedKey] = cur === 'list' ? 'grid' : 'list';
+      var view = state.sectionViews[feedKey];
+      var list = listForFeed(feedKey);
+      var body = null;
+      if (feedKey === 'tax') {
+        var dyn = root.querySelector('#pevDynamic');
+        body = dyn && dyn.querySelector('.eve-body');
+      } else {
+        var sec = root.querySelector('[data-rail="' + feedKey + '"]');
+        body = sec && sec.querySelector('.eve-body');
+      }
+      if (!body) return;
+      killFeed(feedKey);
+      body.innerHTML = feedContainerHTML(feedKey, !!list.length, view);
+      body.classList.toggle('is-list-view', view === 'list');
+      mountSectionFeed(feedKey, list);
+      setPevViewToggleState(feedKey);
+    }
+
+    /* v3 · MOBILE APP FIRST — todas as listagens de evento nascem em GRADE
+       (.grid-layout = 2 por linha no mobile, 4 no ≥1000px), exatamente como a
+       lei do showcase: "ONLOAD: as seções nascem em GRADE". Nada de trilho
+       horizontal por padrão — isso quebrava a leitura no celular. */
+    function renderDynamic() {
+      var host = root.querySelector('#pevDynamic');
+      if (!host) return;
+      var chip = findChip(state.tax);
+      var kind = chip ? (chip.kind === 'genre' ? 'Gênero' : 'Temporada') : '';
+      var label = chip ? (chip.label + (kind ? ' · ' + kind : '')) : 'Eventos';
+      var list = poolForTax();
+      var view = state.sectionViews.tax || 'grid';
+      host.innerHTML =
+        sectionHeadHTML(label, chip && chip.icon, list.length, 'tax', view) +
+        '<div class="eve-body' + (view === 'list' ? ' is-list-view' : '') + '">' +
+          feedContainerHTML('tax', !!list.length, view) +
+        '</div>';
+      mountSectionFeed('tax', list);
+    }
+
+    /* ── HERO · carrossel dos destaques ───────────────────────────────────────
+       Fonte: APOLLO_PORTAL.highlights() — eventos futuros com highlight:true.
+       Cada slide fica HERO_DWELL no ar; a bolinha correspondente é uma barra
+       de progresso que enche durante esse tempo (é o mesmo elemento: a "bola"
+       é o trilho, o preenchimento é o ::after animado). Pausa no hover/foco e
+       quando a aba sai de vista — nada de contador correndo escondido. ── */
+    var HERO_DWELL = 6200;
+
+    function stopHero() {
+      if (heroTimer) { clearTimeout(heroTimer); heroTimer = null; }
+    }
+
+    function heroPool() {
+      return (P().highlights && P().highlights()) || [];
+    }
+
+    function heroSlideHTML(ev, i, active) {
+      return '<article class="pev-hero-slide' + (active ? ' is-on' : '') + '" data-hero-slide="' + i + '"' +
+        (active ? '' : ' aria-hidden="true"') + '>' +
+        '<img class="pev-hero-cover" src="' + esc(ev.cover || '') + '" alt="" ' + (i === 0 ? '' : 'loading="lazy" ') + 'decoding="async">' +
+        '<div class="pev-hero-fade"></div>' +
+        '<div class="pev-hero-body">' +
+          '<span class="pev-hero-kicker"><i class="ri-sparkling-line"></i> Destaque</span>' +
+          '<h1>' + esc(ev.title) + '</h1>' +
+          '<div class="pev-hero-meta">' +
+            ticketChip(ev.tickets) +
+            '<span class="pev-chip"><i class="ri-calendar-line"></i> ' + esc(dateShort(ev.startDate)) + (ev.startTime ? ' · ' + esc(ev.startTime) : '') + '</span>' +
+            '<span class="pev-chip"><i class="ri-map-pin-2-line"></i> ' + esc((ev.venue && ev.venue.name) || 'Local') + '</span>' +
+          '</div>' +
+        '</div>' +
+      '</article>';
+    }
+
+    function paintHero(list) {
+      var el = root.querySelector('#pevHero');
+      if (!el) return;
+      var i = state.heroIndex;
+      var cur = list[i];
+      el.setAttribute('data-ev-open', cur ? cur.id : '');
+      el.querySelectorAll('[data-hero-slide]').forEach(function (s) {
+        var on = +s.getAttribute('data-hero-slide') === i;
+        s.classList.toggle('is-on', on);
+        if (on) s.removeAttribute('aria-hidden');
+        else s.setAttribute('aria-hidden', 'true');
+      });
+      el.querySelectorAll('[data-hero-dot]').forEach(function (dot) {
+        var n = +dot.getAttribute('data-hero-dot');
+        dot.classList.toggle('is-done', n < i);
+        dot.classList.toggle('is-on', n === i);
+        dot.setAttribute('aria-selected', n === i ? 'true' : 'false');
+        if (n === i) {
+          /* reinicia a animação de preenchimento desta bolinha */
+          var fill = dot.querySelector('.pev-hero-dot-fill');
+          if (fill) { fill.style.animation = 'none'; void fill.offsetWidth; fill.style.animation = ''; }
+        }
+      });
+    }
+
+    function scheduleHero(list) {
+      stopHero();
+      if (list.length < 2) return;
+      if (reducedMotion()) return; /* sem auto-play se o usuário pediu menos movimento */
+      heroTimer = setTimeout(function () {
+        state.heroIndex = (state.heroIndex + 1) % list.length;
+        paintHero(list);
+        scheduleHero(list);
+      }, HERO_DWELL);
+    }
+
+    /* ── CAMADA FINAL DE FALLBACK ───────────────────────────────────────────
+       Contrato: quando NENHUM evento carrega highlight:true (P().highlights()
+       devolve lista vazia), o hero não inventa um destaque — ele cai nesta
+       camada. Ver helpers.php: o fallback pra featured() foi removido de
+       propósito, porque rotular o melhor evento do mês como "Destaque" afirma
+       uma decisão editorial que ninguém tomou.
+
+       São QUATRO camadas empilhadas, da mais resiliente pra mais frágil, e o
+       cartão continua legível mesmo que as de cima falhem:
+         0 · degradê CSS  (.pev-hero.is-fallback) — sobrevive a tudo
+         1 · <iframe> do CDN                      — o visual rico
+         2 · véu                                  — garante contraste
+         3 · mensagem                             — sempre por cima
+
+       X-FRAME-OPTIONS, E COMO ELE FOI RESOLVIDO (2026-08-01)
+       O embed DIRETO em assets.apollo.rio.br era recusado pelo navegador:
+         "Refused to display 'https://assets.apollo.rio.br/' in a frame
+          because it set 'X-Frame-Options' to 'sameorigin'."
+       Esse cabeçalho é do HOST DO ASSET e vale contra a origem do documento
+       EMBUTIDO. apollo.rio.br embutindo assets.apollo.rio.br é cross-origin,
+       então "sameorigin" proíbe — e nenhum CSP, sandbox ou atributo daqui
+       derruba um cabeçalho mandado por outro servidor. Também não dá pra
+       DETECTAR o bloqueio no cliente: a origem é opaca (contentDocument é
+       inacessível) e o Chrome ainda dispara 'load' na navegação bloqueada.
+
+       Solução: parar de fazer a requisição ser cross-origin. O documento é
+       buscado NO SERVIDOR e re-servido por este domínio —
+         /wp-json/apollo/v1/iframe/highlighted-fallback
+       (includes/iframe-proxy.php: allowlist fixa de slugs, nunca uma URL do
+       chamador, com cache em transient). O <iframe> passa a ser same-origin,
+       o SAMEORIGIN é satisfeito por construção, e o proxy reemite o mesmo
+       X-Frame-Options em nome próprio pra não virar embed livre pra terceiros.
+
+       O src é lido de #apollo-portal-root[data-iframe-fallback], impresso por
+       archive-event.php via apollo_event_iframe_proxy_url() — a URL do REST
+       vem do WordPress, nunca de string montada no cliente. Se o atributo não
+       existir (tema antigo), a camada some e o degradê CSS assume. ── */
+
+    function heroFallbackSrc() {
+      return (root && root.getAttribute('data-iframe-fallback')) || '';
+    }
+
+    function heroFallbackHTML() {
+      var src = heroFallbackSrc();
+      return '' +
+        (src
+          ? '<iframe class="pev-hero-fallback" src="' + esc(src) + '"' +
+              ' title="Destaques do Portal de Eventos" loading="eager" scrolling="no"' +
+              ' referrerpolicy="no-referrer" sandbox="allow-scripts"' +
+              ' tabindex="-1" aria-hidden="true"' +
+              ' onload="this.classList.add(\'is-ready\')"' +
+              ' onerror="this.remove()"></iframe>'
+          : '') +
+        '<div class="pev-hero-fallback-shade" aria-hidden="true"></div>' +
+        '<div class="pev-hero-body is-empty">' +
+          '<span class="pev-hero-kicker"><i class="ri-sparkling-line" aria-hidden="true"></i> Sem destaque</span>' +
+          '<h1>Nenhum evento em destaque</h1>' +
+          '<div class="pev-hero-meta">' +
+            '<span class="pev-chip">Troque o mês ou o filtro</span>' +
+          '</div>' +
+        '</div>';
+    }
+
+    function renderHero() {
+      var el = root.querySelector('#pevHero');
+      if (!el) return;
+      stopHero();
+      var list = heroPool();
+      if (!list.length) {
+        el.classList.remove('is-slider', 'is-paused');
+        el.classList.add('is-fallback');
+        el.removeAttribute('data-ev-open');
+        /* Sem destaque não há evento pra abrir: o cartão deixa de ser um botão
+           em vez de virar um botão que não faz nada. */
+        el.removeAttribute('role');
+        el.removeAttribute('tabindex');
+        el.setAttribute('aria-label', 'Nenhum evento em destaque');
+        el.onmouseenter = el.onmouseleave = el.onfocusin = el.onfocusout = null;
+        el.innerHTML = heroFallbackHTML();
+        return;
+      }
+      /* Voltando a ter destaque, o cartão reassume o papel de botão. */
+      el.setAttribute('role', 'button');
+      el.setAttribute('tabindex', '0');
+      el.setAttribute('aria-label', 'Evento em destaque');
+      if (state.heroIndex >= list.length) state.heroIndex = 0;
+      el.classList.remove('is-fallback');
+      el.classList.add('is-slider');
+      el.style.setProperty('--pev-hero-dwell', HERO_DWELL + 'ms');
+      el.innerHTML =
+        list.map(function (ev, i) { return heroSlideHTML(ev, i, i === state.heroIndex); }).join('') +
+        (list.length > 1
+          ? '<div class="pev-hero-dots" role="tablist" aria-label="Destaques">' +
+              list.map(function (ev, i) {
+                return '<button type="button" class="pev-hero-dot" data-hero-dot="' + i + '" role="tab"' +
+                  ' aria-selected="' + (i === state.heroIndex ? 'true' : 'false') + '"' +
+                  ' aria-label="' + esc(ev.title) + '"><span class="pev-hero-dot-fill"></span></button>';
+              }).join('') +
+            '</div>'
+          : '');
+      paintHero(list);
+      scheduleHero(list);
+
+      /* pausa cortês: hover, foco por teclado ou aba escondida */
+      el.onmouseenter = function () { el.classList.add('is-paused'); stopHero(); };
+      el.onmouseleave = function () { el.classList.remove('is-paused'); scheduleHero(list); };
+      el.onfocusin = function () { el.classList.add('is-paused'); stopHero(); };
+      el.onfocusout = function () { el.classList.remove('is-paused'); scheduleHero(list); };
+    }
+
+    function goHero(i) {
+      var list = heroPool();
+      if (!list.length) return;
+      state.heroIndex = ((i % list.length) + list.length) % list.length;
+      paintHero(list);
+      scheduleHero(list);
+    }
+
+    /* Últimos registrados: no máximo 3 linhas na coluna — o resto vive no
+       lightbox, que carrega em rolagem infinita. Uma barra lateral não é lugar
+       pra lista longa; 3 é o que cabe ao lado do hero sem empurrar layout. */
+    var RECENT_PREVIEW = 3;
+    function renderRecent() {
+      var track = root.querySelector('#pevRecent');
+      if (!track) return;
+      var all = (P().recent && P().recent(999)) || [];
+      var rows = all.length
+        ? all.slice(0, RECENT_PREVIEW).map(eventRowHTML).join('')
+        : '<div class="pev-empty">Nenhum evento recente</div>';
+      var more = all.length > RECENT_PREVIEW
+        ? '<button type="button" class="pev-rail-more" data-pev-rail-all="recent">Ver todos · ' + plural(all.length, 'evento') + '</button>'
+        : '';
+      /* Uma escrita só: o rodapé é filho da lista (ver skeleton()), então
+         reescrever a lista sem ele deixaria o #pevRecentFooter fora do DOM. */
+      track.innerHTML = rows +
+        '<div class="pev-recent-footer" id="pevRecentFooter">' + more + '</div>';
+    }
+
+    /* ── O PAR DE TRILHOS PADRÃO ───────────────────────────────────────────────
+       Estas duas seções são a única parte da tela que muda de REGIME quando o
+       mês muda (ver buildRails em helpers.php): no mês corrente são recortes
+       relativos a hoje, em qualquer outro mês a primeira vira a lista do mês e
+       a segunda não existe.
+
+       Por isso aqui não há mais `host.innerHTML = …` a cada render. Um wipe
+       total é instantâneo e destrói o que se quer animar: não dá pra morfar
+       "Esse FDS" → "Neste mês" num <h2> que acabou de ser recriado, nem colapsar
+       uma seção que já sumiu do DOM. O host é montado UMA vez; depois disso
+       cada render faz cirurgia por `data-rail`: título morfa, corpo remonta,
+       seção colapsa ou volta. ── */
+
+    var railIcon = function (key) {
+      return key === 'neste-fds' ? 'ri-calendar-check-line' : 'ri-calendar-schedule-line';
+    };
+
+    /** Piscina já resolvida e refinada pelos chips do cabeçalho. */
+    function railEvents(rail) {
+      return refine((P().resolveIds && P().resolveIds(rail.eventIds)) || []);
+    }
+
+    function railTitleEl(sec) {
+      return sec ? sec.querySelector('[data-rail-title]') : null;
+    }
+
+    /** Máscara de troca de texto — MESMA receita do mês no cabeçalho
+        (listing-header/kernel-scripts.php::paintMonth): limpa rápido em
+        power1.in (0.39) e revela devagar em power2.out (0.78), pro rótulo novo
+        parecer que CHEGA em vez de piscar. Sem GSAP ou com movimento reduzido,
+        troca seca — a informação nunca depende da animação. */
+    function morphRailTitle(sec, next) {
+      var el = railTitleEl(sec);
+      if (!el || el.textContent === next) return;
+      if (!w.gsap || reducedMotion()) { el.textContent = next; return; }
+      w.gsap.killTweensOf(el);
+      w.gsap.timeline()
+        .to(el, { clipPath: 'inset(0 100% 0 0)', duration: 0.39, ease: 'power1.in' })
+        .call(function () { el.textContent = next; })
+        .set(el, { clipPath: 'inset(0 100% 0 0)' })
+        .to(el, { clipPath: 'inset(0 0% 0 0)', duration: 0.78, ease: 'power2.out' });
+    }
+
+    /** Sai do fluxo de verdade: `hidden` no fim é o que zera também o `gap` de
+        22px do .pev-rails — só animar a altura pra 0 deixaria o buraco. */
+    function collapseRail(sec, animate) {
+      if (!sec || sec.hasAttribute('hidden')) return;
+      var settle = function () {
+        sec.setAttribute('hidden', '');
+        sec.setAttribute('aria-hidden', 'true');
+        sec.classList.remove('is-exiting');
+        sec.style.height = '';
+        sec.style.opacity = '';
+      };
+      if (!animate || !w.gsap || reducedMotion()) { settle(); return; }
+      var h = sec.offsetHeight;
+      sec.classList.add('is-exiting');
+      w.gsap.killTweensOf(sec);
+      w.gsap.timeline({ onComplete: settle })
+        .to(sec, { opacity: 0, duration: 0.2, ease: 'power1.in' })
+        .fromTo(sec, { height: h }, { height: 0, duration: 0.36, ease: 'power2.inOut' }, '-=0.06');
+    }
+
+    function expandRail(sec, animate) {
+      if (!sec) return;
+      var wasHidden = sec.hasAttribute('hidden');
+      sec.removeAttribute('hidden');
+      sec.removeAttribute('aria-hidden');
+      if (!wasHidden) return;
+      if (!animate || !w.gsap || reducedMotion()) return;
+      sec.classList.add('is-exiting'); /* mesma clipagem, sentido inverso */
+      var h = sec.offsetHeight;
+      w.gsap.killTweensOf(sec);
+      w.gsap.timeline({
+        onComplete: function () {
+          sec.classList.remove('is-exiting');
+          sec.style.height = '';
+          sec.style.opacity = '';
+        }
+      })
+        .fromTo(sec, { height: 0, opacity: 0 }, { height: h, duration: 0.36, ease: 'power2.out' })
+        .to(sec, { opacity: 1, duration: 0.22, ease: 'power1.out' }, '-=0.16');
+    }
+
+    /** Molde da seção — usado só na PRIMEIRA montagem; depois é tudo cirurgia. */
+    function railSectionHTML(rail, evs, view) {
+      return '<section class="pev-rail eve-section" data-rail="' + esc(rail.key) + '"' +
+          ' data-window="' + esc(rail.subtitle || '') + '">' +
+          sectionHeadHTML(rail.title, railIcon(rail.key), evs.length, rail.key, view) +
+          '<div class="eve-body' + (view === 'list' ? ' is-list-view' : '') + '">' +
+            feedContainerHTML(rail.key, !!evs.length, view) +
+          '</div>' +
+        '</section>';
+    }
+
+    function renderRails() {
+      var host = root.querySelector('#pevRails');
+      if (!host) return;
+      var rails = (P().buildRails && P().buildRails(state.ym, state.mode, cursorDate())) || [];
+      rails = rails.filter(function (r) {
+        return r.key === 'neste-fds' || r.key === 'prox-fds';
+      });
+
+      /* Primeira pintura: não há o que morfar nem o que colapsar, então monta
+         seco. Toda troca de mês a partir daqui cai no ramo cirúrgico. */
+      var mounted = !!host.querySelector('[data-rail]');
+      if (!mounted) {
+        host.innerHTML = rails.map(function (rail) {
+          return railSectionHTML(rail, railEvents(rail), state.sectionViews[rail.key] || 'grid');
+        }).join('');
+      }
+
+      rails.forEach(function (rail) {
+        var sec = host.querySelector('[data-rail="' + esc(rail.key) + '"]');
+        if (!sec) return;
+        var evs = railEvents(rail);
+        var visible = rail.visible !== false;
+        var view = state.sectionViews[rail.key] || 'grid';
+
+        /* A janela de dias ("hoje → +4 dias", "01 → fim do mês") é REGRA DE
+           NEGÓCIO, não rótulo de interface: vive em data-window, legível por
+           quem inspeciona e invisível pra quem lê. O badge conta os eventos. */
+        sec.setAttribute('data-window', rail.subtitle || '');
+        if (mounted) morphRailTitle(sec, rail.title);
+
+        var count = sec.querySelector('.pev-section-count');
+        if (count) count.textContent = String(evs.length);
+
+        /* O corpo é sempre remontado: a piscina mudou de regime, não de ordem.
+           Um feed infinito herdado apontaria pro recorte antigo. */
+        var body = sec.querySelector('.eve-body');
+        if (body) {
+          killFeed(rail.key);
+          body.innerHTML = feedContainerHTML(rail.key, !!evs.length, view);
+          body.classList.toggle('is-list-view', view === 'list');
+          /* Só monta o que vai ser visto — um IntersectionObserver dentro de
+             uma seção display:none nunca dispara e o feed nasceria travado. */
+          if (visible && evs.length) mountSectionFeed(rail.key, evs);
+        }
+        setPevViewToggleState(rail.key);
+
+        if (visible) expandRail(sec, mounted);
+        else collapseRail(sec, mounted);
+      });
+
+      /* A lightbox lê daqui em vez de recalcular a janela por conta própria —
+         era o segundo dono de "Esse FDS" e das regras de dia. */
+      lastDefaultRails = {};
+      rails.forEach(function (rail) { lastDefaultRails[rail.key] = rail; });
+    }
+
+    /* Lightbox de lista completa — rolagem infinita dentro do próprio card do
+       modal (scrollRoot = a lista), então o sentinela dispara conforme o
+       usuário desce, não conforme a página de fundo rola. */
+    function openRailLightbox(railKey) {
+      var modal = root.querySelector('#pevRailModal');
+      var listEl = root.querySelector('#pevRailModalList');
+      var titleEl = root.querySelector('#pevRailModalTitle');
+      var subEl = root.querySelector('#pevRailModalSub');
+      if (!modal || !listEl) return;
+      var key = railKey || 'prox-fds';
+      var today = P().todayStart ? P().todayStart() : new Date();
+      var evs, title, sub;
+      if (key === 'recent') {
+        evs = (P().recent && P().recent(999)) || [];
+        title = 'Últimos eventos registrados';
+        sub = 'do mais recente ao mais antigo';
+      } else if (lastDefaultRails[key]) {
+        /* Espelha o trilho que está NA TELA — mesmo título, mesma janela, mesma
+           piscina. Fora do mês corrente isso é "Neste mês · 01 → fim do mês", e
+           'prox-fds' abre vazio de propósito: a seção nem está montada. */
+        var meta = lastDefaultRails[key];
+        evs = (P().resolveIds && P().resolveIds(meta.eventIds)) || [];
+        title = meta.title;
+        sub = meta.subtitle;
+      } else {
+        /* Queda pra quando a lightbox é chamada antes do primeiro render. */
+        evs = (P().filterByMode && P().filterByMode(key, today, w.APOLLO_EVENTS || [])) || [];
+        title = key === 'neste-fds' ? 'Esse FDS' : 'Próximos eventos';
+        sub = key === 'neste-fds' ? 'hoje → +4 dias' : 'hoje+4 → +40 dias';
+      }
+      if (titleEl) titleEl.textContent = title;
+      if (subEl) subEl.textContent = sub + ' · ' + plural(evs.length, 'evento');
+
+      if (lightboxFeed) { lightboxFeed.destroy(); lightboxFeed = null; }
+      listEl.innerHTML = '';
+      if (!evs.length) {
+        listEl.innerHTML = '<div class="pev-empty">Nenhum evento neste recorte</div>';
+      } else {
+        lightboxFeed = mountInfinite(listEl, evs, eventRowHTML, { pageSize: 8, stagger: 45, scrollRoot: listEl });
+      }
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      modal.dataset.railKey = key;
+    }
+
+    function closeRailLightbox() {
+      var modal = root.querySelector('#pevRailModal');
+      if (!modal) return;
+      if (lightboxFeed) { lightboxFeed.destroy(); lightboxFeed = null; }
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+      delete modal.dataset.railKey;
+    }
+
+    /* `dir` só existia para animar o rótulo do mês, que agora vive no
+       cabeçalho e anima sozinho (máscara GSAP no kernel do bloco). Mantido na
+       assinatura porque renderAll(delta) ainda é chamado assim de fora. */
+    function renderAll(dir) { // eslint-disable-line no-unused-vars
+      killFeeds();
+      renderTax();
+      renderDynamic();
+      renderHero();
+      renderRecent();
+      renderRails();
+    }
+
+    /* ── ABERTURA DO EVENTO ─────────────────────────────────────────────────
+       O cartão abre a PÁGINA COMPLETA do evento numa lightbox de viewport
+       inteiro, não um resumo. É o mesmo PHP que monta /evento/{slug} —
+       apollo_event_render_single() servido por
+       GET /apollo/v1/eventos/{id}/fragmento — então a lightbox e a página não
+       podem divergir: uma renderiza, a outra embute, mesmo markup.
+
+       O runtime disso é apollo-event-lightbox.js (ApolloEventLightbox), já
+       impresso nesta página por apollo_event_lightbox_boot() no
+       archive-event.php. Ele se liga sozinho a [data-ev-open] — o mesmo
+       atributo que os cartões agora carregam — então o clique de mouse nem
+       passa por aqui. Esta função existe pro TECLADO (Enter/Espaço, que a
+       lightbox não escuta) e pra qualquer chamada programática.
+
+       O .pev-modal antigo (resumo com capa + lineup + RSVP) fica como QUEDA:
+       se o bundle da lightbox não tiver carregado, o clique ainda abre algo
+       útil em vez de não fazer nada. */
+    function openModal(id) {
+      if (w.ApolloEventLightbox && typeof w.ApolloEventLightbox.open === 'function') {
+        w.ApolloEventLightbox.open(id);
+        return;
+      }
+      openQuickView(id);
+    }
+
+    function openQuickView(id) {
+      var ev = (w.getApolloEvent && w.getApolloEvent(id)) ||
+        (function () {
+          var list = w.APOLLO_EVENTS || [];
+          for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i];
+          return null;
+        })();
+      if (!ev) return;
+      var modal = root.querySelector('#pevModal');
+      var inner = root.querySelector('#pevModalInner');
+      if (!modal || !inner) return;
+      var r = radarOf(ev.id);
+      var vou = r && r.rsvp === 'vou';
+      var quero = r && r.rsvp === 'quero-ir';
+      var lineup = (ev.lineup || []).map(function (l) {
+        return '<li><span>' + esc(l.name) + '</span><small>' + esc(l.start || '') + (l.end ? '–' + esc(l.end) : '') + '</small></li>';
+      }).join('');
+      inner.innerHTML =
+        '<img class="pev-modal-cover" src="' + esc(ev.cover || '') + '" alt="">' +
+        '<div class="pev-modal-body">' +
+          '<h2 id="pevModalTitle">' + esc(ev.title) + '</h2>' +
+          '<p>' + esc(ev.about || '') + '</p>' +
+          '<div class="pev-modal-meta">' +
+            '<span><i class="ri-calendar-line"></i>' + esc(dateShort(ev.startDate)) + (ev.startTime ? ' · ' + esc(ev.startTime) : '') + '</span>' +
+            '<span><i class="ri-map-pin-2-line"></i>' + esc((ev.venue && ev.venue.name) || 'Local a anunciar') + '</span>' +
+            (ev.venue && ev.venue.address ? '<span><i class="ri-road-map-line"></i>' + esc(ev.venue.address) + '</span>' : '') +
+            '<span><i class="ri-ticket-2-line"></i>' + esc((P().ticketLabel && P().ticketLabel(ev.tickets)) || ev.tickets || '—') + '</span>' +
+          '</div>' +
+          (lineup ? '<ul class="pev-lineup">' + lineup + '</ul>' : '') +
+        '</div>' +
+        '<div class="pev-modal-actions">' +
+          '<button type="button" class="btn btn-sm ' + (vou ? 'btn-primary' : 'btn-secondary') + '" data-rsvp="vou" data-ev="' + esc(ev.id) + '">' + (vou ? 'Vou ✓' : 'Vou') + '</button>' +
+          '<button type="button" class="btn btn-sm ' + (quero ? 'btn-primary' : 'btn-secondary') + '" data-rsvp="quero-ir" data-ev="' + esc(ev.id) + '">' + (quero ? 'Quero ir ✓' : 'Quero ir') + '</button>' +
+          (ev.ticketsUrl ? '<a class="btn btn-sm btn-secondary" href="' + esc(ev.ticketsUrl) + '" target="_blank" rel="noopener">Ingressos</a>' : '') +
+        '</div>';
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      modal.dataset.openId = ev.id;
+    }
+
+    function closeModal() {
+      var modal = root.querySelector('#pevModal');
+      if (!modal) return;
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+      delete modal.dataset.openId;
+    }
+
+    function onClick(e) {
+      /* Chip "Busca · x": limpa a busca aqui e avisa o cabeçalho para esvaziar
+         o campo dele (header-bridge.php escuta apollo:pev:search-clear). */
+      if (e.target.closest('[data-pev-search-clear]')) {
+        setSearch('');
+        d.dispatchEvent(new CustomEvent('apollo:pev:search-clear'));
+        return;
+      }
+      var vtHost = e.target.closest('.pev-view-toggle');
+      if (vtHost) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleSectionView(vtHost.getAttribute('data-target'));
+        return;
+      }
+      var railAll = e.target.closest('[data-pev-rail-all]');
+      if (railAll) {
+        openRailLightbox(railAll.getAttribute('data-pev-rail-all') || 'prox-fds');
+        return;
+      }
+      if (e.target.closest('[data-pev-rail-close]')) { closeRailLightbox(); return; }
+      if (e.target.id === 'pevRailModal' || (e.target.classList && e.target.classList.contains('pev-rail-modal'))) {
+        closeRailLightbox();
+        return;
+      }
+      var taxBtn = e.target.closest('[data-pev-tax]');
+      if (taxBtn) {
+        state.tax = taxBtn.getAttribute('data-pev-tax');
+        killFeeds();
+        renderTax();
+        renderDynamic();
+        renderRails();
+        return;
+      }
+      if (e.target.closest('[data-pev-close]')) { closeModal(); return; }
+      if (e.target.classList && e.target.classList.contains('pev-modal') && !e.target.classList.contains('pev-rail-modal')) {
+        closeModal();
+        return;
+      }
+      var rsvp = e.target.closest('[data-rsvp]');
+      if (rsvp) {
+        setRsvp(rsvp.getAttribute('data-ev'), rsvp.getAttribute('data-rsvp'));
+        if (typeof w.toast === 'function') w.toast('Radar atualizado ✓');
+        var cnt = d.querySelector('[data-cnt="radar"]');
+        if (cnt) cnt.textContent = '(' + radar().length + ')';
+        /* openQuickView, não openModal: isto REPINTA o resumo que já está
+           aberto. openModal agora delega pra lightbox de página inteira, o que
+           aqui trocaria a tela do usuário por outra a cada clique de RSVP. */
+        var openId = root.querySelector('#pevModal') && root.querySelector('#pevModal').dataset.openId;
+        if (openId) openQuickView(openId);
+        else renderAll();
+        return;
+      }
+      /* bolinha do hero: navega o slide, NUNCA abre o evento —
+         por isso vem antes do handler genérico de abertura */
+      var dot = e.target.closest('[data-hero-dot]');
+      if (dot) {
+        e.preventDefault();
+        e.stopPropagation();
+        goHero(+dot.getAttribute('data-hero-dot') || 0);
+        return;
+      }
+
+      /* ── ABERTURA DE EVENTO ────────────────────────────────────────────────
+         Os cartões agora carregam [data-ev-open] + href real do permalink, que
+         é o CONTRATO DOCUMENTADO da lightbox. apollo-event-lightbox.js tem o
+         próprio listener delegado no document pra esse atributo, então o
+         caminho normal é: não fazer nada aqui e deixar ele agir.
+
+         Antes o portal inventava um atributo paralelo ([data-pev-open], href
+         "#") e abria por conta própria — era por isso que a tela do evento
+         nunca aparecia mesmo com a lightbox na página.
+
+         O bloco abaixo só existe pra QUANDO o runtime não carregou: aí sim
+         interceptamos e abrimos o resumo, senão o clique não faria nada. Com a
+         lightbox presente, saímos sem tocar no evento — sem preventDefault,
+         sem stopPropagation — pra que o listener dela receba o clique intacto
+         (e ctrl/middle-click continuem abrindo o permalink numa aba nova). */
+      var open = e.target.closest('[data-ev-open]');
+      if (open && open.getAttribute('data-ev-open')) {
+        if (w.ApolloEventLightbox && typeof w.ApolloEventLightbox.open === 'function') {
+          return; /* a lightbox cuida — inclusive do preventDefault */
+        }
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button) return;
+        e.preventDefault();
+        openQuickView(open.getAttribute('data-ev-open'));
+      }
+    }
+
+    /* v3: as setas laterais existiam só pra rolar o trilho horizontal.
+       Com tudo em grade, a navegação por teclado volta a ser a nativa
+       (Tab entre cartões) — só o Escape do modal continua sendo nosso. */
+    function onKey(e) {
+      if (e.key === 'Escape') {
+        var railModal = root && root.querySelector('#pevRailModal');
+        if (railModal && railModal.classList.contains('is-open')) {
+          closeRailLightbox();
+          return;
+        }
+        closeModal();
+      }
+    }
+
+    /* ── API PÚBLICA — o cabeçalho manda, o portal obedece ────────────────────
+       Estes três são o contrato inteiro entre apollo_listing_header() e esta
+       tela (ver header-bridge.php). Cada um é idempotente e cada um termina em
+       um render — nenhum deles assume que o outro já rodou. ─────────────────── */
+
+    /** @param {string} ym 'YYYY-MM'  @param {number} dir +1/-1/0 */
+    function setMonth(ym, dir) {
+      if (!ym || ym === state.ym) return;
+      state.ym = ym;
+      /* Um modo que não seja "mes" é um recorte relativo a hoje (Neste FDS,
+         Próximos…), então navegar para outro mês com ele ligado devolveria
+         sempre a mesma lista. Trocar de mês É escolher o modo "mes". */
+      if (state.mode !== 'mes') state.mode = 'mes';
+      state.tax = defaultTaxKey(state.ym);
+      renderAll(dir || 0);
+    }
+
+    /** @param {{mode?:string, tags?:string[], sounds?:string[]}} next */
+    function setFilters(next) {
+      next = next || {};
+      state.mode = next.mode || 'mes';
+      state.tags = (next.tags || []).slice();
+      state.sounds = (next.sounds || []).slice();
+      renderAll();
+    }
+
+    /** @param {string} q Termo cru; normalizado aqui, uma vez só. */
+    function setSearch(q) {
+      var next = String(q || '').trim().toLowerCase();
+      if (next === state.search) return;
+      state.search = next;
+      renderAll();
+    }
+
+    function init(host) {
+      if (!host) return;
+      root = host;
+      host.classList.add('pev-host');
+      var today = P().todayStart ? P().todayStart() : new Date();
+      state.ym = P().ymKey ? P().ymKey(today) : (today.getFullYear() + '-' + ((today.getMonth() + 1) < 10 ? '0' : '') + (today.getMonth() + 1));
+      state.mode = 'mes';
+      state.tax = defaultTaxKey(state.ym);
+      host.innerHTML = skeleton();
+      host.addEventListener('click', onClick);
+      host.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        if (e.target.closest && e.target.closest('[data-hero-dot]')) return; /* o click handler já cuida */
+        var vtHostKey = e.target.closest && e.target.closest('.pev-view-toggle');
+        if (vtHostKey) {
+          e.preventDefault();
+          toggleSectionView(vtHostKey.getAttribute('data-target'));
+          return;
+        }
+        /* Teclado: a lightbox só escuta 'click', então Enter/Espaço num cartão
+           precisam de openModal() explícito (que delega pra ela). */
+        var open = e.target.closest && e.target.closest('[data-ev-open]');
+        if (open && open.getAttribute('data-ev-open') && !e.target.closest('[data-rsvp]')) {
+          e.preventDefault();
+          openModal(open.getAttribute('data-ev-open'));
+        }
+      });
+      d.addEventListener('keydown', onKey);
+      d.addEventListener('apollo:radar-change', function () {
+        /* openQuickView: repinta o resumo aberto, não abre a lightbox. */
+        var modal = root.querySelector('#pevModal');
+        if (modal && modal.classList.contains('is-open') && modal.dataset.openId) openQuickView(modal.dataset.openId);
+      });
+      renderAll();
+    }
+
+    return {
+      init: init,
+      render: renderAll,
+      openModal: openModal,
+      closeModal: closeModal,
+      setMonth: setMonth,
+      setFilters: setFilters,
+      setSearch: setSearch,
+      getState: function () { return state; }
+    };
+  }
+
+  var api = AppPortalEventos();
+  w.AppPortalEventos = api;
+})(window, document);
+
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var host = document.getElementById('apollo-portal-root');
+  if (host && window.AppPortalEventos) window.AppPortalEventos.init(host);
+});
+</script>
+</body>
+</html>

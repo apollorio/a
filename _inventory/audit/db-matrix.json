@@ -1,0 +1,27 @@
+{
+  "generated": "2026-07-21",
+  "runtime_access": "NO WP-CLI / no direct $wpdb access in this session",
+  "verdict_scope": "All rows NOT_RUNTIME_VERIFIED except where a live REST GET on apollo.rio.br observed the shape (REST read proves the meta exists and is read-serialized, not the raw column).",
+  "rest_observed": [
+    {
+      "cpt": "event",
+      "sample": "id 25 (dismantle-2)",
+      "keys_confirmed_via_rest": ["_event_start_date","_event_end_date","_event_start_time","_event_end_time","_event_ticket_url","_event_video_url","_event_bg_color","_event_ticket_status","_event_privacy","_event_status","_event_access_buttons(access.tickets)"],
+      "value_shapes": "start_date=YYYY-MM-DD; times=HH:MM; ticket_url=abs url; bg_color=#hex; access=object{tickets[],coupon,listas[],listaCta}",
+      "source": "GET apollo/v1/eventos/25 → 200"
+    },
+    {
+      "cpt": "dj",
+      "sample": "id 40 (bernardo-campos)",
+      "keys_confirmed_via_rest": ["_dj_image","_dj_banner","_dj_bio_short","_dj_instagram","_dj_soundcloud","_dj_spotify","_dj_youtube","_dj_mixcloud"],
+      "value_shapes": "image/banner=abs url; social=string url; sounds=array",
+      "source": "GET apollo/v1/djs?per_page=1 → 200"
+    },
+    { "cpt": "local", "sample": "none fetched", "source": "NOT_RUNTIME_VERIFIED" }
+  ],
+  "naming_drift_flags": [
+    { "keys": ["_loc_gallery (apollo-events read)","_local_image_1..5 (apollo-loc single read)","_local_gallery (registry-listed)"], "note": "Three variants of loc imagery coexist across plugins. single-local.php reads _local_image_N + featured image; event create form reads _loc_gallery. NOT a fatal (each reader has a path) but a documented drift. No auto-migration performed." },
+    { "keys": ["_event_loc_id"], "note": "canonical event→local relation key; consistent" }
+  ],
+  "migration_performed": "NONE (discovery only; no destructive DB ops)"
+}

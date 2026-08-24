@@ -1,0 +1,3906 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-membership",
+    "owner": "apollo-membership",
+    "wrap": "plugins.apollo-membership",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-membership",
+  "namespace": "Apollo\\Membership",
+  "priority": 1,
+  "status": "IMPLEMENTED",
+  "description": "Gamification: achievements, badges, points, ranks. Membership badges (admin-only) + Points system (automatic triggers). Adapted from BadgeOS v3.7.0.",
+  "dependencies": [
+    "apollo-core",
+    "apollo-login",
+    "apollo-notif",
+    "apollo-statistics",
+    "apollo-users"
+  ],
+  "provides": [
+    "achievements",
+    "badges",
+    "points",
+    "ranks",
+    "triggers",
+    "rules-engine",
+    "membership-badges",
+    "open-badge-v2",
+    "leaderboard",
+    "gamification",
+    "steps-ui",
+    "bulk-award-tools"
+  ],
+  "NOTE": "_apollo_membership meta is defined in apollo-users plugin. This plugin adds gamification layer on top.",
+  "badgeos_source": "v3.7.0 (~20,000 lines PHP audited)",
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [
+    "apollo_achievements",
+    "apollo_points",
+    "apollo_ranks",
+    "apollo_steps",
+    "apollo_triggers"
+  ],
+  "meta": {
+    "post": {
+      "_achievement_hidden": {
+        "_source": "deep_scan"
+      },
+      "_achievement_maximum_earnings": {
+        "_source": "deep_scan"
+      },
+      "_achievement_point_type": {
+        "_source": "deep_scan"
+      },
+      "_achievement_points": {
+        "_source": "deep_scan"
+      },
+      "_achievement_points_required": {
+        "_source": "deep_scan"
+      },
+      "_achievement_restricted_to": {
+        "_source": "deep_scan"
+      },
+      "_achievement_trigger": {
+        "_source": "deep_scan"
+      },
+      "_achievement_type": {
+        "_source": "deep_scan"
+      },
+      "_open_badge_criteria": {
+        "_source": "deep_scan"
+      },
+      "_open_badge_enable_baking": {
+        "_source": "deep_scan"
+      },
+      "_rank_points_required": {
+        "_source": "deep_scan"
+      },
+      "_rank_priority": {
+        "_source": "deep_scan"
+      },
+      "_step_required_achievement_id": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {
+      "_apollo_achievement_count": {
+        "_source": "deep_scan"
+      },
+      "_apollo_current_rank_id": {
+        "_source": "deep_scan"
+      },
+      "_apollo_last_daily_visit": {
+        "_source": "deep_scan"
+      },
+      "_apollo_last_points_": {
+        "_source": "deep_scan"
+      },
+      "_apollo_last_seen": {
+        "_source": "deep_scan"
+      },
+      "_apollo_membership": {
+        "_source": "deep_scan"
+      },
+      "_apollo_online_minutes": {
+        "_source": "deep_scan"
+      },
+      "_apollo_points_total": {
+        "_source": "deep_scan"
+      }
+    },
+    "term": {}
+  },
+  "triggers": {
+    "wordpress": [
+      "apollo_wp_login",
+      "apollo_wp_login_x_days",
+      "apollo_wp_not_login",
+      "apollo_new_comment",
+      "apollo_new_post",
+      "apollo_visit_a_post",
+      "apollo_visit_a_page",
+      "user_register",
+      "apollo_daily_visit"
+    ],
+    "apollo": [
+      "apollo_points_on_birthday",
+      "apollo_event_created",
+      "apollo_event_attended",
+      "apollo_dj_connected",
+      "apollo_group_joined",
+      "apollo_wow_reaction_received",
+      "apollo_fav_added",
+      "apollo_profile_completed",
+      "apollo_quiz_passed",
+      "specific_achievement",
+      "any_achievement",
+      "all_achievements"
+    ]
+  },
+  "rest": [
+    {
+      "endpoint": "/achievements",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_achievements",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/AchievementsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/achievements/(?P<id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_achievement",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/AchievementsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/user-achievements",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "check_logged_in",
+      "permission_binding": "AchievementsController::check_logged_in",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_user_achievements",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/AchievementsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/membership/achievements/award",
+      "methods": [
+        "POST"
+      ],
+      "description": "Award achievement to user (admin only)",
+      "auth": "DYNAMIC_CAPABILITY",
+      "permission_risk": "REVIEW",
+      "permission_method": "check_admin",
+      "permission_binding": "AchievementsController::check_admin",
+      "permission_summary": "current_user_can() with dynamic cap",
+      "permission_capabilities": [
+        "(dynamic)"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can( apollo_membership_get_manager_capability() );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "award_achievement",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/AchievementsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/membership/achievements/revoke",
+      "methods": [
+        "POST"
+      ],
+      "description": "Revoke achievement from user (admin only)",
+      "auth": "DYNAMIC_CAPABILITY",
+      "permission_risk": "REVIEW",
+      "permission_method": "check_admin",
+      "permission_binding": "AchievementsController::check_admin",
+      "permission_summary": "current_user_can() with dynamic cap",
+      "permission_capabilities": [
+        "(dynamic)"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can( apollo_membership_get_manager_capability() );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "revoke_achievement",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/AchievementsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/membership/evidence/(?P<achievement_id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_evidence",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/AchievementsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/membership/verify/(?P<hash>[a-zA-Z0-9]+)",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "verify_badge",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/AchievementsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/leaderboard",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_leaderboard",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/LeaderboardController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/leaderboard/user/(?P<id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_user_position",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/LeaderboardController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/user-summary",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "check_logged_in",
+      "permission_binding": "LeaderboardController::check_logged_in",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_user_summary",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/LeaderboardController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/membership-badge",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_membership_badge",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/LeaderboardController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/membership-badge",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (DYNAMIC_CAPABILITY)",
+      "auth": "DYNAMIC_CAPABILITY",
+      "permission_risk": "REVIEW",
+      "permission_method": "check_admin",
+      "permission_binding": "LeaderboardController::check_admin",
+      "permission_summary": "current_user_can() with dynamic cap",
+      "permission_capabilities": [
+        "(dynamic)"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can( apollo_membership_get_manager_capability() );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "set_membership_badge",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/LeaderboardController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/points",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "check_logged_in",
+      "permission_binding": "PointsController::check_logged_in",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_points",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/PointsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/points/history",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "check_logged_in",
+      "permission_binding": "PointsController::check_logged_in",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_history",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/PointsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/points/award",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (DYNAMIC_CAPABILITY)",
+      "auth": "DYNAMIC_CAPABILITY",
+      "permission_risk": "REVIEW",
+      "permission_method": "check_admin",
+      "permission_binding": "PointsController::check_admin",
+      "permission_summary": "current_user_can() with dynamic cap",
+      "permission_capabilities": [
+        "(dynamic)"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can( apollo_membership_get_manager_capability() );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "award_points",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/PointsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/points/deduct",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (DYNAMIC_CAPABILITY)",
+      "auth": "DYNAMIC_CAPABILITY",
+      "permission_risk": "REVIEW",
+      "permission_method": "check_admin",
+      "permission_binding": "PointsController::check_admin",
+      "permission_summary": "current_user_can() with dynamic cap",
+      "permission_capabilities": [
+        "(dynamic)"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can( apollo_membership_get_manager_capability() );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "deduct_points",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/PointsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/points/reset",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (DYNAMIC_CAPABILITY)",
+      "auth": "DYNAMIC_CAPABILITY",
+      "permission_risk": "REVIEW",
+      "permission_method": "check_admin",
+      "permission_binding": "PointsController::check_admin",
+      "permission_summary": "current_user_can() with dynamic cap",
+      "permission_capabilities": [
+        "(dynamic)"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can( apollo_membership_get_manager_capability() );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "reset_points",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/PointsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/ranks",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_ranks",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/RanksController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/ranks/(?P<id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_rank",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/RanksController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/user-rank",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "check_logged_in",
+      "permission_binding": "RanksController::check_logged_in",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_user_rank",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/RanksController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/membership/ranks/award",
+      "methods": [
+        "POST"
+      ],
+      "description": "Award rank to user (admin only)",
+      "auth": "DYNAMIC_CAPABILITY",
+      "permission_risk": "REVIEW",
+      "permission_method": "check_admin",
+      "permission_binding": "RanksController::check_admin",
+      "permission_summary": "current_user_can() with dynamic cap",
+      "permission_capabilities": [
+        "(dynamic)"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can( apollo_membership_get_manager_capability() );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "award_rank",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/RanksController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/report",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "submit_report",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/ReportController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/membership/triggers",
+      "methods": [
+        "GET"
+      ],
+      "description": "List available triggers",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_triggers",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/TriggersController.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "pages": [
+    {
+      "slug": "conquistas",
+      "title": "Conquistas",
+      "template": "achievements.php",
+      "type": "virtual",
+      "description": "Achievement gallery with AJAX search, filter, grid/list view, Load More pagination"
+    },
+    {
+      "slug": "conquista/{slug}",
+      "title": "Conquista",
+      "template": "single-achievement.php",
+      "type": "virtual",
+      "description": "Single achievement detail page"
+    },
+    {
+      "slug": "minhas-conquistas",
+      "title": "Minhas Conquistas",
+      "template": "user-achievements.php",
+      "type": "virtual",
+      "auth": true,
+      "description": "User's earned achievements"
+    },
+    {
+      "slug": "pontos",
+      "title": "Pontos",
+      "template": "points.php",
+      "type": "virtual",
+      "description": "Points overview and history"
+    },
+    {
+      "slug": "niveis",
+      "title": "NÃ­veis",
+      "template": "ranks.php",
+      "type": "virtual",
+      "description": "Rank progression hierarchy"
+    },
+    {
+      "slug": "nivel/{slug}",
+      "title": "NÃ­vel",
+      "template": "single-rank.php",
+      "type": "virtual",
+      "description": "Single rank detail page"
+    },
+    {
+      "slug": "placar",
+      "title": "Placar",
+      "template": "leaderboard.php",
+      "type": "virtual",
+      "description": "Points leaderboard"
+    },
+    {
+      "slug": "evidencia/{hash}",
+      "title": "EvidÃªncia",
+      "template": "evidence.php",
+      "type": "virtual",
+      "description": "Open Badge v2 evidence verification page"
+    }
+  ],
+  "shortcodes": [
+    {
+      "tag": "apollo_achievement",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_achievements",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_evidence",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_leaderboard",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_points",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_rank",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_ranks",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_user_achievements",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_user_rank",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "widgets": [
+    {
+      "slug": "apollo_earned_achievements_widget",
+      "name": "Earned Achievements",
+      "description": "Points + Ranks + Achievements display"
+    },
+    {
+      "slug": "apollo_earned_points_widget",
+      "name": "Earned Points",
+      "description": "Points total display"
+    },
+    {
+      "slug": "apollo_earned_ranks_widget",
+      "name": "Earned Ranks",
+      "description": "Ranks display"
+    }
+  ],
+  "admin_tools": [
+    {
+      "name": "Achievement Tools",
+      "description": "Bulk award/revoke achievements to users"
+    },
+    {
+      "name": "Credit Tools",
+      "description": "Bulk award/revoke points to users"
+    },
+    {
+      "name": "Rank Tools",
+      "description": "Bulk award/revoke ranks to users"
+    },
+    {
+      "name": "Email Tools",
+      "description": "Configure achievement/rank/point email notifications"
+    },
+    {
+      "name": "System Tools",
+      "description": "Server info, PHP config, WP info, Apollo Membership info"
+    }
+  ],
+  "version": "1.0.3",
+  "ajax": {
+    "priv": [
+      "apollo_membership_recalc_achievements",
+      "apollo_membership_recalc_points",
+      "apollo_membership_recalc_ranks",
+      "apollo_membership_reset_triggers",
+      "apollo_membership_seed_defaults",
+      "heartbeat"
+    ],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [
+    "apollo/membership/achievement_awarded",
+    "apollo/membership/badge_assigned",
+    "apollo/membership/credit_added",
+    "apollo/membership/level_changed",
+    "apollo/membership/points_awarded",
+    "apollo/membership/points_deducted",
+    "apollo/membership/points_reset",
+    "apollo/membership/points_updated",
+    "apollo/membership/rank_awarded",
+    "apollo_achievement_object",
+    "apollo_activity_triggers",
+    "apollo_after_revoke_achievement",
+    "apollo_after_revoke_rank",
+    "apollo_award_achievement",
+    "apollo_award_points_to_user",
+    "apollo_award_rank",
+    "apollo_award_user_points",
+    "apollo_before_revoke_achievement",
+    "apollo_before_revoke_rank",
+    "apollo_daily_visit_internal",
+    "apollo_deduct_points_from_user",
+    "apollo_deduct_user_points",
+    "apollo_default_rank",
+    "apollo_membership_badge_assigned",
+    "apollo_membership_credit_added",
+    "apollo_point_award_triggers",
+    "apollo_point_deduct_triggers",
+    "apollo_rank_object",
+    "apollo_rank_triggers",
+    "apollo_should_check_rank",
+    "apollo_step_is_complete",
+    "apollo_trigger_processing",
+    "apollo_trigger_processing_complete",
+    "apollo_update_users_points",
+    "apollo_user_deserves_achievement",
+    "apollo_user_deserves_point_award",
+    "apollo_user_deserves_point_deduction",
+    "apollo_user_deserves_trigger",
+    "apollo_user_has_access_to_achievement",
+    "apollo_user_points_reset"
+  ],
+  "hooks_listened": [
+    "apollo_award_achievement",
+    "apollo_award_rank",
+    "apollo_award_user_points",
+    "apollo_deduct_points_from_user",
+    "apollo_deduct_user_points",
+    "apollo_membership_badge_assigned",
+    "apollo_membership_credit_added",
+    "apollo_update_users_points",
+    "apollo_user_points_reset"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [
+      "apollo-cdn",
+      "apollo-membership",
+      "apollo-membership-admin",
+      "jquery",
+      "jquery-ui-datepicker"
+    ],
+    "styles": [
+      "apollo-membership",
+      "apollo-membership-admin"
+    ]
+  },
+  "options": [
+    "apollo_membership_activated",
+    "apollo_membership_badge_types",
+    "apollo_membership_badge_types_seeded",
+    "apollo_membership_db_version",
+    "apollo_membership_settings",
+    "apollo_membership_trigger_points"
+  ],
+  "security": {
+    "risk_band": "HIGH",
+    "risk_score": 53,
+    "abspath_coverage_pct": 98,
+    "rest_open_routes": 11,
+    "rest_critical_write_public": 1,
+    "rest_open_non_intentional": 11,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 23,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 0.85
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_achievements",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_activity_triggers",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_content_reported",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_interaction_logged",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_interaction_logged_cooldown",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_load_activity_triggers",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_access",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_activated",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_admin",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_ajax_recalc_achievements",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_ajax_recalc_points",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_ajax_recalc_ranks",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_ajax_reset_triggers",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_ajax_seed_defaults",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_badge",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_badge_assigned",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_badge_types",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_badge_types_seeded",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_bp_profile_display",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_check_dependencies",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_credit_added",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_daily_check",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_daily_cleanup",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_db_version",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_front",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_init",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_installed",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_load_includes",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_load_shortcodes",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_load_widgets",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_log",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_profile_nonce",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_save_profile_",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_save_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_save_user_profile",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_trigger_cooldowns",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_trigger_points",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_user_profile_data",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_users_column_value",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_users_columns",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_version",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_weekly_recap",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_points",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_ranks",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_steps",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_triggers",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_update_users_points",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_wow_reaction_received",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_wp_login",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_wp_login_x_days",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_wp_not_login",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [],
+  "query_vars": [],
+  "php_surface": {
+    "files": 42,
+    "loc": 7989,
+    "classes": 12,
+    "functions": 110
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:50.761Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 138,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-membership",
+    "main_file": "apollo-membership.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Membership",
+      "plugin_uri": "https://apollo.rio.br/plugins/apollo-membership",
+      "description": "Gamification: achievements, badges, points, ranks. Membership badges (admin-only) + Points system (automatic triggers). Adapted from BadgeOS v3.7.0.",
+      "version": "1.0.3",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "Proprietary",
+      "text_domain": "apollo-membership",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": "false"
+    },
+    "composer": null,
+    "inventory": {
+      "by_extension": {
+        ".php": 42,
+        ".css": 2,
+        ".js": 2,
+        ".md": 1
+      },
+      "by_top_directory": {
+        "(root)": 4,
+        "assets": 4,
+        "includes": 27,
+        "src": 9,
+        "templates": 3
+      },
+      "total_bytes": 292621
+    },
+    "php": {
+      "files": 42,
+      "loc": 7989,
+      "classes": 12,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 110
+    },
+    "architecture": {
+      "namespace": "Apollo\\Membership",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Apollo_Earned_Achievements_Widget",
+          "fqcn": "Apollo_Earned_Achievements_Widget",
+          "extends": "WP_Widget",
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/widgets/class-earned-achievements-widget.php"
+        },
+        {
+          "kind": "class",
+          "name": "Apollo_Earned_Points_Widget",
+          "fqcn": "Apollo_Earned_Points_Widget",
+          "extends": "WP_Widget",
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/widgets/class-earned-points-widget.php"
+        },
+        {
+          "kind": "class",
+          "name": "Apollo_Earned_Ranks_Widget",
+          "fqcn": "Apollo_Earned_Ranks_Widget",
+          "extends": "WP_Widget",
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/widgets/class-earned-ranks-widget.php"
+        },
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Membership\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "AchievementsController",
+          "fqcn": "Apollo\\Membership\\API\\AchievementsController",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/AchievementsController.php"
+        },
+        {
+          "kind": "class",
+          "name": "LeaderboardController",
+          "fqcn": "Apollo\\Membership\\API\\LeaderboardController",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/LeaderboardController.php"
+        },
+        {
+          "kind": "class",
+          "name": "PointsController",
+          "fqcn": "Apollo\\Membership\\API\\PointsController",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/PointsController.php"
+        },
+        {
+          "kind": "class",
+          "name": "RanksController",
+          "fqcn": "Apollo\\Membership\\API\\RanksController",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/RanksController.php"
+        },
+        {
+          "kind": "class",
+          "name": "ReportController",
+          "fqcn": "Apollo\\Membership\\API\\ReportController",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/ReportController.php"
+        },
+        {
+          "kind": "class",
+          "name": "TriggersController",
+          "fqcn": "Apollo\\Membership\\API\\TriggersController",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/TriggersController.php"
+        },
+        {
+          "kind": "class",
+          "name": "Deactivation",
+          "fqcn": "Apollo\\Membership\\Deactivation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Deactivation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Membership\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_membership_check_dependencies",
+          "file": "apollo-membership.php"
+        },
+        {
+          "name": "apollo_membership_load_includes",
+          "file": "apollo-membership.php"
+        },
+        {
+          "name": "apollo_membership_init",
+          "file": "apollo-membership.php"
+        },
+        {
+          "name": "apollo_membership_pmpro_level_to_slugs",
+          "file": "bridge-pmpro.php"
+        },
+        {
+          "name": "apollo_get_user_achievements",
+          "file": "includes/achievement-functions.php"
+        },
+        {
+          "name": "apollo_award_achievement_to_user",
+          "file": "includes/achievement-functions.php"
+        },
+        {
+          "name": "apollo_revoke_achievement_from_user",
+          "file": "includes/achievement-functions.php"
+        },
+        {
+          "name": "apollo_build_achievement_object",
+          "file": "includes/achievement-functions.php"
+        },
+        {
+          "name": "apollo_achievement_user_exceeded_max_earnings",
+          "file": "includes/achievement-functions.php"
+        },
+        {
+          "name": "apollo_get_user_earned_achievement_ids",
+          "file": "includes/achievement-functions.php"
+        },
+        {
+          "name": "apollo_get_achievement_post_thumbnail",
+          "file": "includes/achievement-functions.php"
+        },
+        {
+          "name": "apollo_get_achievement_earners",
+          "file": "includes/achievement-functions.php"
+        },
+        {
+          "name": "apollo_membership_ajax_recalc_points",
+          "file": "includes/ajax-handlers.php"
+        },
+        {
+          "name": "apollo_membership_ajax_recalc_achievements",
+          "file": "includes/ajax-handlers.php"
+        },
+        {
+          "name": "apollo_membership_ajax_recalc_ranks",
+          "file": "includes/ajax-handlers.php"
+        },
+        {
+          "name": "apollo_membership_ajax_reset_triggers",
+          "file": "includes/ajax-handlers.php"
+        },
+        {
+          "name": "apollo_membership_ajax_seed_defaults",
+          "file": "includes/ajax-handlers.php"
+        },
+        {
+          "name": "apollo_membership_get_settings",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_membership_get_directory_path",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_membership_get_directory_url",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_membership_log",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_membership_normalize_storage",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_membership_get_user_badge",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_membership_get_user_slugs",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_membership_set_user_slugs",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_membership_set_user_badge",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_membership_get_badge_types",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_membership_get_badge_info",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_membership_render_badge",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_membership_get_ri_icon",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_membership_badge_html",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_user_badge_data",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_membership_get_manager_capability",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_membership_is_debug_mode",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_membership_default_datetime",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_membership_triggers_date_column",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_membership_get_points_by_type",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_membership_recalc_total_points",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_membership_add_credit",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_membership_revoke_credit",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_membership_award_credit",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_users_points",
+          "file": "includes/points/point-functions.php"
+        },
+        {
+          "name": "apollo_get_users_points_by_type",
+          "file": "includes/points/point-functions.php"
+        },
+        {
+          "name": "apollo_update_users_points",
+          "file": "includes/points/point-functions.php"
+        },
+        {
+          "name": "apollo_log_users_points",
+          "file": "includes/points/point-functions.php"
+        },
+        {
+          "name": "apollo_award_user_points",
+          "file": "includes/points/point-functions.php"
+        },
+        {
+          "name": "apollo_deduct_user_points",
+          "file": "includes/points/point-functions.php"
+        },
+        {
+          "name": "apollo_get_user_point_history",
+          "file": "includes/points/point-functions.php"
+        },
+        {
+          "name": "apollo_get_points_leaderboard",
+          "file": "includes/points/point-functions.php"
+        },
+        {
+          "name": "apollo_get_user_leaderboard_position",
+          "file": "includes/points/point-functions.php"
+        },
+        {
+          "name": "apollo_maybe_award_points_to_user",
+          "file": "includes/points/point-rules-engine.php"
+        },
+        {
+          "name": "apollo_maybe_deduct_points_from_user",
+          "file": "includes/points/point-rules-engine.php"
+        },
+        {
+          "name": "apollo_recalculate_all_user_points",
+          "file": "includes/points/point-rules-engine.php"
+        },
+        {
+          "name": "apollo_reset_user_points",
+          "file": "includes/points/point-rules-engine.php"
+        },
+        {
+          "name": "apollo_get_point_award_triggers",
+          "file": "includes/points/triggers.php"
+        },
+        {
+          "name": "apollo_get_point_deduct_triggers",
+          "file": "includes/points/triggers.php"
+        },
+        {
+          "name": "apollo_get_default_trigger_points",
+          "file": "includes/points/triggers.php"
+        },
+        {
+          "name": "apollo_seed_default_trigger_points",
+          "file": "includes/points/triggers.php"
+        },
+        {
+          "name": "apollo_track_user_online_time",
+          "file": "includes/points/triggers.php"
+        },
+        {
+          "name": "apollo_get_user_rank",
+          "file": "includes/ranks/rank-functions.php"
+        },
+        {
+          "name": "apollo_get_user_rank_id",
+          "file": "includes/ranks/rank-functions.php"
+        },
+        {
+          "name": "apollo_build_rank_object",
+          "file": "includes/ranks/rank-functions.php"
+        },
+        {
+          "name": "apollo_get_default_rank",
+          "file": "includes/ranks/rank-functions.php"
+        },
+        {
+          "name": "apollo_get_next_rank",
+          "file": "includes/ranks/rank-functions.php"
+        },
+        {
+          "name": "apollo_get_previous_rank",
+          "file": "includes/ranks/rank-functions.php"
+        },
+        {
+          "name": "apollo_get_all_ranks",
+          "file": "includes/ranks/rank-functions.php"
+        },
+        {
+          "name": "apollo_get_ranks_by_points",
+          "file": "includes/ranks/rank-functions.php"
+        },
+        {
+          "name": "apollo_award_rank_to_user",
+          "file": "includes/ranks/rank-functions.php"
+        },
+        {
+          "name": "apollo_revoke_rank_from_user",
+          "file": "includes/ranks/rank-functions.php"
+        },
+        {
+          "name": "apollo_check_rank_progression",
+          "file": "includes/ranks/rank-functions.php"
+        },
+        {
+          "name": "apollo_get_user_rank_history",
+          "file": "includes/ranks/rank-functions.php"
+        },
+        {
+          "name": "apollo_get_rank_triggers",
+          "file": "includes/ranks/triggers.php"
+        },
+        {
+          "name": "apollo_maybe_check_rank_for_trigger",
+          "file": "includes/ranks/triggers.php"
+        },
+        {
+          "name": "apollo_maybe_award_achievement_to_user",
+          "file": "includes/rules-engine.php"
+        },
+        {
+          "name": "apollo_check_achievement_completion_for_user",
+          "file": "includes/rules-engine.php"
+        },
+        {
+          "name": "apollo_get_required_steps_for_achievement",
+          "file": "includes/rules-engine.php"
+        },
+        {
+          "name": "apollo_check_step_completion_for_user",
+          "file": "includes/rules-engine.php"
+        },
+        {
+          "name": "apollo_user_has_access_to_achievement",
+          "file": "includes/rules-engine.php"
+        },
+        {
+          "name": "apollo_check_dependent_achievements",
+          "file": "includes/rules-engine.php"
+        },
+        {
+          "name": "apollo_recalculate_achievements_for_user",
+          "file": "includes/rules-engine.php"
+        },
+        {
+          "name": "apollo_shortcode_achievement_single",
+          "file": "includes/shortcodes/apollo-achievement-single.php"
+        },
+        {
+          "name": "apollo_shortcode_achievements_list",
+          "file": "includes/shortcodes/apollo-achievements-list.php"
+        },
+        {
+          "name": "apollo_shortcode_evidence",
+          "file": "includes/shortcodes/apollo-evidence.php"
+        },
+        {
+          "name": "apollo_shortcode_leaderboard",
+          "file": "includes/shortcodes/apollo-leaderboard.php"
+        },
+        {
+          "name": "apollo_shortcode_points",
+          "file": "includes/shortcodes/apollo-points.php"
+        },
+        {
+          "name": "apollo_shortcode_rank_single",
+          "file": "includes/shortcodes/apollo-rank-single.php"
+        },
+        {
+          "name": "apollo_shortcode_ranks",
+          "file": "includes/shortcodes/apollo-ranks.php"
+        },
+        {
+          "name": "apollo_shortcode_user_achievements",
+          "file": "includes/shortcodes/apollo-user-achievements.php"
+        },
+        {
+          "name": "apollo_shortcode_user_rank",
+          "file": "includes/shortcodes/apollo-user-rank.php"
+        },
+        {
+          "name": "apollo_membership_load_shortcodes",
+          "file": "includes/shortcodes.php"
+        },
+        {
+          "name": "apollo_get_activity_triggers",
+          "file": "includes/triggers.php"
+        },
+        {
+          "name": "apollo_load_activity_triggers",
+          "file": "includes/triggers.php"
+        },
+        {
+          "name": "apollo_trigger_event",
+          "file": "includes/triggers.php"
+        },
+        {
+          "name": "apollo_trigger_get_user_id",
+          "file": "includes/triggers.php"
+        },
+        {
+          "name": "apollo_update_user_trigger_count",
+          "file": "includes/triggers.php"
+        },
+        {
+          "name": "apollo_get_user_trigger_count",
+          "file": "includes/triggers.php"
+        },
+        {
+          "name": "apollo_reset_user_trigger_count",
+          "file": "includes/triggers.php"
+        },
+        {
+          "name": "apollo_handle_daily_visit_trigger",
+          "file": "includes/triggers.php"
+        },
+        {
+          "name": "apollo_trigger_event_for_user",
+          "file": "includes/triggers.php"
+        },
+        {
+          "name": "apollo_maybe_award_points_for_trigger",
+          "file": "includes/triggers.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 23,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/achievements",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_achievements",
+          "file": "src/API/AchievementsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/achievements/(?P<id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_achievement",
+          "file": "src/API/AchievementsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/user-achievements",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "check_logged_in",
+            "target": "AchievementsController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "AchievementsController::check_logged_in",
+              "method_file": "src/API/AchievementsController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_user_achievements",
+          "file": "src/API/AchievementsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/membership/achievements/award",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "DYNAMIC_CAPABILITY",
+            "risk": "REVIEW",
+            "method": "check_admin",
+            "target": "AchievementsController",
+            "analysis": {
+              "effective_class": "DYNAMIC_CAPABILITY",
+              "risk": "REVIEW",
+              "summary": "current_user_can() with dynamic cap",
+              "capabilities": [
+                "(dynamic)"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can( apollo_membership_get_manager_capability() )"
+                ]
+              },
+              "body_preview": "return current_user_can( apollo_membership_get_manager_capability() );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "AchievementsController::check_admin",
+              "method_file": "src/API/AchievementsController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "award_achievement",
+          "file": "src/API/AchievementsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/membership/achievements/revoke",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "DYNAMIC_CAPABILITY",
+            "risk": "REVIEW",
+            "method": "check_admin",
+            "target": "AchievementsController",
+            "analysis": {
+              "effective_class": "DYNAMIC_CAPABILITY",
+              "risk": "REVIEW",
+              "summary": "current_user_can() with dynamic cap",
+              "capabilities": [
+                "(dynamic)"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can( apollo_membership_get_manager_capability() )"
+                ]
+              },
+              "body_preview": "return current_user_can( apollo_membership_get_manager_capability() );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "AchievementsController::check_admin",
+              "method_file": "src/API/AchievementsController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "revoke_achievement",
+          "file": "src/API/AchievementsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/membership/evidence/(?P<achievement_id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_evidence",
+          "file": "src/API/AchievementsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/membership/verify/(?P<hash>[a-zA-Z0-9]+)",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "verify_badge",
+          "file": "src/API/AchievementsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/leaderboard",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_leaderboard",
+          "file": "src/API/LeaderboardController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/leaderboard/user/(?P<id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_user_position",
+          "file": "src/API/LeaderboardController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/user-summary",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "check_logged_in",
+            "target": "LeaderboardController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "LeaderboardController::check_logged_in",
+              "method_file": "src/API/LeaderboardController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_user_summary",
+          "file": "src/API/LeaderboardController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/membership-badge",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_membership_badge",
+          "file": "src/API/LeaderboardController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/membership-badge",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "DYNAMIC_CAPABILITY",
+            "risk": "REVIEW",
+            "method": "check_admin",
+            "target": "LeaderboardController",
+            "analysis": {
+              "effective_class": "DYNAMIC_CAPABILITY",
+              "risk": "REVIEW",
+              "summary": "current_user_can() with dynamic cap",
+              "capabilities": [
+                "(dynamic)"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can( apollo_membership_get_manager_capability() )"
+                ]
+              },
+              "body_preview": "return current_user_can( apollo_membership_get_manager_capability() );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "LeaderboardController::check_admin",
+              "method_file": "src/API/LeaderboardController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "set_membership_badge",
+          "file": "src/API/LeaderboardController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/points",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "check_logged_in",
+            "target": "PointsController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "PointsController::check_logged_in",
+              "method_file": "src/API/PointsController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_points",
+          "file": "src/API/PointsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/points/history",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "check_logged_in",
+            "target": "PointsController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "PointsController::check_logged_in",
+              "method_file": "src/API/PointsController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_history",
+          "file": "src/API/PointsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/points/award",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "DYNAMIC_CAPABILITY",
+            "risk": "REVIEW",
+            "method": "check_admin",
+            "target": "PointsController",
+            "analysis": {
+              "effective_class": "DYNAMIC_CAPABILITY",
+              "risk": "REVIEW",
+              "summary": "current_user_can() with dynamic cap",
+              "capabilities": [
+                "(dynamic)"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can( apollo_membership_get_manager_capability() )"
+                ]
+              },
+              "body_preview": "return current_user_can( apollo_membership_get_manager_capability() );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "PointsController::check_admin",
+              "method_file": "src/API/PointsController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "award_points",
+          "file": "src/API/PointsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/points/deduct",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "DYNAMIC_CAPABILITY",
+            "risk": "REVIEW",
+            "method": "check_admin",
+            "target": "PointsController",
+            "analysis": {
+              "effective_class": "DYNAMIC_CAPABILITY",
+              "risk": "REVIEW",
+              "summary": "current_user_can() with dynamic cap",
+              "capabilities": [
+                "(dynamic)"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can( apollo_membership_get_manager_capability() )"
+                ]
+              },
+              "body_preview": "return current_user_can( apollo_membership_get_manager_capability() );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "PointsController::check_admin",
+              "method_file": "src/API/PointsController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "deduct_points",
+          "file": "src/API/PointsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/points/reset",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "DYNAMIC_CAPABILITY",
+            "risk": "REVIEW",
+            "method": "check_admin",
+            "target": "PointsController",
+            "analysis": {
+              "effective_class": "DYNAMIC_CAPABILITY",
+              "risk": "REVIEW",
+              "summary": "current_user_can() with dynamic cap",
+              "capabilities": [
+                "(dynamic)"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can( apollo_membership_get_manager_capability() )"
+                ]
+              },
+              "body_preview": "return current_user_can( apollo_membership_get_manager_capability() );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "PointsController::check_admin",
+              "method_file": "src/API/PointsController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "reset_points",
+          "file": "src/API/PointsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/ranks",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_ranks",
+          "file": "src/API/RanksController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/ranks/(?P<id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_rank",
+          "file": "src/API/RanksController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/user-rank",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "check_logged_in",
+            "target": "RanksController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "RanksController::check_logged_in",
+              "method_file": "src/API/RanksController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_user_rank",
+          "file": "src/API/RanksController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/membership/ranks/award",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "DYNAMIC_CAPABILITY",
+            "risk": "REVIEW",
+            "method": "check_admin",
+            "target": "RanksController",
+            "analysis": {
+              "effective_class": "DYNAMIC_CAPABILITY",
+              "risk": "REVIEW",
+              "summary": "current_user_can() with dynamic cap",
+              "capabilities": [
+                "(dynamic)"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can( apollo_membership_get_manager_capability() )"
+                ]
+              },
+              "body_preview": "return current_user_can( apollo_membership_get_manager_capability() );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "RanksController::check_admin",
+              "method_file": "src/API/RanksController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "award_rank",
+          "file": "src/API/RanksController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/report",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "submit_report",
+          "file": "src/API/ReportController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/membership/triggers",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_triggers",
+          "file": "src/API/TriggersController.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 1,
+        "HIGH": 10,
+        "MEDIUM": 5,
+        "LOW": 0,
+        "REVIEW": 7
+      },
+      "effective_class_counts": {
+        "PUBLIC_UNAUTHENTICATED": 11,
+        "LOGGED_IN_ONLY": 5,
+        "DYNAMIC_CAPABILITY": 7
+      },
+      "permission_body_resolved": 23,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 1,
+      "open_routes": [
+        {
+          "endpoint": "/achievements",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/AchievementsController.php"
+        },
+        {
+          "endpoint": "/achievements/(?P<id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/AchievementsController.php"
+        },
+        {
+          "endpoint": "/membership/evidence/(?P<achievement_id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/AchievementsController.php"
+        },
+        {
+          "endpoint": "/membership/verify/(?P<hash>[a-zA-Z0-9]+)",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/AchievementsController.php"
+        },
+        {
+          "endpoint": "/leaderboard",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/LeaderboardController.php"
+        },
+        {
+          "endpoint": "/leaderboard/user/(?P<id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/LeaderboardController.php"
+        },
+        {
+          "endpoint": "/membership-badge",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/LeaderboardController.php"
+        },
+        {
+          "endpoint": "/ranks",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/RanksController.php"
+        },
+        {
+          "endpoint": "/ranks/(?P<id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/RanksController.php"
+        },
+        {
+          "endpoint": "/report",
+          "methods": [
+            "POST"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/ReportController.php"
+        },
+        {
+          "endpoint": "/membership/triggers",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/TriggersController.php"
+        }
+      ],
+      "admin_cap_routes": [],
+      "logged_in_routes": [
+        "/user-achievements",
+        "/user-summary",
+        "/points",
+        "/points/history",
+        "/user-rank"
+      ]
+    },
+    "database": {
+      "tables_owned_or_defined": [
+        "apollo_achievements",
+        "apollo_points",
+        "apollo_ranks",
+        "apollo_steps",
+        "apollo_triggers"
+      ],
+      "tables_referenced": [
+        "apollo_achievements",
+        "apollo_activity_triggers",
+        "apollo_content_reported",
+        "apollo_interaction_logged",
+        "apollo_interaction_logged_cooldown",
+        "apollo_load_activity_triggers",
+        "apollo_membership_access",
+        "apollo_membership_activated",
+        "apollo_membership_admin",
+        "apollo_membership_ajax_recalc_achievements",
+        "apollo_membership_ajax_recalc_points",
+        "apollo_membership_ajax_recalc_ranks",
+        "apollo_membership_ajax_reset_triggers",
+        "apollo_membership_ajax_seed_defaults",
+        "apollo_membership_badge",
+        "apollo_membership_badge_assigned",
+        "apollo_membership_badge_types",
+        "apollo_membership_badge_types_seeded",
+        "apollo_membership_bp_profile_display",
+        "apollo_membership_check_dependencies",
+        "apollo_membership_credit_added",
+        "apollo_membership_daily_check",
+        "apollo_membership_daily_cleanup",
+        "apollo_membership_db_version",
+        "apollo_membership_front",
+        "apollo_membership_init",
+        "apollo_membership_installed",
+        "apollo_membership_load_includes",
+        "apollo_membership_load_shortcodes",
+        "apollo_membership_load_widgets",
+        "apollo_membership_log",
+        "apollo_membership_profile_nonce",
+        "apollo_membership_save_profile_",
+        "apollo_membership_save_settings",
+        "apollo_membership_save_user_profile",
+        "apollo_membership_settings",
+        "apollo_membership_trigger_cooldowns",
+        "apollo_membership_trigger_points",
+        "apollo_membership_user_profile_data",
+        "apollo_membership_users_column_value",
+        "apollo_membership_users_columns",
+        "apollo_membership_version",
+        "apollo_membership_weekly_recap",
+        "apollo_points",
+        "apollo_ranks",
+        "apollo_steps",
+        "apollo_triggers",
+        "apollo_update_users_points",
+        "apollo_wow_reaction_received",
+        "apollo_wp_login",
+        "apollo_wp_login_x_days",
+        "apollo_wp_not_login"
+      ],
+      "tables_for_registry": [
+        "apollo_achievements",
+        "apollo_points",
+        "apollo_ranks",
+        "apollo_steps",
+        "apollo_triggers"
+      ],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_achievements",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_activity_triggers",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_content_reported",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_interaction_logged",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_interaction_logged_cooldown",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_load_activity_triggers",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_access",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_activated",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_admin",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_ajax_recalc_achievements",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_ajax_recalc_points",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_ajax_recalc_ranks",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_ajax_reset_triggers",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_ajax_seed_defaults",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_badge",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_badge_assigned",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_badge_types",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_badge_types_seeded",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_bp_profile_display",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_check_dependencies",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_credit_added",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_daily_check",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_daily_cleanup",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_db_version",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_front",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_init",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_installed",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_load_includes",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_load_shortcodes",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_load_widgets",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_log",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_profile_nonce",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_save_profile_",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_save_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_save_user_profile",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_trigger_cooldowns",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_trigger_points",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_user_profile_data",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_users_column_value",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_users_columns",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_version",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_weekly_recap",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_points",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_ranks",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_steps",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_triggers",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_update_users_points",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_wow_reaction_received",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_wp_login",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_wp_login_x_days",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_wp_not_login",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 13,
+      "user_count": 8,
+      "term_count": 0,
+      "post_keys": [
+        "_achievement_hidden",
+        "_achievement_maximum_earnings",
+        "_achievement_point_type",
+        "_achievement_points",
+        "_achievement_points_required",
+        "_achievement_restricted_to",
+        "_achievement_trigger",
+        "_achievement_type",
+        "_open_badge_criteria",
+        "_open_badge_enable_baking",
+        "_rank_points_required",
+        "_rank_priority",
+        "_step_required_achievement_id"
+      ],
+      "user_keys": [
+        "_apollo_achievement_count",
+        "_apollo_current_rank_id",
+        "_apollo_last_daily_visit",
+        "_apollo_last_points_",
+        "_apollo_last_seen",
+        "_apollo_membership",
+        "_apollo_online_minutes",
+        "_apollo_points_total"
+      ],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [],
+      "query_vars": [],
+      "pages_derived": []
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 43,
+      "listened_count": 34,
+      "apollo_fired": [
+        "apollo/membership/achievement_awarded",
+        "apollo/membership/badge_assigned",
+        "apollo/membership/credit_added",
+        "apollo/membership/level_changed",
+        "apollo/membership/points_awarded",
+        "apollo/membership/points_deducted",
+        "apollo/membership/points_reset",
+        "apollo/membership/points_updated",
+        "apollo/membership/rank_awarded",
+        "apollo_achievement_object",
+        "apollo_activity_triggers",
+        "apollo_after_revoke_achievement",
+        "apollo_after_revoke_rank",
+        "apollo_award_achievement",
+        "apollo_award_points_to_user",
+        "apollo_award_rank",
+        "apollo_award_user_points",
+        "apollo_before_revoke_achievement",
+        "apollo_before_revoke_rank",
+        "apollo_daily_visit_internal",
+        "apollo_deduct_points_from_user",
+        "apollo_deduct_user_points",
+        "apollo_default_rank",
+        "apollo_membership_badge_assigned",
+        "apollo_membership_credit_added",
+        "apollo_point_award_triggers",
+        "apollo_point_deduct_triggers",
+        "apollo_rank_object",
+        "apollo_rank_triggers",
+        "apollo_should_check_rank",
+        "apollo_step_is_complete",
+        "apollo_trigger_processing",
+        "apollo_trigger_processing_complete",
+        "apollo_update_users_points",
+        "apollo_user_deserves_achievement",
+        "apollo_user_deserves_point_award",
+        "apollo_user_deserves_point_deduction",
+        "apollo_user_deserves_trigger",
+        "apollo_user_has_access_to_achievement",
+        "apollo_user_points_reset"
+      ],
+      "apollo_listened": [
+        "apollo_award_achievement",
+        "apollo_award_rank",
+        "apollo_award_user_points",
+        "apollo_deduct_points_from_user",
+        "apollo_deduct_user_points",
+        "apollo_membership_badge_assigned",
+        "apollo_membership_credit_added",
+        "apollo_update_users_points",
+        "apollo_user_points_reset"
+      ],
+      "critical_wp_listened": [
+        "admin_init",
+        "admin_menu",
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "wp_enqueue_scripts"
+      ]
+    },
+    "ajax": {
+      "priv": [
+        "apollo_membership_recalc_achievements",
+        "apollo_membership_recalc_points",
+        "apollo_membership_recalc_ranks",
+        "apollo_membership_reset_triggers",
+        "apollo_membership_seed_defaults",
+        "heartbeat"
+      ],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [
+      "apollo_achievement",
+      "apollo_achievements",
+      "apollo_evidence",
+      "apollo_leaderboard",
+      "apollo_points",
+      "apollo_rank",
+      "apollo_ranks",
+      "apollo_user_achievements",
+      "apollo_user_rank"
+    ],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [
+        "apollo-cdn",
+        "apollo-membership",
+        "apollo-membership-admin",
+        "jquery",
+        "jquery-ui-datepicker"
+      ],
+      "styles": [
+        "apollo-membership",
+        "apollo-membership-admin"
+      ]
+    },
+    "options": [
+      "apollo_membership_activated",
+      "apollo_membership_badge_types",
+      "apollo_membership_badge_types_seeded",
+      "apollo_membership_db_version",
+      "apollo_membership_settings",
+      "apollo_membership_trigger_points"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_MEMBERSHIP_VERSION",
+        "value": "1.0.3"
+      },
+      {
+        "name": "APOLLO_MEMBERSHIP_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_MEMBERSHIP_DIR",
+        "value": "plugin_dir_path(__FILE__"
+      },
+      {
+        "name": "APOLLO_MEMBERSHIP_URL",
+        "value": "plugin_dir_url(__FILE__"
+      },
+      {
+        "name": "APOLLO_MEMBERSHIP_BASENAME",
+        "value": "plugin_basename(__FILE__"
+      },
+      {
+        "name": "APOLLO_MEMBERSHIP_REST_NAMESPACE",
+        "value": "apollo/v1"
+      },
+      {
+        "name": "APOLLO_TABLE_ACHIEVEMENTS",
+        "value": "apollo_achievements"
+      },
+      {
+        "name": "APOLLO_TABLE_POINTS",
+        "value": "apollo_points"
+      },
+      {
+        "name": "APOLLO_TABLE_RANKS",
+        "value": "apollo_ranks"
+      },
+      {
+        "name": "APOLLO_TABLE_TRIGGERS",
+        "value": "apollo_triggers"
+      },
+      {
+        "name": "APOLLO_TABLE_STEPS",
+        "value": "apollo_steps"
+      },
+      {
+        "name": "APOLLO_TABLE_MEMBERSHIP_LOG",
+        "value": "apollo_membership_log"
+      },
+      {
+        "name": "APOLLO_MEMBERSHIP_BADGE_TYPES",
+        "value": "array(\n\t\t'nao-verificado' => array(\n\t\t\t'label'    "
+      },
+      {
+        "name": "APOLLO_MEMBERSHIP_DEFAULT_POINT_IMAGE",
+        "value": "APOLLO_MEMBERSHIP_URL . 'assets/img/point-default."
+      },
+      {
+        "name": "APOLLO_MEMBERSHIP_DEFAULT_BADGE_IMAGE",
+        "value": "APOLLO_MEMBERSHIP_URL . 'assets/img/badge-default."
+      },
+      {
+        "name": "APOLLO_MEMBERSHIP_DEFAULT_RANK_IMAGE",
+        "value": "APOLLO_MEMBERSHIP_URL . 'assets/img/rank-default.p"
+      }
+    ],
+    "security": {
+      "php_files": 42,
+      "abspath_guard_files": 41,
+      "abspath_coverage_pct": 98,
+      "wpdb_prepare_calls": 39,
+      "wpdb_query_calls": 46,
+      "prepare_to_query_ratio": 0.85,
+      "nonce_checks": 16,
+      "current_user_can_calls": 15,
+      "raw_superglobal": {
+        "get": 4,
+        "post": 19,
+        "request": 0
+      },
+      "permission_callback_return_true": 11,
+      "escape_helpers": 142,
+      "echo_statements": 174,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 53,
+      "risk_band": "HIGH",
+      "rest_permission_critical": 1,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 10,
+      "rest_open_critical": 1,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 11
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core",
+        "apollo-login",
+        "apollo-notif",
+        "apollo-statistics",
+        "apollo-users"
+      ],
+      "signals": [
+        "apollo-core",
+        "apollo-login",
+        "apollo-statistics",
+        "apollo-users"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.0.3",
+      "version_changed": false,
+      "old_rest": 21,
+      "live_rest": 23,
+      "old_pages": 8,
+      "live_pages": 0,
+      "new_plugin": false
+    }
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 42,
+    "php_loc": 7947,
+    "rest_routes_found": 22,
+    "cpts_found": [],
+    "tables_found": [
+      "apollo_achievements",
+      "apollo_membership_log",
+      "apollo_points",
+      "apollo_ranks",
+      "apollo_steps",
+      "apollo_triggers"
+    ],
+    "shortcodes_found": [
+      "apollo_achievement",
+      "apollo_achievements",
+      "apollo_evidence",
+      "apollo_leaderboard",
+      "apollo_points",
+      "apollo_rank",
+      "apollo_ranks",
+      "apollo_user_achievements",
+      "apollo_user_rank"
+    ]
+  }
+}

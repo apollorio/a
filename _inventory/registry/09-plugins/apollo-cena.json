@@ -1,0 +1,124 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-cena",
+    "owner": "apollo-cena",
+    "wrap": "plugins.apollo-cena",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-cena",
+  "namespace": "Apollo\\Cena",
+  "priority": 5,
+  "status": "LOCKED_NEXT_VERSION",
+  "release_block": true,
+  "reason": "deferred implementation",
+  "description": "Cena/Industry: Hidden industry area. Calendar, save-the-dates, industry organizing",
+  "dependencies": [
+    "apollo-core",
+    "apollo-users"
+  ],
+  "provides": [
+    "industry-calendar",
+    "save-the-dates",
+    "industry-tools"
+  ],
+  "access": "industry-only",
+  "FORBIDDEN": [
+    "cult"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [
+    "apollo_industry_calendar"
+  ],
+  "meta": {
+    "user": {
+      "_apollo_cena_access": {
+        "type": "bool",
+        "description": "Has industry access"
+      },
+      "_apollo_cena_role": {
+        "type": "string",
+        "values": [
+          "member",
+          "verified",
+          "admin"
+        ]
+      }
+    }
+  },
+  "rest": [
+    {
+      "endpoint": "/cena/calendar",
+      "methods": [
+        "GET"
+      ],
+      "description": "Industry calendar",
+      "auth": "industry"
+    },
+    {
+      "endpoint": "/cena/calendar/save-date",
+      "methods": [
+        "POST"
+      ],
+      "description": "Save the date",
+      "auth": "industry"
+    },
+    {
+      "endpoint": "/cena/calendar/{id}",
+      "methods": [
+        "PUT",
+        "DELETE"
+      ],
+      "description": "Update/Delete date",
+      "auth": "industry"
+    },
+    {
+      "endpoint": "/cena/members",
+      "methods": [
+        "GET"
+      ],
+      "description": "Industry members",
+      "auth": "industry"
+    },
+    {
+      "endpoint": "/cena/access/request",
+      "methods": [
+        "POST"
+      ],
+      "description": "Request access",
+      "auth": true
+    }
+  ],
+  "pages": [
+    {
+      "slug": "cena",
+      "title": "Cena",
+      "template": "cena.php",
+      "type": "virtual",
+      "access": "industry-only"
+    },
+    {
+      "slug": "cena/calendario",
+      "title": "CalendÃ¡rio Industry",
+      "template": "cena-calendar.php",
+      "type": "virtual",
+      "access": "industry-only"
+    },
+    {
+      "slug": "cena/membros",
+      "title": "Membros",
+      "template": "cena-members.php",
+      "type": "virtual",
+      "access": "industry-only"
+    }
+  ],
+  "shortcodes": [
+    {
+      "tag": "apollo_cena_calendar",
+      "description": "Industry calendar (industry only)"
+    }
+  ],
+  "$disk_status": "ABSENT",
+  "$disk_note": "No folder at plugins/apollo-cena on 2026-07-28. Entry PRESERVED (not deleted) — either planned/not-yet-built or removed. Resolve before treating as live."
+}

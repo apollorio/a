@@ -1,0 +1,182 @@
+{
+  "plugin": "apollo-journal",
+  "version": "1.0.0",
+  "layer": "L5",
+  "description": "Magazine & editorial platform — news grid, NREP auto-codes, custom taxonomies, shortcodes, REST API, mobile-first layouts.",
+  "namespace": "Apollo\\Journal",
+  "provides": [
+    "journal",
+    "news-grid",
+    "nrep-auto-coding",
+    "editorial-taxonomies",
+    "magazine-layout"
+  ],
+  "cpts": [],
+  "taxonomies": [
+    {
+      "slug": "music",
+      "name": "Música",
+      "hierarchical": true,
+      "post_types": ["post"],
+      "show_in_rest": true
+    },
+    {
+      "slug": "culture",
+      "name": "Cultura",
+      "hierarchical": true,
+      "post_types": ["post"],
+      "show_in_rest": true
+    },
+    {
+      "slug": "rio",
+      "name": "Rio",
+      "hierarchical": true,
+      "post_types": ["post"],
+      "show_in_rest": true
+    },
+    {
+      "slug": "formato",
+      "name": "Formato",
+      "hierarchical": true,
+      "post_types": ["post"],
+      "show_in_rest": true
+    }
+  ],
+  "meta_keys": {
+    "_nrep_code": {
+      "type": "string",
+      "description": "NREP code (e.g., NREP.2026-001)",
+      "post_type": "post"
+    },
+    "_nrep_year": {
+      "type": "string",
+      "description": "Year of the NREP code",
+      "post_type": "post"
+    },
+    "_nrep_seq": {
+      "type": "int",
+      "description": "Sequential number within year",
+      "post_type": "post"
+    }
+  },
+  "rest_endpoints": [
+    {
+      "endpoint": "/journal/posts",
+      "methods": ["GET"],
+      "auth": false,
+      "description": "Paginated journal posts for load-more",
+      "params": ["page", "per_page", "category", "taxonomy", "term"]
+    }
+  ],
+  "shortcodes": [
+    {
+      "tag": "apollo_journal",
+      "description": "News grid widget — configurable count, category, columns, loadmore",
+      "atts": ["count", "category", "taxonomy", "term", "columns", "offset", "orderby", "loadmore"]
+    },
+    {
+      "tag": "apollo_journal_marquee",
+      "description": "Horizontal scrolling news ticker",
+      "atts": ["count", "category", "speed", "pausable"]
+    },
+    {
+      "tag": "apollo_journal_card",
+      "description": "Single article card embed by ID or latest from category",
+      "atts": ["id", "category", "style"]
+    }
+  ],
+  "hooks_fired": [
+    "apollo/journal/initialized",
+    "apollo/journal/nrep_assigned"
+  ],
+  "hooks_listened": [
+    "transition_post_status",
+    "apollo/core/initialized"
+  ],
+  "plugins": [
+    "apollo-core",
+    "apollo-login",
+    "apollo-users",
+    "apollo-membership",
+    "apollo-events",
+    "apollo-djs",
+    "apollo-loc",
+    "apollo-classifieds",
+    "apollo-social",
+    "apollo-groups",
+    "apollo-wow",
+    "apollo-fav",
+    "apollo-comment",
+    "apollo-notif",
+    "apollo-email",
+    "apollo-chat",
+    "apollo-shortcodes",
+    "apollo-templates",
+    "apollo-dashboard",
+    "apollo-hub",
+    "apollo-admin",
+    "apollo-mod",
+    "apollo-coauthor",
+    "apollo-statistics",
+    "apollo-docs",
+    "apollo-sign",
+    "apollo-seo",
+    "apollo-sheets",
+    "apollo-adverts",
+    "apollo-gestor"
+  ],
+  "integrations": [
+    {
+      "plugin": "apollo-social",
+      "type": "hook",
+      "description": "NREP posts appear in social feed"
+    },
+    {
+      "plugin": "apollo-notif",
+      "type": "hook",
+      "description": "Notification on new NREP publication"
+    },
+    {
+      "plugin": "apollo-templates",
+      "type": "template-part",
+      "description": "news-grid.php can replace mural/news.php"
+    },
+    {
+      "plugin": "apollo-fav",
+      "type": "hook",
+      "description": "Journal posts can be favorited"
+    },
+    {
+      "plugin": "apollo-comment",
+      "type": "hook",
+      "description": "Depoimentos on journal posts"
+    },
+    {
+      "plugin": "apollo-wow",
+      "type": "hook",
+      "description": "Wow reactions on journal posts"
+    }
+  ],
+  "settings": {
+    "aj_nrep_prefix": {
+      "type": "string",
+      "default": "NREP.",
+      "description": "Prefix for NREP codes"
+    },
+    "aj_nrep_format": {
+      "type": "string",
+      "default": "%prefix%%year%-%seq%",
+      "description": "Format pattern for NREP codes"
+    }
+  },
+  "activation_terms": {
+    "category": [
+      { "slug": "nota-de-repudio", "name": "Nota de Repúdio" },
+      { "slug": "news", "name": "News" }
+    ],
+    "music": ["Funk", "Samba", "Rap", "Rock", "MPB", "Eletrônica", "Pagode", "Forró"],
+    "culture": ["Cinema", "Literatura", "Artes Visuais", "Teatro", "Dança", "Gastronomia"],
+    "rio": ["Centro", "Zona Sul", "Zona Norte", "Zona Oeste", "Baixada", "Niterói"],
+    "formato": ["Reportagem", "Entrevista", "Opinião", "Cobertura", "Guia", "Lista"]
+  }
+}

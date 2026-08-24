@@ -1,0 +1,15 @@
+{
+  "name": "apollo/dj-sync",
+  "description": "Per-user feature gates and session logging for apolloDJ.exe",
+  "type": "wordpress-plugin",
+  "license": "proprietary",
+  "minimum-stability": "stable",
+  "autoload": {
+    "psr-4": {
+      "Apollo\\DJSync\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=8.1"
+  }
+}

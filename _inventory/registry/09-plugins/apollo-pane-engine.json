@@ -1,0 +1,891 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-pane-engine",
+    "owner": "apollo-pane-engine",
+    "wrap": "plugins.apollo-pane-engine",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-pane-engine",
+  "namespace": "Apollo\\PaneEngine",
+  "priority": 6,
+  "status": "IMPLEMENTED",
+  "version": "2.0.1",
+  "description": "Isolated test harness — read-only \"aquarium bubble\" that probes all 220+ Apollo REST endpoints via a side-by-slide panel UI at /casa.",
+  "dependencies": [
+    "apollo-adverts",
+    "apollo-chat",
+    "apollo-comment",
+    "apollo-core",
+    "apollo-dashboard",
+    "apollo-djs",
+    "apollo-email",
+    "apollo-events",
+    "apollo-fav",
+    "apollo-groups",
+    "apollo-hub",
+    "apollo-loc",
+    "apollo-login",
+    "apollo-maps",
+    "apollo-membership",
+    "apollo-mod",
+    "apollo-notif",
+    "apollo-radio",
+    "apollo-seo",
+    "apollo-sheets",
+    "apollo-social",
+    "apollo-statistics",
+    "apollo-templates",
+    "apollo-users",
+    "apollo-wow"
+  ],
+  "provides": [
+    "pane-sections",
+    "aquarium-bubble",
+    "endpoint-aggregator",
+    "section-fragments"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [],
+  "meta": {
+    "post": {
+      "_dj_city": {
+        "_source": "deep_scan"
+      },
+      "_event_loc_id": {
+        "_source": "deep_scan"
+      },
+      "_event_price": {
+        "_source": "deep_scan"
+      },
+      "_event_start_date": {
+        "_source": "deep_scan"
+      },
+      "_loc_address": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {},
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/pane/plugins",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo/v1",
+      "file": "includes/fragment-helper.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/pane/fragment",
+      "methods": [
+        "GET"
+      ],
+      "description": "Generic fragment loader",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo/v1",
+      "file": "includes/fragment-helper.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/pane/section/(?P<slug>[a-z0-9-]+)",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo/v1",
+      "file": "includes/section-renderer.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/pane/section/chat-thread/(?P<thread_id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo/v1",
+      "file": "includes/section-renderer.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/pane/section/",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo/v1",
+      "file": "includes/section-renderer.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "pages": [
+    {
+      "slug": "casa",
+      "rewrite": "^casa/?$",
+      "query": "index.php?apollo_casa_page=1",
+      "query_vars": [
+        "apollo_casa_page=1"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "casa/{param}",
+      "rewrite": "^casa/([^/]+)/?$",
+      "query": "index.php?apollo_casa_page=1",
+      "query_vars": [
+        "apollo_casa_page=1"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "painel-lab",
+      "rewrite": "^painel-lab/?$",
+      "query": "index.php?apollo_casa_page=1",
+      "query_vars": [
+        "apollo_casa_page=1"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "painel-lab/{param}",
+      "rewrite": "^painel-lab/([^/]+)/?$",
+      "query": "index.php?apollo_casa_page=1",
+      "query_vars": [
+        "apollo_casa_page=1"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    }
+  ],
+  "shortcodes": [],
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [
+    "apollo/pane/cpt_sections"
+  ],
+  "hooks_listened": [],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [],
+    "styles": []
+  },
+  "options": [
+    "apollo_pane_engine_version"
+  ],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 0,
+    "abspath_coverage_pct": 100,
+    "rest_open_routes": 0,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 0,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 5,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": null
+  },
+  "database_schemas": [],
+  "rewrite_rules": [
+    {
+      "pattern": "^casa/?$",
+      "query": "index.php?apollo_casa_page=1"
+    },
+    {
+      "pattern": "^casa/([^/]+)/?$",
+      "query": "index.php?apollo_casa_page=1"
+    },
+    {
+      "pattern": "^painel-lab/?$",
+      "query": "index.php?apollo_casa_page=1"
+    },
+    {
+      "pattern": "^painel-lab/([^/]+)/?$",
+      "query": "index.php?apollo_casa_page=1"
+    }
+  ],
+  "query_vars": [
+    "apollo_casa_page",
+    "apollo_pane_back_route",
+    "apollo_pane_preload_id",
+    "apollo_pane_preload_section"
+  ],
+  "php_surface": {
+    "files": 7,
+    "loc": 1658,
+    "classes": 0,
+    "functions": 24
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:50.852Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 14,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-pane-engine",
+    "main_file": "apollo-pane-engine.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Pane Engine",
+      "plugin_uri": "https://apollo.rio.br",
+      "description": "Isolated test harness — read-only \"aquarium bubble\" that probes all 220+ Apollo REST endpoints via a side-by-slide panel UI at /casa.",
+      "version": "2.0.1",
+      "author": "Apollo Team",
+      "author_uri": "https://apollo.rio.br",
+      "license": "GPL-2.0-or-later",
+      "text_domain": "apollo-pane-engine",
+      "domain_path": null,
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": null
+    },
+    "composer": null,
+    "inventory": {
+      "by_extension": {
+        ".php": 7,
+        ".css": 1,
+        ".js": 1,
+        ".json": 1
+      },
+      "by_top_directory": {
+        "(root)": 4,
+        "assets": 2,
+        "includes": 3,
+        "templates": 1
+      },
+      "total_bytes": 114900
+    },
+    "php": {
+      "files": 7,
+      "loc": 1658,
+      "classes": 0,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 24
+    },
+    "architecture": {
+      "namespace": "Apollo\\PaneEngine",
+      "classes": [],
+      "public_functions": [
+        {
+          "name": "apollo_pane_is_fragment_request",
+          "file": "includes/fragment-helper.php"
+        },
+        {
+          "name": "apollo_pane_csp_nonce",
+          "file": "includes/fragment-helper.php"
+        },
+        {
+          "name": "apollo_pane_send_csp_header",
+          "file": "includes/fragment-helper.php"
+        },
+        {
+          "name": "apollo_pane_wrap_fragment",
+          "file": "includes/fragment-helper.php"
+        },
+        {
+          "name": "apollo_pane_plugin_map",
+          "file": "includes/fragment-helper.php"
+        },
+        {
+          "name": "apollo_pane_engine_owns_casa",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_pane_engine_add_rewrite_rules",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_pane_section_callback",
+          "file": "includes/section-renderer.php"
+        },
+        {
+          "name": "apollo_pane_html_response",
+          "file": "includes/section-renderer.php"
+        },
+        {
+          "name": "apollo_pane_internal_fetch",
+          "file": "includes/section-renderer.php"
+        },
+        {
+          "name": "apollo_pane_status_dot",
+          "file": "includes/section-renderer.php"
+        },
+        {
+          "name": "apollo_pane_render_casa",
+          "file": "includes/section-renderer.php"
+        },
+        {
+          "name": "apollo_pane_render_gigs",
+          "file": "includes/section-renderer.php"
+        },
+        {
+          "name": "apollo_pane_render_sounds",
+          "file": "includes/section-renderer.php"
+        },
+        {
+          "name": "apollo_pane_render_spots",
+          "file": "includes/section-renderer.php"
+        },
+        {
+          "name": "apollo_pane_render_social",
+          "file": "includes/section-renderer.php"
+        },
+        {
+          "name": "apollo_pane_render_tools",
+          "file": "includes/section-renderer.php"
+        },
+        {
+          "name": "apollo_pane_render_chat_inbox",
+          "file": "includes/section-renderer.php"
+        },
+        {
+          "name": "apollo_pane_chat_thread_callback",
+          "file": "includes/section-renderer.php"
+        },
+        {
+          "name": "apollo_pane_meta_chip",
+          "file": "includes/section-renderer.php"
+        },
+        {
+          "name": "apollo_pane_detail_head",
+          "file": "includes/section-renderer.php"
+        },
+        {
+          "name": "apollo_pane_render_evento_detail",
+          "file": "includes/section-renderer.php"
+        },
+        {
+          "name": "apollo_pane_render_dj_detail",
+          "file": "includes/section-renderer.php"
+        },
+        {
+          "name": "apollo_pane_render_local_detail",
+          "file": "includes/section-renderer.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 5,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/pane/plugins",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": null,
+          "file": "includes/fragment-helper.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/pane/fragment",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": null,
+          "file": "includes/fragment-helper.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/pane/section/(?P<slug>[a-z0-9-]+)",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": null,
+          "file": "includes/section-renderer.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/pane/section/chat-thread/(?P<thread_id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": null,
+          "file": "includes/section-renderer.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/pane/section/",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": null,
+          "file": "includes/section-renderer.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 0,
+        "MEDIUM": 5,
+        "LOW": 0,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "LOGGED_IN_ONLY": 5
+      },
+      "permission_body_resolved": 5,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [],
+      "admin_cap_routes": [],
+      "logged_in_routes": [
+        "/pane/plugins",
+        "/pane/fragment",
+        "/pane/section/(?P<slug>[a-z0-9-]+)",
+        "/pane/section/chat-thread/(?P<thread_id>\\d+)",
+        "/pane/section/"
+      ]
+    },
+    "database": {
+      "tables_owned_or_defined": [],
+      "tables_referenced": [],
+      "tables_for_registry": [],
+      "schemas_with_columns": 0,
+      "schemas": []
+    },
+    "meta": {
+      "post_count": 5,
+      "user_count": 0,
+      "term_count": 0,
+      "post_keys": [
+        "_dj_city",
+        "_event_loc_id",
+        "_event_price",
+        "_event_start_date",
+        "_loc_address"
+      ],
+      "user_keys": [],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [
+        {
+          "pattern": "^casa/?$",
+          "query": "index.php?apollo_casa_page=1",
+          "position": "top",
+          "file": "includes/functions.php"
+        },
+        {
+          "pattern": "^casa/([^/]+)/?$",
+          "query": "index.php?apollo_casa_page=1",
+          "position": "top",
+          "file": "includes/functions.php"
+        },
+        {
+          "pattern": "^painel-lab/?$",
+          "query": "index.php?apollo_casa_page=1",
+          "position": "top",
+          "file": "includes/functions.php"
+        },
+        {
+          "pattern": "^painel-lab/([^/]+)/?$",
+          "query": "index.php?apollo_casa_page=1",
+          "position": "top",
+          "file": "includes/functions.php"
+        }
+      ],
+      "query_vars": [
+        "apollo_casa_page",
+        "apollo_pane_back_route",
+        "apollo_pane_preload_id",
+        "apollo_pane_preload_section"
+      ],
+      "pages_derived": [
+        {
+          "slug": "casa",
+          "rewrite": "^casa/?$",
+          "query": "index.php?apollo_casa_page=1",
+          "query_vars": [
+            "apollo_casa_page=1"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "casa/{param}",
+          "rewrite": "^casa/([^/]+)/?$",
+          "query": "index.php?apollo_casa_page=1",
+          "query_vars": [
+            "apollo_casa_page=1"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "painel-lab",
+          "rewrite": "^painel-lab/?$",
+          "query": "index.php?apollo_casa_page=1",
+          "query_vars": [
+            "apollo_casa_page=1"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "painel-lab/{param}",
+          "rewrite": "^painel-lab/([^/]+)/?$",
+          "query": "index.php?apollo_casa_page=1",
+          "query_vars": [
+            "apollo_casa_page=1"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        }
+      ]
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 1,
+      "listened_count": 8,
+      "apollo_fired": [
+        "apollo/pane/cpt_sections"
+      ],
+      "apollo_listened": [],
+      "critical_wp_listened": [
+        "admin_init",
+        "init",
+        "rest_api_init",
+        "template_redirect"
+      ]
+    },
+    "ajax": {
+      "priv": [],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [],
+      "styles": []
+    },
+    "options": [
+      "apollo_pane_engine_version"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_PANE_ENGINE_VERSION",
+        "value": "2.0.1"
+      },
+      {
+        "name": "APOLLO_PANE_ENGINE_PATH",
+        "value": "plugin_dir_path(__FILE__"
+      },
+      {
+        "name": "APOLLO_PANE_ENGINE_URL",
+        "value": "plugin_dir_url(__FILE__"
+      },
+      {
+        "name": "APOLLO_PANE_ENGINE_MANIFEST",
+        "value": "APOLLO_PANE_ENGINE_PATH . 'pane-engine-casa.json'"
+      }
+    ],
+    "security": {
+      "php_files": 7,
+      "abspath_guard_files": 7,
+      "abspath_coverage_pct": 100,
+      "wpdb_prepare_calls": 0,
+      "wpdb_query_calls": 0,
+      "prepare_to_query_ratio": null,
+      "nonce_checks": 1,
+      "current_user_can_calls": 0,
+      "raw_superglobal": {
+        "get": 0,
+        "post": 0,
+        "request": 0
+      },
+      "permission_callback_return_true": 0,
+      "escape_helpers": 71,
+      "echo_statements": 30,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 1,
+      "risk_score": 0,
+      "risk_band": "LOW",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 0,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 0
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-adverts",
+        "apollo-chat",
+        "apollo-comment",
+        "apollo-core",
+        "apollo-dashboard",
+        "apollo-djs",
+        "apollo-email",
+        "apollo-events",
+        "apollo-fav",
+        "apollo-groups",
+        "apollo-hub",
+        "apollo-loc",
+        "apollo-login",
+        "apollo-maps",
+        "apollo-membership",
+        "apollo-mod",
+        "apollo-notif",
+        "apollo-radio",
+        "apollo-seo",
+        "apollo-sheets",
+        "apollo-social",
+        "apollo-statistics",
+        "apollo-templates",
+        "apollo-users",
+        "apollo-wow"
+      ],
+      "signals": [
+        "apollo-adverts",
+        "apollo-chat",
+        "apollo-comment",
+        "apollo-core",
+        "apollo-dashboard",
+        "apollo-djs",
+        "apollo-email",
+        "apollo-events",
+        "apollo-fav",
+        "apollo-groups",
+        "apollo-hub",
+        "apollo-loc",
+        "apollo-login",
+        "apollo-maps",
+        "apollo-membership",
+        "apollo-mod",
+        "apollo-notif",
+        "apollo-radio",
+        "apollo-seo",
+        "apollo-sheets",
+        "apollo-social",
+        "apollo-statistics",
+        "apollo-templates",
+        "apollo-users",
+        "apollo-wow"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": "2.0.0",
+      "new_version": "2.0.1",
+      "version_changed": true,
+      "old_rest": 3,
+      "live_rest": 5,
+      "old_pages": 2,
+      "live_pages": 4,
+      "new_plugin": false
+    }
+  },
+  "security_remediation": {
+    "note": "P2: ABSPATH coverage complete",
+    "last_updated": "2026-07-20"
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 7,
+    "php_loc": 1651,
+    "rest_routes_found": 5,
+    "cpts_found": [],
+    "tables_found": [],
+    "shortcodes_found": []
+  }
+}

@@ -1,0 +1,1265 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-scheduler",
+    "owner": "apollo-scheduler",
+    "wrap": "plugins.apollo-scheduler",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-scheduler",
+  "namespace": "Apollo\\Scheduler",
+  "priority": 3,
+  "status": "IMPLEMENTED",
+  "version": "1.0.1",
+  "layer": "L2_content",
+  "description": "Luxury Apollo-native appointment scheduling — nucleo-scoped agents, rooms, services, availability engine, dual calendar bridge.",
+  "dependencies": [
+    "apollo-core",
+    "apollo-email",
+    "apollo-events",
+    "apollo-gestor",
+    "apollo-groups",
+    "apollo-users"
+  ],
+  "provides": [
+    "appointment-cpt",
+    "service-cpt",
+    "resource-cpt",
+    "availability-engine",
+    "booking-wizard",
+    "manager-calendar",
+    "ical-export",
+    "nucleo-agent-assignment"
+  ],
+  "cpts": [
+    "appointment",
+    "service",
+    "resource"
+  ],
+  "meta": {
+    "post": {
+      "_apollo_appointment_agent_id": {
+        "_source": "deep_scan"
+      },
+      "_apollo_appointment_customer_id": {
+        "_source": "deep_scan"
+      },
+      "_apollo_appointment_end": {
+        "_source": "deep_scan"
+      },
+      "_apollo_appointment_event_id": {
+        "_source": "deep_scan"
+      },
+      "_apollo_appointment_notes": {
+        "_source": "deep_scan"
+      },
+      "_apollo_appointment_nucleo_id": {
+        "_source": "deep_scan"
+      },
+      "_apollo_appointment_payment_status": {
+        "_source": "deep_scan"
+      },
+      "_apollo_appointment_resource_id": {
+        "_source": "deep_scan"
+      },
+      "_apollo_appointment_service_id": {
+        "_source": "deep_scan"
+      },
+      "_apollo_appointment_start": {
+        "_source": "deep_scan"
+      },
+      "_apollo_appointment_status": {
+        "_source": "deep_scan"
+      },
+      "_apollo_resource_capacity": {
+        "_source": "deep_scan"
+      },
+      "_apollo_resource_loc_id": {
+        "_source": "deep_scan"
+      },
+      "_apollo_resource_nucleo_id": {
+        "_source": "deep_scan"
+      },
+      "_apollo_scheduler_appointment_id": {
+        "_source": "deep_scan"
+      },
+      "_apollo_service_duration": {
+        "_source": "deep_scan"
+      },
+      "_apollo_service_nucleo_id": {
+        "_source": "deep_scan"
+      },
+      "_apollo_service_price": {
+        "_source": "deep_scan"
+      },
+      "_apollo_service_slot_interval": {
+        "_source": "deep_scan"
+      },
+      "_event_end_date": {
+        "_source": "deep_scan"
+      },
+      "_event_end_time": {
+        "_source": "deep_scan"
+      },
+      "_event_start_date": {
+        "_source": "deep_scan"
+      },
+      "_event_start_time": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {
+      "_apollo_agent_of_nucleo": {
+        "_source": "deep_scan"
+      },
+      "_apollo_agent_rooms": {
+        "_source": "deep_scan"
+      },
+      "_apollo_agent_services": {
+        "_source": "deep_scan"
+      },
+      "_apollo_is_agent": {
+        "_source": "deep_scan"
+      },
+      "_apollo_manages_nucleo": {
+        "_source": "deep_scan"
+      },
+      "_apollo_working_plan": {
+        "_source": "deep_scan"
+      },
+      "_apollo_working_plan_exceptions": {
+        "_source": "deep_scan"
+      }
+    },
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_hours",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/AvailabilityController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "logged_in_permission",
+      "permission_binding": "RestController::logged_in_permission",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "book",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/BookingController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/",
+      "methods": [
+        "PATCH",
+        "POST",
+        "PUT"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "logged_in_permission",
+      "permission_binding": "RestController::logged_in_permission",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "reschedule",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/BookingController.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "hooks": {
+    "fires": [
+      "apollo/scheduler/init",
+      "apollo/scheduler/booked",
+      "apollo/scheduler/rescheduled",
+      "apollo/scheduler/agent_assigned",
+      "apollo/scheduler/availability_updated",
+      "apollo/scheduler/calendar_linked",
+      "apollo/scheduler/confirmation"
+    ],
+    "listens": [
+      "apollo/core/initialized"
+    ]
+  },
+  "pages": [
+    {
+      "slug": "book",
+      "rewrite": "^book/?$",
+      "query": "index.php?apollo_scheduler_page=book",
+      "query_vars": [
+        "apollo_scheduler_page=book"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "nucleo/{param}/schedule",
+      "rewrite": "^nucleo/([^/]+)/schedule/?$",
+      "query": "index.php?apollo_scheduler_page=nucleo_schedule&apollo_nucleo_slug=$matches[1]",
+      "query_vars": [
+        "apollo_scheduler_page=nucleo_schedule",
+        "apollo_nucleo_slug=$matches[1]"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "agent/availability",
+      "rewrite": "^agent/availability/?$",
+      "query": "index.php?apollo_scheduler_page=agent_availability",
+      "query_vars": [
+        "apollo_scheduler_page=agent_availability"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "book",
+      "rewrite": "^book/?$",
+      "query": "index.php?apollo_scheduler_page=book",
+      "query_vars": [
+        "apollo_scheduler_page=book"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "nucleo/{param}/schedule",
+      "rewrite": "^nucleo/([^/]+)/schedule/?$",
+      "query": "index.php?apollo_scheduler_page=nucleo_schedule&apollo_nucleo_slug=$matches[1]",
+      "query_vars": [
+        "apollo_scheduler_page=nucleo_schedule",
+        "apollo_nucleo_slug=$matches[1]"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "agent/availability",
+      "rewrite": "^agent/availability/?$",
+      "query": "index.php?apollo_scheduler_page=agent_availability",
+      "query_vars": [
+        "apollo_scheduler_page=agent_availability"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    }
+  ],
+  "shortcodes": [
+    {
+      "tag": "apollo_scheduler_book",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_scheduler_manager",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "files": {
+    "main": "apollo-scheduler.php",
+    "src": [
+      "src/Plugin.php",
+      "src/Registry.php",
+      "src/Engine/AvailabilityEngine.php",
+      "src/API/BookingController.php"
+    ]
+  },
+  "taxonomies": [],
+  "tables": [],
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [
+    "apollo/gestor/milestone_from_appointment",
+    "apollo/notif/send",
+    "apollo/remind/schedule",
+    "apollo/scheduler/activated",
+    "apollo/scheduler/agent_assigned",
+    "apollo/scheduler/agents_for_nucleo",
+    "apollo/scheduler/availability_updated",
+    "apollo/scheduler/available_hours",
+    "apollo/scheduler/book_advance_timeout",
+    "apollo/scheduler/booked",
+    "apollo/scheduler/calendar_linked",
+    "apollo/scheduler/can_manage_nucleo",
+    "apollo/scheduler/confirmation",
+    "apollo/scheduler/create_event",
+    "apollo/scheduler/deactivated",
+    "apollo/scheduler/future_booking_limit",
+    "apollo/scheduler/init",
+    "apollo/scheduler/payment_processed",
+    "apollo/scheduler/process_payment",
+    "apollo/scheduler/rate_limited",
+    "apollo/scheduler/rescheduled"
+  ],
+  "hooks_listened": [
+    "apollo/core/initialized",
+    "apollo/scheduler/booking_rollback",
+    "apollo/scheduler/can_manage_nucleo",
+    "apollo/users/profile_sections",
+    "apollo_core_register_meta",
+    "apollo_core_register_user_meta"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [
+      "apollo-scheduler-calendar",
+      "apollo-scheduler-picker",
+      "apollo-scheduler-wizard",
+      "gsap",
+      "gsap-flip",
+      "lenis"
+    ],
+    "styles": [
+      "apollo-scheduler",
+      "apollo-scheduler-admin",
+      "remixicon"
+    ]
+  },
+  "options": [
+    "apollo_scheduler_version"
+  ],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 6,
+    "abspath_coverage_pct": 94,
+    "rest_open_routes": 1,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 1,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 3,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": null
+  },
+  "database_schemas": [],
+  "rewrite_rules": [
+    {
+      "pattern": "^book/?$",
+      "query": "index.php?apollo_scheduler_page=book"
+    },
+    {
+      "pattern": "^nucleo/([^/]+)/schedule/?$",
+      "query": "index.php?apollo_scheduler_page=nucleo_schedule&apollo_nucleo_slug=$matches[1]"
+    },
+    {
+      "pattern": "^agent/availability/?$",
+      "query": "index.php?apollo_scheduler_page=agent_availability"
+    },
+    {
+      "pattern": "^book/?$",
+      "query": "index.php?apollo_scheduler_page=book"
+    },
+    {
+      "pattern": "^nucleo/([^/]+)/schedule/?$",
+      "query": "index.php?apollo_scheduler_page=nucleo_schedule&apollo_nucleo_slug=$matches[1]"
+    },
+    {
+      "pattern": "^agent/availability/?$",
+      "query": "index.php?apollo_scheduler_page=agent_availability"
+    }
+  ],
+  "query_vars": [
+    "apollo_nucleo_slug",
+    "apollo_scheduler_page"
+  ],
+  "php_surface": {
+    "files": 33,
+    "loc": 2864,
+    "classes": 25,
+    "functions": 8
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:51.017Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 37,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-scheduler",
+    "main_file": "apollo-scheduler.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Scheduler",
+      "plugin_uri": "https://apollo.rio.br/plugins/apollo-scheduler",
+      "description": "Luxury Apollo-native appointment scheduling — nucleo-scoped agents, rooms, services, availability engine, dual calendar bridge.",
+      "version": "1.0.1",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "Proprietary",
+      "text_domain": "apollo-scheduler",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": null
+    },
+    "composer": {
+      "name": "apollo/apollo-scheduler",
+      "namespaces": [
+        "Apollo\\Scheduler"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 33,
+        ".css": 1,
+        ".js": 3,
+        ".json": 1
+      },
+      "by_top_directory": {
+        "(root)": 4,
+        "assets": 4,
+        "includes": 2,
+        "src": 25,
+        "templates": 3
+      },
+      "total_bytes": 94532
+    },
+    "php": {
+      "files": 33,
+      "loc": 2864,
+      "classes": 25,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 8
+    },
+    "architecture": {
+      "namespace": "Apollo\\Scheduler",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Scheduler\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "AgentAssignment",
+          "fqcn": "Apollo\\Scheduler\\Admin\\AgentAssignment",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Admin/AgentAssignment.php"
+        },
+        {
+          "kind": "class",
+          "name": "AvailabilityController",
+          "fqcn": "Apollo\\Scheduler\\API\\AvailabilityController",
+          "extends": "RestController",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/AvailabilityController.php"
+        },
+        {
+          "kind": "class",
+          "name": "BookingController",
+          "fqcn": "Apollo\\Scheduler\\API\\BookingController",
+          "extends": "RestController",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/BookingController.php"
+        },
+        {
+          "kind": "class",
+          "name": "ICalController",
+          "fqcn": "Apollo\\Scheduler\\API\\ICalController",
+          "extends": "RestController",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/ICalController.php"
+        },
+        {
+          "kind": "class",
+          "name": "ManagerController",
+          "fqcn": "Apollo\\Scheduler\\API\\ManagerController",
+          "extends": "RestController",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/ManagerController.php"
+        },
+        {
+          "kind": "class",
+          "name": "RestController",
+          "fqcn": "Apollo\\Scheduler\\API\\RestController",
+          "extends": null,
+          "implements": [],
+          "modifiers": "abstract",
+          "file": "src/API/RestController.php"
+        },
+        {
+          "kind": "class",
+          "name": "CalendarBridge",
+          "fqcn": "Apollo\\Scheduler\\Bridge\\CalendarBridge",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Bridge/CalendarBridge.php"
+        },
+        {
+          "kind": "class",
+          "name": "NotificationBridge",
+          "fqcn": "Apollo\\Scheduler\\Bridge\\NotificationBridge",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Bridge/NotificationBridge.php"
+        },
+        {
+          "kind": "class",
+          "name": "PaymentBridge",
+          "fqcn": "Apollo\\Scheduler\\Bridge\\PaymentBridge",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Bridge/PaymentBridge.php"
+        },
+        {
+          "kind": "class",
+          "name": "Deactivation",
+          "fqcn": "Apollo\\Scheduler\\Deactivation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Deactivation.php"
+        },
+        {
+          "kind": "class",
+          "name": "AvailabilityEngine",
+          "fqcn": "Apollo\\Scheduler\\Engine\\AvailabilityEngine",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Engine/AvailabilityEngine.php"
+        },
+        {
+          "kind": "class",
+          "name": "PeriodHelper",
+          "fqcn": "Apollo\\Scheduler\\Engine\\PeriodHelper",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Engine/PeriodHelper.php"
+        },
+        {
+          "kind": "class",
+          "name": "WorkingPlan",
+          "fqcn": "Apollo\\Scheduler\\Engine\\WorkingPlan",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Engine/WorkingPlan.php"
+        },
+        {
+          "kind": "class",
+          "name": "Assets",
+          "fqcn": "Apollo\\Scheduler\\Frontend\\Assets",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Frontend/Assets.php"
+        },
+        {
+          "kind": "class",
+          "name": "BookingWizard",
+          "fqcn": "Apollo\\Scheduler\\Frontend\\BookingWizard",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Frontend/BookingWizard.php"
+        },
+        {
+          "kind": "class",
+          "name": "ManagerCalendar",
+          "fqcn": "Apollo\\Scheduler\\Frontend\\ManagerCalendar",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Frontend/ManagerCalendar.php"
+        },
+        {
+          "kind": "class",
+          "name": "UsersIntegration",
+          "fqcn": "Apollo\\Scheduler\\Integrations\\UsersIntegration",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Integrations/UsersIntegration.php"
+        },
+        {
+          "kind": "class",
+          "name": "AgentModel",
+          "fqcn": "Apollo\\Scheduler\\Models\\AgentModel",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Models/AgentModel.php"
+        },
+        {
+          "kind": "class",
+          "name": "AppointmentModel",
+          "fqcn": "Apollo\\Scheduler\\Models\\AppointmentModel",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Models/AppointmentModel.php"
+        },
+        {
+          "kind": "class",
+          "name": "ResourceModel",
+          "fqcn": "Apollo\\Scheduler\\Models\\ResourceModel",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Models/ResourceModel.php"
+        },
+        {
+          "kind": "class",
+          "name": "ServiceModel",
+          "fqcn": "Apollo\\Scheduler\\Models\\ServiceModel",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Models/ServiceModel.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Scheduler\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "Registry",
+          "fqcn": "Apollo\\Scheduler\\Registry",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Registry.php"
+        },
+        {
+          "kind": "class",
+          "name": "BookingRateLimit",
+          "fqcn": "Apollo\\Scheduler\\Security\\BookingRateLimit",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Security/BookingRateLimit.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_scheduler_check_dependencies",
+          "file": "apollo-scheduler.php"
+        },
+        {
+          "name": "apollo_scheduler_is_agent",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_scheduler_get_agent_nucleo",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_scheduler_get_working_plan",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_scheduler_default_working_plan",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_scheduler_get_agent_context",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_scheduler_can_manage_nucleo",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_scheduler_time_ago",
+          "file": "includes/functions.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 3,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_hours",
+          "file": "src/API/AvailabilityController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "logged_in_permission",
+            "target": "RestController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "RestController::logged_in_permission",
+              "method_file": "src/API/RestController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "book",
+          "file": "src/API/BookingController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "logged_in_permission",
+            "target": "RestController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "RestController::logged_in_permission",
+              "method_file": "src/API/RestController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "reschedule",
+          "file": "src/API/BookingController.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 1,
+        "MEDIUM": 2,
+        "LOW": 0,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "PUBLIC_UNAUTHENTICATED": 1,
+        "LOGGED_IN_ONLY": 2
+      },
+      "permission_body_resolved": 3,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [
+        {
+          "endpoint": "/",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/AvailabilityController.php"
+        }
+      ],
+      "admin_cap_routes": [],
+      "logged_in_routes": [
+        "/",
+        "/"
+      ]
+    },
+    "database": {
+      "tables_owned_or_defined": [],
+      "tables_referenced": [],
+      "tables_for_registry": [],
+      "schemas_with_columns": 0,
+      "schemas": []
+    },
+    "meta": {
+      "post_count": 23,
+      "user_count": 7,
+      "term_count": 0,
+      "post_keys": [
+        "_apollo_appointment_agent_id",
+        "_apollo_appointment_customer_id",
+        "_apollo_appointment_end",
+        "_apollo_appointment_event_id",
+        "_apollo_appointment_notes",
+        "_apollo_appointment_nucleo_id",
+        "_apollo_appointment_payment_status",
+        "_apollo_appointment_resource_id",
+        "_apollo_appointment_service_id",
+        "_apollo_appointment_start",
+        "_apollo_appointment_status",
+        "_apollo_resource_capacity",
+        "_apollo_resource_loc_id",
+        "_apollo_resource_nucleo_id",
+        "_apollo_scheduler_appointment_id",
+        "_apollo_service_duration",
+        "_apollo_service_nucleo_id",
+        "_apollo_service_price",
+        "_apollo_service_slot_interval",
+        "_event_end_date",
+        "_event_end_time",
+        "_event_start_date",
+        "_event_start_time"
+      ],
+      "user_keys": [
+        "_apollo_agent_of_nucleo",
+        "_apollo_agent_rooms",
+        "_apollo_agent_services",
+        "_apollo_is_agent",
+        "_apollo_manages_nucleo",
+        "_apollo_working_plan",
+        "_apollo_working_plan_exceptions"
+      ],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [
+        {
+          "pattern": "^book/?$",
+          "query": "index.php?apollo_scheduler_page=book",
+          "position": "top",
+          "file": "src/Activation.php"
+        },
+        {
+          "pattern": "^nucleo/([^/]+)/schedule/?$",
+          "query": "index.php?apollo_scheduler_page=nucleo_schedule&apollo_nucleo_slug=$matches[1]",
+          "position": "top",
+          "file": "src/Activation.php"
+        },
+        {
+          "pattern": "^agent/availability/?$",
+          "query": "index.php?apollo_scheduler_page=agent_availability",
+          "position": "top",
+          "file": "src/Activation.php"
+        },
+        {
+          "pattern": "^book/?$",
+          "query": "index.php?apollo_scheduler_page=book",
+          "position": "top",
+          "file": "src/Plugin.php"
+        },
+        {
+          "pattern": "^nucleo/([^/]+)/schedule/?$",
+          "query": "index.php?apollo_scheduler_page=nucleo_schedule&apollo_nucleo_slug=$matches[1]",
+          "position": "top",
+          "file": "src/Plugin.php"
+        },
+        {
+          "pattern": "^agent/availability/?$",
+          "query": "index.php?apollo_scheduler_page=agent_availability",
+          "position": "top",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "query_vars": [
+        "apollo_nucleo_slug",
+        "apollo_scheduler_page"
+      ],
+      "pages_derived": [
+        {
+          "slug": "book",
+          "rewrite": "^book/?$",
+          "query": "index.php?apollo_scheduler_page=book",
+          "query_vars": [
+            "apollo_scheduler_page=book"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "nucleo/{param}/schedule",
+          "rewrite": "^nucleo/([^/]+)/schedule/?$",
+          "query": "index.php?apollo_scheduler_page=nucleo_schedule&apollo_nucleo_slug=$matches[1]",
+          "query_vars": [
+            "apollo_scheduler_page=nucleo_schedule",
+            "apollo_nucleo_slug=$matches[1]"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "agent/availability",
+          "rewrite": "^agent/availability/?$",
+          "query": "index.php?apollo_scheduler_page=agent_availability",
+          "query_vars": [
+            "apollo_scheduler_page=agent_availability"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "book",
+          "rewrite": "^book/?$",
+          "query": "index.php?apollo_scheduler_page=book",
+          "query_vars": [
+            "apollo_scheduler_page=book"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "nucleo/{param}/schedule",
+          "rewrite": "^nucleo/([^/]+)/schedule/?$",
+          "query": "index.php?apollo_scheduler_page=nucleo_schedule&apollo_nucleo_slug=$matches[1]",
+          "query_vars": [
+            "apollo_scheduler_page=nucleo_schedule",
+            "apollo_nucleo_slug=$matches[1]"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "agent/availability",
+          "rewrite": "^agent/availability/?$",
+          "query": "index.php?apollo_scheduler_page=agent_availability",
+          "query_vars": [
+            "apollo_scheduler_page=agent_availability"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        }
+      ]
+    },
+    "cpts": [
+      {
+        "slug": "appointment",
+        "registered_locally": false,
+        "via_constant": true
+      },
+      {
+        "slug": "service",
+        "registered_locally": false,
+        "via_constant": true
+      },
+      {
+        "slug": "resource",
+        "registered_locally": false,
+        "via_constant": true
+      }
+    ],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 21,
+      "listened_count": 15,
+      "apollo_fired": [
+        "apollo/gestor/milestone_from_appointment",
+        "apollo/notif/send",
+        "apollo/remind/schedule",
+        "apollo/scheduler/activated",
+        "apollo/scheduler/agent_assigned",
+        "apollo/scheduler/agents_for_nucleo",
+        "apollo/scheduler/availability_updated",
+        "apollo/scheduler/available_hours",
+        "apollo/scheduler/book_advance_timeout",
+        "apollo/scheduler/booked",
+        "apollo/scheduler/calendar_linked",
+        "apollo/scheduler/can_manage_nucleo",
+        "apollo/scheduler/confirmation",
+        "apollo/scheduler/create_event",
+        "apollo/scheduler/deactivated",
+        "apollo/scheduler/future_booking_limit",
+        "apollo/scheduler/init",
+        "apollo/scheduler/payment_processed",
+        "apollo/scheduler/process_payment",
+        "apollo/scheduler/rate_limited",
+        "apollo/scheduler/rescheduled"
+      ],
+      "apollo_listened": [
+        "apollo/core/initialized",
+        "apollo/scheduler/booking_rollback",
+        "apollo/scheduler/can_manage_nucleo",
+        "apollo/users/profile_sections",
+        "apollo_core_register_meta",
+        "apollo_core_register_user_meta"
+      ],
+      "critical_wp_listened": [
+        "admin_menu",
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "template_redirect",
+        "wp_enqueue_scripts"
+      ]
+    },
+    "ajax": {
+      "priv": [],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [
+      "apollo_scheduler_book",
+      "apollo_scheduler_manager"
+    ],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [
+        "apollo-scheduler-calendar",
+        "apollo-scheduler-picker",
+        "apollo-scheduler-wizard",
+        "gsap",
+        "gsap-flip",
+        "lenis"
+      ],
+      "styles": [
+        "apollo-scheduler",
+        "apollo-scheduler-admin",
+        "remixicon"
+      ]
+    },
+    "options": [
+      "apollo_scheduler_version"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_SCHEDULER_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_SCHEDULER_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_SCHEDULER_DIR",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_SCHEDULER_URL",
+        "value": "plugin_dir_url( __FILE__"
+      },
+      {
+        "name": "APOLLO_SCHEDULER_BASENAME",
+        "value": "plugin_basename( __FILE__"
+      },
+      {
+        "name": "APOLLO_SCHEDULER_REST_NAMESPACE",
+        "value": "apollo/v1"
+      },
+      {
+        "name": "APOLLO_SCHEDULER_REST_BASE",
+        "value": "scheduler"
+      },
+      {
+        "name": "APOLLO_SCHEDULER_CPT_APPOINTMENT",
+        "value": "appointment"
+      },
+      {
+        "name": "APOLLO_SCHEDULER_CPT_SERVICE",
+        "value": "service"
+      },
+      {
+        "name": "APOLLO_SCHEDULER_CPT_RESOURCE",
+        "value": "resource"
+      },
+      {
+        "name": "APOLLO_SCHEDULER_CACHE_GROUP",
+        "value": "apollo_scheduler"
+      },
+      {
+        "name": "APOLLO_SCHEDULER_CACHE_TTL",
+        "value": "300"
+      },
+      {
+        "name": "APOLLO_SCHEDULER_USER_META_KEYS",
+        "value": "array(\r\n\t\t'_apollo_is_agent',\r\n\t\t'_apollo_agent_of"
+      },
+      {
+        "name": "APOLLO_SCHEDULER_APPOINTMENT_META",
+        "value": "array(\r\n\t\t'_apollo_appointment_start',\r\n\t\t'_apollo"
+      },
+      {
+        "name": "APOLLO_SCHEDULER_SERVICE_META",
+        "value": "array(\r\n\t\t'_apollo_service_duration',\r\n\t\t'_apollo_"
+      },
+      {
+        "name": "APOLLO_SCHEDULER_RESOURCE_META",
+        "value": "array(\r\n\t\t'_apollo_resource_capacity',\r\n\t\t'_apollo"
+      }
+    ],
+    "security": {
+      "php_files": 33,
+      "abspath_guard_files": 31,
+      "abspath_coverage_pct": 94,
+      "wpdb_prepare_calls": 0,
+      "wpdb_query_calls": 0,
+      "prepare_to_query_ratio": null,
+      "nonce_checks": 3,
+      "current_user_can_calls": 3,
+      "raw_superglobal": {
+        "get": 0,
+        "post": 4,
+        "request": 0
+      },
+      "permission_callback_return_true": 2,
+      "escape_helpers": 4,
+      "echo_statements": 8,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 6,
+      "risk_band": "LOW",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 1,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 1
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core",
+        "apollo-email",
+        "apollo-events",
+        "apollo-gestor",
+        "apollo-groups",
+        "apollo-users"
+      ],
+      "signals": [
+        "apollo-core",
+        "apollo-email",
+        "apollo-events",
+        "apollo-gestor"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": "1.0.0",
+      "new_version": "1.0.1",
+      "version_changed": true,
+      "old_rest": 7,
+      "live_rest": 3,
+      "old_pages": 3,
+      "live_pages": 6,
+      "new_plugin": false
+    }
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 34,
+    "php_loc": 2869,
+    "rest_routes_found": 1,
+    "cpts_found": [],
+    "tables_found": [],
+    "shortcodes_found": [
+      "apollo_scheduler_book",
+      "apollo_scheduler_manager"
+    ]
+  }
+}

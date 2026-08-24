@@ -1,0 +1,56 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Apollo DJs — Style Pack: apollo-v3 (Luxury Monochrome)
+   Light bg, orange accent (sparse), mobile-first Canvas mode
+   Build: 19 CSS modules → dj-single-v3.css | 10 JS modules → dj-single-v3.js
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+    /* ── DJ v3 Primary ── */
+    --dj-primary:          var(--primary, FF9820);
+    --dj-primary-soft:     rgba(244, 95, 0, 0.05);
+    --dj-primary-border:   rgba(244, 95, 0, 0.3);
+    --dj-primary-glow:     rgba(244, 95, 0, 0.04);
+
+    /* ── Typography — inherits Apollo CDN ── */
+    --dj-ff-main:          var(--ff-main, "Space Grotesk", sans-serif);
+    --dj-ff-mono:          var(--ff-mono, "Space Mono", monospace);
+    --dj-ff-fun:           var(--ff-fun, "Syne", sans-serif);
+
+    /* ── Surfaces ── */
+    --dj-bg:               var(--bg, #ffffff);
+    --dj-surface:          var(--card);
+    --dj-surface-hover:    var(--card-hover);
+    --dj-bg-neutral:       var(--bg-neutral, var(--card));
+
+    /* ── Borders ── */
+    --dj-border:           var(--border);
+    --dj-border-hover:     var(--border-hover);
+    --dj-border-soft:      rgba(var(--rgb-d), 0.05);
+
+    /* ── Text ── */
+    --dj-txt:              var(--txt-color);
+    --dj-txt-color-hover:      var(----txt-color-hover);
+    --dj-txt-muted:        var(--muted);
+    --dj-black:            var(--black-1);
+
+    /* ── Radius ── */
+    --dj-radius:           var(--r);
+    --dj-r-sm:        var(--r-sm);
+    --dj-r-xs:        var(--r-xs);
+
+    /* ── Easing ── */
+    --dj-ease:             var(--ease-default);
+
+    /* ── Layout ── */
+    --dj-max-width:        1120px;
+    --dj-pad-x:            24px;
+    --dj-pad-x-md:         48px;
+
+    /* ── Glass ── */
+    --dj-glass-bg:         rgba(var(--rgb-t), 0.02);
+    --dj-glass-border:     rgba(var(--rgb-t), 0.05);
+    --dj-glass-blur:       16px;
+
+    /* ── Selection ── */
+    --dj-selection-bg:     rgba(255, 139, 60, 0.38);
+}

@@ -1,0 +1,17 @@
+/* ===========================================
+   MARKETPLACE — Carousel (SM 481–767px)
+   =========================================== */
+
+@media (min-width: 481px) and (max-width: 767px) {
+    .carousel {
+        height: 540px;
+        min-width: 100vw;
+        max-width: 100%;
+    }
+
+    article[type=ticket].carousel-item {
+        --width: 280px;
+        --x: calc(var(--active) * 160px);
+        margin: -210px 0 0 -140px;
+    }
+}

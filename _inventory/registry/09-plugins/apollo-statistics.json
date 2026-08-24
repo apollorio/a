@@ -1,0 +1,2777 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-statistics",
+    "owner": "apollo-statistics",
+    "wrap": "plugins.apollo-statistics",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-statistics",
+  "namespace": "Apollo\\Statistics",
+  "priority": 5,
+  "status": "IMPLEMENTED",
+  "version": "2.0.6",
+  "description": "Ultra Modular Pro Analytics Engine — 15 MetricGroup classes, 68 plug-and-play metric instances, PostHog-inspired tracker, amCharts 5 visualizations, gamification bridge. Covers ALL 27 Apollo plugins.",
+  "dependencies": [
+    "apollo-admin",
+    "apollo-core",
+    "apollo-dj-sync",
+    "apollo-fav",
+    "apollo-login",
+    "apollo-membership",
+    "apollo-radio",
+    "apollo-users"
+  ],
+  "provides": [
+    "analytics",
+    "stats-dashboard",
+    "reports",
+    "metrics",
+    "tracking",
+    "sessions",
+    "pageviews"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [
+    "apollo_event_rsvp",
+    "apollo_stats_clicks",
+    "apollo_stats_content",
+    "apollo_stats_events",
+    "apollo_stats_pageviews",
+    "apollo_stats_radio",
+    "apollo_stats_sessions",
+    "apollo_stats_users"
+  ],
+  "meta": {
+    "post": {
+      "_apollo_content_score": {
+        "_source": "deep_scan"
+      },
+      "_event_rsvp_going_count": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {
+      "_apollo_last_seen": {
+        "_source": "deep_scan"
+      },
+      "_apollo_online_minutes": {
+        "_source": "deep_scan"
+      },
+      "_apollo_stats_engagement_score": {
+        "_source": "deep_scan"
+      },
+      "_apollo_stats_milestone_100": {
+        "_source": "deep_scan"
+      },
+      "_apollo_stats_visibility": {
+        "_source": "deep_scan"
+      }
+    },
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/stats/overview",
+      "methods": [
+        "GET"
+      ],
+      "description": "Overview stats",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "admin_permission",
+      "permission_binding": "REST_Controller::admin_permission",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if ( current_user_can( 'manage_options' ) ) { return true; } return new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistics' ), array( 'status' => 403 ) );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_overview",
+      "rest_namespace": "apollo/v1",
+      "file": "includes/class-rest-controller.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/stats/events",
+      "methods": [
+        "GET"
+      ],
+      "description": "Event stats",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "admin_permission",
+      "permission_binding": "REST_Controller::admin_permission",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if ( current_user_can( 'manage_options' ) ) { return true; } return new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistics' ), array( 'status' => 403 ) );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_events",
+      "rest_namespace": "apollo/v1",
+      "file": "includes/class-rest-controller.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/stats/users",
+      "methods": [
+        "GET"
+      ],
+      "description": "User stats",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "admin_permission",
+      "permission_binding": "REST_Controller::admin_permission",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if ( current_user_can( 'manage_options' ) ) { return true; } return new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistics' ), array( 'status' => 403 ) );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_users",
+      "rest_namespace": "apollo/v1",
+      "file": "includes/class-rest-controller.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/stats/content",
+      "methods": [
+        "GET"
+      ],
+      "description": "Content stats",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "admin_permission",
+      "permission_binding": "REST_Controller::admin_permission",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if ( current_user_can( 'manage_options' ) ) { return true; } return new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistics' ), array( 'status' => 403 ) );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_content",
+      "rest_namespace": "apollo/v1",
+      "file": "includes/class-rest-controller.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/stats/export",
+      "methods": [
+        "GET"
+      ],
+      "description": "Export stats CSV",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "admin_permission",
+      "permission_binding": "REST_Controller::admin_permission",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if ( current_user_can( 'manage_options' ) ) { return true; } return new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistics' ), array( 'status' => 403 ) );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "export_csv",
+      "rest_namespace": "apollo/v1",
+      "file": "includes/class-rest-controller.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/stats/health",
+      "methods": [
+        "GET"
+      ],
+      "description": "Stats health check",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "admin_permission",
+      "permission_binding": "REST_Controller::admin_permission",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if ( current_user_can( 'manage_options' ) ) { return true; } return new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistics' ), array( 'status' => 403 ) );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_health",
+      "rest_namespace": "apollo/v1",
+      "file": "includes/class-rest-controller.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/stats/trend",
+      "methods": [
+        "GET"
+      ],
+      "description": "Trend data",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "admin_permission",
+      "permission_binding": "REST_Controller::admin_permission",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if ( current_user_can( 'manage_options' ) ) { return true; } return new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistics' ), array( 'status' => 403 ) );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_trend",
+      "rest_namespace": "apollo/v1",
+      "file": "includes/class-rest-controller.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/stats/chart",
+      "methods": [
+        "GET"
+      ],
+      "description": "Chart data",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "admin_permission",
+      "permission_binding": "REST_Controller::admin_permission",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if ( current_user_can( 'manage_options' ) ) { return true; } return new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistics' ), array( 'status' => 403 ) );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_chart_data",
+      "rest_namespace": "apollo/v1",
+      "file": "includes/class-rest-controller.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (ADMIN_CAPABILITY)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "check_visibility",
+      "permission_binding": "ProfileController::check_visibility",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "$target_id = absint($request->get_param('user_id')); $current_id = get_current_user_id(); if ($current_id > 0 && $current_id === $target_id) { return true; } if (current_user_can('manage_options')) { return true; } $visibility = get_user_meta($target_id, '_apollo_stats_visibility",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_profile_stats",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/ProfileController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/",
+      "methods": [
+        "PATCH",
+        "POST",
+        "PUT"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "is_logged_in",
+      "permission_binding": null,
+      "permission_summary": "Method is_logged_in() not found in index; name implies logged-in check",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "update_visibility",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/ProfileController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "record_pageview",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/TrackController.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "ajax": {
+    "priv": [
+      "apollo_get_user_stats_widget",
+      "apollo_stats_cleanup_tests",
+      "apollo_stats_run_test",
+      "apollo_update_stats_visibility",
+      "nopriv_apollo_get_user_stats_widget"
+    ],
+    "nopriv": [
+      "apollo_get_user_stats_widget"
+    ]
+  },
+  "pages": [
+    {
+      "slug": "id/{param}/stats",
+      "rewrite": "^id/([^/]+)/stats/?$",
+      "query": "index.php?apollo_profile_user=$matches[1]&apollo_profile_stats=1",
+      "query_vars": [
+        "apollo_profile_user=$matches[1]",
+        "apollo_profile_stats=1"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    }
+  ],
+  "shortcodes": [
+    {
+      "tag": "apollo_stats_widget",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_user_stats",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "cron": [
+    "apollo_stats_daily_aggregate",
+    "apollo_stats_daily_collect",
+    "apollo_stats_weekly_rotate",
+    "now"
+  ],
+  "hooks_fired": [
+    "apollo/membership/achievement_trigger",
+    "apollo/membership/award_session_points",
+    "apollo/social/is_following",
+    "apollo/statistics/click_recorded",
+    "apollo/statistics/daily_aggregate_completed",
+    "apollo/statistics/daily_collected",
+    "apollo/statistics/data_providers",
+    "apollo/statistics/data_rotated",
+    "apollo/statistics/event_recorded",
+    "apollo/statistics/initialized",
+    "apollo/statistics/pageview_recorded",
+    "apollo/statistics/radio_",
+    "apollo/statistics/register",
+    "apollo/statistics/retention_days",
+    "apollo/statistics/session_",
+    "apollo/statistics/tracked_cpts",
+    "apollo_stats_events_reminder_body",
+    "apollo_stats_events_reminder_completed",
+    "apollo_stats_events_reminder_subject",
+    "apollo_stats_weekly_roundup_body",
+    "apollo_stats_weekly_roundup_completed",
+    "apollo_stats_weekly_roundup_lines",
+    "apollo_stats_weekly_roundup_subject"
+  ],
+  "hooks_listened": [
+    "apollo/admin/dashboard_widgets",
+    "apollo/admin/register_settings",
+    "apollo/canvas/head",
+    "apollo/chat/message_sent",
+    "apollo/chat/thread_created",
+    "apollo/coauthor/invited",
+    "apollo/dj/created",
+    "apollo/dj/deleted",
+    "apollo/dj/followed",
+    "apollo/dj/published",
+    "apollo/dj/updated",
+    "apollo/email/failed",
+    "apollo/email/opened",
+    "apollo/email/sent",
+    "apollo/event/created",
+    "apollo/event/deleted",
+    "apollo/event/gone",
+    "apollo/event/published",
+    "apollo/event/rsvp_updated",
+    "apollo/event/updated",
+    "apollo/fav/added",
+    "apollo/fav/removed",
+    "apollo/feed/after_content",
+    "apollo/gestor/milestone_reached",
+    "apollo/gestor/payment_recorded",
+    "apollo/gestor/task_completed",
+    "apollo/gestor/task_created",
+    "apollo/groups/user_joined",
+    "apollo/journal/nrep_assigned",
+    "apollo/loc/created",
+    "apollo/loc/deleted",
+    "apollo/loc/geocoded",
+    "apollo/loc/published",
+    "apollo/loc/updated",
+    "apollo/membership/achievement_awarded",
+    "apollo/membership/badge_assigned",
+    "apollo/membership/points_awarded",
+    "apollo/membership/points_deducted",
+    "apollo/membership/rank_awarded",
+    "apollo/notif/push_subscribed",
+    "apollo/social/activity_created",
+    "apollo/social/follow",
+    "apollo/social/reply_created",
+    "apollo/statistics/collect",
+    "apollo/statistics/daily_aggregate_completed",
+    "apollo/statistics/daily_collected",
+    "apollo/statistics/register",
+    "apollo/statistics/register_metrics",
+    "apollo/statistics/session_end",
+    "apollo/statistics/session_heartbeat",
+    "apollo/statistics/session_start",
+    "apollo/users/profile_visited",
+    "apollo/wow/added",
+    "apollo/wow/reaction_received",
+    "apollo_stats_daily_aggregate",
+    "apollo_stats_daily_collect",
+    "apollo_stats_session_cleanup",
+    "apollo_stats_weekly_rotate",
+    "apollo_user_profile_stats_section"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [
+      "am5-animated",
+      "am5-index",
+      "am5-percent",
+      "am5-xy",
+      "apollo-admin-charts",
+      "apollo-profile-stats",
+      "apollo-statistics-admin",
+      "apollo-test-panel",
+      "apollo-tracker",
+      "chartjs"
+    ],
+    "styles": [
+      "apollo-admin-stats",
+      "apollo-profile-stats",
+      "apollo-statistics-admin",
+      "apollo-test-panel"
+    ]
+  },
+  "options": [
+    "apollo_admin_settings",
+    "apollo_analytics_admin_override",
+    "apollo_statistics_db_version",
+    "apollo_statistics_settings"
+  ],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 6,
+    "abspath_coverage_pct": 96,
+    "rest_open_routes": 0,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 0,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 9,
+    "permission_methods_unresolved": 2,
+    "prepare_ratio": 0.96
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_admin_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_chat_messages",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_event_rsvp",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_group_members",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_get_user_slugs",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_normalize_storage",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_user_profile_data",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_statistics_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_clicks",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_content",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_content_rankings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_cron_events_reminder_email",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_cron_weekly_roundup_email",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_daily_aggregate",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_daily_collect",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_dashboard",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_digest_events",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_digest_roundup",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_event_engagement",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_events",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_events_reminder_body",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_events_reminder_completed",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_events_reminder_subject",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_forbidden",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_overview",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_overview_",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_overview_30",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_overview_7",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_overview_90",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_pageviews",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_radio",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_record_content",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_record_event",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_record_user",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_session_cleanup",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_sessions",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_test",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_user_activity",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_users",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_visibility",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_weekly_rotate",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_weekly_roundup_body",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_weekly_roundup_completed",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_weekly_roundup_lines",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_weekly_roundup_subject",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_stats_widget",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_update_stats_visibility",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_user_profile_stats_section",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [
+    {
+      "pattern": "^id/([^/]+)/stats/?$",
+      "query": "index.php?apollo_profile_user=$matches[1]&apollo_profile_stats=1"
+    }
+  ],
+  "query_vars": [
+    "apollo_profile_stats",
+    "apollo_profile_user"
+  ],
+  "php_surface": {
+    "files": 47,
+    "loc": 10518,
+    "classes": 42,
+    "functions": 6
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:51.633Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 195,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-statistics",
+    "main_file": "apollo-statistics.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Statistics",
+      "plugin_uri": "https://apollo.rio.br",
+      "description": "Ultra Modular Pro Analytics Engine — 15 MetricGroup classes, 68 plug-and-play metric instances, PostHog-inspired tracker, amCharts 5 visualizations, gamification bridge. Covers ALL 27 Apollo plugins.",
+      "version": "2.0.6",
+      "author": "Apollo RIO",
+      "author_uri": "https://apollo.rio.br",
+      "license": "GPL-2.0+",
+      "text_domain": "apollo-statistics",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": null
+    },
+    "composer": null,
+    "inventory": {
+      "by_extension": {
+        ".php": 47,
+        ".css": 4,
+        ".js": 5,
+        ".md": 2,
+        ".ffs_db": 1
+      },
+      "by_top_directory": {
+        "(root)": 5,
+        "assets": 9,
+        "bin": 1,
+        "includes": 7,
+        "src": 36,
+        "templates": 1
+      },
+      "total_bytes": 533758
+    },
+    "php": {
+      "files": 47,
+      "loc": 10518,
+      "classes": 42,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 6
+    },
+    "architecture": {
+      "namespace": "Apollo\\Statistics",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Analytics",
+          "fqcn": "Apollo\\Statistics\\Analytics",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "includes/class-analytics.php"
+        },
+        {
+          "kind": "class",
+          "name": "Data_Collector",
+          "fqcn": "Apollo\\Statistics\\Data_Collector",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "includes/class-data-collector.php"
+        },
+        {
+          "kind": "class",
+          "name": "Metrics_Processor",
+          "fqcn": "Apollo\\Statistics\\Metrics_Processor",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "includes/class-metrics-processor.php"
+        },
+        {
+          "kind": "class",
+          "name": "Reports",
+          "fqcn": "Apollo\\Statistics\\Reports",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "includes/class-reports.php"
+        },
+        {
+          "kind": "class",
+          "name": "REST_Controller",
+          "fqcn": "Apollo\\Statistics\\REST_Controller",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "includes/class-rest-controller.php"
+        },
+        {
+          "kind": "class",
+          "name": "User_Stats_Widget",
+          "fqcn": "Apollo\\Statistics\\User_Stats_Widget",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/class-user-stats-widget.php"
+        },
+        {
+          "kind": "class",
+          "name": "DashboardWidgets",
+          "fqcn": "Apollo\\Statistics\\Admin\\DashboardWidgets",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/DashboardWidgets.php"
+        },
+        {
+          "kind": "class",
+          "name": "SettingsSchema",
+          "fqcn": "Apollo\\Statistics\\Admin\\SettingsSchema",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/SettingsSchema.php"
+        },
+        {
+          "kind": "class",
+          "name": "TestPanel",
+          "fqcn": "Apollo\\Statistics\\Admin\\TestPanel",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/TestPanel.php"
+        },
+        {
+          "kind": "class",
+          "name": "ProfileController",
+          "fqcn": "Apollo\\Statistics\\API\\ProfileController",
+          "extends": "RestBase",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/API/ProfileController.php"
+        },
+        {
+          "kind": "class",
+          "name": "StatsController",
+          "fqcn": "Apollo\\Statistics\\API\\StatsController",
+          "extends": "RestBase",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/API/StatsController.php"
+        },
+        {
+          "kind": "class",
+          "name": "TrackController",
+          "fqcn": "Apollo\\Statistics\\API\\TrackController",
+          "extends": "RestBase",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/API/TrackController.php"
+        },
+        {
+          "kind": "class",
+          "name": "CronCollector",
+          "fqcn": "Apollo\\Statistics\\Collectors\\CronCollector",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Collectors/CronCollector.php"
+        },
+        {
+          "kind": "class",
+          "name": "HookCollector",
+          "fqcn": "Apollo\\Statistics\\Collectors\\HookCollector",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Collectors/HookCollector.php"
+        },
+        {
+          "kind": "class",
+          "name": "SessionCollector",
+          "fqcn": "Apollo\\Statistics\\Collectors\\SessionCollector",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Collectors/SessionCollector.php"
+        },
+        {
+          "kind": "class",
+          "name": "WeeklyDigestCron",
+          "fqcn": "Apollo\\Statistics\\Collectors\\WeeklyDigestCron",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Collectors/WeeklyDigestCron.php"
+        },
+        {
+          "kind": "class",
+          "name": "DataAggregator",
+          "fqcn": "Apollo\\Statistics\\Core\\DataAggregator",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Core/DataAggregator.php"
+        },
+        {
+          "kind": "class",
+          "name": "MetricBootstrap",
+          "fqcn": "Apollo\\Statistics\\Core\\MetricBootstrap",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Core/MetricBootstrap.php"
+        },
+        {
+          "kind": "class",
+          "name": "MetricConnector",
+          "fqcn": "Apollo\\Statistics\\Core\\MetricConnector",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Core/MetricConnector.php"
+        },
+        {
+          "kind": "class",
+          "name": "MetricGroup",
+          "fqcn": "Apollo\\Statistics\\Core\\MetricGroup",
+          "extends": null,
+          "implements": [],
+          "modifiers": "abstract",
+          "file": "src/Core/MetricGroup.php"
+        },
+        {
+          "kind": "class",
+          "name": "MetricRegistry",
+          "fqcn": "Apollo\\Statistics\\Core\\MetricRegistry",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Core/MetricRegistry.php"
+        },
+        {
+          "kind": "class",
+          "name": "ChartAdapter",
+          "fqcn": "Apollo\\Statistics\\Frontend\\ChartAdapter",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Frontend/ChartAdapter.php"
+        },
+        {
+          "kind": "class",
+          "name": "ProfileStats",
+          "fqcn": "Apollo\\Statistics\\Frontend\\ProfileStats",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Frontend/ProfileStats.php"
+        },
+        {
+          "kind": "class",
+          "name": "WidgetRenderer",
+          "fqcn": "Apollo\\Statistics\\Frontend\\WidgetRenderer",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Frontend/WidgetRenderer.php"
+        },
+        {
+          "kind": "class",
+          "name": "ClickTrack",
+          "fqcn": "Apollo\\Statistics\\Metrics\\ClickTrack",
+          "extends": "MetricGroup",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Metrics/ClickTrack.php"
+        },
+        {
+          "kind": "class",
+          "name": "Comparison",
+          "fqcn": "Apollo\\Statistics\\Metrics\\Comparison",
+          "extends": "MetricGroup",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Metrics/Comparison.php"
+        },
+        {
+          "kind": "class",
+          "name": "Distribution",
+          "fqcn": "Apollo\\Statistics\\Metrics\\Distribution",
+          "extends": "MetricGroup",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Metrics/Distribution.php"
+        },
+        {
+          "kind": "class",
+          "name": "EngagementScore",
+          "fqcn": "Apollo\\Statistics\\Metrics\\EngagementScore",
+          "extends": "MetricGroup",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Metrics/EngagementScore.php"
+        },
+        {
+          "kind": "class",
+          "name": "Funnel",
+          "fqcn": "Apollo\\Statistics\\Metrics\\Funnel",
+          "extends": "MetricGroup",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Metrics/Funnel.php"
+        },
+        {
+          "kind": "class",
+          "name": "Growth",
+          "fqcn": "Apollo\\Statistics\\Metrics\\Growth",
+          "extends": "MetricGroup",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Metrics/Growth.php"
+        },
+        {
+          "kind": "class",
+          "name": "Leaderboard",
+          "fqcn": "Apollo\\Statistics\\Metrics\\Leaderboard",
+          "extends": "MetricGroup",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Metrics/Leaderboard.php"
+        },
+        {
+          "kind": "class",
+          "name": "Lifecycle",
+          "fqcn": "Apollo\\Statistics\\Metrics\\Lifecycle",
+          "extends": "MetricGroup",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Metrics/Lifecycle.php"
+        },
+        {
+          "kind": "class",
+          "name": "Profile",
+          "fqcn": "Apollo\\Statistics\\Metrics\\Profile",
+          "extends": "MetricGroup",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Metrics/Profile.php"
+        },
+        {
+          "kind": "class",
+          "name": "Radio",
+          "fqcn": "Apollo\\Statistics\\Metrics\\Radio",
+          "extends": "MetricGroup",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Metrics/Radio.php"
+        },
+        {
+          "kind": "class",
+          "name": "Ranking",
+          "fqcn": "Apollo\\Statistics\\Metrics\\Ranking",
+          "extends": "MetricGroup",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Metrics/Ranking.php"
+        },
+        {
+          "kind": "class",
+          "name": "Session",
+          "fqcn": "Apollo\\Statistics\\Metrics\\Session",
+          "extends": "MetricGroup",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Metrics/Session.php"
+        },
+        {
+          "kind": "class",
+          "name": "Skeleton",
+          "fqcn": "Apollo\\Statistics\\Metrics\\Skeleton",
+          "extends": "MetricGroup",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Metrics/Skeleton.php"
+        },
+        {
+          "kind": "class",
+          "name": "TimeSeries",
+          "fqcn": "Apollo\\Statistics\\Metrics\\TimeSeries",
+          "extends": "MetricGroup",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Metrics/TimeSeries.php"
+        },
+        {
+          "kind": "class",
+          "name": "ViewCounter",
+          "fqcn": "Apollo\\Statistics\\Metrics\\ViewCounter",
+          "extends": "MetricGroup",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Metrics/ViewCounter.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Statistics\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "GamificationBridge",
+          "fqcn": "Apollo\\Statistics\\Processors\\GamificationBridge",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Processors/GamificationBridge.php"
+        },
+        {
+          "kind": "class",
+          "name": "ScoreProcessor",
+          "fqcn": "Apollo\\Statistics\\Processors\\ScoreProcessor",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Processors/ScoreProcessor.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_smoke_http_probes",
+          "file": "bin/local-smoke.php"
+        },
+        {
+          "name": "apollo_stats_record_event",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_stats_record_user",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_stats_record_content",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_stats_get_overview",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_stats_export_csv",
+          "file": "includes/functions.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 11,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/stats/overview",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "admin_permission",
+            "target": "REST_Controller",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true",
+                  "new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistic"
+                ]
+              },
+              "body_preview": "if ( current_user_can( 'manage_options' ) ) { return true; } return new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistics' ), array( 'status' => 403 ) );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "REST_Controller::admin_permission",
+              "method_file": "includes/class-rest-controller.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_overview",
+          "file": "includes/class-rest-controller.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/stats/events",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "admin_permission",
+            "target": "REST_Controller",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true",
+                  "new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistic"
+                ]
+              },
+              "body_preview": "if ( current_user_can( 'manage_options' ) ) { return true; } return new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistics' ), array( 'status' => 403 ) );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "REST_Controller::admin_permission",
+              "method_file": "includes/class-rest-controller.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_events",
+          "file": "includes/class-rest-controller.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/stats/users",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "admin_permission",
+            "target": "REST_Controller",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true",
+                  "new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistic"
+                ]
+              },
+              "body_preview": "if ( current_user_can( 'manage_options' ) ) { return true; } return new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistics' ), array( 'status' => 403 ) );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "REST_Controller::admin_permission",
+              "method_file": "includes/class-rest-controller.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_users",
+          "file": "includes/class-rest-controller.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/stats/content",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "admin_permission",
+            "target": "REST_Controller",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true",
+                  "new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistic"
+                ]
+              },
+              "body_preview": "if ( current_user_can( 'manage_options' ) ) { return true; } return new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistics' ), array( 'status' => 403 ) );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "REST_Controller::admin_permission",
+              "method_file": "includes/class-rest-controller.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_content",
+          "file": "includes/class-rest-controller.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/stats/export",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "admin_permission",
+            "target": "REST_Controller",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true",
+                  "new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistic"
+                ]
+              },
+              "body_preview": "if ( current_user_can( 'manage_options' ) ) { return true; } return new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistics' ), array( 'status' => 403 ) );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "REST_Controller::admin_permission",
+              "method_file": "includes/class-rest-controller.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "export_csv",
+          "file": "includes/class-rest-controller.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/stats/health",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "admin_permission",
+            "target": "REST_Controller",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true",
+                  "new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistic"
+                ]
+              },
+              "body_preview": "if ( current_user_can( 'manage_options' ) ) { return true; } return new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistics' ), array( 'status' => 403 ) );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "REST_Controller::admin_permission",
+              "method_file": "includes/class-rest-controller.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_health",
+          "file": "includes/class-rest-controller.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/stats/trend",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "admin_permission",
+            "target": "REST_Controller",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true",
+                  "new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistic"
+                ]
+              },
+              "body_preview": "if ( current_user_can( 'manage_options' ) ) { return true; } return new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistics' ), array( 'status' => 403 ) );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "REST_Controller::admin_permission",
+              "method_file": "includes/class-rest-controller.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_trend",
+          "file": "includes/class-rest-controller.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/stats/chart",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "admin_permission",
+            "target": "REST_Controller",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true",
+                  "new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistic"
+                ]
+              },
+              "body_preview": "if ( current_user_can( 'manage_options' ) ) { return true; } return new \\WP_Error( 'apollo_stats_forbidden', __( 'Acesso restrito a administradores.', 'apollo-statistics' ), array( 'status' => 403 ) );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "REST_Controller::admin_permission",
+              "method_file": "includes/class-rest-controller.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_chart_data",
+          "file": "includes/class-rest-controller.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "check_visibility",
+            "target": "ProfileController",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": true,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true",
+                  "true",
+                  "true",
+                  "true",
+                  "new \\WP_Error('rest_forbidden', 'Stats are private.', array('status' => 403))"
+                ]
+              },
+              "body_preview": "$target_id = absint($request->get_param('user_id')); $current_id = get_current_user_id(); if ($current_id > 0 && $current_id === $target_id) { return true; } if (current_user_can('manage_options')) { return true; } $visibility = get_user_meta($target_id, '_apollo_stats_visibility",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "ProfileController::check_visibility",
+              "method_file": "src/API/ProfileController.php",
+              "method_signature": "\\WP_REST_Request $request"
+            }
+          },
+          "callback": "get_profile_stats",
+          "file": "src/API/ProfileController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "is_logged_in",
+            "target": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Method is_logged_in() not found in index; name implies logged-in check",
+              "resolved": false,
+              "method": "is_logged_in",
+              "target": null,
+              "body_preview": null
+            }
+          },
+          "callback": "update_visibility",
+          "file": "src/API/ProfileController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $throttled,\r\n                "
+            }
+          },
+          "callback": "record_pageview",
+          "file": "src/API/TrackController.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 0,
+        "MEDIUM": 1,
+        "LOW": 9,
+        "REVIEW": 1
+      },
+      "effective_class_counts": {
+        "ADMIN_CAPABILITY": 9,
+        "LOGGED_IN_ONLY": 1,
+        "OTHER": 1
+      },
+      "permission_body_resolved": 9,
+      "permission_body_unresolved": 2,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [],
+      "admin_cap_routes": [
+        "/stats/overview",
+        "/stats/events",
+        "/stats/users",
+        "/stats/content",
+        "/stats/export",
+        "/stats/health",
+        "/stats/trend",
+        "/stats/chart",
+        "/"
+      ],
+      "logged_in_routes": [
+        "/"
+      ]
+    },
+    "database": {
+      "tables_owned_or_defined": [
+        "apollo_event_rsvp",
+        "apollo_stats_clicks",
+        "apollo_stats_content",
+        "apollo_stats_events",
+        "apollo_stats_pageviews",
+        "apollo_stats_radio",
+        "apollo_stats_sessions",
+        "apollo_stats_users"
+      ],
+      "tables_referenced": [
+        "apollo_admin_settings",
+        "apollo_chat_messages",
+        "apollo_event_rsvp",
+        "apollo_group_members",
+        "apollo_membership_get_user_slugs",
+        "apollo_membership_normalize_storage",
+        "apollo_membership_user_profile_data",
+        "apollo_statistics_settings",
+        "apollo_stats_clicks",
+        "apollo_stats_content",
+        "apollo_stats_content_rankings",
+        "apollo_stats_cron_events_reminder_email",
+        "apollo_stats_cron_weekly_roundup_email",
+        "apollo_stats_daily_aggregate",
+        "apollo_stats_daily_collect",
+        "apollo_stats_dashboard",
+        "apollo_stats_digest_events",
+        "apollo_stats_digest_roundup",
+        "apollo_stats_event_engagement",
+        "apollo_stats_events",
+        "apollo_stats_events_reminder_body",
+        "apollo_stats_events_reminder_completed",
+        "apollo_stats_events_reminder_subject",
+        "apollo_stats_forbidden",
+        "apollo_stats_overview",
+        "apollo_stats_overview_",
+        "apollo_stats_overview_30",
+        "apollo_stats_overview_7",
+        "apollo_stats_overview_90",
+        "apollo_stats_pageviews",
+        "apollo_stats_radio",
+        "apollo_stats_record_content",
+        "apollo_stats_record_event",
+        "apollo_stats_record_user",
+        "apollo_stats_session_cleanup",
+        "apollo_stats_sessions",
+        "apollo_stats_test",
+        "apollo_stats_user_activity",
+        "apollo_stats_users",
+        "apollo_stats_visibility",
+        "apollo_stats_weekly_rotate",
+        "apollo_stats_weekly_roundup_body",
+        "apollo_stats_weekly_roundup_completed",
+        "apollo_stats_weekly_roundup_lines",
+        "apollo_stats_weekly_roundup_subject",
+        "apollo_stats_widget",
+        "apollo_update_stats_visibility",
+        "apollo_user_profile_stats_section"
+      ],
+      "tables_for_registry": [
+        "apollo_event_rsvp",
+        "apollo_stats_clicks",
+        "apollo_stats_content",
+        "apollo_stats_events",
+        "apollo_stats_pageviews",
+        "apollo_stats_radio",
+        "apollo_stats_sessions",
+        "apollo_stats_users"
+      ],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_admin_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_chat_messages",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_event_rsvp",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_group_members",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_get_user_slugs",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_normalize_storage",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_user_profile_data",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_statistics_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_clicks",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_content",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_content_rankings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_cron_events_reminder_email",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_cron_weekly_roundup_email",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_daily_aggregate",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_daily_collect",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_dashboard",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_digest_events",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_digest_roundup",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_event_engagement",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_events",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_events_reminder_body",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_events_reminder_completed",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_events_reminder_subject",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_forbidden",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_overview",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_overview_",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_overview_30",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_overview_7",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_overview_90",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_pageviews",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_radio",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_record_content",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_record_event",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_record_user",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_session_cleanup",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_sessions",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_test",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_user_activity",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_users",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_visibility",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_weekly_rotate",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_weekly_roundup_body",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_weekly_roundup_completed",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_weekly_roundup_lines",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_weekly_roundup_subject",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_stats_widget",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_update_stats_visibility",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_user_profile_stats_section",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 2,
+      "user_count": 5,
+      "term_count": 0,
+      "post_keys": [
+        "_apollo_content_score",
+        "_event_rsvp_going_count"
+      ],
+      "user_keys": [
+        "_apollo_last_seen",
+        "_apollo_online_minutes",
+        "_apollo_stats_engagement_score",
+        "_apollo_stats_milestone_100",
+        "_apollo_stats_visibility"
+      ],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [
+        {
+          "pattern": "^id/([^/]+)/stats/?$",
+          "query": "index.php?apollo_profile_user=$matches[1]&apollo_profile_stats=1",
+          "position": "top",
+          "file": "src/Frontend/ProfileStats.php"
+        }
+      ],
+      "query_vars": [
+        "apollo_profile_stats",
+        "apollo_profile_user"
+      ],
+      "pages_derived": [
+        {
+          "slug": "id/{param}/stats",
+          "rewrite": "^id/([^/]+)/stats/?$",
+          "query": "index.php?apollo_profile_user=$matches[1]&apollo_profile_stats=1",
+          "query_vars": [
+            "apollo_profile_user=$matches[1]",
+            "apollo_profile_stats=1"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        }
+      ]
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 23,
+      "listened_count": 78,
+      "apollo_fired": [
+        "apollo/membership/achievement_trigger",
+        "apollo/membership/award_session_points",
+        "apollo/social/is_following",
+        "apollo/statistics/click_recorded",
+        "apollo/statistics/daily_aggregate_completed",
+        "apollo/statistics/daily_collected",
+        "apollo/statistics/data_providers",
+        "apollo/statistics/data_rotated",
+        "apollo/statistics/event_recorded",
+        "apollo/statistics/initialized",
+        "apollo/statistics/pageview_recorded",
+        "apollo/statistics/radio_",
+        "apollo/statistics/register",
+        "apollo/statistics/retention_days",
+        "apollo/statistics/session_",
+        "apollo/statistics/tracked_cpts",
+        "apollo_stats_events_reminder_body",
+        "apollo_stats_events_reminder_completed",
+        "apollo_stats_events_reminder_subject",
+        "apollo_stats_weekly_roundup_body",
+        "apollo_stats_weekly_roundup_completed",
+        "apollo_stats_weekly_roundup_lines",
+        "apollo_stats_weekly_roundup_subject"
+      ],
+      "apollo_listened": [
+        "apollo/admin/dashboard_widgets",
+        "apollo/admin/register_settings",
+        "apollo/canvas/head",
+        "apollo/chat/message_sent",
+        "apollo/chat/thread_created",
+        "apollo/coauthor/invited",
+        "apollo/dj/created",
+        "apollo/dj/deleted",
+        "apollo/dj/followed",
+        "apollo/dj/published",
+        "apollo/dj/updated",
+        "apollo/email/failed",
+        "apollo/email/opened",
+        "apollo/email/sent",
+        "apollo/event/created",
+        "apollo/event/deleted",
+        "apollo/event/gone",
+        "apollo/event/published",
+        "apollo/event/rsvp_updated",
+        "apollo/event/updated",
+        "apollo/fav/added",
+        "apollo/fav/removed",
+        "apollo/feed/after_content",
+        "apollo/gestor/milestone_reached",
+        "apollo/gestor/payment_recorded",
+        "apollo/gestor/task_completed",
+        "apollo/gestor/task_created",
+        "apollo/groups/user_joined",
+        "apollo/journal/nrep_assigned",
+        "apollo/loc/created",
+        "apollo/loc/deleted",
+        "apollo/loc/geocoded",
+        "apollo/loc/published",
+        "apollo/loc/updated",
+        "apollo/membership/achievement_awarded",
+        "apollo/membership/badge_assigned",
+        "apollo/membership/points_awarded",
+        "apollo/membership/points_deducted",
+        "apollo/membership/rank_awarded",
+        "apollo/notif/push_subscribed",
+        "apollo/social/activity_created",
+        "apollo/social/follow",
+        "apollo/social/reply_created",
+        "apollo/statistics/collect",
+        "apollo/statistics/daily_aggregate_completed",
+        "apollo/statistics/daily_collected",
+        "apollo/statistics/register",
+        "apollo/statistics/register_metrics",
+        "apollo/statistics/session_end",
+        "apollo/statistics/session_heartbeat",
+        "apollo/statistics/session_start",
+        "apollo/users/profile_visited",
+        "apollo/wow/added",
+        "apollo/wow/reaction_received",
+        "apollo_stats_daily_aggregate",
+        "apollo_stats_daily_collect",
+        "apollo_stats_session_cleanup",
+        "apollo_stats_weekly_rotate",
+        "apollo_user_profile_stats_section"
+      ],
+      "critical_wp_listened": [
+        "admin_init",
+        "admin_menu",
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "template_redirect",
+        "user_register",
+        "wp_enqueue_scripts",
+        "wp_login"
+      ]
+    },
+    "ajax": {
+      "priv": [
+        "apollo_get_user_stats_widget",
+        "apollo_stats_cleanup_tests",
+        "apollo_stats_run_test",
+        "apollo_update_stats_visibility",
+        "nopriv_apollo_get_user_stats_widget"
+      ],
+      "nopriv": [
+        "apollo_get_user_stats_widget"
+      ]
+    },
+    "cron": [
+      "apollo_stats_daily_aggregate",
+      "apollo_stats_daily_collect",
+      "apollo_stats_weekly_rotate",
+      "now"
+    ],
+    "shortcodes": [
+      "apollo_stats_widget",
+      "apollo_user_stats"
+    ],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [
+        "am5-animated",
+        "am5-index",
+        "am5-percent",
+        "am5-xy",
+        "apollo-admin-charts",
+        "apollo-profile-stats",
+        "apollo-statistics-admin",
+        "apollo-test-panel",
+        "apollo-tracker",
+        "chartjs"
+      ],
+      "styles": [
+        "apollo-admin-stats",
+        "apollo-profile-stats",
+        "apollo-statistics-admin",
+        "apollo-test-panel"
+      ]
+    },
+    "options": [
+      "apollo_admin_settings",
+      "apollo_analytics_admin_override",
+      "apollo_statistics_db_version",
+      "apollo_statistics_settings"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_STATS_VERSION",
+        "value": "2.0.6"
+      },
+      {
+        "name": "APOLLO_STATS_PATH",
+        "value": "plugin_dir_path(__FILE__"
+      },
+      {
+        "name": "APOLLO_STATS_URL",
+        "value": "plugin_dir_url(__FILE__"
+      },
+      {
+        "name": "APOLLO_STATS_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_STATS_DB_VERSION",
+        "value": "2.0.0"
+      },
+      {
+        "name": "APOLLO_STATISTICS_VERSION",
+        "value": "APOLLO_STATS_VERSION"
+      },
+      {
+        "name": "APOLLO_STATISTICS_PATH",
+        "value": "APOLLO_STATS_PATH"
+      },
+      {
+        "name": "APOLLO_STATISTICS_URL",
+        "value": "APOLLO_STATS_URL"
+      },
+      {
+        "name": "APOLLO_STATISTICS_FILE",
+        "value": "APOLLO_STATS_FILE"
+      }
+    ],
+    "security": {
+      "php_files": 47,
+      "abspath_guard_files": 45,
+      "abspath_coverage_pct": 96,
+      "wpdb_prepare_calls": 55,
+      "wpdb_query_calls": 57,
+      "prepare_to_query_ratio": 0.96,
+      "nonce_checks": 10,
+      "current_user_can_calls": 12,
+      "raw_superglobal": {
+        "get": 0,
+        "post": 7,
+        "request": 0
+      },
+      "permission_callback_return_true": 0,
+      "escape_helpers": 121,
+      "echo_statements": 135,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 5,
+      "risk_score": 6,
+      "risk_band": "LOW",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 2,
+      "rest_open_high": 0,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 0
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-admin",
+        "apollo-core",
+        "apollo-dj-sync",
+        "apollo-fav",
+        "apollo-login",
+        "apollo-membership",
+        "apollo-radio",
+        "apollo-users"
+      ],
+      "signals": [
+        "apollo-admin",
+        "apollo-core",
+        "apollo-dj-sync",
+        "apollo-fav",
+        "apollo-login",
+        "apollo-membership",
+        "apollo-radio",
+        "apollo-users"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": "2.0.0",
+      "new_version": "2.0.6",
+      "version_changed": true,
+      "old_rest": 21,
+      "live_rest": 11,
+      "old_pages": 0,
+      "live_pages": 1,
+      "new_plugin": false
+    }
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 47,
+    "php_loc": 10471,
+    "rest_routes_found": 9,
+    "cpts_found": [],
+    "tables_found": [
+      "apollo_event_rsvp",
+      "apollo_stats_clicks",
+      "apollo_stats_content",
+      "apollo_stats_events",
+      "apollo_stats_pageviews",
+      "apollo_stats_radio",
+      "apollo_stats_sessions",
+      "apollo_stats_users",
+      "statistics_pages"
+    ],
+    "shortcodes_found": [
+      "apollo_stats_widget",
+      "apollo_user_stats"
+    ]
+  }
+}

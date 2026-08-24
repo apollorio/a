@@ -1,0 +1,822 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-sign",
+    "owner": "apollo-sign",
+    "wrap": "plugins.apollo-sign",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-sign",
+  "namespace": "Apollo\\Sign",
+  "priority": 3,
+  "status": "IMPLEMENTED",
+  "version": "1.2.1",
+  "description": "Digital signature module — ICP-Brasil compliant certificate signing, PKCS7, audit trail, verification.",
+  "dependencies": [
+    "apollo-core",
+    "apollo-docs",
+    "apollo-email",
+    "openssl"
+  ],
+  "composer_dependencies": {
+    "jeidison/signer-php": "^1.0"
+  },
+  "provides": [
+    "signature-system",
+    "signature-pad",
+    "signature-audit",
+    "contracts",
+    "certificate-validation",
+    "openssl-integration",
+    "icpbr-compliance",
+    "pdf-viewer",
+    "signature-placement",
+    "visual-stamp",
+    "coordinate-system",
+    "hand-drawn-signature",
+    "signature-image-upload",
+    "stamp-generator"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [
+    "apollo_signature_audit",
+    "apollo_signatures"
+  ],
+  "table_columns": {
+    "apollo_signatures": {
+      "sig_x": {
+        "type": "DECIMAL(5,4)",
+        "default": 0.65,
+        "description": "Fractional X position (0-1)"
+      },
+      "sig_y": {
+        "type": "DECIMAL(5,4)",
+        "default": 0.85,
+        "description": "Fractional Y position (0-1)"
+      },
+      "sig_w": {
+        "type": "DECIMAL(5,4)",
+        "default": 0.28,
+        "description": "Fractional width (0-1)"
+      },
+      "sig_h": {
+        "type": "DECIMAL(5,4)",
+        "default": 0.06,
+        "description": "Fractional height (0-1)"
+      },
+      "sig_page": {
+        "type": "SMALLINT UNSIGNED",
+        "default": 1,
+        "description": "PDF page number (1-based)"
+      },
+      "placement_mode": {
+        "type": "VARCHAR(20)",
+        "default": "auto_footer",
+        "description": "manual | auto_footer"
+      },
+      "signature_image_path": {
+        "type": "VARCHAR(512)",
+        "default": "",
+        "description": "Path to hand-drawn/uploaded signature PNG"
+      },
+      "stamp_path": {
+        "type": "VARCHAR(512)",
+        "default": "",
+        "description": "Path to generated visual stamp PNG"
+      }
+    }
+  },
+  "meta": {
+    "post": {
+      "_doc_clauses": {
+        "_source": "deep_scan"
+      },
+      "_doc_issuer_cnpj": {
+        "_source": "deep_scan"
+      },
+      "_doc_issuer_name": {
+        "_source": "deep_scan"
+      },
+      "_doc_number": {
+        "_source": "deep_scan"
+      },
+      "_doc_pdf_path": {
+        "_source": "deep_scan"
+      },
+      "_doc_signer_role": {
+        "_source": "deep_scan"
+      },
+      "_doc_signers": {
+        "_source": "deep_scan"
+      },
+      "_doc_status": {
+        "_source": "deep_scan"
+      },
+      "_doc_version": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {},
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_PLUS)",
+      "auth": "LOGGED_IN_PLUS",
+      "permission_risk": "MEDIUM",
+      "permission_method": "require_login",
+      "permission_binding": "RequestController::require_login",
+      "permission_summary": "is_user_logged_in present; may have extra checks",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "if (! is_user_logged_in()) { return new WP_Error('rest_forbidden', 'Autenticação necessária.', array('status' => 401)); } return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "create_request",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/RequestController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_PLUS)",
+      "auth": "LOGGED_IN_PLUS",
+      "permission_risk": "MEDIUM",
+      "permission_method": "require_login",
+      "permission_binding": "RequestController::require_login",
+      "permission_summary": "is_user_logged_in present; may have extra checks",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "if (! is_user_logged_in()) { return new WP_Error('rest_forbidden', 'Autenticação necessária.', array('status' => 401)); } return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "list_users",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/RequestController.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "ajax": {
+    "priv": [
+      "apollo_sign_"
+    ],
+    "nopriv": []
+  },
+  "js_files": {
+    "sign-placement.js": {
+      "path": "assets/js/sign-placement.js",
+      "description": "State-machine driven PDF viewer + interactive signature placement (PDF.js + interact.js)",
+      "cdn_deps": [
+        "pdf.min.mjs",
+        "pdf.worker.min.mjs",
+        "interact.min.js"
+      ]
+    },
+    "signature-pad.js": {
+      "path": "assets/js/signature-pad.js",
+      "description": "Hand-drawn signature pad â€” canvas draw, upload image, undo, clear, color picker, PNG export",
+      "cdn_deps": [],
+      "adapted_from": "_library/signing doc/advanced-pdf-esignature-main/assets/src/js/modules/signaturePad.js"
+    }
+  },
+  "css_files": {
+    "sign-placement.css": {
+      "path": "assets/css/sign-placement.css",
+      "description": "PDF viewer, signature rect overlay, placement modal, toast styles"
+    },
+    "signature-pad.css": {
+      "path": "assets/css/signature-pad.css",
+      "description": "Signature pad canvas, toolbar, color picker, toggle, preview styles"
+    }
+  },
+  "state_machine": {
+    "states": [
+      "IDLE",
+      "PLACING",
+      "PLACED",
+      "DRAGGING",
+      "RESIZING"
+    ],
+    "transitions": {
+      "IDLE â†’ PLACING": "User clicks 'Posicionar Assinatura' and chooses 'manual'",
+      "PLACING â†’ PLACED": "Default rect positioned on canvas",
+      "PLACED â†’ DRAGGING": "User starts dragging rect",
+      "PLACED â†’ RESIZING": "User starts resizing rect",
+      "DRAGGING â†’ PLACED": "Drag ends, fractions updated",
+      "RESIZING â†’ PLACED": "Resize ends, fractions updated"
+    }
+  },
+  "coordinate_system": {
+    "frontend": "Canvas pixels, origin top-left",
+    "storage": "Fractions 0.0â€“1.0 (x/canvasW, y/canvasH) in DB DECIMAL(5,4)",
+    "backend": "PDF points (72pt/inch), origin bottom-left, Y inverted for signer-php rect"
+  },
+  "pages": [
+    {
+      "slug": "assinar/{param}",
+      "rewrite": "^assinar/([a-f0-9]{64})/?$",
+      "query": "index.php?apollo_sign_hash=$matches[1]",
+      "query_vars": [
+        "apollo_sign_hash=$matches[1]"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    }
+  ],
+  "template_parts": [
+    "parts/head.php",
+    "parts/header.php",
+    "parts/doc-info.php",
+    "parts/pdf-viewer.php",
+    "parts/placement-modal.php",
+    "parts/signature-pad-canvas.php",
+    "parts/signing-form.php",
+    "parts/signed-info.php",
+    "parts/footer.php",
+    "parts/scripts.php"
+  ],
+  "shortcodes": [
+    {
+      "tag": "apollo_signature_pad",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "cron": [],
+  "hooks_fired": [
+    "apollo/sign/before_email",
+    "apollo/sign/created",
+    "apollo/sign/doc_finalized",
+    "apollo/sign/initialized",
+    "apollo/sign/signed"
+  ],
+  "hooks_listened": [
+    "apollo/docs/finalized",
+    "apollo/sign/signed"
+  ],
+  "admin_menus": [
+    {
+      "page_title": "apollo",
+      "menu_title": "Assinaturas Digitais",
+      "capability": "Assinaturas",
+      "menu_slug": "manage_options"
+    }
+  ],
+  "assets": {
+    "scripts": [
+      "apollo-sign-js"
+    ],
+    "styles": [
+      "apollo-sign-css"
+    ]
+  },
+  "options": [
+    "apollo_sign_db_version",
+    "apollo_sign_version"
+  ],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 3,
+    "abspath_coverage_pct": 97,
+    "rest_open_routes": 0,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 0,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 2,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 0.62
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_signature_audit",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_signatures",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [
+    {
+      "pattern": "^assinar/([a-f0-9]{64})/?$",
+      "query": "index.php?apollo_sign_hash=$matches[1]"
+    }
+  ],
+  "query_vars": [
+    "apollo_sign_hash"
+  ],
+  "php_surface": {
+    "files": 39,
+    "loc": 7938,
+    "classes": 10,
+    "functions": 0
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:51.334Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 96,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-sign",
+    "main_file": "apollo-sign.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Sign",
+      "plugin_uri": "https://apollo.rio.br",
+      "description": "Digital signature module — ICP-Brasil compliant certificate signing, PKCS7, audit trail, verification.",
+      "version": "1.2.1",
+      "author": "Apollo Platform",
+      "author_uri": "https://apollo.rio.br",
+      "license": "GPL-2.0-or-later",
+      "text_domain": "apollo-sign",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": null
+    },
+    "composer": {
+      "name": "apollo/sign",
+      "namespaces": [
+        "Apollo\\Sign"
+      ],
+      "require": {
+        "php": ">=8.1",
+        "ext-openssl": "*",
+        "jeidison/signer-php": "^1.0"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 39,
+        ".css": 3,
+        ".js": 3,
+        ".json": 1
+      },
+      "by_top_directory": {
+        "(root)": 3,
+        "assets": 6,
+        "src": 10,
+        "templates": 27
+      },
+      "total_bytes": 325885
+    },
+    "php": {
+      "files": 39,
+      "loc": 7938,
+      "classes": 10,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 0
+    },
+    "architecture": {
+      "namespace": "Apollo\\Sign",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Controller",
+          "fqcn": "Apollo\\Sign\\Admin\\Controller",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/Controller.php"
+        },
+        {
+          "kind": "class",
+          "name": "RequestController",
+          "fqcn": "Apollo\\Sign\\API\\RequestController",
+          "extends": "WP_REST_Controller",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/API/RequestController.php"
+        },
+        {
+          "kind": "class",
+          "name": "SignController",
+          "fqcn": "Apollo\\Sign\\API\\SignController",
+          "extends": "\\WP_REST_Controller",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/API/SignController.php"
+        },
+        {
+          "kind": "class",
+          "name": "VerifyController",
+          "fqcn": "Apollo\\Sign\\API\\VerifyController",
+          "extends": "\\WP_REST_Controller",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/API/VerifyController.php"
+        },
+        {
+          "kind": "class",
+          "name": "Database",
+          "fqcn": "Apollo\\Sign\\Database",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Database.php"
+        },
+        {
+          "kind": "class",
+          "name": "Signature",
+          "fqcn": "Apollo\\Sign\\Model\\Signature",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Model/Signature.php"
+        },
+        {
+          "kind": "class",
+          "name": "Notifications",
+          "fqcn": "Apollo\\Sign\\Notifications",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Notifications.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Sign\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "Storage",
+          "fqcn": "Apollo\\Sign\\Storage",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Storage.php"
+        },
+        {
+          "kind": "class",
+          "name": "VisualStamp",
+          "fqcn": "Apollo\\Sign\\VisualStamp",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/VisualStamp.php"
+        }
+      ],
+      "public_functions": []
+    },
+    "rest": {
+      "count": 2,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_PLUS",
+            "risk": "MEDIUM",
+            "method": "require_login",
+            "target": "RequestController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_PLUS",
+              "risk": "MEDIUM",
+              "summary": "is_user_logged_in present; may have extra checks",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "new WP_Error('rest_forbidden', 'Autenticação necessária.', array('status' => 401))",
+                  "true"
+                ]
+              },
+              "body_preview": "if (! is_user_logged_in()) { return new WP_Error('rest_forbidden', 'Autenticação necessária.', array('status' => 401)); } return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "RequestController::require_login",
+              "method_file": "src/API/RequestController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "create_request",
+          "file": "src/API/RequestController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_PLUS",
+            "risk": "MEDIUM",
+            "method": "require_login",
+            "target": "RequestController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_PLUS",
+              "risk": "MEDIUM",
+              "summary": "is_user_logged_in present; may have extra checks",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "new WP_Error('rest_forbidden', 'Autenticação necessária.', array('status' => 401))",
+                  "true"
+                ]
+              },
+              "body_preview": "if (! is_user_logged_in()) { return new WP_Error('rest_forbidden', 'Autenticação necessária.', array('status' => 401)); } return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "RequestController::require_login",
+              "method_file": "src/API/RequestController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "list_users",
+          "file": "src/API/RequestController.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 0,
+        "MEDIUM": 2,
+        "LOW": 0,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "LOGGED_IN_PLUS": 2
+      },
+      "permission_body_resolved": 2,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [],
+      "admin_cap_routes": [],
+      "logged_in_routes": [
+        "/",
+        "/"
+      ]
+    },
+    "database": {
+      "tables_owned_or_defined": [
+        "apollo_signature_audit",
+        "apollo_signatures"
+      ],
+      "tables_referenced": [
+        "apollo_signature_audit",
+        "apollo_signatures"
+      ],
+      "tables_for_registry": [
+        "apollo_signature_audit",
+        "apollo_signatures"
+      ],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_signature_audit",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_signatures",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 9,
+      "user_count": 0,
+      "term_count": 0,
+      "post_keys": [
+        "_doc_clauses",
+        "_doc_issuer_cnpj",
+        "_doc_issuer_name",
+        "_doc_number",
+        "_doc_pdf_path",
+        "_doc_signer_role",
+        "_doc_signers",
+        "_doc_status",
+        "_doc_version"
+      ],
+      "user_keys": [],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [
+        {
+          "pattern": "^assinar/([a-f0-9]{64})/?$",
+          "query": "index.php?apollo_sign_hash=$matches[1]",
+          "position": "top",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "query_vars": [
+        "apollo_sign_hash"
+      ],
+      "pages_derived": [
+        {
+          "slug": "assinar/{param}",
+          "rewrite": "^assinar/([a-f0-9]{64})/?$",
+          "query": "index.php?apollo_sign_hash=$matches[1]",
+          "query_vars": [
+            "apollo_sign_hash=$matches[1]"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        }
+      ]
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 6,
+      "listened_count": 10,
+      "apollo_fired": [
+        "apollo/sign/before_email",
+        "apollo/sign/created",
+        "apollo/sign/doc_finalized",
+        "apollo/sign/initialized",
+        "apollo/sign/signed"
+      ],
+      "apollo_listened": [
+        "apollo/docs/finalized",
+        "apollo/sign/signed"
+      ],
+      "critical_wp_listened": [
+        "admin_menu",
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "template_redirect"
+      ]
+    },
+    "ajax": {
+      "priv": [
+        "apollo_sign_"
+      ],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [
+      "apollo_signature_pad"
+    ],
+    "admin_menus": [
+      {
+        "page_title": "apollo",
+        "menu_title": "Assinaturas Digitais",
+        "capability": "Assinaturas",
+        "menu_slug": "manage_options"
+      }
+    ],
+    "assets": {
+      "scripts": [
+        "apollo-sign-js"
+      ],
+      "styles": [
+        "apollo-sign-css"
+      ]
+    },
+    "options": [
+      "apollo_sign_db_version",
+      "apollo_sign_version"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_SIGN_VERSION",
+        "value": "1.2.1"
+      },
+      {
+        "name": "APOLLO_SIGN_DB_VERSION",
+        "value": "4"
+      },
+      {
+        "name": "APOLLO_SIGN_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_SIGN_DIR",
+        "value": "plugin_dir_path(__FILE__"
+      },
+      {
+        "name": "APOLLO_SIGN_URL",
+        "value": "plugin_dir_url(__FILE__"
+      },
+      {
+        "name": "APOLLO_SIGN_BASENAME",
+        "value": "plugin_basename(__FILE__"
+      }
+    ],
+    "security": {
+      "php_files": 39,
+      "abspath_guard_files": 38,
+      "abspath_coverage_pct": 97,
+      "wpdb_prepare_calls": 8,
+      "wpdb_query_calls": 13,
+      "prepare_to_query_ratio": 0.62,
+      "nonce_checks": 9,
+      "current_user_can_calls": 6,
+      "raw_superglobal": {
+        "get": 0,
+        "post": 19,
+        "request": 0
+      },
+      "permission_callback_return_true": 1,
+      "escape_helpers": 101,
+      "echo_statements": 98,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 6,
+      "risk_score": 3,
+      "risk_band": "LOW",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 0,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 0
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core",
+        "apollo-docs",
+        "apollo-email",
+        "openssl"
+      ],
+      "signals": [
+        "apollo-core",
+        "apollo-docs",
+        "apollo-email"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": "1.2.0",
+      "new_version": "1.2.1",
+      "version_changed": true,
+      "old_rest": 9,
+      "live_rest": 2,
+      "old_pages": 1,
+      "live_pages": 1,
+      "new_plugin": false
+    }
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 39,
+    "php_loc": 7899,
+    "rest_routes_found": 1,
+    "cpts_found": [],
+    "tables_found": [
+      "apollo_signature_audit",
+      "apollo_signatures"
+    ],
+    "shortcodes_found": [
+      "apollo_signature_pad"
+    ]
+  }
+}

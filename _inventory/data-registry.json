@@ -1,0 +1,3259 @@
+{
+  "$schema": "apollo/data-registry/v1",
+  "$id": "plugins/_inventory/data-registry.json",
+  "$version": "1.3.1",
+  "$generated": "2026-07-28",
+  "$description": "Deep technical audit of every DB-bound information spot shown on official mockups (event / dj / local singles + official layout shell). Canonical map: mockup payload → live storage → input surfaces.",
+  "$note_template": "No external attachment was present at generation time. This file EMBEDS the mandatory field template under $field_template — every entry in cpts.*.fields MUST conform.",
+  "$field_template": {
+    "id": "cpt.section.key — unique stable id",
+    "label": "Human label",
+    "cpt": "event | dj | local | _shell",
+    "mockup": {
+      "file": "path under D:/dev/_dev web/",
+      "payload": "JS object path or null",
+      "section": "UI section id",
+      "ui": "CSS selector hint or null",
+      "hardcoded_in_html": "boolean — true if mock still hardcodes instead of payload",
+      "sample": "optional sample value from mock"
+    },
+    "storage": {
+      "kind": "post | meta | taxonomy | attachment | relation | derived | runtime | table",
+      "key": "canonical WP/live key",
+      "type": "scalar/object type",
+      "owner_cpt": "owning CPT when relation/derived",
+      "mockup_key_legacy": "mock-only key if renamed (e.g. _ap_* → _local_*)"
+    },
+    "payload_key": "context/localize key",
+    "input": {
+      "frontend": "selector|true|null",
+      "metabox": "true|null",
+      "rest": "REST field name|null"
+    },
+    "required_for_render": "boolean",
+    "empty_behavior": "hide | fallback | omit | required",
+    "notes": "free text"
+  },
+  "sources": {
+    "mockups": [
+      {
+        "id": "event-single",
+        "path": "screen/single cpt/event/single-event/event-single-page.html",
+        "data": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+        "payload": "APOLLO_EVENT_SIMULATED"
+      },
+      {
+        "id": "dj-single",
+        "path": "screen/single cpt/dj/dj-single-page.html",
+        "payload": "APOLLO_DJ"
+      },
+      {
+        "id": "loc-single",
+        "path": "screen/single cpt/location/loc-single-page.html",
+        "payload": "APOLLO_LOC"
+      },
+      {
+        "id": "official-layout",
+        "path": "screen/_official_layout/layout.html",
+        "data": "screen/_official_layout/simulated.data.js",
+        "payload": "APOLLO_* shell"
+      }
+    ],
+    "live_plugins": {
+      "event": {
+        "plugin": "apollo-events",
+        "cpt": "event",
+        "constant": "APOLLO_EVENT_CPT",
+        "meta_prefix": "_event_",
+        "context": "apollo_event_* helpers / single parts"
+      },
+      "dj": {
+        "plugin": "apollo-djs",
+        "cpt": "dj",
+        "constant": "APOLLO_DJ_CPT",
+        "meta_prefix": "_dj_",
+        "context": "apollo_get_dj_context($dj_id)"
+      },
+      "local": {
+        "plugin": "apollo-loc",
+        "cpt": "local",
+        "constant": "APOLLO_LOCAL_CPT",
+        "meta_prefix": "_local_",
+        "context": "LocalsController + single-local.php"
+      }
+    },
+    "input_surfaces": {
+      "metabox_provider": {
+        "plugin": "apollo-lux-panels",
+        "version": "1.0.0",
+        "scope": [
+          "event",
+          "dj",
+          "local"
+        ],
+        "shape": "One high-priority tabbed metabox per CPT, 1:1 with the Apollo add-new form design system.",
+        "note": "Every field whose input.metabox is true is rendered by this plugin. It owns no meta — it writes meta owned by apollo-events / apollo-djs / apollo-loc.",
+        "hook_fired": "apollo/lux/saved"
+      },
+      "frontend_forms": {
+        "event": "apollo-events — /novo-evento, /editar/{cpt}/{id}",
+        "dj": "apollo-djs — quick-add from the event form + standalone",
+        "local": "apollo-loc — quick-add from the event form + standalone"
+      },
+      "rest": {
+        "namespace": "apollo/v1",
+        "note": "input.rest values name the REST field, not the route."
+      }
+    }
+  },
+  "cpts": {
+    "event": {
+      "slug": "event",
+      "labels": {
+        "singular": "Evento",
+        "plural": "Eventos"
+      },
+      "public_route": "/evento/{slug}",
+      "mockup_payload": "APOLLO_EVENT_SIMULATED",
+      "field_count": 42,
+      "fields": [
+        {
+          "id": "event.id",
+          "label": "Event ID / slug",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "APOLLO_EVENT_SIMULATED.id",
+            "section": "identity",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": "sunset-theory-vol-04"
+          },
+          "storage": {
+            "kind": "post",
+            "key": "ID|post_name",
+            "type": "int|string",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "id",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": "id"
+          },
+          "required_for_render": true,
+          "empty_behavior": "required",
+          "notes": ""
+        },
+        {
+          "id": "event.share.title",
+          "label": "Share title",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "share.title",
+            "section": "share",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": "Sunset Theory Vol.04"
+          },
+          "storage": {
+            "kind": "post",
+            "key": "post_title",
+            "type": "string",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "share.title",
+          "input": {
+            "frontend": "#ev-title",
+            "metabox": "title",
+            "rest": "title"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.hero.kicker",
+          "label": "Hero kicker",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "hero.kicker",
+            "section": "hero",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": "Apollo · Rio"
+          },
+          "storage": {
+            "kind": "derived",
+            "key": "brand_static|seo",
+            "type": "string",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "hero.kicker",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "fallback",
+          "notes": "Often static brand line; may become meta later."
+        },
+        {
+          "id": "event.hero.titleLines",
+          "label": "Hero title lines",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "hero.titleLines",
+            "section": "hero",
+            "ui": ".ev-title",
+            "hardcoded_in_html": false,
+            "sample": [
+              "Sunset",
+              "Theory"
+            ]
+          },
+          "storage": {
+            "kind": "post",
+            "key": "post_title",
+            "type": "string",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "hero.titleLines",
+          "input": {
+            "frontend": "#ev-title",
+            "metabox": null,
+            "rest": "title"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "Split client/PHP from post_title + optional accent."
+        },
+        {
+          "id": "event.hero.titleAccent",
+          "label": "Hero title accent",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "hero.titleAccent",
+            "section": "hero",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": "Vol.04"
+          },
+          "storage": {
+            "kind": "derived",
+            "key": "post_title_split",
+            "type": "string",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "hero.titleAccent",
+          "input": {
+            "frontend": "#ev-title",
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "omit",
+          "notes": ""
+        },
+        {
+          "id": "event.hero.image",
+          "label": "Hero banner image",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "hero.image",
+            "section": "hero",
+            "ui": ".ev-hero-media img",
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_banner",
+            "type": "attachment_id",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "hero.image",
+          "input": {
+            "frontend": "#ev-banner",
+            "metabox": true,
+            "rest": "banner"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.hero.youtubeId",
+          "label": "Hero YouTube id",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "hero.youtubeId",
+            "section": "hero",
+            "ui": ".ev-hero-yt",
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_video_url",
+            "type": "string_url",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "hero.youtubeId",
+          "input": {
+            "frontend": "#ev-video",
+            "metabox": true,
+            "rest": "video_url"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "Parse YT id from URL at render."
+        },
+        {
+          "id": "event.hero.youtubeDelayMs",
+          "label": "YouTube reveal delay",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "hero.youtubeDelayMs",
+            "section": "hero",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": 2600
+          },
+          "storage": {
+            "kind": "runtime",
+            "key": "ui_const",
+            "type": "int",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "hero.youtubeDelayMs",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": false,
+          "empty_behavior": "fallback",
+          "notes": "Presentation constant, not DB."
+        },
+        {
+          "id": "event.hero.meta",
+          "label": "Hero meta chips",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "hero.meta[]",
+            "section": "hero",
+            "ui": ".ev-hero-meta",
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "derived",
+            "key": "_event_start_date+_event_start_time+_event_loc_id",
+            "type": "object[]",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "hero.meta",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "Built from date/time + loc name."
+        },
+        {
+          "id": "event.facts",
+          "label": "Facts strip",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "facts[]",
+            "section": "facts",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "derived",
+            "key": "schedule+loc",
+            "type": "object[]",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "facts",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.start_date",
+          "label": "Start date",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "→ facts/hero.meta",
+            "section": "schedule",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_start_date",
+            "type": "string_ymd",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "start_date",
+          "input": {
+            "frontend": "#start_date",
+            "metabox": true,
+            "rest": "start_date"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.end_date",
+          "label": "End date",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "→ facts/hero.meta",
+            "section": "schedule",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_end_date",
+            "type": "string_ymd",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "end_date",
+          "input": {
+            "frontend": "#end_date",
+            "metabox": true,
+            "rest": "end_date"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.start_time",
+          "label": "Start time",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "→ facts",
+            "section": "schedule",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_start_time",
+            "type": "string_hm",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "start_time",
+          "input": {
+            "frontend": "#start_time",
+            "metabox": true,
+            "rest": "start_time"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.end_time",
+          "label": "End time",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "→ facts",
+            "section": "schedule",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_end_time",
+            "type": "string_hm",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "end_time",
+          "input": {
+            "frontend": "#end_time",
+            "metabox": true,
+            "rest": "end_time"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.genres",
+          "label": "Genre marquee",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "genres[]",
+            "section": "marquee",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": [
+              "Techno",
+              "Industrial"
+            ]
+          },
+          "storage": {
+            "kind": "taxonomy",
+            "key": "sound",
+            "type": "term[]",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "genres",
+          "input": {
+            "frontend": ".ev-genre",
+            "metabox": null,
+            "rest": "sounds"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.season",
+          "label": "Season",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/event-single-page.html",
+            "payload": null,
+            "section": "taxonomy",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "taxonomy",
+            "key": "event_season",
+            "type": "term",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "seasons",
+          "input": {
+            "frontend": "#ev-season",
+            "metabox": null,
+            "rest": "seasons"
+          },
+          "required_for_render": false,
+          "empty_behavior": "hide",
+          "notes": "In form/live single; not always in simulated.data.js object."
+        },
+        {
+          "id": "event.rsvp.title",
+          "label": "RSVP block title",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "rsvp.title",
+            "section": "rsvp",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "runtime",
+            "key": "i18n_copy",
+            "type": "string",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "rsvp.title",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": false,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.rsvp.me",
+          "label": "Current user RSVP persona",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "rsvp.me",
+            "section": "rsvp",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "runtime",
+            "key": "wp_current_user",
+            "type": "object",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "rsvp.me",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "Not CPT meta — session user."
+        },
+        {
+          "id": "event.rsvp.options",
+          "label": "RSVP option avatars (will/maybe)",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "rsvp.options",
+            "section": "rsvp",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "table",
+            "key": "apollo_event_rsvp",
+            "type": "rows",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "rsvp.options",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": "participantes"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "going / interested rows."
+        },
+        {
+          "id": "event.lineup.djs",
+          "label": "Line-up DJ cards",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "lineup.djs[]",
+            "section": "lineup",
+            "ui": ".ev-lineup",
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "relation",
+            "key": "_event_dj_ids+_event_dj_slots",
+            "type": "int[]+object[]",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "lineup.djs",
+          "input": {
+            "frontend": "form-lineup",
+            "metabox": null,
+            "rest": "dj_ids,dj_slots"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "Resolved against CPT dj (name, photo, audio, badge, slot)."
+        },
+        {
+          "id": "event.dj_ids",
+          "label": "DJ IDs",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "lineup.djs[].slug→id",
+            "section": "lineup",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_dj_ids",
+            "type": "int[]",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "dj_ids",
+          "input": {
+            "frontend": "#ev-dj-ids",
+            "metabox": true,
+            "rest": "dj_ids"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.dj_slots",
+          "label": "DJ timetable slots",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "lineup.djs[].slot + timetable.rows",
+            "section": "timetable",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_dj_slots",
+            "type": "object[]",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "dj_slots",
+          "input": {
+            "frontend": "slots UI",
+            "metabox": true,
+            "rest": "dj_slots"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "{dj_id,start,end,badge?}"
+        },
+        {
+          "id": "event.timetable",
+          "label": "Timetable panel",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "timetable.rows[]",
+            "section": "timetable",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "derived",
+            "key": "_event_dj_slots",
+            "type": "object[]",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "timetable.rows",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.gallery",
+          "label": "Event gallery",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "gallery[]",
+            "section": "gallery",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_gallery",
+            "type": "attachment_id[]",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "gallery",
+          "input": {
+            "frontend": "#ev-gallery",
+            "metabox": true,
+            "rest": "gallery"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.about",
+          "label": "About copy",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "about",
+            "section": "about",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "post",
+            "key": "post_content",
+            "type": "html",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "about",
+          "input": {
+            "frontend": "#ev-about",
+            "metabox": null,
+            "rest": "content"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.spotify",
+          "label": "Audio / Spotify embed",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "spotify",
+            "section": "audio",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_audio_url",
+            "type": "string_url",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "spotify",
+          "input": {
+            "frontend": "#ev-audio",
+            "metabox": true,
+            "rest": "audio_url"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.loc_id",
+          "label": "Linked location",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "loc.*",
+            "section": "loc",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_loc_id",
+            "type": "int",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "loc_id",
+          "input": {
+            "frontend": "#ev-loc-id",
+            "metabox": true,
+            "rest": "loc_id"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "Resolves CPT local fields into loc.*"
+        },
+        {
+          "id": "event.loc.name",
+          "label": "Loc name (resolved)",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "loc.name",
+            "section": "loc",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "relation",
+            "key": "local.post_title|_local_name",
+            "type": "string",
+            "owner_cpt": "local",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "loc.name",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.loc.address",
+          "label": "Loc address (resolved)",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "loc.addressLines",
+            "section": "loc",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "relation",
+            "key": "_local_address(+city/state)",
+            "type": "string",
+            "owner_cpt": "local",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "loc.addressLines",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.loc.loc",
+          "label": "Loc lat/lng (resolved)",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "loc.loc",
+            "section": "loc",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "relation",
+            "key": "_local_lat+_local_lng",
+            "type": "object",
+            "owner_cpt": "local",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "loc.loc",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.loc.photos",
+          "label": "Loc photos (resolved)",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "loc.photos[]",
+            "section": "loc",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "relation",
+            "key": "_local_image_1..N|_local_amenities gallery",
+            "type": "url[]",
+            "owner_cpt": "local",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "loc.photos",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.access.tickets",
+          "label": "Ticket buttons",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "access.tickets[]",
+            "section": "access",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_access_buttons|_event_ticket_url|_event_earlybird_*",
+            "type": "object[]",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "access.tickets",
+          "input": {
+            "frontend": "#ev-access-buttons",
+            "metabox": null,
+            "rest": "access_buttons"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.access.coupon",
+          "label": "Coupon code",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "access.coupon",
+            "section": "access",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_coupon_code",
+            "type": "string",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "access.coupon",
+          "input": {
+            "frontend": "#ev-coupon-code",
+            "metabox": true,
+            "rest": "coupon_code"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.access.listas",
+          "label": "Lista entries",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "access.listas[]",
+            "section": "access",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_access_buttons|_event_lista_*",
+            "type": "object[]",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "access.listas",
+          "input": {
+            "frontend": "#ev-access-buttons",
+            "metabox": null,
+            "rest": "access_buttons"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.access.listaCta",
+          "label": "Lista CTA",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "access.listaCta",
+            "section": "access",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_lista_cta_label|_event_list_url",
+            "type": "object",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "access.listaCta",
+          "input": {
+            "frontend": "#ev-lista-cta-label",
+            "metabox": true,
+            "rest": "lista_cta_label,list_url"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.ticket_status",
+          "label": "Ticket availability status",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/event-single-page.html",
+            "payload": null,
+            "section": "access",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_ticket_status",
+            "type": "enum",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "ticket_status",
+          "input": {
+            "frontend": "#ev-tickets",
+            "metabox": true,
+            "rest": "ticket_status"
+          },
+          "required_for_render": false,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.status",
+          "label": "Event status",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/event-single-page.html",
+            "payload": null,
+            "section": "status",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_status",
+            "type": "enum",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "event_status",
+          "input": {
+            "frontend": "#ev-status",
+            "metabox": true,
+            "rest": "event_status"
+          },
+          "required_for_render": false,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.privacy",
+          "label": "Privacy",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/event-single-page.html",
+            "payload": null,
+            "section": "status",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_privacy",
+            "type": "enum",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "privacy",
+          "input": {
+            "frontend": "#ev-privacy",
+            "metabox": true,
+            "rest": "privacy"
+          },
+          "required_for_render": false,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.is_gone",
+          "label": "Expired flag",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/event-single-page.html",
+            "payload": null,
+            "section": "status",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_is_gone",
+            "type": "bool",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": null,
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "Cron-derived 30min after end — never form input."
+        },
+        {
+          "id": "event.highlighted",
+          "label": "Highlighted (destaque)",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/_official_layout/layout.html#/eventos",
+            "payload": null,
+            "section": "status",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_highlighted",
+            "type": "bool",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "highlighted",
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": false,
+          "empty_behavior": "hide",
+          "notes": "Added 2026-07-28 (apollo-events 1.5.0 -> next). Admin-only curation checkbox — apollo-events/src/Admin/Metabox.php render_config(), '1'/'' string-bool same convention as _event_is_gone above. Registered via Registry.php register_meta() filter. NOT exposed on the public /novo-evento submit form or EventsController's REST write meta_map by design (editorial curation flag, not self-service). Drives the .pev-hero highlighted-events slider on the Eventos screen(s) — see 09-plugins/apollo-events.json note for the slider prep."
+        },
+        {
+          "id": "event.bg_color",
+          "label": "Background tint",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/event-single-page.html",
+            "payload": null,
+            "section": "hero",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_bg_color",
+            "type": "hex",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "bg_color",
+          "input": {
+            "frontend": "#ev-bg-color",
+            "metabox": true,
+            "rest": "bg_color"
+          },
+          "required_for_render": false,
+          "empty_behavior": "fallback",
+          "notes": ""
+        },
+        {
+          "id": "event.footer",
+          "label": "Footer brand block",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "footer",
+            "section": "footer",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "derived",
+            "key": "banner+title+date+loc",
+            "type": "object",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "footer",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "event.chat",
+          "label": "Warm-Up chat",
+          "cpt": "event",
+          "mockup": {
+            "file": "screen/single cpt/event/single-event/assets/data/simulated.data.js",
+            "payload": "chat",
+            "section": "chat",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "runtime",
+            "key": "apollo-chat channel",
+            "type": "object",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "chat",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": "chat"
+          },
+          "required_for_render": false,
+          "empty_behavior": "hide",
+          "notes": "Not event meta — chat plugin channel keyed by event."
+        }
+      ]
+    },
+    "dj": {
+      "slug": "dj",
+      "labels": {
+        "singular": "DJ",
+        "plural": "DJs"
+      },
+      "public_route": "/dj/{slug}",
+      "mockup_payload": "APOLLO_DJ",
+      "context_php": "apollo_get_dj_context",
+      "field_count": 21,
+      "fields": [
+        {
+          "id": "dj.name",
+          "label": "DJ display name",
+          "cpt": "dj",
+          "mockup": {
+            "file": "screen/single cpt/dj/dj-single-page.html",
+            "payload": "APOLLO_DJ.name",
+            "section": "identity",
+            "ui": "#heroName,#evTopName,#footName",
+            "hardcoded_in_html": false,
+            "sample": "Leo Janeiro"
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_dj_name",
+            "type": "string",
+            "owner_cpt": "dj",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "name",
+          "input": {
+            "frontend": "hero",
+            "metabox": true,
+            "rest": "name"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "Fallback post_title."
+        },
+        {
+          "id": "dj.bio_short",
+          "label": "Hero short bio",
+          "cpt": "dj",
+          "mockup": {
+            "file": "screen/single cpt/dj/dj-single-page.html",
+            "payload": null,
+            "section": "hero",
+            "ui": ".hero-bio",
+            "hardcoded_in_html": true,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_dj_bio_short",
+            "type": "string",
+            "owner_cpt": "dj",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "bioShort",
+          "input": {
+            "frontend": true,
+            "metabox": true,
+            "rest": true
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "GAP: still HTML-hardcoded in mockup; must join APOLLO_DJ."
+        },
+        {
+          "id": "dj.statement",
+          "label": "Statement word-fill",
+          "cpt": "dj",
+          "mockup": {
+            "file": "screen/single cpt/dj/dj-single-page.html",
+            "payload": null,
+            "section": "statement",
+            "ui": "#stmtTxt",
+            "hardcoded_in_html": true,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_dj_statement",
+            "type": "string",
+            "owner_cpt": "dj",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "statement",
+          "input": {
+            "frontend": true,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "Fallback _dj_bio_short. GAP: hardcoded in mockup HTML."
+        },
+        {
+          "id": "dj.hero_image",
+          "label": "Hero image",
+          "cpt": "dj",
+          "mockup": {
+            "file": "screen/single cpt/dj/dj-single-page.html",
+            "payload": null,
+            "section": "hero",
+            "ui": "#heroImg",
+            "hardcoded_in_html": true,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_dj_banner|_dj_image",
+            "type": "attachment_id|url",
+            "owner_cpt": "dj",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "heroImage",
+          "input": {
+            "frontend": true,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "GAP: hardcoded img src in mockup."
+        },
+        {
+          "id": "dj.booking",
+          "label": "Booking email",
+          "cpt": "dj",
+          "mockup": {
+            "file": "screen/single cpt/dj/dj-single-page.html",
+            "payload": "APOLLO_DJ.bookingEmail",
+            "section": "actions",
+            "ui": "#heroBooking,#dockBooking",
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_dj_booking",
+            "type": "email",
+            "owner_cpt": "dj",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "bookingEmail",
+          "input": {
+            "frontend": true,
+            "metabox": true,
+            "rest": true
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "dj.soundcloud",
+          "label": "SoundCloud URL",
+          "cpt": "dj",
+          "mockup": {
+            "file": "screen/single cpt/dj/dj-single-page.html",
+            "payload": "APOLLO_DJ.soundcloud",
+            "section": "platforms",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_dj_soundcloud",
+            "type": "string_url",
+            "owner_cpt": "dj",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "soundcloud",
+          "input": {
+            "frontend": true,
+            "metabox": true,
+            "rest": true
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "dj.bandcamp",
+          "label": "Bandcamp URL",
+          "cpt": "dj",
+          "mockup": {
+            "file": "screen/single cpt/dj/dj-single-page.html",
+            "payload": "APOLLO_DJ.bandcamp",
+            "section": "platforms",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_dj_bandcamp",
+            "type": "string_url",
+            "owner_cpt": "dj",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "bandcamp",
+          "input": {
+            "frontend": true,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "dj.spotify",
+          "label": "Spotify URL",
+          "cpt": "dj",
+          "mockup": {
+            "file": "screen/single cpt/dj/dj-single-page.html",
+            "payload": "APOLLO_DJ.spotify",
+            "section": "platforms",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_dj_spotify",
+            "type": "string_url",
+            "owner_cpt": "dj",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "spotify",
+          "input": {
+            "frontend": true,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "dj.instagram",
+          "label": "Instagram URL",
+          "cpt": "dj",
+          "mockup": {
+            "file": "screen/single cpt/dj/dj-single-page.html",
+            "payload": null,
+            "section": "platforms",
+            "ui": "footer .soc",
+            "hardcoded_in_html": true,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_dj_instagram",
+            "type": "string_url",
+            "owner_cpt": "dj",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "instagram",
+          "input": {
+            "frontend": true,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "In handoff map; not in APOLLO_DJ object yet."
+        },
+        {
+          "id": "dj.media_kit_url",
+          "label": "Promo kit Drive URL",
+          "cpt": "dj",
+          "mockup": {
+            "file": "screen/single cpt/dj/dj-single-page.html",
+            "payload": "APOLLO_DJ.mediaKitUrl",
+            "section": "kit",
+            "ui": "#kitDl,#dockKit",
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_dj_media_kit_url",
+            "type": "string_url",
+            "owner_cpt": "dj",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "mediaKitUrl",
+          "input": {
+            "frontend": true,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "dj.about_video",
+          "label": "About video",
+          "cpt": "dj",
+          "mockup": {
+            "file": "screen/single cpt/dj/dj-single-page.html",
+            "payload": "APOLLO_DJ.videoUrl",
+            "section": "about",
+            "ui": "#aboutFig",
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_dj_about_video",
+            "type": "string_url",
+            "owner_cpt": "dj",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "videoUrl",
+          "input": {
+            "frontend": true,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "fallback",
+          "notes": "Priority over about photo."
+        },
+        {
+          "id": "dj.about_photo",
+          "label": "About photo (≠ hero)",
+          "cpt": "dj",
+          "mockup": {
+            "file": "screen/single cpt/dj/dj-single-page.html",
+            "payload": "APOLLO_DJ.aboutPhoto",
+            "section": "about",
+            "ui": "#aboutFig",
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_dj_about_photo",
+            "type": "attachment_id|url",
+            "owner_cpt": "dj",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "aboutPhoto",
+          "input": {
+            "frontend": true,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "dj.bio",
+          "label": "About long bio",
+          "cpt": "dj",
+          "mockup": {
+            "file": "screen/single cpt/dj/dj-single-page.html",
+            "payload": null,
+            "section": "about",
+            "ui": ".about-p",
+            "hardcoded_in_html": true,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_dj_bio",
+            "type": "html|string",
+            "owner_cpt": "dj",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "bio",
+          "input": {
+            "frontend": true,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "GAP: hardcoded in mockup HTML."
+        },
+        {
+          "id": "dj.genres",
+          "label": "Sound / genre marquee",
+          "cpt": "dj",
+          "mockup": {
+            "file": "screen/single cpt/dj/dj-single-page.html",
+            "payload": "APOLLO_DJ.genres[]",
+            "section": "marquee",
+            "ui": "#mqInner",
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "taxonomy",
+            "key": "sound",
+            "type": "term[]",
+            "owner_cpt": "dj",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "genres",
+          "input": {
+            "frontend": true,
+            "metabox": true,
+            "rest": "sounds"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "dj.tracks",
+          "label": "Out now! tracks",
+          "cpt": "dj",
+          "mockup": {
+            "file": "screen/single cpt/dj/dj-single-page.html",
+            "payload": "APOLLO_DJ.tracks[]",
+            "section": "out-now",
+            "ui": "#trkList,#outNowLb",
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_dj_tracks",
+            "type": "object[] (schema v2, 14 fields)",
+            "owner_cpt": "dj",
+            "mockup_key_legacy": null,
+            "schema_ref": "plugins/_inventory/registry/20-meta-schemas.json#_dj_tracks"
+          },
+          "payload_key": "tracks",
+          "input": {
+            "frontend": "releases",
+            "metabox": true,
+            "rest": "tracks"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "v2 (2026-07-28): {title*, artists*, duration*, bpm, release_date, album, label, genre, cover_url, cover_id, url_soundcloud, url_spotify, url_bandcamp, url_download} — * mandatory, plus at least 1 of the 4 url_* fields. Registered + sanitized in apollo-core MetaRegistry (apollo_dj_sanitize_tracks_meta), enforced identically on both write paths: REST and the apollo-lux-panels admin metabox (repeater_card field type, Apollo dark design system — the redundant plain-wp-admin apollo-djs metabox was retired same day, see $duplicate_metabox_found). Supersedes v1 {title,url,year,duration}. GAP CLOSED 2026-07-28: apollo_dj_get_tracks() migrated to v2 (superset shape, back-compat url/year aliases) — see $tracks_read_path_migration in registry/09-plugins/apollo-djs.json. Display: newest track (by release_date) auto-pulls to /casa landing via apollo_get_latest_dj_tracks(), real data with simulated-cover fallback pre-launch; full list on /dj/{id}; max 5 + Ver Todos (placeholder href to /lancamentos, page not built yet)."
+        },
+        {
+          "id": "dj.playedOn",
+          "label": "Played-on event cards",
+          "cpt": "dj",
+          "mockup": {
+            "file": "screen/single cpt/dj/dj-single-page.html",
+            "payload": "APOLLO_DJ.playedOn[]",
+            "section": "played-on",
+            "ui": "#poTrack",
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "derived",
+            "key": "WP_Query event WHERE _event_dj_ids CONTAINS dj",
+            "type": "object[]",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "playedOn",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "title,loc,date,withCount,cover from events+loc."
+        },
+        {
+          "id": "dj.playedWith",
+          "label": "Played-with co-DJs",
+          "cpt": "dj",
+          "mockup": {
+            "file": "screen/single cpt/dj/dj-single-page.html",
+            "payload": "APOLLO_DJ.playedWith[]",
+            "section": "played-with",
+            "ui": "#roster",
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "derived",
+            "key": "co-DJs from shared lineups",
+            "type": "object[]",
+            "owner_cpt": "dj",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "playedWith",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "dj.stats",
+          "label": "Numbers / stats strip",
+          "cpt": "dj",
+          "mockup": {
+            "file": "screen/single cpt/dj/dj-single-page.html",
+            "payload": null,
+            "section": "numbers",
+            "ui": "[data-count]",
+            "hardcoded_in_html": true,
+            "sample": null
+          },
+          "storage": {
+            "kind": "derived",
+            "key": "apollo_dj_compute_stats(past_events)",
+            "type": "object",
+            "owner_cpt": "dj",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "stats",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "GAP: mockup hardcodes 86/6/9/14; live computes from past events."
+        },
+        {
+          "id": "dj.gallery",
+          "label": "Gallery",
+          "cpt": "dj",
+          "mockup": {
+            "file": "screen/single cpt/dj/dj-single-page.html",
+            "payload": null,
+            "section": "gallery",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_dj_gallery",
+            "type": "attachment_id[]",
+            "owner_cpt": "dj",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "gallery",
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": false,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "dj.projects",
+          "label": "Original projects 1–3",
+          "cpt": "dj",
+          "mockup": {
+            "file": "screen/single cpt/dj/dj-single-page.html",
+            "payload": null,
+            "section": "projects",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_dj_original_project_1..3",
+            "type": "string",
+            "owner_cpt": "dj",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "projects",
+          "input": {
+            "frontend": true,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": false,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "dj.verified",
+          "label": "Verified badge",
+          "cpt": "dj",
+          "mockup": {
+            "file": "screen/single cpt/dj/dj-single-page.html",
+            "payload": null,
+            "section": "identity",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_dj_verified",
+            "type": "bool",
+            "owner_cpt": "dj",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "verified",
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": false,
+          "empty_behavior": "hide",
+          "notes": ""
+        }
+      ]
+    },
+    "local": {
+      "slug": "local",
+      "labels": {
+        "singular": "Local",
+        "plural": "Locais"
+      },
+      "public_route": "/local/{slug}",
+      "mockup_payload": "APOLLO_LOC",
+      "mockup_legacy_prefix": "_ap_",
+      "live_prefix": "_local_",
+      "field_count": 20,
+      "fields": [
+        {
+          "id": "local.name",
+          "label": "Loc name",
+          "cpt": "local",
+          "mockup": {
+            "file": "screen/single cpt/location/loc-single-page.html",
+            "payload": "APOLLO_LOC.name",
+            "section": "identity",
+            "ui": "#footName,#heroName",
+            "hardcoded_in_html": false,
+            "sample": "D-Edge"
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_local_name",
+            "type": "string",
+            "owner_cpt": "local",
+            "mockup_key_legacy": "_ap_venue_name"
+          },
+          "payload_key": "name",
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": "name"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "Fallback post_title. Mock still labels _ap_*."
+        },
+        {
+          "id": "local.hero_image",
+          "label": "Hero image",
+          "cpt": "local",
+          "mockup": {
+            "file": "screen/single cpt/location/loc-single-page.html",
+            "payload": null,
+            "section": "hero",
+            "ui": "#heroImg",
+            "hardcoded_in_html": true,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_local_image_1",
+            "type": "attachment_id",
+            "owner_cpt": "local",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "heroImage",
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "GAP: hardcoded in mockup; align to image_1 or dedicated banner."
+        },
+        {
+          "id": "local.hero_kicker",
+          "label": "Hero kicker",
+          "cpt": "local",
+          "mockup": {
+            "file": "screen/single cpt/location/loc-single-page.html",
+            "payload": null,
+            "section": "hero",
+            "ui": ".hero-kick",
+            "hardcoded_in_html": true,
+            "sample": null
+          },
+          "storage": {
+            "kind": "derived",
+            "key": "_local_city+_local_state+copy",
+            "type": "string",
+            "owner_cpt": "local",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "hero.kicker",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "GAP: hardcoded; productize as meta or derived."
+        },
+        {
+          "id": "local.address",
+          "label": "Address line",
+          "cpt": "local",
+          "mockup": {
+            "file": "screen/single cpt/location/loc-single-page.html",
+            "payload": "APOLLO_LOC.addr",
+            "section": "map",
+            "ui": "map/Uber/99",
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_local_address",
+            "type": "string",
+            "owner_cpt": "local",
+            "mockup_key_legacy": "_ap_address"
+          },
+          "payload_key": "addr",
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": "address"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "local.city",
+          "label": "City",
+          "cpt": "local",
+          "mockup": {
+            "file": "screen/single cpt/location/loc-single-page.html",
+            "payload": "→ addr/hero",
+            "section": "identity",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_local_city",
+            "type": "string",
+            "owner_cpt": "local",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "city",
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": "city"
+          },
+          "required_for_render": false,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "local.state",
+          "label": "State",
+          "cpt": "local",
+          "mockup": {
+            "file": "screen/single cpt/location/loc-single-page.html",
+            "payload": "→ addr",
+            "section": "identity",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_local_state",
+            "type": "string",
+            "owner_cpt": "local",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "state",
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": "state"
+          },
+          "required_for_render": false,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "local.postal",
+          "label": "Postal code",
+          "cpt": "local",
+          "mockup": {
+            "file": "screen/single cpt/location/loc-single-page.html",
+            "payload": null,
+            "section": "identity",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_local_postal",
+            "type": "string",
+            "owner_cpt": "local",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "postal",
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": "postal"
+          },
+          "required_for_render": false,
+          "empty_behavior": "omit",
+          "notes": ""
+        },
+        {
+          "id": "local.lat",
+          "label": "Latitude",
+          "cpt": "local",
+          "mockup": {
+            "file": "screen/single cpt/location/loc-single-page.html",
+            "payload": "APOLLO_LOC.lat",
+            "section": "map",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_local_lat",
+            "type": "number",
+            "owner_cpt": "local",
+            "mockup_key_legacy": "_ap_geo.lat"
+          },
+          "payload_key": "lat",
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": "lat"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "local.lng",
+          "label": "Longitude",
+          "cpt": "local",
+          "mockup": {
+            "file": "screen/single cpt/location/loc-single-page.html",
+            "payload": "APOLLO_LOC.lng",
+            "section": "map",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_local_lng",
+            "type": "number",
+            "owner_cpt": "local",
+            "mockup_key_legacy": "_ap_geo.lng"
+          },
+          "payload_key": "lng",
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": "lng"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "local.eventsHosted",
+          "label": "Events hosted count",
+          "cpt": "local",
+          "mockup": {
+            "file": "screen/single cpt/location/loc-single-page.html",
+            "payload": "APOLLO_LOC.eventsHosted",
+            "section": "facts",
+            "ui": "#factEvents",
+            "hardcoded_in_html": false,
+            "sample": 1180
+          },
+          "storage": {
+            "kind": "derived",
+            "key": "COUNT(event WHERE _event_loc_id=ID)",
+            "type": "int",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "eventsHosted",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "NEVER capacity/lotação. Auto count only."
+        },
+        {
+          "id": "local.marquee",
+          "label": "Marquee tags",
+          "cpt": "local",
+          "mockup": {
+            "file": "screen/single cpt/location/loc-single-page.html",
+            "payload": "APOLLO_LOC.marquee[]",
+            "section": "marquee",
+            "ui": "#mqInner",
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_local_amenities|custom marquee tags",
+            "type": "string[]",
+            "owner_cpt": "local",
+            "mockup_key_legacy": "_ap_marquee_tags"
+          },
+          "payload_key": "marquee",
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "Live may use amenities/hours; mock uses dedicated marquee repeater — decide SSOT."
+        },
+        {
+          "id": "local.events",
+          "label": "Agenda at this loc",
+          "cpt": "local",
+          "mockup": {
+            "file": "screen/single cpt/location/loc-single-page.html",
+            "payload": "APOLLO_LOC.events[]",
+            "section": "agenda",
+            "ui": "#agTrack,#agFullList",
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "derived",
+            "key": "WP_Query event WHERE _event_loc_id",
+            "type": "object[]",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "events",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "title,day,month,time,tags,lineup,status,cover,url from event+tax."
+        },
+        {
+          "id": "local.gallery",
+          "label": "Loc gallery",
+          "cpt": "local",
+          "mockup": {
+            "file": "screen/single cpt/location/loc-single-page.html",
+            "payload": "APOLLO_LOC.gallery[]",
+            "section": "gallery",
+            "ui": "#gal",
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_local_image_1..5",
+            "type": "attachment_id[]",
+            "owner_cpt": "local",
+            "mockup_key_legacy": "_ap_gallery"
+          },
+          "payload_key": "gallery",
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "Mock {src,cap,bleed}; live image_1..5 — caption/bleed may need meta expansion."
+        },
+        {
+          "id": "local.amenities",
+          "label": "Amenities chips",
+          "cpt": "local",
+          "mockup": {
+            "file": "screen/single cpt/location/loc-single-page.html",
+            "payload": "APOLLO_LOC.amenities[]",
+            "section": "amenities",
+            "ui": "#amen",
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_local_amenities",
+            "type": "object[]",
+            "owner_cpt": "local",
+            "mockup_key_legacy": "_ap_amenities"
+          },
+          "payload_key": "amenities",
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "local.depoimentos",
+          "label": "Testimonials",
+          "cpt": "local",
+          "mockup": {
+            "file": "screen/single cpt/location/loc-single-page.html",
+            "payload": "APOLLO_LOC.depoimentos[]",
+            "section": "depoimentos",
+            "ui": "#depoTrack",
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "relation",
+            "key": "_local_testimonials|apollo-comment",
+            "type": "object[]",
+            "owner_cpt": "local",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "depoimentos",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "Mock treats as related posts; live may use _local_testimonials or comments."
+        },
+        {
+          "id": "local.description",
+          "label": "Description",
+          "cpt": "local",
+          "mockup": {
+            "file": "screen/single cpt/location/loc-single-page.html",
+            "payload": null,
+            "section": "about",
+            "ui": null,
+            "hardcoded_in_html": true,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_local_description",
+            "type": "html",
+            "owner_cpt": "local",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "description",
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": true
+          },
+          "required_for_render": false,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "local.phone",
+          "label": "Phone",
+          "cpt": "local",
+          "mockup": {
+            "file": "screen/single cpt/location/loc-single-page.html",
+            "payload": null,
+            "section": "contact",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_local_phone",
+            "type": "string",
+            "owner_cpt": "local",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "phone",
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": "phone"
+          },
+          "required_for_render": false,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "local.capacity",
+          "label": "Capacity (admin only)",
+          "cpt": "local",
+          "mockup": {
+            "file": "screen/single cpt/location/loc-single-page.html",
+            "payload": null,
+            "section": "admin",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_local_capacity",
+            "type": "int",
+            "owner_cpt": "local",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "capacity",
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": false,
+          "empty_behavior": "omit",
+          "notes": "Explicitly NOT shown as public fact on mockup (eventsHosted ≠ capacity)."
+        },
+        {
+          "id": "local.socials",
+          "label": "Website / IG / FB / WA",
+          "cpt": "local",
+          "mockup": {
+            "file": "screen/single cpt/location/loc-single-page.html",
+            "payload": null,
+            "section": "links",
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_local_website|_local_instagram|_local_facebook|_local_whatsapp",
+            "type": "string_url",
+            "owner_cpt": "local",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "links",
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": false,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "local.hours",
+          "label": "Opening hours",
+          "cpt": "local",
+          "mockup": {
+            "file": "screen/single cpt/location/loc-single-page.html",
+            "payload": null,
+            "section": "hero",
+            "ui": ".hero-meta",
+            "hardcoded_in_html": true,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_local_hours",
+            "type": "object|string",
+            "owner_cpt": "local",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "hours",
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": false,
+          "empty_behavior": "hide",
+          "notes": ""
+        }
+      ]
+    }
+  },
+  "surfaces": {
+    "shell": {
+      "id": "official_layout",
+      "path": "screen/_official_layout/layout.html",
+      "field_count": 4,
+      "fields": [
+        {
+          "id": "shell.user",
+          "label": "Logged-in user (aside/profile)",
+          "cpt": "_shell",
+          "mockup": {
+            "file": "screen/_official_layout/layout.html",
+            "payload": "APOLLO_SESSION.user",
+            "section": "aside/profile",
+            "ui": ".urow,#panel-profile",
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "runtime",
+            "key": "wp_current_user",
+            "type": "object",
+            "owner_cpt": "_shell",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "user",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "shell.radar",
+          "label": "Eventos Radar RSVP list",
+          "cpt": "_shell",
+          "mockup": {
+            "file": "screen/_official_layout/layout.html",
+            "payload": "APOLLO_RADAR[]",
+            "section": "aside",
+            "ui": "#radarInn",
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "table",
+            "key": "apollo_event_rsvp (quero-ir|vou)",
+            "type": "object[]",
+            "owner_cpt": "_shell",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "radar",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": "rsvp"
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": "Max 5 + Ver tudo → #/eventos/radar; resolves APOLLO_EVENTS."
+        },
+        {
+          "id": "shell.gestor.counts",
+          "label": "Gestor sidebar counts",
+          "cpt": "_shell",
+          "mockup": {
+            "file": "screen/_official_layout/layout.html",
+            "payload": "derived+APOLLO_GESTOR",
+            "section": "aside",
+            "ui": "#col-mgr .cnt",
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "derived",
+            "key": "events/anuncios/comunas/nucleos + APOLLO_GESTOR",
+            "type": "object",
+            "owner_cpt": "_shell",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "gestor",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": true,
+          "empty_behavior": "hide",
+          "notes": ""
+        },
+        {
+          "id": "shell.notifications",
+          "label": "Activities panel feed",
+          "cpt": "_shell",
+          "mockup": {
+            "file": "screen/_official_layout/layout.html",
+            "payload": "panel-act feed",
+            "section": "topbar",
+            "ui": "#panel-act",
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "runtime",
+            "key": "apollo-notif",
+            "type": "object[]",
+            "owner_cpt": "_shell",
+            "mockup_key_legacy": null
+          },
+          "payload_key": "notifications",
+          "input": {
+            "frontend": null,
+            "metabox": null,
+            "rest": null
+          },
+          "required_for_render": false,
+          "empty_behavior": "hide",
+          "notes": ""
+        }
+      ]
+    }
+  },
+  "relations": [
+    {
+      "from": "event._event_loc_id",
+      "to": "local.ID",
+      "used_by": [
+        "event.loc.*",
+        "local.events"
+      ]
+    },
+    {
+      "from": "event._event_dj_ids",
+      "to": "dj.ID",
+      "used_by": [
+        "event.lineup",
+        "event.timetable",
+        "dj.playedOn",
+        "dj.playedWith"
+      ]
+    },
+    {
+      "from": "apollo_event_rsvp",
+      "to": "event.ID + user.ID",
+      "used_by": [
+        "event.rsvp",
+        "shell.radar"
+      ]
+    }
+  ],
+  "gaps": [
+    {
+      "severity": "info",
+      "cpt": "dj",
+      "id": "dj.bio_short",
+      "verdict": "ALREADY_FIXED",
+      "evidence": "apollo-djs/templates/parts/dj-v3/hero.php reads _dj_bio_short; form field frontend-fields.php; active since APOLLO_DJ_DEFAULT_STYLE=apollo-v3",
+      "issue": "(resolved) was: hero bio hardcoded — now dynamic from _dj_bio_short"
+    },
+    {
+      "severity": "info",
+      "cpt": "dj",
+      "id": "dj.statement",
+      "verdict": "ALREADY_FIXED",
+      "evidence": "single-dj-v3.php:17 statement.php from _dj_statement (fallback _dj_bio_short); form field present",
+      "issue": "(resolved) was: statement hardcoded — now dynamic"
+    },
+    {
+      "severity": "info",
+      "cpt": "dj",
+      "id": "dj.hero_image",
+      "verdict": "ALREADY_FIXED",
+      "evidence": "parts/dj-v3/hero.php reads _dj_banner via apollo_dj_get_banner; REST image",
+      "issue": "(resolved) was: hero img hardcoded — now dynamic"
+    },
+    {
+      "severity": "info",
+      "cpt": "dj",
+      "id": "dj.bio",
+      "verdict": "ALREADY_FIXED",
+      "evidence": "single-dj-v3.php:28 about.php reads _dj_bio",
+      "issue": "(resolved) was: about paragraph hardcoded — now dynamic"
+    },
+    {
+      "severity": "info",
+      "cpt": "dj",
+      "id": "dj.stats",
+      "verdict": "INTENTIONAL_DERIVED",
+      "evidence": "apollo_dj_compute_stats / parts/dj-v3/metrics.php from event history",
+      "issue": "(by design) stats are derived runtime values, not meta"
+    },
+    {
+      "severity": "info",
+      "cpt": "local",
+      "id": "local.images_input",
+      "verdict": "RESOLVED",
+      "evidence": "apollo-loc/src/Admin/Metabox/GalleryMetabox.php renders _local_image_1..5 (wp.media); MetaboxSaver.php:save loops 1..5 absint/esc_url_raw; MetaboxManager registers it. single-local.php:98 reads them.",
+      "issue": "(resolved) loc images now collectable via admin metabox; hero+galeria populate from real uploads (was unsplash placeholder)"
+    },
+    {
+      "severity": "medium",
+      "cpt": "local",
+      "id": "local.testimonials_input",
+      "verdict": "STILL_BROKEN",
+      "evidence": "single-local.php:231 reads _local_testimonials; no input path; not in MetaRegistrar",
+      "issue": "DECISION_REQUIRED: depoimentos meta has no writer (runtime/comment-fed only)"
+    },
+    {
+      "severity": "medium",
+      "cpt": "local",
+      "id": "local.marquee",
+      "verdict": "PARTIALLY_FIXED",
+      "evidence": "single-local marquee built from _local_amenities + aggregated event sounds",
+      "issue": "mock _ap_marquee_tags mapped to _local_amenities; no dedicated marquee meta"
+    },
+    {
+      "severity": "low",
+      "cpt": "local",
+      "verdict": "LEGACY_COMPATIBILITY",
+      "issue": "mock prefix _ap_* are legacy aliases of _local_* (preserved in storage.mockup_key_legacy)"
+    },
+    {
+      "severity": "info",
+      "cpt": "event",
+      "id": "event.chat",
+      "verdict": "INTENTIONAL_RUNTIME",
+      "issue": "Warm-Up chat is a runtime channel, not event meta"
+    },
+    {
+      "severity": "info",
+      "cpt": "event",
+      "id": "event.hero.kicker",
+      "verdict": "INTENTIONAL_STATIC",
+      "issue": "static brand copy by design"
+    },
+    {
+      "severity": "medium",
+      "cpt": "dj",
+      "id": "dj.name",
+      "verdict": "OPEN",
+      "evidence": "apollo-lux-panels DjPanel.php field config has no '_dj_name' entry (verified 2026-07-28 against includes/*Panel.php).",
+      "issue": "input.metabox claims an admin metabox exists for _dj_name, but the metabox provider does not render it. Either add the field to apollo-lux-panels or set input.metabox to null."
+    },
+    {
+      "severity": "medium",
+      "cpt": "local",
+      "id": "local.hero_image",
+      "verdict": "OPEN",
+      "evidence": "apollo-lux-panels LocalPanel.php field config has no '_local_image_1' entry (verified 2026-07-28 against includes/*Panel.php).",
+      "issue": "input.metabox claims an admin metabox exists for _local_image_1, but the metabox provider does not render it. Either add the field to apollo-lux-panels or set input.metabox to null."
+    }
+  ],
+  "totals": {
+    "event_fields": 42,
+    "dj_fields": 21,
+    "local_fields": 20,
+    "shell_fields": 4,
+    "all_fields": 87,
+    "gaps": 13
+  },
+  "$naming_alignment": {
+    "date": "2026-07-21",
+    "aligned_to": "apollo-registry.json namingRules (FORBIDDEN_TERMS)",
+    "changes": "venue→loc / Venue→Loc across all field ids, payload keys, mockup sections, labels, notes, relations, and composite storage keys — data-registry now uses apollo's canonical 'loc' vocabulary for the event↔location relation (matches _event_loc_id + REST payload key 'loc').",
+    "preserved": [
+      "cpts.local.fields[0].storage.mockup_key_legacy = _ap_venue_name (historical mock alias)",
+      "RSVP enum value 'interested' (legit apollo status, not the fav/bookmark 'interest')",
+      "plugin slug 'apollo-comment' (real apollo-registry plugin name)"
+    ]
+  },
+  "$phase11_verdicts": {
+    "date": "2026-07-21",
+    "note": "Gaps reclassified with file:line evidence per plan Phase 11/15. 4 DJ high-severity gaps closed (v3 template active reads meta from form). 1 production mock removed (loc hero unsplash→apollo asset). Remaining local image/testimonials input gaps are DECISION_REQUIRED feature builds, not minor adjusts."
+  },
+  "$phase001_002": {
+    "date": "2026-07-21",
+    "forms": "added apollo-loc GalleryMetabox for _local_image_1..5 (only remaining zero-input gap). dj gallery + event media already had admin surfaces.",
+    "singles": "verified all 3 single templates render every visible mockup section from live meta (event/dj live-fetched 200; loc sections O espaço/Estrutura/Como chegar/Quem já viveu/agenda all dynamic). loc hero de-mocked + now fillable. No template edits needed for mockup parity.",
+    "note": "season/status/privacy have no visual slot in event mockup (confirmed: only cancelAnimationFrame matches 'cancel') — correctly non-rendered."
+  },
+  "$canvas_shell_contract": {
+    "date": "2026-07-28",
+    "status": "COMPLETE",
+    "binds": "surfaces.shell (official_layout, 4 fields) -> the Blank Canvas Apollo / Apollo+ page-template contract",
+    "registry_ref": "plugins/_inventory/registry/18-canvas-shell.json ($canvas_shell)",
+    "variants": {
+      "apollo": {
+        "chrome": "none",
+        "head_rule": "Only charset + 2 preconnects may precede core.js fetchpriority=high, immediately after <head>.",
+        "applies_to": [
+          "single-event",
+          "single-dj",
+          "single-local",
+          "/acesso",
+          "/registre",
+          "profile-login-required",
+          "profile-private",
+          "export documents"
+        ],
+        "shell_fields_rendered": []
+      },
+      "plus": {
+        "chrome": "Mandatory app shell: burger + topbar (activities, apps, profile panels); login button when guest.",
+        "applies_to": [
+          "dashboards",
+          "create/edit forms",
+          "app surfaces",
+          "feeds",
+          "/agenda",
+          "/radar",
+          "/modera"
+        ],
+        "shell_fields_rendered": [
+          "shell.user",
+          "shell.radar"
+        ],
+        "note": "surfaces.shell fields are only guaranteed present on Apollo+ pages. Apollo (bare) pages must not be expected to expose APOLLO_SESSION.user or APOLLO_RADAR."
+      }
+    },
+    "canonical_source": {
+      "template": "apollo-templates/templates/template-parts/app-shell.php",
+      "function": "apollo_render_app_shell()",
+      "chokepoint": "apollo_render_navbar() / apollo_get_navbar() — 26 call sites",
+      "trait": "apollo-core/src/Traits/BlankCanvasTrait.php"
+    },
+    "guards": [
+      "APOLLO_CANVAS_VARIANT",
+      "APOLLO_APP_SHELL_LOADED",
+      "APOLLO_NAVBAR_LOADED",
+      "APOLLO_NAVBAR_V2_LOADED"
+    ],
+    "plugins_audited": 13,
+    "plugins_fixed": [
+      "apollo-core",
+      "apollo-templates",
+      "apollo-events",
+      "apollo-users",
+      "apollo-admin",
+      "apollo-dashboard",
+      "apollo-calendar"
+    ],
+    "plugins_verified_no_change": [
+      "apollo-djs",
+      "apollo-loc",
+      "apollo-social",
+      "apollo-elementor",
+      "apollo-elementor-pro",
+      "apollo-sheets"
+    ],
+    "open_items": [
+      "apollo-core source changed for the variant contract but its plugin version stayed 6.2.3 — bump before deploy.",
+      "php -l not run: no PHP binary in the audit sandbox."
+    ]
+  },
+  "$input_surface_audit": {
+    "date": "2026-07-28",
+    "method": "Re-derived apollo-lux-panels' meta set from its declarative field config (69 keys), then matched every meta storage.key declared in this file.",
+    "declared_meta_keys": 59,
+    "rendered_by_metabox": [
+      "_dj_about_photo",
+      "_dj_about_video",
+      "_dj_bandcamp",
+      "_dj_banner",
+      "_dj_bio",
+      "_dj_bio_short",
+      "_dj_booking",
+      "_dj_gallery",
+      "_dj_image",
+      "_dj_instagram",
+      "_dj_media_kit_url",
+      "_dj_soundcloud",
+      "_dj_spotify",
+      "_dj_tracks",
+      "_dj_verified",
+      "_event_access_buttons",
+      "_event_audio_url",
+      "_event_banner",
+      "_event_bg_color",
+      "_event_coupon_code",
+      "_event_dj_ids",
+      "_event_dj_slots",
+      "_event_end_date",
+      "_event_end_time",
+      "_event_gallery",
+      "_event_list_url",
+      "_event_loc_id",
+      "_event_privacy",
+      "_event_start_date",
+      "_event_start_time",
+      "_event_status",
+      "_event_ticket_status",
+      "_event_ticket_url",
+      "_event_video_url",
+      "_local_address",
+      "_local_amenities",
+      "_local_capacity",
+      "_local_city",
+      "_local_description",
+      "_local_facebook",
+      "_local_hours",
+      "_local_instagram",
+      "_local_lat",
+      "_local_lng",
+      "_local_name",
+      "_local_phone",
+      "_local_postal",
+      "_local_state",
+      "_local_website",
+      "_local_whatsapp"
+    ],
+    "not_in_metabox": [
+      "_dj_name",
+      "_dj_original_project_1..3",
+      "_dj_statement",
+      "_event_earlybird_*",
+      "_event_highlighted",
+      "_event_is_gone",
+      "_event_lista_*",
+      "_event_lista_cta_label",
+      "_local_image_1",
+      "_local_image_1..5"
+    ],
+    "verdict": "50/59 declared meta keys have an admin metabox input via apollo-lux-panels.",
+    "metabox_plugin": "apollo-lux-panels",
+    "metabox_meta_keys_found": 69,
+    "not_in_metabox_reason": "Wildcard placeholders (_event_earlybird_*, _event_lista_*, _local_image_1..5, _dj_original_project_1..3) are notation, not literal keys; the rest are derived/cron-owned or frontend-only. See each field's input block.",
+    "contradictions": [
+      {
+        "field": "event.hero.youtubeId",
+        "cpt": "event",
+        "key": "_event_video_url",
+        "claim": "input.metabox = null",
+        "reality": "IS rendered by apollo-lux-panels — claim understates reality"
+      },
+      {
+        "field": "event.end_date",
+        "cpt": "event",
+        "key": "_event_end_date",
+        "claim": "input.metabox = null",
+        "reality": "IS rendered by apollo-lux-panels — claim understates reality"
+      },
+      {
+        "field": "event.start_time",
+        "cpt": "event",
+        "key": "_event_start_time",
+        "claim": "input.metabox = null",
+        "reality": "IS rendered by apollo-lux-panels — claim understates reality"
+      },
+      {
+        "field": "event.end_time",
+        "cpt": "event",
+        "key": "_event_end_time",
+        "claim": "input.metabox = null",
+        "reality": "IS rendered by apollo-lux-panels — claim understates reality"
+      },
+      {
+        "field": "event.dj_ids",
+        "cpt": "event",
+        "key": "_event_dj_ids",
+        "claim": "input.metabox = null",
+        "reality": "IS rendered by apollo-lux-panels — claim understates reality"
+      },
+      {
+        "field": "event.dj_slots",
+        "cpt": "event",
+        "key": "_event_dj_slots",
+        "claim": "input.metabox = null",
+        "reality": "IS rendered by apollo-lux-panels — claim understates reality"
+      },
+      {
+        "field": "event.gallery",
+        "cpt": "event",
+        "key": "_event_gallery",
+        "claim": "input.metabox = null",
+        "reality": "IS rendered by apollo-lux-panels — claim understates reality"
+      },
+      {
+        "field": "event.spotify",
+        "cpt": "event",
+        "key": "_event_audio_url",
+        "claim": "input.metabox = null",
+        "reality": "IS rendered by apollo-lux-panels — claim understates reality"
+      },
+      {
+        "field": "event.loc_id",
+        "cpt": "event",
+        "key": "_event_loc_id",
+        "claim": "input.metabox = null",
+        "reality": "IS rendered by apollo-lux-panels — claim understates reality"
+      },
+      {
+        "field": "event.access.coupon",
+        "cpt": "event",
+        "key": "_event_coupon_code",
+        "claim": "input.metabox = null",
+        "reality": "IS rendered by apollo-lux-panels — claim understates reality"
+      },
+      {
+        "field": "event.access.listaCta",
+        "cpt": "event",
+        "key": "_event_lista_cta_label|_event_list_url",
+        "claim": "input.metabox = null",
+        "reality": "IS rendered by apollo-lux-panels — claim understates reality"
+      },
+      {
+        "field": "event.ticket_status",
+        "cpt": "event",
+        "key": "_event_ticket_status",
+        "claim": "input.metabox = null",
+        "reality": "IS rendered by apollo-lux-panels — claim understates reality"
+      },
+      {
+        "field": "event.status",
+        "cpt": "event",
+        "key": "_event_status",
+        "claim": "input.metabox = null",
+        "reality": "IS rendered by apollo-lux-panels — claim understates reality"
+      },
+      {
+        "field": "event.privacy",
+        "cpt": "event",
+        "key": "_event_privacy",
+        "claim": "input.metabox = null",
+        "reality": "IS rendered by apollo-lux-panels — claim understates reality"
+      },
+      {
+        "field": "event.bg_color",
+        "cpt": "event",
+        "key": "_event_bg_color",
+        "claim": "input.metabox = null",
+        "reality": "IS rendered by apollo-lux-panels — claim understates reality"
+      },
+      {
+        "field": "dj.name",
+        "cpt": "dj",
+        "key": "_dj_name",
+        "claim": "input.metabox = true",
+        "reality": "not in apollo-lux-panels field config"
+      },
+      {
+        "field": "dj.statement",
+        "cpt": "dj",
+        "key": "_dj_statement",
+        "claim": "input.metabox = true",
+        "reality": "not in apollo-lux-panels field config"
+      },
+      {
+        "field": "local.hero_image",
+        "cpt": "local",
+        "key": "_local_image_1",
+        "claim": "input.metabox = true",
+        "reality": "not in apollo-lux-panels field config"
+      }
+    ],
+    "contradiction_count": 18,
+    "corrections_applied": {
+      "count": 15,
+      "change": "input.metabox: null -> true",
+      "reason": "apollo-lux-panels renders these; the registry predated the plugin.",
+      "fields": [
+        "event.hero.youtubeId",
+        "event.end_date",
+        "event.start_time",
+        "event.end_time",
+        "event.dj_ids",
+        "event.dj_slots",
+        "event.gallery",
+        "event.spotify",
+        "event.loc_id",
+        "event.access.coupon",
+        "event.access.listaCta",
+        "event.ticket_status",
+        "event.status",
+        "event.privacy",
+        "event.bg_color"
+      ]
+    },
+    "open_gaps_opened": [
+      "dj.name",
+      "local.hero_image"
+    ]
+  },
+  "$data_registry_sync_log": [
+    {
+      "date": "2026-07-28",
+      "action": "MERGE_LATEST + SSOT_AUDIT",
+      "added": [
+        "$canvas_shell_contract",
+        "sources.input_surfaces",
+        "$input_surface_audit",
+        "$data_registry_sync_log"
+      ],
+      "verified": [
+        "bak/bak2/bak3/bak4 are strict subsets of the live file — nothing lost",
+        "totals unchanged: event 42 / dj 21 / local 20 / shell 4 / all 87 / gaps 11"
+      ],
+      "registry_ref": "plugins/_inventory/registry/ (chaptered SSOT, 19 chapters + 46 plugin files)",
+      "backup": "audit/data-registry.json.bak5",
+      "corrections": {
+        "input_metabox_true": 15,
+        "gaps_opened": [
+          "dj.name",
+          "local.hero_image"
+        ],
+        "gaps_total_before": 11,
+        "gaps_total_after": 13
+      }
+    },
+    {
+      "date": "2026-07-28",
+      "action": "SCHEMA_REGISTRATION",
+      "field": "dj.tracks (_dj_tracks)",
+      "change": "storage.type + notes updated to document schema v2; added $dj_tracks_schema_v2",
+      "backup": "audit/data-registry.json.bak6"
+    },
+    {
+      "date": "2026-07-28",
+      "action": "ADMIN_UI_MIGRATION",
+      "field": "dj.tracks (_dj_tracks)",
+      "change": "notes updated: admin metabox migrated to v2 + duplicate-metabox bug found and fixed",
+      "backup": "audit/data-registry.json.bak7"
+    },
+    {
+      "date": "2026-07-28",
+      "action": "CASA_LUXURY_PASS_B",
+      "field": "dj.tracks (_dj_tracks); apollo-templates /casa (footer, .ax-login, event cards, new-home.css tokens)",
+      "change": "READ_PATH_GAP_CLOSED: apollo_dj_get_tracks() migrated v1->v2 (superset, back-compat aliases); new apollo_get_latest_dj_tracks() aggregator; tracks.php now renders real newest-first tracks + 'Ver Todos ->' link (placeholder /lancamentos). Unrelated in same pass: .nh-footer flush-bottom + mobile translateY(18%); app-shell.php .ax-login stripped to icon-only site-wide; event cards (.a-eve-card) un-stripped from GSAP so reveal-up.js drives them directly (ST2 retargeted to section head only, preserving >=3 ScrollTriggers); new-home.css hex-color/px-font-size audit against core.js tokens (var(--bg-deep) — a token that never existed — fixed to var(--onyx-700) in 5 places).",
+      "registry_refs": [
+        "registry/09-plugins/apollo-djs.json#$tracks_read_path_migration",
+        "registry/09-plugins/apollo-templates.json#$casa_luxury_pass_2026_07_28b"
+      ],
+      "versions_bumped": {
+        "apollo-djs": "1.0.3 -> 1.0.4",
+        "apollo-templates": "1.3.7 -> 1.3.8"
+      }
+    },
+    {
+      "date": "2026-07-28",
+      "action": "ACCOMMODATION_META_BLOCK_ADDED",
+      "field": "classified.hostel / hostel_url / min_nights / max_days / avail_start / avail_end (_classified_*)",
+      "change": "Six new meta keys registered in apollo-core MetaRegistry's `classified` map and mirrored in apollo-adverts' APOLLO_ADVERTS_META_KEYS: _classified_hostel (bool, the privacy switch), _classified_hostel_url (url, replaces the chat CTA for hostels), _classified_min_nights + _classified_max_days (int, both hostel and non-hostel), _classified_avail_start + _classified_avail_end (Y-m-d, non-hostel only). Admin surface: new 'Hospedagem' block in apollo-adverts' Dados do Anuncio metabox, folded away unless _classified_type is accommodation|rent_space. Also enabled Depoimentos (WP comments, narrowed to accommodations by a comments_open filter) on the same CPT.",
+      "not_added_here": "NO field-shape entries were added to cpts[] in this file. This registry's scope is explicitly the mockup single-page truth for evento/dj/local -- cpts contains exactly those three and has no `classified` section at all. Inventing one for six admin-only fields with no mockup counterpart would misrepresent what this file tracks. Full detail lives in registry/09-plugins/{apollo-core,apollo-adverts,apollo-templates}.json under the 2026-07-28 note blocks.",
+      "open_divergence": "Accommodation is modelled twice across the ecosystem: apollo-adverts uses `classified` posts with _classified_type=accommodation|rent_space (where this meta lives), while apollo-templates' /casa Acomoda::Rio strip uses the `local` CPT filtered by local_type. The hostel switch is registered against `classified` only; crash.php reads the same key so it will honour the flag if a `local` post ever carries it, but the default stays locked. Unifying the two -- or registering the block on `local` too -- is a product decision, left open deliberately."
+    }
+  ],
+  "$dj_tracks_schema_v2": {
+    "date": "2026-07-28",
+    "action": "REGISTERED",
+    "registered_in": "apollo-core/src/Core/MetaRegistry.php (post_meta.dj._dj_tracks)",
+    "sanitizer": "apollo-djs/includes/functions.php — apollo_dj_sanitize_tracks_meta()",
+    "registry_ref": "plugins/_inventory/registry/20-meta-schemas.json",
+    "versions_bumped": {
+      "apollo-core": "6.2.3 -> 6.2.4",
+      "apollo-djs": "1.0.1 -> 1.0.3",
+      "apollo-lux-panels": "1.0.0 -> 1.0.1"
+    },
+    "scope": "Meta registration + admin UI + registry documentation. Both write paths (REST, admin metabox) are v2 and mutually consistent. Front-end read/display migrated 2026-07-28 (see $tracks_read_path_migration in registry/09-plugins/apollo-djs.json) — apollo_dj_get_tracks() now reads v2 in full with back-compat url/year aliases, and a new apollo_get_latest_dj_tracks() aggregator powers /casa's real Out Now! section.",
+    "$duplicate_metabox_found": {
+      "finding": "apollo-djs' own admin metabox duplicated apollo-lux-panels' DjPanel field-for-field, both active, both writing the dj CPT — _dj_tracks specifically had two competing editors on one screen with two different schemas.",
+      "fix": "Closed lux-panels' 5-field parity gap, then guarded the old metabox behind class_exists() so it's inert while lux-panels is active, with automatic fallback if not.",
+      "ref": "plugins/_inventory/registry/20-meta-schemas.json#_dj_tracks.duplicate_metabox_found"
+    }
+  }
+}

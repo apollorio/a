@@ -1,0 +1,308 @@
+/**
+ * Apollo Statistics — Admin Dashboard Styles
+ *
+ * Design tokens: Apollo palette (coral #F95006, amber #FFBF00, grayscale).
+ * Background always #fff. Mobile-first.
+ *
+ * @package Apollo\Statistics
+ * @since   2.0.0
+ */
+
+/* ═══════════════════════════════════════════════
+   TOKENS
+   ═══════════════════════════════════════════════ */
+
+:root {
+    --apollo-coral: #F95006;
+    --apollo-amber: #FFBF00;
+    --apollo-gray1: #222;
+    --apollo-gray2: #444;
+    --apollo-gray3: #777;
+    --apollo-gray4: #aaa;
+    --apollo-gray5: #ddd;
+    --apollo-white: #fff;
+    --apollo-bg: #fff;
+    --apollo-radius: 8px;
+    --apollo-shadow: 0 1px 3px rgba(var(--rgb-d),0.08);
+    --apollo-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ═══════════════════════════════════════════════
+   STATS GRID
+   ═══════════════════════════════════════════════ */
+
+.apollo-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 16px 0;
+}
+
+@media (min-width: 600px) {
+    .apollo-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .apollo-stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1400px) {
+    .apollo-stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* ═══════════════════════════════════════════════
+   STAT CARD
+   ═══════════════════════════════════════════════ */
+
+.apollo-stat-card {
+    background: var(--apollo-bg);
+    border: 1px solid var(--apollo-gray5);
+    border-radius: var(--apollo-r);
+    box-shadow: var(--apollo-shadow);
+    overflow: hidden;
+    transition: box-shadow 0.2s ease;
+}
+
+.apollo-stat-card:hover {
+    box-shadow: 0 2px 8px rgba(var(--rgb-d),0.12);
+}
+
+.apollo-stat-card__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--apollo-gray5);
+}
+
+.apollo-stat-card__header i {
+    font-size: 18px;
+    color: var(--apollo-coral);
+}
+
+.apollo-stat-card__header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--apollo-gray1);
+    font-family: var(--apollo-font);
+}
+
+.apollo-stat-card__body {
+    padding: 16px;
+    min-height: 80px;
+}
+
+.apollo-stat-card__unavailable {
+    color: var(--apollo-gray3);
+    font-size: 13px;
+    font-style: italic;
+    margin: 0;
+}
+
+.apollo-stat-card__empty {
+    color: var(--apollo-gray4);
+    font-size: 13px;
+    margin: 0;
+    text-align: center;
+    padding: 20px 0;
+}
+
+/* ═══════════════════════════════════════════════
+   NUMBER CARDS
+   ═══════════════════════════════════════════════ */
+
+.apollo-number-card,
+.apollo-number-chart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 0;
+}
+
+.apollo-number-card__value,
+.apollo-number-chart__value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--apollo-gray1);
+    line-height: 1.1;
+}
+
+.apollo-number-card__delta,
+.apollo-number-chart__delta {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.apollo-number-card__delta--positive,
+.apollo-number-chart__delta--positive {
+    color: #16a34a;
+    background: rgba(22, 163, 74, 0.1);
+}
+
+.apollo-number-card__delta--negative,
+.apollo-number-chart__delta--negative {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.1);
+}
+
+.apollo-number-card__delta--neutral,
+.apollo-number-chart__delta--neutral {
+    color: var(--apollo-gray3);
+    background: rgba(var(--rgb-d),0.05);
+}
+
+.apollo-number-chart__label {
+    font-size: 12px;
+    color: var(--apollo-gray3);
+}
+
+/* ═══════════════════════════════════════════════
+   TABLE / LEADERBOARD
+   ═══════════════════════════════════════════════ */
+
+.apollo-stat-table,
+.apollo-chart-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    font-family: var(--apollo-font);
+}
+
+.apollo-stat-table thead th,
+.apollo-chart-table thead th {
+    text-align: left;
+    padding: 8px 12px;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--apollo-gray3);
+    border-bottom: 2px solid var(--apollo-gray5);
+}
+
+.apollo-stat-table tbody td,
+.apollo-chart-table tbody td {
+    padding: 8px 12px;
+    color: var(--apollo-gray2);
+    border-bottom: 1px solid rgba(var(--rgb-d),0.04);
+}
+
+.apollo-stat-table tbody tr:hover,
+.apollo-chart-table tbody tr:hover {
+    background: rgba(249, 80, 6, 0.03);
+}
+
+/* ═══════════════════════════════════════════════
+   CHART CONTAINERS
+   ═══════════════════════════════════════════════ */
+
+.apollo-chart-container {
+    width: 100%;
+    min-height: 240px;
+}
+
+.apollo-chart-empty,
+.apollo-chart-error {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--apollo-gray3);
+    font-size: 13px;
+}
+
+.apollo-chart-error {
+    color: #dc2626;
+}
+
+.apollo-chart-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+}
+
+.apollo-chart-loading::after {
+    content: '';
+    width: 28px;
+    height: 28px;
+    border: 3px solid var(--apollo-gray5);
+    border-top-color: var(--apollo-coral);
+    border-radius: 50%;
+    animation: apollo-spin 0.7s linear infinite;
+}
+
+/* ═══════════════════════════════════════════════
+   PERIOD SELECTOR
+   ═══════════════════════════════════════════════ */
+
+.apollo-period-selector {
+    display: flex;
+    gap: 4px;
+    padding: 8px 0;
+    flex-wrap: wrap;
+}
+
+.apollo-period-btn {
+    padding: 6px 14px;
+    border: 1px solid var(--apollo-gray5);
+    border-radius: 20px;
+    background: var(--apollo-white);
+    color: var(--apollo-gray2);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: var(--apollo-font);
+}
+
+.apollo-period-btn:hover {
+    border-color: var(--apollo-coral);
+    color: var(--apollo-coral);
+}
+
+.apollo-period-btn.active {
+    background: var(--apollo-coral);
+    border-color: var(--apollo-coral);
+    color: var(--apollo-white);
+}
+
+/* ═══════════════════════════════════════════════
+   STATS EMPTY STATE
+   ═══════════════════════════════════════════════ */
+
+.apollo-stats-empty {
+    text-align: center;
+    padding: 48px 16px;
+    color: var(--apollo-gray3);
+    font-size: 14px;
+}
+
+/* ═══════════════════════════════════════════════
+   SPINNER
+   ═══════════════════════════════════════════════ */
+
+.apollo-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--apollo-gray5);
+    border-top-color: var(--apollo-coral);
+    border-radius: 50%;
+    animation: apollo-spin 0.7s linear infinite;
+    margin: 48px auto;
+}
+
+@keyframes apollo-spin {
+    to { transform: rotate(360deg); }
+}

@@ -1,0 +1,1226 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-hub",
+    "owner": "apollo-hub",
+    "wrap": "plugins.apollo-hub",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-hub",
+  "namespace": "Apollo\\Hub",
+  "priority": 4,
+  "status": "IMPLEMENTED",
+  "description": "Hub público estilo Linktree para usuários Apollo — links, redes sociais, eventos e compartilhamento nativo. Rota /hub/{username}.",
+  "dependencies": [
+    "apollo-admin",
+    "apollo-core",
+    "apollo-events",
+    "apollo-login",
+    "apollo-maps",
+    "apollo-social",
+    "apollo-users"
+  ],
+  "provides": [
+    "hub-page",
+    "hub-builder",
+    "public-profile"
+  ],
+  "NOTE": "HUB is public Linktree-style page (/hub/), PROFILE is full page (/id/)",
+  "cpts": [
+    "hub"
+  ],
+  "taxonomies": [],
+  "tables": [],
+  "meta": {
+    "post": {
+      "_event_date_start": {
+        "_source": "deep_scan"
+      },
+      "_event_loc_name": {
+        "_source": "deep_scan"
+      },
+      "_hub_avatar": {
+        "_source": "deep_scan"
+      },
+      "_hub_avatar_type": {
+        "_source": "deep_scan"
+      },
+      "_hub_bio": {
+        "_source": "deep_scan"
+      },
+      "_hub_blocks": {
+        "_source": "deep_scan"
+      },
+      "_hub_cover": {
+        "_source": "deep_scan"
+      },
+      "_hub_custom_css": {
+        "_source": "deep_scan"
+      },
+      "_hub_links": {
+        "_source": "deep_scan"
+      },
+      "_hub_socials": {
+        "_source": "deep_scan"
+      },
+      "_hub_theme": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {
+      "_apollo_avatar_url": {
+        "_source": "deep_scan"
+      },
+      "_apollo_social_name": {
+        "_source": "deep_scan"
+      },
+      "_apollo_verified": {
+        "_source": "deep_scan"
+      }
+    },
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/hubs",
+      "methods": [
+        "GET"
+      ],
+      "description": "List hubs",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_hubs",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/HubController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/hubs/(?P<username>[a-zA-Z0-9._-]+)",
+      "methods": [
+        "GET",
+        "PATCH",
+        "POST",
+        "PUT"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_hub",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/HubController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/hubs/(?P<username>[a-zA-Z0-9._-]+)/links",
+      "methods": [
+        "GET",
+        "PATCH",
+        "POST",
+        "PUT"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_links",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/HubController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/hubs/(?P<username>[a-zA-Z0-9._-]+)/blocks",
+      "methods": [
+        "GET",
+        "PATCH",
+        "POST",
+        "PUT"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_blocks",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/HubController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/hubs/(?P<username>[a-zA-Z0-9._-]+)/share/(?P<post_id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_share_urls",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/HubController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/hubs/me",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_PLUS)",
+      "auth": "LOGGED_IN_PLUS",
+      "permission_risk": "MEDIUM",
+      "permission_method": "is_logged_in",
+      "permission_binding": "HubController::is_logged_in",
+      "permission_summary": "is_user_logged_in present; may have extra checks",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "if ( is_user_logged_in() ) { return true; } return new \\WP_Error( 'rest_forbidden', __( 'Autenticação requerida.', 'apollo-hub' ), array( 'status' => 401 ) );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_my_hub",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/HubController.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "pages": [
+    {
+      "slug": "' . self::SLUG . '",
+      "rewrite": "^' . self::SLUG . '/?$",
+      "query": "index.php?",
+      "query_vars": [],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "' . APOLLO_HUB_EDIT_SLUG . '",
+      "rewrite": "^' . APOLLO_HUB_EDIT_SLUG . '/?$",
+      "query": "index.php?apollo_hub_edit=1",
+      "query_vars": [
+        "apollo_hub_edit=1"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    }
+  ],
+  "shortcodes": [
+    {
+      "tag": "apollo_hub",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_hub_builder",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "version": "1.0.1",
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [
+    "apollo/hub/activated",
+    "apollo/hub/auto_provision",
+    "apollo/hub/blocks_updated",
+    "apollo/hub/created",
+    "apollo/hub/links_updated",
+    "apollo/hub/migrated",
+    "apollo/hub/rest_response",
+    "apollo/hub/updated"
+  ],
+  "hooks_listened": [
+    "apollo/events/after_content",
+    "apollo/hub/created",
+    "apollo/login/registered",
+    "apollo/social/share_networks",
+    "apollo/users/profile_links",
+    "apollo_admin_tabs"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [
+      "apollo-home-",
+      "apollo-hub",
+      "apollo-hub-admin-blocks",
+      "apollo-hub-builder",
+      "leaflet"
+    ],
+    "styles": [
+      "apollo-home-",
+      "apollo-hub",
+      "apollo-hub-admin",
+      "leaflet"
+    ]
+  },
+  "options": [
+    "apollo_hub_flush_rewrite",
+    "apollo_hub_version"
+  ],
+  "security": {
+    "risk_band": "MEDIUM",
+    "risk_score": 39,
+    "abspath_coverage_pct": 97,
+    "rest_open_routes": 5,
+    "rest_critical_write_public": 3,
+    "rest_open_non_intentional": 5,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 6,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 1
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_hub_blocks",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [
+    {
+      "pattern": "^' . self::SLUG . '/?$",
+      "query": "index.php?"
+    },
+    {
+      "pattern": "^' . APOLLO_HUB_EDIT_SLUG . '/?$",
+      "query": "index.php?apollo_hub_edit=1"
+    }
+  ],
+  "query_vars": [
+    "apollo_hub_edit"
+  ],
+  "php_surface": {
+    "files": 31,
+    "loc": 4982,
+    "classes": 11,
+    "functions": 12
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:49.901Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 45,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-hub",
+    "main_file": "apollo-hub.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Hub",
+      "plugin_uri": "https://apollo.rio.br/plugins/apollo-hub",
+      "description": "Hub público estilo Linktree para usuários Apollo — links, redes sociais, eventos e compartilhamento nativo. Rota /hub/{username}.",
+      "version": "1.0.1",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "Proprietary",
+      "text_domain": "apollo-hub",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": "false"
+    },
+    "composer": {
+      "name": "apollo/hub",
+      "namespaces": [
+        "Apollo\\Hub"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 31,
+        ".css": 16,
+        ".js": 8,
+        ".json": 1
+      },
+      "by_top_directory": {
+        "(root)": 3,
+        "assets": 24,
+        "includes": 2,
+        "src": 11,
+        "templates": 16
+      },
+      "total_bytes": 442541
+    },
+    "php": {
+      "files": 31,
+      "loc": 4982,
+      "classes": 11,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 12
+    },
+    "architecture": {
+      "namespace": "Apollo\\Hub",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Hub\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "HubAdmin",
+          "fqcn": "Apollo\\Hub\\Admin\\HubAdmin",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Admin/HubAdmin.php"
+        },
+        {
+          "kind": "class",
+          "name": "HubController",
+          "fqcn": "Apollo\\Hub\\API\\HubController",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/HubController.php"
+        },
+        {
+          "kind": "class",
+          "name": "BlockRenderer",
+          "fqcn": "Apollo\\Hub\\BlockRenderer",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/BlockRenderer.php"
+        },
+        {
+          "kind": "class",
+          "name": "HomePage",
+          "fqcn": "Apollo\\Hub\\HomePage",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/HomePage.php"
+        },
+        {
+          "kind": "class",
+          "name": "Integrations",
+          "fqcn": "Apollo\\Hub\\Integrations",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Integrations.php"
+        },
+        {
+          "kind": "class",
+          "name": "Migration",
+          "fqcn": "Apollo\\Hub\\Migration",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Migration.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Hub\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "Registry",
+          "fqcn": "Apollo\\Hub\\Registry",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Registry.php"
+        },
+        {
+          "kind": "class",
+          "name": "Shortcodes",
+          "fqcn": "Apollo\\Hub\\Shortcodes",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Shortcodes.php"
+        },
+        {
+          "kind": "class",
+          "name": "TemplateLoader",
+          "fqcn": "Apollo\\Hub\\TemplateLoader",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/TemplateLoader.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_hub_check_dependencies",
+          "file": "apollo-hub.php"
+        },
+        {
+          "name": "apollo_hub_init",
+          "file": "apollo-hub.php"
+        },
+        {
+          "name": "apollo_hub_get_by_username",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_hub_get_data",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_hub_get_blocks",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_hub_save_blocks",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_hub_sanitize_block_data",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_hub_get_current_user_hub",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_hub_ensure_current_user_hub",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_hub_share_url",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_hub_event_share_urls",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_hub_bust_cache",
+          "file": "includes/functions.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 6,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/hubs",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_hubs",
+          "file": "src/API/HubController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/hubs/(?P<username>[a-zA-Z0-9._-]+)",
+          "methods": [
+            "GET",
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_hub",
+          "file": "src/API/HubController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/hubs/(?P<username>[a-zA-Z0-9._-]+)/links",
+          "methods": [
+            "GET",
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_links",
+          "file": "src/API/HubController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/hubs/(?P<username>[a-zA-Z0-9._-]+)/blocks",
+          "methods": [
+            "GET",
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_blocks",
+          "file": "src/API/HubController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/hubs/(?P<username>[a-zA-Z0-9._-]+)/share/(?P<post_id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_share_urls",
+          "file": "src/API/HubController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/hubs/me",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_PLUS",
+            "risk": "MEDIUM",
+            "method": "is_logged_in",
+            "target": "HubController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_PLUS",
+              "risk": "MEDIUM",
+              "summary": "is_user_logged_in present; may have extra checks",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true",
+                  "new \\WP_Error( 'rest_forbidden', __( 'Autenticação requerida.', 'apollo-hub' ), array( 'status' => 4"
+                ]
+              },
+              "body_preview": "if ( is_user_logged_in() ) { return true; } return new \\WP_Error( 'rest_forbidden', __( 'Autenticação requerida.', 'apollo-hub' ), array( 'status' => 401 ) );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "HubController::is_logged_in",
+              "method_file": "src/API/HubController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_my_hub",
+          "file": "src/API/HubController.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 3,
+        "HIGH": 2,
+        "MEDIUM": 1,
+        "LOW": 0,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "PUBLIC_UNAUTHENTICATED": 5,
+        "LOGGED_IN_PLUS": 1
+      },
+      "permission_body_resolved": 6,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 3,
+      "open_routes": [
+        {
+          "endpoint": "/hubs",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/HubController.php"
+        },
+        {
+          "endpoint": "/hubs/(?P<username>[a-zA-Z0-9._-]+)",
+          "methods": [
+            "GET",
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/HubController.php"
+        },
+        {
+          "endpoint": "/hubs/(?P<username>[a-zA-Z0-9._-]+)/links",
+          "methods": [
+            "GET",
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/HubController.php"
+        },
+        {
+          "endpoint": "/hubs/(?P<username>[a-zA-Z0-9._-]+)/blocks",
+          "methods": [
+            "GET",
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/HubController.php"
+        },
+        {
+          "endpoint": "/hubs/(?P<username>[a-zA-Z0-9._-]+)/share/(?P<post_id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/HubController.php"
+        }
+      ],
+      "admin_cap_routes": [],
+      "logged_in_routes": [
+        "/hubs/me"
+      ]
+    },
+    "database": {
+      "tables_owned_or_defined": [],
+      "tables_referenced": [
+        "apollo_hub_blocks"
+      ],
+      "tables_for_registry": [],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_hub_blocks",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 11,
+      "user_count": 3,
+      "term_count": 0,
+      "post_keys": [
+        "_event_date_start",
+        "_event_loc_name",
+        "_hub_avatar",
+        "_hub_avatar_type",
+        "_hub_bio",
+        "_hub_blocks",
+        "_hub_cover",
+        "_hub_custom_css",
+        "_hub_links",
+        "_hub_socials",
+        "_hub_theme"
+      ],
+      "user_keys": [
+        "_apollo_avatar_url",
+        "_apollo_social_name",
+        "_apollo_verified"
+      ],
+      "term_keys": [],
+      "registered_calls": [
+        {
+          "kind": "post",
+          "object": "$post_type",
+          "key": "_hub_bio"
+        },
+        {
+          "kind": "post",
+          "object": "$post_type",
+          "key": "_hub_blocks"
+        },
+        {
+          "kind": "post",
+          "object": "$post_type",
+          "key": "_hub_links"
+        },
+        {
+          "kind": "post",
+          "object": "$post_type",
+          "key": "_hub_socials"
+        },
+        {
+          "kind": "post",
+          "object": "$post_type",
+          "key": "_hub_theme"
+        },
+        {
+          "kind": "post",
+          "object": "$post_type",
+          "key": "_hub_avatar"
+        },
+        {
+          "kind": "post",
+          "object": "$post_type",
+          "key": "_hub_cover"
+        },
+        {
+          "kind": "post",
+          "object": "$post_type",
+          "key": "_hub_custom_css"
+        }
+      ]
+    },
+    "routing": {
+      "rewrite_rules": [
+        {
+          "pattern": "^' . self::SLUG . '/?$",
+          "query": "index.php?",
+          "position": "bottom",
+          "file": "src/HomePage.php"
+        },
+        {
+          "pattern": "^' . APOLLO_HUB_EDIT_SLUG . '/?$",
+          "query": "index.php?apollo_hub_edit=1",
+          "position": "top",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "query_vars": [
+        "apollo_hub_edit"
+      ],
+      "pages_derived": [
+        {
+          "slug": "' . self::SLUG . '",
+          "rewrite": "^' . self::SLUG . '/?$",
+          "query": "index.php?",
+          "query_vars": [],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "' . APOLLO_HUB_EDIT_SLUG . '",
+          "rewrite": "^' . APOLLO_HUB_EDIT_SLUG . '/?$",
+          "query": "index.php?apollo_hub_edit=1",
+          "query_vars": [
+            "apollo_hub_edit=1"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        }
+      ]
+    },
+    "cpts": [
+      {
+        "slug": "hub",
+        "registered_locally": false,
+        "via_constant": true
+      }
+    ],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 8,
+      "listened_count": 21,
+      "apollo_fired": [
+        "apollo/hub/activated",
+        "apollo/hub/auto_provision",
+        "apollo/hub/blocks_updated",
+        "apollo/hub/created",
+        "apollo/hub/links_updated",
+        "apollo/hub/migrated",
+        "apollo/hub/rest_response",
+        "apollo/hub/updated"
+      ],
+      "apollo_listened": [
+        "apollo/events/after_content",
+        "apollo/hub/created",
+        "apollo/login/registered",
+        "apollo/social/share_networks",
+        "apollo/users/profile_links",
+        "apollo_admin_tabs"
+      ],
+      "critical_wp_listened": [
+        "admin_menu",
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "save_post_",
+        "template_redirect",
+        "user_register",
+        "wp_enqueue_scripts"
+      ]
+    },
+    "ajax": {
+      "priv": [],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [
+      "apollo_hub",
+      "apollo_hub_builder"
+    ],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [
+        "apollo-home-",
+        "apollo-hub",
+        "apollo-hub-admin-blocks",
+        "apollo-hub-builder",
+        "leaflet"
+      ],
+      "styles": [
+        "apollo-home-",
+        "apollo-hub",
+        "apollo-hub-admin",
+        "leaflet"
+      ]
+    },
+    "options": [
+      "apollo_hub_flush_rewrite",
+      "apollo_hub_version"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_HUB_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_HUB_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_HUB_DIR",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_HUB_URL",
+        "value": "plugin_dir_url( __FILE__"
+      },
+      {
+        "name": "APOLLO_HUB_BASENAME",
+        "value": "plugin_basename( __FILE__"
+      },
+      {
+        "name": "APOLLO_HUB_REST_NAMESPACE",
+        "value": "apollo/v1"
+      },
+      {
+        "name": "APOLLO_HUB_CPT",
+        "value": "hub"
+      },
+      {
+        "name": "APOLLO_HUB_SLUG",
+        "value": "hub"
+      },
+      {
+        "name": "APOLLO_HUB_EDIT_SLUG",
+        "value": "editar-hub"
+      },
+      {
+        "name": "APOLLO_HUB_CACHE_GROUP",
+        "value": "apollo_hub"
+      },
+      {
+        "name": "APOLLO_HUB_CACHE_TTL",
+        "value": "300"
+      },
+      {
+        "name": "APOLLO_HUB_BIO_MAX_LEN",
+        "value": "280"
+      },
+      {
+        "name": "APOLLO_HUB_LINKS_MAX",
+        "value": "30"
+      },
+      {
+        "name": "APOLLO_HUB_META_KEYS",
+        "value": "array(\r\n\t\t'_hub_bio',\r\n\t\t'_hub_links',\r\n\t\t'_hub_so"
+      },
+      {
+        "name": "APOLLO_HUB_THEMES",
+        "value": "array(\r\n\t\t'dark'     => 'Escuro',\r\n\t\t'light'    =>"
+      },
+      {
+        "name": "APOLLO_HUB_BLOCK_TYPES",
+        "value": "array(\r\n\t\t'header'    => array(\r\n\t\t\t'label' => 'Ca"
+      },
+      {
+        "name": "APOLLO_HUB_SOCIAL_ICONS",
+        "value": "array(\r\n\t\t'instagram'  => 'ri-instagram-line',\r\n\t\t"
+      }
+    ],
+    "security": {
+      "php_files": 31,
+      "abspath_guard_files": 30,
+      "abspath_coverage_pct": 97,
+      "wpdb_prepare_calls": 4,
+      "wpdb_query_calls": 4,
+      "prepare_to_query_ratio": 1,
+      "nonce_checks": 4,
+      "current_user_can_calls": 3,
+      "raw_superglobal": {
+        "get": 0,
+        "post": 18,
+        "request": 0
+      },
+      "permission_callback_return_true": 5,
+      "escape_helpers": 215,
+      "echo_statements": 202,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 39,
+      "risk_band": "MEDIUM",
+      "rest_permission_critical": 3,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 2,
+      "rest_open_critical": 3,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 5
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-admin",
+        "apollo-core",
+        "apollo-events",
+        "apollo-login",
+        "apollo-maps",
+        "apollo-social",
+        "apollo-users"
+      ],
+      "signals": [
+        "apollo-admin",
+        "apollo-core",
+        "apollo-events",
+        "apollo-login",
+        "apollo-maps",
+        "apollo-social",
+        "apollo-users"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.0.1",
+      "version_changed": false,
+      "old_rest": 3,
+      "live_rest": 6,
+      "old_pages": 2,
+      "live_pages": 2,
+      "new_plugin": false
+    }
+  },
+  "security_remediation": {
+    "note": "P2: uninstall deletes prepared",
+    "last_updated": "2026-07-20"
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 31,
+    "php_loc": 4951,
+    "rest_routes_found": 6,
+    "cpts_found": [],
+    "tables_found": [],
+    "shortcodes_found": [
+      "apollo_hub",
+      "apollo_hub_builder"
+    ]
+  }
+}

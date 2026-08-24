@@ -1,0 +1,446 @@
+/**
+ * Apollo Email — Admin Styles
+ *
+ * Dark-themed admin UI consistent with Apollo ecosystem.
+ *
+ * @package Apollo\Email
+ * @since   1.0.0
+ */
+
+/* ─── Variables - REMOVED: Now using universal :root injected inline ──────────────────────────────────────────── */
+
+/* ─── Base Wrap ──────────────────────────────────────────── */
+.apollo-email-admin {
+    max-width: 1200px;
+}
+
+.apollo-email-admin h1 {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+/* ─── Stat Cards Row ─────────────────────────────────────── */
+.apollo-email-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+}
+
+.apollo-email-stat-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: var(--ae-r);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: box-shadow 0.2s ease;
+    border-left: 4px solid var(--ae-primary);
+}
+
+.apollo-email-stat-card:hover {
+    box-shadow: 0 2px 12px rgba(var(--rgb-d),0.08);
+}
+
+.apollo-email-stat-card.stat-success {
+    border-left-color: var(--ae-success);
+}
+.apollo-email-stat-card.stat-info {
+    border-left-color: var(--ae-info);
+}
+.apollo-email-stat-card.stat-warning {
+    border-left-color: var(--ae-warning);
+}
+
+.apollo-email-stat-card .stat-icon {
+    font-size: 32px;
+    width: 40px;
+    height: 40px;
+    color: var(--ae-primary);
+}
+
+.apollo-email-stat-card.stat-success .stat-icon { color: var(--ae-success); }
+.apollo-email-stat-card.stat-info .stat-icon { color: var(--ae-info); }
+.apollo-email-stat-card.stat-warning .stat-icon { color: var(--ae-warning); }
+
+.stat-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #1d2327;
+}
+
+.stat-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #50575e;
+}
+
+.stat-period {
+    font-size: 11px;
+    color: #999;
+    margin-top: 2px;
+}
+
+/* ─── Cards ──────────────────────────────────────────────── */
+.apollo-email-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: var(--ae-r);
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+.apollo-email-card h2,
+.apollo-email-card h3 {
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.apollo-email-card .card-footer {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #eee;
+}
+
+.apollo-email-card-full {
+    width: 100%;
+}
+
+.apollo-email-dashboard-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+@media (max-width: 782px) {
+    .apollo-email-dashboard-columns {
+        grid-template-columns: 1fr;
+    }
+    .apollo-email-stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* ─── Badges ──────────────────────────────────────────────── */
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.5;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.badge-pending {
+    background: #FFF3E0;
+    color: #E65100;
+}
+
+.badge-processing {
+    background: #E3F2FD;
+    color: #1565C0;
+}
+
+.badge-sent {
+    background: #E8F5E9;
+    color: #2E7D32;
+}
+
+.badge-failed {
+    background: #FFEBEE;
+    color: #C62828;
+}
+
+.badge-cancelled {
+    background: #F5F5F5;
+    color: #616161;
+}
+
+.badge-transactional {
+    background: #EDE7F6;
+    color: #4527A0;
+}
+
+.badge-marketing {
+    background: #E0F7FA;
+    color: #00695C;
+}
+
+.badge-digest {
+    background: #FFF8E1;
+    color: #F57F17;
+}
+
+/* ─── Priority Badges ────────────────────────────────────── */
+.priority-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.priority-badge.priority-1,
+.priority-badge.priority-2 {
+    background: var(--ae-error);
+}
+.priority-badge.priority-3,
+.priority-badge.priority-4 {
+    background: var(--ae-warning);
+    color: #333;
+}
+.priority-badge.priority-5 {
+    background: var(--ae-primary);
+}
+.priority-badge.priority-6,
+.priority-badge.priority-7,
+.priority-badge.priority-8,
+.priority-badge.priority-9,
+.priority-badge.priority-10 {
+    background: #999;
+}
+
+/* ─── Error Detail Row ───────────────────────────────────── */
+.error-detail-row td {
+    padding-top: 0 !important;
+}
+
+.error-detail {
+    display: inline-block;
+    padding: 4px 10px;
+    background: #FFF5F5;
+    border-left: 3px solid var(--ae-error);
+    color: #C62828;
+    font-size: 12px;
+    border-radius: 3px;
+}
+
+/* ─── Chart ──────────────────────────────────────────────── */
+.apollo-email-chart {
+    padding: 10px 0;
+    overflow-x: auto;
+}
+
+.chart-bars {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 8px;
+    height: 160px;
+    min-width: 400px;
+}
+
+.chart-bar-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    justify-content: flex-end;
+}
+
+.chart-bar {
+    width: 100%;
+    max-width: 40px;
+    min-height: 4px;
+    background: linear-gradient(180deg, var(--ae-primary), #8B5CF6);
+    border-radius: 4px 4px 0 0;
+    position: relative;
+    transition: height 0.3s ease;
+}
+
+.chart-bar:hover {
+    opacity: 0.85;
+}
+
+.chart-bar-value {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    font-weight: 600;
+    color: #666;
+    white-space: nowrap;
+}
+
+.chart-bar-label {
+    margin-top: 6px;
+    font-size: 10px;
+    color: #999;
+}
+
+/* ─── Log Stats Bar ──────────────────────────────────────── */
+.apollo-email-log-stats {
+    display: flex;
+    gap: 24px;
+    padding: 12px 16px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: var(--ae-r);
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.apollo-email-log-stats .stat-item {
+    font-size: 13px;
+    color: #666;
+}
+
+.apollo-email-log-stats .stat-item strong {
+    font-size: 18px;
+    margin-right: 4px;
+    color: #1d2327;
+}
+
+.stat-item.stat-sent strong { color: var(--ae-success); }
+.stat-item.stat-failed strong { color: var(--ae-error); }
+.stat-item.stat-opened strong { color: var(--ae-info); }
+.stat-item.stat-clicked strong { color: var(--ae-primary); }
+
+/* ─── Filters ────────────────────────────────────────────── */
+.apollo-email-filters {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.apollo-email-filters input[type="text"],
+.apollo-email-filters select {
+    height: 32px;
+}
+
+/* ─── Empty State ────────────────────────────────────────── */
+.apollo-email-empty {
+    text-align: center;
+    padding: 40px 20px;
+    background: #FAFAFA;
+    border: 2px dashed #ddd;
+    border-radius: var(--ae-r);
+    margin: 20px 0;
+}
+
+.apollo-email-empty .dashicons {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #ccc;
+    margin-bottom: 12px;
+}
+
+.apollo-email-empty p {
+    font-size: 14px;
+    color: #666;
+}
+
+/* ─── Settings ───────────────────────────────────────────── */
+.apollo-email-settings-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.apollo-email-settings-section {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: var(--ae-r);
+    padding: 20px;
+}
+
+.apollo-email-settings-section h2 {
+    margin-top: 0;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #1d2327;
+}
+
+.apollo-email-settings-section h2 .dashicons {
+    color: var(--ae-primary);
+}
+
+.apollo-email-settings-section .description {
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.apollo-email-settings-section .form-table th {
+    width: 200px;
+}
+
+/* ─── Test Email Form ────────────────────────────────────── */
+.apollo-email-test-form p {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.apollo-email-test-form label {
+    font-weight: 600;
+}
+
+/* ─── Purge Form ─────────────────────────────────────────── */
+.apollo-email-purge-form p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ─── Var Tags ───────────────────────────────────────────── */
+.var-tag {
+    font-size: 11px;
+    padding: 2px 6px;
+    background: #F3E8FF;
+    color: var(--ae-primary);
+    border-radius: 3px;
+}
+
+/* ─── Table Tweaks ───────────────────────────────────────── */
+.apollo-email-admin .wp-list-table code {
+    font-size: 11px;
+    padding: 2px 6px;
+    background: #f0f0f1;
+    border-radius: 3px;
+}
+
+.apollo-email-admin .subsubsub {
+    margin-bottom: 10px;
+}
+
+/* ─── Responsive ─────────────────────────────────────────── */
+@media (max-width: 600px) {
+    .apollo-email-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-value {
+        font-size: 22px;
+    }
+
+    .apollo-email-log-stats {
+        gap: 12px;
+    }
+
+    .apollo-email-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

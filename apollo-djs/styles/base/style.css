@@ -1,0 +1,152 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Apollo DJs — Base Style
+   CSS custom properties + base layout (neutral)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+	--a-dj-bg: #ffffff;
+	--a-dj-text: #1a1a1a;
+	--a-dj-text-secondary: #666;
+	--a-dj-accent: #333;
+	--a-dj-border: #e0e0e0;
+	--a-dj-radius: 8px;
+	--a-dj-shadow: 0 2px 8px rgba(var(--rgb-d),0.06);
+	--a-dj-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	--a-dj-card-bg: #fff;
+	--a-dj-verified: #1da1f2;
+	--a-dj-tag-bg: #f0f0f0;
+	--a-dj-tag-text: #555;
+}
+
+/* ─── Card ──────────────────────────────────────────────────────────── */
+
+.a-dj-card {
+	background: var(--a-dj-card-bg);
+	border: 1px solid var(--a-dj-border);
+	border-radius: var(--a-dj-r);
+	overflow: hidden;
+	transition: transform 0.2s, box-shadow 0.2s;
+	font-family: var(--a-dj-font);
+}
+
+.a-dj-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 24px rgba(var(--rgb-d),0.1);
+}
+
+.a-dj-card__image {
+	width: 100%;
+	aspect-ratio: 1;
+	object-fit: cover;
+	object-position: center top;
+	display: block;
+}
+
+.a-dj-card__body {
+	padding: 16px;
+}
+
+.a-dj-card__header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 8px;
+}
+
+.a-dj-card__name {
+	font-size: 18px;
+	font-weight: 700;
+	color: var(--a-dj-text);
+	text-decoration: none;
+	margin: 0;
+}
+
+.a-dj-card__name a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.a-dj-card__verified {
+	color: var(--a-dj-verified);
+	font-size: 16px;
+	line-height: 1;
+}
+
+.a-dj-card__bio {
+	font-size: 14px;
+	color: var(--a-dj-text-secondary);
+	line-height: 1.5;
+	margin-bottom: 12px;
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.a-dj-card__sounds {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-bottom: 12px;
+}
+
+.a-dj-card__sound-tag {
+	background: var(--a-dj-tag-bg);
+	color: var(--a-dj-tag-text);
+	font-size: 12px;
+	padding: 3px 10px;
+	border-radius: 12px;
+	font-weight: 500;
+}
+
+.a-dj-card__footer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-top: 1px solid var(--a-dj-border);
+	padding-top: 12px;
+}
+
+.a-dj-card__events-count {
+	font-size: 13px;
+	color: var(--a-dj-text-secondary);
+}
+
+.a-dj-card__links {
+	display: flex;
+	gap: 10px;
+}
+
+.a-dj-card__links a {
+	color: var(--a-dj-text-secondary);
+	font-size: 18px;
+	transition: color 0.2s;
+}
+
+.a-dj-card__links a:hover {
+	color: var(--a-dj-accent);
+}
+
+/* ─── Grid ──────────────────────────────────────────────────────────── */
+
+.a-dj-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: 24px;
+}
+
+/* ─── Empty ─────────────────────────────────────────────────────────── */
+
+.a-dj-empty {
+	text-align: center;
+	padding: 60px 20px;
+	color: var(--a-dj-text-secondary);
+	font-size: 16px;
+}
+
+@media (max-width: 768px) {
+	.a-dj-grid {
+		grid-template-columns: 1fr;
+		gap: 16px;
+	}
+}

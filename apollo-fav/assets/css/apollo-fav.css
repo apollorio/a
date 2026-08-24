@@ -1,0 +1,571 @@
+/**
+ * Apollo Fav — Estilos do sistema de favoritos
+ *
+ * Inclui:
+ * - Botão Apollo Heart (toggle)
+ * - Dashboard de favoritos
+ * - Cards estilo LinkedIn para perfil
+ * - Filtros por tipo de CPT
+ *
+ * @package Apollo\Fav
+ */
+
+/* ═══════════════════════════════════════════════════
+   VARIÁVEIS CSS
+   ═══════════════════════════════════════════════════ */
+
+:root {
+    --apollo-fav-color: #ff6b6b;
+    --apollo-fav-color-hover: #ee5a5a;
+    --apollo-fav-color-active: #e74c3c;
+    --apollo-fav-bg: rgba(255, 107, 107, 0.08);
+    --apollo-fav-bg-hover: rgba(255, 107, 107, 0.15);
+    --apollo-fav-radius: 12px;
+    --apollo-fav-shadow: 0 2px 8px rgba(var(--rgb-d), 0.08);
+    --apollo-fav-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --apollo-text: #1a1a2e;
+    --apollo-text-muted: #6c757d;
+    --apollo-border: #e8e8e8;
+    --apollo-bg-card: #ffffff;
+}
+
+/* Dark mode */
+[data-theme="dark"] {
+    --apollo-text: #e0e0e0;
+    --apollo-text-muted: #9e9e9e;
+    --apollo-border: #2d2d2d;
+    --apollo-bg-card: #1e1e2e;
+    --apollo-fav-bg: rgba(255, 107, 107, 0.12);
+}
+
+
+/* ═══════════════════════════════════════════════════
+   BOTÃO APOLLO HEART
+   ═══════════════════════════════════════════════════ */
+
+.apollo-fav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: 1.5px solid var(--apollo-border);
+    border-radius: 24px;
+    background: transparent;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--apollo-text-muted);
+    transition: var(--apollo-fav-transition);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.apollo-fav-btn:hover {
+    border-color: var(--apollo-fav-color);
+    color: var(--apollo-fav-color);
+    background: var(--apollo-fav-bg);
+}
+
+.apollo-fav-btn:active {
+    transform: scale(0.95);
+}
+
+/* Estado ativo (favoritado) */
+.apollo-fav-btn.apollo-fav--active {
+    border-color: var(--apollo-fav-color);
+    color: var(--apollo-fav-color-active);
+    background: var(--apollo-fav-bg);
+}
+
+.apollo-fav-btn.apollo-fav--active .apollo-heart-svg {
+    fill: var(--apollo-fav-color-active);
+}
+
+.apollo-fav-btn .apollo-heart-svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    transition: var(--apollo-fav-transition);
+}
+
+.apollo-fav-btn.apollo-fav--active .apollo-heart-svg {
+    stroke: none;
+    fill: var(--apollo-fav-color-active);
+}
+
+/* Animação de "pulse" ao clicar */
+@keyframes apollo-heart-pulse {
+    0%   { transform: scale(1); }
+    25%  { transform: scale(1.3); }
+    50%  { transform: scale(0.95); }
+    100% { transform: scale(1); }
+}
+
+.apollo-fav-btn.apollo-fav--animating .apollo-fav-icon {
+    animation: apollo-heart-pulse 0.4s ease-in-out;
+}
+
+.apollo-fav-count {
+    font-variant-numeric: tabular-nums;
+}
+
+/* Wrapper quando injetado no conteúdo */
+.apollo-fav-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   DASHBOARD DE FAVORITOS
+   ═══════════════════════════════════════════════════ */
+
+.apollo-favs-dashboard {
+    padding: 0;
+}
+
+/* Filtros (tabs de tipo) */
+.apollo-favs-filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--apollo-border);
+    margin-bottom: 24px;
+}
+
+.apollo-favs-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: 1px solid var(--apollo-border);
+    border-radius: 20px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--apollo-text-muted);
+    transition: var(--apollo-fav-transition);
+}
+
+.apollo-favs-filter:hover {
+    border-color: var(--apollo-fav-color);
+    color: var(--apollo-fav-color);
+}
+
+.apollo-favs-filter.active {
+    background: var(--apollo-fav-color);
+    border-color: var(--apollo-fav-color);
+    color: #fff;
+}
+
+.apollo-favs-filter .apollo-favs-count {
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    background: rgba(var(--rgb-d), 0.06);
+}
+
+.apollo-favs-filter.active .apollo-favs-count {
+    background: rgba(var(--rgb-t), 0.25);
+}
+
+/* Grid de favoritos */
+.apollo-favs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+@media (max-width: 640px) {
+    .apollo-favs-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Estado vazio */
+.apollo-favs-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--apollo-text-muted);
+}
+
+.apollo-favs-empty p {
+    margin-top: 12px;
+    font-size: 15px;
+}
+
+/* Load More */
+.apollo-favs-load-more {
+    text-align: center;
+    margin-top: 32px;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   CARD DE FAVORITO (Dashboard)
+   ═══════════════════════════════════════════════════ */
+
+.apollo-fav-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--apollo-bg-card);
+    border: 1px solid var(--apollo-border);
+    border-radius: var(--apollo-fav-r);
+    overflow: hidden;
+    box-shadow: var(--apollo-fav-shadow);
+    transition: var(--apollo-fav-transition);
+}
+
+.apollo-fav-card:hover {
+    box-shadow: 0 4px 16px rgba(var(--rgb-d), 0.12);
+    transform: translateY(-2px);
+}
+
+.apollo-fav-card__image {
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+}
+
+.apollo-fav-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.apollo-fav-card:hover .apollo-fav-card__image img {
+    transform: scale(1.05);
+}
+
+.apollo-fav-card__body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+
+.apollo-fav-card__type {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--apollo-fav-color);
+}
+
+.apollo-fav-card__title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.apollo-fav-card__title a {
+    color: var(--apollo-text);
+    text-decoration: none;
+}
+
+.apollo-fav-card__title a:hover {
+    color: var(--apollo-fav-color);
+}
+
+.apollo-fav-card__excerpt {
+    margin: 0;
+    font-size: 13px;
+    color: var(--apollo-text-muted);
+    line-height: 1.5;
+}
+
+.apollo-fav-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--apollo-text-muted);
+}
+
+.apollo-fav-card__meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.apollo-fav-card__footer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--apollo-border);
+    font-size: 12px;
+    color: var(--apollo-text-muted);
+}
+
+.apollo-fav-card__favcount {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--apollo-fav-color);
+    font-weight: 600;
+}
+
+.apollo-fav-card__time {
+    margin-left: auto;
+}
+
+.apollo-fav-card__footer .apollo-fav-btn {
+    padding: 4px 10px;
+    font-size: 12px;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   CARDS ESTILO LINKEDIN (Perfil)
+   ═══════════════════════════════════════════════════ */
+
+.apollo-profile-favs {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.apollo-profile-favs__section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 16px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--apollo-text);
+}
+
+.apollo-profile-favs__section-title .apollo-count {
+    font-weight: 400;
+    color: var(--apollo-text-muted);
+    font-size: 14px;
+}
+
+.apollo-profile-favs__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+}
+
+.apollo-profile-favs__more {
+    display: block;
+    margin-top: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--apollo-fav-color);
+    text-decoration: none;
+}
+
+.apollo-profile-favs__more:hover {
+    text-decoration: underline;
+}
+
+/* LinkedIn Card */
+.apollo-linkedin-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--apollo-border);
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    transition: var(--apollo-fav-transition);
+    background: var(--apollo-bg-card);
+}
+
+.apollo-linkedin-card:hover {
+    border-color: var(--apollo-fav-color);
+    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.1);
+}
+
+.apollo-linkedin-card__thumb {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--apollo-fav-bg);
+}
+
+.apollo-linkedin-card__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.apollo-linkedin-card__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: var(--apollo-fav-color);
+}
+
+.apollo-linkedin-card__info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+}
+
+.apollo-linkedin-card__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--apollo-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.apollo-linkedin-card__subtitle {
+    font-size: 12px;
+    color: var(--apollo-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   SIDEBAR WIDGET (Perfil)
+   ═══════════════════════════════════════════════════ */
+
+.apollo-sidebar-widget--favs {
+    padding: 16px;
+    background: var(--apollo-bg-card);
+    border: 1px solid var(--apollo-border);
+    border-radius: var(--apollo-fav-r);
+}
+
+.apollo-sidebar-widget__title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 12px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.apollo-sidebar-widget__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.apollo-sidebar-widget__list li {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--apollo-border);
+}
+
+.apollo-sidebar-widget__list li:last-child {
+    border-bottom: none;
+}
+
+.apollo-sidebar-widget__list a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--apollo-text);
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.apollo-sidebar-widget__list a:hover {
+    color: var(--apollo-fav-color);
+}
+
+.apollo-sidebar-widget__more {
+    display: block;
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--apollo-fav-color);
+    text-decoration: none;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   ESTADOS DE PRIVACIDADE
+   ═══════════════════════════════════════════════════ */
+
+.apollo-profile-private,
+.apollo-profile-favs-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--apollo-text-muted);
+}
+
+.apollo-profile-private i,
+.apollo-profile-favs-empty i {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.apollo-fav-login-notice {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.apollo-fav-login-notice .apollo-btn {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 10px 24px;
+    background: var(--apollo-fav-color);
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   BOTÃO GENÉRICO APOLLO
+   ═══════════════════════════════════════════════════ */
+
+.apollo-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background: var(--apollo-fav-color);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--apollo-fav-transition);
+}
+
+.apollo-btn:hover {
+    background: var(--apollo-fav-color-hover);
+}
+
+.apollo-btn--outline {
+    background: transparent;
+    border: 1.5px solid var(--apollo-fav-color);
+    color: var(--apollo-fav-color);
+}
+
+.apollo-btn--outline:hover {
+    background: var(--apollo-fav-bg);
+}

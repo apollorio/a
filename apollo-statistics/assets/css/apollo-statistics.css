@@ -1,0 +1,364 @@
+/**
+ * Apollo Statistics — Admin Styles
+ *
+ * @package Apollo\Statistics
+ */
+
+/* ───────────────────────── VARIABLES ───────────────────────── */
+
+:root {
+	--apollo-stats-primary: #e91e63;
+	--apollo-stats-secondary: #2196f3;
+	--apollo-stats-success: #4caf50;
+	--apollo-stats-warning: #ff9800;
+	--apollo-stats-danger: #f44336;
+	--apollo-stats-purple: #9c27b0;
+	--apollo-stats-bg: #ffffff;
+	--apollo-stats-text: #1a1a2e;
+	--apollo-stats-border: #e0e0e0;
+	--apollo-stats-muted: #757575;
+	--apollo-stats-radius: 12px;
+}
+
+[data-theme="dark"] {
+	--apollo-stats-bg: #1a1a2e;
+	--apollo-stats-text: #e0e0e0;
+	--apollo-stats-border: #333;
+	--apollo-stats-muted: #999;
+}
+
+/* ───────────────────────── LAYOUT ───────────────────────── */
+
+.apollo-stats-overview,
+.apollo-stats-report {
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	color: var(--apollo-stats-text);
+}
+
+.apollo-stats-title {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 1.25rem;
+	font-weight: 700;
+	margin-bottom: 24px;
+	padding-bottom: 12px;
+	border-bottom: 2px solid var(--apollo-stats-primary);
+}
+
+.apollo-stats-title i {
+	font-size: 1.5rem;
+	color: var(--apollo-stats-primary);
+}
+
+/* ───────────────────────── METRIC CARDS ───────────────────────── */
+
+.apollo-stats-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 16px;
+	margin-bottom: 32px;
+}
+
+.apollo-stats-card {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 20px;
+	background: var(--apollo-stats-bg);
+	border-radius: var(--apollo-stats-r);
+	border: 1px solid var(--apollo-stats-border);
+	position: relative;
+	overflow: hidden;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.apollo-stats-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(var(--rgb-d), 0.08);
+}
+
+.apollo-stats-card::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 4px;
+	background: var(--card-accent, var(--apollo-stats-primary));
+}
+
+.apollo-stats-card__icon {
+	width: 48px;
+	height: 48px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: color-mix(in srgb, var(--card-accent) 10%, transparent);
+	flex-shrink: 0;
+}
+
+.apollo-stats-card__icon i {
+	font-size: 1.5rem;
+	color: var(--card-accent, var(--apollo-stats-primary));
+}
+
+.apollo-stats-card__body {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+}
+
+.apollo-stats-card__value {
+	font-size: 1.75rem;
+	font-weight: 800;
+	line-height: 1;
+	color: var(--apollo-stats-text);
+}
+
+.apollo-stats-card__label {
+	font-size: 0.75rem;
+	color: var(--apollo-stats-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	margin-top: 4px;
+}
+
+.apollo-stats-card__trend {
+	font-size: 0.8rem;
+	font-weight: 600;
+	padding: 4px 8px;
+	border-radius: 20px;
+	white-space: nowrap;
+}
+
+.apollo-stats-card__trend--up {
+	background: rgba(76, 175, 80, 0.1);
+	color: var(--apollo-stats-success);
+}
+
+.apollo-stats-card__trend--down {
+	background: rgba(244, 67, 54, 0.1);
+	color: var(--apollo-stats-danger);
+}
+
+.apollo-stats-card__trend--stable {
+	background: rgba(158, 158, 158, 0.1);
+	color: var(--apollo-stats-muted);
+}
+
+/* ───────────────────────── TABLES ───────────────────────── */
+
+.apollo-stats-top h4 {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 16px;
+	font-size: 1rem;
+	font-weight: 600;
+}
+
+.apollo-stats-top h4 i {
+	color: var(--apollo-stats-warning);
+}
+
+.apollo-stats-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-bottom: 24px;
+}
+
+.apollo-stats-table thead th {
+	text-align: left;
+	padding: 10px 12px;
+	font-size: 0.75rem;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	color: var(--apollo-stats-muted);
+	border-bottom: 2px solid var(--apollo-stats-border);
+}
+
+.apollo-stats-table tbody td {
+	padding: 10px 12px;
+	border-bottom: 1px solid var(--apollo-stats-border);
+	font-size: 0.875rem;
+}
+
+.apollo-stats-table tbody tr:hover {
+	background: color-mix(in srgb, var(--apollo-stats-primary) 3%, var(--apollo-stats-bg));
+}
+
+.apollo-stats-table a {
+	color: var(--apollo-stats-secondary);
+	text-decoration: none;
+}
+
+.apollo-stats-table a:hover {
+	text-decoration: underline;
+}
+
+/* ───────────────────────── BADGES ───────────────────────── */
+
+.apollo-stats-badge {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 20px;
+	font-size: 0.7rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.3px;
+}
+
+.apollo-stats-badge--event      { background: #fce4ec; color: #c62828; }
+.apollo-stats-badge--dj         { background: #e8eaf6; color: #283593; }
+.apollo-stats-badge--classified  { background: #fff3e0; color: #e65100; }
+.apollo-stats-badge--loc        { background: #e0f2f1; color: #00695c; }
+.apollo-stats-badge--hub        { background: #f3e5f5; color: #6a1b9a; }
+.apollo-stats-badge--supplier    { background: #e3f2fd; color: #1565c0; }
+.apollo-stats-badge--doc        { background: #fafafa; color: #424242; }
+
+/* ───────────────────────── HEALTH WIDGET ───────────────────────── */
+
+.apollo-stats-health {
+	text-align: center;
+	padding: 24px;
+}
+
+.apollo-stats-health__score {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 24px;
+}
+
+.apollo-stats-health__score i {
+	font-size: 3rem;
+	color: var(--health-color);
+}
+
+.apollo-stats-health__number {
+	font-size: 3rem;
+	font-weight: 900;
+	color: var(--health-color);
+}
+
+.apollo-stats-health__label {
+	font-size: 1rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	color: var(--health-color);
+}
+
+.apollo-stats-health__metrics {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	gap: 12px;
+}
+
+.apollo-stats-health__metric {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+	padding: 12px;
+	border-radius: 8px;
+	background: color-mix(in srgb, var(--apollo-stats-border) 30%, var(--apollo-stats-bg));
+}
+
+.apollo-stats-health__metric i {
+	font-size: 1.25rem;
+	color: var(--apollo-stats-primary);
+}
+
+.apollo-stats-health__metric-label {
+	font-size: 0.7rem;
+	text-transform: uppercase;
+	color: var(--apollo-stats-muted);
+}
+
+.apollo-stats-health__metric-value {
+	font-size: 1.25rem;
+	font-weight: 700;
+}
+
+.apollo-stats-health__metric-trend--up   { color: var(--apollo-stats-success); }
+.apollo-stats-health__metric-trend--down { color: var(--apollo-stats-danger); }
+.apollo-stats-health__metric-trend--stable { color: var(--apollo-stats-muted); }
+
+/* ───────────────────────── ADMIN DASHBOARD WIDGET ───────────────────────── */
+
+.apollo-stats-admin-widget__row {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 12px;
+	padding: 8px 0;
+}
+
+.apollo-stats-admin-widget__kpi {
+	text-align: center;
+}
+
+.apollo-stats-admin-widget__kpi strong {
+	display: block;
+	font-size: 1.5rem;
+	color: var(--apollo-stats-primary);
+}
+
+.apollo-stats-admin-widget__kpi span {
+	font-size: 0.7rem;
+	text-transform: uppercase;
+	color: var(--apollo-stats-muted);
+}
+
+/* ───────────────────────── CHART ───────────────────────── */
+
+#apollo-stats-chart-overview {
+	margin-top: 24px;
+	max-height: 300px;
+}
+
+/* ───────────────────────── EMPTY STATE ───────────────────────── */
+
+.apollo-stats-empty {
+	text-align: center;
+	padding: 40px 20px;
+	color: var(--apollo-stats-muted);
+	font-style: italic;
+}
+
+.apollo-stats-noaccess {
+	text-align: center;
+	padding: 20px;
+	color: var(--apollo-stats-danger);
+	background: rgba(244, 67, 54, 0.05);
+	border-radius: var(--apollo-stats-r);
+}
+
+/* ───────────────────────── RESPONSIVE ───────────────────────── */
+
+@media (max-width: 768px) {
+	.apollo-stats-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	.apollo-stats-admin-widget__row {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	.apollo-stats-table {
+		font-size: 0.8rem;
+	}
+}
+
+@media (max-width: 480px) {
+	.apollo-stats-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.apollo-stats-health__metrics {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}

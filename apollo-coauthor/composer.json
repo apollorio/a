@@ -1,0 +1,24 @@
+{
+	"name": "apollo/coauthor",
+	"description": "Apollo CoAuthor — Multi-authoring via taxonomy for the Apollo ecosystem.",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"minimum-stability": "stable",
+	"prefer-stable": true,
+	"require": {
+		"php": ">=8.1"
+	},
+	"autoload": {
+		"psr-4": {
+			"Apollo\\CoAuthor\\": "src/"
+		},
+		"files": [
+			"includes/constants.php",
+			"includes/functions.php"
+		]
+	},
+	"config": {
+		"optimize-autoloader": true,
+		"sort-packages": true
+	}
+}

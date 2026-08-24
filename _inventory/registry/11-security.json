@@ -1,0 +1,20 @@
+{
+  "$chapter": {
+    "id": "11-security",
+    "owner": "apollo-login",
+    "keys": [
+      "$deep_audit.open_rest_total",
+      "$deep_audit.remediations_applied"
+    ],
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "$deep_audit": {
+    "open_rest_total": 99,
+    "remediations_applied": [
+      "P1",
+      "P2",
+      "P3"
+    ]
+  }
+}

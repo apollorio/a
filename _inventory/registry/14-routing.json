@@ -1,0 +1,103 @@
+{
+  "$chapter": {
+    "id": "14-routing",
+    "owner": "apollo-core",
+    "keys": [
+      "$routing_canonical",
+      "$mu_plugins",
+      "$third_party_plugins"
+    ],
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "$routing_canonical": {
+    "description": "Public URL policy (May 2026). Implemented in plugin PHP and rewrites; registry documents behaviour only — not parsed for routing at request time.",
+    "guest_landing": "/casa",
+    "logged_home": "/feed",
+    "root_slash": "Guests: 301 to /casa (apollo-templates/includes/landing-router.php template_redirect priority 4). Logged-in: redirect to /feed (mural-router.php priority 5).",
+    "legacy_home": "/home: guests 301 /casa; logged /feed (mural-router + landing-router query var apollo_home_redirect).",
+    "auth_routes": "apollo-login: /acesso (+ aliases), /registre, /reset, /verificar-email, /sair — template_redirect priority 1.",
+    "apollo_templates_priorities": "landing-router P4, mural-router P5, main template handler P10 (apollo-templates.php).",
+    "apollo_core_front_route": "FrontRouteDispatcher template_redirect P0 — reads wp-content/apollo-pages-rest.json for index/logging (not apollo-registry.json).",
+    "apollo_pane_engine": "Default: pane lab at /painel-lab; /casa is apollo-templates guest landing unless APOLLO_PANE_PRIMARY forces pane to own /casa (see apollo-pane-engine/includes/functions.php).",
+    "error_funnel": "apollo-error-handler.php template_redirect PHP_INT_MAX — late 404 to apollo.rio.br erro pages."
+  },
+  "$mu_plugins": {
+    "description": "Must-Use plugins in wp-content/mu-plugins/ — loaded before regular plugins; cannot be deactivated from wp-admin",
+    "apollo-brain": {
+      "file": "mu-plugins/apollo-brain.php",
+      "version": "1.2.0",
+      "status": "active",
+      "priority": -100,
+      "description": "Early boot: defines APOLLO_REGISTRY_PATH (wp-content/apollo-registry.json), validates JSON readable, require_once apollo-core/apollo-core.php before active_plugins. script_loader_tag defer for safe front bundles (preserves GSAP/jQuery/Apollo CDN). save_post and transition_post_status hooks purge apollo_purge_* and Registry::clear_cache(). Does NOT init CPT/CDN/security — apollo_core_bootstrap on plugins_loaded P1 does that.",
+      "constants_defined": [
+        "APOLLO_REGISTRY_PATH",
+        "APOLLO_BRAIN_LOADED"
+      ],
+      "hook": "muplugins_loaded priority -100",
+      "actions": [
+        "apollo/brain/before_apollo_core",
+        "apollo/brain/after_apollo_core_file",
+        "apollo/brain/bootstrap_complete",
+        "apollo/brain/loaded",
+        "apollo/brain/page_cache_maybe_init"
+      ]
+    },
+    "apollo-debug": {
+      "file": "mu-plugins/apollo-debug.php",
+      "status": "dev-only",
+      "description": "Query Monitor Apollo panel, boot timings, registry snapshot. apollo_debug_log() helper when WP_DEBUG or APOLLO_DEV_MODE.",
+      "guard": "WP_DEBUG or APOLLO_DEV_MODE",
+      "provides": [
+        "apollo_debug_log()",
+        "Query Monitor Apollo panel"
+      ]
+    },
+    "apollo-dev-routing": {
+      "file": "mu-plugins/apollo-dev-routing.php",
+      "status": "dev-only",
+      "description": "Logs which route handler wins (template_redirect) when APOLLO_DEV_MODE is true.",
+      "guard": "APOLLO_DEV_MODE"
+    },
+    "apollo-route-setup": {
+      "file": "mu-plugins/apollo-route-setup.php",
+      "status": "active",
+      "description": "One-time maintenance on init P20: drafts WP Pages whose slugs collide with apollo_get_reserved_virtual_slugs() (includes casa, home, acesso, feed, etc.), apollo_templates_add_rewrite_rules(), flush_rewrite_rules(false), Registry::clear_cache(), FrontRouteDispatcher::clear_cache(). Bump apollo_route_setup_version option when reserved slugs change.",
+      "option_flag": "apollo_route_setup_version",
+      "current_flag_example": "2026.05.20.2"
+    },
+    "apollo-error-handler": {
+      "file": "mu-plugins/apollo-error-handler.php",
+      "status": "active",
+      "description": "Late template_redirect: funnel is_404 to https://apollo.rio.br/erro/{code}/ (skips REST/AJAX as configured)."
+    }
+  },
+  "$third_party_plugins": {
+    "description": "Third-party WordPress plugins present in this aprio installation but not part of the Apollo ecosystem",
+    "loginizer": {
+      "slug": "loginizer",
+      "status": "active",
+      "purpose": "Login security: brute force protection, IP blocking, CAPTCHA, two-factor auth. Works alongside apollo-login security layer."
+    },
+    "loginizer-security": {
+      "slug": "loginizer-security",
+      "status": "active",
+      "purpose": "Extended Loginizer security features. Companion to loginizer plugin."
+    },
+    "really-simple-ssl": {
+      "slug": "really-simple-ssl",
+      "status": "active",
+      "purpose": "Automatic SSL/HTTPS enforcement and mixed content fixing."
+    },
+    "query-monitor": {
+      "slug": "query-monitor",
+      "status": "dev-only",
+      "purpose": "Developer debugging: DB queries, hooks, HTTP requests, cache. Used with apollo-debug MU plugin."
+    },
+    "wp-debugging": {
+      "slug": "wp-debugging",
+      "status": "dev-only",
+      "purpose": "Enables WP_DEBUG, WP_DEBUG_LOG, SAVEQUERIES constants for development environments."
+    }
+  }
+}

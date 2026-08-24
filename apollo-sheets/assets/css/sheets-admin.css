@@ -1,0 +1,284 @@
+/**
+ * Apollo Sheets — Admin Editor Styles
+ *
+ * Styles for the spreadsheet editor, import/export pages, and admin list.
+ *
+ * @package Apollo\Sheets
+ */
+
+/* ═══════════════════════════════════════════════════════════════
+   GENERAL
+   ═══════════════════════════════════════════════════════════════ */
+
+.apollo-sheets-admin .wp-heading-inline {
+    margin-right: 1rem;
+}
+
+.apollo-sheets-id {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: #888;
+    margin-left: 0.5rem;
+    background: #f0f0f1;
+    padding: 2px 8px;
+    border-radius: 3px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LIST TABLE
+   ═══════════════════════════════════════════════════════════════ */
+
+.apollo-sheets-table .column-shortcode code {
+    background: #f0f0f1;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    -webkit-user-select: all;
+    user-select: all;
+    cursor: pointer;
+}
+
+.apollo-sheets-empty {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    margin-top: 1rem;
+}
+
+.apollo-sheets-empty p {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   META FIELDS
+   ═══════════════════════════════════════════════════════════════ */
+
+.apollo-sheets-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+}
+
+.apollo-sheets-meta-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.apollo-sheets-meta-field label {
+    font-weight: 600;
+    font-size: 0.8125rem;
+    color: #1d2327;
+}
+
+.apollo-sheets-meta-field .regular-text {
+    min-width: 280px;
+}
+
+.apollo-sheets-shortcode-display code {
+    background: #f0f6fc;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    border: 1px solid #d0d5dd;
+    -webkit-user-select: all;
+    user-select: all;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TOOLBAR
+   ═══════════════════════════════════════════════════════════════ */
+
+.apollo-sheets-toolbar {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.75rem 0;
+}
+
+.apollo-sheets-toolbar .button {
+    font-size: 12px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SPREADSHEET GRID
+   ═══════════════════════════════════════════════════════════════ */
+
+.apollo-sheets-grid-wrap {
+    margin: 1rem 0;
+}
+
+.apollo-sheets-grid {
+    overflow: auto;
+    max-height: 60dvh;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.apollo-sheets-edit-table {
+    border-collapse: collapse;
+    width: auto;
+    min-width: 100%;
+}
+
+.apollo-sheets-edit-table th,
+.apollo-sheets-edit-table td {
+    border: 1px solid #dcdcde;
+    padding: 0;
+    text-align: center;
+}
+
+.apollo-sheets-edit-table thead th {
+    background: #f0f0f1;
+    padding: 6px 12px;
+    font-weight: 600;
+    font-size: 12px;
+    color: #50575e;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    border-bottom: 2px solid #c3c4c7;
+}
+
+.apollo-sheets-edit-table .row-num {
+    background: #f6f7f7;
+    color: #888;
+    font-size: 11px;
+    padding: 4px 8px;
+    min-width: 36px;
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    font-weight: 600;
+}
+
+.apollo-sheets-edit-table thead .row-num {
+    z-index: 3;
+}
+
+/* Cell input */
+.cell-input {
+    width: 100%;
+    min-width: 100px;
+    border: none;
+    outline: none;
+    padding: 7px 8px;
+    font-size: 13px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: transparent;
+    box-sizing: border-box;
+}
+
+.cell-input:focus {
+    background: #f0f6fc;
+    box-shadow: inset 0 0 0 2px #2271b1;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   OPTIONS
+   ═══════════════════════════════════════════════════════════════ */
+
+.apollo-sheets-options {
+    margin: 1.5rem 0;
+    padding: 1rem 1.5rem;
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+}
+
+.apollo-sheets-options h3 {
+    margin-top: 0;
+    font-size: 1rem;
+    color: #1d2327;
+}
+
+.apollo-sheets-options .form-table th {
+    width: 160px;
+    font-weight: 500;
+    font-size: 13px;
+}
+
+.apollo-sheets-options .form-table td label {
+    font-size: 13px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ACTIONS BAR
+   ═══════════════════════════════════════════════════════════════ */
+
+.apollo-sheets-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1.5rem 0;
+}
+
+.apollo-sheets-save-status {
+    font-size: 13px;
+    color: #00a32a;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.apollo-sheets-save-status.visible {
+    opacity: 1;
+}
+
+.apollo-sheets-save-status.error {
+    color: #d63638;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PREVIEW
+   ═══════════════════════════════════════════════════════════════ */
+
+.apollo-sheets-preview {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: #1d2327;
+    border-radius: 8px;
+    color: #e0e0e6;
+}
+
+.apollo-sheets-preview h3 {
+    margin-top: 0;
+    color: #f0f0f1;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   IMPORT PAGE
+   ═══════════════════════════════════════════════════════════════ */
+
+.apollo-sheets-admin .form-table textarea.code {
+    font-family: 'Space Mono', Consolas, Monaco, monospace;
+    font-size: 12px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 782px) {
+    .apollo-sheets-meta {
+        flex-direction: column;
+    }
+
+    .apollo-sheets-meta-field .regular-text {
+        min-width: auto;
+        width: 100%;
+    }
+
+    .apollo-sheets-toolbar {
+        flex-wrap: wrap;
+    }
+}

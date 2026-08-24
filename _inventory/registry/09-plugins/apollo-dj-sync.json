@@ -1,0 +1,487 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-dj-sync",
+    "owner": "apollo-dj-sync",
+    "wrap": "plugins.apollo-dj-sync",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-dj-sync",
+  "namespace": "Apollo\\DJSync",
+  "priority": 4,
+  "status": "IMPLEMENTED",
+  "version": "1.0.1",
+  "layer": "L2_content",
+  "scope": "desktop_bridge",
+  "web_production": false,
+  "desktop_only_bridge": true,
+  "description": "Per-user feature gates, global config, and session logging for apolloDJ.exe. Thin REST layer on top of apollo-core.",
+  "dependencies": [
+    "apollo-core",
+    "apollo-login",
+    "apollo-users"
+  ],
+  "provides": [
+    "dj-session-logging",
+    "desktop-app-bridge",
+    "dj-user-meta-registry-ui"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [],
+  "meta": {
+    "post": {},
+    "user": {},
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (DELEGATES_TO_METHOD)",
+      "auth": "DELEGATES_TO_METHOD",
+      "permission_risk": "REVIEW",
+      "permission_method": "app_token_permission",
+      "permission_binding": "DJPermissionsController::app_token_permission",
+      "permission_summary": "Delegates to $this->_resolve_token() (may need recursive resolve)",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "$token = $request->get_header('x_apollo_app_token'); if (empty($token) || ! preg_match('/^[a-zA-Z0-9]{64}$/', $token)) { return new WP_Error('dj_missing_token', __('Valid app token required.', 'apollo-dj-sync'), ['status' => 401]); } $user_id = $this->_resolve_token($token); if (",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "log_session",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/DJPermissionsController.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "hooks": {
+    "fires": [
+      "apollo/dj/session_logged"
+    ],
+    "listens": [
+      "apollo/core/initialized"
+    ]
+  },
+  "auth_scheme": {
+    "header": "X-Apollo-App-Token",
+    "lookup": "SHA-256 hash stored in user meta _apollo_app_token_{app_id}",
+    "jwt": "HS256 JWT with optional HMAC signature via X-Apollo-JWT-Signature + X-Apollo-JWT-Timestamp",
+    "strict_mode": "JWT + HMAC mandatory in production; optional in dev (WP_DEBUG mode)",
+    "app_id": "apollodj"
+  },
+  "external_app": "apolloDJ.exe",
+  "admin": "DJUserAdmin.php - user edit screen UI for per-user feature gate management",
+  "files": {
+    "main": "apollo-dj-sync.php",
+    "src": [
+      "src/API/DJPermissionsController.php",
+      "src/Core/DJMetaRegistry.php",
+      "src/Admin/DJUserAdmin.php"
+    ]
+  },
+  "pages": [],
+  "shortcodes": [],
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [
+    "apollo/dj/session_logged"
+  ],
+  "hooks_listened": [
+    "apollo/core/initialized"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [],
+    "styles": []
+  },
+  "options": [
+    "apollo_dj_allowed_memberships_nicotine",
+    "apollo_dj_allowed_roles_login",
+    "apollo_dj_global_message",
+    "apollo_dj_maintenance_mode",
+    "apollo_dj_min_version"
+  ],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 13,
+    "abspath_coverage_pct": 100,
+    "rest_open_routes": 0,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 0,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 1,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 1
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_dj_allowed_memberships_nicotine",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_dj_allowed_roles_login",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_dj_sync_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [],
+  "query_vars": [],
+  "php_surface": {
+    "files": 5,
+    "loc": 769,
+    "classes": 3,
+    "functions": 0
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:48.454Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 7,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-dj-sync",
+    "main_file": "apollo-dj-sync.php",
+    "plugin_header": {
+      "plugin_name": "Apollo DJ Sync",
+      "plugin_uri": "https://apollo.rio.br",
+      "description": "Per-user feature gates, global config, and session logging for apolloDJ.exe. Thin REST layer on top of apollo-core.",
+      "version": "1.0.1",
+      "author": "Apollo",
+      "author_uri": null,
+      "license": null,
+      "text_domain": "apollo-dj-sync",
+      "domain_path": null,
+      "requires_at_least": null,
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": null
+    },
+    "composer": {
+      "name": "apollo/dj-sync",
+      "namespaces": [
+        "Apollo\\DJSync"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 5,
+        ".json": 1
+      },
+      "by_top_directory": {
+        "(root)": 3,
+        "src": 3
+      },
+      "total_bytes": 30321
+    },
+    "php": {
+      "files": 5,
+      "loc": 769,
+      "classes": 3,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 0
+    },
+    "architecture": {
+      "namespace": "Apollo\\DJSync",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "DJUserAdmin",
+          "fqcn": "Apollo\\DJSync\\Admin\\DJUserAdmin",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Admin/DJUserAdmin.php"
+        },
+        {
+          "kind": "class",
+          "name": "DJPermissionsController",
+          "fqcn": "Apollo\\DJSync\\API\\DJPermissionsController",
+          "extends": "WP_REST_Controller",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/DJPermissionsController.php"
+        },
+        {
+          "kind": "class",
+          "name": "DJMetaRegistry",
+          "fqcn": "Apollo\\DJSync\\Core\\DJMetaRegistry",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Core/DJMetaRegistry.php"
+        }
+      ],
+      "public_functions": []
+    },
+    "rest": {
+      "count": 1,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "DELEGATES_TO_METHOD",
+            "risk": "REVIEW",
+            "method": "app_token_permission",
+            "target": "DJPermissionsController",
+            "analysis": {
+              "effective_class": "DELEGATES_TO_METHOD",
+              "risk": "REVIEW",
+              "summary": "Delegates to $this->_resolve_token() (may need recursive resolve)",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [
+                  "_resolve_token",
+                  "validate_jwt_and_hmac"
+                ],
+                "returns": [
+                  "new WP_Error('dj_missing_token', __('Valid app token required.', 'apollo-dj-sync'), ['status' => 401",
+                  "new WP_Error('dj_invalid_token', __('Token not recognised or expired.', 'apollo-dj-sync'), ['status'",
+                  "$jwt_validation",
+                  "true"
+                ]
+              },
+              "body_preview": "$token = $request->get_header('x_apollo_app_token'); if (empty($token) || ! preg_match('/^[a-zA-Z0-9]{64}$/', $token)) { return new WP_Error('dj_missing_token', __('Valid app token required.', 'apollo-dj-sync'), ['status' => 401]); } $user_id = $this->_resolve_token($token); if (",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "DJPermissionsController::app_token_permission",
+              "method_file": "src/API/DJPermissionsController.php",
+              "method_signature": "WP_REST_Request $request"
+            }
+          },
+          "callback": "log_session",
+          "file": "src/API/DJPermissionsController.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0,
+        "REVIEW": 1
+      },
+      "effective_class_counts": {
+        "DELEGATES_TO_METHOD": 1
+      },
+      "permission_body_resolved": 1,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [],
+      "admin_cap_routes": [],
+      "logged_in_routes": []
+    },
+    "database": {
+      "tables_owned_or_defined": [],
+      "tables_referenced": [
+        "apollo_dj_allowed_memberships_nicotine",
+        "apollo_dj_allowed_roles_login",
+        "apollo_dj_sync_settings"
+      ],
+      "tables_for_registry": [],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_dj_allowed_memberships_nicotine",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_dj_allowed_roles_login",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_dj_sync_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 0,
+      "user_count": 0,
+      "term_count": 0,
+      "post_keys": [],
+      "user_keys": [],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [],
+      "query_vars": [],
+      "pages_derived": []
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 1,
+      "listened_count": 4,
+      "apollo_fired": [
+        "apollo/dj/session_logged"
+      ],
+      "apollo_listened": [
+        "apollo/core/initialized"
+      ],
+      "critical_wp_listened": [
+        "admin_init",
+        "admin_menu",
+        "rest_api_init"
+      ]
+    },
+    "ajax": {
+      "priv": [],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [],
+      "styles": []
+    },
+    "options": [
+      "apollo_dj_allowed_memberships_nicotine",
+      "apollo_dj_allowed_roles_login",
+      "apollo_dj_global_message",
+      "apollo_dj_maintenance_mode",
+      "apollo_dj_min_version"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_DJ_SYNC_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_DJ_SYNC_PATH",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_DJ_SYNC_APP_ID",
+        "value": "apollodj"
+      }
+    ],
+    "security": {
+      "php_files": 5,
+      "abspath_guard_files": 5,
+      "abspath_coverage_pct": 100,
+      "wpdb_prepare_calls": 3,
+      "wpdb_query_calls": 3,
+      "prepare_to_query_ratio": 1,
+      "nonce_checks": 0,
+      "current_user_can_calls": 2,
+      "raw_superglobal": {
+        "get": 0,
+        "post": 0,
+        "request": 0
+      },
+      "permission_callback_return_true": 1,
+      "escape_helpers": 6,
+      "echo_statements": 6,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 13,
+      "risk_band": "LOW",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 0,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 0
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core",
+        "apollo-login",
+        "apollo-users"
+      ],
+      "signals": [
+        "apollo-core",
+        "apollo-login"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": false,
+      "register_deactivation_hook": false,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": "1.0.0",
+      "new_version": "1.0.1",
+      "version_changed": true,
+      "old_rest": 1,
+      "live_rest": 1,
+      "old_pages": 0,
+      "live_pages": 0,
+      "new_plugin": false
+    }
+  },
+  "security_remediation": {
+    "note": "P2: ABSPATH on uninstall",
+    "last_updated": "2026-07-20"
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 5,
+    "php_loc": 764,
+    "rest_routes_found": 1,
+    "cpts_found": [],
+    "tables_found": [],
+    "shortcodes_found": []
+  }
+}

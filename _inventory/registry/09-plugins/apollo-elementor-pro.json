@@ -1,0 +1,638 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-elementor-pro",
+    "owner": "apollo-elementor-pro",
+    "wrap": "plugins.apollo-elementor-pro",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-elementor-pro",
+  "namespace": "Apollo\\Elementor",
+  "priority": 50,
+  "status": "IMPLEMENTED",
+  "version": "1.0.1",
+  "description": "Native Elementor widgets, dynamic tags, and controls for the Apollo ecosystem. Reads CPTs, taxonomies, and meta from apollo-core MASTER_REGISTRY.",
+  "dependencies": [
+    "apollo-core",
+    "apollo-elementor",
+    "apollo-events",
+    "apollo-fav",
+    "apollo-hub",
+    "apollo-membership",
+    "apollo-wow"
+  ],
+  "provides": [
+    "elementor-pro",
+    "db"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [],
+  "meta": {
+    "post": {
+      "_apollo_fav_count": {
+        "_source": "deep_scan"
+      },
+      "_apollo_wow_count": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {
+      "_apollo_fav_total": {
+        "_source": "deep_scan"
+      },
+      "_apollo_membership": {
+        "_source": "deep_scan"
+      },
+      "_apollo_wow_total": {
+        "_source": "deep_scan"
+      }
+    },
+    "term": {}
+  },
+  "rest": [],
+  "pages": [],
+  "shortcodes": [],
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [],
+  "hooks_listened": [],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [
+      "apollo-elementor-widgets"
+    ],
+    "styles": [
+      "apollo-elementor-widgets"
+    ]
+  },
+  "options": [
+    "apollo_cdn_url",
+    "apollo_delete_data_on_uninstall",
+    "apollo_elementor_settings"
+  ],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 0,
+    "abspath_coverage_pct": 96,
+    "rest_open_routes": 0,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 0,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 0,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": null
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_elementor_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_events_grid",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_gate",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_wow_count",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_wow_counter",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [],
+  "query_vars": [
+    "apollo_user_id"
+  ],
+  "php_surface": {
+    "files": 23,
+    "loc": 1712,
+    "classes": 21,
+    "functions": 0
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:48.647Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 49,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-elementor-pro",
+    "main_file": "apollo-elementor-pro.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Elementor Pro",
+      "plugin_uri": "https://apollo.rio.br",
+      "description": "Native Elementor widgets, dynamic tags, and controls for the Apollo ecosystem. Reads CPTs, taxonomies, and meta from apollo-core MASTER_REGISTRY.",
+      "version": "1.0.1",
+      "author": "Apollo Rio",
+      "author_uri": null,
+      "license": "GPL-2.0-or-later",
+      "text_domain": "apollo-elementor-pro",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.2",
+      "requires_plugins": null,
+      "network": null
+    },
+    "composer": {
+      "name": "apollo/apollo-elementor-pro",
+      "namespaces": [
+        "Apollo\\Elementor"
+      ],
+      "require": {
+        "php": ">=8.2"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 23,
+        ".css": 1,
+        ".js": 1,
+        ".json": 1
+      },
+      "by_top_directory": {
+        "(root)": 3,
+        "assets": 2,
+        "src": 21
+      },
+      "total_bytes": 70962
+    },
+    "php": {
+      "files": 23,
+      "loc": 1712,
+      "classes": 21,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 0
+    },
+    "architecture": {
+      "namespace": "Apollo\\Elementor",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "ApolloCpt",
+          "fqcn": "Apollo\\Elementor\\Controls\\ApolloCpt",
+          "extends": "Base_Data_Control",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Controls/ApolloCpt.php"
+        },
+        {
+          "kind": "class",
+          "name": "Manager",
+          "fqcn": "Apollo\\Elementor\\Controls\\Manager",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Controls/Manager.php"
+        },
+        {
+          "kind": "class",
+          "name": "SoundsTaxonomy",
+          "fqcn": "Apollo\\Elementor\\Controls\\SoundsTaxonomy",
+          "extends": "Base_Data_Control",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Controls/SoundsTaxonomy.php"
+        },
+        {
+          "kind": "class",
+          "name": "FavCount",
+          "fqcn": "Apollo\\Elementor\\DynamicTags\\FavCount",
+          "extends": "Tag",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/DynamicTags/FavCount.php"
+        },
+        {
+          "kind": "class",
+          "name": "Manager",
+          "fqcn": "Apollo\\Elementor\\DynamicTags\\Manager",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/DynamicTags/Manager.php"
+        },
+        {
+          "kind": "class",
+          "name": "MatchScore",
+          "fqcn": "Apollo\\Elementor\\DynamicTags\\MatchScore",
+          "extends": "Tag",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/DynamicTags/MatchScore.php"
+        },
+        {
+          "kind": "class",
+          "name": "ProfileField",
+          "fqcn": "Apollo\\Elementor\\DynamicTags\\ProfileField",
+          "extends": "Tag",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/DynamicTags/ProfileField.php"
+        },
+        {
+          "kind": "class",
+          "name": "RestField",
+          "fqcn": "Apollo\\Elementor\\DynamicTags\\RestField",
+          "extends": "Tag",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/DynamicTags/RestField.php"
+        },
+        {
+          "kind": "class",
+          "name": "WowCount",
+          "fqcn": "Apollo\\Elementor\\DynamicTags\\WowCount",
+          "extends": "Tag",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/DynamicTags/WowCount.php"
+        },
+        {
+          "kind": "class",
+          "name": "Integration",
+          "fqcn": "Apollo\\Elementor\\Integration",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Integration.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Elementor\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "Uninstaller",
+          "fqcn": "Apollo\\Elementor\\Uninstaller",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Uninstaller.php"
+        },
+        {
+          "kind": "class",
+          "name": "Base",
+          "fqcn": "Apollo\\Elementor\\Widgets\\Base",
+          "extends": "Widget_Base",
+          "implements": [],
+          "modifiers": "abstract",
+          "file": "src/Widgets/Base.php"
+        },
+        {
+          "kind": "class",
+          "name": "ClassifiedsGrid",
+          "fqcn": "Apollo\\Elementor\\Widgets\\ClassifiedsGrid",
+          "extends": "Base",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Widgets/ClassifiedsGrid.php"
+        },
+        {
+          "kind": "class",
+          "name": "DJCard",
+          "fqcn": "Apollo\\Elementor\\Widgets\\DJCard",
+          "extends": "Base",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Widgets/DJCard.php"
+        },
+        {
+          "kind": "class",
+          "name": "EventsGrid",
+          "fqcn": "Apollo\\Elementor\\Widgets\\EventsGrid",
+          "extends": "Base",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Widgets/EventsGrid.php"
+        },
+        {
+          "kind": "class",
+          "name": "HubListing",
+          "fqcn": "Apollo\\Elementor\\Widgets\\HubListing",
+          "extends": "Base",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Widgets/HubListing.php"
+        },
+        {
+          "kind": "class",
+          "name": "MembershipGate",
+          "fqcn": "Apollo\\Elementor\\Widgets\\MembershipGate",
+          "extends": "Base",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Widgets/MembershipGate.php"
+        },
+        {
+          "kind": "class",
+          "name": "ProfileCard",
+          "fqcn": "Apollo\\Elementor\\Widgets\\ProfileCard",
+          "extends": "Base",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Widgets/ProfileCard.php"
+        },
+        {
+          "kind": "class",
+          "name": "UserRadar",
+          "fqcn": "Apollo\\Elementor\\Widgets\\UserRadar",
+          "extends": "Base",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Widgets/UserRadar.php"
+        },
+        {
+          "kind": "class",
+          "name": "WoWCounter",
+          "fqcn": "Apollo\\Elementor\\Widgets\\WoWCounter",
+          "extends": "Base",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Widgets/WoWCounter.php"
+        }
+      ],
+      "public_functions": []
+    },
+    "rest": {
+      "count": 0,
+      "routes": [],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 0,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {},
+      "permission_body_resolved": 0,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [],
+      "admin_cap_routes": [],
+      "logged_in_routes": []
+    },
+    "database": {
+      "tables_owned_or_defined": [],
+      "tables_referenced": [
+        "apollo_elementor_settings",
+        "apollo_events_grid",
+        "apollo_membership_gate",
+        "apollo_wow_count",
+        "apollo_wow_counter"
+      ],
+      "tables_for_registry": [],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_elementor_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_events_grid",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_gate",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_wow_count",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_wow_counter",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 2,
+      "user_count": 3,
+      "term_count": 0,
+      "post_keys": [
+        "_apollo_fav_count",
+        "_apollo_wow_count"
+      ],
+      "user_keys": [
+        "_apollo_fav_total",
+        "_apollo_membership",
+        "_apollo_wow_total"
+      ],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [],
+      "query_vars": [
+        "apollo_user_id"
+      ],
+      "pages_derived": []
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 0,
+      "listened_count": 8,
+      "apollo_fired": [],
+      "apollo_listened": [],
+      "critical_wp_listened": [
+        "plugins_loaded"
+      ]
+    },
+    "ajax": {
+      "priv": [],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [
+        "apollo-elementor-widgets"
+      ],
+      "styles": [
+        "apollo-elementor-widgets"
+      ]
+    },
+    "options": [
+      "apollo_cdn_url",
+      "apollo_delete_data_on_uninstall",
+      "apollo_elementor_settings"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_ELEMENTOR_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_ELEMENTOR_DIR",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_ELEMENTOR_URL",
+        "value": "plugin_dir_url( __FILE__"
+      },
+      {
+        "name": "APOLLO_ELEMENTOR_FILE",
+        "value": "__FILE__"
+      }
+    ],
+    "security": {
+      "php_files": 23,
+      "abspath_guard_files": 22,
+      "abspath_coverage_pct": 96,
+      "wpdb_prepare_calls": 0,
+      "wpdb_query_calls": 0,
+      "prepare_to_query_ratio": null,
+      "nonce_checks": 1,
+      "current_user_can_calls": 1,
+      "raw_superglobal": {
+        "get": 0,
+        "post": 0,
+        "request": 0
+      },
+      "permission_callback_return_true": 0,
+      "escape_helpers": 48,
+      "echo_statements": 55,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 0,
+      "risk_band": "LOW",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 0,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 0
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core",
+        "apollo-elementor",
+        "apollo-events",
+        "apollo-fav",
+        "apollo-hub",
+        "apollo-membership",
+        "apollo-wow"
+      ],
+      "signals": [
+        "apollo-core",
+        "apollo-elementor",
+        "apollo-events",
+        "apollo-fav",
+        "apollo-hub",
+        "apollo-membership",
+        "apollo-wow"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": false,
+      "register_deactivation_hook": false,
+      "register_uninstall_hook": true,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": false,
+      "old_status": null,
+      "old_version": null,
+      "new_version": "1.0.1",
+      "version_changed": false,
+      "old_rest": 0,
+      "live_rest": 0,
+      "old_pages": 0,
+      "live_pages": 0,
+      "new_plugin": true
+    }
+  },
+  "canvas_contract": {
+    "variant": "none",
+    "action": "VERIFIED",
+    "shape": "no-canvas",
+    "audited": "2026-07-28",
+    "ref": "$canvas_shell.plugins.apollo-elementor-pro"
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 23,
+    "php_loc": 1689,
+    "rest_routes_found": 0,
+    "cpts_found": [],
+    "tables_found": [],
+    "shortcodes_found": []
+  }
+}

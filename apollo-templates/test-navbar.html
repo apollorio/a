@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Apollo Navbar - Teste Rápido</title>
+	<script src="https://cdn.apollo.rio.br/v1.0.0/core.js?v=t0x1x&versao=bb" fetchpriority="high" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="http://apollo.local/wp-content/plugins/apollo-templates/assets/css/navbar.css">
+	<style>
+		body {
+			margin: 0;
+			padding: 80px 2rem 4rem;
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			min-height: 100vh;
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+			color: white;
+		}
+		.test-section {
+			max-width: 800px;
+			margin: 0 auto 2rem;
+			background: rgba(var(--rgb-t),0.1);
+			backdrop-filter: blur(10px);
+			border-radius: 16px;
+			padding: 2rem;
+			box-shadow: 0 8px 32px rgba(var(--rgb-d),0.1);
+		}
+		h1 { margin-top: 0; font-size: 2rem; }
+		h2 { color: #ffd700; margin-top: 1.5rem; }
+		.status { display: flex; gap: 1rem; margin: 1rem 0; }
+		.status-item {
+			flex: 1;
+			padding: 1rem;
+			background: rgba(var(--rgb-t),0.15);
+			border-radius: 8px;
+			text-align: center;
+		}
+		.status-value { font-size: 1.5rem; font-weight: bold; margin-top: 0.5rem; }
+		.checklist { list-style: none; padding: 0; }
+		.checklist li { padding: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem; }
+		.checklist li:before { content: '✓'; color: #4ade80; font-weight: bold; }
+		code { background: rgba(var(--rgb-d),0.3); padding: 0.2rem 0.5rem; border-radius: 4px; }
+	</style>
+</head>
+<body>
+
+<!-- GUEST STATE NAVBAR -->
+<nav class="apollo-navbar" id="apollo-navbar" data-auth="guest">
+	<div class="clock-pill" id="digital-clock">--:--:--</div>
+
+	<button id="btn-apps" class="nav-btn" aria-label="Aplicativos">
+		<svg viewBox="0 0 24 24" fill="currentColor">
+			<path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"></path>
+		</svg>
+	</button>
+</nav>
+
+<!-- APPS MENU (with login) -->
+<div id="menu-app" class="dropdown-menu">
+	<div class="section-title">Aplicativos</div>
+	<div class="apps-grid">
+		<a href="#" class="app-item">
+			<div class="app-icon bg-orange">EV</div>
+			<span class="app-label">Eventos</span>
+		</a>
+		<a href="#" class="app-item">
+			<div class="app-icon bg-blue">CL</div>
+			<span class="app-label">Classificados</span>
+		</a>
+		<a href="#" class="app-item">
+			<div class="app-icon bg-purple">DJ</div>
+			<span class="app-label">DJs</span>
+		</a>
+	</div>
+
+	<div class="login-section" id="login-section">
+		<div class="login-header">
+			<div class="login-title">Bem-vindo ao Apollo</div>
+			<div class="login-subtitle">Entre para acessar todos os recursos</div>
+		</div>
+
+		<form id="apollo-login-form" onsubmit="event.preventDefault(); alert('Login form funcional! (Teste visual)');">
+			<div class="input-group">
+				<label class="input-label" for="login-user">Usuário</label>
+				<input type="text" id="login-user" class="apollo-input input-field" placeholder="seu@email.com">
+			</div>
+			<div class="input-group">
+				<label class="input-label" for="login-pass">Senha</label>
+				<input type="password" id="login-pass" class="apollo-input input-field" placeholder="••••••••">
+			</div>
+			<label class="custom-checkbox" class="checkbox-group">
+				<input type="checkbox" class="checkbox-input">
+				<span class="checkbox-custom">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"></polyline></svg>
+				</span>
+				<span class="checkbox-label">Manter conectado</span>
+			</label>
+			<button type="submit" class="login-btn">
+				<span class="btn-text">Entrar</span>
+				<span class="spinner"></span>
+			</button>
+		</form>
+	</div>
+</div>
+
+<div class="test-section">
+	<h1>🎯 Apollo Navbar - Teste Visual</h1>
+	<p>Navbar completo integrado com sucesso! Verifique os componentes abaixo:</p>
+
+	<div class="status">
+		<div class="status-item">
+			<div>📦 Componentes</div>
+			<div class="status-value">5/5</div>
+		</div>
+		<div class="status-item">
+			<div>🎨 Estilos CSS</div>
+			<div class="status-value">1156</div>
+		</div>
+		<div class="status-item">
+			<div>⚡ JavaScript</div>
+			<div class="status-value">477</div>
+		</div>
+	</div>
+
+	<h2>✅ Checklist de Teste (Estado: Guest)</h2>
+	<ul class="checklist">
+		<li>Clock digital aparece e atualiza a cada segundo</li>
+		<li>Botão Apps (grid icon) visível</li>
+		<li>Clicar Apps abre modal com login form</li>
+		<li>Login form tem campos username/password</li>
+		<li>Checkbox "Manter conectado" funcional</li>
+		<li>Botão "Entrar" com loading spinner</li>
+		<li>Navbar transparente com blur (glassmorphism)</li>
+		<li>Dropdown fecha ao clicar fora</li>
+	</ul>
+
+	<h2>🔍 Componentes Implementados</h2>
+	<ul class="checklist">
+		<li><code>.clock-pill</code> - Relógio digital (HH:MM:SS)</li>
+		<li><code>#btn-apps</code> - Botão grid com modal apps</li>
+		<li><code>#menu-app</code> - Modal com apps grid + login form</li>
+		<li><code>#apollo-login-form</code> - Formulário AJAX de login</li>
+		<li><code>.apollo-navbar</code> - Container principal fixed top</li>
+	</ul>
+
+	<h2>🎨 Estilos Glassmorphism</h2>
+	<ul class="checklist">
+		<li>Navbar: <code>backdrop-filter: blur(20px)</code></li>
+		<li>Background transparente com opacity</li>
+		<li>Shadow e border sutil</li>
+		<li>Animações smooth (transitions)</li>
+		<li>Responsive breakpoints mobile/tablet</li>
+	</ul>
+
+	<h2>📝 Instruções de Teste</h2>
+	<ol style="list-style-position: inside; padding-left: 0;">
+		<li>Verifique se o relógio está atualizando (segundos correndo)</li>
+		<li>Clique no botão de Apps (grid icon no navbar)</li>
+		<li>Confirme que o modal abre com a grid de apps E o login form</li>
+		<li>Teste o formulário (preencha campos e clique "Entrar")</li>
+		<li>Pressione ESC para fechar o modal</li>
+		<li>Clique fora do modal para fechá-lo também</li>
+	</ol>
+
+	<h2>🚀 Próximo Passo</h2>
+	<p><strong>Testar em estado LOGGED:</strong></p>
+	<p>Altere <code>data-auth="guest"</code> para <code>data-auth="logged"</code> no navbar acima para ver:</p>
+	<ul class="checklist">
+		<li>Botão Notificações (GPS icon) aparece</li>
+		<li>Botão Profile (avatar com iniciais) aparece</li>
+		<li>Login form desaparece do modal apps</li>
+		<li>Dropdown perfil com logout ativo</li>
+	</ul>
+</div>
+
+<script src="http://apollo.local/wp-content/plugins/apollo-templates/assets/js/navbar.js"></script>
+<script>
+// Mock do apolloNavbar para teste
+window.apolloNavbar = {
+	ajaxUrl: 'http://apollo.local/wp-admin/admin-ajax.php',
+	restUrl: 'http://apollo.local/wp-json/apollo/v1/',
+	nonce: 'test-nonce-12345'
+};
+
+// Log para debug
+console.log('✅ Navbar test page loaded');
+console.log('📦 apolloNavbar config:', window.apolloNavbar);
+
+// Verificar se clock está rodando
+setTimeout(() => {
+	const clock = document.getElementById('digital-clock');
+	if (clock && clock.textContent !== '--:--:--') {
+		console.log('✅ Clock is updating:', clock.textContent);
+	} else {
+		console.warn('⚠️ Clock not updating');
+	}
+}, 2000);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,18 @@
+/* ===========================================
+   MARKETPLACE — Ticket Card Base Structure
+   =========================================== */
+
+article[type=ticket] {
+    width: 100%;
+    background: #fff;
+    font-family: var(--ff-ticket);
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--r);
+    overflow: hidden;
+    transition: transform 0.3s var(--ease-lux);
+}
+
+article[type=ticket]:hover {
+    transform: translateY(-5px);
+}

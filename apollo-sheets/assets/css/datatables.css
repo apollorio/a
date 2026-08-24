@@ -1,0 +1,130 @@
+/**
+ * Apollo Sheets — DataTables Override Styles (Light)
+ * Aligns DataTables UI with the approved mobile sheet design.
+ *
+ * @package Apollo\Sheets
+ */
+
+.dataTables_wrapper {
+    font-family: 'Space Grotesk', sans-serif;
+    color: #121214;
+}
+
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+    margin-bottom: 0.75rem;
+    font-size: 0.85rem;
+    color: #666666;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.dataTables_wrapper .dataTables_length select,
+.dataTables_wrapper .dataTables_filter input {
+    background: #ffffff;
+    border: 1px solid rgba(var(--rgb-d),0.08);
+    color: #121214;
+    border-radius: 100px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.dataTables_wrapper .dataTables_filter input { width: 200px; }
+
+.dataTables_wrapper .dataTables_length select:focus,
+.dataTables_wrapper .dataTables_filter input:focus {
+    border-color: FF9820;
+    box-shadow: 0 0 0 2px rgba(244, 95, 0, 0.12);
+}
+
+.apollo-sheet-dt thead th { cursor: pointer; user-select: none; position: relative; padding-right: 24px; }
+.apollo-sheet-dt thead th.sorting::after,
+.apollo-sheet-dt thead th.sorting_asc::after,
+.apollo-sheet-dt thead th.sorting_desc::after {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.75rem;
+    color: #999999;
+}
+.apollo-sheet-dt thead th.sorting::after { content: '⇅'; opacity: 0.35; }
+.apollo-sheet-dt thead th.sorting_asc::after { content: '↑'; color: FF9820; opacity: 1; }
+.apollo-sheet-dt thead th.sorting_desc::after { content: '↓'; color: FF9820; opacity: 1; }
+
+.dataTables_wrapper .dataTables_info {
+    float: left;
+    padding-top: 0.6rem;
+    font-size: 0.85rem;
+    color: #666666;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    float: right;
+    padding-top: 0.4rem;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 10px;
+    margin: 0 2px;
+    border: 1px solid rgba(var(--rgb-d),0.08);
+    border-radius: 999px;
+    background: #fff;
+    color: #121214 !important;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: FF9820;
+    border-color: FF9820;
+    color: #fff !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: FF9820;
+    border-color: FF9820;
+    color: #fff !important;
+    font-weight: 600;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+    opacity: 0.35;
+    cursor: default;
+    pointer-events: none;
+}
+
+.dataTables_wrapper .dataTables_processing {
+    background: rgba(var(--rgb-t), 0.92);
+    color: FF9820;
+    border: 1px solid rgba(var(--rgb-d),0.08);
+    border-radius: 8px;
+    padding: 1rem;
+    font-size: 0.9rem;
+    box-shadow: 0 6px 20px rgba(var(--rgb-d),0.08);
+}
+
+.dataTables_empty { text-align: center; color: #666666; font-style: italic; padding: 2rem !important; }
+
+.dataTables_wrapper::after { content: ''; display: table; clear: both; }
+
+@media (max-width: 768px) {
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter { float: none; width: 100%; margin-bottom: 0.5rem; }
+    .dataTables_wrapper .dataTables_filter input { width: 100%; }
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_paginate { float: none; text-align: center; }
+    .dataTables_wrapper .dataTables_info { padding-top: 0.4rem; }
+}

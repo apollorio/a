@@ -1,0 +1,35 @@
+/* ═══════════════════════════════════════════════════════════════
+   APOLLO::RIO — HOME / marquee.css
+   Infinite ticker strip
+   ═══════════════════════════════════════════════════════════════ */
+.nh-marquee-wrap {
+    position: relative; z-index: 1;
+    width: 100%; overflow: hidden;
+    border-bottom: 1px solid var(--border-ultra);
+    padding: 18px 0; background: var(--bg);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+}
+.nh-marquee-content {
+    display: flex; width: max-content;
+    gap: 100px; white-space: nowrap;
+    animation: nh-marquee 100s linear infinite;
+    will-change: transform;
+}
+.nh-marquee-item {
+    flex-shrink: 0;
+    font-family: var(--ff-mono); text-transform: uppercase;
+    font-size: clamp(1.3rem, 1.8vw, 1.7rem) !important;
+    letter-spacing: -0.02em; line-height: 1;
+    display: inline-flex; align-items: center; gap: 16px;
+    color: var(--muted); font-weight: 100;
+}
+.nh-marquee-item i {
+    font-size: 1.15em !important; flex-shrink: 0;
+    opacity: 0.75; display: inline-block;
+    vertical-align: middle; line-height: 1;
+}
+@keyframes nh-marquee { 0% { transform: translate3d(var(--rgb-d)); } 100% { transform: translate3d(-50%,0,0); } }
+@media (max-width: 767px) {
+    .nh-marquee-content { gap: 48px; animation-duration: 32s; }
+}

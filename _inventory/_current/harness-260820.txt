@@ -1,0 +1,21 @@
+apollo-guard --harness · 2026-08-20 (after plan-003 batch)
+===============================================================================
+
+GREEN  apollo-djs/_sandbox/build-dj-harness.mjs
+          16/16 passed → _sandbox/dj-harness.html
+
+GREEN  apollo-email/_sandbox/build-email-harness.mjs
+        GREEN — 26/26 assertions passed
+
+GREEN  apollo-events/_sandbox/build-portal-harness.mjs
+          SKIP  H2 · the shipped header renders                  php not runnable: spawnSync php ENOENT — install php to run H2/H3
+          SKIP  H3 · header JS parses and never invents data     php not runnable: spawnSync php ENOENT — depends on H2
+          51/51 passed, 2 skipped (environment) → _sandbox/portal-harness.html
+
+ RED   apollo-core/_sandbox/build-cpt-surface-harness.mjs
+          ✗ G2 FAILS — 5 surface(s) below 100%
+          Phase 3 does not start until this is green (PLAN §9).
+
+ RED   apollo-templates/_sandbox/build-casa-harness.mjs
+          ✗ 31 assertions failed
+

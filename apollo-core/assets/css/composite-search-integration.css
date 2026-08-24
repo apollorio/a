@@ -1,0 +1,154 @@
+/**
+ * Apollo Composite Search — Template Integration Styles
+ *
+ * Contextual styling for composite search in different templates.
+ *
+ * @package Apollo\Core
+ * @since   6.2.0
+ */
+
+/* ─── Feed Header (apollo-social/explore) ──────────────────────────────── */
+.feed-header-bar {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding: 20px;
+	background: var(--white-1);
+	border-bottom: 1px solid var(--white-8);
+}
+
+.feed-header-top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	flex-wrap: wrap;
+}
+
+.feed-search .apollo-search-composite {
+	max-width: 350px;
+}
+
+@media (max-width: 768px) {
+	.feed-header-top {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.feed-search .apollo-search-composite {
+		max-width: 100%;
+	}
+}
+
+/* ─── Classifieds Filters ──────────────────────────────────────────────── */
+.classifieds-filters {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding: 20px;
+	background: var(--card);
+	border-radius: var(--r-lg);
+	margin-bottom: 24px;
+}
+
+.classifieds-search-composite {
+	width: 100%;
+}
+
+.classifieds-search-composite .apollo-search-composite {
+	max-width: 100%;
+	margin-bottom: 12px;
+}
+
+/* ─── Groups Directory Toolbar ─────────────────────────────────────────── */
+.groups-search-composite {
+	flex-shrink: 0;
+}
+
+.groups-search-composite .apollo-search-composite {
+	min-width: 260px;
+	max-width: 320px;
+}
+
+@media (max-width: 640px) {
+	.groups-search-composite .apollo-search-composite {
+		min-width: 200px;
+		max-width: 280px;
+	}
+}
+
+/* ─── Events Listing ────────────────────────────────────────────────────── */
+.events-filters {
+	display: flex;
+	gap: 12px;
+	flex-wrap: wrap;
+	align-items: flex-start;
+}
+
+.events-search-composite {
+	flex-shrink: 0;
+}
+
+.events-search-composite .apollo-search-composite {
+	min-width: 280px;
+	max-width: 360px;
+}
+
+@media (max-width: 768px) {
+	.events-search-composite .apollo-search-composite {
+		max-width: 100%;
+		width: 100%;
+	}
+}
+
+/* ─── Radar (User Discovery) ────────────────────────────────────────────── */
+.radar-header {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	padding: 24px 5%;
+	background: var(--card);
+	border-bottom: 2px solid var(--border);
+}
+
+.radar-search-composite {
+	max-width: 420px;
+	margin: 0 auto;
+}
+
+.radar-search-composite .apollo-search-composite {
+	max-width: 100%;
+}
+
+@media (max-width: 640px) {
+	.radar-search-composite {
+		max-width: 100%;
+	}
+}
+
+/* ─── Form Wrapper Resets ───────────────────────────────────────────────── */
+.apollo-search-composite-form {
+	margin: 0;
+	padding: 0;
+}
+
+/* Remove default form spacing */
+.feed-search,
+.classifieds-search-composite,
+.groups-search-composite,
+.events-search-composite,
+.radar-search-composite {
+	margin: 0;
+}
+
+/* ─── Dark Mode Adjustments ─────────────────────────────────────────────── */
+html.dark-mode .feed-header-bar,
+html.dark-mode .classifieds-filters {
+	background: var(--black-2);
+	border-color: var(--black-6);
+}
+
+html.dark-mode .radar-header {
+	background: var(--black-1);
+	border-color: var(--black-5);
+}

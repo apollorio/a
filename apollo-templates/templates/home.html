@@ -1,0 +1,1310 @@
+
+
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<script>
+window.ApolloCDNConfig = {
+debug: true,
+cache: false
+};
+</script>
+<script src="https://cdn.apollo.rio.br/v1.0.0/core.js?v=t0x1x&versao=bb" fetchpriority="high" crossorigin="anonymous"></script>
+<link href="https://fonts.cdnfonts.com/css/alimony" rel="stylesheet">
+    <!-- PART 01 --></head><body>
+<!-- HEADER -->
+  <header class="a-hero-aprio-hero-header inverso">
+   <div class="a-hero-aprio-hero-brand">
+   <i class="apollo"></i><a class="txt-logo-hero">apollo<span class="ap-logo-squ">::</span>rio
+   </div>
+   <a href="#login" class="a-hero-aprio-hero-btn">Entrar</a>
+  </header>
+  <!-- CONTENT -->
+
+   <!-- HERO -->
+   <section class="a-hero-aprio-hero">
+    <!-- Responsive Video Background -->
+    <video class="a-hero-hero-video" autoplay muted loop playsinline preload="auto" poster="/img/hero-fallback.jpg">
+     <source src="https://assets.apollo.rio.br/vid/v2.webm" type="video/webm">
+     <source src="https://assets.apollo.rio.br/vid/v2.mp4" type="video/mp4">
+     <source src="https://assets.apollo.rio.br/vid/v2.mov" type="video/quicktime">
+    </video>
+    <h1 class="a-hero-aprio-hero-title reveal-up"> Não apenas veja. <br>
+     <span class="vetxt">Venha viver junto!</span>
+    </h1>
+    <p class="a-hero-aprio-hero-text reveal-up" style="transition-delay: 0.1s;"> Sua nova ferramenta de cultura digital e de cadeia produtiva da cultura do Rio de Janeiro. Com caráter inovador, é orientado à economia criativa e à difusão do acesso à arte, música e cultura carioca. </p>
+    <div class="reveal-up" style="transition-delay: 0.2s;">
+     <a href="#explorar" class="a-hero-aprio-hero-btn">Explorar</a>
+    </div>
+    
+
+   </section>
+  
+    <!-- PART 02 -->
+
+    <style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--apollo-orange:#FF9820;--apollo-black:#1d1d1f;--apollo-gray:#86868b;--apollo-light:#f5f5f7;--white:#fff;--radius:10px;--cubic:cubic-bezier(0.16,1,0.3,1);--spring:linear(0,0.008 1.1%,0.034 2.3%,0.134 4.9%,0.264 7.3%,0.683 14.3%,0.797 16.5%,0.89 18.6%,0.967 20.7%,1.027 22.8%,1.073 25%,1.104 27.3%,1.123 30.6%,1.119 34.3%,1.018 49.5%,0.988 58.6%,0.985 65.2%,1 84.5%,1)}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family: system-ui, -apple-system, BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,sans-serif;background-color:var(--white);color:var(--apollo-black);overflow-x:hidden;-webkit-font-smoothing:antialiased;line-height:1.6;font-size:15px;max-width:100vw}
+::-webkit-scrollbar-track{background:#f2f2f2}
+::-webkit-scrollbar-thumb{background:#d0d0d0;border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:#b0b0b0}
+@media(prefers-color-scheme:dark){::-webkit-scrollbar-track{background:#242424}::-webkit-scrollbar-thumb{background:#444}}
+::selection{background:rgba(255,14var(--rgb-d).2);color:var(--apollo-black)}
+.container{max-width:1400px;margin:0 auto;padding:0 48px;overflow:hidden}
+.smooth-transition{transition:all 0.6s var(--cubic)}
+main{padding-top:48px;overflow-x:hidden;max-width:100vw}
+.hero{margin:128px auto}
+.hero-grid{display:grid;grid-template-columns:1fr;gap:32px;align-items:end;margin-bottom:64px}
+@media(min-width:768px){.hero-grid{grid-template-columns:2fr 1fr;gap:48px}}
+.hero-badge{display:inline-block;padding:4px 8px;margin-bottom:24px;border:1px solid rgba(255,14var(--rgb-d).3);color:var(--apollo-orange);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;border-radius:4px;background:rgba(255,14var(--rgb-d).05)}
+h1{font-size:clamp(36px,6vw,80px);font-weight:500;line-height:0.95;letter-spacing:-0.03em;margin:0}
+.hero-text-gray{color:var(--apollo-gray)}
+.hero-description{font-size:13px;color:var(--apollo-gray);line-height:1.6;max-width:320px;margin-top:24px}
+@media(min-width:768px){.hero-description{text-align:right;margin-top:0}}
+.hero-video{width:100%;aspect-ratio:16/9;background:var(--apollo-black);border-radius:16px;overflow:hidden;position:relative}
+.hero-video iframe{width:100%;height:100%;border:none}
+.marquee-wrapper{width:100vw;margin-left:calc(-50vw + 50%);overflow:hidden;padding:16px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;background:white;margin-bottom:96px;user-select:none}
+.marquee-content{display:flex;white-space:nowrap;animation:marquee 18s linear infinite}
+.marquee-text{font-size:clamp(32px,5vw,60px);font-weight:700;text-transform:uppercase;letter-spacing:-0.03em;margin:0 32px;-webkit-text-stroke:1px rgba(var(--rgb-d),0.1);color:transparent;transition:color 0.8s ease}
+.marquee-wrapper.in-view .marquee-text{color:#F2F2F2}
+@keyframes marquee{0%{transform:translateX(0%)}100%{transform:translateX(-50%)}}
+.manifesto{margin-bottom:128px}
+.manifesto-grid{display:grid;grid-template-columns:1fr;gap:48px}
+@media(min-width:768px){.manifesto-grid{grid-template-columns:1fr 2fr}}
+.section-label{font-size:13px;font-weight:600;color:var(--apollo-orange);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px}
+.manifesto-text{font-size:clamp(20px,2.5vw,24px);color:var(--apollo-black);line-height:1.3;font-weight:300;margin-bottom:48px}
+.manifesto-cards{display:grid;grid-template-columns:1fr;gap:48px;border-top:1px solid #f0f0f0;padding-top:48px}
+@media(min-width:640px){.manifesto-cards{grid-template-columns:1fr 1fr}}
+.card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--apollo-black);margin-bottom:12px}
+.card-text{font-size:13px;color:var(--apollo-gray);line-height:1.6}
+.hub-section{background:var(--apollo-light);padding:80px 0 128px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;overflow:hidden;position:relative}
+.hub-bg-circle{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:white;border-radius:50%;filter:blur(100px);opacity:0.6;pointer-events:none}
+.hub-grid{overflow:none!important;display:grid;grid-template-columns:1fr;gap:80px;align-items:center;position:relative;z-index:10}
+@media(min-width:768px){.hub-grid{grid-template-columns:1fr 1fr}}
+.hub-card-wrapper{overflow:none!important;display:flex;justify-content:center;order:2}
+@media(min-width:768px){.hub-card-wrapper{order:1}}
+.hub-card{width:288px;background:white;box-shadow:0 20px 40px rgba(var(--rgb-d),0.1);border:1px solid #f0f0f0;border-radius:16px;padding:24px;cursor:default;transition:transform 0.1s ease-out;transform-style:preserve-3d;transform:perspective(1000px)}
+.hub-profile{display:flex;align-items:center;gap:16px;margin-bottom:20px;justify-content:center}
+.hub-avatar{width:80px;height:80px;margin-top:10px;background:#e0e0e0;border-radius:50%;overflow:hidden;box-shadow:0 0 0 2px white}
+.hub-avatar img{width:100%;height:100%;object-fit:cover;filter:grayscale(100%)}
+.hub-content-card{margin-bottom:24px}
+.hub-artist{color:var(--apollo-gray);font-size:0.85rem;display:flex;align-items:center;gap:8px;margin-bottom:0.4rem}
+.hub-artist i{font-size:0.95rem;flex-shrink:0;opacity:0.8}
+.hub-artist span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hub-card-sup-title {font-size:0.85rem;font-weight:600; line-height:0.8 }
+.hub-card-title{font-size:1.85rem;margin-left:6px;font-weight:700;color:var(--apollo-black);line-height:.9;margin-bottom:0.5rem}
+.hub-handle-meta{color:var(--apollo-gray);font-size:0.8rem;display:flex;align-items:center;gap:8px;margin-bottom:0.4rem; line-height:0.8 }
+.hub-handle-meta i{font-size:0.95rem;flex-shrink:0;opacity:0.8}
+.hub-handle-meta span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hub-name{font-size:13px;font-weight:700;color:var(--apollo-black)}
+.hub-handle{font-size:10px;color:var(--apollo-gray);font-weight:500}
+.hub-links{display:flex;flex-direction:column;gap:12px}
+.hub-link{height:40px;width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:11px;font-weight:500;border-radius:8px;cursor:pointer}
+.hub-link-primary{background:var(--apollo-black);color:white;box-shadow:0 4px 8px rgba(var(--rgb-d),0.1)}
+.hub-link-primary:hover i{opacity:1}
+.hub-link-primary i{opacity:0;transition:opacity 0.3s}
+.hub-link-secondary{background:transparent;color:var(--apollo-black);border:1px solid #e0e0e0}
+.hub-link-secondary:hover{background:#fafafa;border-color:#d0d0d0}
+.hub-footer{margin-top:32px;padding-top:16px;border-top:1px solid #fafafa;text-align:center}
+.hub-footer span{font-family:system-ui;text-transform:uppercase;letter-spacing:0.15em;font-size:8px;font-weight:200;color:var(--apollo-gray);}
+.hub-content{order:1}
+@media(min-width:768px){.hub-content{order:2}}
+.hub-status{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.hub-pulse{width:8px;height:8px;background:var(--apollo-orange);border-radius:50%;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+.hub-status-text{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:var(--apollo-gray)}
+h2{font-size:clamp(28px,4vw,40px);font-weight:500;color:var(--apollo-black);margin-bottom:24px;letter-spacing:-0.02em}
+.hub-description{font-size:15px;color:var(--apollo-gray);line-height:1.6;margin-bottom:32px;max-width:450px}
+.hub-cta{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:var(--apollo-black);text-decoration:none;border-bottom:1px solid #e0e0e0;padding-bottom:4px}
+.hub-cta:hover{border-color:var(--apollo-orange);color:var(--apollo-orange)}
+.tools-section{padding:100px 0;overflow:hidden}
+.tools-grid{display:grid;grid-template-columns:1fr;gap:48px;padding-left:5rem;padding-right:1.5rem}
+@media(min-width:768px){.tools-grid{grid-template-columns:1fr 2fr}}
+.tools-intro{max-width:320px}
+.accordion{border-top:1px solid #f0f0f0}
+.accordion-item{border-bottom:1px solid #f0f0f0;overflow:hidden}
+.accordion-trigger{width:100%;display:flex;align-items:center;justify-content:space-between;padding:24px 0;background:none;border:none;cursor:pointer;text-align:left;transition:padding-left 0.6s var(--cubic)}
+.accordion-trigger:hover{padding-left:16px}
+.accordion-title{font-size:clamp(18px,2vw,22px);font-weight:300;color:var(--apollo-black);transition:color 0.6s var(--cubic)}
+.accordion-trigger:hover .accordion-title{color:var(--apollo-orange)}
+.accordion-icon{width:24px;height:24px;position:relative;flex-shrink:0}
+.accordion-icon::before,.accordion-icon::after{content:'';position:absolute;background:var(--apollo-gray);transition:transform 0.4s var(--cubic)}
+.accordion-icon::before{width:12px;height:2px;top:50%;left:50%;transform:translate(-50%,-50%)}
+.accordion-icon::after{width:2px;height:12px;top:50%;left:50%;transform:translate(-50%,-50%)}
+.accordion-item.open .accordion-icon::after{transform:translate(-50%,-50%) rotate(90deg)}
+.accordion-content{max-height:0;overflow:hidden;transition:max-height 0.6s cubic-bezier(0.16,1,0.3,1),opacity 0.4s ease}
+.accordion-item.open .accordion-content{max-height:1200px;opacity:1}
+.accordion-inner{padding:0 0 24px 0;opacity:0;transition:opacity 0.3s ease 0.2s}
+.accordion-item.open .accordion-inner{opacity:1}
+.accordion-inner p{font-size:13px;color:var(--apollo-gray);line-height:1.6;margin-bottom:16px}
+.accordion-images{display:flex;gap:4%;margin-bottom:16px}
+.accordion-images img{filter:grayscale(0.95);width:48%;border-radius:8px;opacity:0.9;transition:opacity 0.3s;object-fit:cover;aspect-ratio:4/3; transition:all 1.5s var(--ap-easing)}
+.accordion-images img:hover{filter:grayscale(0);opacity:1}
+.accordion-iframe{width:100%;aspect-ratio:5/4;border-radius:8px;overflow:hidden;background:var(--apollo-light);height:auto!important}
+.accordion-iframe iframe{width:100%;height:100%;border:none}
+.events{padding-bottom:128px;overflow:hidden}
+.events-header{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;margin-bottom:64px;border-bottom:1px solid #f0f0f0;padding-bottom:24px}
+@media(min-width:768px){.events-header{flex-direction:row;align-items:flex-end}}
+.events-title h2{font-size:28px;margin-bottom:4px}
+.events-subtitle{font-size:13px;color:var(--apollo-gray)}
+.events-filters{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;width:100%}
+@media(min-width:768px){.events-filters{margin-top:0;width:auto}}
+.filter-search{position:relative}
+.filter-search input{height:40px;padding:0 16px 0 40px;border:1px solid #e0e0e0;border-radius:var(--r);font-size:13px;background:#fafafa;transition:all 0.3s;width:180px}
+.filter-search input:focus{outline:none;border-color:var(--apollo-orange);background:white;box-shadow:0 0 0 3px rgba(255,14var(--rgb-d).1)}
+.filter-search::before{content:'';position:absolute;left:14px;top:50%;transform:translateY(-50%);width:16px;height:16px;background:var(--apollo-gray);mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='currentColor' d='m19.6 21l-6.3-6.3q-.75.6-1.725.95T9.5 16q-2.725 0-4.612-1.888T3 9.5t1.888-4.612T9.5 3t4.613 1.888T16 9.5q0 1.1-.35 2.075T14.7 13.3l6.3 6.3zM9.5 14q1.875 0 3.188-1.312T14 9.5t-1.312-3.187T9.5 5T6.313 6.313T5 9.5t1.313 3.188T9.5 14'/%3E%3C/svg%3E");mask-size:contain;mask-repeat:no-repeat}
+.custom-select{position:relative;min-width:140px}
+.custom-select select{display:none}
+.select-trigger{height:40px;padding:0 36px 0 14px;border:1px solid #e0e0e0;border-radius:var(--r);font-size:13px;background:#fafafa;cursor:pointer;display:flex;align-items:center;transition:all 0.3s;white-space:nowrap}
+.select-trigger:hover{border-color:#ccc}
+.select-trigger::after{content:'';position:absolute;right:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;background:var(--apollo-gray);mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='currentColor' d='M7 9a1 1 0 0 0-.707 1.707l5 5a1 1 0 0 0 1.414 0l5-5A1 1 0 0 0 17 9z'/%3E%3C/svg%3E");mask-size:contain;mask-repeat:no-repeat;transition:transform 0.3s}
+.custom-select.open .select-trigger{border-color:var(--apollo-orange);background:white;box-shadow:0 0 0 3px rgba(255,14var(--rgb-d).1)}
+.custom-select.open .select-trigger::after{transform:translateY(-50%) rotate(180deg)}
+.select-dropdown{position:absolute;top:calc(100% + 8px);left:0;right:0;background:white;border:1px solid #e0e0e0;border-radius:var(--r);box-shadow:0 10px 40px rgba(var(--rgb-d),0.12);z-index:200;opacity:0;visibility:hidden;transform:translateY(-10px) scale(0.98);transition:all 0.3s var(--cubic);max-height:240px;overflow-y:auto}
+.custom-select.open .select-dropdown{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
+.select-option{padding:12px 14px;font-size:13px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:10px}
+.select-option:hover{background:rgba(255,14var(--rgb-d).05);color:var(--apollo-orange)}
+.select-option.selected{background:rgba(255,14var(--rgb-d).1);color:var(--apollo-orange);font-weight:500}
+.select-option input[type="checkbox"]{width:16px;height:16px;accent-color:var(--apollo-orange);cursor:pointer}
+.events-grid {    display: grid;
+    grid-template-columns: repeat(2, calc(50% - 12px));
+    gap: 24px;
+    row-gap: 24px;
+    column-gap: 24px;
+    row-gap: 64px;
+}
+@media (min-width: 768px) {
+.events-grid {
+grid-template-columns: repeat(4, calc(25% - 18px));
+}
+}
+.a-eve-card {
+display: block;
+position: relative;
+width: 100%;
+text-decoration: none;
+cursor: pointer;
+transition: transform 0.4s ease;
+background: transparent;
+aspect-ratio: 4 / 6;
+overflow: hidden; /* Prevent content overflow from breaking the ratio or viewport */
+display: block;
+position: relative;
+width: 100%;
+text-decoration: none;
+cursor: pointer;
+transition: transform 0.4s ease;
+background: transparent;
+aspect-ratio: 4 / 6;
+overflow: hidden; /* Prevent content overflow from breaking the ratio or viewport */
+}
+.a-eve-card:hover {
+transform: translateY(-5px);
+}
+.a-eve-date{position:absolute;top:5px;left:7px;width:60px;height:54px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;line-height:1;z-index:2;pointer-events:none}
+.a-eve-date-day{font-size:1.6rem;font-weight:700;color:var(--apollo-black);display:block}
+.a-eve-date-month{font-size:0.9rem;font-weight:600;text-transform:uppercase;color:var(--apollo-gray)}
+.a-eve-media{aspect-ratio:4/5;position:relative;overflow:hidden;border-radius:12px;border:1px solid #e0e0e0;box-shadow:0 10px 30px rgba(var(--rgb-d),0.08);transition:box-shadow 0.4s ease;background:#e0e0e0;--r:12px;--s:12px;--x:48px;--y:42px;--_m:/calc(2*var(--r)) calc(2*var(--r)) radial-gradient(#000 70%,#0000 72%);--_g:conic-gradient(at var(--r) var(--r),#000 75%,#0000 0);--_d:(var(--s) + var(--r));mask:calc(var(--_d) + var(--x)) 0 var(--_m),0 calc(var(--_d) + var(--y)) var(--_m),radial-gradient(var(--s) at 0 0,#0000 99%,#000 calc(100% + 1px)) calc(var(--r) + var(--x)) calc(var(--r) + var(--y)),var(--_g) calc(var(--_d) + var(--x)) 0,var(--_g) 0 calc(var(--_d) + var(--y));mask-repeat:no-repeat;-webkit-mask:calc(var(--_d) + var(--x)) 0 var(--_m),0 calc(var(--_d) + var(--y)) var(--_m),radial-gradient(var(--s) at 0 0,#0000 99%,#000 calc(100% + 1px)) calc(var(--r) + var(--x)) calc(var(--r) + var(--y)),var(--_g) calc(var(--_d) + var(--x)) 0,var(--_g) 0 calc(var(--_d) + var(--y));-webkit-mask-repeat:no-repeat}
+.a-eve-card:hover .a-eve-media{box-shadow:0 15px 40px rgba(var(--rgb-d),0.12)}
+.a-eve-media img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s ease;display:block}
+.a-eve-card:hover .a-eve-media img{transform:scale(1.05)}
+.a-eve-tags{position:absolute;bottom:10px;right:10px;display:flex;gap:8px;z-index:3;pointer-events:none}
+.a-eve-tag{padding:4px 10px;border-radius:4px;border:1px solid rgba(var(--rgb-t),0.2);background:linear-gradient(30deg,rgba(var(--rgb-t),0.1) -49%,rgba(var(--rgb-t),0.35) 160%);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);font-size:0.65rem;color:#fff;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.a-eve-content{padding:1.25em 0.5rem;width:100%}
+.a-eve-title{font-size:1.1rem;font-weight:700;color:var(--apollo-black);line-height:1.3;margin-bottom:0.5rem;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+
+
+
+
+.a-eve-meta{color:var(--apollo-gray);font-size:0.85rem;display:flex;align-items:center;gap:8px;margin-bottom:0.4rem}
+.a-eve-meta i{font-size:0.95rem;flex-shrink:0;opacity:0.8;display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;}
+.a-eve-meta span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+      
+      
+.classifieds{padding:80px 0;background:var(--apollo-light);border-top:1px solid #f0f0f0;overflow:hidden}
+.classifieds-header{margin-bottom:48px;padding:0 24px;max-width:1400px;margin-left:auto;margin-right:auto}
+.classifieds-header h2{font-size:24px;margin-bottom:8px}
+.classifieds-header p{font-size:13px;color:var(--apollo-gray)}
+.tickets-section{margin-bottom:64px;overflow:hidden}
+.tickets-section h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:var(--apollo-gray);margin-bottom:24px;padding:0 24px;max-width:1400px;margin-left:auto;margin-right:auto}
+.tickets-scroll{display:flex;gap:20px;overflow-x:auto;overflow-y:clip;padding-bottom:16px;-webkit-overflow-scrolling:touch;cursor:grab;user-select:none;scroll-behavior:auto}
+.tickets-scroll:active{cursor:grabbing}
+.tickets-scroll::-webkit-scrollbar{height:4px}
+.tickets-scroll::-webkit-scrollbar-track{background:#f2f2f2;border-radius:2px}
+.tickets-scroll::-webkit-scrollbar-thumb{background:#d0d0d0;border-radius:2px}
+.tickets-track{display:flex;gap:20px;animation:infiniteScrollReverse 70s linear infinite}
+@keyframes infiniteScrollReverse{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
+.tickets-scroll:hover .tickets-track{animation-play-state:paused}
+.resell-ticket{min-width:260px;background:white;border-radius:12px;padding:20px;box-shadow:0 4px 20px rgba(var(--rgb-d),0.06);transition:transform 0.3s,box-shadow 0.3s;user-select:none;touch-action:pan-x;flex-shrink:0}
+.resell-ticket:hover{transform:translateY(-4px);box-shadow:0 8px 30px rgba(var(--rgb-d),0.1)}
+.ticket-event{font-size:13px;font-weight:600;color:var(--apollo-black);margin-bottom:8px}
+.ticket-info{font-size:11px;color:var(--apollo-gray);margin-bottom:12px}
+.ticket-price{font-size:18px;font-weight:700;color:var(--apollo-orange)}
+.ticket-original{font-size:11px;color:#999;text-decoration:line-through;margin-left:8px}
+.ticket-badge{display:inline-block;padding:2px 8px;background:rgba(255,14var(--rgb-d).1);color:var(--apollo-orange);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;border-radius:4px;margin-top:12px}
+.accommodations-section h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:var(--apollo-gray);margin-bottom:24px;padding:0 24px;max-width:1400px;margin-left:auto;margin-right:auto}
+.accommodations-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;padding:0 24px;max-width:1400px;margin-left:auto;margin-right:auto}
+@media(min-width:768px){.accommodations-grid{grid-template-columns:repeat(4,1fr)}}
+.accommodation-card{background:white;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(var(--rgb-d),0.06);transition:transform 0.3s,box-shadow 0.3s}
+.accommodation-card:hover{transform:translateY(-4px);box-shadow:0 8px 30px rgba(var(--rgb-d),0.1)}
+      .accommodation-more{cursor:pointer}
+.accommodation-more .accommodation-image{background:rgba(var(--rgb-t),0.1);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(var(--rgb-t),0.2);display:flex;align-items:center;justify-content:center}
+.more-overlay{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--apollo-gray);transition:color 0.3s}
+.more-overlay span{font-size:14px;font-weight:600}
+.more-overlay i{font-size:20px}
+.accommodation-more:hover .more-overlay{color:var(--apollo-orange); opacity: 1!important;}
+.accommodation-more .accommodation-info{padding:16px;text-align:center}
+.accommodation-more .accommodation-hood{font-size:12px;color:var(--apollo-gray);margin-bottom:0}
+.accommodation-more .accommodation-price{font-weight:400;font-size:12px;color:var(--apollo-gray);display:none}
+.accommodation-image{aspect-ratio:4/3;background:#e0e0e0;overflow:hidden}
+.accommodation-image img{width:100%;height:100%;object-fit:cover;filter:grayscale(70%);transition:filter 0.4s}
+.accommodation-card:hover .accommodation-image img{filter:grayscale(0%)}
+.accommodation-info{padding:16px}
+.accommodation-hood{font-size:11px;color:var(--apollo-gray);margin-bottom:4px}
+.accommodation-price{font-size:13px;font-weight:700;color:var(--apollo-black)}
+.accommodation-price span{font-size:11px;font-weight:400;color:var(--apollo-gray)}
+footer{background:white;border-top:1px solid #f0f0f0;padding:48px 0;overflow:hidden}
+.footer-content{display:flex;flex-direction:column;align-items:center;text-align:center}
+.footer-copyright{font-size:12px;color:var(--apollo-gray);margin-bottom:20px}
+.footer-links{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+.footer-links a{font-size:11px;color:var(--apollo-gray);text-decoration:none;transition:color 0.3s}
+.footer-links a:hover{color:var(--apollo-orange)}
+.reveal-up{opacity:0;transform:translateY(40px);transition:opacity 1s var(--cubic),transform 1s var(--cubic)}
+.reveal-up.in-view{opacity:1;transform:translateY(0)}
+.delay-100{transition-delay:0.1s}
+.delay-200{transition-delay:0.2s}
+.delay-300{transition-delay:0.3s}
+    </style>
+<main>
+    <section class="hero container">
+        <div class="hero-grid">
+            <div>
+                <div class="reveal-up">
+                    <span class="hero-badge">Infraestrutura Cultural Digital</span>
+                </div>
+                <h1 class="reveal-up delay-100">
+                    Patrimônio Imaterial.<br>
+                    <span class="hero-text-gray">Futuro Digital.</span>
+                </h1>
+            </div>
+            <div class="reveal-up delay-200">
+                <p class="hero-description">
+                    Estruturando a cadeia produtiva da cultura carioca através de tecnologia modular e memória viva.
+                </p>
+            </div>
+        </div>
+        <div class="hero-video reveal-up delay-300">
+            <iframe src="https://plano.apollo.rio.br/ij.html" allowfullscreen></iframe>
+        </div>
+<br>
+        <a href="https://plano.apollo.rio.br/" target="_blank" > <div class="hub-link hub-link-primary" style=“width:55px!important”>
+                                <span style="width:100%;justify-content:flex-end;align-text:right;" ><b>Plano.px</b> — Apollo's Creative Studio </span>
+                                <i class="ri-arrow-right-up-long-line"></i>
+                            </div></a>
+
+    </section>
+
+    <div class="marquee-wrapper">
+        <div class="marquee-content">
+            <span class="marquee-text">Cultura</span>
+            <span class="marquee-text">Memória</span>
+            <span class="marquee-text">Inteligência</span>
+            <span class="marquee-text">Conexão</span>
+            <span class="marquee-text">Cultura</span>
+            <span class="marquee-text">Memória</span>
+            <span class="marquee-text">Inteligência</span>
+            <span class="marquee-text">Conexão</span>
+            <span class="marquee-text">Cultura</span>
+            <span class="marquee-text">Memória</span>
+            <span class="marquee-text">Inteligência</span>
+            <span class="marquee-text">Conexão</span>
+        </div>
+    </div>
+
+    <section id="manifesto" class="manifesto container">
+        <div class="manifesto-grid">
+            <div class="reveal-up">
+                <h3 class="section-label">A Missão</h3>
+            </div>
+            <div>
+                <p class="manifesto-text reveal-up delay-100">
+                    O Apollo::rio é um projeto estruturante e territorial. Atuamos como a ferramenta de cultura digital do Rio de Janeiro, orientados à economia criativa e à difusão do acesso.
+                </p>
+                <div class="manifesto-cards">
+                    <div class="reveal-up delay-200">
+                        <h4 class="card-title">Suporte à Indústria</h4>
+                        <p class="card-text">Infraestrutura digital modular para eventos, memória e inteligência aplicada. Uma plataforma social inclusiva para agentes de todos os portes.</p>
+                    </div>
+                    <div class="reveal-up delay-300">
+                        <h4 class="card-title">Arquivo Vivo</h4>
+                        <p class="card-text">Um registro em tempo real da cultura carioca com enfase da música eletrônica e clubber carioca, com vocação para replicação em outros territórios globais.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section><!-- end section mission -->
+
+<!-- Eve listing -->
+
+    <section id="events" class="events container" style="padding-left:24px;padding-right:24px">
+        <div class="events-header reveal-up">
+            <div class="events-title">
+                <h2>Eventos</h2>
+                <p class="events-subtitle">Acompanhe a pulsação da cidade.</p>
+            </div>
+            <div class="events-filters">
+                <div class="filter-search">
+                    <input type="text" placeholder="Buscar eventos..." class="apollo-input">
+                </div>
+                <div class="custom-select" data-type="single">
+                    <div class="select-trigger">Temporada</div>
+                    <div class="select-dropdown">
+                        <div class="select-option" data-value="verao">Verão</div>
+                        <div class="select-option" data-value="outono">Carna’26</div>
+                        <div class="select-option" data-value="inverno">Bey’26</div>
+                        <div class="select-option" data-value="primavera">RiR’26</div>
+                    </div>
+                </div>
+                <div class="custom-select" data-type="multi">
+                    <div class="select-trigger">Gêneros</div>
+                    <div class="select-dropdown">
+                        <div class="select-option" data-value="techno"><input type="checkbox"> Techno</div>
+                        <div class="select-option" data-value="house"><input type="checkbox"> House</div>
+                        <div class="select-option" data-value="minimal"><input type="checkbox"> Minimal</div>
+                        <div class="select-option" data-value="trance"><input type="checkbox"> Trance</div>
+                        <div class="select-option" data-value="dnb"><input type="checkbox"> Drum & Bass</div>
+                        <div class="select-option" data-value="ambient"><input type="checkbox"> Ambient</div>
+                        <div class="select-option" data-value="industrial"><input type="checkbox"> Industrial</div>
+                        <div class="select-option" data-value="electro"><input type="checkbox"> Electro</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+           
+
+        <div class="events-grid">
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+
+        <!-- ========== 10 JAN ========== -->
+
+        <!-- Event: XÊPA - 10 jan -->
+        <a href="https://shotgun.live/pt-br/events/xepa" target="_blank" class="a-eve-card coup-apollo reveal-up delay-300" data-coupon="apollorio">
+            <div class="a-eve-date">
+                <span class="a-eve-date-day">10</span>
+                <span class="a-eve-date-month">jan</span>
+            </div>
+            <div class="a-eve-media">
+                <img src="https://res.cloudinary.com/shotgun/image/upload/c_limit,ar_16:9,w_750/fl_lossy/f_auto/q_auto/production/artworks/1000258374_zjj0b7.jpg" alt="XÊPA">
+                <div class="a-eve-tags">
+                    <span class="a-eve-tag">House</span>
+                </div>
+            </div>
+            <div class="a-eve-content">
+                <h2 class="a-eve-title">XÊPA</h2>
+                <p class="a-eve-meta">
+                    <i class="ri-sound-module-fill"></i>
+                    <span>XÊPA</span>
+                </p>
+                <p class="a-eve-meta">
+                    <i class="ri-map-pin-2-line"></i>
+                    <span>Secreto</span>
+                </p>
+            </div>
+        </a>
+
+        <!-- Event: Marky & Friends - 10 jan -->
+        <a href="https://www.blueticket.com.br/evento/39706?c=apollo" target="_blank" class="a-eve-card coup-apollo reveal-up delay-100" data-coupon="apollorio">
+            <div class="a-eve-date">
+                <span class="a-eve-date-day">10</span>
+                <span class="a-eve-date-month">jan</span>
+            </div>
+            <div class="a-eve-media">
+                <img src="https://cdn.blueticket.com.br/images/imagens/full/inE2UK7zzyoTNHXbee1ghUxOxJ6Fs0OColccLeZL.jpeg" alt="D-Edge presents Marky & Friends">
+                <div class="a-eve-tags">
+                    <span class="a-eve-tag">D&B</span>
+                </div>
+            </div>
+            <div class="a-eve-content">
+                <h2 class="a-eve-title">D-Edge presents Marky & Friends</h2>
+                <p class="a-eve-meta">
+                    <i class="ri-sound-module-fill"></i>
+                    <span>DJ Marky</span>
+                </p>
+                <p class="a-eve-meta">
+                    <i class="ri-map-pin-2-line"></i>
+                    <span>D-Edge Club RJ</span>
+                </p>
+            </div>
+        </a>
+
+        <!-- Event: Deseo Latino III - 10 jan -->
+        <a href="https://shotgun.live/pt-br/events/deseo-latino-nas-alturas-iii" target="_blank" class="a-eve-card coup-apollo reveal-up delay-200" data-coupon="apollorio">
+            <div class="a-eve-date">
+                <span class="a-eve-date-day">10</span>
+                <span class="a-eve-date-month">jan</span>
+            </div>
+            <div class="a-eve-media">
+                <img src="https://res.cloudinary.com/shotgun/image/upload/c_limit,ar_16:9,w_750/fl_lossy/f_auto/q_auto/production/artworks/shot_zn5k5n.png" alt="Deseo Latino III">
+                <div class="a-eve-tags">
+                    <span class="a-eve-tag">House</span>
+                </div>
+            </div>
+            <div class="a-eve-content">
+                <h2 class="a-eve-title">Deseo Latino III</h2>
+                <p class="a-eve-meta">
+                    <i class="ri-sound-module-fill"></i>
+                    <span>Deseo Latino nas Alturas</span>
+                </p>
+                <p class="a-eve-meta">
+                    <i class="ri-map-pin-2-line"></i>
+                    <span>RUFtop Leme</span>
+                </p>
+            </div>
+        </a>
+
+        <!-- Event: Elektra 1 Ano - 10 jan -->
+        <a href="https://shotgun.live/pt-br/events/elektra-1-ano-1-a-de-26" target="_blank" class="a-eve-card coup-apollo reveal-up delay-300" data-coupon="apollorio">
+            <div class="a-eve-date">
+                <span class="a-eve-date-day">10</span>
+                <span class="a-eve-date-month">jan</span>
+            </div>
+            <div class="a-eve-media">
+                <img src="https://res.cloudinary.com/shotgun/image/upload/c_limit,ar_16:9,w_750/fl_lossy/f_auto/q_auto/production/artworks/BANNER_ELEKTRA_1_ANO_10.01_SHOTGUN_ff5tym.png" alt="Elektra 1 Ano">
+                <div class="a-eve-tags">
+                    <span class="a-eve-tag">Techno</span>
+                </div>
+            </div>
+            <div class="a-eve-content">
+                <h2 class="a-eve-title">Elektra 1 Ano</h2>
+                <p class="a-eve-meta">
+                    <i class="ri-sound-module-fill"></i>
+                    <span>1ª de 26</span>
+                </p>
+                <p class="a-eve-meta">
+                    <i class="ri-map-pin-2-line"></i>
+                    <span>Beco de Bagança</span>
+                </p>
+            </div>
+        </a>
+
+        <!-- Event: Clubberzinha - 10 jan -->
+        <a href="https://shotgun.live/pt-br/events/clubberzinha-club-doido" target="_blank" class="a-eve-card coup-apollo reveal-up delay-100" data-coupon="apollorio">
+            <div class="a-eve-date">
+                <span class="a-eve-date-day">10</span>
+                <span class="a-eve-date-month">jan</span>
+            </div>
+            <div class="a-eve-media">
+                <img src="https://res.cloudinary.com/shotgun/image/upload/c_limit,ar_16:9,w_750/fl_lossy/f_auto/q_auto/production/artworks/clubberzinha_capa_shotgun_uywcv6.png" alt="Clubberzinha">
+                <div class="a-eve-tags">
+                    <span class="a-eve-tag">House</span>
+                </div>
+            </div>
+            <div class="a-eve-content">
+                <h2 class="a-eve-title">Clubberzinha</h2>
+                <p class="a-eve-meta">
+                    <i class="ri-sound-module-fill"></i>
+                    <span>Club Doido</span>
+                </p>
+                <p class="a-eve-meta">
+                    <i class="ri-map-pin-2-line"></i>
+                    <span>CLUB63</span>
+                </p>
+            </div>
+        </a>
+
+        <!-- Event: Festa Wobble - 10 jan -->
+        <a href="https://shotgun.live/pt-br/events/wobble-apresenta-jialing" target="_blank" class="a-eve-card coup-apollo reveal-up delay-200" data-coupon="apollorio">
+            <div class="a-eve-date">
+                <span class="a-eve-date-day">10</span>
+                <span class="a-eve-date-month">jan</span>
+            </div>
+            <div class="a-eve-media">
+                <img src="https://res.cloudinary.com/shotgun/image/upload/c_limit,ar_16:9,w_750/fl_lossy/f_auto/q_auto/production/artworks/JIA_SHOT_qtmvfe.png" alt="Festa Wobble">
+                <div class="a-eve-tags">
+                    <span class="a-eve-tag">House</span>
+                </div>
+            </div>
+            <div class="a-eve-content">
+                <h2 class="a-eve-title">Festa Wobble</h2>
+                <p class="a-eve-meta">
+                    <i class="ri-sound-module-fill"></i>
+                    <span>Wobble apresenta Jialing</span>
+                </p>
+                <p class="a-eve-meta">
+                    <i class="ri-map-pin-2-line"></i>
+                    <span>Secreto</span>
+                </p>
+            </div>
+        </a>
+
+        <!-- Event: Technera de Verão - 10 jan -->
+        <a href="https://shotgun.live/pt-br/events/technera-de-verao" target="_blank" class="a-eve-card coup-apollo reveal-up delay-300" data-coupon="apollorio">
+            <div class="a-eve-date">
+                <span class="a-eve-date-day">10</span>
+                <span class="a-eve-date-month">jan</span>
+            </div>
+            <div class="a-eve-media">
+                <img src="https://res.cloudinary.com/shotgun/image/upload/c_limit,ar_16:9,w_750/fl_lossy/f_auto/q_auto/production/artworks/Design_sem_nome_1_pj4z67.png" alt="Technera de Verão">
+                <div class="a-eve-tags">
+                    <span class="a-eve-tag">Techno</span>
+                </div>
+            </div>
+            <div class="a-eve-content">
+                <h2 class="a-eve-title">Technera de Verão</h2>
+                <p class="a-eve-meta">
+                    <i class="ri-sound-module-fill"></i>
+                    <span>Technera de Verão</span>
+                </p>
+                <p class="a-eve-meta">
+                    <i class="ri-map-pin-2-line"></i>
+                    <span>Secreta</span>
+                </p>
+            </div>
+        </a>
+
+        <!-- Event: A_CURA - 10 jan -->
+        <a href="https://shotgun.live/pt-br/events/a-cura" target="_blank" class="a-eve-card coup-apollo reveal-up delay-100" data-coupon="apollorio">
+            <div class="a-eve-date">
+                <span class="a-eve-date-day">10</span>
+                <span class="a-eve-date-month">jan</span>
+            </div>
+            <div class="a-eve-media">
+                <img src="https://res.cloudinary.com/shotgun/image/upload/c_limit,ar_16:9,w_750/fl_lossy/f_auto/q_auto/production/artworks/73b6db52-10f7-4dc9-a667-8ad4bfb02506_b6vnbt.jpg" alt="A_CURA">
+                <div class="a-eve-tags">
+                    <span class="a-eve-tag">House</span>
+                </div>
+            </div>
+            <div class="a-eve-content">
+                <h2 class="a-eve-title">A_CURA</h2>
+                <p class="a-eve-meta">
+                    <i class="ri-sound-module-fill"></i>
+                    <span>A_CURA</span>
+                </p>
+                <p class="a-eve-meta">
+                    <i class="ri-map-pin-2-line"></i>
+                    <span>Baiuca DJ Bar</span>
+                </p>
+            </div>
+        </a>
+
+        <!-- ========== 11 JAN ========== -->
+
+        <!-- Event: Embarcasom - 11 jan -->
+        <a href="https://shotgun.live/pt-br/events/embarcasom" target="_blank" class="a-eve-card coup-apollo reveal-up delay-200" data-coupon="apollorio">
+            <div class="a-eve-date">
+                <span class="a-eve-date-day">11</span>
+                <span class="a-eve-date-month">jan</span>
+            </div>
+            <div class="a-eve-media">
+                <img src="https://res.cloudinary.com/shotgun/image/upload/c_limit,ar_16:9,w_750/fl_lossy/f_auto/q_auto/production/artworks/Embarcasom_Shotgun_f05ccc.png" alt="Embarcasom">
+                <div class="a-eve-tags">
+                    <span class="a-eve-tag">House</span>
+                </div>
+            </div>
+            <div class="a-eve-content">
+                <h2 class="a-eve-title">Embarcasom</h2>
+                <p class="a-eve-meta">
+                    <i class="ri-sound-module-fill"></i>
+                    <span>Embarcasom</span>
+                </p>
+                <p class="a-eve-meta">
+                    <i class="ri-map-pin-2-line"></i>
+                    <span>Urca (Quadrante Embarque)</span>
+                </p>
+            </div>
+        </a>
+
+        <!-- ========== 15 JAN ========== -->
+
+        <!-- Event: Quintas de Verão - 15 jan -->
+        <a href="https://shotgun.live/pt-br/events/quintas-de-verao-danca-bronze-juntos-com-certeza" target="_blank" class="a-eve-card coup-apollo reveal-up delay-300" data-coupon="apollorio">
+            <div class="a-eve-date">
+                <span class="a-eve-date-day">15</span>
+                <span class="a-eve-date-month">jan</span>
+            </div>
+            <div class="a-eve-media">
+                <img src="https://res.cloudinary.com/shotgun/image/upload/c_limit,ar_16:9,w_750/fl_lossy/f_auto/q_auto/production/artworks/BANNER_QUINTAS_JANEIRO_SHOTGUN_v3_hbdwrp.png" alt="Quintas de Verão">
+                <div class="a-eve-tags">
+                    <span class="a-eve-tag">House</span>
+                </div>
+            </div>
+            <div class="a-eve-content">
+                <h2 class="a-eve-title">Quintas de Verão</h2>
+                <p class="a-eve-meta">
+                    <i class="ri-sound-module-fill"></i>
+                    <span>Dança Bronze, Juntos com Certeza</span>
+                </p>
+                <p class="a-eve-meta">
+                    <i class="ri-map-pin-2-line"></i>
+                    <span>Praça XV</span>
+                </p>
+            </div>
+        </a>
+
+        <!-- ========== 16 JAN ========== -->
+
+        <!-- Event: FATSYNC - 16 jan -->
+        <a href="https://www.blueticket.com.br/evento/39708?c=apollo%21duplicada" target="_blank" class="a-eve-card coup-apollo reveal-up delay-100" data-coupon="apollorio">
+            <div class="a-eve-date">
+                <span class="a-eve-date-day">16</span>
+                <span class="a-eve-date-month">jan</span>
+            </div>
+            <div class="a-eve-media">
+                <img src="https://api.wegoout.com.br/images/news/6336/full_fatsync.jpg" alt="D-Edge presents FATSYNC">
+                <div class="a-eve-tags">
+                    <span class="a-eve-tag">Techno</span>
+                </div>
+            </div>
+            <div class="a-eve-content">
+                <h2 class="a-eve-title">D-Edge presents FATSYNC</h2>
+                <p class="a-eve-meta">
+                    <i class="ri-sound-module-fill"></i>
+                    <span>FJ FATSYNC</span>
+                </p>
+                <p class="a-eve-meta">
+                    <i class="ri-map-pin-2-line"></i>
+                    <span>D-Edge Club RJ</span>
+                </p>
+            </div>
+        </a>
+
+        <!-- ========== 17 JAN ========== -->
+
+        <!-- Event: Domply Mergulho - 17 jan (VALLE coupon) -->
+        <a href="https://shotgun.live/pt-br/events/domplymergulho-barbaraboeing-giununez-lysia?utm_source=promoter-3416" target="_blank" class="a-eve-card coup-apollo reveal-up delay-200" data-coupon="valle">
+            <div class="a-eve-date">
+                <span class="a-eve-date-day">17</span>
+                <span class="a-eve-date-month">jan</span>
+            </div>
+            <div class="a-eve-media">
+                <img src="https://res.cloudinary.com/shotgun/image/upload/c_limit,ar_16:9,w_750/fl_lossy/f_auto/q_auto/production/artworks/mergulho_1701_shotgun_e0jos0.jpg" alt="Domply: Mergulho">
+                <div class="a-eve-tags">
+                    <span class="a-eve-tag">House</span>
+                </div>
+            </div>
+            <div class="a-eve-content">
+                <h2 class="a-eve-title">Domply: Mergulho</h2>
+                <p class="a-eve-meta">
+                    <i class="ri-sound-module-fill"></i>
+                    <span>Barbara Boeing, Giu Nunez, Lysia</span>
+                </p>
+                <p class="a-eve-meta">
+                    <i class="ri-map-pin-2-line"></i>
+                    <span>Villa Alexandrino</span>
+                </p>
+            </div>
+        </a>
+
+        <!-- Event: Mormaço - 17 jan -->
+        <a href="https://shotgun.live/pt-br/events/mormaco-o-calor-avanca" target="_blank" class="a-eve-card coup-apollo reveal-up delay-300" data-coupon="apollorio">
+            <div class="a-eve-date">
+                <span class="a-eve-date-day">17</span>
+                <span class="a-eve-date-month">jan</span>
+            </div>
+            <div class="a-eve-media">
+                <img src="https://res.cloudinary.com/shotgun/image/upload/c_limit,ar_16:9,w_750/fl_lossy/f_auto/q_auto/production/artworks/Mormac%CC%A7o-Vera%CC%83o-2-Shotgun_wk0bbf.jpg" alt="Mormaço">
+                <div class="a-eve-tags">
+                    <span class="a-eve-tag">House</span>
+                </div>
+            </div>
+            <div class="a-eve-content">
+                <h2 class="a-eve-title">Mormaço</h2>
+                <p class="a-eve-meta">
+                    <i class="ri-sound-module-fill"></i>
+                    <span>O Calor Avança</span>
+                </p>
+                <p class="a-eve-meta">
+                    <i class="ri-map-pin-2-line"></i>
+                    <span>Edificio Touring</span>
+                </p>
+            </div>
+        </a>
+
+        <!-- ========== 19 JAN ========== -->
+
+        <!-- Event: ZeroGravity - 19 jan -->
+        <a href="https://www.blueticket.com.br/evento/39851?c=apollo%21duplicada" target="_blank" class="a-eve-card coup-apollo reveal-up delay-100" data-coupon="apollorio">
+            <div class="a-eve-date">
+                <span class="a-eve-date-day">19</span>
+                <span class="a-eve-date-month">jan</span>
+            </div>
+            <div class="a-eve-media">
+                <img src="https://i1.sndcdn.com/avatars-FoylaIlQgNvTym1i-9ByBcQ-t500x500.jpg" alt="D-Edge presents ZeroGravity">
+                <div class="a-eve-tags">
+                    <span class="a-eve-tag">Techno</span>
+                </div>
+            </div>
+            <div class="a-eve-content">
+                <h2 class="a-eve-title">D-Edge presents ZeroGravity</h2>
+                <p class="a-eve-meta">
+                    <i class="ri-sound-module-fill"></i>
+                    <span>Soon</span>
+                </p>
+                <p class="a-eve-meta">
+                    <i class="ri-map-pin-2-line"></i>
+                    <span>D-Edge Club RJ</span>
+                </p>
+            </div>
+        </a>
+
+        <!-- ========== 23 JAN ========== -->
+
+        <!-- Event: RATIER & Friends - 23 jan -->
+        <a href="https://www.blueticket.com.br/evento/39709?c=apollo%21duplicada" target="_blank" class="a-eve-card coup-apollo reveal-up delay-200" data-coupon="apollorio">
+            <div class="a-eve-date">
+                <span class="a-eve-date-day">23</span>
+                <span class="a-eve-date-month">jan</span>
+            </div>
+            <div class="a-eve-media">
+                <img src="https://cdn.blueticket.com.br/images/imagens/full/UcW2Db1r88eIzXuao56PXCYpbQ1qfmHVeUK2Sf6s.jpeg" alt="D-Edge presents RATIER & Friends">
+                <div class="a-eve-tags">
+                    <span class="a-eve-tag">House</span>
+                </div>
+            </div>
+            <div class="a-eve-content">
+                <h2 class="a-eve-title">D-Edge presents RATIER & Friends</h2>
+                <p class="a-eve-meta">
+                    <i class="ri-sound-module-fill"></i>
+                    <span>Ratier, Bhaskar, Vivi Seixas +</span>
+                </p>
+                <p class="a-eve-meta">
+                    <i class="ri-map-pin-2-line"></i>
+                    <span>D-Edge Club RJ</span>
+                </p>
+            </div>
+        </a>
+
+        <!-- ========== 24 JAN ========== -->
+
+        <!-- Event: Flumma - 24 jan -->
+        <a href="https://www.blueticket.com.br/evento/39710?c=apollo%21duplicada" target="_blank" class="a-eve-card coup-apollo reveal-up delay-300" data-coupon="apollorio">
+            <div class="a-eve-date">
+                <span class="a-eve-date-day">24</span>
+                <span class="a-eve-date-month">jan</span>
+            </div>
+            <div class="a-eve-media">
+                <img src="https://instagram.fvix22-1.fna.fbcdn.net/v/t51.29350-15/431841101_7187825244658041_5559440996079070394_n.jpg?stp=dst-jpg_e35_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6IkNBUk9VU0VMX0lURU0uaW1hZ2VfdXJsZ2VuLjE0NDB4MTQzOC5zZHIuZjI5MzUwLmRlZmF1bHRfaW1hZ2UuYzIifQ&_nc_ht=instagram.fvix22-1.fna.fbcdn.net&_nc_cat=109&_nc_oc=Q6cZ2QElP6WJokZ71UbKGIWCBigSc24yftEVSNG3Id4oxwt2FJc59y7wwJqnWdVkKQOw8NqLCij6_T4Bb8aYq0z9MN03&_nc_ohc=6t6FQzshrvQQ7kNvwExhOiC&_nc_gid=xFddRX53SgIBdpFKWVGkLw&edm=APs17CUBAAAA&ccb=7-5&ig_cache_key=MzMxODc2MzA5NzgxMDIxODM2Ng%3D%3D.3-ccb7-5&oh=00_AfpqOUy4L56n0O__4SGvwAzSS5yDhfUDy1MR4HDILH0Ydw&oe=695BF5C5&_nc_sid=10d13b" alt="Flumma">
+                <div class="a-eve-tags">
+                    <span class="a-eve-tag">House</span>
+                </div>
+            </div>
+            <div class="a-eve-content">
+                <h2 class="a-eve-title">Flumma</h2>
+                <p class="a-eve-meta">
+                    <i class="ri-sound-module-fill"></i>
+                    <span>Carol Mattos & More</span>
+                </p>
+                <p class="a-eve-meta">
+                    <i class="ri-map-pin-2-line"></i>
+                    <span>D-Edge Club RJ</span>
+                </p>
+            </div>
+        </a>
+
+        <!-- Event: Entropia IV - 24 jan -->
+        <a href="https://shotgun.live/pt-br/events/entropia-iv-ascensao" target="_blank" class="a-eve-card coup-apollo reveal-up delay-100" data-coupon="apollorio">
+            <div class="a-eve-date">
+                <span class="a-eve-date-day">24</span>
+                <span class="a-eve-date-month">jan</span>
+            </div>
+            <div class="a-eve-media">
+                <img src="https://res.cloudinary.com/shotgun/image/upload/c_limit,ar_16:9,w_750/fl_lossy/f_auto/q_auto/production/artworks/entropia_placeholder.jpg" alt="Entropia IV">
+                <div class="a-eve-tags">
+                    <span class="a-eve-tag">Techno</span>
+                </div>
+            </div>
+            <div class="a-eve-content">
+                <h2 class="a-eve-title">Entropia IV</h2>
+                <p class="a-eve-meta">
+                    <i class="ri-sound-module-fill"></i>
+                    <span>Ascensão</span>
+                </p>
+                <p class="a-eve-meta">
+                    <i class="ri-map-pin-2-line"></i>
+                    <span>Sacadura Cabral, 167</span>
+                </p>
+            </div>
+        </a>
+
+        <!-- ========== 30 JAN ========== -->
+
+        <!-- Event: GABE - 30 jan -->
+        <a href="https://www.blueticket.com.br/evento/39711?c=apollo%21duplicada" target="_blank" class="a-eve-card coup-apollo reveal-up delay-200" data-coupon="apollorio">
+            <div class="a-eve-date">
+                <span class="a-eve-date-day">30</span>
+                <span class="a-eve-date-month">jan</span>
+            </div>
+            <div class="a-eve-media">
+                <img src="https://mixmag.com.br/assets/uploads/images/_twoThirds/Gabe-Tomorrowland-01.jpg" alt="D-Edge presents GABE">
+                <div class="a-eve-tags">
+                    <span class="a-eve-tag">House</span>
+                </div>
+            </div>
+            <div class="a-eve-content">
+                <h2 class="a-eve-title">D-Edge presents GABE</h2>
+                <p class="a-eve-meta">
+                    <i class="ri-sound-module-fill"></i>
+                    <span>GABE & Friends</span>
+                </p>
+                <p class="a-eve-meta">
+                    <i class="ri-map-pin-2-line"></i>
+                    <span>D-Edge Club RJ</span>
+                </p>
+            </div>
+        </a>
+
+        <!-- ========== 01 FEV ========== -->
+
+        <!-- Event: Domply On Boat - 01 fev (VALLE coupon) -->
+        <a href="https://shotgun.live/pt-br/events/domply-on-boat?utm_source=promoter-3416" target="_blank" class="a-eve-card coup-apollo reveal-up delay-300" data-coupon="valle">
+            <div class="a-eve-date">
+                <span class="a-eve-date-day">01</span>
+                <span class="a-eve-date-month">fev</span>
+            </div>
+            <div class="a-eve-media">
+                <img src="https://res.cloudinary.com/shotgun/image/upload/c_limit,ar_16:9,w_750/fl_lossy/f_auto/q_auto/production/artworks/boat_shotgun_qdba4r.jpg" alt="Domply: On Boat">
+                <div class="a-eve-tags">
+                    <span class="a-eve-tag">House</span>
+                </div>
+            </div>
+            <div class="a-eve-content">
+                <h2 class="a-eve-title">Domply: On Boat</h2>
+                <p class="a-eve-meta">
+                    <i class="ri-sound-module-fill"></i>
+                    <span>Giu, Craig Our, Simon</span>
+                </p>
+                <p class="a-eve-meta">
+                    <i class="ri-map-pin-2-line"></i>
+                    <span>Marina da Glória</span>
+                </p>
+            </div>
+        </a>
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+        </div>
+    </section>
+
+
+
+
+
+  <!-- CLASSIFIEDS ACCOMODATION -->
+    <section class="classifieds">
+            <div class="classifieds-header reveal-up">
+                <h2>Classificados Apollo</h2>
+                <p>Repasses verificados pela comunidade. Preview disponível para membros.</p>
+            </div>
+            <div class="tickets-section reveal-up delay-100">
+                <h3>Repasse de Ingressos</h3>
+                <div class="tickets-scroll" id="ticketsScroll">
+                    <div class="tickets-track">
+                      
+<!-- RESELL 01 -->
+                    <div class="resell-ticket">
+                        <div class="ticket-event">Carregando...</div>
+                        <div class="ticket-info">00 Jan · Pista · Local</div>
+                        <div class="ticket-price">R$ 0<span class="ticket-original">R$ 0</span></div>
+                        <span class="ticket-badge">-0%</span>
+                    </div>
+                       
+<!-- RESELL 02 -->
+                    <div class="resell-ticket">
+                        <div class="ticket-event">Carregando...</div>
+                        <div class="ticket-info">00 Jan · Pista · Local</div>
+                        <div class="ticket-price">R$ 0<span class="ticket-original">R$ 0</span></div>
+                        <span class="ticket-badge">-0%</span>
+                    </div>
+              
+                    </div>
+                </div>
+            </div>
+      
+
+ <!--  #ACOMODA -->
+            <div class="accommodations-section reveal-up delay-200">
+                <h3>Acomodações</h3>
+                <div class="accommodations-grid">
+                    <div class="accommodation-card">
+                        <div class="accommodation-image">
+                            <img src="https://apollo.rio.br/v2/host3.jpg" alt="Apartamento Copacabana">
+                        </div>
+                        <div class="accommodation-info">
+                            <div class="accommodation-hood">Copacabana</div>
+                            <div class="accommodation-price">R$ 55<span>/noite</span></div>
+                        </div>
+                    </div>
+                   
+                    <div class="accommodation-card">
+                        <div class="accommodation-image">
+                            <img src="https://apollo.rio.br/v2/host2.jpg" alt="Casa Botafogo">
+                        </div>
+                        <div class="accommodation-info">
+                            <div class="accommodation-hood">Botafogo</div>
+                            <div class="accommodation-price">R$ 93<span>/noite</span></div>
+                        </div>
+                    </div>
+                   
+                    <div class="accommodation-card">
+                        <div class="accommodation-image">
+                            <img src="https://apollo.rio.br/v2/host1.jpg" alt="Suite Flamengo">
+                        </div>
+                        <div class="accommodation-info">
+                            <div class="accommodation-hood">Flamengo</div>
+                            <div class="accommodation-price">R$ 65<span>/noite</span></div>
+                        </div>
+                    </div>
+                    <div class="accommodation-card accommodation-more" style="opacity:.45">
+                        <div class="accommodation-image">
+                            <div class="more-overlay">
+                               
+                                <span>Ver todas  <i class="ri-arrow-right-up-long-line" style="font-size:11px!important;"></i></span>
+                            </div>
+                        </div>
+                        <div class="accommodation-info">
+                            <div class="accommodation-hood"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </section>
+<!-- END CLASSIFIEDS -->
+
+
+<!-- HUB SECTION Starts-->
+    <section id="hub" class="hub-section">
+        <div class="hub-bg-circle"></div>
+        <div class="container">
+            <div class="hub-grid">
+                <div class="hub-card-wrapper reveal-up">
+                    <div class="hub-card" id="hubCard">
+                        <div class="hub-profile">
+                            <div class="hub-avatar">
+                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop" alt="DJ Ana Clara">
+                            </div>
+                        </div>
+                        <div class="hub-content-card">
+                            <p class="hub-artist">
+                              <span class="hub-card-sup-title">DJ & Producer</span>
+                            </p>
+                            <h3 class="hub-card-title">Discarada</h3>
+                            <p class="hub-handle-meta">
+                                <i class="ph-bold ph-at"></i>
+                                <span>@anaclara_rio</span>
+                            </p>
+                        </div>
+                        <div class="hub-links">
+                            <div class="hub-link hub-link-primary">
+                                <span>SoundCloud Set</span>
+                                <i class="ri-arrow-right-up-long-line"></i>
+                            </div>
+                            <div class="hub-link hub-link-secondary"><span>Agenda 2025</span><i class="ri-arrow-right-up-long-line"></i></div>
+                            <div class="hub-link hub-link-secondary"><span>Press Kit</span><i class="ri-arrow-right-up-long-line"></i></div>
+                        </div>
+                        <div class="hub-footer"><span>Powered by Apollo</span></div>
+                    </div>
+                </div>
+                <div class="hub-content reveal-up delay-100">
+                    <div class="hub-status">
+                        <span class="hub-pulse"></span>
+                        <span class="hub-status-text">Ferramenta</span>
+                    </div>
+                    <h2>HUB::rio</h2>
+                    <p class="hub-description">Uma página simples para todos os seus links. O Apollo é a mão extra que apoia toda a indústria, centralizando sua presença digital em um único ponto de contato.</p>
+                    <a href="#" class="hub-cta smooth-transition">Criar minha conta<i class="ri-arrow-right-up-long-line"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="roster" class="tools-section container">
+        <div class="tools-grid">
+            <div class="tools-intro reveal-up">
+                <div class="hub-status" style="margin-bottom:16px">
+                    <span class="hub-pulse"></span>
+                    <span class="hub-status-text">Ferramenta</span>
+                </div>
+                <h2>DJ Global Roster</h2>
+                <p class="card-text">Conectando sons locais a plataformas globais. Curadoria internacional sem intermediários.</p>
+            </div>
+            <div class="reveal-up delay-100">
+                <h3 class="section-label" style="margin-bottom:24px">Ferramentas</h3>
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <button class="accordion-trigger" type="button">
+                            <span class="accordion-title">Plano, apollo's image creative studio</span>
+                            <span class="accordion-icon"></span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="accordion-inner">
+                                <p>Estúdio criativo para produção de material visual. Crie flyers, capas e identidades visuais para seus eventos e releases.</p>
+                                <div class="accordion-images">
+                                    <img src="https://apollo.rio.br/v2/pln1.png" alt="Plano Studio 1">
+                                    <img src="https://apollo.rio.br/v2/pln2.png" alt="Plano Studio 2">
+                                </div>
+                                <div class="accordion-iframe">
+                                    <iframe src="https://plano.apollo.rio.br/ij.html" allowfullscreen></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <button class="accordion-trigger" type="button">
+                            <span class="accordion-title">Doc & Assina::rio, seu contrato fácil</span>
+                            <span class="accordion-icon"></span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="accordion-inner">
+                                <p>Contratos digitais simplificados para a indústria criativa. Assinatura eletrônica válida juridicamente.</p>
+                                <div class="accordion-images">
+                                    <img src="https://apollo.rio.br/v2/ass1.png" alt="Doc Assina 1">
+                                    <img src="https://apollo.rio.br/v2/ass2.png" alt="Doc Assina 2">
+                                </div>
+                                <div class="accordion-iframe">
+                                    <iframe src="https://apollo.rio.br/v2/sign.html" allowfullscreen></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <button class="accordion-trigger" type="button">
+                            <span class="accordion-title">Cena::rio, ferramentas da indústria cultural</span>
+                            <span class="accordion-icon"></span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="accordion-inner">
+                                <p>Suite completa de ferramentas para produtores, promoters e artistas. Gestão de eventos, bilheteria e analytics.</p>
+                                <div class="accordion-images">
+                                    <img src="https://images.unsplash.com/photo-1514525253440-b393452e8d2e?q=80&w=600&auto=format&fit=crop" style="display:none" alt="Cena Rio 1">
+                                    <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=600&auto=format&fit=crop"  style="display:none" alt="Cena Rio 2">
+                                </div>
+                                <div class="accordion-iframe">
+                                    <iframe src="https://plano.apollo.rio.br/ij.html"  style="display:none"  allowfullscreen></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <button class="accordion-trigger" type="button">
+                            <span class="accordion-title">Repasses de Ingressos & Acomodações</span>
+                            <span class="accordion-icon"></span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="accordion-inner">
+                                <p>Marketplace seguro para revenda de ingressos e hospedagem compartilhada durante eventos.</p>
+                                <div class="accordion-images">
+                                    <img src="https://images.unsplash.com/photo-1540541338287-41700207dee6?q=80&w=600&auto=format&fit=crop" alt="Marketplace 1"  style="display:none" >
+                                    <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?q=80&w=600&auto=format&fit=crop" alt="Marketplace 2"  style="display:none" >
+                                </div>
+                                <div class="accordion-iframe">
+                                    <iframe src="https://plano.apollo.rio.br/ij.html" style="display:none"   allowfullscreen></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <p class="footer-copyright">© 2023-2025 Apollo::rio</p>
+            <div class="footer-links">
+                <a href="mailto:oi@apollo.rio.br" class="smooth-transition" data-apollo-report-trigger>Suporte</a>
+                <a href="#" class="smooth-transition">Privacidade & Termos</a>
+                <a href="https://instagram.com/apollo.rio.br" target="_blank" class="smooth-transition">Instagram</a>
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.apollo.rio.br/v1.0.0/core.js?v=t0x1x&versao=bb" fetchpriority="high" crossorigin="anonymous"></script>
+<script>
+(function(){
+    var o=new IntersectionObserver(function(e){e.forEach(function(t){t.isIntersecting&&(t.target.classList.add('in-view'),o.unobserve(t.target))})},{threshold:0.15});
+    document.querySelectorAll('.reveal-up').forEach(function(e){o.observe(e)});
+    var mq=document.querySelector('.marquee-wrapper');
+    if(mq){new IntersectionObserver(function(e){e.forEach(function(t){if(t.isIntersecting){setTimeout(function(){mq.classList.add('in-view')},2000)}})},{threshold:0.3}).observe(mq)}
+    var h=document.getElementById('hubCard');
+    h&&(h.onmousemove=function(e){var r=h.getBoundingClientRect(),x=(e.clientX-r.left-r.width/2)/(r.width/2)*5,y=(e.clientY-r.top-r.height/2)/(r.height/2)*-5;h.style.transform='perspective(1000px) rotateX('+y+'deg) rotateY('+x+'deg) scale(1.02)'},h.onmouseleave=function(){h.style.transform='perspective(1000px) rotateX(0) rotateY(0) scale(1)'});
+    document.querySelectorAll('.accordion-trigger').forEach(function(b){b.onclick=function(){var p=b.parentElement;p.classList.toggle('open');document.querySelectorAll('.accordion-item').forEach(function(i){i!==p&&i.classList.remove('open')})}});
+    document.querySelectorAll('.custom-select').forEach(function(s){
+        var tr=s.querySelector('.select-trigger'),dr=s.querySelector('.select-dropdown'),opts=s.querySelectorAll('.select-option'),isMulti=s.dataset.type==='multi';
+        tr.onclick=function(e){e.stopPropagation();document.querySelectorAll('.custom-select.open').forEach(function(x){x!==s&&x.classList.remove('open')});s.classList.toggle('open')};
+        opts.forEach(function(op){op.onclick=function(e){
+            if(isMulti){e.stopPropagation();var cb=op.querySelector('input');cb&&(cb.checked=!cb.checked);op.classList.toggle('selected',cb&&cb.checked);var sel=[];s.querySelectorAll('.select-option.selected').forEach(function(x){sel.push(x.textContent.trim())});tr.textContent=sel.length?sel.join(', '):'Gêneros'}
+            else{opts.forEach(function(x){x.classList.remove('selected')});op.classList.add('selected');tr.textContent=op.textContent;s.classList.remove('open')}
+        }});
+    });
+    document.addEventListener('click',function(){document.querySelectorAll('.custom-select.open').forEach(function(s){s.classList.remove('open')})});
+    var tickTrack=document.querySelector('.tickets-track');
+    if(tickTrack){tickTrack.innerHTML+=tickTrack.innerHTML}
+})();
+</script>
+<!-- APOLLO COUPON POPUP -->
+
+
+<div class="apollo-popup-overlay" id="apolloCouponPopup">
+    <div class="apollo-popup">
+        <div class="apollo-popup-header">
+            <button class="apollo-popup-close" onclick="closeApolloPopup()"><i class="ri-close-line"></i></button>
+            <i class="ri-ticket-2-line"></i>
+            <h3>Antes de ir...</h3>
+        </div>
+        <div class="apollo-popup-body">
+            <p class="apollo-popup-message">Este evento é parceiro Apollo! Não se esqueça de aplicar nosso código promocional no checkout.</p>
+            <div class="apollo-coupon-detail">
+                <i class="ri-coupon-3-line"></i>
+                <span class="coupon-text">Verifique se o cupom está ativo com desconto</span>
+                <div class="coupon-code" id="couponCodeBtn" onclick="copyApolloCode()">
+                    <span id="couponCodeText">APOLLORIO</span>
+                    <i class="ri-file-copy-line" id="couponCopyIcon"></i>
+                </div>
+            </div>
+            <div class="apollo-popup-actions">
+                <button class="apollo-popup-btn secondary" onclick="closeApolloPopup()">Cancelar</button>
+                <button class="apollo-popup-btn primary" id="apolloPopupContinue">Continuar <i class="ri-arrow-right-line"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function(){
+    var overlay=document.getElementById('apolloCouponPopup');
+    var targetUrl=null;
+    var currentCode='APOLLORIO';
+    
+    // Coupon codes mapping
+    var couponCodes={
+        'coup-apollo':'APOLLORIO',
+        'coup-apollorio':'APOLLORIO',
+        'coup-valle':'VALLE'
+    };
+    
+    // Intercept clicks on coupon cards
+    document.querySelectorAll('.a-eve-card').forEach(function(card){
+        var hasCoupon=false;
+        var code='APOLLORIO';
+        
+        for(var cls in couponCodes){
+            if(card.classList.contains(cls)){
+                hasCoupon=true;
+                code=couponCodes[cls];
+                break;
+            }
+        }
+        
+        // Also check data-coupon attribute
+        if(card.dataset.coupon){
+            hasCoupon=true;
+            code=card.dataset.coupon.toUpperCase();
+        }
+        
+        if(hasCoupon){
+            card.addEventListener('click',function(e){
+                e.preventDefault();
+                e.stopPropagation();
+                targetUrl=card.href;
+                currentCode=code;
+                document.getElementById('couponCodeText').textContent=code;
+                overlay.classList.add('active');
+                document.body.style.overflow='hidden';
+            });
+        }
+    });
+    
+    // Continue button
+    document.getElementById('apolloPopupContinue').addEventListener('click',function(){
+        if(targetUrl){window.open(targetUrl,'_blank')}
+        closeApolloPopup();
+    });
+    
+    // Close on overlay click
+    overlay.addEventListener('click',function(e){
+        if(e.target===overlay){closeApolloPopup()}
+    });
+    
+    // ESC key
+    document.addEventListener('keydown',function(e){
+        if(e.key==='Escape'&&overlay.classList.contains('active')){closeApolloPopup()}
+    });
+    
+    // Global close function
+    window.closeApolloPopup=function(){
+        overlay.classList.remove('active');
+        document.body.style.overflow='';
+        targetUrl=null;
+    };
+    
+    // Global copy function
+    window.copyApolloCode=function(){
+        var code=document.getElementById('couponCodeText').textContent;
+        var btn=document.getElementById('couponCodeBtn');
+        var icon=document.getElementById('couponCopyIcon');
+        
+        if(navigator.clipboard&&navigator.clipboard.writeText){
+            navigator.clipboard.writeText(code).then(function(){
+                showCopied(btn,icon);
+            }).catch(function(){
+                fallbackCopy(code,btn,icon);
+            });
+        }else{
+            fallbackCopy(code,btn,icon);
+        }
+    };
+    
+    function fallbackCopy(text,btn,icon){
+        var ta=document.createElement('textarea');
+        ta.value=text;
+        ta.style.cssText='position:fixed;opacity:0';
+        document.body.appendChild(ta);
+        ta.select();
+        try{document.execCommand('copy');showCopied(btn,icon)}catch(e){}
+        document.body.removeChild(ta);
+    }
+    
+    function showCopied(btn,icon){
+        btn.classList.add('copied');
+        icon.className='ri-check-line';
+        setTimeout(function(){
+            btn.classList.remove('copied');
+            icon.className='ri-file-copy-line';
+        },2000);
+    }
+})();
+</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9becfead3d95e2b2',t:'MTc2ODU2MDAyNw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"6f9fe350d9f7425796d640adb85decb2","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

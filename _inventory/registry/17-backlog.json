@@ -1,0 +1,251 @@
+{
+  "$chapter": {
+    "id": "17-backlog",
+    "owner": "apollo-core",
+    "keys": [
+      "$to_be_done"
+    ],
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "$to_be_done": {
+    "description": "All known issues, inconsistencies, security problems, and pending implementations. Work through these systematically - step by step we reach the moon.",
+    "generated": "2026-05-12",
+    "registry_version": "6.6.1",
+    "items": [
+      {
+        "id": "TBD-001",
+        "severity": "CRITICAL",
+        "category": "security",
+        "plugin": "apollo-login",
+        "file": "src/API/AppAuthController.php",
+        "issue": "Hardcoded Windows debug path in production code",
+        "detail": "file_put_contents('C:/Users/User/Local Sites/apollorio/...') hardcoded debug write. Will fail silently on any non-Windows or non-matching path server. Must be removed or gated behind if (WP_DEBUG).",
+        "fix": "Remove the file_put_contents call or wrap in if (defined('WP_DEBUG') && WP_DEBUG) { ... }",
+        "status": "resolved",
+        "resolution_note": "Re-audited 2026-05-20: current AppAuthController.php contains no file_put_contents or hardcoded Windows path."
+      },
+      {
+        "id": "TBD-002",
+        "severity": "CRITICAL",
+        "category": "security",
+        "plugin": "apollo-chat",
+        "file": "src/Plugin.php",
+        "issue": "Raw SQL without $wpdb->prepare()",
+        "detail": "Lines L1191 and L1193 contain direct variable interpolation in SQL queries. SQL injection risk.",
+        "fix": "Wrap all SQL queries with $wpdb->prepare() and use placeholders (%s, %d)",
+        "status": "pending"
+      },
+      {
+        "id": "TBD-003",
+        "severity": "CRITICAL",
+        "category": "security",
+        "plugin": "apollo-notif",
+        "file": "src/Plugin.php + Admin.php",
+        "issue": "Raw SQL without $wpdb->prepare()",
+        "detail": "Plugin.php L1185 and Admin.php L304 have raw SQL with variable interpolation.",
+        "fix": "Use $wpdb->prepare() for all parameterized queries",
+        "status": "pending"
+      },
+      {
+        "id": "TBD-004",
+        "severity": "CRITICAL",
+        "category": "security",
+        "plugin": "apollo-adverts",
+        "file": "src/Deactivation.php",
+        "issue": "Raw SQL without $wpdb->prepare()",
+        "detail": "Deactivation.php L56 uses direct variable in SQL query.",
+        "fix": "Use $wpdb->prepare() even in deactivation/cleanup hooks",
+        "status": "pending"
+      },
+      {
+        "id": "TBD-005",
+        "severity": "CRITICAL",
+        "category": "security",
+        "plugins": [
+          "apollo-fav",
+          "apollo-wow",
+          "apollo-adverts",
+          "apollo-events",
+          "apollo-membership",
+          "apollo-hub",
+          "apollo-sheets",
+          "apollo-statistics",
+          "apollo-pane-engine"
+        ],
+        "issue": "Nonces exposed in data-* HTML attributes",
+        "detail": "10 instances across 9 plugins where WordPress nonces are output as data-* attribute values in rendered HTML. Nonces should only be in JS config blocks (wp_json_encode) for logged-in users, never in the DOM.",
+        "fix": "Move nonces to wp_json_encode() JS config block, guard with is_user_logged_in(), remove from data-* attributes",
+        "status": "pending"
+      },
+      {
+        "id": "TBD-006",
+        "severity": "CRITICAL",
+        "category": "security",
+        "plugin": "apollo-groups",
+        "file": "src/Plugin.php or REST controller",
+        "issue": "__return_true on REST permission_callback",
+        "detail": "At least one REST endpoint in apollo-groups uses __return_true as permission_callback, allowing unauthenticated mutations.",
+        "fix": "Replace __return_true with proper capability check (is_user_logged_in, current_user_can, etc.) on all write endpoints",
+        "status": "pending"
+      },
+      {
+        "id": "TBD-007",
+        "severity": "CRITICAL",
+        "category": "security",
+        "plugin": "apollo-login",
+        "file": "src/Auth/RegisterHandler.php",
+        "issue": "Missing CURLOPT_SSL_VERIFYPEER on Instagram profile cURL",
+        "detail": "get_instagram_profile_pic() method fetches Instagram avatar without CURLOPT_SSL_VERIFYPEER = true. Man-in-the-middle attack risk on profile picture fetching.",
+        "fix": "Add curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true) to the cURL setup",
+        "status": "pending"
+      },
+      {
+        "id": "TBD-008",
+        "severity": "HIGH",
+        "category": "security",
+        "plugin": "apollo-djs",
+        "files": [
+          "templates/player.php",
+          "templates/hero.php",
+          "templates/bio-modal.php"
+        ],
+        "issue": "Unescaped echo in templates",
+        "detail": "6 HIGH unescaped echo instances across apollo-djs templates. Output not wrapped in esc_html() or esc_attr().",
+        "fix": "Wrap all dynamic template output with appropriate escape functions: esc_html(), esc_attr(), esc_url(), wp_kses_post()",
+        "status": "pending"
+      },
+      {
+        "id": "TBD-009",
+        "severity": "HIGH",
+        "category": "security",
+        "plugin": "apollo-remind",
+        "file": "templates/admin-dashboard.php",
+        "issue": "Unescaped echo in admin template",
+        "detail": "Admin dashboard template has unescaped dynamic output.",
+        "fix": "Use esc_html() or esc_attr() on all echoed values",
+        "status": "pending"
+      },
+      {
+        "id": "TBD-010",
+        "severity": "HIGH",
+        "category": "security",
+        "plugin": "apollo-sign",
+        "file": "templates/titan-stamp.php",
+        "issue": "Unescaped echo in signature template",
+        "detail": "Digital signature stamp template outputs dynamic data without escaping.",
+        "fix": "Escape all output with esc_html() or wp_kses_post() as appropriate",
+        "status": "pending"
+      },
+      {
+        "id": "TBD-011",
+        "severity": "HIGH",
+        "category": "incomplete-feature",
+        "plugin": "apollo-login",
+        "issue": "Email verification REST endpoints not implemented",
+        "detail": "/auth/verify-email and /auth/resend-verification are registered in the registry and have handler stubs in EmailVerification.php but are not fully implemented. Email verification flow is incomplete.",
+        "fix": "Implement email sending, token generation, and verification logic in EmailVerification.php REST endpoints",
+        "status": "resolved",
+        "resolution_note": "Stale as of 2026-05-20: AuthController registers POST /auth/verify-email and /auth/resend-verification with full callbacks; fires apollo/login/verification_email."
+      },
+      {
+        "id": "TBD-012",
+        "severity": "HIGH",
+        "category": "security",
+        "plugin": "apollo-fav",
+        "issue": "nopriv AJAX handler should be restricted",
+        "detail": "apollo-fav has a nopriv (unauthenticated) AJAX handler that should require authentication to prevent unauthenticated favorite writes.",
+        "fix": "Change wp_ajax_nopriv_{action} to wp_ajax_{action} (authenticated only) and add is_user_logged_in() check",
+        "status": "pending"
+      },
+      {
+        "id": "TBD-013",
+        "severity": "HIGH",
+        "category": "security",
+        "plugin": "apollo-hub",
+        "issue": "JSON blocks without schema validation",
+        "detail": "Hub link blocks stored as JSON are written without schema/type validation, allowing arbitrary data structures.",
+        "fix": "Add JSON schema validation before saving hub blocks. Define allowed fields and types.",
+        "status": "pending"
+      },
+      {
+        "id": "TBD-014",
+        "severity": "HIGH",
+        "category": "security",
+        "plugin": "apollo-email",
+        "issue": "Newsletter subscribe endpoint without rate-limiting",
+        "detail": "The newsletter subscription endpoint has no rate limiting, allowing email harvest abuse.",
+        "fix": "Add IP-based rate limiting via apollo-login RateLimiter class on the subscribe endpoint",
+        "status": "pending"
+      },
+      {
+        "id": "TBD-015",
+        "severity": "HIGH",
+        "category": "security",
+        "plugin": "apollo-statistics",
+        "issue": "Capability check unverified on toggle metric endpoint",
+        "detail": "PUT /stats/metric/{slug}/toggle should require manage_options but capability verification path is unclear in current code.",
+        "fix": "Add explicit current_user_can('manage_options') check in the permission_callback of the toggle endpoint",
+        "status": "pending"
+      },
+      {
+        "id": "TBD-016",
+        "severity": "HIGH",
+        "category": "security",
+        "plugin": "apollo-login",
+        "file": "src/API/AuthController.php",
+        "issue": "IP rate-limit tier not reset on successful login",
+        "detail": "When a user successfully authenticates, the IP-level rate limiting tier counter is not reset to 0. A user who was rate-limited and then succeeds still carries the old tier state.",
+        "fix": "In AuthController::login() on success path, call RateLimiter::reset($ip) to clear the tier for the IP",
+        "status": "pending"
+      },
+      {
+        "id": "TBD-017",
+        "severity": "MEDIUM",
+        "category": "missing-templates",
+        "plugin": "apollo-adverts",
+        "issue": "Frontend templates missing",
+        "detail": "archive-classified.php, single-classified.php, and create-classified.php template files are absent. Pages rely on future template creation or apollo-classifieds marketplace page integration.",
+        "fix": "Create the 3 missing frontend templates following Apollo Canvas template pattern",
+        "status": "pending"
+      },
+      {
+        "id": "TBD-018",
+        "severity": "MEDIUM",
+        "category": "missing-templates",
+        "plugin": "apollo-membership",
+        "issue": "Public page templates missing",
+        "detail": "achievements.php, points.php, ranks.php, and leaderboard.php public-facing templates are not present in apollo-membership/templates/. Registry pages remain planned but unbuilt.",
+        "fix": "Create the 4 missing page templates using Apollo Canvas pattern and Apollo CDN",
+        "status": "pending"
+      },
+      {
+        "id": "TBD-019",
+        "severity": "MEDIUM",
+        "category": "code-quality",
+        "issue": "Debug output in production code",
+        "detail": "22 console.log() calls and 15 unguarded error_log() calls found across the codebase (from 2026-04-03 audit). These should not exist in production code.",
+        "fix": "Remove all console.log() from production JS files. Wrap all error_log() with if (WP_DEBUG) { ... }",
+        "status": "pending"
+      },
+      {
+        "id": "TBD-020",
+        "severity": "LOW",
+        "category": "registry-consistency",
+        "issue": "apollo-suppliers meta keys registered but plugin absent",
+        "detail": "apollo-core config registers supplier CPT and meta keys (apollo-core/config/cpts.php) as fallback bridge, but the apollo-suppliers plugin directory does not exist in this installation.",
+        "fix": "When apollo-suppliers is installed, its CPT/meta will auto-activate. No immediate fix needed, but document as expected behavior.",
+        "status": "acceptable-by-design"
+      },
+      {
+        "id": "TBD-021",
+        "severity": "LOW",
+        "category": "registry-consistency",
+        "issue": "apollo-social /feed route vs explore.php template",
+        "detail": "APOLLO_ALL_ROUTES lists /feed pointing to feed.php, but current plugin template is explore.php serving /explore and /mural routes. Feed route may be an alias or legacy reference.",
+        "fix": "Confirm whether /feed should alias to explore.php or be removed. Update APOLLO_ALL_ROUTES and registry accordingly.",
+        "status": "pending-review"
+      }
+    ]
+  }
+}

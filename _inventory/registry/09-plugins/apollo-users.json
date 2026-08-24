@@ -1,0 +1,3484 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-users",
+    "owner": "apollo-users",
+    "wrap": "plugins.apollo-users",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-users",
+  "namespace": "Apollo\\Users",
+  "priority": 1,
+  "status": "IMPLEMENTED",
+  "description": "Users: Roles, Capabilities, Profile page (/id/username), Preferences, Matchmaking, Advanced Fields, Author Protection",
+  "dependencies": [
+    "apollo-core",
+    "apollo-login",
+    "apollo-membership",
+    "apollo-social",
+    "apollo-templates"
+  ],
+  "provides": [
+    "roles",
+    "capabilities",
+    "profile-page",
+    "preferences",
+    "matchmaking",
+    "advanced-profile-fields",
+    "author-protection",
+    "user-enumeration-block",
+    "profile-context-function"
+  ],
+  "shared_functions": {
+    "apollo_get_profile_context": {
+      "file": "includes/functions.php",
+      "params": [
+        "user_id"
+      ],
+      "returns": "array",
+      "description": "Single source of truth for profile data â€” centralizes ALL DB reads (identity, privacy, media, stats, ratings, feed, JS config). JS config includes nonce only for logged-in users, admin keys only for admins.",
+      "added": "v6.6.0 (2026-04-03)"
+    },
+    "apollo_get_user_by_username": {
+      "file": "includes/functions.php",
+      "params": [
+        "username"
+      ],
+      "returns": "WP_User|false",
+      "description": "Case-insensitive user lookup by username"
+    },
+    "apollo_query_members": {
+      "file": "includes/functions.php",
+      "params": [
+        "args"
+      ],
+      "returns": "array",
+      "description": "Canonical paginated member query â€” used by apollo-social member directory"
+    }
+  },
+  "native_features": {
+    "userswp_equivalent": [
+      "advanced_profile_fields",
+      "profile_tabs",
+      "custom_user_meta",
+      "user_directory",
+      "user_search"
+    ],
+    "hidemywp_equivalent": [
+      "hide_author_urls",
+      "block_user_enumeration",
+      "disable_author_sitemap",
+      "hide_user_info"
+    ]
+  },
+  "NOTE": "ALWAYS /id/username - NEVER /user/username",
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [
+    "apollo_activity",
+    "apollo_chat_messages",
+    "apollo_chat_participants",
+    "apollo_event_rsvp",
+    "apollo_favs",
+    "apollo_group_members",
+    "apollo_user_ratings",
+    "apollo_wows"
+  ],
+  "meta": {
+    "post": {
+      "_apollo_bio": {
+        "_source": "deep_scan"
+      },
+      "_apollo_phone": {
+        "_source": "deep_scan"
+      },
+      "_apollo_social_name": {
+        "_source": "deep_scan"
+      },
+      "_apollo_website": {
+        "_source": "deep_scan"
+      },
+      "_apollo_wows": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {
+      "_apollo_avatar_url": {
+        "_source": "deep_scan"
+      },
+      "_apollo_bio": {
+        "_source": "deep_scan"
+      },
+      "_apollo_birth_date": {
+        "_source": "deep_scan"
+      },
+      "_apollo_disable_author_url": {
+        "_source": "deep_scan"
+      },
+      "_apollo_fav_count": {
+        "_source": "deep_scan"
+      },
+      "_apollo_favorites_count": {
+        "_source": "deep_scan"
+      },
+      "_apollo_favs_count": {
+        "_source": "deep_scan"
+      },
+      "_apollo_membership": {
+        "_source": "deep_scan"
+      },
+      "_apollo_nucleos": {
+        "_source": "deep_scan"
+      },
+      "_apollo_phone": {
+        "_source": "deep_scan"
+      },
+      "_apollo_points_total": {
+        "_source": "deep_scan"
+      },
+      "_apollo_privacy_email": {
+        "_source": "deep_scan"
+      },
+      "_apollo_privacy_profile": {
+        "_source": "deep_scan"
+      },
+      "_apollo_profile_completed": {
+        "_source": "deep_scan"
+      },
+      "_apollo_profile_views": {
+        "_source": "deep_scan"
+      },
+      "_apollo_ranking": {
+        "_source": "deep_scan"
+      },
+      "_apollo_social_name": {
+        "_source": "deep_scan"
+      },
+      "_apollo_sound_preferences": {
+        "_source": "deep_scan"
+      },
+      "_apollo_soundcloud_url": {
+        "_source": "deep_scan"
+      },
+      "_apollo_unique_visits": {
+        "_source": "deep_scan"
+      },
+      "_apollo_user_verified": {
+        "_source": "deep_scan"
+      },
+      "_apollo_website": {
+        "_source": "deep_scan"
+      },
+      "_apollo_youtube_url": {
+        "_source": "deep_scan"
+      }
+    },
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/profile/avatar",
+      "methods": [
+        "POST"
+      ],
+      "description": "Upload/Delete avatar",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "is_user_logged_in",
+      "permission_binding": "is_user_logged_in",
+      "permission_summary": "WP core is_user_logged_in callback",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "upload_avatar",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/ProfileController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/profile/avatar",
+      "methods": [
+        "DELETE"
+      ],
+      "description": "Upload/Delete avatar",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "is_user_logged_in",
+      "permission_binding": "is_user_logged_in",
+      "permission_summary": "WP core is_user_logged_in callback",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "delete_avatar",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/ProfileController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/profile/cover",
+      "methods": [
+        "POST"
+      ],
+      "description": "Upload/Delete cover image",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "is_user_logged_in",
+      "permission_binding": "is_user_logged_in",
+      "permission_summary": "WP core is_user_logged_in callback",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "upload_cover",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/ProfileController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/profile/cover",
+      "methods": [
+        "DELETE"
+      ],
+      "description": "Upload/Delete cover image",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "is_user_logged_in",
+      "permission_binding": "is_user_logged_in",
+      "permission_summary": "WP core is_user_logged_in callback",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "delete_cover",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/ProfileController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/profile/views",
+      "methods": [
+        "GET"
+      ],
+      "description": "Get profile view count",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "is_user_logged_in",
+      "permission_binding": "is_user_logged_in",
+      "permission_summary": "WP core is_user_logged_in callback",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_profile_views",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/ProfileController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/profile/match",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "is_user_logged_in",
+      "permission_binding": "is_user_logged_in",
+      "permission_summary": "WP core is_user_logged_in callback",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "create_match",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/ProfileController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/profile/matches",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "is_user_logged_in",
+      "permission_binding": "is_user_logged_in",
+      "permission_summary": "WP core is_user_logged_in callback",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_matches",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/ProfileController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/users/me",
+      "methods": [
+        "GET"
+      ],
+      "description": "Get/Update current user",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "check_user_logged_in",
+      "permission_binding": "UsersController::check_user_logged_in",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_current_user",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/UsersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/users/me",
+      "methods": [
+        "PATCH",
+        "POST",
+        "PUT"
+      ],
+      "description": "Get/Update current user",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "check_user_logged_in",
+      "permission_binding": "UsersController::check_user_logged_in",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "update_current_user",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/UsersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/users/me/matches",
+      "methods": [
+        "GET"
+      ],
+      "description": "Get current user's top N matches ordered by score DESC",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "check_user_logged_in",
+      "permission_binding": "UsersController::check_user_logged_in",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_my_matches",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/UsersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/users/search",
+      "methods": [
+        "GET"
+      ],
+      "description": "Search users",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "check_can_view_directory",
+      "permission_binding": "UsersController::check_can_view_directory",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "search_users",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/UsersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/users/radar",
+      "methods": [
+        "GET"
+      ],
+      "description": "Radar - Track all new user spots",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_radar_users",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/UsersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/users/(?P<username>[a-zA-Z0-9_-]+)",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_user_by_username",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/UsersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/users",
+      "methods": [
+        "GET"
+      ],
+      "description": "List users",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "check_can_view_directory",
+      "permission_binding": "UsersController::check_can_view_directory",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_users_directory",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/UsersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/users/(?P<id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_user_by_id",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/UsersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/users/(?P<id>\\d+)",
+      "methods": [
+        "PATCH",
+        "POST",
+        "PUT"
+      ],
+      "description": "Live apollo/v1 (CAPABILITY_CHECK)",
+      "auth": "CAPABILITY_CHECK",
+      "permission_risk": "LOW",
+      "permission_method": "check_can_edit_user",
+      "permission_binding": "UsersController::check_can_edit_user",
+      "permission_summary": "Requires capability: edit_user",
+      "permission_capabilities": [
+        "edit_user"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if ( ! is_user_logged_in() ) { return false; } $target_id = (int) $request->get_param( 'id' ); if ( get_current_user_id() === $target_id ) { return true; } return current_user_can( 'edit_user', $target_id );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "update_user_by_id",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/UsersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/users/(?P<id>\\d+)/preferences",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (CAPABILITY_CHECK)",
+      "auth": "CAPABILITY_CHECK",
+      "permission_risk": "LOW",
+      "permission_method": "check_can_view_user",
+      "permission_binding": "UsersController::check_can_view_user",
+      "permission_summary": "Requires capability: list_users",
+      "permission_capabilities": [
+        "list_users"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if ( ! is_user_logged_in() ) { return false; } $target_id = (int) $request->get_param( 'id' ); if ( get_current_user_id() === $target_id ) { return true; } return current_user_can( 'list_users' );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_user_preferences",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/UsersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/users/(?P<id>\\d+)/preferences",
+      "methods": [
+        "PATCH",
+        "POST",
+        "PUT"
+      ],
+      "description": "Live apollo/v1 (CAPABILITY_CHECK)",
+      "auth": "CAPABILITY_CHECK",
+      "permission_risk": "LOW",
+      "permission_method": "check_can_edit_user",
+      "permission_binding": "UsersController::check_can_edit_user",
+      "permission_summary": "Requires capability: edit_user",
+      "permission_capabilities": [
+        "edit_user"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if ( ! is_user_logged_in() ) { return false; } $target_id = (int) $request->get_param( 'id' ); if ( get_current_user_id() === $target_id ) { return true; } return current_user_can( 'edit_user', $target_id );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "update_user_preferences",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/UsersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/users/(?P<id>\\d+)/matchmaking",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (CAPABILITY_CHECK)",
+      "auth": "CAPABILITY_CHECK",
+      "permission_risk": "LOW",
+      "permission_method": "check_can_view_user",
+      "permission_binding": "UsersController::check_can_view_user",
+      "permission_summary": "Requires capability: list_users",
+      "permission_capabilities": [
+        "list_users"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if ( ! is_user_logged_in() ) { return false; } $target_id = (int) $request->get_param( 'id' ); if ( get_current_user_id() === $target_id ) { return true; } return current_user_can( 'list_users' );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_user_matches",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/UsersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/users/(?P<id>\\d+)/fields",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (CAPABILITY_CHECK)",
+      "auth": "CAPABILITY_CHECK",
+      "permission_risk": "LOW",
+      "permission_method": "check_can_view_user",
+      "permission_binding": "UsersController::check_can_view_user",
+      "permission_summary": "Requires capability: list_users",
+      "permission_capabilities": [
+        "list_users"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if ( ! is_user_logged_in() ) { return false; } $target_id = (int) $request->get_param( 'id' ); if ( get_current_user_id() === $target_id ) { return true; } return current_user_can( 'list_users' );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_user_fields",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/UsersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/users/(?P<id>\\d+)/fields",
+      "methods": [
+        "PATCH",
+        "POST",
+        "PUT"
+      ],
+      "description": "Live apollo/v1 (CAPABILITY_CHECK)",
+      "auth": "CAPABILITY_CHECK",
+      "permission_risk": "LOW",
+      "permission_method": "check_can_edit_user",
+      "permission_binding": "UsersController::check_can_edit_user",
+      "permission_summary": "Requires capability: edit_user",
+      "permission_capabilities": [
+        "edit_user"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if ( ! is_user_logged_in() ) { return false; } $target_id = (int) $request->get_param( 'id' ); if ( get_current_user_id() === $target_id ) { return true; } return current_user_can( 'edit_user', $target_id );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "update_user_fields",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/UsersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/profile/(?P<username>[a-zA-Z0-9_-]+)",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_public_profile",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/UsersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/profile/(?P<username>[a-zA-Z0-9_-]+)/view",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "record_profile_view",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/UsersController.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "ajax": {
+    "priv": [
+      "apollo_admin_adjust_rating",
+      "apollo_admin_delete_rating",
+      "apollo_admin_get_voters",
+      "apollo_delete_avatar",
+      "apollo_delete_cover",
+      "apollo_delete_depoimento",
+      "apollo_get_ratings",
+      "apollo_get_voter_list",
+      "apollo_submit_depoimento",
+      "apollo_submit_rating",
+      "apollo_update_profile",
+      "apollo_upload_avatar",
+      "apollo_upload_cover"
+    ],
+    "nopriv": []
+  },
+  "pages": [
+    {
+      "slug": "radar",
+      "rewrite": "^radar/?$",
+      "query": "index.php?apollo_user_page=radar",
+      "query_vars": [
+        "apollo_user_page=radar"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "id/{param}",
+      "rewrite": "^id/([^/]+)/?$",
+      "query": "index.php?apollo_user_page=profile&apollo_username=$matches[1]",
+      "query_vars": [
+        "apollo_user_page=profile",
+        "apollo_username=$matches[1]"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "editar-perfil",
+      "rewrite": "^editar-perfil/?$",
+      "query": "index.php?apollo_user_page=edit-profile",
+      "query_vars": [
+        "apollo_user_page=edit-profile"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    }
+  ],
+  "shortcodes": [
+    {
+      "tag": "apollo_matchmaking",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_profile",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_profile_edit",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_profile_fields",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_radar",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_user_card",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "cron": [
+    "five_minutes"
+  ],
+  "hooks_fired": [
+    "apollo/matchmaking/batch_completed",
+    "apollo/matchmaking/score_updated",
+    "apollo/matchmaking/signal_updated",
+    "apollo/users/profile_visited",
+    "apollo/users/query_members_args",
+    "apollo_author_protection_allowed_routes",
+    "apollo_user_meta_initialized",
+    "apollo_user_verified",
+    "apollo_users_fields",
+    "apollo_users_match_created"
+  ],
+  "hooks_listened": [
+    "apollo/chat/message_sent",
+    "apollo/event/rsvp",
+    "apollo/fav/added",
+    "apollo/groups/user_joined",
+    "apollo/login/email_verified",
+    "apollo/matchmaking/signal_updated",
+    "apollo/wow/added",
+    "apollo_matchmaking_incremental",
+    "apollo_matchmaking_recompute"
+  ],
+  "matchmaking_engine": {
+    "file": "src/Components/MatchmakingEngine.php",
+    "class": "Apollo\\Users\\Components\\MatchmakingEngine",
+    "type": "asymmetric",
+    "storage": "apollo_matchmaking_scores",
+    "score_range": "0â€“300 (0â€“100 base; 3Ã— when viewer has fav'd target as user)",
+    "score_note": "Aâ†’B â‰  Bâ†’A â€” each direction stored as separate row",
+    "fav_user_boost": {
+      "multiplier": 3,
+      "condition": "apollo_favs WHERE user_id=from AND post_id=to AND post_type='user'",
+      "max_boosted_score": 300
+    },
+    "weights": {
+      "ratings": 20,
+      "wow": 15,
+      "chat": 15,
+      "comments": 10,
+      "views": 5,
+      "sounds": 15,
+      "favs": 10,
+      "rsvp": 5,
+      "groups": 3,
+      "passive": 2
+    },
+    "normalization": "Jaccard for set overlap signals; min(1, count/SAT) + time_decay(2^(-days/90)) for count signals",
+    "active_window_days": 90,
+    "decay_half_life_days": 90
+  },
+  "rating_system": {
+    "file": "src/Components/RatingHandler.php",
+    "class": "Apollo\\Users\\Components\\RatingHandler",
+    "table": "apollo_user_ratings",
+    "max_score": 3,
+    "categories": {
+      "sexy": {
+        "label": "Sexy",
+        "icon": "ri-heart-3-fill",
+        "color": "#FF9820",
+        "voter_privacy": "admin_only"
+      },
+      "legal": {
+        "label": "Legal",
+        "icon": "ri-user-smile-line",
+        "color": "#22c55e",
+        "voter_privacy": "admin_only"
+      },
+      "confiavel": {
+        "label": "ConfiÃ¡vel",
+        "icon": "ri-instance-line",
+        "color": "#3b82f6",
+        "voter_privacy": "public"
+      }
+    },
+    "matchmaking_weight": 20,
+    "note": "3-star voting per category. ConfiÃ¡vel voters public; Sexy/Legal voters admin-only. Feeds into matchmaking engine as highest-weighted signal."
+  },
+  "version": "1.1.0",
+  "admin_menus": [],
+  "assets": {
+    "scripts": [
+      "apollo-users-profile"
+    ],
+    "styles": [
+      "apollo-users-edit-profile",
+      "apollo-users-profile",
+      "apollo-users-radar"
+    ]
+  },
+  "options": [
+    "_apollo_matchmaking_dirty_pairs",
+    "apollo_users_activated",
+    "apollo_users_block_author_enum",
+    "apollo_users_default_privacy",
+    "apollo_users_delete_data_on_uninstall",
+    "apollo_users_profile_slug",
+    "apollo_users_radar_slug",
+    "apollo_users_settings",
+    "apollo_users_version"
+  ],
+  "security": {
+    "risk_band": "MEDIUM",
+    "risk_score": 33,
+    "abspath_coverage_pct": 93,
+    "rest_open_routes": 5,
+    "rest_critical_write_public": 1,
+    "rest_open_non_intentional": 5,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 23,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 0.97
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_activity",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_chat_messages",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_chat_participants",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_create_events",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_create_events_at_venue",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_delete_all_events",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_delete_own_events",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_edit_all_events",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_edit_own_events",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_event_rsvp",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_favs",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_get_membership_badge_html",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_get_user_membership",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_group_members",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_matchmaking",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_matchmaking_incremental",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_matchmaking_lock",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_matchmaking_recompute",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_matchmaking_scores",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_assign",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_get_badge_info",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_get_user_access_slugs",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_get_user_badge",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_get_user_slugs",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_moderate_content",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_moderate_users",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_profile_fields",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_profile_views",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_rate_users",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_user_fields",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_user_ratings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_user_verified",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_users_activated",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_users_block_author_enum",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_users_default_privacy",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_users_delete_data_on_uninstall",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_users_fields",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_users_match_created",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_users_matchmaking_cache",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_users_profile_slug",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_users_radar_cache",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_users_radar_slug",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_users_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_users_version",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_view_reports",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_wows",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [
+    {
+      "pattern": "^radar/?$",
+      "query": "index.php?apollo_user_page=radar"
+    },
+    {
+      "pattern": "^id/([^/]+)/?$",
+      "query": "index.php?apollo_user_page=profile&apollo_username=$matches[1]"
+    },
+    {
+      "pattern": "^editar-perfil/?$",
+      "query": "index.php?apollo_user_page=edit-profile"
+    }
+  ],
+  "query_vars": [
+    "apollo_flush_rewrites",
+    "apollo_user_page",
+    "apollo_username"
+  ],
+  "php_surface": {
+    "files": 30,
+    "loc": 13245,
+    "classes": 11,
+    "functions": 27
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:46.655Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 250,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-users",
+    "main_file": "apollo-users.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Users",
+      "plugin_uri": "https://apollo.rio.br/plugins/apollo-users",
+      "description": "Users: Roles, Capabilities, Profile page (/id/username), Preferences, Matchmaking, Advanced Fields, Author Protection",
+      "version": "1.0.1",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "Proprietary",
+      "text_domain": "apollo-users",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": "false"
+    },
+    "composer": {
+      "name": "apollo/apollo-users",
+      "namespaces": [
+        "Apollo\\Users"
+      ],
+      "require": {
+        "php": ">=8.0"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 30,
+        ".css": 4,
+        ".js": 1,
+        ".json": 1,
+        ".md": 2,
+        ".ffs_db": 1,
+        ".bak": 5
+      },
+      "by_top_directory": {
+        "(root)": 6,
+        "assets": 5,
+        "bin": 1,
+        "includes": 2,
+        "src": 11,
+        "templates": 19
+      },
+      "total_bytes": 526689
+    },
+    "php": {
+      "files": 30,
+      "loc": 13245,
+      "classes": 11,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 27
+    },
+    "architecture": {
+      "namespace": "Apollo\\Users",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Users\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "ProfileController",
+          "fqcn": "Apollo\\Users\\API\\ProfileController",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/ProfileController.php"
+        },
+        {
+          "kind": "class",
+          "name": "UsersController",
+          "fqcn": "Apollo\\Users\\API\\UsersController",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/UsersController.php"
+        },
+        {
+          "kind": "class",
+          "name": "AuthorProtection",
+          "fqcn": "Apollo\\Users\\Components\\AuthorProtection",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Components/AuthorProtection.php"
+        },
+        {
+          "kind": "class",
+          "name": "DepoimentoHandler",
+          "fqcn": "Apollo\\Users\\Components\\DepoimentoHandler",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Components/DepoimentoHandler.php"
+        },
+        {
+          "kind": "class",
+          "name": "MatchmakingEngine",
+          "fqcn": "Apollo\\Users\\Components\\MatchmakingEngine",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Components/MatchmakingEngine.php"
+        },
+        {
+          "kind": "class",
+          "name": "ProfileHandler",
+          "fqcn": "Apollo\\Users\\Components\\ProfileHandler",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Components/ProfileHandler.php"
+        },
+        {
+          "kind": "class",
+          "name": "RatingHandler",
+          "fqcn": "Apollo\\Users\\Components\\RatingHandler",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Components/RatingHandler.php"
+        },
+        {
+          "kind": "class",
+          "name": "UserFields",
+          "fqcn": "Apollo\\Users\\Components\\UserFields",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Components/UserFields.php"
+        },
+        {
+          "kind": "class",
+          "name": "Deactivation",
+          "fqcn": "Apollo\\Users\\Deactivation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Deactivation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Users\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_users_check_dependencies",
+          "file": "apollo-users.php"
+        },
+        {
+          "name": "apollo_users_load_textdomain",
+          "file": "apollo-users.php"
+        },
+        {
+          "name": "apollo_users_suppress_textdomain_notice",
+          "file": "apollo-users.php"
+        },
+        {
+          "name": "apollo_users_register_query_vars",
+          "file": "apollo-users.php"
+        },
+        {
+          "name": "apollo_users_add_rewrite_rules",
+          "file": "apollo-users.php"
+        },
+        {
+          "name": "apollo_users_handle_virtual_pages",
+          "file": "apollo-users.php"
+        },
+        {
+          "name": "apollo_users_init",
+          "file": "apollo-users.php"
+        },
+        {
+          "name": "apollo_users",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_profile_url",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_user_by_username",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_user_avatar_url",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_user_cover_url",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_user_membership",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_can_view_profile",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_record_profile_view",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_social_name",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_user_bio",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_profile_context",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_users_enqueue_page_assets",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_is_user_verified",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_verify_user",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_profile_completion",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_user_can",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_user_role",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_user_display_data",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_query_members",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_client_ip",
+          "file": "src/API/UsersController.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 23,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/profile/avatar",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "is_user_logged_in",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "WP core is_user_logged_in callback",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "is_user_logged_in"
+            }
+          },
+          "callback": "upload_avatar",
+          "file": "src/API/ProfileController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/profile/avatar",
+          "methods": [
+            "DELETE"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "is_user_logged_in",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "WP core is_user_logged_in callback",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "is_user_logged_in"
+            }
+          },
+          "callback": "delete_avatar",
+          "file": "src/API/ProfileController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/profile/cover",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "is_user_logged_in",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "WP core is_user_logged_in callback",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "is_user_logged_in"
+            }
+          },
+          "callback": "upload_cover",
+          "file": "src/API/ProfileController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/profile/cover",
+          "methods": [
+            "DELETE"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "is_user_logged_in",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "WP core is_user_logged_in callback",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "is_user_logged_in"
+            }
+          },
+          "callback": "delete_cover",
+          "file": "src/API/ProfileController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/profile/views",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "is_user_logged_in",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "WP core is_user_logged_in callback",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "is_user_logged_in"
+            }
+          },
+          "callback": "get_profile_views",
+          "file": "src/API/ProfileController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/profile/match",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "is_user_logged_in",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "WP core is_user_logged_in callback",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "is_user_logged_in"
+            }
+          },
+          "callback": "create_match",
+          "file": "src/API/ProfileController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/profile/matches",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "is_user_logged_in",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "WP core is_user_logged_in callback",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "is_user_logged_in"
+            }
+          },
+          "callback": "get_matches",
+          "file": "src/API/ProfileController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/users/me",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "check_user_logged_in",
+            "target": "UsersController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "UsersController::check_user_logged_in",
+              "method_file": "src/API/UsersController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_current_user",
+          "file": "src/API/UsersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/users/me",
+          "methods": [
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "check_user_logged_in",
+            "target": "UsersController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "UsersController::check_user_logged_in",
+              "method_file": "src/API/UsersController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "update_current_user",
+          "file": "src/API/UsersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/users/me/matches",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "check_user_logged_in",
+            "target": "UsersController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "UsersController::check_user_logged_in",
+              "method_file": "src/API/UsersController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_my_matches",
+          "file": "src/API/UsersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/users/search",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "check_can_view_directory",
+            "target": "UsersController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "UsersController::check_can_view_directory",
+              "method_file": "src/API/UsersController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "search_users",
+          "file": "src/API/UsersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/users/radar",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_radar_users",
+          "file": "src/API/UsersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/users/(?P<username>[a-zA-Z0-9_-]+)",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_user_by_username",
+          "file": "src/API/UsersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/users",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "check_can_view_directory",
+            "target": "UsersController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "UsersController::check_can_view_directory",
+              "method_file": "src/API/UsersController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_users_directory",
+          "file": "src/API/UsersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/users/(?P<id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_user_by_id",
+          "file": "src/API/UsersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/users/(?P<id>\\d+)",
+          "methods": [
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "permission": {
+            "class": "CAPABILITY_CHECK",
+            "risk": "LOW",
+            "method": "check_can_edit_user",
+            "target": "UsersController",
+            "analysis": {
+              "effective_class": "CAPABILITY_CHECK",
+              "risk": "LOW",
+              "summary": "Requires capability: edit_user",
+              "capabilities": [
+                "edit_user"
+              ],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": true,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "false",
+                  "true",
+                  "current_user_can( 'edit_user', $target_id )"
+                ]
+              },
+              "body_preview": "if ( ! is_user_logged_in() ) { return false; } $target_id = (int) $request->get_param( 'id' ); if ( get_current_user_id() === $target_id ) { return true; } return current_user_can( 'edit_user', $target_id );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "UsersController::check_can_edit_user",
+              "method_file": "src/API/UsersController.php",
+              "method_signature": "\\WP_REST_Request $request"
+            }
+          },
+          "callback": "update_user_by_id",
+          "file": "src/API/UsersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/users/(?P<id>\\d+)/preferences",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "CAPABILITY_CHECK",
+            "risk": "LOW",
+            "method": "check_can_view_user",
+            "target": "UsersController",
+            "analysis": {
+              "effective_class": "CAPABILITY_CHECK",
+              "risk": "LOW",
+              "summary": "Requires capability: list_users",
+              "capabilities": [
+                "list_users"
+              ],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": true,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "false",
+                  "true",
+                  "current_user_can( 'list_users' )"
+                ]
+              },
+              "body_preview": "if ( ! is_user_logged_in() ) { return false; } $target_id = (int) $request->get_param( 'id' ); if ( get_current_user_id() === $target_id ) { return true; } return current_user_can( 'list_users' );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "UsersController::check_can_view_user",
+              "method_file": "src/API/UsersController.php",
+              "method_signature": "\\WP_REST_Request $request"
+            }
+          },
+          "callback": "get_user_preferences",
+          "file": "src/API/UsersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/users/(?P<id>\\d+)/preferences",
+          "methods": [
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "permission": {
+            "class": "CAPABILITY_CHECK",
+            "risk": "LOW",
+            "method": "check_can_edit_user",
+            "target": "UsersController",
+            "analysis": {
+              "effective_class": "CAPABILITY_CHECK",
+              "risk": "LOW",
+              "summary": "Requires capability: edit_user",
+              "capabilities": [
+                "edit_user"
+              ],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": true,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "false",
+                  "true",
+                  "current_user_can( 'edit_user', $target_id )"
+                ]
+              },
+              "body_preview": "if ( ! is_user_logged_in() ) { return false; } $target_id = (int) $request->get_param( 'id' ); if ( get_current_user_id() === $target_id ) { return true; } return current_user_can( 'edit_user', $target_id );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "UsersController::check_can_edit_user",
+              "method_file": "src/API/UsersController.php",
+              "method_signature": "\\WP_REST_Request $request"
+            }
+          },
+          "callback": "update_user_preferences",
+          "file": "src/API/UsersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/users/(?P<id>\\d+)/matchmaking",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "CAPABILITY_CHECK",
+            "risk": "LOW",
+            "method": "check_can_view_user",
+            "target": "UsersController",
+            "analysis": {
+              "effective_class": "CAPABILITY_CHECK",
+              "risk": "LOW",
+              "summary": "Requires capability: list_users",
+              "capabilities": [
+                "list_users"
+              ],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": true,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "false",
+                  "true",
+                  "current_user_can( 'list_users' )"
+                ]
+              },
+              "body_preview": "if ( ! is_user_logged_in() ) { return false; } $target_id = (int) $request->get_param( 'id' ); if ( get_current_user_id() === $target_id ) { return true; } return current_user_can( 'list_users' );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "UsersController::check_can_view_user",
+              "method_file": "src/API/UsersController.php",
+              "method_signature": "\\WP_REST_Request $request"
+            }
+          },
+          "callback": "get_user_matches",
+          "file": "src/API/UsersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/users/(?P<id>\\d+)/fields",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "CAPABILITY_CHECK",
+            "risk": "LOW",
+            "method": "check_can_view_user",
+            "target": "UsersController",
+            "analysis": {
+              "effective_class": "CAPABILITY_CHECK",
+              "risk": "LOW",
+              "summary": "Requires capability: list_users",
+              "capabilities": [
+                "list_users"
+              ],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": true,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "false",
+                  "true",
+                  "current_user_can( 'list_users' )"
+                ]
+              },
+              "body_preview": "if ( ! is_user_logged_in() ) { return false; } $target_id = (int) $request->get_param( 'id' ); if ( get_current_user_id() === $target_id ) { return true; } return current_user_can( 'list_users' );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "UsersController::check_can_view_user",
+              "method_file": "src/API/UsersController.php",
+              "method_signature": "\\WP_REST_Request $request"
+            }
+          },
+          "callback": "get_user_fields",
+          "file": "src/API/UsersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/users/(?P<id>\\d+)/fields",
+          "methods": [
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "permission": {
+            "class": "CAPABILITY_CHECK",
+            "risk": "LOW",
+            "method": "check_can_edit_user",
+            "target": "UsersController",
+            "analysis": {
+              "effective_class": "CAPABILITY_CHECK",
+              "risk": "LOW",
+              "summary": "Requires capability: edit_user",
+              "capabilities": [
+                "edit_user"
+              ],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": true,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "false",
+                  "true",
+                  "current_user_can( 'edit_user', $target_id )"
+                ]
+              },
+              "body_preview": "if ( ! is_user_logged_in() ) { return false; } $target_id = (int) $request->get_param( 'id' ); if ( get_current_user_id() === $target_id ) { return true; } return current_user_can( 'edit_user', $target_id );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "UsersController::check_can_edit_user",
+              "method_file": "src/API/UsersController.php",
+              "method_signature": "\\WP_REST_Request $request"
+            }
+          },
+          "callback": "update_user_fields",
+          "file": "src/API/UsersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/profile/(?P<username>[a-zA-Z0-9_-]+)",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_public_profile",
+          "file": "src/API/UsersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/profile/(?P<username>[a-zA-Z0-9_-]+)/view",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "record_profile_view",
+          "file": "src/API/UsersController.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 1,
+        "HIGH": 4,
+        "MEDIUM": 12,
+        "LOW": 6,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "LOGGED_IN_ONLY": 12,
+        "PUBLIC_UNAUTHENTICATED": 5,
+        "CAPABILITY_CHECK": 6
+      },
+      "permission_body_resolved": 23,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 1,
+      "open_routes": [
+        {
+          "endpoint": "/users/radar",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/UsersController.php"
+        },
+        {
+          "endpoint": "/users/(?P<username>[a-zA-Z0-9_-]+)",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/UsersController.php"
+        },
+        {
+          "endpoint": "/users/(?P<id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/UsersController.php"
+        },
+        {
+          "endpoint": "/profile/(?P<username>[a-zA-Z0-9_-]+)",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/UsersController.php"
+        },
+        {
+          "endpoint": "/profile/(?P<username>[a-zA-Z0-9_-]+)/view",
+          "methods": [
+            "POST"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/UsersController.php"
+        }
+      ],
+      "admin_cap_routes": [],
+      "logged_in_routes": [
+        "/profile/avatar",
+        "/profile/avatar",
+        "/profile/cover",
+        "/profile/cover",
+        "/profile/views",
+        "/profile/match",
+        "/profile/matches",
+        "/users/me",
+        "/users/me",
+        "/users/me/matches",
+        "/users/search",
+        "/users"
+      ]
+    },
+    "database": {
+      "tables_owned_or_defined": [
+        "apollo_activity",
+        "apollo_chat_messages",
+        "apollo_chat_participants",
+        "apollo_event_rsvp",
+        "apollo_favs",
+        "apollo_group_members",
+        "apollo_user_ratings",
+        "apollo_wows"
+      ],
+      "tables_referenced": [
+        "apollo_activity",
+        "apollo_chat_messages",
+        "apollo_chat_participants",
+        "apollo_create_events",
+        "apollo_create_events_at_venue",
+        "apollo_delete_all_events",
+        "apollo_delete_own_events",
+        "apollo_edit_all_events",
+        "apollo_edit_own_events",
+        "apollo_event_rsvp",
+        "apollo_favs",
+        "apollo_get_membership_badge_html",
+        "apollo_get_user_membership",
+        "apollo_group_members",
+        "apollo_matchmaking",
+        "apollo_matchmaking_incremental",
+        "apollo_matchmaking_lock",
+        "apollo_matchmaking_recompute",
+        "apollo_matchmaking_scores",
+        "apollo_membership_assign",
+        "apollo_membership_get_badge_info",
+        "apollo_membership_get_user_access_slugs",
+        "apollo_membership_get_user_badge",
+        "apollo_membership_get_user_slugs",
+        "apollo_moderate_content",
+        "apollo_moderate_users",
+        "apollo_profile_fields",
+        "apollo_profile_views",
+        "apollo_rate_users",
+        "apollo_user_fields",
+        "apollo_user_ratings",
+        "apollo_user_verified",
+        "apollo_users_activated",
+        "apollo_users_block_author_enum",
+        "apollo_users_default_privacy",
+        "apollo_users_delete_data_on_uninstall",
+        "apollo_users_fields",
+        "apollo_users_match_created",
+        "apollo_users_matchmaking_cache",
+        "apollo_users_profile_slug",
+        "apollo_users_radar_cache",
+        "apollo_users_radar_slug",
+        "apollo_users_settings",
+        "apollo_users_version",
+        "apollo_view_reports",
+        "apollo_wows"
+      ],
+      "tables_for_registry": [
+        "apollo_activity",
+        "apollo_chat_messages",
+        "apollo_chat_participants",
+        "apollo_event_rsvp",
+        "apollo_favs",
+        "apollo_group_members",
+        "apollo_user_ratings",
+        "apollo_wows"
+      ],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_activity",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_chat_messages",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_chat_participants",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_create_events",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_create_events_at_venue",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_delete_all_events",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_delete_own_events",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_edit_all_events",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_edit_own_events",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_event_rsvp",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_favs",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_get_membership_badge_html",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_get_user_membership",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_group_members",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_matchmaking",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_matchmaking_incremental",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_matchmaking_lock",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_matchmaking_recompute",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_matchmaking_scores",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_assign",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_get_badge_info",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_get_user_access_slugs",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_get_user_badge",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_get_user_slugs",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_moderate_content",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_moderate_users",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_profile_fields",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_profile_views",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_rate_users",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_user_fields",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_user_ratings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_user_verified",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_users_activated",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_users_block_author_enum",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_users_default_privacy",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_users_delete_data_on_uninstall",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_users_fields",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_users_match_created",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_users_matchmaking_cache",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_users_profile_slug",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_users_radar_cache",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_users_radar_slug",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_users_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_users_version",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_view_reports",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_wows",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 5,
+      "user_count": 23,
+      "term_count": 0,
+      "post_keys": [
+        "_apollo_bio",
+        "_apollo_phone",
+        "_apollo_social_name",
+        "_apollo_website",
+        "_apollo_wows"
+      ],
+      "user_keys": [
+        "_apollo_avatar_url",
+        "_apollo_bio",
+        "_apollo_birth_date",
+        "_apollo_disable_author_url",
+        "_apollo_fav_count",
+        "_apollo_favorites_count",
+        "_apollo_favs_count",
+        "_apollo_membership",
+        "_apollo_nucleos",
+        "_apollo_phone",
+        "_apollo_points_total",
+        "_apollo_privacy_email",
+        "_apollo_privacy_profile",
+        "_apollo_profile_completed",
+        "_apollo_profile_views",
+        "_apollo_ranking",
+        "_apollo_social_name",
+        "_apollo_sound_preferences",
+        "_apollo_soundcloud_url",
+        "_apollo_unique_visits",
+        "_apollo_user_verified",
+        "_apollo_website",
+        "_apollo_youtube_url"
+      ],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [
+        {
+          "pattern": "^radar/?$",
+          "query": "index.php?apollo_user_page=radar",
+          "position": "top",
+          "file": "apollo-users.php"
+        },
+        {
+          "pattern": "^id/([^/]+)/?$",
+          "query": "index.php?apollo_user_page=profile&apollo_username=$matches[1]",
+          "position": "top",
+          "file": "apollo-users.php"
+        },
+        {
+          "pattern": "^editar-perfil/?$",
+          "query": "index.php?apollo_user_page=edit-profile",
+          "position": "top",
+          "file": "apollo-users.php"
+        }
+      ],
+      "query_vars": [
+        "apollo_flush_rewrites",
+        "apollo_user_page",
+        "apollo_username"
+      ],
+      "pages_derived": [
+        {
+          "slug": "radar",
+          "rewrite": "^radar/?$",
+          "query": "index.php?apollo_user_page=radar",
+          "query_vars": [
+            "apollo_user_page=radar"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "id/{param}",
+          "rewrite": "^id/([^/]+)/?$",
+          "query": "index.php?apollo_user_page=profile&apollo_username=$matches[1]",
+          "query_vars": [
+            "apollo_user_page=profile",
+            "apollo_username=$matches[1]"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "editar-perfil",
+          "rewrite": "^editar-perfil/?$",
+          "query": "index.php?apollo_user_page=edit-profile",
+          "query_vars": [
+            "apollo_user_page=edit-profile"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        }
+      ]
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 10,
+      "listened_count": 43,
+      "apollo_fired": [
+        "apollo/matchmaking/batch_completed",
+        "apollo/matchmaking/score_updated",
+        "apollo/matchmaking/signal_updated",
+        "apollo/users/profile_visited",
+        "apollo/users/query_members_args",
+        "apollo_author_protection_allowed_routes",
+        "apollo_user_meta_initialized",
+        "apollo_user_verified",
+        "apollo_users_fields",
+        "apollo_users_match_created"
+      ],
+      "apollo_listened": [
+        "apollo/chat/message_sent",
+        "apollo/event/rsvp",
+        "apollo/fav/added",
+        "apollo/groups/user_joined",
+        "apollo/login/email_verified",
+        "apollo/matchmaking/signal_updated",
+        "apollo/wow/added",
+        "apollo_matchmaking_incremental",
+        "apollo_matchmaking_recompute"
+      ],
+      "critical_wp_listened": [
+        "admin_init",
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "template_redirect",
+        "user_register"
+      ]
+    },
+    "ajax": {
+      "priv": [
+        "apollo_admin_adjust_rating",
+        "apollo_admin_delete_rating",
+        "apollo_admin_get_voters",
+        "apollo_delete_avatar",
+        "apollo_delete_cover",
+        "apollo_delete_depoimento",
+        "apollo_get_ratings",
+        "apollo_get_voter_list",
+        "apollo_submit_depoimento",
+        "apollo_submit_rating",
+        "apollo_update_profile",
+        "apollo_upload_avatar",
+        "apollo_upload_cover"
+      ],
+      "nopriv": []
+    },
+    "cron": [
+      "five_minutes"
+    ],
+    "shortcodes": [
+      "apollo_matchmaking",
+      "apollo_profile",
+      "apollo_profile_edit",
+      "apollo_profile_fields",
+      "apollo_radar",
+      "apollo_user_card"
+    ],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [
+        "apollo-users-profile"
+      ],
+      "styles": [
+        "apollo-users-edit-profile",
+        "apollo-users-profile",
+        "apollo-users-radar"
+      ]
+    },
+    "options": [
+      "_apollo_matchmaking_dirty_pairs",
+      "apollo_users_activated",
+      "apollo_users_block_author_enum",
+      "apollo_users_default_privacy",
+      "apollo_users_delete_data_on_uninstall",
+      "apollo_users_profile_slug",
+      "apollo_users_radar_slug",
+      "apollo_users_settings",
+      "apollo_users_version"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_USERS_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_USERS_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_USERS_DIR",
+        "value": "plugin_dir_path(__FILE__"
+      },
+      {
+        "name": "APOLLO_USERS_URL",
+        "value": "plugin_dir_url(__FILE__"
+      },
+      {
+        "name": "APOLLO_USERS_BASENAME",
+        "value": "plugin_basename(__FILE__"
+      },
+      {
+        "name": "APOLLO_USERS_REST_NAMESPACE",
+        "value": "apollo/v1"
+      },
+      {
+        "name": "APOLLO_USERS_TABLE_MATCHMAKING",
+        "value": "apollo_matchmaking"
+      },
+      {
+        "name": "APOLLO_USERS_TABLE_FIELDS",
+        "value": "apollo_user_fields"
+      },
+      {
+        "name": "APOLLO_USERS_TABLE_PROFILE_VIEWS",
+        "value": "apollo_profile_views"
+      },
+      {
+        "name": "APOLLO_USERS_TABLE_RATINGS",
+        "value": "apollo_user_ratings"
+      },
+      {
+        "name": "APOLLO_USERS_TABLE_MATCHMAKING_SCORES",
+        "value": "apollo_matchmaking_scores"
+      },
+      {
+        "name": "APOLLO_USERS_PROFILE_SLUG",
+        "value": "id"
+      },
+      {
+        "name": "APOLLO_USERS_MEMBERSHIP_TYPES",
+        "value": "array(\r\n\t\t'nao-verificado' => 'Não Verificado',\r\n\t"
+      },
+      {
+        "name": "APOLLO_USERS_PRIVACY_LEVELS",
+        "value": "array(\r\n\t\t'public'  => 'Público',\r\n\t\t'members' => "
+      }
+    ],
+    "security": {
+      "php_files": 30,
+      "abspath_guard_files": 28,
+      "abspath_coverage_pct": 93,
+      "wpdb_prepare_calls": 39,
+      "wpdb_query_calls": 40,
+      "prepare_to_query_ratio": 0.97,
+      "nonce_checks": 15,
+      "current_user_can_calls": 10,
+      "raw_superglobal": {
+        "get": 12,
+        "post": 24,
+        "request": 0
+      },
+      "permission_callback_return_true": 5,
+      "escape_helpers": 194,
+      "echo_statements": 225,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 33,
+      "risk_band": "MEDIUM",
+      "rest_permission_critical": 1,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 4,
+      "rest_open_critical": 1,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 5
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core",
+        "apollo-login",
+        "apollo-membership",
+        "apollo-social",
+        "apollo-templates"
+      ],
+      "signals": [
+        "apollo-core",
+        "apollo-login",
+        "apollo-membership",
+        "apollo-social",
+        "apollo-templates"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.0.1",
+      "version_changed": false,
+      "old_rest": 15,
+      "live_rest": 23,
+      "old_pages": 3,
+      "live_pages": 3,
+      "new_plugin": false
+    }
+  },
+  "security_remediation": {
+    "note": "P1: public profile payloads strip email/phone; privacy gate on all public reads",
+    "public_email": false,
+    "last_updated": "2026-07-20"
+  },
+  "canvas_contract": {
+    "variant": "plus",
+    "action": "FIXED",
+    "shape": "body-helper",
+    "audited": "2026-07-28",
+    "ref": "$canvas_shell.plugins.apollo-users"
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 30,
+    "php_loc": 13225,
+    "rest_routes_found": 17,
+    "cpts_found": [],
+    "tables_found": [
+      "apollo_activity",
+      "apollo_chat_messages",
+      "apollo_chat_participants",
+      "apollo_event_rsvp",
+      "apollo_favs",
+      "apollo_group_members",
+      "apollo_matchmaking",
+      "apollo_profile_views",
+      "apollo_user_fields",
+      "apollo_user_ratings",
+      "apollo_wows"
+    ],
+    "shortcodes_found": [
+      "apollo_matchmaking",
+      "apollo_profile",
+      "apollo_profile_edit",
+      "apollo_profile_fields",
+      "apollo_radar",
+      "apollo_user_card"
+    ]
+  }
+}

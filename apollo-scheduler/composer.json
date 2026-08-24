@@ -1,0 +1,18 @@
+{
+    "name": "apollo/apollo-scheduler",
+    "description": "Luxury Apollo-native appointment scheduling with nucleo-scoped agents, rooms, and availability engine",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Apollo\\Scheduler\\": "src/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    }
+}

@@ -1,0 +1,91 @@
+{
+    "slug": "apollo-remind",
+    "namespace": "Apollo\\Remind",
+    "version": "1.0.0",
+    "priority": 4,
+    "status": "IMPLEMENTED",
+    "layer": "L4_communication",
+    "description": "Multi-channel personal calendar reminders — Telegram Bot (webhook + commands), Web Push (VAPID/RFC 8292 via minishlink/web-push), in-app (apollo-notif), email (apollo-email). Per-user reminder calendar with 2-min WP-Cron queue, recurrence, delivery log, auto-RSVP reminders.",
+    "dependencies": ["apollo-core"],
+    "optional_integration": ["apollo-notif", "apollo-email", "apollo-events"],
+    "provides": [
+        "personal-calendar-reminders",
+        "telegram-bot-reminders",
+        "web-push-reminders",
+        "email-reminders",
+        "in-app-reminders",
+        "reminder-recurrence",
+        "delivery-audit-log",
+        "event-rsvp-auto-remind"
+    ],
+    "cpts": [],
+    "taxonomies": [],
+    "tables": [
+        "apollo_reminders",
+        "apollo_remind_telegram",
+        "apollo_remind_push_subs",
+        "apollo_remind_log"
+    ],
+    "rest": [
+        { "endpoint": "/remind",                      "methods": ["GET", "POST"],    "description": "List/Create reminders", "auth": true },
+        { "endpoint": "/remind/{id}",                 "methods": ["GET", "PUT", "DELETE"], "description": "CRUD reminder", "auth": true },
+        { "endpoint": "/remind/calendar",             "methods": ["GET"],            "description": "Calendar view (date range)", "auth": true },
+        { "endpoint": "/remind/channels",             "methods": ["GET"],            "description": "Available channels for user", "auth": true },
+        { "endpoint": "/remind/telegram/link",        "methods": ["POST"],           "description": "Link Telegram via code", "auth": true },
+        { "endpoint": "/remind/telegram/status",      "methods": ["GET"],            "description": "Telegram link status", "auth": true },
+        { "endpoint": "/remind/telegram/webhook",     "methods": ["POST"],           "description": "Telegram Bot webhook (public)", "auth": false },
+        { "endpoint": "/remind/push/subscribe",       "methods": ["POST"],           "description": "Subscribe Web Push device", "auth": true },
+        { "endpoint": "/remind/push/unsubscribe",     "methods": ["DELETE"],         "description": "Unsubscribe Web Push", "auth": true },
+        { "endpoint": "/remind/push/vapid-key",       "methods": ["GET"],            "description": "Get VAPID public key", "auth": false }
+    ],
+    "hooks": {
+        "fires": [
+            "apollo/remind/created",
+            "apollo/remind/sent",
+            "apollo/remind/failed"
+        ],
+        "listens": [
+            "apollo/event/rsvp",
+            "apollo/event/published"
+        ]
+    },
+    "cron": {
+        "apollo_remind_process_queue": {
+            "schedule": "apollo_remind_two_minutes",
+            "interval": 120,
+            "description": "Process due reminders — dispatches to Telegram, Push, Email, Notif channels. Batch 50, max 3 attempts."
+        },
+        "apollo_remind_daily_cleanup": {
+            "schedule": "daily",
+            "description": "Purge sent/cancelled/failed reminders older than 90 days + their delivery logs."
+        }
+    },
+    "telegram_commands": [
+        { "command": "/start",     "description": "Welcome + instructions" },
+        { "command": "/link",      "description": "Generate 6-char code to link WP account (15min TTL)" },
+        { "command": "/remind",    "description": "/remind HH:MM message — quick-create reminder (BRT timezone)" },
+        { "command": "/reminders", "description": "List next 10 pending reminders" },
+        { "command": "/cancel",    "description": "/cancel {id} — cancel a pending reminder" },
+        { "command": "/help",      "description": "Show available commands" }
+    ],
+    "channels": {
+        "telegram": {
+            "library": "wp_remote_post (native WP HTTP API)",
+            "api": "https://api.telegram.org/bot{TOKEN}/sendMessage",
+            "features": ["Markdown formatting", "Deep links to events", "Auto-deactivate on 403 (blocked)"]
+        },
+        "push": {
+            "library": "minishlink/web-push (optional, recommended for production)",
+            "standard": "VAPID / RFC 8292",
+            "features": ["Per-device subscriptions", "Auto-cleanup expired endpoints", "Fallback mode without library"]
+        },
+        "email": {
+            "library": "apollo-email (preferred) or wp_mail() fallback",
+            "features": ["HTML template", "Deep links"]
+        },
+        "notif": {
+            "library": "Direct insert to apollo_notifications table",
+            "features": ["Unread count increment", "In-app real-time via apollo-notif polling"]
+        }
+    }
+}

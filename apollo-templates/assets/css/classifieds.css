@@ -1,0 +1,408 @@
+/**
+ * Apollo Templates — Classificados Page Template (V2)
+ *
+ * Page-level layout for the Classificados/Marketplace page.
+ * Card-level styles live in apollo-adverts/assets/css/classifieds.css.
+ * Uses av2-design-system.css tokens.
+ *
+ * @package Apollo\Templates
+ * @since   2.0.0
+ */
+
+/* ═══════════════════════════════════════════════════════════
+   PAGE CONTAINER
+   ═══════════════════════════════════════════════════════════ */
+
+body.page-classifieds {
+    background: var(--av2-bg, #ffffff);
+    color: var(--av2-black, #121214);
+    font-family: var(--av2-ff-main, "Space Grotesk", system-ui, sans-serif);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
+}
+
+.classifieds-container {
+    max-width: var(--av2-max-w, 1280px);
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PAGE HEADER
+   ═══════════════════════════════════════════════════════════ */
+
+.classifieds-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--av2-border, #e4e4e7);
+    flex-wrap: wrap;
+}
+
+.classifieds-header-content {
+    flex: 1;
+}
+
+.classifieds-title {
+    font-family: var(--av2-ff-main, sans-serif);
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 700;
+    color: var(--av2-black, #121214);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin: 0 0 8px;
+}
+
+.classifieds-title i {
+    color: var(--av2-primary, FF9820);
+}
+
+.classifieds-subtitle {
+    font-family: var(--av2-ff-mono, "Space Mono", monospace);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--av2-grey, #666);
+    margin: 0;
+}
+
+/* ── CTA Button (v2 fill animation) ── */
+.btn-create-ad {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    background: var(--av2-black, #121214);
+    color: #fff;
+    text-decoration: none;
+    border-radius: var(--av2-r-sm, 8px);
+    font-family: var(--av2-ff-main, sans-serif);
+    font-weight: 600;
+    font-size: 14px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-create-ad::before {
+    content: '';
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 100%; height: 100%;
+    background: var(--av2-primary, FF9820);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-create-ad:hover::before {
+    transform: scaleY(1);
+}
+
+.btn-create-ad span,
+.btn-create-ad i {
+    position: relative;
+    z-index: 1;
+}
+
+.btn-create-ad:hover {
+    color: #fff;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FILTERS BAR
+   ═══════════════════════════════════════════════════════════ */
+
+.classifieds-filters {
+    background: var(--av2-surface, #f4f4f5);
+    border: 1px solid var(--av2-border, #e4e4e7);
+    border-radius: var(--av2-radius, 16px);
+    padding: 20px 24px;
+    margin-bottom: 32px;
+}
+
+.filters-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+.filter-search {
+    position: relative;
+    flex: 1 1 280px;
+}
+
+.filter-search i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: var(--av2-grey, #666);
+    pointer-events: none;
+}
+
+.search-input,
+.filter-select {
+    width: 100%;
+    padding: 10px 14px 10px 40px;
+    border: 1px solid var(--av2-border, #e4e4e7);
+    border-radius: var(--av2-r-sm, 8px);
+    font-family: var(--av2-ff-main, sans-serif);
+    font-size: 14px;
+    color: var(--av2-black, #121214);
+    background: var(--av2-bg, #fff);
+    transition: border-color 0.15s ease;
+    outline: none;
+}
+
+.filter-select {
+    padding-left: 14px;
+    cursor: pointer;
+}
+
+.search-input:focus,
+.filter-select:focus {
+    border-color: var(--av2-primary, FF9820);
+}
+
+.filter-dropdown {
+    flex: 0 1 180px;
+}
+
+.filter-btn-submit,
+.filter-btn-clear {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border-radius: var(--av2-r-sm, 8px);
+    font-family: var(--av2-ff-main, sans-serif);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    border: none;
+}
+
+.filter-btn-submit {
+    background: var(--av2-black, #121214);
+    color: #fff;
+}
+
+.filter-btn-submit:hover {
+    background: var(--av2-primary, FF9820);
+}
+
+.filter-btn-clear {
+    background: transparent;
+    border: 1px solid var(--av2-border, #e4e4e7);
+    color: var(--av2-grey, #666);
+}
+
+.filter-btn-clear:hover {
+    border-color: var(--av2-black, #121214);
+    color: var(--av2-black, #121214);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESULTS STATS
+   ═══════════════════════════════════════════════════════════ */
+
+.classifieds-results-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.results-count {
+    font-family: var(--av2-ff-mono, monospace);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--av2-grey, #666);
+}
+
+.results-view-toggle {
+    display: flex;
+    gap: 4px;
+}
+
+.view-btn {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--av2-r-sm, 8px);
+    border: 1px solid var(--av2-border, #e4e4e7);
+    background: transparent;
+    color: var(--av2-grey, #666);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.view-btn.active,
+.view-btn:hover {
+    background: var(--av2-black, #121214);
+    color: #fff;
+    border-color: var(--av2-black, #121214);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   GRID LAYOUT (wraps apollo-adverts cards)
+   ═══════════════════════════════════════════════════════════ */
+
+.classifieds-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 32px;
+    justify-items: center;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CATEGORIES SIDEBAR
+   ═══════════════════════════════════════════════════════════ */
+
+.classifieds-sidebar {
+    margin-bottom: 40px;
+}
+
+.classifieds-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.classifieds-categories li a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: var(--av2-r-pill, 100px);
+    border: 1px solid var(--av2-border, #e4e4e7);
+    font-family: var(--av2-ff-main, sans-serif);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--av2-grey, #666);
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+
+.classifieds-categories li a:hover,
+.classifieds-categories li.current a {
+    background: var(--av2-black, #121214);
+    color: #fff;
+    border-color: var(--av2-black, #121214);
+}
+
+.classifieds-categories li a .count {
+    font-family: var(--av2-ff-mono, monospace);
+    font-size: 10px;
+    opacity: 0.6;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PAGINATION
+   ═══════════════════════════════════════════════════════════ */
+
+.classifieds-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 48px;
+}
+
+.classifieds-pagination a,
+.classifieds-pagination span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 10px;
+    border-radius: var(--av2-r-sm, 8px);
+    border: 1px solid var(--av2-border, #e4e4e7);
+    background: transparent;
+    color: var(--av2-black, #121214);
+    font-family: var(--av2-ff-mono, monospace);
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+
+.classifieds-pagination a:hover {
+    background: var(--av2-black, #121214);
+    color: #fff;
+    border-color: var(--av2-black, #121214);
+}
+
+.classifieds-pagination .current {
+    background: var(--av2-primary, FF9820);
+    color: #fff;
+    border-color: var(--av2-primary, FF9820);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   EMPTY STATE
+   ═══════════════════════════════════════════════════════════ */
+
+.classifieds-empty-state {
+    text-align: center;
+    padding: 80px 24px;
+    grid-column: 1 / -1;
+}
+
+.classifieds-empty-state i {
+    font-size: 48px;
+    color: var(--av2-border, #e4e4e7);
+    margin-bottom: 16px;
+}
+
+.classifieds-empty-state h3 {
+    font-family: var(--av2-ff-main, sans-serif);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--av2-black, #121214);
+    margin-bottom: 8px;
+}
+
+.classifieds-empty-state p {
+    font-size: 14px;
+    color: var(--av2-grey, #666);
+    margin-bottom: 24px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+    .classifieds-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .filters-form {
+        flex-direction: column;
+    }
+
+    .filter-search,
+    .filter-dropdown {
+        flex: 1 1 100%;
+    }
+
+    .classifieds-grid {
+        grid-template-columns: 1fr;
+    }
+}

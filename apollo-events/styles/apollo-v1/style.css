@@ -1,0 +1,304 @@
+/**
+ * Apollo V1 Style — Berlin Brutalism Design
+ * Estilo dark, high-contrast, tipografia bold, influência club scene Berlin.
+ * CSS prefix: a-eve-
+ *
+ * @package Apollo\Event
+ */
+
+:root {
+	--a-eve-primary: #fff;
+	--a-eve-secondary: #999;
+	--a-eve-accent: #ff3366;
+	--a-eve-bg: #111;
+	--a-eve-bg-alt: #1a1a1a;
+	--a-eve-border: #333;
+	--a-eve-radius: 2px;
+	--a-eve-shadow: 0 0 0 1px rgba(var(--rgb-t),.05);
+	--a-eve-gap: 20px;
+	--a-eve-font: 'Inter', 'Helvetica Neue', sans-serif;
+}
+
+/* ─── Card: Apollo V1 ───────────────────────────────────────────────── */
+.a-eve-card {
+	background: var(--a-eve-bg);
+	border: 1px solid var(--a-eve-border);
+	border-radius: var(--a-eve-r);
+	overflow: hidden;
+	transition: border-color .3s;
+	font-family: var(--a-eve-font);
+}
+
+.a-eve-card:hover {
+	border-color: var(--a-eve-accent);
+	transform: none;
+	box-shadow: 0 0 20px rgba(255, 51, 102, .15);
+}
+
+.a-eve-card__banner img {
+	filter: grayscale(.3) contrast(1.1);
+	transition: filter .3s;
+}
+
+.a-eve-card:hover .a-eve-card__banner img {
+	filter: grayscale(0) contrast(1);
+}
+
+.a-eve-card__status {
+	background: var(--a-eve-accent);
+	font-family: var(--a-eve-font);
+	font-weight: 800;
+	letter-spacing: .08em;
+	text-transform: uppercase;
+	font-size: .7rem;
+	border-radius: 0;
+}
+
+.a-eve-card__body {
+	padding: var(--a-eve-gap);
+	color: var(--a-eve-primary);
+}
+
+.a-eve-card__date {
+	color: var(--a-eve-accent);
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: .05em;
+	font-size: .8rem;
+}
+
+.a-eve-card__title {
+	font-size: 1.3rem;
+	font-weight: 900;
+	text-transform: uppercase;
+	letter-spacing: -.02em;
+	line-height: 1.1;
+}
+
+.a-eve-card__title a {
+	color: var(--a-eve-primary);
+}
+
+.a-eve-card__title a:hover {
+	color: var(--a-eve-accent);
+}
+
+.a-eve-card__meta {
+	color: var(--a-eve-secondary);
+	font-size: .8rem;
+}
+
+.a-eve-card__sound-tag {
+	background: transparent;
+	border: 1px solid var(--a-eve-accent);
+	color: var(--a-eve-accent);
+	border-radius: 0;
+	font-size: .7rem;
+	text-transform: uppercase;
+	letter-spacing: .05em;
+	font-weight: 700;
+}
+
+.a-eve-card__footer {
+	border-top: 1px solid var(--a-eve-border);
+	padding: 12px var(--a-eve-gap);
+}
+
+.a-eve-card__ticket {
+	background: var(--a-eve-accent);
+	border-radius: 0;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: .08em;
+	font-size: .8rem;
+}
+
+.a-eve-card__ticket:hover {
+	background: #fff;
+	color: #111;
+}
+
+.a-eve-card__price {
+	color: var(--a-eve-primary);
+	font-weight: 800;
+}
+
+/* ─── Gone ──────────────────────────────────────────────────────────── */
+.a-eve-gone {
+	opacity: .35;
+	filter: grayscale(1);
+}
+
+/* ─── List: Apollo V1 ───────────────────────────────────────────────── */
+.a-eve-list-item {
+	border-bottom: 1px solid var(--a-eve-border);
+	color: var(--a-eve-primary);
+	font-family: var(--a-eve-font);
+}
+
+.a-eve-list-item:hover {
+	background: var(--a-eve-bg-alt);
+	border-color: var(--a-eve-accent);
+}
+
+.a-eve-list-item__day {
+	color: var(--a-eve-accent);
+	font-weight: 900;
+	font-size: 2rem;
+}
+
+.a-eve-list-item__month {
+	color: var(--a-eve-secondary);
+	font-weight: 800;
+	letter-spacing: .1em;
+}
+
+.a-eve-list-item__title a {
+	color: var(--a-eve-primary);
+	text-transform: uppercase;
+	font-weight: 800;
+	letter-spacing: -.01em;
+}
+
+.a-eve-list-item__details {
+	color: var(--a-eve-secondary);
+}
+
+/* ─── Calendar: Apollo V1 ───────────────────────────────────────────── */
+.a-eve-calendar {
+	font-family: var(--a-eve-font);
+	color: var(--a-eve-primary);
+}
+
+.a-eve-cal-header {
+	background: var(--a-eve-bg-alt);
+	border: 1px solid var(--a-eve-border);
+}
+
+.a-eve-cal-title {
+	font-weight: 900;
+	text-transform: uppercase;
+	letter-spacing: .05em;
+}
+
+.a-eve-cal-nav {
+	background: transparent;
+	border: 1px solid var(--a-eve-border);
+	color: var(--a-eve-primary);
+	cursor: pointer;
+	padding: 4px 12px;
+	font-weight: 800;
+}
+
+.a-eve-cal-nav:hover {
+	border-color: var(--a-eve-accent);
+	color: var(--a-eve-accent);
+}
+
+.a-eve-cal-dow {
+	color: var(--a-eve-secondary);
+	font-weight: 800;
+	text-transform: uppercase;
+	font-size: .7rem;
+	letter-spacing: .1em;
+}
+
+.a-eve-cal-day {
+	border: 1px solid transparent;
+	color: var(--a-eve-secondary);
+}
+
+.a-eve-cal-day--has-event {
+	border-color: var(--a-eve-accent);
+	color: var(--a-eve-primary);
+	cursor: pointer;
+}
+
+.a-eve-cal-day--today {
+	background: var(--a-eve-accent);
+	color: #fff;
+}
+
+.a-eve-cal-dot {
+	background: var(--a-eve-accent);
+}
+
+/* ─── Single: Apollo V1 ─────────────────────────────────────────────── */
+.a-eve-single {
+	font-family: var(--a-eve-font);
+	color: var(--a-eve-primary);
+	background: var(--a-eve-bg);
+}
+
+.a-eve-single__title {
+	font-size: 2.5rem;
+	font-weight: 900;
+	text-transform: uppercase;
+	letter-spacing: -.03em;
+	line-height: 1;
+}
+
+.a-eve-single__banner img {
+	filter: grayscale(.2) contrast(1.1);
+}
+
+.a-eve-single__info-box {
+	background: var(--a-eve-bg-alt);
+	border: 1px solid var(--a-eve-border);
+	border-radius: 0;
+}
+
+.a-eve-single__info-box h4 {
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: .05em;
+}
+
+.a-eve-single__dj {
+	border: 1px solid var(--a-eve-border);
+}
+
+.a-eve-single__dj:hover {
+	border-color: var(--a-eve-accent);
+}
+
+/* ─── Archive: Apollo V1 ────────────────────────────────────────────── */
+.a-eve-archive {
+	background: var(--a-eve-bg);
+	font-family: var(--a-eve-font);
+	color: var(--a-eve-primary);
+}
+
+.a-eve-archive__title {
+	font-weight: 900;
+	text-transform: uppercase;
+	letter-spacing: -.02em;
+}
+
+.a-eve-view-btn {
+	background: transparent;
+	border: 1px solid var(--a-eve-border);
+	color: var(--a-eve-secondary);
+	cursor: pointer;
+}
+
+.a-eve-view-btn--active,
+.a-eve-view-btn:hover {
+	border-color: var(--a-eve-accent);
+	color: var(--a-eve-accent);
+}
+
+/* ─── Grid ──────────────────────────────────────────────────────────── */
+.a-eve-events--card {
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	gap: 2px;
+}
+
+@media (max-width: 768px) {
+	.a-eve-single__title {
+		font-size: 1.8rem;
+	}
+	.a-eve-events--card {
+		grid-template-columns: 1fr;
+	}
+}

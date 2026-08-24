@@ -1,0 +1,152 @@
+{
+  "$chapter": {
+    "id": "20-meta-schemas",
+    "owner": "apollo-core",
+    "keys": [
+      "$meta_schemas"
+    ],
+    "source": "apollo-core/src/Core/MetaRegistry.php — structured (array-of-object) post meta whose shape is nontrivial enough to need its own contract doc, starting with _dj_tracks.",
+    "merge": "deep_merge_last_wins",
+    "note": "Structured post-meta schema contracts. _dj_tracks v2: registered 2026-07-28, both write paths (REST + admin UI) now consistent; front-end read/display path is the one remaining known_gap."
+  },
+  "$meta_schemas": {
+    "_dj_tracks": {
+      "cpt": "dj",
+      "registered_in": "apollo-core/src/Core/MetaRegistry.php — post_meta['dj']['_dj_tracks']",
+      "registered_version": "apollo-core 6.2.4",
+      "date": "2026-07-28",
+      "schema_version": "v2",
+      "supersedes": "v1 shape {title,url,year,duration} — still the ONLY shape the front-end reads, see known_gap below.",
+      "type": "array of objects",
+      "fields": {
+        "title": {
+          "type": "string",
+          "required": true,
+          "note": "Track title."
+        },
+        "artists": {
+          "type": "string",
+          "required": true,
+          "note": "Featured/credited artists."
+        },
+        "duration": {
+          "type": "string",
+          "required": true,
+          "note": "mm:ss, e.g. \"3:42\"."
+        },
+        "bpm": {
+          "type": "integer",
+          "required": false,
+          "note": ""
+        },
+        "release_date": {
+          "type": "string",
+          "required": false,
+          "note": "Y-m-d. Drives sort order and the \"latest -> landing\" pull."
+        },
+        "album": {
+          "type": "string",
+          "required": false,
+          "note": ""
+        },
+        "label": {
+          "type": "string",
+          "required": false,
+          "note": "Record label."
+        },
+        "genre": {
+          "type": "string",
+          "required": false,
+          "note": ""
+        },
+        "cover_url": {
+          "type": "string",
+          "required": false,
+          "note": "External cover image URL."
+        },
+        "cover_id": {
+          "type": "integer",
+          "required": false,
+          "note": "WP attachment ID, alternative to cover_url."
+        },
+        "url_soundcloud": {
+          "type": "string",
+          "required": "conditional",
+          "note": "At least one of the 4 url_* fields is mandatory per row."
+        },
+        "url_spotify": {
+          "type": "string",
+          "required": "conditional",
+          "note": ""
+        },
+        "url_bandcamp": {
+          "type": "string",
+          "required": "conditional",
+          "note": ""
+        },
+        "url_download": {
+          "type": "string",
+          "required": "conditional",
+          "note": "Free direct download."
+        }
+      },
+      "validation": {
+        "mandatory_per_row": [
+          "title",
+          "artists",
+          "duration"
+        ],
+        "mandatory_at_least_one": [
+          "url_soundcloud",
+          "url_spotify",
+          "url_bandcamp",
+          "url_download"
+        ],
+        "sort": "newest first by release_date",
+        "enforced_by": "apollo_dj_sanitize_tracks_meta() in apollo-djs/includes/functions.php"
+      },
+      "write_paths": {
+        "rest_api": {
+          "status": "ENFORCED",
+          "note": "Runs through WP's sanitize_meta(), which calls the registered sanitize_callback."
+        },
+        "admin_metabox": {
+          "status": "MIGRATED 2026-07-28",
+          "file": "apollo-lux-panels/includes/DjPanel.php (Faixas card) + Panel.php (repeater_card type)",
+          "note": "Renders all 14 v2 fields on the Apollo dark design system (repeater_card field type, new this pass) and runs apollo_dj_sanitize_tracks_meta() as its save-time sanitize_callback — same function the REST path uses, so both surfaces enforce identical rules."
+        }
+      },
+      "read_paths": {
+        "apollo_dj_get_tracks()": {
+          "file": "apollo-djs/includes/functions.php",
+          "status": "NOT YET MIGRATED",
+          "note": "Reads only title/url/year/duration."
+        },
+        "templates": {
+          "files": [
+            "apollo-djs/templates/parts/dj-card/out-now.php",
+            "apollo-djs/templates/parts/dj-card/out-now-lightbox.php",
+            "apollo-djs/templates/parts/dj-v3/sounds.php"
+          ],
+          "status": "NOT YET MIGRATED"
+        },
+        "rest_controller": {
+          "file": "apollo-djs/src/API/DJsController.php",
+          "status": "NOT AUDITED THIS PASS"
+        }
+      },
+      "known_gap": "Front-end display only: apollo_dj_get_tracks() and the out-now/out-now-lightbox/sounds templates still read the v1 shape (title/url/year/duration). A track saved via REST or the now-migrated admin metabox validates and stores correctly in v2, but will render blank on the public /dj/{id} page until the normalizer + templates are migrated to v2. Both write paths (REST, admin UI) are now fully v2 and mutually consistent — this is a read-side gap only.",
+      "duplicate_metabox_found": {
+        "date": "2026-07-28",
+        "finding": "apollo-djs' own Admin\\Metabox (6 plain wp-admin boxes: info/links/tracks/gallery/booking/config) duplicated apollo-lux-panels' DjPanel field-for-field — both active simultaneously, both writing the same meta keys, with _dj_tracks specifically having TWO competing editors on one edit screen using different schemas.",
+        "root_cause": "apollo-lux-panels was built to supersede it (its main file even forces '#apollo_lux_panel{order:-999}' to sit above every other metabox) but the old class was never disabled.",
+        "fix": "Closed apollo-lux-panels' 5-field parity gap (_dj_name, _dj_statement, _dj_original_project_1..3), then guarded apollo-djs' Metabox behind class_exists('\\Apollo\\LuxPanels\\DjPanel') in src/Plugin.php — disabled in the normal running state, falls back automatically if apollo-lux-panels is ever deactivated."
+      },
+      "versions_bumped": {
+        "apollo-core": "6.2.3 -> 6.2.4 (schema registration)",
+        "apollo-djs": "1.0.1 -> 1.0.2 (sanitizer) -> 1.0.3 (metabox retirement)",
+        "apollo-lux-panels": "1.0.0 -> 1.0.1 (repeater_card type + DjPanel v2 UI + 5-field parity)"
+      }
+    }
+  }
+}

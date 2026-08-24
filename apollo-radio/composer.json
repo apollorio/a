@@ -1,0 +1,18 @@
+{
+    "name": "apollo/radio",
+    "description": "Apollo Radio: SoundCloud-powered radio with schedule and proxy",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Apollo\\Radio\\": "src/"
+        }
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true
+    }
+}

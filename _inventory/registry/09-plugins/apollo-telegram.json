@@ -1,0 +1,1447 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-telegram",
+    "owner": "apollo-telegram",
+    "wrap": "plugins.apollo-telegram",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-telegram",
+  "namespace": "Apollo\\Telegram",
+  "priority": 50,
+  "status": "IMPLEMENTED",
+  "version": "1.1.2",
+  "description": "Apollo Telegram Bot - Independent test plugin for Telegram Bot integration with Apollo Rio. Test mode only. No registry involvement yet.",
+  "dependencies": [
+    "apollo-core",
+    "apollo-events"
+  ],
+  "provides": [
+    "telegram",
+    "rest-api",
+    "db"
+  ],
+  "cpts": [
+    "event"
+  ],
+  "taxonomies": [],
+  "tables": [
+    "apollo_telegram_verif"
+  ],
+  "meta": {
+    "post": {
+      "_event_loc_id": {
+        "_source": "deep_scan"
+      },
+      "_event_start_date": {
+        "_source": "deep_scan"
+      },
+      "_event_start_time": {
+        "_source": "deep_scan"
+      },
+      "_event_ticket_price": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {
+      "_telegram_user_id": {
+        "_source": "deep_scan"
+      },
+      "_telegram_username": {
+        "_source": "deep_scan"
+      }
+    },
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/request-support-verification",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo-telegram/v1 (CUSTOM_LOGIC)",
+      "auth": "CUSTOM_LOGIC",
+      "permission_risk": "REVIEW",
+      "permission_method": "permission_verify_nonce",
+      "permission_binding": "VerificationController::permission_verify_nonce",
+      "permission_summary": "Custom permission logic; returns: apollo_telegram_verify_rest_nonce($request)",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return apollo_telegram_verify_rest_nonce($request);",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo-telegram/v1",
+      "file": "src/API/VerificationController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/verify-support-code",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo-telegram/v1 (CUSTOM_LOGIC)",
+      "auth": "CUSTOM_LOGIC",
+      "permission_risk": "REVIEW",
+      "permission_method": "permission_verify_nonce",
+      "permission_binding": "VerificationController::permission_verify_nonce",
+      "permission_summary": "Custom permission logic; returns: apollo_telegram_verify_rest_nonce($request)",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return apollo_telegram_verify_rest_nonce($request);",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo-telegram/v1",
+      "file": "src/API/VerificationController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/verification-status",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo-telegram/v1 (CUSTOM_LOGIC)",
+      "auth": "CUSTOM_LOGIC",
+      "permission_risk": "REVIEW",
+      "permission_method": "permission_verify_nonce",
+      "permission_binding": "VerificationController::permission_verify_nonce",
+      "permission_summary": "Custom permission logic; returns: apollo_telegram_verify_rest_nonce($request)",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return apollo_telegram_verify_rest_nonce($request);",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo-telegram/v1",
+      "file": "src/API/VerificationController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/poll-tick",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo-telegram/v1 (CUSTOM_LOGIC)",
+      "auth": "CUSTOM_LOGIC",
+      "permission_risk": "REVIEW",
+      "permission_method": "permission_verify_nonce",
+      "permission_binding": "VerificationController::permission_verify_nonce",
+      "permission_summary": "Custom permission logic; returns: apollo_telegram_verify_rest_nonce($request)",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return apollo_telegram_verify_rest_nonce($request);",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo-telegram/v1",
+      "file": "src/API/VerificationController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/check-phone-available",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo-telegram/v1 (CUSTOM_LOGIC)",
+      "auth": "CUSTOM_LOGIC",
+      "permission_risk": "REVIEW",
+      "permission_method": "permission_verify_nonce",
+      "permission_binding": "VerificationController::permission_verify_nonce",
+      "permission_summary": "Custom permission logic; returns: apollo_telegram_verify_rest_nonce($request)",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return apollo_telegram_verify_rest_nonce($request);",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo-telegram/v1",
+      "file": "src/API/VerificationController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/telegram",
+      "methods": [
+        "?"
+      ],
+      "description": "Live apollo-telegram/v1 (ALWAYS_DENY)",
+      "auth": "ALWAYS_DENY",
+      "permission_risk": "LOW",
+      "permission_method": "permission_legacy_debug",
+      "permission_binding": "VerificationController::permission_legacy_debug",
+      "permission_summary": "Returns false (deny-all or stub)",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "if (! defined('WP_DEBUG') || ! WP_DEBUG) { return false; } return apollo_telegram_verify_rest_nonce($request);",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo-telegram/v1",
+      "file": "src/API/VerificationController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/broadcast",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo-telegram/v1 (ADMIN_CAPABILITY)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can('manage_options');",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo-telegram/v1",
+      "file": "src/API/VerificationController.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "pages": [
+    {
+      "slug": "telegram",
+      "rewrite": "^telegram/?$",
+      "query": "index.php?apollo_telegram_test=1",
+      "query_vars": [
+        "apollo_telegram_test=1"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "telegram",
+      "rewrite": "^telegram/?$",
+      "query": "index.php?apollo_telegram_test=1",
+      "query_vars": [
+        "apollo_telegram_test=1"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    }
+  ],
+  "shortcodes": [],
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [],
+  "hooks_listened": [
+    "apollo/error/should_intercept",
+    "apollo_clean_expired_verifs"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [
+      "APOLLO_TELEGRAM_admin"
+    ],
+    "styles": [
+      "APOLLO_TELEGRAM_admin"
+    ]
+  },
+  "options": [
+    "apollo_telegram_linked_chats",
+    "apollo_telegram_options",
+    "apollo_telegram_rewrites_ver",
+    "apollo_tg_debug_start_trail"
+  ],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 15,
+    "abspath_coverage_pct": 24,
+    "rest_open_routes": 0,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 0,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 7,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 0.82
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_clean_expired_verifs",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_telegram_debug_log",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_telegram_verif",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_telegram_verify",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [
+    {
+      "pattern": "^telegram/?$",
+      "query": "index.php?apollo_telegram_test=1"
+    },
+    {
+      "pattern": "^telegram/?$",
+      "query": "index.php?apollo_telegram_test=1"
+    }
+  ],
+  "query_vars": [
+    "apollo_telegram_test"
+  ],
+  "php_surface": {
+    "files": 58,
+    "loc": 9880,
+    "classes": 47,
+    "functions": 15
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:51.874Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 241,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-telegram",
+    "main_file": "apollo-telegram.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Telegram",
+      "plugin_uri": "https://apollo.rio.br",
+      "description": "Apollo Telegram Bot - Independent test plugin for Telegram Bot integration with Apollo Rio. Test mode only. No registry involvement yet.",
+      "version": "1.1.1",
+      "author": "Apollo Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "GPL-2.0-or-later",
+      "text_domain": "apollo-telegram",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": null
+    },
+    "composer": {
+      "name": null,
+      "namespaces": [
+        "Apollo\\Telegram"
+      ],
+      "require": {
+        "longman/telegram-bot": "*",
+        "monolog/monolog": "2.x-dev"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".none": 3,
+        ".php": 58,
+        ".md": 9,
+        ".css": 1,
+        ".js": 1,
+        ".json": 1,
+        ".lock": 1,
+        ".phar": 1,
+        ".log": 5,
+        ".ffs_db": 1
+      },
+      "by_top_directory": {
+        "(root)": 16,
+        "assets": 2,
+        "docs": 2,
+        "includes": 2,
+        "logs": 5,
+        "src": 47,
+        "views": 7
+      },
+      "total_bytes": 4091295
+    },
+    "php": {
+      "files": 58,
+      "loc": 9880,
+      "classes": 47,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 15
+    },
+    "architecture": {
+      "namespace": "Apollo\\Telegram",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "BaseEndpoint",
+          "fqcn": "Apollo\\Telegram\\API\\BaseEndpoint",
+          "extends": null,
+          "implements": [],
+          "modifiers": "abstract",
+          "file": "src/API/BaseEndpoint.php"
+        },
+        {
+          "kind": "class",
+          "name": "GetMessage",
+          "fqcn": "Apollo\\Telegram\\API\\Endpoints\\GetMessage",
+          "extends": "BaseEndpoint",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/Endpoints/GetMessage.php"
+        },
+        {
+          "kind": "class",
+          "name": "GetMessagePolling",
+          "fqcn": "Apollo\\Telegram\\API\\Endpoints\\GetMessagePolling",
+          "extends": "BaseEndpoint",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/Endpoints/GetMessagePolling.php"
+        },
+        {
+          "kind": "class",
+          "name": "VerificationController",
+          "fqcn": "Apollo\\Telegram\\API\\VerificationController",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/API/VerificationController.php"
+        },
+        {
+          "kind": "class",
+          "name": "API",
+          "fqcn": "Apollo\\Telegram\\API",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API.php"
+        },
+        {
+          "kind": "class",
+          "name": "Asset",
+          "fqcn": "Apollo\\Telegram\\Asset",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Asset.php"
+        },
+        {
+          "kind": "class",
+          "name": "Container",
+          "fqcn": "Apollo\\Telegram\\Container",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Container.php"
+        },
+        {
+          "kind": "class",
+          "name": "ExampleController",
+          "fqcn": "Apollo\\Telegram\\Controllers\\ExampleController",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Controllers/ExampleController.php"
+        },
+        {
+          "kind": "class",
+          "name": "Core",
+          "fqcn": "Apollo\\Telegram\\Core",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Core.php"
+        },
+        {
+          "kind": "class",
+          "name": "User",
+          "fqcn": "Apollo\\Telegram\\Entities\\User",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Entities/User.php"
+        },
+        {
+          "kind": "class",
+          "name": "TelegramHelper",
+          "fqcn": "Apollo\\Telegram\\Helpers\\TelegramHelper",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Helpers/TelegramHelper.php"
+        },
+        {
+          "kind": "class",
+          "name": "Menu",
+          "fqcn": "Apollo\\Telegram\\Menu",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Menu.php"
+        },
+        {
+          "kind": "class",
+          "name": "Base",
+          "fqcn": "Apollo\\Telegram\\Menus\\Base",
+          "extends": null,
+          "implements": [],
+          "modifiers": "abstract",
+          "file": "src/Menus/Base.php"
+        },
+        {
+          "kind": "class",
+          "name": "BroadcastMenu",
+          "fqcn": "Apollo\\Telegram\\Menus\\BroadcastMenu",
+          "extends": "Base",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Menus/BroadcastMenu.php"
+        },
+        {
+          "kind": "class",
+          "name": "CustomMenu",
+          "fqcn": "Apollo\\Telegram\\Menus\\CustomMenu",
+          "extends": "Base",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Menus/CustomMenu.php"
+        },
+        {
+          "kind": "class",
+          "name": "MainMenu",
+          "fqcn": "Apollo\\Telegram\\Menus\\MainMenu",
+          "extends": "Base",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Menus/MainMenu.php"
+        },
+        {
+          "kind": "class",
+          "name": "SecondMenu",
+          "fqcn": "Apollo\\Telegram\\Menus\\SecondMenu",
+          "extends": "Base",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Menus/SecondMenu.php"
+        },
+        {
+          "kind": "class",
+          "name": "Model",
+          "fqcn": "Apollo\\Telegram\\Model",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Model.php"
+        },
+        {
+          "kind": "class",
+          "name": "Base",
+          "fqcn": "Apollo\\Telegram\\Models\\Base",
+          "extends": null,
+          "implements": [],
+          "modifiers": "abstract",
+          "file": "src/Models/Base.php"
+        },
+        {
+          "kind": "class",
+          "name": "ExampleModel",
+          "fqcn": "Apollo\\Telegram\\Models\\ExampleModel",
+          "extends": "Base",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Models/ExampleModel.php"
+        },
+        {
+          "kind": "class",
+          "name": "RateLimiter",
+          "fqcn": "Apollo\\Telegram\\Security\\RateLimiter",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Security/RateLimiter.php"
+        },
+        {
+          "kind": "class",
+          "name": "Service",
+          "fqcn": "Apollo\\Telegram\\Service",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Service.php"
+        },
+        {
+          "kind": "class",
+          "name": "Elementor",
+          "fqcn": "Apollo\\Telegram\\Services\\Integrations\\Elementor",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Services/Integrations/Elementor.php"
+        },
+        {
+          "kind": "class",
+          "name": "EventsBotService",
+          "fqcn": "Apollo\\Telegram\\Services\\Integrations\\EventsBotService",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Services/Integrations/EventsBotService.php"
+        },
+        {
+          "kind": "class",
+          "name": "RankMath",
+          "fqcn": "Apollo\\Telegram\\Services\\Integrations\\RankMath",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Services/Integrations/RankMath.php"
+        },
+        {
+          "kind": "class",
+          "name": "NoticeManager",
+          "fqcn": "Apollo\\Telegram\\Services\\NoticeManager",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Services/NoticeManager.php"
+        },
+        {
+          "kind": "class",
+          "name": "Post",
+          "fqcn": "Apollo\\Telegram\\Services\\Posts\\Post",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Services/Posts/Post.php"
+        },
+        {
+          "kind": "class",
+          "name": "TelegramService",
+          "fqcn": "Apollo\\Telegram\\Services\\TelegramService",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Services/TelegramService.php"
+        },
+        {
+          "kind": "class",
+          "name": "VerificationService",
+          "fqcn": "Apollo\\Telegram\\Services\\VerificationService",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Services/VerificationService.php"
+        },
+        {
+          "kind": "class",
+          "name": "WebhookService",
+          "fqcn": "Apollo\\Telegram\\Services\\WebhookService",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Services/WebhookService.php"
+        },
+        {
+          "kind": "class",
+          "name": "PostModifiedDateShortcode",
+          "fqcn": "Apollo\\Telegram\\Shortcodes\\PostModifiedDateShortcode",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Shortcodes/PostModifiedDateShortcode.php"
+        },
+        {
+          "kind": "class",
+          "name": "ShortcodeManager",
+          "fqcn": "Apollo\\Telegram\\Shortcodes\\ShortcodeManager",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Shortcodes/ShortcodeManager.php"
+        },
+        {
+          "kind": "class",
+          "name": "Base",
+          "fqcn": "Apollo\\Telegram\\Telegram\\CallbackQueries\\Base",
+          "extends": null,
+          "implements": [],
+          "modifiers": "abstract",
+          "file": "src/Telegram/CallbackQueries/Base.php"
+        },
+        {
+          "kind": "class",
+          "name": "ExampleCallback",
+          "fqcn": "Apollo\\Telegram\\Telegram\\CallbackQueries\\ExampleCallback",
+          "extends": "Base",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Telegram/CallbackQueries/ExampleCallback.php"
+        },
+        {
+          "kind": "class",
+          "name": "CallbackQueryCommand",
+          "fqcn": "Apollo\\Telegram\\Telegram\\Commands\\UserCommands\\CallbackQueryCommand",
+          "extends": "UserCommand",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Telegram/Commands/UserCommands/CallbackQueryCommand.php"
+        },
+        {
+          "kind": "class",
+          "name": "CancelCommand",
+          "fqcn": "Apollo\\Telegram\\Telegram\\Commands\\UserCommands\\CancelCommand",
+          "extends": "UserCommand",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Telegram/Commands/UserCommands/CancelCommand.php"
+        },
+        {
+          "kind": "class",
+          "name": "GenericCommand",
+          "fqcn": "Apollo\\Telegram\\Telegram\\Commands\\UserCommands\\GenericCommand",
+          "extends": "UserCommand",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Telegram/Commands/UserCommands/GenericCommand.php"
+        },
+        {
+          "kind": "class",
+          "name": "StartCommand",
+          "fqcn": "Apollo\\Telegram\\Telegram\\Commands\\UserCommands\\StartCommand",
+          "extends": "UserCommand",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Telegram/Commands/UserCommands/StartCommand.php"
+        },
+        {
+          "kind": "class",
+          "name": "AdminCommand",
+          "fqcn": "Apollo\\Telegram\\Telegram\\ExtendedClasses\\Commands\\AdminCommand",
+          "extends": "Command",
+          "implements": [],
+          "modifiers": "abstract",
+          "file": "src/Telegram/ExtendedClasses/Commands/AdminCommand.php"
+        },
+        {
+          "kind": "class",
+          "name": "Command",
+          "fqcn": "Apollo\\Telegram\\Telegram\\ExtendedClasses\\Commands\\Command",
+          "extends": "TelegramBotCommand",
+          "implements": [],
+          "modifiers": "abstract",
+          "file": "src/Telegram/ExtendedClasses/Commands/Command.php"
+        },
+        {
+          "kind": "class",
+          "name": "SystemCommand",
+          "fqcn": "Apollo\\Telegram\\Telegram\\ExtendedClasses\\Commands\\SystemCommand",
+          "extends": "Command",
+          "implements": [],
+          "modifiers": "abstract",
+          "file": "src/Telegram/ExtendedClasses/Commands/SystemCommand.php"
+        },
+        {
+          "kind": "class",
+          "name": "UserCommand",
+          "fqcn": "Apollo\\Telegram\\Telegram\\ExtendedClasses\\Commands\\UserCommand",
+          "extends": "Command",
+          "implements": [],
+          "modifiers": "abstract",
+          "file": "src/Telegram/ExtendedClasses/Commands/UserCommand.php"
+        },
+        {
+          "kind": "class",
+          "name": "Request",
+          "fqcn": "Apollo\\Telegram\\Telegram\\ExtendedClasses\\Request",
+          "extends": "TelegramBotRequest",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Telegram/ExtendedClasses/Request.php"
+        },
+        {
+          "kind": "class",
+          "name": "Telegram",
+          "fqcn": "Apollo\\Telegram\\Telegram\\ExtendedClasses\\Telegram",
+          "extends": "TelegramBotTelegram",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Telegram/ExtendedClasses/Telegram.php"
+        },
+        {
+          "kind": "class",
+          "name": "CallbackQueryHandler",
+          "fqcn": "Apollo\\Telegram\\Telegram\\Handlers\\CallbackQueryHandler",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Telegram/Handlers/CallbackQueryHandler.php"
+        },
+        {
+          "kind": "class",
+          "name": "UpdateHandler",
+          "fqcn": "Apollo\\Telegram\\Telegram\\Handlers\\UpdateHandler",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Telegram/Handlers/UpdateHandler.php"
+        },
+        {
+          "kind": "class",
+          "name": "View",
+          "fqcn": "Apollo\\Telegram\\View",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/View.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_telegram_get_linked_chats",
+          "file": "apollo-telegram.php"
+        },
+        {
+          "name": "apollo_telegram_broadcast",
+          "file": "apollo-telegram.php"
+        },
+        {
+          "name": "apollo_telegram_send",
+          "file": "apollo-telegram.php"
+        },
+        {
+          "name": "apollo_telegram_link_chat",
+          "file": "apollo-telegram.php"
+        },
+        {
+          "name": "apollo_telegram_send_message",
+          "file": "apollo-telegram.php"
+        },
+        {
+          "name": "apollo_telegram_config",
+          "file": "includes/helpers.php"
+        },
+        {
+          "name": "apollo_telegram_bot_token",
+          "file": "includes/helpers.php"
+        },
+        {
+          "name": "apollo_telegram_bot_username",
+          "file": "includes/helpers.php"
+        },
+        {
+          "name": "apollo_telegram_uses_local_polling",
+          "file": "includes/helpers.php"
+        },
+        {
+          "name": "apollo_telegram_wp_db_credentials",
+          "file": "includes/helpers.php"
+        },
+        {
+          "name": "apollo_telegram_normalize_phone",
+          "file": "includes/helpers.php"
+        },
+        {
+          "name": "apollo_telegram_phone_log_suffix",
+          "file": "includes/helpers.php"
+        },
+        {
+          "name": "apollo_telegram_debug_log",
+          "file": "includes/helpers.php"
+        },
+        {
+          "name": "apollo_telegram_verify_rest_nonce",
+          "file": "includes/helpers.php"
+        },
+        {
+          "name": "apollo_rl",
+          "file": "includes/helpers.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 7,
+      "routes": [
+        {
+          "namespace": "apollo-telegram/v1",
+          "endpoint": "/request-support-verification",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "CUSTOM_LOGIC",
+            "risk": "REVIEW",
+            "method": "permission_verify_nonce",
+            "target": "VerificationController",
+            "analysis": {
+              "effective_class": "CUSTOM_LOGIC",
+              "risk": "REVIEW",
+              "summary": "Custom permission logic; returns: apollo_telegram_verify_rest_nonce($request)",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "apollo_telegram_verify_rest_nonce($request)"
+                ]
+              },
+              "body_preview": "return apollo_telegram_verify_rest_nonce($request);",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "VerificationController::permission_verify_nonce",
+              "method_file": "src/API/VerificationController.php",
+              "method_signature": "WP_REST_Request $request"
+            }
+          },
+          "callback": null,
+          "file": "src/API/VerificationController.php"
+        },
+        {
+          "namespace": "apollo-telegram/v1",
+          "endpoint": "/verify-support-code",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "CUSTOM_LOGIC",
+            "risk": "REVIEW",
+            "method": "permission_verify_nonce",
+            "target": "VerificationController",
+            "analysis": {
+              "effective_class": "CUSTOM_LOGIC",
+              "risk": "REVIEW",
+              "summary": "Custom permission logic; returns: apollo_telegram_verify_rest_nonce($request)",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "apollo_telegram_verify_rest_nonce($request)"
+                ]
+              },
+              "body_preview": "return apollo_telegram_verify_rest_nonce($request);",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "VerificationController::permission_verify_nonce",
+              "method_file": "src/API/VerificationController.php",
+              "method_signature": "WP_REST_Request $request"
+            }
+          },
+          "callback": null,
+          "file": "src/API/VerificationController.php"
+        },
+        {
+          "namespace": "apollo-telegram/v1",
+          "endpoint": "/verification-status",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "CUSTOM_LOGIC",
+            "risk": "REVIEW",
+            "method": "permission_verify_nonce",
+            "target": "VerificationController",
+            "analysis": {
+              "effective_class": "CUSTOM_LOGIC",
+              "risk": "REVIEW",
+              "summary": "Custom permission logic; returns: apollo_telegram_verify_rest_nonce($request)",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "apollo_telegram_verify_rest_nonce($request)"
+                ]
+              },
+              "body_preview": "return apollo_telegram_verify_rest_nonce($request);",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "VerificationController::permission_verify_nonce",
+              "method_file": "src/API/VerificationController.php",
+              "method_signature": "WP_REST_Request $request"
+            }
+          },
+          "callback": null,
+          "file": "src/API/VerificationController.php"
+        },
+        {
+          "namespace": "apollo-telegram/v1",
+          "endpoint": "/poll-tick",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "CUSTOM_LOGIC",
+            "risk": "REVIEW",
+            "method": "permission_verify_nonce",
+            "target": "VerificationController",
+            "analysis": {
+              "effective_class": "CUSTOM_LOGIC",
+              "risk": "REVIEW",
+              "summary": "Custom permission logic; returns: apollo_telegram_verify_rest_nonce($request)",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "apollo_telegram_verify_rest_nonce($request)"
+                ]
+              },
+              "body_preview": "return apollo_telegram_verify_rest_nonce($request);",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "VerificationController::permission_verify_nonce",
+              "method_file": "src/API/VerificationController.php",
+              "method_signature": "WP_REST_Request $request"
+            }
+          },
+          "callback": null,
+          "file": "src/API/VerificationController.php"
+        },
+        {
+          "namespace": "apollo-telegram/v1",
+          "endpoint": "/check-phone-available",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "CUSTOM_LOGIC",
+            "risk": "REVIEW",
+            "method": "permission_verify_nonce",
+            "target": "VerificationController",
+            "analysis": {
+              "effective_class": "CUSTOM_LOGIC",
+              "risk": "REVIEW",
+              "summary": "Custom permission logic; returns: apollo_telegram_verify_rest_nonce($request)",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "apollo_telegram_verify_rest_nonce($request)"
+                ]
+              },
+              "body_preview": "return apollo_telegram_verify_rest_nonce($request);",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "VerificationController::permission_verify_nonce",
+              "method_file": "src/API/VerificationController.php",
+              "method_signature": "WP_REST_Request $request"
+            }
+          },
+          "callback": null,
+          "file": "src/API/VerificationController.php"
+        },
+        {
+          "namespace": "apollo-telegram/v1",
+          "endpoint": "/telegram",
+          "methods": [
+            "?"
+          ],
+          "permission": {
+            "class": "ALWAYS_DENY",
+            "risk": "LOW",
+            "method": "permission_legacy_debug",
+            "target": "VerificationController",
+            "analysis": {
+              "effective_class": "ALWAYS_DENY",
+              "risk": "LOW",
+              "summary": "Returns false (deny-all or stub)",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "false",
+                  "apollo_telegram_verify_rest_nonce($request)"
+                ]
+              },
+              "body_preview": "if (! defined('WP_DEBUG') || ! WP_DEBUG) { return false; } return apollo_telegram_verify_rest_nonce($request);",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "VerificationController::permission_legacy_debug",
+              "method_file": "src/API/VerificationController.php",
+              "method_signature": "WP_REST_Request $request"
+            }
+          },
+          "callback": null,
+          "file": "src/API/VerificationController.php"
+        },
+        {
+          "namespace": "apollo-telegram/v1",
+          "endpoint": "/broadcast",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": null,
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can('manage_options')"
+                ]
+              },
+              "body_preview": "return current_user_can('manage_options');",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": null,
+          "file": "src/API/VerificationController.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 2,
+        "REVIEW": 5
+      },
+      "effective_class_counts": {
+        "CUSTOM_LOGIC": 5,
+        "ALWAYS_DENY": 1,
+        "ADMIN_CAPABILITY": 1
+      },
+      "permission_body_resolved": 7,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [],
+      "admin_cap_routes": [
+        "/broadcast"
+      ],
+      "logged_in_routes": []
+    },
+    "database": {
+      "tables_owned_or_defined": [
+        "apollo_telegram_verif"
+      ],
+      "tables_referenced": [
+        "apollo_clean_expired_verifs",
+        "apollo_telegram_debug_log",
+        "apollo_telegram_verif",
+        "apollo_telegram_verify"
+      ],
+      "tables_for_registry": [
+        "apollo_telegram_verif"
+      ],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_clean_expired_verifs",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_telegram_debug_log",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_telegram_verif",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_telegram_verify",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 4,
+      "user_count": 2,
+      "term_count": 0,
+      "post_keys": [
+        "_event_loc_id",
+        "_event_start_date",
+        "_event_start_time",
+        "_event_ticket_price"
+      ],
+      "user_keys": [
+        "_telegram_user_id",
+        "_telegram_username"
+      ],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [
+        {
+          "pattern": "^telegram/?$",
+          "query": "index.php?apollo_telegram_test=1",
+          "position": "top",
+          "file": "apollo-telegram.php"
+        },
+        {
+          "pattern": "^telegram/?$",
+          "query": "index.php?apollo_telegram_test=1",
+          "position": "top",
+          "file": "apollo-telegram.php"
+        }
+      ],
+      "query_vars": [
+        "apollo_telegram_test"
+      ],
+      "pages_derived": [
+        {
+          "slug": "telegram",
+          "rewrite": "^telegram/?$",
+          "query": "index.php?apollo_telegram_test=1",
+          "query_vars": [
+            "apollo_telegram_test=1"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "telegram",
+          "rewrite": "^telegram/?$",
+          "query": "index.php?apollo_telegram_test=1",
+          "query_vars": [
+            "apollo_telegram_test=1"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        }
+      ]
+    },
+    "cpts": [
+      {
+        "slug": "event",
+        "registered_locally": false,
+        "via_constant": true
+      }
+    ],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 9,
+      "listened_count": 22,
+      "apollo_fired": [],
+      "apollo_listened": [
+        "apollo/error/should_intercept",
+        "apollo_clean_expired_verifs"
+      ],
+      "critical_wp_listened": [
+        "admin_init",
+        "admin_menu",
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "template_redirect"
+      ]
+    },
+    "ajax": {
+      "priv": [],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [
+        "APOLLO_TELEGRAM_admin"
+      ],
+      "styles": [
+        "APOLLO_TELEGRAM_admin"
+      ]
+    },
+    "options": [
+      "apollo_telegram_linked_chats",
+      "apollo_telegram_options",
+      "apollo_telegram_rewrites_ver",
+      "apollo_tg_debug_start_trail"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_TELEGRAM_VERSION",
+        "value": "1.1.2"
+      },
+      {
+        "name": "APOLLO_TELEGRAM_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_TELEGRAM_URL",
+        "value": "plugin_dir_url(APOLLO_TELEGRAM_FILE"
+      },
+      {
+        "name": "APOLLO_TELEGRAM_DIR",
+        "value": "plugin_dir_path(APOLLO_TELEGRAM_FILE"
+      },
+      {
+        "name": "APOLLO_TELEGRAM_BASENAME",
+        "value": "plugin_basename(APOLLO_TELEGRAM_FILE"
+      },
+      {
+        "name": "APOLLO_TELEGRAM_SLUG",
+        "value": "apollo-telegram"
+      },
+      {
+        "name": "APOLLO_TELEGRAM_OPTIONS_KEY",
+        "value": "apollo_telegram_options"
+      },
+      {
+        "name": "APOLLO_TELEGRAM_DB_VERSION",
+        "value": "1.1.0"
+      },
+      {
+        "name": "APOLLO_TELEGRAM_OPTIONS_KEY_DB_VERSION",
+        "value": "apollo_telegram_db_version"
+      },
+      {
+        "name": "APOLLO_TELEGRAM_MENUS_SLUG",
+        "value": "apollo_telegram"
+      },
+      {
+        "name": "APOLLO_TELEGRAM_BOT_TOKEN",
+        "value": "your-token-from-botfather"
+      },
+      {
+        "name": "APOLLO_TELEGRAM_BOT_USERNAME",
+        "value": "YourBotUsername"
+      }
+    ],
+    "security": {
+      "php_files": 58,
+      "abspath_guard_files": 14,
+      "abspath_coverage_pct": 24,
+      "wpdb_prepare_calls": 14,
+      "wpdb_query_calls": 17,
+      "prepare_to_query_ratio": 0.82,
+      "nonce_checks": 7,
+      "current_user_can_calls": 7,
+      "raw_superglobal": {
+        "get": 7,
+        "post": 5,
+        "request": 0
+      },
+      "permission_callback_return_true": 0,
+      "escape_helpers": 39,
+      "echo_statements": 64,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 15,
+      "risk_band": "LOW",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 0,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 0
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core",
+        "apollo-events"
+      ],
+      "signals": [
+        "apollo-core",
+        "apollo-events"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": false
+    },
+    "delta_vs_old": {
+      "was_in_registry": false,
+      "old_status": null,
+      "old_version": null,
+      "new_version": "1.1.1",
+      "version_changed": false,
+      "old_rest": 0,
+      "live_rest": 7,
+      "old_pages": 0,
+      "live_pages": 2,
+      "new_plugin": true
+    }
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 59,
+    "php_loc": 9844,
+    "rest_routes_found": 7,
+    "cpts_found": [],
+    "tables_found": [
+      "apollo_telegram_verif"
+    ],
+    "shortcodes_found": []
+  }
+}

@@ -1,0 +1,30 @@
+{
+    "name": "apollo/apollo-users",
+    "description": "User profiles, avatar system, radar directory, and matchmaking for Apollo Platform",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Apollo Team",
+            "email": "dev@apollo.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Apollo\\Users\\": "src/"
+        },
+        "files": [
+            "includes/constants.php",
+            "includes/functions.php"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

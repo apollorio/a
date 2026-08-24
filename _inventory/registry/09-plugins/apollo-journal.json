@@ -1,0 +1,824 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-journal",
+    "owner": "apollo-journal",
+    "wrap": "plugins.apollo-journal",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-journal",
+  "namespace": "Apollo\\Journal",
+  "priority": 5,
+  "status": "IMPLEMENTED",
+  "description": "Magazine & editorial platform — news grid, NREP auto-codes, custom taxonomies, ColorMag-adapted layouts. Mobile-first.",
+  "dependencies": [
+    "apollo-core"
+  ],
+  "provides": [
+    "journal-page",
+    "news-publishing",
+    "repudy-notes",
+    "newspaper-layout",
+    "news-grid",
+    "nrep-auto-coding",
+    "editorial-taxonomies",
+    "magazine-layout",
+    "marquee-ticker"
+  ],
+  "cpts": [
+    "journal_news",
+    "journal_nota"
+  ],
+  "taxonomies": [],
+  "tables": [],
+  "meta": {
+    "post": {
+      "_apollo_featured": {
+        "_source": "deep_scan"
+      },
+      "_apollo_headline": {
+        "_source": "deep_scan"
+      },
+      "_apollo_note_type": {
+        "_source": "deep_scan"
+      },
+      "_apollo_source": {
+        "_source": "deep_scan"
+      },
+      "_apollo_subtitle": {
+        "_source": "deep_scan"
+      },
+      "_nrep_code": {
+        "_source": "deep_scan"
+      },
+      "_nrep_seq": {
+        "_source": "deep_scan"
+      },
+      "_nrep_year": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {},
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/journal/posts",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_posts",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/PostsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/journal/news",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_news",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/PostsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/journal/notas",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_notas",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/PostsController.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "routes": [
+    "/jornal",
+    "/artigo/{slug}",
+    "/nota/{slug}"
+  ],
+  "templates": [
+    "page-jornal.php",
+    "single-journal_news.php",
+    "single-journal_nota.php",
+    "archive-journal.php"
+  ],
+  "hooks_fired": [
+    "apollo/journal/initialized",
+    "apollo/journal/news_grid_count",
+    "apollo/journal/news_per_page",
+    "apollo/journal/nota_per_page",
+    "apollo/journal/nrep_assigned",
+    "apollo/journal/render_jornal",
+    "apollo/journal/render_news",
+    "apollo/journal/render_nota",
+    "apollo/journal/taxonomies"
+  ],
+  "hooks_listened": [
+    "apollo_journal_retry_nrep"
+  ],
+  "ajax_actions": [],
+  "pages": [
+    {
+      "slug": "jornal",
+      "rewrite": "^jornal/?$",
+      "query": "index.php?apollo_journal_page=1",
+      "query_vars": [
+        "apollo_journal_page=1"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    }
+  ],
+  "shortcodes": [
+    {
+      "tag": "apollo_add_news",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_add_nrep",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_journal",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_journal_card",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_journal_marquee",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "layout": {
+    "type": "newspaper",
+    "header": "Jornal.rio",
+    "columns": {
+      "news": "70%",
+      "nota": "30%"
+    }
+  },
+  "queries": {
+    "jornal_page": {
+      "news": {
+        "cpt": "journal_news",
+        "orderby": "date",
+        "order": "DESC"
+      },
+      "nota": {
+        "cpt": "journal_nota",
+        "orderby": "date",
+        "order": "DESC"
+      }
+    }
+  },
+  "constraints": {
+    "journal_page_must_render": {
+      "route": "/jornal",
+      "requires": [
+        "journal_news",
+        "journal_nota"
+      ],
+      "layout": "70/30",
+      "header": "Jornal.rio"
+    }
+  },
+  "version": "1.0.1",
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [
+    "apollo_journal_retry_nrep"
+  ],
+  "admin_menus": [
+    {
+      "page_title": "options-general.php",
+      "menu_title": "Apollo Journal",
+      "capability": "Apollo Journal",
+      "menu_slug": "manage_options"
+    }
+  ],
+  "assets": {
+    "scripts": [
+      "apollo-forms-cdn",
+      "apollo-journal"
+    ],
+    "styles": [
+      "apollo-journal"
+    ]
+  },
+  "options": [
+    "aj_nrep_format",
+    "aj_nrep_prefix",
+    "apollo_journal_activated"
+  ],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 9,
+    "abspath_coverage_pct": 94,
+    "rest_open_routes": 3,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 3,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 3,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 0.5
+  },
+  "database_schemas": [],
+  "rewrite_rules": [
+    {
+      "pattern": "^jornal/?$",
+      "query": "index.php?apollo_journal_page=1"
+    }
+  ],
+  "query_vars": [
+    "apollo_journal_page"
+  ],
+  "php_surface": {
+    "files": 16,
+    "loc": 4517,
+    "classes": 7,
+    "functions": 3
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:50.010Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 109,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-journal",
+    "main_file": "apollo-journal.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Journal",
+      "plugin_uri": "https://apollo.rio.br/plugins/apollo-journal",
+      "description": "Magazine & editorial platform — news grid, NREP auto-codes, custom taxonomies, ColorMag-adapted layouts. Mobile-first.",
+      "version": "1.0.1",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "Proprietary",
+      "text_domain": "apollo-journal",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": "false"
+    },
+    "composer": {
+      "name": "apollo/apollo-journal",
+      "namespaces": [
+        "Apollo\\Journal"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 16,
+        ".css": 1,
+        ".js": 1,
+        ".json": 2
+      },
+      "by_top_directory": {
+        "(root)": 4,
+        "assets": 2,
+        "includes": 2,
+        "src": 7,
+        "templates": 5
+      },
+      "total_bytes": 165050
+    },
+    "php": {
+      "files": 16,
+      "loc": 4517,
+      "classes": 7,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 3
+    },
+    "architecture": {
+      "namespace": "Apollo\\Journal",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Journal\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Admin",
+          "fqcn": "Apollo\\Journal\\Admin",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Admin.php"
+        },
+        {
+          "kind": "class",
+          "name": "PostsController",
+          "fqcn": "Apollo\\Journal\\API\\PostsController",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/PostsController.php"
+        },
+        {
+          "kind": "class",
+          "name": "Deactivation",
+          "fqcn": "Apollo\\Journal\\Deactivation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Deactivation.php"
+        },
+        {
+          "kind": "class",
+          "name": "NREP",
+          "fqcn": "Apollo\\Journal\\NREP",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/NREP.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Journal\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "Shortcodes",
+          "fqcn": "Apollo\\Journal\\Shortcodes",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Shortcodes.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_journal_check_dependencies",
+          "file": "apollo-journal.php"
+        },
+        {
+          "name": "apollo_journal_init",
+          "file": "apollo-journal.php"
+        },
+        {
+          "name": "apollo_journal",
+          "file": "includes/functions.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 3,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/journal/posts",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_posts",
+          "file": "src/API/PostsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/journal/news",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_news",
+          "file": "src/API/PostsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/journal/notas",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_notas",
+          "file": "src/API/PostsController.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 3,
+        "MEDIUM": 0,
+        "LOW": 0,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "PUBLIC_UNAUTHENTICATED": 3
+      },
+      "permission_body_resolved": 3,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [
+        {
+          "endpoint": "/journal/posts",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/PostsController.php"
+        },
+        {
+          "endpoint": "/journal/news",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/PostsController.php"
+        },
+        {
+          "endpoint": "/journal/notas",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/PostsController.php"
+        }
+      ],
+      "admin_cap_routes": [],
+      "logged_in_routes": []
+    },
+    "database": {
+      "tables_owned_or_defined": [],
+      "tables_referenced": [],
+      "tables_for_registry": [],
+      "schemas_with_columns": 0,
+      "schemas": []
+    },
+    "meta": {
+      "post_count": 8,
+      "user_count": 0,
+      "term_count": 0,
+      "post_keys": [
+        "_apollo_featured",
+        "_apollo_headline",
+        "_apollo_note_type",
+        "_apollo_source",
+        "_apollo_subtitle",
+        "_nrep_code",
+        "_nrep_seq",
+        "_nrep_year"
+      ],
+      "user_keys": [],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [
+        {
+          "pattern": "^jornal/?$",
+          "query": "index.php?apollo_journal_page=1",
+          "position": "top",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "query_vars": [
+        "apollo_journal_page"
+      ],
+      "pages_derived": [
+        {
+          "slug": "jornal",
+          "rewrite": "^jornal/?$",
+          "query": "index.php?apollo_journal_page=1",
+          "query_vars": [
+            "apollo_journal_page=1"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        }
+      ]
+    },
+    "cpts": [
+      {
+        "slug": "journal_news",
+        "registered_locally": true,
+        "public": true,
+        "show_in_rest": true,
+        "menu_icon": "dashicons-media-text"
+      },
+      {
+        "slug": "journal_nota",
+        "registered_locally": true,
+        "public": true,
+        "show_in_rest": true,
+        "menu_icon": "dashicons-megaphone"
+      }
+    ],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 9,
+      "listened_count": 26,
+      "apollo_fired": [
+        "apollo/journal/initialized",
+        "apollo/journal/news_grid_count",
+        "apollo/journal/news_per_page",
+        "apollo/journal/nota_per_page",
+        "apollo/journal/nrep_assigned",
+        "apollo/journal/render_jornal",
+        "apollo/journal/render_news",
+        "apollo/journal/render_nota",
+        "apollo/journal/taxonomies"
+      ],
+      "apollo_listened": [
+        "apollo_journal_retry_nrep"
+      ],
+      "critical_wp_listened": [
+        "admin_init",
+        "admin_menu",
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "save_post",
+        "wp_enqueue_scripts"
+      ]
+    },
+    "ajax": {
+      "priv": [],
+      "nopriv": []
+    },
+    "cron": [
+      "apollo_journal_retry_nrep"
+    ],
+    "shortcodes": [
+      "apollo_add_news",
+      "apollo_add_nrep",
+      "apollo_journal",
+      "apollo_journal_card",
+      "apollo_journal_marquee"
+    ],
+    "admin_menus": [
+      {
+        "page_title": "options-general.php",
+        "menu_title": "Apollo Journal",
+        "capability": "Apollo Journal",
+        "menu_slug": "manage_options"
+      }
+    ],
+    "assets": {
+      "scripts": [
+        "apollo-forms-cdn",
+        "apollo-journal"
+      ],
+      "styles": [
+        "apollo-journal"
+      ]
+    },
+    "options": [
+      "aj_nrep_format",
+      "aj_nrep_prefix",
+      "apollo_journal_activated"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_JOURNAL_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_JOURNAL_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_JOURNAL_DIR",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_JOURNAL_URL",
+        "value": "plugin_dir_url( __FILE__"
+      },
+      {
+        "name": "APOLLO_JOURNAL_BASENAME",
+        "value": "plugin_basename( __FILE__"
+      },
+      {
+        "name": "APOLLO_JOURNAL_REST_NAMESPACE",
+        "value": "apollo/v1"
+      },
+      {
+        "name": "APOLLO_JOURNAL_NREP_PREFIX",
+        "value": "NREP."
+      }
+    ],
+    "security": {
+      "php_files": 16,
+      "abspath_guard_files": 15,
+      "abspath_coverage_pct": 94,
+      "wpdb_prepare_calls": 2,
+      "wpdb_query_calls": 4,
+      "prepare_to_query_ratio": 0.5,
+      "nonce_checks": 4,
+      "current_user_can_calls": 6,
+      "raw_superglobal": {
+        "get": 2,
+        "post": 4,
+        "request": 0
+      },
+      "permission_callback_return_true": 3,
+      "escape_helpers": 138,
+      "echo_statements": 135,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 9,
+      "risk_band": "LOW",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 3,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 3
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core"
+      ],
+      "signals": [
+        "apollo-core"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.0.1",
+      "version_changed": false,
+      "old_rest": 3,
+      "live_rest": 3,
+      "old_pages": 1,
+      "live_pages": 1,
+      "new_plugin": false
+    }
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 16,
+    "php_loc": 4501,
+    "rest_routes_found": 3,
+    "cpts_found": [
+      "journal_news",
+      "journal_nota"
+    ],
+    "tables_found": [],
+    "shortcodes_found": [
+      "apollo_add_news",
+      "apollo_add_nrep",
+      "apollo_journal",
+      "apollo_journal_card",
+      "apollo_journal_marquee"
+    ]
+  }
+}

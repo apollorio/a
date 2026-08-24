@@ -1,0 +1,292 @@
+/**
+ * Apollo Navbar Apps — Admin Settings Styles
+ *
+ * @package Apollo\Templates
+ * @since 1.1.0
+ */
+
+/* ========================================
+   PAGE LAYOUT
+   ======================================== */
+.apollo-navbar-settings h1 {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: .25rem;
+}
+
+.apollo-navbar-settings > .description {
+    color: #666;
+    margin-bottom: 1.5rem;
+}
+
+/* ========================================
+   APPS LIST — REPEATER
+   ======================================== */
+.apollo-apps-list {
+    max-width: 900px;
+}
+
+.apollo-app-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    margin-bottom: 8px;
+    background: #fff;
+    border: 1px solid #dcdcde;
+    border-radius: 8px;
+    transition: box-shadow .15s ease, border-color .15s ease;
+}
+
+.apollo-app-row:hover {
+    border-color: #2271b1;
+    box-shadow: 0 1px 4px rgba(var(--rgb-d), .08);
+}
+
+.apollo-app-row-placeholder {
+    height: 120px;
+    margin-bottom: 8px;
+    background: #f0f6fc;
+    border: 2px dashed #2271b1;
+    border-radius: 8px;
+}
+
+/* Drag handle */
+.app-row-handle {
+    cursor: grab;
+    padding: 4px;
+    color: #999;
+    flex-shrink: 0;
+    margin-top: 8px;
+}
+
+.app-row-handle:active {
+    cursor: grabbing;
+}
+
+.app-row-handle .dashicons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+/* Icon preview */
+.app-row-preview {
+    flex-shrink: 0;
+    margin-top: 4px;
+}
+
+.app-row-icon-preview {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    box-shadow: 0 2px 6px rgba(var(--rgb-d), .1);
+    transition: all .2s ease;
+}
+
+/* Fields */
+.app-row-fields {
+    flex: 1;
+    min-width: 0;
+}
+
+.field-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.field-row:last-child {
+    margin-bottom: 0;
+}
+
+.field-group {
+    flex: 1;
+    min-width: 140px;
+}
+
+.field-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #1d2327;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+}
+
+.field-group input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.field-group .description {
+    font-size: 11px;
+    color: #999;
+    margin-top: 2px;
+}
+
+.field-group .description a {
+    color: #2271b1;
+}
+
+/* Color fields */
+.field-color {
+    flex: 0 0 80px;
+    min-width: 80px;
+}
+
+.field-color input[type="color"] {
+    width: 48px;
+    height: 32px;
+    border: 1px solid #dcdcde;
+    border-radius: 4px;
+    padding: 2px;
+    cursor: pointer;
+    background: transparent;
+}
+
+/* Image field */
+.field-image {
+    flex: 1.5;
+}
+
+.image-field-wrap {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.image-field-wrap input[type="text"] {
+    flex: 1;
+}
+
+.image-field-wrap .button {
+    flex-shrink: 0;
+    padding: 0 6px;
+    min-width: auto;
+    height: 30px;
+}
+
+/* Remove button */
+.app-row-actions {
+    flex-shrink: 0;
+    margin-top: 8px;
+}
+
+.app-remove-row {
+    color: #b32d2e !important;
+    border-color: transparent !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.app-remove-row:hover {
+    color: #fff !important;
+    background: #b32d2e !important;
+    border-color: #b32d2e !important;
+}
+
+/* ========================================
+   ACTIONS BAR
+   ======================================== */
+.apollo-apps-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin: 16px 0 8px;
+    max-width: 900px;
+}
+
+.apollo-apps-actions #apollo-add-app {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ========================================
+   PREVIEW SECTION
+   ======================================== */
+.apollo-preview-section {
+    max-width: 400px;
+    margin-top: 2rem;
+    padding: 24px;
+    background: #121214;
+    border-radius: 16px;
+    border: 1px solid #333;
+}
+
+.apollo-preview-section h2 {
+    color: #fff;
+    font-size: .85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin: 0 0 16px;
+    opacity: .6;
+}
+
+.apollo-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.preview-app-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.preview-app-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    box-shadow: 0 4px 10px rgba(var(--rgb-d), .2);
+    background-size: cover;
+    background-position: center;
+}
+
+.preview-app-label {
+    font-size: .7rem;
+    color: #999;
+    text-align: center;
+    max-width: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 782px) {
+    .field-row {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .field-color {
+        flex: 0 0 auto;
+    }
+
+    .apollo-app-row {
+        flex-wrap: wrap;
+    }
+
+    .apollo-preview-section {
+        max-width: 100%;
+    }
+}

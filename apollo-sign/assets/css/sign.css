@@ -1,0 +1,725 @@
+/* ═══════════════════════════════════════════════════════════
+   Apollo Sign — Admin Signatures Stylesheet
+   Silent Luxury Dark Theme — ICP-Brasil
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Variables (inherit from docs when available) ── */
+:root {
+    --sign-primary:    #FF9820;
+    --sign-primary-h:  rgba(244, 95, 0, .12);
+    --sign-surface:    #1a1a1e;
+    --sign-surface-2:  #222226;
+    --sign-surface-3:  #2a2a2e;
+    --sign-border:     #333338;
+    --sign-text:       #e4e4e7;
+    --sign-text-dim:   #8e8e93;
+    --sign-text-muted: #636366;
+    --sign-success:    #30d158;
+    --sign-warning:    #ffd60a;
+    --sign-danger:     #ff3b30;
+    --sign-info:       #64d2ff;
+    --sign-icpbr:      #006847;
+    --sign-radius:     10px;
+    --sign-font:       'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+    --sign-transition: .2s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── Reset & Base ── */
+.apollo-sign-admin {
+    font-family: var(--sign-font);
+    color: var(--sign-text);
+    background: var(--sign-surface);
+    min-height: 100dvh;
+    padding: 24px;
+}
+
+.apollo-sign-admin *,
+.apollo-sign-admin *::before,
+.apollo-sign-admin *::after {
+    box-sizing: border-box;
+}
+
+/* ── Header ── */
+.sign-admin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px;
+    background: var(--sign-surface-2);
+    border: 1px solid var(--sign-border);
+    border-radius: var(--sign-r);
+    margin-bottom: 24px;
+}
+
+.sign-admin-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -.02em;
+}
+
+.sign-admin-title i {
+    font-size: 22px;
+    color: var(--sign-primary);
+}
+
+.sign-badge-icpbr {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: #fff;
+    background: var(--sign-icpbr);
+    border-radius: 20px;
+}
+
+.sign-admin-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ── Select ── */
+.sign-select {
+    appearance: none;
+    background: var(--sign-surface-3);
+    color: var(--sign-text);
+    border: 1px solid var(--sign-border);
+    border-radius: 8px;
+    padding: 8px 32px 8px 12px;
+    font-size: 13px;
+    font-family: var(--sign-font);
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238e8e93' viewBox='0 0 24 24'%3E%3Cpath d='M12 16l-6-6h12z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    transition: border-color var(--sign-transition);
+}
+
+.sign-select:hover {
+    border-color: var(--sign-primary);
+}
+
+.sign-select:focus {
+    outline: none;
+    border-color: var(--sign-primary);
+    box-shadow: 0 0 0 2px var(--sign-primary-h);
+}
+
+/* ── Buttons ── */
+.sign-admin-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: var(--sign-font);
+    color: var(--sign-text);
+    background: var(--sign-surface-3);
+    border: 1px solid var(--sign-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all var(--sign-transition);
+    white-space: nowrap;
+}
+
+.sign-admin-btn:hover {
+    border-color: var(--sign-primary);
+    color: var(--sign-primary);
+}
+
+.sign-admin-btn.refresh {
+    padding: 8px;
+    width: 36px;
+    height: 36px;
+}
+
+.sign-admin-btn.primary {
+    background: var(--sign-primary);
+    border-color: var(--sign-primary);
+    color: #fff;
+}
+
+.sign-admin-btn.primary:hover {
+    background: #e55500;
+    border-color: #e55500;
+    color: #fff;
+}
+
+.sign-admin-btn.danger {
+    color: var(--sign-danger);
+    border-color: var(--sign-danger);
+}
+
+.sign-admin-btn.danger:hover {
+    background: var(--sign-danger);
+    color: #fff;
+}
+
+.sign-admin-btn.success {
+    color: var(--sign-success);
+    border-color: var(--sign-success);
+}
+
+/* ── Table ── */
+.sign-admin-table-wrap {
+    background: var(--sign-surface-2);
+    border: 1px solid var(--sign-border);
+    border-radius: var(--sign-r);
+    overflow: hidden;
+}
+
+.sign-admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.sign-admin-table thead th {
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--sign-text-dim);
+    background: var(--sign-surface-3);
+    border-bottom: 1px solid var(--sign-border);
+    white-space: nowrap;
+}
+
+.sign-admin-table tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(var(--rgb-t),.04);
+    vertical-align: middle;
+}
+
+.sign-admin-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.sign-admin-table tbody tr {
+    transition: background var(--sign-transition);
+}
+
+.sign-admin-table tbody tr:hover {
+    background: rgba(244, 95, 0, .04);
+}
+
+/* ── Status Badges ── */
+.sign-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.sign-status.pending {
+    color: var(--sign-warning);
+    background: rgba(255, 214, 10, .1);
+}
+
+.sign-status.signed {
+    color: var(--sign-success);
+    background: rgba(48, 209, 88, .1);
+}
+
+.sign-status.revoked {
+    color: var(--sign-danger);
+    background: rgba(255, 59, 48, .1);
+}
+
+.sign-status.expired {
+    color: var(--sign-text-dim);
+    background: rgba(142, 142, 147, .1);
+}
+
+/* ── Action Buttons in table ── */
+.sign-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.sign-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    font-size: 15px;
+    color: var(--sign-text-dim);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all var(--sign-transition);
+}
+
+.sign-action-btn:hover {
+    background: var(--sign-surface-3);
+    color: var(--sign-primary);
+    border-color: var(--sign-border);
+}
+
+.sign-action-btn.verify:hover {
+    color: var(--sign-success);
+}
+
+.sign-action-btn.revoke:hover {
+    color: var(--sign-danger);
+}
+
+.sign-action-btn[disabled] {
+    opacity: .3;
+    pointer-events: none;
+}
+
+/* ── Certificate Info ── */
+.sign-cert-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.sign-cert-cn {
+    font-weight: 500;
+    color: var(--sign-text);
+    font-size: 12px;
+}
+
+.sign-cert-issuer {
+    font-size: 11px;
+    color: var(--sign-text-muted);
+}
+
+/* ── Signer Info ── */
+.sign-signer {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.sign-signer-name {
+    font-weight: 500;
+    color: var(--sign-text);
+}
+
+.sign-signer-email {
+    font-size: 11px;
+    color: var(--sign-text-muted);
+}
+
+/* ── Document Link ── */
+.sign-doc-link {
+    color: var(--sign-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity var(--sign-transition);
+}
+
+.sign-doc-link:hover {
+    opacity: .8;
+    text-decoration: underline;
+}
+
+/* ── CPF masked ── */
+.sign-cpf {
+    font-family: 'SF Mono', 'Consolas', monospace;
+    font-size: 12px;
+    color: var(--sign-text-dim);
+    letter-spacing: .03em;
+}
+
+/* ── Modal ── */
+.sign-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(var(--rgb-d), .7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+}
+
+.sign-modal-overlay.active {
+    display: flex;
+}
+
+.sign-modal {
+    background: var(--sign-surface-2);
+    border: 1px solid var(--sign-border);
+    border-radius: 14px;
+    width: 100%;
+    max-width: 600px;
+    max-height: 80dvh;
+    overflow-y: auto;
+    box-shadow: 0 24px 80px rgba(var(--rgb-d),.5);
+}
+
+.sign-modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--sign-border);
+}
+
+.sign-modal-head h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--sign-text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sign-modal-close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: var(--sign-text-dim);
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all var(--sign-transition);
+}
+
+.sign-modal-close:hover {
+    background: var(--sign-surface-3);
+    color: var(--sign-text);
+}
+
+.sign-modal-body {
+    padding: 24px;
+}
+
+.sign-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--sign-border);
+}
+
+/* ── Form Fields (modal) ── */
+.sign-form-group {
+    margin-bottom: 16px;
+}
+
+.sign-form-group:last-child {
+    margin-bottom: 0;
+}
+
+.sign-form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sign-text-dim);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.sign-form-input {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 13px;
+    font-family: var(--sign-font);
+    color: var(--sign-text);
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--sign-border);
+    border-radius: 0;
+    transition: border-color var(--sign-transition);
+}
+
+.sign-form-input:focus {
+    outline: none;
+    border-bottom-color: var(--sign-primary);
+}
+
+.sign-form-input[type="file"] {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.sign-form-input[type="file"]::file-selector-button {
+    padding: 6px 14px;
+    font-size: 12px;
+    font-family: var(--sign-font);
+    font-weight: 500;
+    color: #fff;
+    background: var(--sign-primary);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: background var(--sign-transition);
+}
+
+.sign-form-input[type="file"]::file-selector-button:hover {
+    background: #e55500;
+}
+
+/* ── Audit Trail ── */
+.sign-audit-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sign-audit-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(var(--rgb-t),.04);
+    position: relative;
+}
+
+.sign-audit-item:last-child {
+    border-bottom: none;
+}
+
+.sign-audit-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--sign-primary);
+    margin-top: 4px;
+    flex-shrink: 0;
+}
+
+.sign-audit-item.created .sign-audit-dot { background: var(--sign-info); }
+.sign-audit-item.signed .sign-audit-dot  { background: var(--sign-success); }
+.sign-audit-item.revoked .sign-audit-dot { background: var(--sign-danger); }
+.sign-audit-item.verified .sign-audit-dot { background: var(--sign-warning); }
+
+.sign-audit-content {
+    flex: 1;
+}
+
+.sign-audit-action {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--sign-text);
+    margin-bottom: 2px;
+}
+
+.sign-audit-meta {
+    font-size: 11px;
+    color: var(--sign-text-muted);
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.sign-audit-detail {
+    font-size: 12px;
+    color: var(--sign-text-dim);
+    margin-top: 4px;
+    word-break: break-word;
+}
+
+/* ── Verify Result ── */
+.sign-verify-result {
+    padding: 20px;
+    border-radius: var(--sign-r);
+    text-align: center;
+}
+
+.sign-verify-result.valid {
+    background: rgba(48, 209, 88, .08);
+    border: 1px solid rgba(48, 209, 88, .2);
+}
+
+.sign-verify-result.invalid {
+    background: rgba(255, 59, 48, .08);
+    border: 1px solid rgba(255, 59, 48, .2);
+}
+
+.sign-verify-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.sign-verify-result.valid .sign-verify-icon { color: var(--sign-success); }
+.sign-verify-result.invalid .sign-verify-icon { color: var(--sign-danger); }
+
+.sign-verify-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.sign-verify-desc {
+    font-size: 13px;
+    color: var(--sign-text-dim);
+}
+
+/* ── Info Grid ── */
+.sign-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.sign-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.sign-info-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--sign-text-muted);
+}
+
+.sign-info-value {
+    font-size: 13px;
+    color: var(--sign-text);
+    font-weight: 500;
+}
+
+/* ── Empty State ── */
+.sign-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--sign-text-dim);
+}
+
+.sign-empty i {
+    font-size: 48px;
+    color: var(--sign-text-muted);
+    margin-bottom: 12px;
+    display: block;
+}
+
+.sign-empty p {
+    font-size: 14px;
+    margin: 0;
+}
+
+/* ── Loading Skeleton ── */
+.sign-skeleton {
+    background: linear-gradient(90deg,
+        var(--sign-surface-3) 25%,
+        rgba(var(--rgb-t),.06) 50%,
+        var(--sign-surface-3) 75%);
+    background-size: 200% 100%;
+    animation: sign-shimmer 1.5s ease-in-out infinite;
+    border-radius: 6px;
+    height: 14px;
+}
+
+@keyframes sign-shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ── Toast ── */
+.sign-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 10001;
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: var(--sign-font);
+    color: #fff;
+    background: var(--sign-surface-3);
+    border-left: 3px solid var(--sign-primary);
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(var(--rgb-d),.4);
+    opacity: 0;
+    transform: translateY(12px);
+    transition: all .3s ease;
+    pointer-events: none;
+}
+
+.sign-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.sign-toast.success { border-left-color: var(--sign-success); }
+.sign-toast.error   { border-left-color: var(--sign-danger); }
+.sign-toast.info    { border-left-color: var(--sign-info); }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .apollo-sign-admin {
+        padding: 12px;
+    }
+
+    .sign-admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px;
+    }
+
+    .sign-admin-table-wrap {
+        overflow-x: auto;
+    }
+
+    .sign-admin-table {
+        min-width: 700px;
+    }
+
+    .sign-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .sign-modal {
+        margin: 16px;
+        max-height: 90dvh;
+    }
+}
+
+
+/* ── Scroll Snap Utilities (Apollo Mobile UX)
+   dvh + snap = zero classic mobile viewport bugs
+   ─────────────────────────────────────────────── */
+.scroll-container {
+  scroll-snap-type: y mandatory;
+  overflow-y: auto;
+}
+.scroll-container-soft {
+  scroll-snap-type: y proximity;
+  overflow-y: auto;
+}
+.section,.snap-item {
+  scroll-snap-align: start;
+}
+.snap-center {
+  scroll-snap-align: center;
+}
+/* Sign flow scroll snap */
+.sign-steps { scroll-snap-type: y mandatory; overflow-y: auto; }
+.sign-step { scroll-snap-align: start; min-height: 100dvh; }

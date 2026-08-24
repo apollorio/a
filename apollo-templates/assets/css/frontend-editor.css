@@ -1,0 +1,924 @@
+/**
+ * Apollo Frontend Editor — Styles
+ *
+ * UI patterns replicated from apollo-users/edit-profile.php:
+ *   - Editable inputs: transparent → dashed orange border → orange glow on focus
+ *   - Mono labels with icons and counters
+ *   - Hero section with cover + avatar upload overlay
+ *   - Profile card with subtle border/shadow
+ *   - Fixed save bar at bottom
+ *   - Toast notifications
+ *   - Tags, stat cards, section dividers
+ *
+ * Uses CSS variables from Apollo CDN core.js:
+ *   --primary, --bg, --black-1, --white-1, --gray-1, --gray-2, --gray-9,
+ *   --border, --surface, --txt-color, ----txt-color-hover, --txt-muted,
+ *   --ff-main, --ff-mono, --fs-p, --fs-h2,
+ *   --space-2..--space-6, --radius, --r-sm, --r-lg,
+ *   --ease-default, --ease-smooth
+ *
+ * @package Apollo\Templates
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   COMPONENT TOKENS → CDN Design Tokens
+   Maps editor-specific aliases to Apollo CDN variables (with fallbacks)
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root {
+	--ae-primary: var(--primary, FF9820);
+	--ae-bg: var(--bg, #ffffff);
+	--ae-black: var(--black-1, #121214);
+	--ae-white: #ffffff;
+	--ae-gray-1: var(--surface, #f4f4f5);
+	--ae-gray-2: var(--border, #e4e4e7);
+	--ae-gray-9: var(--black-1, #121214);
+	--ae-border: var(--border, #e4e4e7);
+	--ae-surface: var(--surface, #f4f4f5);
+	--ae-txt: var(--black-1, #121214);
+	--ae-txt-color-hover: var(--black-1, #121214);
+	--ae-txt-muted: var(--gray-1, #666);
+	--ae-ff-main: var(--ff-main, "Space Grotesk", system-ui, sans-serif);
+	--ae-ff-mono: var(--ff-mono, "Space Mono", monospace);
+	--ae-radius: var(--r-sm, 8px);
+	--ae-r-sm: 4px;
+	--ae-r-lg: var(--radius, 16px);
+	--ae-ease: cubic-bezier(0.4, 0, 0.2, 1);
+	--ae-ease-smooth: var(--ease-smooth, cubic-bezier(0.16, 1, 0.3, 1));
+
+	/* Editor-specific */
+	--ae-success: #22c55e;
+	--ae-danger: #dc2626;
+	--ae-info: #3b82f6;
+	--ae-primary-glow: rgba(244, 95, 0, 0.1);
+	--ae-border-dashed: rgba(244, 94, 0, 0.85);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CANVAS RESET
+   ═══════════════════════════════════════════════════════════════════════════ */
+.apollo-editor-page {
+	background: var(--ae-bg);
+	color: var(--ae-txt);
+	font-family: var(--ae-ff-main);
+	line-height: 1.6;
+	min-height: 100dvh;
+}
+
+.apollo-editor-page *,
+.apollo-editor-page *::before,
+.apollo-editor-page *::after {
+	box-sizing: border-box;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CONTAINER
+   ═══════════════════════════════════════════════════════════════════════════ */
+.apollo-editor-container {
+	max-width: 920px;
+	margin: 0 auto;
+	padding: 0 16px 120px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PAGE HEADER (back link + title)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.apollo-editor-header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 20px 0;
+	margin-bottom: 8px;
+}
+
+.apollo-editor-back {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	color: var(--ae-txt-muted);
+	text-decoration: none;
+	font-family: var(--ae-ff-mono);
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	padding: 8px 14px;
+	border: 1px solid var(--ae-border);
+	border-radius: 100px;
+	transition: all 0.2s var(--ae-ease);
+}
+
+.apollo-editor-back:hover {
+	color: var(--ae-txt-color-hover);
+	border-color: var(--ae-txt-color-hover);
+	background: var(--ae-white);
+}
+
+.apollo-editor-page-title {
+	font-family: var(--ae-ff-mono);
+	font-size: 11px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--ae-txt-muted);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   HERO SECTION (cover + main image)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.apollo-editor-hero {
+	position: relative;
+	border-radius: var(--ae-r-lg);
+	overflow: hidden;
+	margin-bottom: 24px;
+	background: var(--ae-black);
+}
+
+.apollo-editor-hero .apollo-image-cover {
+	width: 100%;
+	min-height: 200px;
+	max-height: 320px;
+	position: relative;
+}
+
+.apollo-editor-hero .apollo-image-cover .apollo-image-preview {
+	width: 100%;
+	height: 260px;
+	background: linear-gradient(135deg, var(--ae-gray-9) 0%, var(--ae-black) 100%);
+}
+
+.apollo-editor-hero .apollo-image-cover .apollo-image-preview img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	filter: grayscale(100%) contrast(1.05);
+	opacity: 0.7;
+	transition: all 0.4s var(--ae-ease-smooth);
+}
+
+.apollo-editor-hero .apollo-image-cover:hover .apollo-image-preview img {
+	filter: grayscale(50%);
+	opacity: 0.9;
+}
+
+.apollo-editor-hero::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: radial-gradient(ellipse at 30% 100%, rgba(244, 95, 0, 0.15), transparent 70%);
+	pointer-events: none;
+	animation: breathe 8s ease-in-out infinite;
+}
+
+/* Avatar overlay inside hero */
+.apollo-editor-hero-avatar {
+	position: absolute;
+	bottom: -40px;
+	left: 32px;
+	z-index: 10;
+}
+
+.apollo-editor-hero-avatar .apollo-image-preview {
+	width: 130px;
+	height: 130px;
+	border-radius: 30%;
+	border: 3px solid var(--ae-white);
+	overflow: hidden;
+	background: var(--ae-surface);
+}
+
+.apollo-editor-hero-avatar .apollo-image-preview img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PROFILE CARD (main form card)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.apollo-editor-card {
+	background: var(--ae-white);
+	border: 0.3px solid var(--ae-border);
+	border-radius: var(--ae-r-lg);
+	padding: 32px;
+	margin-bottom: 24px;
+	box-shadow: 0 1px 3px rgba(var(--rgb-d), 0.04);
+	animation: fadeUp 0.6s var(--ae-ease-smooth) both;
+}
+
+.apollo-editor-card + .apollo-editor-card {
+	animation-delay: 0.1s;
+}
+
+/* Section title inside card */
+.apollo-editor-card-title {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-family: var(--ae-ff-mono);
+	font-size: 10px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.12em;
+	color: var(--ae-txt-muted);
+	margin-bottom: 20px;
+	padding-bottom: 12px;
+	border-bottom: 1px solid var(--ae-border);
+}
+
+.apollo-editor-card-title i {
+	font-size: 14px;
+	color: var(--ae-primary);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FIELD LIST (UL wrapper)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.apollo-editor-fields {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FIELD ITEM (LI wrapper)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.apollo-editor-field {
+	margin-bottom: 16px;
+}
+
+.apollo-editor-field:last-child {
+	margin-bottom: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LABELS — mono font, icon, counter
+   ═══════════════════════════════════════════════════════════════════════════ */
+.field-label {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-family: var(--ae-ff-mono);
+	font-size: 9px;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	font-weight: 700;
+	color: var(--ae-txt-muted);
+	margin-bottom: 6px;
+	user-select: none;
+}
+
+.field-label i {
+	font-size: 12px;
+}
+
+.field-label .required-mark {
+	color: var(--ae-danger);
+	font-weight: 800;
+}
+
+.field-label .char-counter {
+	margin-left: auto;
+	font-weight: 500;
+	opacity: 0.7;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   EDITABLE INPUTS — the core UI pattern
+   ═══════════════════════════════════════════════════════════════════════════ */
+.editable-input {
+	display: block;
+	width: 100%;
+	font-family: var(--ae-ff-main);
+	font-size: 14px;
+	color: var(--ae-txt);
+	background: rgba(247, 167, 29, 0.05);
+	border: 0.5px dashed var(--ae-border-dashed);
+	border-radius: var(--ae-r-sm);
+	padding: 10px 12px;
+	outline: none;
+	transition: all 0.2s var(--ae-ease);
+	-webkit-appearance: none;
+}
+
+.editable-input::placeholder {
+	color: var(--ae-txt-muted);
+	opacity: 0.6;
+}
+
+.editable-input:hover {
+	border-color: var(--ae-border);
+	border-style: solid;
+	background: var(--ae-surface);
+}
+
+.editable-input:focus {
+	border-color: var(--ae-primary);
+	border-style: solid;
+	background: var(--ae-white);
+	box-shadow: 0 0 0 3px var(--ae-primary-glow);
+}
+
+/* Readonly inputs */
+.editable-input[readonly] {
+	opacity: 0.6;
+	cursor: not-allowed;
+	border-style: dotted;
+}
+
+/* Name field — large bold */
+.editable-input.edit-name {
+	font-size: clamp(24px, 6vw, 36px);
+	font-weight: 700;
+	letter-spacing: -0.03em;
+	line-height: 1.1;
+	padding: 8px 12px;
+	border: none;
+	background: transparent;
+}
+
+.editable-input.edit-name:hover {
+	background: rgba(247, 167, 29, 0.03);
+}
+
+.editable-input.edit-name:focus {
+	border: 0.5px dashed var(--ae-border-dashed);
+	background: var(--ae-white);
+	box-shadow: 0 0 0 3px var(--ae-primary-glow);
+}
+
+/* Bio textarea */
+.editable-input.edit-bio {
+	font-size: 13px;
+	line-height: 1.6;
+	resize: vertical;
+	min-height: 60px;
+}
+
+/* URL / mono fields */
+.editable-input.edit-url {
+	font-family: var(--ae-ff-mono);
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+}
+
+/* Select dropdown */
+.editable-input.privacy-select {
+	font-family: var(--ae-ff-mono);
+	font-size: 11px;
+	font-weight: 600;
+	cursor: pointer;
+	padding-right: 32px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FIELD HELP TEXT
+   ═══════════════════════════════════════════════════════════════════════════ */
+.apollo-field-help {
+	display: block;
+	font-family: var(--ae-ff-mono);
+	font-size: 10px;
+	color: var(--ae-txt-muted);
+	margin-top: 4px;
+	opacity: 0.7;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ERROR STATE
+   ═══════════════════════════════════════════════════════════════════════════ */
+.apollo-editor-field.has-error .editable-input {
+	border-color: var(--ae-danger);
+	border-style: solid;
+	box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.apollo-editor-field.has-error .field-label {
+	color: var(--ae-danger);
+}
+
+.apollo-field-error {
+	display: block;
+	font-family: var(--ae-ff-mono);
+	font-size: 10px;
+	color: var(--ae-danger);
+	margin-top: 4px;
+	font-weight: 600;
+}
+
+.apollo-editor-error {
+	background: rgba(220, 38, 38, 0.05);
+	border: 1px solid rgba(220, 38, 38, 0.2);
+	border-radius: var(--ae-r);
+	padding: 20px;
+	color: var(--ae-danger);
+	font-family: var(--ae-ff-mono);
+	font-size: 12px;
+	text-align: center;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   IMAGE UPLOAD
+   ═══════════════════════════════════════════════════════════════════════════ */
+.apollo-image-upload {
+	position: relative;
+}
+
+.apollo-image-preview {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 16 / 9;
+	border-radius: var(--ae-r);
+	overflow: hidden;
+	background: var(--ae-surface);
+	border: 2px dashed var(--ae-border);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: all 0.2s var(--ae-ease);
+}
+
+.apollo-image-preview:hover {
+	border-color: var(--ae-primary);
+	background: rgba(244, 95, 0, 0.03);
+}
+
+.apollo-image-preview.has-image {
+	border: none;
+}
+
+.apollo-image-preview img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+/* Overlay on hover */
+.apollo-image-overlay {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	background: rgba(var(--rgb-d), 0.5);
+	backdrop-filter: blur(4px);
+	opacity: 0;
+	transition: opacity 0.2s var(--ae-ease);
+}
+
+.apollo-image-preview:hover .apollo-image-overlay,
+.apollo-image-upload:hover .apollo-image-overlay {
+	opacity: 1;
+}
+
+/* Upload/delete buttons in overlay */
+.hero-edit-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 16px;
+	background: rgba(var(--rgb-d), 0.6);
+	backdrop-filter: blur(8px);
+	color: var(--ae-white);
+	border: none;
+	border-radius: 100px;
+	font-family: var(--ae-ff-mono);
+	font-size: 10px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	cursor: pointer;
+	transition: all 0.2s var(--ae-ease);
+}
+
+.hero-edit-btn:hover {
+	background: var(--ae-primary);
+	transform: translateY(-1px);
+}
+
+.hero-edit-btn i {
+	font-size: 14px;
+}
+
+.apollo-image-delete-btn:hover {
+	background: var(--ae-danger);
+}
+
+/* Upload spinner */
+.apollo-image-upload.uploading .apollo-image-overlay {
+	opacity: 1;
+}
+
+.apollo-image-upload.uploading .apollo-image-upload-btn span::after {
+	content: '...';
+	animation: dots 1.5s steps(3, end) infinite;
+}
+
+/* Empty state */
+.apollo-image-preview:not(.has-image)::before {
+	content: '';
+	display: block;
+	width: 48px;
+	height: 48px;
+	background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='1.5'%3E%3Crect x='3' y='3' width='18' height='18' rx='2'/%3E%3Ccircle cx='8.5' cy='8.5' r='1.5'/%3E%3Cpath d='M21 15l-5-5L5 21'/%3E%3C/svg%3E") no-repeat center;
+	opacity: 0.4;
+}
+
+.apollo-image-preview:not(.has-image) .apollo-image-overlay {
+	background: transparent;
+	opacity: 1;
+}
+
+.apollo-image-preview:not(.has-image) .hero-edit-btn {
+	background: rgba(var(--rgb-d), 0.55);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CHECKBOX & TAXONOMY
+   ═══════════════════════════════════════════════════════════════════════════ */
+.apollo-checkbox-single,
+.apollo-checkbox-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	cursor: pointer;
+	font-family: var(--ae-ff-mono);
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--ae-txt);
+	padding: 4px 0;
+}
+
+.apollo-checkbox-item input[type="checkbox"] {
+	accent-color: var(--ae-primary);
+	width: 16px;
+	height: 16px;
+	cursor: pointer;
+}
+
+.apollo-checkbox-group,
+.apollo-taxonomy-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+/* Tag-style taxonomy items */
+.apollo-taxonomy-list .apollo-checkbox-item {
+	padding: 4px 10px;
+	border: 1px solid var(--ae-border);
+	border-radius: 100px;
+	font-size: 8px;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	transition: all 0.2s var(--ae-ease);
+}
+
+.apollo-taxonomy-list .apollo-checkbox-item:hover {
+	border-color: var(--ae-primary);
+	background: rgba(244, 95, 0, 0.03);
+}
+
+.apollo-taxonomy-list .apollo-checkbox-item:has(input:checked) {
+	border-color: var(--ae-primary);
+	background: rgba(244, 95, 0, 0.08);
+	color: var(--ae-primary);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SECTION DIVIDER
+   ═══════════════════════════════════════════════════════════════════════════ */
+.apollo-section-divider {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-family: var(--ae-ff-mono);
+	font-size: 9px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.12em;
+	color: var(--ae-txt-muted);
+	margin: 24px 0 12px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid var(--ae-border);
+}
+
+.apollo-section-divider i {
+	font-size: 14px;
+	color: var(--ae-primary);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SAVE BAR — fixed bottom
+   ═══════════════════════════════════════════════════════════════════════════ */
+.apollo-save-bar {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 1000;
+	background: var(--ae-white);
+	border-top: 1px solid var(--ae-border);
+	padding: 12px 24px;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 12px;
+	box-shadow: 0 -4px 20px rgba(var(--rgb-d), 0.06);
+	animation: slideUp 0.4s var(--ae-ease-smooth) both;
+}
+
+.apollo-save-bar .btn {
+	padding: 10px 24px;
+	font-family: var(--ae-ff-mono);
+	font-size: 12px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	border: 1px solid var(--ae-border);
+	border-radius: var(--ae-r-sm);
+	cursor: pointer;
+	transition: all 0.2s var(--ae-ease);
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.btn-ghost {
+	background: transparent;
+	color: var(--ae-txt-muted);
+}
+
+.btn-ghost:hover {
+	background: var(--ae-surface);
+	color: var(--ae-txt);
+}
+
+.btn-primary {
+	background: var(--ae-black);
+	color: var(--ae-white);
+	border-color: var(--ae-black);
+}
+
+.btn-primary:hover {
+	background: var(--ae-primary);
+	border-color: var(--ae-primary);
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(244, 95, 0, 0.3);
+}
+
+.btn-primary:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	transform: none;
+	box-shadow: none;
+}
+
+/* Status indicator in save bar */
+.apollo-save-status {
+	margin-right: auto;
+	font-family: var(--ae-ff-mono);
+	font-size: 10px;
+	font-weight: 600;
+	color: var(--ae-txt-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+}
+
+.apollo-save-status.saving {
+	color: var(--ae-primary);
+}
+
+.apollo-save-status.saved {
+	color: var(--ae-success);
+}
+
+.apollo-save-status.error {
+	color: var(--ae-danger);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TOAST NOTIFICATION
+   ═══════════════════════════════════════════════════════════════════════════ */
+#apollo-toast {
+	position: fixed;
+	top: 90px;
+	right: 20px;
+	z-index: 10000;
+	padding: 14px 24px;
+	border-radius: var(--ae-r);
+	font-family: var(--ae-ff-mono);
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	color: var(--ae-white);
+	box-shadow: 0 8px 24px rgba(var(--rgb-d), 0.15);
+	transform: translateX(120%);
+	transition: transform 0.3s var(--ae-ease-smooth);
+	pointer-events: none;
+}
+
+#apollo-toast.visible {
+	transform: translateX(0);
+}
+
+#apollo-toast.success {
+	background: var(--ae-success);
+}
+
+#apollo-toast.error {
+	background: var(--ae-danger);
+}
+
+#apollo-toast.info {
+	background: var(--ae-info);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GRID LAYOUTS
+   ═══════════════════════════════════════════════════════════════════════════ */
+.apollo-editor-grid {
+	display: grid;
+	gap: 16px;
+}
+
+.apollo-editor-grid-2 {
+	grid-template-columns: 1fr 1fr;
+}
+
+.apollo-editor-grid-3 {
+	grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════════════════════════════════ */
+@keyframes fadeUp {
+	from {
+		opacity: 0;
+		transform: translateY(32px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes fadeIn {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+@keyframes slideUp {
+	from {
+		transform: translateY(100%);
+	}
+	to {
+		transform: translateY(0);
+	}
+}
+
+@keyframes breathe {
+	0%, 100% { opacity: 0.15; }
+	50% { opacity: 0.35; }
+}
+
+@keyframes dots {
+	0% { content: ''; }
+	33% { content: '.'; }
+	66% { content: '..'; }
+	100% { content: '...'; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+	.apollo-editor-container {
+		padding: 0 12px 100px;
+	}
+
+	.apollo-editor-card {
+		padding: 20px 16px;
+		border-radius: var(--ae-r);
+	}
+
+	.apollo-editor-hero .apollo-image-cover .apollo-image-preview {
+		height: 180px;
+	}
+
+	.apollo-editor-hero-avatar .apollo-image-preview {
+		width: 100px;
+		height: 100px;
+	}
+
+	.apollo-editor-grid-2,
+	.apollo-editor-grid-3 {
+		grid-template-columns: 1fr;
+	}
+
+	.apollo-save-bar {
+		padding: 10px 16px;
+	}
+
+	.apollo-save-bar .btn {
+		padding: 8px 16px;
+		font-size: 11px;
+	}
+
+	.editable-input.edit-name {
+		font-size: 22px;
+	}
+}
+
+@media (min-width: 980px) {
+	.apollo-editor-layout {
+		display: grid;
+		grid-template-columns: 1fr 380px;
+		gap: 24px;
+		align-items: start;
+	}
+}
+
+@media (min-width: 1400px) {
+	.apollo-editor-container {
+		max-width: 1100px;
+	}
+
+	.apollo-editor-layout {
+		grid-template-columns: 1fr 420px;
+	}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DARK MODE SUPPORT
+   ═══════════════════════════════════════════════════════════════════════════ */
+html.dark-mode .apollo-editor-card {
+	background: var(--ae-gray-9);
+	border-color: rgba(var(--rgb-t), 0.1);
+}
+
+html.dark-mode .editable-input {
+	color: var(--ae-white);
+}
+
+html.dark-mode .editable-input:focus {
+	background: var(--ae-black);
+}
+
+html.dark-mode .apollo-save-bar {
+	background: var(--ae-black);
+	border-color: rgba(var(--rgb-t), 0.1);
+}
+
+html.dark-mode .btn-primary {
+	background: var(--ae-primary);
+	border-color: var(--ae-primary);
+}
+
+/* ─── GLOBAL TOOLTIPS ──────────────────────────────────────────────── */
+[data-tooltip] {
+	position: relative;
+}
+
+[data-tooltip]::before {
+	content: attr(data-tooltip);
+	position: absolute;
+	bottom: calc(100% + 8px);
+	left: 50%;
+	transform: translateX(-50%) translateY(-4px);
+	padding: 6px 12px;
+	background: var(--ae-black);
+	color: #fff;
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 1.4;
+	white-space: nowrap;
+	border-radius: 6px;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.2s var(--ae-ease), transform 0.2s var(--ae-ease);
+	z-index: 1000;
+}
+
+[data-tooltip]::after {
+	content: "";
+	position: absolute;
+	bottom: calc(100% + 2px);
+	left: 50%;
+	transform: translateX(-50%);
+	border: 6px solid transparent;
+	border-top-color: var(--ae-black);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.2s var(--ae-ease);
+	z-index: 1000;
+}
+
+[data-tooltip]:hover::before,
+[data-tooltip]:hover::after {
+	opacity: 1;
+	transform: translateX(-50%) translateY(0);
+}

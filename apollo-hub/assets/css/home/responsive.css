@@ -1,0 +1,25 @@
+/* ═══════════════════════════════════════════════════════════════
+   APOLLO::RIO — HOME / responsive.css
+   Consolidated breakpoints + reduced motion + safety net
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .a-eve-media img, .nh-track-artwork img, .nh-crash-img { transition: none !important; }
+    .nh-marquee-content { animation: none !important; }
+    .nh-radio-wave span { animation: none !important; }
+    .nh-scroll-line     { animation: none !important; }
+    [data-panel] .ai { opacity: 1 !important; transform: none !important; animation: none !important; }
+    .nh-menu-fab, .nh-menu-sheet { transition: none !important; }
+}
+
+/* Small phone safety */
+@media (max-width: 480px) {
+    .section { padding: 52px 0; }
+}
+
+/* Mid-range mobile */
+@media (max-width: 767px) {
+    .nh-events-grid { margin-left: 0; }
+    .nh-section-head { position: relative; overflow: visible; }
+}

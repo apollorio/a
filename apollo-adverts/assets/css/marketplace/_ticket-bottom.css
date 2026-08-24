@@ -1,0 +1,43 @@
+/* ===========================================
+   MARKETPLACE — Ticket Bottom (Barcode + Chat)
+   =========================================== */
+
+article[type=ticket] .bottom {
+    background-color: #fff;
+    display: grid;
+    grid-template-columns: 1fr 50px;
+    gap: 16px;
+    padding: 16px 20px 24px 20px;
+    align-items: center;
+    margin-bottom: 0;
+}
+
+.barcode {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAF4AAAABCAYAAABXChlMAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAACPSURBVChTXVAJDsMgDOsrVpELiqb+/4c0DgStQ7JMYogNh2gdvg5VfXFCRIZaC6BOtnoNFpvaumNmwb/71Frrm8XvgYkker1/g9WzMOsohaOGNziRs5inDsAn8yEPengTapJ5bmdZ2Yv7VvfPN6AH2NJx7nOWPTf1/78hoqgxhzw3ZqYG1Dr/9ur3y8vMxgNZhcAUnR4xKgAAAABJRU5ErkJggg==);
+    background-repeat: repeat;
+    width: 100%;
+    height: 40px;
+    opacity: 0.25;
+    border-radius: 2px;
+}
+
+.btn-chat-ticket {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--ff-mono);
+    background-color: var(--black-1);
+    color: #fff;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    font-size: 20px;
+    transition: all 0.3s var(--ease-lux);
+    cursor: pointer;
+}
+
+.btn-chat-ticket:hover {
+    filter: brightness(2.5);
+    transform: translateY(0);
+}

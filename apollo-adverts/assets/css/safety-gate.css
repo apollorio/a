@@ -1,0 +1,364 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   safety-gate.css — /seguranca/
+   apollo::rio · apollo-adverts
+
+   ZERO :root. The four locals are page-specific names that do not exist in
+   core.js, which is the only case a local declaration is allowed.
+
+   WHY THIS PAGE DOES NOT FOLLOW THE USER'S THEME
+   core.js runs a theme manager that removes .dark-mode and forces data-theme
+   on boot, and its injected :root block is !important — so a markup-level
+   switch is wiped before first paint. A security interstitial should look
+   identical in light and dark anyway, so the palette is built from the FIXED
+   scales (--orange-*, --white-50) which never flip, and the ink is local.
+
+   --gate-vidro is the .vidro formula from the design system (top-edge
+   highlight + hairline) re-based on this page's fixed ink, because
+   --ins-shadow is built from --rgb-theme and would invert underneath us.
+   Depth is this and nothing else — a única profundidade permitida.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.apollo-stage.ap-safety {
+  --gate-ink: 255, 255, 255;
+  --gate-vidro: inset 0 1px 0 0 rgba(var(--gate-ink), .10), inset 0 0 0 1px rgba(var(--gate-ink), .05);
+  --gate-av: 40px;
+  --safe-b: var(--safe-bottom, env(safe-area-inset-bottom, 0px));
+
+  container-type: inline-size;
+  position: fixed; inset: 0; overflow: hidden;
+  display: flex; flex-flow: column nowrap;
+  background:
+    radial-gradient(120% 70% at 50% -8%, var(--orange-800) 0%, transparent 58%),
+    radial-gradient(90% 55% at 88% 108%, var(--orange-900) 0%, transparent 62%),
+    linear-gradient(178deg, var(--orange-900) 0%, transparent 34%, var(--orange-950) 100%),
+    var(--orange-950);
+}
+
+/* one soft bloom behind the seal — the only decoration on the page */
+.ap-safety::before {
+  content: ''; position: absolute; left: 50%; top: -14%;
+  width: min(760px, 150%); aspect-ratio: 1; translate: -50% 0;
+  background: radial-gradient(circle, color-mix(in srgb, var(--orange-300) 14%, transparent) 0%, transparent 62%);
+  pointer-events: none;
+}
+
+.ap-safety .apollo-warn { position: relative; flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+.ap-safety .apollo-warn__inner {
+  width: min(720px, 100%); margin: 0 auto;
+  padding: clamp(28px, 8cqi, 64px) clamp(20px, 5.5cqi, 40px) clamp(40px, 10cqi, 72px);
+  display: flex; flex-flow: column nowrap; gap: clamp(20px, 4.5cqi, 30px);
+}
+
+/* ══ THE WARNING ══════════════════════════════════════════════════════════ */
+.ap-safety .ap-lede { display: flex; flex-flow: column nowrap; gap: var(--s-3); }
+
+.ap-safety .ap-seal {
+  width: clamp(52px, 13cqi, 68px); aspect-ratio: 1; border-radius: var(--r);
+  display: grid; place-items: center; margin-bottom: var(--s-2);
+  background: rgba(var(--gate-ink), .06); box-shadow: var(--gate-vidro);
+  color: var(--orange-300);
+}
+.ap-safety .ap-seal svg { width: 56%; height: 56%; display: block; }
+
+.ap-safety .ap-kicker {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--ff-mono); font-size: clamp(.625rem, 2.5cqi, .75rem);
+  text-transform: uppercase; letter-spacing: .16em; color: var(--orange-300);
+}
+.ap-safety .ap-kicker::before { content: ''; width: 18px; height: 1px; background: currentColor; opacity: .6; }
+
+.ap-safety .ap-lede h1 {
+  font-family: var(--ff-heading);
+  font-size: clamp(1.5rem, 7.4cqi, 2.6rem); line-height: 1.06;
+  letter-spacing: -.035em; color: rgba(var(--gate-ink), .97);
+}
+.ap-safety .ap-lede p {
+  font-size: clamp(.9375rem, 3.9cqi, 1.125rem); line-height: 1.55;
+  color: rgba(var(--gate-ink), .72); max-width: 46ch;
+}
+.ap-safety .ap-lede p strong { color: rgba(var(--gate-ink), .96); font-weight: 600; }
+
+/* who you are about to contact */
+.ap-safety .ap-target {
+  display: flex; align-items: center; gap: var(--s-3);
+  padding: var(--s-3) var(--s-4); border-radius: var(--r);
+  background: rgba(var(--gate-ink), .05); box-shadow: var(--gate-vidro);
+}
+.ap-safety .ap-target__av { width: 46px; height: 46px; font-size: clamp(.8125rem, 3.4cqi, .95rem); }
+.ap-safety .ap-target__id { display: flex; flex-flow: column nowrap; gap: 2px; min-width: 0; flex: 1 1 auto; }
+.ap-safety .ap-target__name { font-size: clamp(.875rem, 3.7cqi, 1rem); font-weight: 600; color: rgba(var(--gate-ink), .95); letter-spacing: -.015em; }
+.ap-safety .ap-target__handle { font-family: var(--ff-mono); font-size: clamp(.6875rem, 2.9cqi, .82rem); color: var(--orange-300); text-decoration: none; }
+.ap-safety .ap-target__handle:hover { text-decoration: underline; }
+.ap-safety .ap-target__ad { font-size: clamp(.6875rem, 2.9cqi, .82rem); color: rgba(var(--gate-ink), .5); text-align: right; }
+.ap-safety .ap-target__ad b { display: block; color: rgba(var(--gate-ink), .82); font-size: clamp(.75rem, 3.1cqi, .9rem); }
+
+/* the rule the whole page turns on */
+.ap-safety .ap-rule {
+  display: block; padding-left: var(--s-3);
+  font-size: clamp(.8125rem, 3.4cqi, .95rem); line-height: 1.5;
+  color: rgba(var(--gate-ink), .88);
+  box-shadow: inset 3px 0 0 0 var(--orange-400);
+}
+.ap-safety .ap-rule b { color: var(--orange-300); font-weight: 600; }
+
+/* ══ THE THREE CHECKS ═════════════════════════════════════════════════════ */
+.ap-safety .ap-checks { display: flex; flex-flow: column nowrap; gap: var(--s-3); }
+
+.ap-safety .ap-check {
+  border-radius: var(--r); overflow: hidden;
+  background: rgba(var(--gate-ink), .05); box-shadow: var(--gate-vidro);
+  transition: background .5s var(--ease), box-shadow .5s var(--ease);
+}
+/* .alert-accent's language: a confirmed signal earns a left rail, nothing else */
+.ap-safety .ap-check[data-state="on"] {
+  background: rgba(var(--gate-ink), .07);
+  box-shadow: var(--gate-vidro), inset 3px 0 0 0 rgba(var(--gate-ink), .9);
+}
+
+.ap-safety .ap-check__top { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3) var(--s-4); flex-wrap: wrap; }
+
+.ap-safety .ap-check__mark {
+  position: relative; flex: 0 0 auto; width: 30px; height: 30px; border-radius: 10px;
+  display: grid; place-items: center; color: var(--orange-950);
+  border: 1.5px solid rgba(var(--gate-ink), .18); background: transparent;
+  transition: background .4s var(--ease), border-color .4s var(--ease);
+}
+.ap-safety .ap-check__mark svg { width: 18px; height: 18px; display: block; overflow: visible; }
+.ap-safety .ap-tick { stroke: currentColor; stroke-width: 2.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.ap-safety .ap-check[data-state="on"] .ap-check__mark { background: rgba(var(--gate-ink), .95); border-color: rgba(var(--gate-ink), .95); }
+.ap-safety .ap-check[data-state="off"] .ap-check__mark { border-style: dashed; border-color: rgba(var(--gate-ink), .14); }
+.ap-safety .ap-check[data-state="off"] .ap-tick { display: none; }
+
+/* found, but opens nothing: half-filled mark, no rail, no tick. Without this
+   a white tick on the trust-votes block reads as safe, and the badge is the
+   only thing saying otherwise — nobody reads the badge. */
+.ap-safety .ap-check[data-state="info"] .ap-check__mark { background: rgba(var(--gate-ink), .16); border-color: transparent; }
+.ap-safety .ap-check[data-state="info"] .ap-tick { display: none; }
+.ap-safety .ap-check[data-state="info"] .ap-check__mark::before {
+  content: ''; width: 11px; height: 2px; border-radius: var(--r-pill);
+  background: rgba(var(--gate-ink), .55);
+}
+
+/* running — the page must show it is actually consulting something */
+.ap-safety .ap-check.is-loading .ap-check__mark { border-color: rgba(var(--gate-ink), .12); }
+.ap-safety .ap-check.is-loading .ap-tick { display: none; }
+.ap-safety .ap-check.is-loading .ap-check__mark::after {
+  content: ''; position: absolute; inset: 4px; border-radius: 50%;
+  border: 2px solid rgba(var(--gate-ink), .16); border-top-color: var(--orange-300);
+  animation: ap-safety-spin .7s linear infinite;
+}
+@keyframes ap-safety-spin { to { transform: rotate(360deg); } }
+
+.ap-safety .ap-check__id { flex: 1 1 auto; min-width: 0; display: flex; flex-flow: column nowrap; gap: 3px; }
+.ap-safety .ap-check__title { font-size: clamp(.875rem, 3.6cqi, 1rem); font-weight: 600; color: rgba(var(--gate-ink), .93); letter-spacing: -.015em; line-height: 1.25; }
+.ap-safety .ap-check__status { font-size: clamp(.6875rem, 2.9cqi, .82rem); color: rgba(var(--gate-ink), .5); line-height: 1.3; }
+.ap-safety .ap-check[data-state="on"] .ap-check__status { color: var(--orange-300); }
+.ap-safety .ap-check__pair { font-family: var(--ff-mono); font-size: clamp(.625rem, 2.6cqi, .76rem); color: rgba(var(--gate-ink), .38); }
+
+.ap-safety .ap-check__gate {
+  flex: 0 0 auto; align-self: flex-start;
+  font-family: var(--ff-mono); font-size: clamp(.5625rem, 2.2cqi, .6875rem);
+  text-transform: uppercase; letter-spacing: .12em;
+  padding: 4px 9px; border-radius: var(--r-pill);
+}
+.ap-safety .ap-check__gate[data-gate="unlock"] { background: rgba(var(--gate-ink), .10); color: var(--orange-300); }
+.ap-safety .ap-check__gate[data-gate="context"] { background: rgba(var(--gate-ink), .05); color: rgba(var(--gate-ink), .40); }
+
+.ap-safety .ap-check__body { padding: 0 var(--s-4) var(--s-3); }
+.ap-safety .ap-check__say { font-size: clamp(.75rem, 3.2cqi, .9rem); line-height: 1.55; color: rgba(var(--gate-ink), .62); }
+
+/* ══ PEOPLE ═══════════════════════════════════════════════════════════════ */
+.ap-safety .ap-people { list-style: none; margin: 0; padding: 0; display: flex; flex-flow: column nowrap; }
+.ap-safety .ap-person__row { display: flex; align-items: center; gap: var(--s-2); flex-wrap: wrap; border-radius: var(--r-sm); transition: background var(--t-ui); }
+.ap-safety .ap-person__row.is-active { background: rgba(var(--gate-ink), .07); }
+.ap-safety .ap-person__row.is-loading .ap-person { opacity: .55; }
+
+.ap-safety .ap-person {
+  flex: 1 1 190px; min-width: 0;
+  display: flex; align-items: center; gap: var(--s-3);
+  padding: 9px 10px; border-radius: var(--r-sm);
+  color: inherit; text-decoration: none; transition: background var(--t-ui);
+}
+.ap-safety .ap-person:hover { background: rgba(var(--gate-ink), .06); }
+.ap-safety .ap-person__av { flex: 0 0 auto; width: var(--gate-av); height: var(--gate-av); font-size: clamp(.6875rem, 2.9cqi, .82rem); }
+.ap-safety .ap-person__id { flex: 1 1 auto; min-width: 0; display: flex; flex-flow: column nowrap; gap: 1px; }
+.ap-safety .ap-person__name { font-size: clamp(.8125rem, 3.4cqi, .9375rem); font-weight: 600; color: rgba(var(--gate-ink), .9); line-height: 1.25; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ap-safety .ap-person__handle { font-family: var(--ff-mono); font-size: clamp(.6875rem, 2.8cqi, .8rem); color: rgba(var(--gate-ink), .45); line-height: 1.25; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.ap-safety .ap-person__ok {
+  flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px; margin-right: 10px;
+  font-size: clamp(.6875rem, 2.8cqi, .8rem); font-weight: 600; white-space: nowrap; color: var(--orange-300);
+}
+.ap-safety .ap-person__ok svg { width: 15px; height: 15px; display: block; }
+
+/* monogram is the honest default; <img> wins when a profile_pic_url actually
+   resolves — scontent URLs are hotlink-guarded and expire. */
+.ap-safety .ap-av {
+  position: relative; overflow: hidden; flex: 0 0 auto;
+  border-radius: 50%; display: grid; place-items: center;
+  font-family: var(--ff-main); font-weight: 600; letter-spacing: -.02em;
+  color: var(--orange-950); text-transform: uppercase; user-select: none;
+  background: rgba(var(--gate-ink), .55);
+}
+.ap-safety .ap-av[data-tone="1"] { background: rgba(var(--gate-ink), .34); }
+.ap-safety .ap-av[data-tone="2"] { background: rgba(var(--gate-ink), .44); }
+.ap-safety .ap-av[data-tone="3"] { background: rgba(var(--gate-ink), .56); }
+.ap-safety .ap-av[data-tone="4"] { background: rgba(var(--gate-ink), .68); }
+.ap-safety .ap-av[data-tone="5"] { background: rgba(var(--gate-ink), .82); }
+.ap-safety .ap-av img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ══ NOTE / DECISION BAR ══════════════════════════════════════════════════ */
+.ap-safety .ap-note {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: clamp(.6875rem, 2.9cqi, .82rem); line-height: 1.55; color: rgba(var(--gate-ink), .45);
+}
+.ap-safety .ap-note i { flex: 0 0 auto; margin-top: 2px; }
+.ap-safety .ap-note svg { width: 15px; height: 15px; display: block; }
+
+.ap-safety .apollo-warn__foot {
+  flex: 0 0 auto; position: relative; z-index: var(--z-sticky, 20);
+  padding: var(--s-3) 0 calc(var(--s-3) + var(--safe-b));
+  background: color-mix(in srgb, var(--orange-950) 82%, transparent);
+  backdrop-filter: blur(18px) saturate(1.2);
+  border-top: 1px solid rgba(var(--gate-ink), .08);
+}
+/* gutter on the inner block, not the bar, so the row lines up with the column */
+.ap-safety .apollo-warn__foot > div {
+  width: min(720px, 100%); margin: 0 auto;
+  padding-inline: clamp(20px, 5.5cqi, 40px);
+  display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap;
+}
+.ap-safety .ap-verdict { flex: 1 1 220px; min-width: 0; display: flex; align-items: baseline; flex-wrap: wrap; gap: 3px 7px; }
+.ap-safety .ap-verdict__icon { align-self: center; color: var(--alert-warning); display: grid; place-items: center; }
+.ap-safety .ap-verdict__icon svg { width: 16px; height: 16px; display: block; }
+.ap-safety .ap-verdict b { font-size: clamp(.8125rem, 3.4cqi, .95rem); font-weight: 600; color: rgba(var(--gate-ink), .95); letter-spacing: -.015em; }
+.ap-safety .ap-verdict span { font-size: clamp(.6875rem, 2.8cqi, .8rem); color: rgba(var(--gate-ink), .5); line-height: 1.35; }
+.ap-safety .apollo-warn__foot[data-verdict="danger"] .ap-verdict b { color: var(--alert-warning); }
+.ap-safety .ap-actions { display: flex; align-items: center; gap: var(--s-2); flex: 0 0 auto; }
+
+/* ══ PRIMITIVE OVERRIDES — size and ink only. uni.theme owns .btn. ════════
+   .btn-primary / .btn-secondary resolve from --rgb-diff and would invert with
+   the user's theme; on a fixed amber page they have to be pinned. */
+.ap-safety .btn { padding: 13px 22px; font-size: clamp(.8125rem, 3.4cqi, .95rem); font-weight: 600; letter-spacing: -.01em; text-decoration: none; }
+.ap-safety .btn-sm { padding: 8px 15px; font-size: clamp(.6875rem, 2.9cqi, .82rem); }
+.ap-safety .btn svg { width: 16px; height: 16px; display: block; }
+.ap-safety .btn:disabled { opacity: .45; pointer-events: none; }
+
+/* uni.theme sets .btn-primary{color:var(--bg)!important}, which resolves to
+   white here and would print white on white — the one place this page has to
+   answer !important with !important. */
+.ap-safety .btn-primary { background: var(--white-50); color: var(--orange-950) !important; }
+.ap-safety .btn-primary:hover { background: var(--orange-100); }
+.ap-safety .btn-secondary {
+  background: rgba(var(--gate-ink), .09); color: rgba(var(--gate-ink), .84);
+  box-shadow: var(--gate-vidro);
+}
+.ap-safety .btn-secondary:hover { background: rgba(var(--gate-ink), .14); }
+
+/* .btn sets display:inline-flex, which outranks the UA [hidden] rule */
+.ap-safety [hidden] { display: none !important; }
+
+/* On a narrow column the ask button and the name fight for the same row and
+   every name truncates. Stacking costs height but keeps names readable and
+   turns the button into a proper touch target. */
+@container (max-width: 480px) {
+  .ap-safety .ap-person__row { flex-flow: column nowrap; align-items: stretch; padding-bottom: 8px; }
+  .ap-safety .ap-person__row .ap-person { flex: 1 1 auto; }
+  .ap-safety .ap-ask { width: calc(100% - 20px); margin: 2px 10px 0; }
+  .ap-safety .ap-person__ok { margin: 2px 10px 4px; }
+}
+
+@container (max-width: 560px) {
+  .ap-safety .apollo-warn__foot > div { flex-flow: column nowrap; align-items: stretch; }
+  /* flex-basis resolves against the MAIN axis: 220px is a width in the row
+     layout and a height once this stacks. */
+  .ap-safety .ap-verdict { flex: 0 0 auto; }
+  .ap-safety .ap-actions { width: 100%; }
+  .ap-safety .ap-actions .btn { flex: 1 1 auto; justify-content: center; }
+  .ap-safety .ap-target { flex-wrap: wrap; }
+  .ap-safety .ap-target__ad { text-align: left; width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ap-safety .ap-check, .ap-safety .ap-check__mark, .ap-safety .ap-person { transition: none !important; }
+  .ap-safety .ap-check.is-loading .ap-check__mark::after { animation: none; }
+}
+
+/* ══ PRELOADER ════════════════════════════════════════════════════════════
+   The page holds itself back until every signal has answered and its avatars
+   have decoded, then crossfades in as one piece. A half-drawn verdict is
+   worse than none: two ticks landed and a third still spinning reads as
+   "2 de 3" to anyone who stops reading there.
+
+   data-boot stays "loading" forever when a signal never resolves. That is the
+   design — "could not check" must never be allowed to look like "checked, and
+   fine". See templates/parts/safety/preloader.php. */
+
+.ap-safety .ap-preloader {
+  position: absolute; inset: 0; z-index: 3;
+  display: flex; flex-flow: column nowrap; align-items: center; justify-content: center;
+  gap: var(--s-3); text-align: center; padding: var(--s-4);
+  opacity: 1; transition: opacity .55s var(--ease);
+}
+.ap-safety[data-boot="ready"] .ap-preloader { opacity: 0; pointer-events: none; }
+
+.ap-safety .ap-preloader__seal {
+  width: clamp(52px, 13cqi, 68px); aspect-ratio: 1; border-radius: var(--r);
+  display: grid; place-items: center;
+  background: rgba(var(--gate-ink), .06); box-shadow: var(--gate-vidro);
+  color: var(--orange-300);
+  animation: ap-preloader-pulse 1.9s var(--ease) infinite;
+}
+.ap-safety .ap-preloader__seal svg { width: 56%; height: 56%; display: block; }
+
+@keyframes ap-preloader-pulse {
+  0%, 100% { opacity: .55; transform: scale(.97); }
+  50%      { opacity: 1;   transform: scale(1); }
+}
+
+.ap-safety .ap-preloader__label {
+  font-family: var(--ff-mono); font-size: clamp(.6875rem, 2.8cqi, .8rem);
+  text-transform: uppercase; letter-spacing: .14em; color: var(--orange-300);
+}
+
+/* one bar per signal — it fills as that check answers, so the wait is legible
+   instead of being a spinner that could mean anything */
+.ap-safety .ap-preloader__steps { display: flex; gap: 6px; }
+.ap-safety .ap-preloader__steps i {
+  display: block; width: 34px; height: 3px; border-radius: var(--r-pill);
+  background: rgba(var(--gate-ink), .14); overflow: hidden; position: relative;
+}
+.ap-safety .ap-preloader__steps i::after {
+  content: ''; position: absolute; inset: 0;
+  background: var(--orange-300); transform: scaleX(0); transform-origin: 0 50%;
+  transition: transform .5s var(--ease);
+}
+.ap-safety .ap-preloader__steps i.is-active::after { transform: scaleX(1); }
+
+/* Everything except the preloader waits. Kept at opacity 0 rather than
+   display:none so the page has its real height from the first frame and the
+   reveal is a fade, not a jump. */
+.ap-safety[data-boot="loading"] .apollo-warn__inner > *:not(.ap-preloader) {
+  opacity: 0;
+  pointer-events: none;
+}
+.ap-safety .apollo-warn__inner > *:not(.ap-preloader) {
+  transition: opacity .6s var(--ease);
+}
+.ap-safety[data-boot="loading"] .apollo-warn__foot { opacity: 0; pointer-events: none; }
+.ap-safety .apollo-warn__foot { transition: opacity .6s var(--ease), transform .6s var(--ease); }
+
+/* the scroller must not scroll while there is nothing to read */
+.ap-safety[data-boot="loading"] .apollo-warn { overflow: hidden; }
+
+/* The preloader is centred on the viewport, not on the (empty) content, so it
+   sits still while the page behind it grows to its real height. */
+.ap-safety .apollo-warn { position: relative; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ap-safety .ap-preloader,
+  .ap-safety .apollo-warn__inner > *,
+  .ap-safety .apollo-warn__foot { transition: none !important; }
+  .ap-safety .ap-preloader__seal { animation: none; }
+  .ap-safety .ap-preloader__steps i::after { transition: none; }
+}

@@ -1,0 +1,18 @@
+{
+	"name": "apollo/apollo-djs",
+	"description": "Apollo DJs — CPT de DJs com profiles, social links, sound genres, carousel/grid views.",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"require": {
+		"php": ">=7.4"
+	},
+	"autoload": {
+		"psr-4": {
+			"Apollo\\DJs\\": "src/"
+		},
+		"files": [
+			"includes/constants.php",
+			"includes/functions.php"
+		]
+	}
+}

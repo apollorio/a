@@ -1,0 +1,50 @@
+{
+  "$chapter": {
+    "id": "12-data-sync",
+    "owner": "apollo-core",
+    "keys": [
+      "$data_registry_sync"
+    ],
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "$data_registry_sync": {
+    "date": "2026-07-21",
+    "source": "_inventory/data-registry.json (expected = mockup single-page truth for evento/dj/local)",
+    "action": "Added live META_KEYS entries missing from deep_scan meta.post; removed one scan artifact.",
+    "added": {
+      "apollo-events": [
+        "_event_access_buttons",
+        "_event_bg_color"
+      ],
+      "apollo-djs": [
+        "_dj_about_photo",
+        "_dj_about_video",
+        "_dj_bandcamp",
+        "_dj_beatport",
+        "_dj_booking",
+        "_dj_facebook",
+        "_dj_media_kit_url",
+        "_dj_mix_url",
+        "_dj_resident_advisor",
+        "_dj_rider_url",
+        "_dj_statement",
+        "_dj_tiktok",
+        "_dj_tracks"
+      ],
+      "apollo-loc": [
+        "_local_image_2",
+        "_local_image_3",
+        "_local_image_4",
+        "_local_image_5",
+        "_local_whatsapp"
+      ]
+    },
+    "removed": {
+      "apollo-loc": [
+        "_local_image_{$i}"
+      ]
+    },
+    "data_registry_renames": "none — every expected storage.key already resolves to a live registered key (mockup _ap_* aliases already captured via mockup_key_legacy)."
+  }
+}

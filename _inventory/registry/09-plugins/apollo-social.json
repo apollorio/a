@@ -1,0 +1,1451 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-social",
+    "owner": "apollo-social",
+    "wrap": "plugins.apollo-social",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-social",
+  "namespace": "Apollo\\Social",
+  "priority": 3,
+  "status": "IMPLEMENTED",
+  "description": "Activity streams, social feed, auto-connections — adapted from BuddyPress activity patterns. No likes, no followers hierarchy.",
+  "dependencies": [
+    "apollo-core",
+    "apollo-membership",
+    "apollo-mod",
+    "apollo-templates",
+    "apollo-users"
+  ],
+  "provides": [
+    "feed",
+    "activity-stream",
+    "social-posts",
+    "content-embeds",
+    "youtube-embed",
+    "soundcloud-embed",
+    "spotify-embed",
+    "event-embed"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [
+    "apollo_activity",
+    "apollo_blocks",
+    "apollo_connections",
+    "apollo_follows"
+  ],
+  "meta": {
+    "post": {
+      "_classified_price": {
+        "_source": "deep_scan"
+      },
+      "_event_date": {
+        "_source": "deep_scan"
+      },
+      "_event_loc_id": {
+        "_source": "deep_scan"
+      },
+      "_event_loc_name": {
+        "_source": "deep_scan"
+      },
+      "_event_start_date": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {},
+    "term": {}
+  },
+  "content_parser": {
+    "description": "ContentParser.php - detects and renders embedded media from URLs in posts",
+    "embed_types": [
+      {
+        "type": "youtube",
+        "patterns": [
+          "youtube.com/watch?v=",
+          "youtu.be/",
+          "youtube.com/shorts/"
+        ],
+        "renderer": "render_youtube_player()",
+        "privacy": "youtube-nocookie.com"
+      },
+      {
+        "type": "soundcloud",
+        "patterns": [
+          "soundcloud.com/"
+        ],
+        "renderer": "render_soundcloud_player()"
+      },
+      {
+        "type": "spotify_track",
+        "patterns": [
+          "open.spotify.com/track/"
+        ],
+        "renderer": "render_spotify_player('track')"
+      },
+      {
+        "type": "spotify_album",
+        "patterns": [
+          "open.spotify.com/album/"
+        ],
+        "renderer": "render_spotify_player('album')"
+      },
+      {
+        "type": "spotify_playlist",
+        "patterns": [
+          "open.spotify.com/playlist/"
+        ],
+        "renderer": "render_spotify_player('playlist')"
+      },
+      {
+        "type": "apollo_event",
+        "patterns": [
+          "site.com/evento/"
+        ],
+        "renderer": "render_event_card()"
+      }
+    ]
+  },
+  "template_parts": [
+    "templates/parts/head.php",
+    "templates/parts/sidebar-left.php",
+    "templates/parts/sidebar-right.php",
+    "templates/parts/feed-header.php",
+    "templates/parts/compose-box.php",
+    "templates/parts/feed-container.php",
+    "templates/parts/modal-delete.php",
+    "templates/parts/modal-safety.php",
+    "templates/parts/scripts.php"
+  ],
+  "features": {
+    "no_image_uploads": "Server-side validation rejects file params, base64, and img tags in POST /feed/post",
+    "media_url_bar": "Compose toolbar with SoundCloud, Spotify, Event, YouTube URL buttons",
+    "safety_disclaimer": "Modal with checkbox consent for classified chat initiation",
+    "comment_labels": "Conditional labels: 'Depoimento' for classified/event CPTs, 'ComentÃ¡rio' for social posts",
+    "activity_loggers": [
+      "publish_post",
+      "publish_event",
+      "publish_classified"
+    ]
+  },
+  "rest": [
+    {
+      "endpoint": "/feed",
+      "methods": [
+        "GET"
+      ],
+      "description": "Get activity feed",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_feed",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/feed/post",
+      "methods": [
+        "POST"
+      ],
+      "description": "Create post (no images allowed)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_create_post",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/activity/(?P<id>\\d+)",
+      "methods": [
+        "DELETE"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_delete_activity",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/depo/(?P<user_id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_user_depoimentos",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/activity/(?P<id>\\d+)/replies",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_replies",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/activity/(?P<id>\\d+)",
+      "methods": [
+        "PUT"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_edit_activity",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/activity/(?P<id>\\d+)/spam",
+      "methods": [
+        "DELETE",
+        "POST"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_report_spam",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/blocks",
+      "methods": [
+        "GET"
+      ],
+      "description": "Get blocked users list",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_blocks",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/block/(?P<user_id>\\d+)",
+      "methods": [
+        "DELETE",
+        "POST"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_block_user",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/members",
+      "methods": [
+        "GET"
+      ],
+      "description": "Member directory with search + sort",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_members",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/members/suggestions",
+      "methods": [
+        "GET"
+      ],
+      "description": "Suggested members to connect",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_member_suggestions",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "rest_planned": [],
+  "pages": [
+    {
+      "slug": "feed",
+      "title": "Feed",
+      "template": "page-feed.php",
+      "type": "virtual",
+      "auth": true,
+      "NOTE": "Canonical social page â€” owned by apollo-templates. apollo-social provides REST + assets only."
+    },
+    {
+      "slug": "explore",
+      "title": "Explore (redirect)",
+      "template": null,
+      "type": "redirect_301",
+      "redirect_to": "/feed",
+      "NOTE": "Deprecated slug â†’ 301 to /feed"
+    },
+    {
+      "slug": "mural",
+      "title": "Mural (redirect)",
+      "template": null,
+      "type": "redirect_301",
+      "redirect_to": "/feed",
+      "NOTE": "Deprecated slug â†’ 301 to /feed"
+    }
+  ],
+  "shortcodes": [
+    {
+      "tag": "apollo_feed",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_follow_btn",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "version": "1.0.1",
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [
+    "apollo/mod/report",
+    "apollo/mod/reported",
+    "apollo/social/activity_created",
+    "apollo/social/reply_created",
+    "apollo/social/trending_tracks",
+    "apollo/social/user_blocked",
+    "apollo/social/user_unblocked"
+  ],
+  "hooks_listened": [
+    "apollo/event/published",
+    "apollo/social/is_following"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [],
+    "styles": [
+      "apollo-social-v3"
+    ]
+  },
+  "options": [
+    "apollo_social_version"
+  ],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 17,
+    "abspath_coverage_pct": 96,
+    "rest_open_routes": 3,
+    "rest_critical_write_public": 1,
+    "rest_open_non_intentional": 3,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 11,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 0.92
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_activity",
+      "column_count": 13,
+      "columns": [
+        "id:BIGINT UNSIGNED NOT",
+        "user_id:BIGINT UNSIGNED NOT",
+        "component:VARCHAR(50) NOT NULL",
+        "type:VARCHAR(50) NOT NULL",
+        "action_text:TEXT",
+        "content:LONGTEXT",
+        "primary_link:VARCHAR(500)",
+        "item_id:BIGINT UNSIGNED DEFAULT",
+        "secondary_item_id:BIGINT UNSIGNED DEFAULT",
+        "hide_sitewide:TINYINT(1) DEFAULT 0",
+        "is_spam:TINYINT(1) DEFAULT 0",
+        "is_edited:TINYINT(1) DEFAULT 0",
+        "created_at:DATETIME NOT NULL"
+      ],
+      "indexes": [
+        "PRIMARY KEY (id)",
+        "KEY user_id (user_id)",
+        "KEY component (component)",
+        "KEY type (type)",
+        "KEY item_id (item_id)",
+        "KEY secondary_item_id (secondary_item_id)",
+        "KEY created_at (created_at)"
+      ],
+      "source": "create_var_prefix",
+      "ref_only": false,
+      "defined": true,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_blocks",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_connections",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_follows",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_get_ri_icon",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_moderate_content",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_query_members",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [],
+  "query_vars": [
+    "apollo_social_page"
+  ],
+  "php_surface": {
+    "files": 24,
+    "loc": 3821,
+    "classes": 7,
+    "functions": 6
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:51.437Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 104,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-social",
+    "main_file": "apollo-social.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Social",
+      "plugin_uri": "https://apollo.rio.br",
+      "description": "Activity streams, social feed, auto-connections — adapted from BuddyPress activity patterns. No likes, no followers hierarchy.",
+      "version": "1.0.1",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "GPL-2.0-or-later",
+      "text_domain": "apollo-social",
+      "domain_path": null,
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": null
+    },
+    "composer": {
+      "name": "apollo/social",
+      "namespaces": [
+        "Apollo\\Social"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 24,
+        ".css": 2,
+        ".js": 2,
+        ".scss": 12,
+        ".json": 1,
+        ".md": 1
+      },
+      "by_top_directory": {
+        "(root)": 4,
+        "assets": 16,
+        "includes": 1,
+        "src": 7,
+        "templates": 14
+      },
+      "total_bytes": 321587
+    },
+    "php": {
+      "files": 24,
+      "loc": 3821,
+      "classes": 7,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 6
+    },
+    "architecture": {
+      "namespace": "Apollo\\Social",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Social\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "FeedLoader",
+          "fqcn": "Apollo\\Social\\Components\\FeedLoader",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Components/FeedLoader.php"
+        },
+        {
+          "kind": "class",
+          "name": "PostRenderer",
+          "fqcn": "Apollo\\Social\\Components\\PostRenderer",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Components/PostRenderer.php"
+        },
+        {
+          "kind": "class",
+          "name": "SidebarRenderer",
+          "fqcn": "Apollo\\Social\\Components\\SidebarRenderer",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Components/SidebarRenderer.php"
+        },
+        {
+          "kind": "class",
+          "name": "ContentParser",
+          "fqcn": "Apollo\\Social\\ContentParser",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/ContentParser.php"
+        },
+        {
+          "kind": "class",
+          "name": "Deactivation",
+          "fqcn": "Apollo\\Social\\Deactivation",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Deactivation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Social\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_log_activity",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_process_mentions",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_feed",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_auto_connect_new_user",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_block_user",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_unblock_user",
+          "file": "includes/functions.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 11,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/feed",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_get_feed",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/feed/post",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_create_post",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/activity/(?P<id>\\d+)",
+          "methods": [
+            "DELETE"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_delete_activity",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/depo/(?P<user_id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "rest_get_user_depoimentos",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/activity/(?P<id>\\d+)/replies",
+          "methods": [
+            "GET",
+            "POST"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "rest_get_replies",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/activity/(?P<id>\\d+)",
+          "methods": [
+            "PUT"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_edit_activity",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/activity/(?P<id>\\d+)/spam",
+          "methods": [
+            "DELETE",
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_report_spam",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/blocks",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_get_blocks",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/block/(?P<user_id>\\d+)",
+          "methods": [
+            "DELETE",
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_block_user",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/members",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "rest_get_members",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/members/suggestions",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_member_suggestions",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 1,
+        "HIGH": 2,
+        "MEDIUM": 8,
+        "LOW": 0,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "LOGGED_IN_ONLY": 8,
+        "PUBLIC_UNAUTHENTICATED": 3
+      },
+      "permission_body_resolved": 11,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 1,
+      "open_routes": [
+        {
+          "endpoint": "/depo/(?P<user_id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/Plugin.php"
+        },
+        {
+          "endpoint": "/activity/(?P<id>\\d+)/replies",
+          "methods": [
+            "GET",
+            "POST"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/Plugin.php"
+        },
+        {
+          "endpoint": "/members",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/Plugin.php"
+        }
+      ],
+      "admin_cap_routes": [],
+      "logged_in_routes": [
+        "/feed",
+        "/feed/post",
+        "/activity/(?P<id>\\d+)",
+        "/activity/(?P<id>\\d+)",
+        "/activity/(?P<id>\\d+)/spam",
+        "/blocks",
+        "/block/(?P<user_id>\\d+)",
+        "/members/suggestions"
+      ]
+    },
+    "database": {
+      "tables_owned_or_defined": [
+        "apollo_activity",
+        "apollo_blocks",
+        "apollo_connections",
+        "apollo_follows"
+      ],
+      "tables_referenced": [
+        "apollo_activity",
+        "apollo_blocks",
+        "apollo_connections",
+        "apollo_follows",
+        "apollo_membership_get_ri_icon",
+        "apollo_moderate_content",
+        "apollo_query_members"
+      ],
+      "tables_for_registry": [
+        "apollo_activity",
+        "apollo_blocks",
+        "apollo_connections",
+        "apollo_follows"
+      ],
+      "schemas_with_columns": 1,
+      "schemas": [
+        {
+          "table": "apollo_activity",
+          "column_count": 13,
+          "columns": [
+            "id:BIGINT UNSIGNED NOT",
+            "user_id:BIGINT UNSIGNED NOT",
+            "component:VARCHAR(50) NOT NULL",
+            "type:VARCHAR(50) NOT NULL",
+            "action_text:TEXT",
+            "content:LONGTEXT",
+            "primary_link:VARCHAR(500)",
+            "item_id:BIGINT UNSIGNED DEFAULT",
+            "secondary_item_id:BIGINT UNSIGNED DEFAULT",
+            "hide_sitewide:TINYINT(1) DEFAULT 0",
+            "is_spam:TINYINT(1) DEFAULT 0",
+            "is_edited:TINYINT(1) DEFAULT 0",
+            "created_at:DATETIME NOT NULL"
+          ],
+          "indexes": [
+            "PRIMARY KEY (id)",
+            "KEY user_id (user_id)",
+            "KEY component (component)",
+            "KEY type (type)",
+            "KEY item_id (item_id)",
+            "KEY secondary_item_id (secondary_item_id)",
+            "KEY created_at (created_at)"
+          ],
+          "source": "create_var_prefix",
+          "ref_only": false,
+          "defined": true,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_blocks",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_connections",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_follows",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_get_ri_icon",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_moderate_content",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_query_members",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 5,
+      "user_count": 0,
+      "term_count": 0,
+      "post_keys": [
+        "_classified_price",
+        "_event_date",
+        "_event_loc_id",
+        "_event_loc_name",
+        "_event_start_date"
+      ],
+      "user_keys": [],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [],
+      "query_vars": [
+        "apollo_social_page"
+      ],
+      "pages_derived": []
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 7,
+      "listened_count": 9,
+      "apollo_fired": [
+        "apollo/mod/report",
+        "apollo/mod/reported",
+        "apollo/social/activity_created",
+        "apollo/social/reply_created",
+        "apollo/social/trending_tracks",
+        "apollo/social/user_blocked",
+        "apollo/social/user_unblocked"
+      ],
+      "apollo_listened": [
+        "apollo/event/published",
+        "apollo/social/is_following"
+      ],
+      "critical_wp_listened": [
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "user_register"
+      ]
+    },
+    "ajax": {
+      "priv": [],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [
+      "apollo_feed",
+      "apollo_follow_btn"
+    ],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [],
+      "styles": [
+        "apollo-social-v3"
+      ]
+    },
+    "options": [
+      "apollo_social_version"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_SOCIAL_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_SOCIAL_PATH",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_SOCIAL_URL",
+        "value": "plugin_dir_url( __FILE__"
+      },
+      {
+        "name": "APOLLO_SOCIAL_FILE",
+        "value": "__FILE__"
+      }
+    ],
+    "security": {
+      "php_files": 24,
+      "abspath_guard_files": 23,
+      "abspath_coverage_pct": 96,
+      "wpdb_prepare_calls": 22,
+      "wpdb_query_calls": 24,
+      "prepare_to_query_ratio": 0.92,
+      "nonce_checks": 1,
+      "current_user_can_calls": 6,
+      "raw_superglobal": {
+        "get": 1,
+        "post": 0,
+        "request": 0
+      },
+      "permission_callback_return_true": 3,
+      "escape_helpers": 110,
+      "echo_statements": 127,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 17,
+      "risk_band": "LOW",
+      "rest_permission_critical": 1,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 2,
+      "rest_open_critical": 1,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 3
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core",
+        "apollo-membership",
+        "apollo-mod",
+        "apollo-templates",
+        "apollo-users"
+      ],
+      "signals": [
+        "apollo-core",
+        "apollo-membership",
+        "apollo-mod",
+        "apollo-templates",
+        "apollo-users"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.0.1",
+      "version_changed": false,
+      "old_rest": 14,
+      "live_rest": 11,
+      "old_pages": 3,
+      "live_pages": 0,
+      "new_plugin": false
+    }
+  },
+  "canvas_contract": {
+    "variant": "plus",
+    "action": "VERIFIED",
+    "shape": "no-change",
+    "audited": "2026-07-28",
+    "ref": "$canvas_shell.plugins.apollo-social"
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 24,
+    "php_loc": 3797,
+    "rest_routes_found": 10,
+    "cpts_found": [],
+    "tables_found": [
+      "apollo_",
+      "apollo_activity",
+      "apollo_blocks",
+      "apollo_connections",
+      "apollo_follows"
+    ],
+    "shortcodes_found": [
+      "apollo_feed",
+      "apollo_follow_btn"
+    ]
+  }
+}

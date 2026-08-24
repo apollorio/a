@@ -1,0 +1,28 @@
+{
+  "name": "apollo/login",
+  "description": "Apollo Login - Authentication, Registration, MANDATORY Quiz System",
+  "type": "wordpress-plugin",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Apollo::Rio",
+      "email": "dev@apollo.rio.br"
+    }
+  ],
+  "require": {
+    "php": ">=8.1",
+    "composer/installers": "^2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Apollo\\Login\\": "src/"
+    }
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "sort-packages": true,
+    "allow-plugins": {
+      "composer/installers": true
+    }
+  }
+}

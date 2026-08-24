@@ -1,0 +1,27 @@
+{
+  "$chapter": {
+    "id": "13-runtime",
+    "owner": "apollo-runtime",
+    "keys": [
+      "runtime_wordpress_packages"
+    ],
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "runtime_wordpress_packages": {
+    "_note": "Replaced or merged by apollo-core PluginInventorySync when POST /apollo/v1/registry/inventory-sync runs with persist=true. Schema mirrors PluginInventorySync::build_runtime_payload(): generated_iso, wordpress_version, paths, regular_plugins, must_use_plugins, counts. Filters: apollo/registry/runtime_packages, apollo/registry/data_after_inventory_sync.",
+    "generated_iso": "",
+    "wordpress_version": "",
+    "paths": {
+      "plugins_dir": "",
+      "mu_plugins_dir": ""
+    },
+    "regular_plugins": {},
+    "must_use_plugins": {},
+    "counts": {
+      "regular": 0,
+      "must_use": 0,
+      "inactive": 0
+    }
+  }
+}

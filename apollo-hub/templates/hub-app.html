@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HUB::rio - Editor de Página</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/cirrus-ui@0.7.1/dist/cirrus.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --color-primary: #F97316;
+            --color-primary-dark: #EA580C;
+            --color-primary-light: #FB923C;
+            --color-bg-page: #e5e7eb;
+            --color-bg-panel: rgba(249, 250, 251, 0.5);
+            --color-bg-card: #ffffff;
+            --color-bg-dark: #1f2937;
+            --color-text-primary: #1f2937;
+            --color-text-secondary: #4b5563;
+            --color-text-tertiary: #6b7280;
+            --color-text-light: #9ca3af;
+            --color-border: #e5e7eb;
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-full: 9999px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.3s ease;
+            --transition-slow: 0.5s ease;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; height: 100%; -webkit-text-size-adjust: 100%; }
+        body { font-family: "Inter", system-ui, sans-serif; background-color: var(--color-bg-page); min-height: 100vh; width: 100%; overflow-x: hidden; line-height: 1.5; }
+        ::-webkit-scrollbar { width: 3px; height: 3px; }
+        ::-webkit-scrollbar-thumb { background: var(--color-text-light); border-radius: var(--radius-full); }
+
+        .hub-layout { display: flex; flex-direction: column; min-height: 100vh; width: 100%; }
+        @media (min-width: 1025px) { .hub-layout { flex-direction: row; justify-content: space-between; height: 100vh; overflow: hidden; } }
+
+        .hub-preview { display: flex; align-items: center; justify-content: end; padding: var(--space-lg); background-color: var(--color-bg-page); position: relative; user-select: none; flex-shrink: 0; }
+        @media (max-width: 1024px) { .hub-preview { min-height: 60vh; padding: var(--space-md); order: 2; } }
+        @media (min-width: 1025px) { .hub-preview { width: 50%; height: 100vh; overflow: hidden; } }
+
+        .hub-phone { width: min(420px, 90vw, calc((100vh - 10%) * (9/16))); aspect-ratio: 9 / 16; background: var(--color-bg-card); border-radius: 36px; box-shadow: var(--shadow-xl); overflow: hidden; display: flex; flex-direction: column; position: relative; border: 6px solid var(--color-bg-dark); user-select: none; }
+        @media (max-width: 1024px) { .hub-phone { max-width: 340px; border-radius: 28px; border-width: 5px; height: 90%; min-height: calc(100vh - 40%); } }
+        @media (min-width: 1025px) { .hub-phone { max-width: 420px; height: calc(100vh - 10%); max-height: 98vh; margin-right: 100px; margin-left: -75px; min-height: calc(100vh - 10%); } }
+        .hub-phone__bg { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transition: opacity var(--transition-slow); z-index: 0; user-select: none; }
+        .hub-phone__bg.is-active { opacity: 1; }
+        .hub-phone__content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: var(--space-lg); background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); z-index: 10; position: relative; scrollbar-width: none; -webkit-overflow-scrolling: touch; user-select: none; }
+        .hub-phone__content::-webkit-scrollbar { display: none; }
+        @media (max-width: 768px) { .hub-phone__content { padding: var(--space-md); } }
+
+        .hub-editor { width: 100%; background: var(--color-bg-page); overflow-y: auto; overflow-x: hidden; padding: var(--space-lg); }
+        @media (max-width: 1024px) { .hub-editor { order: 1; padding: var(--space-md); min-height: auto; } }
+        @media (min-width: 1025px) { .hub-editor { width: 600px; height: 100vh; padding: var(--space-xl); } }
+        .hub-editor__header { margin-bottom: var(--space-xl); }
+        .hub-editor__profile-section { padding: 1.25rem; border-radius: var(--radius-lg); border: 1px solid var(--color-border); background: var(--color-bg-panel); margin-bottom: var(--space-xl); }
+        @media (max-width: 768px) { .hub-editor__profile-section { padding: var(--space-md); } }
+        .hub-editor__blocks-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); gap: var(--space-sm); }
+        .hub-editor__blocks-list { display: flex; flex-direction: column; gap: var(--space-md); }
+
+        .hub-text-project { font-size: 1.875rem; font-weight: 900; line-height: 1.1; color: var(--color-text-primary); padding-top: var(--space-md); margin: 0; user-select: none; }
+        @media (max-width: 768px) { .hub-text-project { font-size: 1.5rem; } }
+        .hub-text-about { margin-top: var(--space-sm); color: var(--color-text-tertiary); line-height: 1.4; margin-bottom: 0; font-size: 0.875rem; }
+        .hub-text-section { font-size: 1.125rem; font-weight: 600; color: var(--color-text-secondary); margin: 0; line-height: 1.2; user-select: none; }
+        @media (max-width: 768px) { .hub-text-section { font-size: 1rem; } }
+
+        .hub-preview__title { font-size: 1.875rem; font-weight: bold; line-height: 1.1; text-align: center; color: var(--color-text-primary); padding: var(--space-sm); margin: 0; }
+        @media (max-width: 768px) { .hub-preview__title { font-size: 1.5rem; } }
+        .hub-preview__subtitle { font-size: 1.09rem; line-height: 1.2; font-weight: 500; text-align: center; color: var(--color-text-secondary); opacity: 0.6; padding: var(--space-xs) var(--space-sm); margin: 0; }
+        @media (max-width: 768px) { .hub-preview__subtitle { font-size: 0.95rem; } }
+        .hub-preview__text { color: var(--color-text-tertiary); line-height: 1.4; font-size: 0.89em; padding: var(--space-md); margin: 0; text-align: center; }
+
+        .hub-profile__avatar { width: 6rem; height: 6rem; border-radius: var(--radius-full); margin: 1.25rem auto var(--space-md); display: block; border: none; box-shadow: var(--shadow-md); object-fit: cover; }
+        .hub-profile__avatar.is-hidden { display: none; }
+        @media (max-width: 768px) { .hub-profile__avatar { width: 5rem; height: 5rem; } }
+        .hub-profile__name { font-size: 1.25rem; font-weight: bold; color: var(--color-text-primary); text-align: center; line-height: 1.3; }
+        @media (max-width: 768px) { .hub-profile__name { font-size: 1.1rem; } }
+        .hub-profile__bio { color: var(--color-text-tertiary); text-align: center; margin-top: var(--space-xs); line-height: 1.4; font-size: 0.9rem; }
+
+        .hub-elements { display: flex; flex-direction: column; gap: var(--space-xs); }
+        @media (max-width: 768px) { .hub-elements { gap: var(--space-sm); } }
+        .hub-link { transition: transform var(--transition-fast), box-shadow var(--transition-fast); display: flex; align-items: center; gap: var(--space-sm); }
+        .hub-link:active { transform: scale(0.98); }
+        @media (min-width: 1025px) { .hub-link:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); } }
+        .hub-link__inner { flex: 1; background-color: var(--color-bg-dark); color: white; padding: var(--space-md); border-radius: var(--radius-lg); display: flex; justify-content: space-between; align-items: center; text-decoration: none; transition: all var(--transition-fast); min-height: 60px; }
+        @media (max-width: 768px) { .hub-link__inner { padding: var(--space-sm) var(--space-md); min-height: 50px; } }
+        .hub-link__content { display: flex; align-items: center; gap: var(--space-md); }
+        @media (max-width: 768px) { .hub-link__content { gap: var(--space-sm); } }
+        .hub-link__icon { color: var(--color-primary-light); flex-shrink: 0; }
+        .hub-link__text { display: flex; flex-direction: column; gap: var(--space-xs); }
+        .hub-link__title { font-weight: bold; margin: 0; line-height: 1.3; font-size: 1rem; }
+        @media (max-width: 768px) { .hub-link__title { font-size: 0.9rem; } }
+        .hub-link__desc { font-size: 0.875rem; opacity: 0.7; margin: 0; line-height: 1.3; }
+        @media (max-width: 768px) { .hub-link__desc { font-size: 0.75rem; } }
+
+        @keyframes gradient-flow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .animate-gradient-flow {
+            background-size: 200% 200%;
+            animation: gradient-flow 4s ease infinite;
+        }
+
+        .hub-social { display: flex; justify-content: center; align-items: center; gap: var(--space-lg); padding: var(--space-sm) 0; }
+        @media (max-width: 768px) { .hub-social { gap: var(--space-md); } }
+        .hub-social__link { color: var(--color-text-secondary); font-size: 1.875rem; text-decoration: none; transition: all var(--transition-fast); }
+        @media (max-width: 768px) { .hub-social__link { font-size: 1.5rem; } }
+        .hub-countdown { padding: var(--space-md); border-radius: var(--radius-lg); color: white; text-align: center; }
+        .hub-countdown__grid { display: flex; justify-content: center; gap: var(--space-md); }
+        .hub-countdown__number { font-size: 1.875rem; font-weight: bold; line-height: 1.1; }
+        .hub-countdown__label { font-size: 0.75rem; opacity: 0.7; margin-top: var(--space-xs); }
+
+        .hub-card { padding: var(--space-md); border-radius: var(--radius-md); border: 1px solid var(--color-border); background: var(--color-bg-card); cursor: move; transition: opacity var(--transition-fast); max-width: 390px; }
+        @media (min-width: 768px) { .hub-card { width: 400px; } }
+        @media (max-width: 768px) { .hub-card { padding: var(--space-sm); } }
+        .hub-card.is-dragging { opacity: 0.5; }
+        .hub-card__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; gap: var(--space-sm); }
+        .hub-card__title { font-size: 0.875rem; font-weight: 600; color: var(--color-text-primary); }
+        .hub-card__actions { display: flex; gap: var(--space-xs); flex-shrink: 0; }
+        .hub-card__divider { margin: var(--space-sm) 0; border: none; border-top: 1px solid var(--color-border); }
+
+        /* Sliding Personalizar Panel */
+        .hub-customize { margin-top: var(--space-sm); padding: var(--space-sm); background: rgba(249, 115, 22, 0.03); border-radius: var(--radius-sm); border: 1px solid rgba(249, 115, 22, 0.1); }
+        .hub-customize__toggle { width: 100%; background: transparent; border: none; color: var(--color-primary); font-size: 0.75rem; font-weight: 600; padding: var(--space-xs); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: var(--space-xs); transition: all var(--transition-fast); }
+        .hub-customize__toggle:hover { color: var(--color-primary-dark); }
+        .hub-customize__toggle i { font-size: 0.875rem; transition: transform var(--transition-normal); }
+        .hub-customize__toggle.is-active i { transform: rotate(180deg); }
+        
+        /* Smooth slide down animation */
+        .hub-customize__content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+        .hub-customize__content.is-active {
+            max-height: 800px; /* Large enough for all content */
+            transition: max-height 0.5s ease-in;
+        }
+        
+        .hub-customize__grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); padding-top: var(--space-sm); }
+        .hub-customize__field { margin-bottom: var(--space-sm); }
+        .hub-customize__label { font-size: 0.7rem; font-weight: 600; color: var(--color-text-secondary); display: block; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .hub-customize__input { width: 100%; padding: 4px 6px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: 0.75rem; transition: border-color var(--transition-fast); }
+        .hub-customize__input:focus { outline: none; border-color: var(--color-primary); }
+        .hub-customize__input--color { height: 32px; padding: 2px; cursor: pointer; }
+        .hub-customize__input--select { padding: 4px 6px; }
+
+        .hub-btn { background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)) !important; border: none; border-radius: var(--radius-md); padding: 0; max-width: 10px; height: 20px; font-size: 10px; line-height: 0.01; font-weight: 900; color: #fff; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 8px 24px rgba(249, 115, 22, 0.2); position: relative; overflow: hidden; }
+        .hub-btn:hover { transform: translateY(-2px) scale(1.01) !important; box-shadow: 0 15px 49px rgba(255, 255, 255, 0.5) !important; filter: brightness(2) saturation(1.4) !important; }
+        .hub-btn:active { transform: scale(0.95); }
+        
+        /* Analytics button in editor */
+        .hub-stats-btn-editor { background: rgba(249, 115, 22, 0.1); border: 1px solid var(--color-primary); color: var(--color-primary); font-size: 0.875rem; cursor: pointer; padding: 4px 8px; border-radius: var(--radius-sm); transition: all var(--transition-fast); display: inline-flex; align-items: center; gap: 4px; }
+        .hub-stats-btn-editor:hover { background: var(--color-primary); color: white; }
+        .hub-stats-btn-editor i { font-size: 1rem; }
+
+        .hub-loading { position: fixed; inset: 0; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity var(--transition-normal); opacity: 0; pointer-events: none; }
+        .hub-loading.is-active { opacity: 1; pointer-events: auto; }
+        .hub-loading__spinner { width: 3rem; height: 3rem; border: 4px solid var(--color-border); border-top-color: var(--color-primary); border-radius: var(--radius-full); animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Analytics Lightbox */
+        .analytics-lightbox { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(8px); z-index: 10000; display: none; align-items: center; justify-content: center; }
+        .analytics-lightbox.is-active { display: flex; }
+        .analytics-container { width: auto; height: auto; border-radius: 15px; background-color: white; box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; overflow: hidden; max-width: 90vw; }
+        .analytics-box > * { padding: 16px; }
+        .analytics-head { background-color: #a2ccb6; }
+        .analytics-username { text-align: right; }
+        .analytics-username a { color: #549a76; display: inline-block; text-decoration: none; }
+        .analytics-username a:before { content: "@"; display: inline-block; margin-right: 2px; }
+        .analytics-followers { padding: 24px 0; text-align: center; }
+        .analytics-followers h2 { margin-bottom: 4px; color: snow; font-size: 36px; font-weight: bold; text-shadow: 1px 1px 5px gray; }
+        .analytics-followers small { display: block; color: #549a76; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; }
+        .analytics-canvas { display: block; width: 300px; height: 100px; }
+        .analytics-week { display: grid; grid-template-columns: repeat(7, 1fr); color: snow; font-size: 12px; font-weight: bold; letter-spacing: 1px; text-align: center; text-transform: uppercase; text-shadow: 1px 1px 5px gray; }
+        .analytics-body { background-color: #fbe89c; }
+        .analytics-insights { padding: 8px 0; font-size: 0; }
+        .analytics-insights .reach, .analytics-insights .impressions { display: inline-block; width: 50%; font-size: 16px; text-align: center; }
+        .analytics-insights h3 { margin-bottom: 4px; font-size: 24px; font-weight: bold; }
+        .analytics-insights h3:before { content: "+"; display: inline-block; margin-right: 2px; }
+        .analytics-insights small { display: block; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
+        .analytics-foot { background-color: #f29a93; }
+        .analytics-delete { color: snow; text-align: center; cursor: pointer; }
+        .analytics-delete:hover { text-decoration: underline; }
+
+        .hub-slider__track { display: flex; gap: var(--space-xs); padding-bottom: var(--space-md); overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+        .hub-slider__slide { position: relative; flex-shrink: 0; width: 5rem; height: 20rem; border-radius: var(--radius-xl); overflow: hidden; cursor: pointer; border: 1px solid var(--color-border); transition: width var(--transition-slow); scroll-snap-align: center; }
+        .hub-slider__slide.is-expanded { width: 20rem; }
+        .hub-slider__slide-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .hub-slider__slide-title { writing-mode: vertical-rl; transform: rotate(180deg); font-weight: bold; font-size: 1.125rem; color: #FFF; text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); }
+
+        .hub-field { margin-bottom: var(--space-sm); }
+        @media (max-width: 1024px) { button, a, [onclick] { min-height: 44px; min-width: 44px; } }
+    </style>
+</head>
+<body>
+    <div id="hub-loading" class="hub-loading">
+        <div style="padding: var(--space-md); background: var(--color-bg-card); border-radius: var(--radius-md); box-shadow: var(--shadow-xl); display: flex; align-items: center; gap: var(--space-md);">
+            <div class="hub-loading__spinner"></div>
+            <span style="font-size: 1rem; font-weight: 500; color: var(--color-text-secondary);">Salvando...</span>
+        </div>
+    </div>
+
+    <div id="analytics-lightbox" class="analytics-lightbox" onclick="HubRio.closeAnalytics(event)">
+        <div class="analytics-container" onclick="event.stopPropagation()">
+            <div class="analytics-box">
+                <div class="analytics-head">
+                    <div class="analytics-username">
+                        <a href="#" id="analytics-username">username</a>
+                    </div>
+                    <div class="analytics-followers">
+                        <h2 id="analytics-clicks">0</h2>
+                        <small>cliques totais</small>
+                    </div>
+                    <div>
+                        <canvas id="analytics-canvas" class="analytics-canvas"></canvas>
+                        <ul class="analytics-week">
+                            <li>seg</li><li>ter</li><li>qua</li><li>qui</li><li>sex</li><li>sab</li><li>dom</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="analytics-body">
+                    <div class="analytics-insights">
+                        <div class="reach">
+                            <h3 id="analytics-week">0</h3>
+                            <small>esta semana</small>
+                        </div>
+                        <div class="impressions">
+                            <h3 id="analytics-month">0</h3>
+                            <small>este mês</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="analytics-foot">
+                    <div class="analytics-delete" onclick="HubRio.closeAnalytics()">
+                        <p><small>FECHAR</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="hub-icon-modal" class="modal">
+        <div class="modal-background" onclick="HubRio.closeIconPicker()"></div>
+        <div class="modal-card" style="max-width: 90vw; width: 800px; max-height: 90vh;">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Selecione um Ícone</p>
+                <button class="delete" onclick="HubRio.closeIconPicker()"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="field">
+                    <input id="hub-icon-search" class="input" type="text" placeholder="Buscar ícones...">
+                </div>
+                <div id="hub-icon-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: var(--space-sm); padding: var(--space-md); max-height: 400px; overflow-y: auto;">
+                    <div style="grid-column: 1 / -1; text-align: center; padding: var(--space-lg); color: var(--color-text-tertiary);">
+                        <p>Clique em "Selecionar" para carregar os ícones...</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div class="hub-layout">
+        <main class="hub-preview">
+            <div class="hub-phone">
+                <div id="hub-phone-bg" class="hub-phone__bg"></div>
+                <div id="hub-phone-content" class="hub-phone__content">
+                    <header style="text-align: center; margin-bottom: var(--space-xl);">
+                        <img id="hub-preview-avatar" class="hub-profile__avatar" src="" alt="Avatar">
+                        <div id="hub-preview-profile"></div>
+                    </header>
+                    <div id="hub-preview-elements" class="hub-elements"></div>
+                </div>
+            </div>
+        </main>
+
+        <div class="hub-editor">
+            <header class="hub-editor__header">
+                <h1 class="hub-text-project">HUB::rio</h1>
+                <p class="hub-text-about">Crie sua página de links com blocos dinâmicos.</p>
+            </header>
+
+            <div class="hub-editor__profile-section">
+                <h3 class="hub-text-section" style="margin-bottom: var(--space-md);">Seu Perfil</h3>
+                <div class="hub-field">
+                    <label class="label is-small">Nome de Exibição</label>
+                    <input id="hub-profile-name" type="text" class="input is-small" oninput="HubRio.updateProfile('name', this.value)">
+                </div>
+                <div class="hub-field">
+                    <label class="label is-small">Biografia</label>
+                    <textarea id="hub-profile-bio" class="textarea" rows="2" oninput="HubRio.updateProfile('bio', this.value)"></textarea>
+                </div>
+                <div class="hub-field">
+                    <label class="label is-small">URL da Imagem de Perfil</label>
+                    <input id="hub-profile-image" type="url" class="input is-small" oninput="HubRio.updateProfile('imageUrl', this.value)">
+                </div>
+            </div>
+
+            <div class="hub-editor__blocks-header">
+                <h3 class="hub-text-section">Seus Blocos</h3>
+                <div class="dropdown" id="hub-add-dropdown">
+                    <div class="dropdown-trigger">
+                        <button class="hub-btn" onclick="HubRio.toggleDropdown()">✚</button>
+                    </div>
+                    <div class="dropdown-menu" style="left:-250px; background: rgba(255, 255, 255, 0.95); border: 1px solid var(--color-border); backdrop-filter: blur(12px); min-width: 16rem;">
+                        <div class="dropdown-content" style="background: none;">
+                            <a class="dropdown-item" onclick="HubRio.addElement('title')">Título</a>
+                            <a class="dropdown-item" onclick="HubRio.addElement('subtitle')">Subtítulo</a>
+                            <a class="dropdown-item" onclick="HubRio.addElement('description')">Descrição</a>
+                            <hr class="dropdown-divider">
+                            <a class="dropdown-item" onclick="HubRio.addElement('featured-link')">Link de Destaque</a>
+                            <a class="dropdown-item" onclick="HubRio.addElement('advanced-bg-changer')">Link com Fundo</a>
+                            <hr class="dropdown-divider">
+                            <a class="dropdown-item" onclick="HubRio.addElement('social-links')">Ícones Sociais</a>
+                            <a class="dropdown-item" onclick="HubRio.addElement('countdown')">Contador Regressivo</a>
+                            <hr class="dropdown-divider">
+                            <a class="dropdown-item" onclick="HubRio.addElement('slider')">Slider</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="hub-blocks-list" class="hub-editor__blocks-list"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        'use strict';
+
+        const HubRio = {
+            profileData: {
+                name: "Apollo::rio",
+                bio: "Conectando pessoas e cultura através da tecnologia",
+                imageUrl: "https://assets.apollo.rio.br/profile.jpg",
+                elements: [
+                    { type: 'title', text: 'meu⌥HUB::rio', styles: { color: '#1f2937', fontSize: '1.875', fontWeight: '700' } },
+                    { type: 'subtitle', text: 'Sua central de links e projetos', styles: { color: '#6b7280', fontSize: '1.09', fontWeight: '500' } },
+                    { type: 'description', text: 'Explore os links abaixo para saber mais sobre meu trabalho e minhas redes.', styles: { color: '#6b7280', fontSize: '0.89', fontWeight: '400' } },
+                    { type: 'countdown', targetDate: new Date(Date.now() + 86400000 * 2).toISOString().slice(0, 16), buttonTitle: 'Lançamento!', buttonUrl: '#', styles: { bgColor: '#F97316', bgColor2: '#EA580C', gradientAngle: '135', textColor: '#ffffff', fontSize: '1.875' }, clicks: 1250 },
+                    { type: 'social-links', links: { instagram: 'https://instagram.com', x: 'https://x.com', github: 'https://github.com', linkedin: '', facebook: '' }, styles: { iconColor: '#4b5563', iconSize: '1.875' }, clicks: 543 }
+                ]
+            },
+
+            remixIcons: [],
+            remixIconsLoaded: false,
+            activeIconElementIndex: null,
+            activeIconField: 'icon',
+            activeTimers: {},
+            draggedIndex: null,
+
+            FONT_WEIGHTS: {
+                '200': 'Fino',
+                '300': 'Leve',
+                '400': 'Normal',
+                '500': 'Médio',
+                '600': 'Semi-negrito',
+                '700': 'Negrito',
+                '800': 'Extra-negrito'
+            },
+
+            ELEMENT_LIBRARY: {
+                'title': {
+                    name: 'Título',
+                    defaultData: { type: 'title', text: 'Seu Título Aqui', styles: { color: '#1f2937', fontSize: '1.875', fontWeight: '700' } },
+                    getSettingsHTML: (el, i) => `
+                        <div class="hub-field">
+                            <label class="label is-small">Texto</label>
+                            <input type="text" class="input is-small" value="${el.text}" oninput="HubRio.updateElement(${i}, 'text', this.value)">
+                        </div>
+                        ${HubRio.getCustomizationHTML(el, i, ['color', 'fontSize', 'fontWeight'])}
+                    `,
+                    getPreviewHTML: (el) => `<h1 class="hub-preview__title" style="${HubRio.getInlineStyles(el.styles)}">${el.text}</h1>`
+                },
+
+                'subtitle': {
+                    name: 'Subtítulo',
+                    defaultData: { type: 'subtitle', text: 'Um subtítulo informativo', styles: { color: '#6b7280', fontSize: '1.09', fontWeight: '500' } },
+                    getSettingsHTML: (el, i) => `
+                        <div class="hub-field">
+                            <label class="label is-small">Texto</label>
+                            <input type="text" class="input is-small" value="${el.text}" oninput="HubRio.updateElement(${i}, 'text', this.value)">
+                        </div>
+                        ${HubRio.getCustomizationHTML(el, i, ['color', 'fontSize', 'fontWeight'])}
+                    `,
+                    getPreviewHTML: (el) => `<h2 class="hub-preview__subtitle" style="${HubRio.getInlineStyles(el.styles)}">${el.text}</h2>`
+                },
+
+                'description': {
+                    name: 'Descrição',
+                    defaultData: { type: 'description', text: 'Descreva algo aqui com mais detalhes.', styles: { color: '#6b7280', fontSize: '0.89', fontWeight: '400' } },
+                    getSettingsHTML: (el, i) => `
+                        <div class="hub-field">
+                            <label class="label is-small">Texto</label>
+                            <textarea class="textarea" rows="2" oninput="HubRio.updateElement(${i}, 'text', this.value)">${el.text}</textarea>
+                        </div>
+                        ${HubRio.getCustomizationHTML(el, i, ['color', 'fontSize', 'fontWeight'])}
+                    `,
+                    getPreviewHTML: (el) => `<p class="hub-preview__text" style="${HubRio.getInlineStyles(el.styles)}">${el.text}</p>`
+                },
+
+                'featured-link': {
+                    name: 'Link de Destaque',
+                    hasUrl: true,
+                    hasAnalytics: true,
+                    defaultData: {
+                        type: 'featured-link',
+                        title: 'The Apollo Project',
+                        desc: 'Official Site & Manifesto',
+                        url: 'https://',
+                        icon: 'ri-rocket-line',
+                        iconSize: '2',
+                        endIcon: 'ri-arrow-right-line',
+                        endIconSize: '1.5',
+                        styles: { bgColor: '#1f2937', bgColor2: '', gradientAngle: '135', textColor: '#ffffff', iconColor: '#FB923C', titleSize: '1', descSize: '0.875' },
+                        clicks: 0
+                    },
+                    getSettingsHTML: (el, i) => `
+                        <div class="field">
+                            <label class="label is-small">Título</label>
+                            <input type="text" class="input is-small" value="${el.title}" oninput="HubRio.updateElement(${i}, 'title', this.value)">
+                        </div>
+                        <div class="field">
+                            <label class="label is-small">Descrição</label>
+                            <input type="text" class="input is-small" value="${el.desc}" oninput="HubRio.updateElement(${i}, 'desc', this.value)">
+                        </div>
+                        <div class="field">
+                            <label class="label is-small">URL</label>
+                            <input type="url" class="input is-small" value="${el.url}" oninput="HubRio.updateElement(${i}, 'url', this.value)">
+                        </div>
+                        <div class="field">
+                            <label class="label is-small">Ícone Inicial</label>
+                            <button class="button is-fullwidth is-small" onclick="HubRio.openIconPicker(${i}, 'icon')">
+                                <span class="icon"><i class="${el.icon || 'ri-add-line'}"></i></span>
+                                <span>Selecionar</span>
+                            </button>
+                        </div>
+                        <div class="field">
+                            <label class="label is-small">Ícone Final</label>
+                            <button class="button is-fullwidth is-small" onclick="HubRio.openIconPicker(${i}, 'endIcon')">
+                                <span class="icon"><i class="${el.endIcon || 'ri-arrow-right-line'}"></i></span>
+                                <span>Selecionar</span>
+                            </button>
+                        </div>
+                        <div class="field" style="margin-top: var(--space-sm);">
+                            <button class="hub-stats-btn-editor" onclick="HubRio.openAnalytics(${i})">
+                                <i class="ri-bar-chart-box-fill"></i>
+                                <span>Ver Analíticas</span>
+                            </button>
+                        </div>
+                        ${HubRio.getCustomizationHTML(el, i, ['bgColor', 'bgColor2', 'gradientAngle', 'textColor', 'iconColor', 'titleSize', 'descSize'])}
+                    `,
+                    getPreviewHTML: (el, i) => {
+                        const s = el.styles || {};
+                        const bgStyle = s.bgColor2 && s.bgColor2 !== s.bgColor 
+                            ? `background: linear-gradient(${s.gradientAngle || 135}deg, ${s.bgColor || '#1f2937'}, ${s.bgColor2}); background-size: 200% 200%; animation: gradient-flow 4s ease infinite;`
+                            : `background-color: ${s.bgColor || '#1f2937'};`;
+                        return `
+                        <div class="hub-link">
+                            <a href="${el.url}" onclick="return HubRio.handleLink(event, '${el.url}', ${i})" class="hub-link__inner" style="${bgStyle} color: ${s.textColor || '#ffffff'};">
+                                <div class="hub-link__content">
+                                    ${el.icon ? `<i class="${el.icon}" style="color: ${s.iconColor || '#FB923C'}; font-size: ${el.iconSize || 1.5}rem;"></i>` : ''}
+                                    <div class="hub-link__text">
+                                        <p class="hub-link__title" style="font-size: ${s.titleSize || 1}rem;">${el.title}</p>
+                                        <p class="hub-link__desc" style="font-size: ${s.descSize || 0.875}rem;">${el.desc}</p>
+                                    </div>
+                                </div>
+                                ${el.endIcon ? `<i class="${el.endIcon}" style="font-size: ${el.endIconSize || 1.5}rem;"></i>` : '<span style="font-size: 1.5rem;">&rarr;</span>'}
+                            </a>
+                        </div>`;
+                    }
+                },
+
+                'social-links': {
+                    name: 'Ícones Sociais',
+                    hasAnalytics: true,
+                    defaultData: {
+                        type: 'social-links',
+                        links: { instagram: '', x: '', github: '', linkedin: '', facebook: '' },
+                        styles: { iconColor: '#4b5563', iconSize: '1.875' },
+                        clicks: 0
+                    },
+                    getSettingsHTML: (el, i) => `
+                        ${Object.keys(el.links).map(key => `
+                            <div class="field">
+                                <label class="label is-small"><i class="ri-${key}-fill"></i> ${key.charAt(0).toUpperCase() + key.slice(1)}</label>
+                                <input type="url" class="input is-small" placeholder="URL do ${key}" value="${el.links[key]}" oninput="HubRio.updateSocialLink(${i}, '${key}', this.value)">
+                            </div>
+                        `).join('')}
+                        <div class="field" style="margin-top: var(--space-sm);">
+                            <button class="hub-stats-btn-editor" onclick="HubRio.openAnalytics(${i})">
+                                <i class="ri-bar-chart-box-fill"></i>
+                                <span>Ver Analíticas</span>
+                            </button>
+                        </div>
+                        ${HubRio.getCustomizationHTML(el, i, ['iconColor', 'iconSize'])}
+                    `,
+                    getPreviewHTML: (el, i) => {
+                        const s = el.styles || {};
+                        return `
+                        <div class="hub-social">
+                            ${Object.entries(el.links).filter(([k, v]) => v).map(([key, url]) => `
+                                <a href="${url}" onclick="return HubRio.handleLink(event, '${url}', ${i})" class="hub-social__link" style="color: ${s.iconColor || '#4b5563'}; font-size: ${s.iconSize || 1.875}rem;">
+                                    <i class="ri-${key}-fill"></i>
+                                </a>
+                            `).join('')}
+                        </div>`;
+                    }
+                },
+
+                'countdown': {
+                    name: 'Contador Regressivo',
+                    hasUrl: true,
+                    hasAnalytics: true,
+                    defaultData: {
+                        type: 'countdown',
+                        targetDate: new Date(Date.now() + 86400000 * 7).toISOString().slice(0, 16),
+                        buttonTitle: 'Evento Começou!',
+                        buttonUrl: '#',
+                        styles: { bgColor: '#1f2937', bgColor2: '', gradientAngle: '135', textColor: '#ffffff', fontSize: '1.875' },
+                        clicks: 0
+                    },
+                    getSettingsHTML: (el, i) => `
+                        <div class="field">
+                            <label class="label is-small">Data e Hora Final</label>
+                            <input type="datetime-local" class="input is-small" value="${el.targetDate}" oninput="HubRio.updateElement(${i}, 'targetDate', this.value)">
+                        </div>
+                        <div class="field">
+                            <label class="label is-small">Título do Botão</label>
+                            <input type="text" class="input is-small" value="${el.buttonTitle}" oninput="HubRio.updateElement(${i}, 'buttonTitle', this.value)">
+                        </div>
+                        <div class="field">
+                            <label class="label is-small">URL do Botão</label>
+                            <input type="url" class="input is-small" value="${el.buttonUrl}" oninput="HubRio.updateElement(${i}, 'buttonUrl', this.value)">
+                        </div>
+                        <div class="field" style="margin-top: var(--space-sm);">
+                            <button class="hub-stats-btn-editor" onclick="HubRio.openAnalytics(${i})">
+                                <i class="ri-bar-chart-box-fill"></i>
+                                <span>Ver Analíticas</span>
+                            </button>
+                        </div>
+                        ${HubRio.getCustomizationHTML(el, i, ['bgColor', 'bgColor2', 'gradientAngle', 'textColor', 'fontSize'])}
+                    `,
+                    getPreviewHTML: (el, i) => {
+                        const s = el.styles || {};
+                        const bgStyle = s.bgColor2 && s.bgColor2 !== s.bgColor 
+                            ? `background: linear-gradient(${s.gradientAngle || 135}deg, ${s.bgColor || '#1f2937'}, ${s.bgColor2}); background-size: 200% 200%; animation: gradient-flow 4s ease infinite;`
+                            : `background-color: ${s.bgColor || '#1f2937'};`;
+                        return `<div id="countdown-${i}" class="hub-countdown" style="${bgStyle} color: ${s.textColor || '#ffffff'};"></div>`;
+                    }
+                },
+
+                'advanced-bg-changer': {
+                    name: 'Link com Fundo',
+                    hasUrl: true,
+                    hasAnalytics: true,
+                    defaultData: {
+                        type: 'advanced-bg-changer',
+                        title: 'Ver Galeria',
+                        url: 'https://',
+                        bgImage: 'https://images.unsplash.com/photo-1497250681960-ef046c08a56e?w=1200',
+                        icon: 'ri-gallery-line',
+                        iconSize: '1',
+                        styles: { bgColor: '#1f2937', textColor: '#ffffff', fontSize: '1' },
+                        clicks: 0
+                    },
+                    getSettingsHTML: (el, i) => `
+                        <div class="field">
+                            <label class="label is-small">Título</label>
+                            <input type="text" class="input is-small" value="${el.title}" oninput="HubRio.updateElement(${i}, 'title', this.value)">
+                        </div>
+                        <div class="field">
+                            <label class="label is-small">URL</label>
+                            <input type="url" class="input is-small" value="${el.url}" oninput="HubRio.updateElement(${i}, 'url', this.value)">
+                        </div>
+                        <div class="field">
+                            <label class="label is-small">URL Imagem Fundo</label>
+                            <input type="url" class="input is-small" value="${el.bgImage}" oninput="HubRio.updateElement(${i}, 'bgImage', this.value)">
+                        </div>
+                        <div class="field">
+                            <label class="label is-small">Ícone</label>
+                            <button class="button is-fullwidth is-small" onclick="HubRio.openIconPicker(${i}, 'icon')">
+                                <span class="icon"><i class="${el.icon || 'ri-add-line'}"></i></span>
+                                <span>Selecionar</span>
+                            </button>
+                        </div>
+                        <div class="field" style="margin-top: var(--space-sm);">
+                            <button class="hub-stats-btn-editor" onclick="HubRio.openAnalytics(${i})">
+                                <i class="ri-bar-chart-box-fill"></i>
+                                <span>Ver Analíticas</span>
+                            </button>
+                        </div>
+                        ${HubRio.getCustomizationHTML(el, i, ['bgColor', 'textColor', 'fontSize'])}
+                    `,
+                    getPreviewHTML: (el, i) => {
+                        const s = el.styles || {};
+                        return `
+                        <div class="hub-link">
+                            <a href="${el.url}" onclick="return HubRio.handleLink(event, '${el.url}', ${i})" data-bg-image="${el.bgImage}" style="flex: 1; background-color: ${s.bgColor || '#1f2937'}; color: ${s.textColor || '#ffffff'}; padding: 1.25rem; border-radius: var(--radius-lg); text-align: center; font-weight: bold; text-decoration: none; display: flex; align-items: center; justify-content: center; min-height: 60px;">
+                                <span style="display: flex; align-items: center; justify-content: center; gap: var(--space-sm); font-size: ${s.fontSize || 1}rem;">
+                                    ${el.icon ? `<i class="${el.icon}" style="font-size: ${el.iconSize || 1}rem;"></i>` : ''}
+                                    ${el.title}
+                                </span>
+                            </a>
+                        </div>`;
+                    }
+                },
+
+                'slider': {
+                    name: 'Slider',
+                    defaultData: {
+                        type: 'slider',
+                        slides: [{ title: 'Slide 1', desc: 'Descrição.', bg: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800', thumb: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=200', url: '#' }]
+                    },
+                    getSettingsHTML: (el, i) => `
+                        <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+                            ${el.slides.map((slide, si) => `
+                                <div class="box" style="padding: var(--space-sm);">
+                                    <p style="font-weight: bold; font-size: 0.875rem; margin-bottom: var(--space-sm);">Slide ${si + 1}</p>
+                                    <div class="field"><input type="text" class="input is-small" placeholder="Título" value="${slide.title}" oninput="HubRio.updateSliderContent(${i}, ${si}, 'title', this.value)"></div>
+                                    <div class="field"><input type="text" class="input is-small" placeholder="Descrição" value="${slide.desc}" oninput="HubRio.updateSliderContent(${i}, ${si}, 'desc', this.value)"></div>
+                                    <div class="field"><input type="url" class="input is-small" placeholder="URL" value="${slide.url}" oninput="HubRio.updateSliderContent(${i}, ${si}, 'url', this.value)"></div>
+                                    <div class="field"><input type="url" class="input is-small" placeholder="URL Imagem Fundo" value="${slide.bg}" oninput="HubRio.updateSliderContent(${i}, ${si}, 'bg', this.value)"></div>
+                                    <div class="field"><input type="url" class="input is-small" placeholder="URL Thumb" value="${slide.thumb}" oninput="HubRio.updateSliderContent(${i}, ${si}, 'thumb', this.value)"></div>
+                                    <button class="button is-small is-danger" onclick="HubRio.removeSlide(${i}, ${si})">Remover</button>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button class="button is-small is-info" onclick="HubRio.addSlide(${i})">Adicionar Slide</button>
+                    `,
+                    getPreviewHTML: (el) => `<div class="slider-container-wrapper" data-slides='${JSON.stringify(el.slides)}'></div>`
+                }
+            },
+
+            getCustomizationHTML(el, i, fields) {
+                if (!el.styles) el.styles = {};
+                
+                const fieldConfig = {
+                    color: { label: 'Cor Texto', type: 'color', default: '#1f2937' },
+                    bgColor: { label: 'Cor Fundo 1', type: 'color', default: '#1f2937' },
+                    bgColor2: { label: 'Cor Fundo 2', type: 'color', default: '' },
+                    gradientAngle: { label: 'Ângulo', type: 'number', default: '135', step: '1', min: '0', max: '360' },
+                    textColor: { label: 'Cor Texto', type: 'color', default: '#ffffff' },
+                    iconColor: { label: 'Cor Ícone', type: 'color', default: '#FB923C' },
+                    fontSize: { label: 'Tamanho', type: 'number', default: '1', step: '0.1', min: '0.5', max: '3' },
+                    titleSize: { label: 'Tam. Título', type: 'number', default: '1', step: '0.1', min: '0.5', max: '2' },
+                    descSize: { label: 'Tam. Desc.', type: 'number', default: '0.875', step: '0.05', min: '0.5', max: '1.5' },
+                    iconSize: { label: 'Tam. Ícone', type: 'number', default: '1.5', step: '0.1', min: '0.5', max: '3' },
+                    fontWeight: { label: 'Destaque', type: 'select', default: '400', options: this.FONT_WEIGHTS }
+                };
+
+                const fieldHTML = fields.map(field => {
+                    const config = fieldConfig[field];
+                    if (!config) return '';
+                    
+                    const value = el.styles[field] || config.default;
+                    
+                    if (config.type === 'color') {
+                        return `
+                            <div class="hub-customize__field">
+                                <label class="hub-customize__label">${config.label}</label>
+                                <input type="color" class="hub-customize__input hub-customize__input--color" value="${value}" oninput="HubRio.updateStyle(${i}, '${field}', this.value)">
+                            </div>
+                        `;
+                    } else if (config.type === 'number') {
+                        return `
+                            <div class="hub-customize__field">
+                                <label class="hub-customize__label">${config.label}</label>
+                                <input type="number" class="hub-customize__input" value="${value}" step="${config.step}" min="${config.min}" max="${config.max}" oninput="HubRio.updateStyle(${i}, '${field}', this.value)">
+                            </div>
+                        `;
+                    } else if (config.type === 'select') {
+                        return `
+                            <div class="hub-customize__field" style="grid-column: 1 / -1;">
+                                <label class="hub-customize__label">${config.label}</label>
+                                <select class="hub-customize__input hub-customize__input--select" onchange="HubRio.updateStyle(${i}, '${field}', this.value)">
+                                    ${Object.entries(config.options).map(([key, label]) => `<option value="${key}" ${value === key ? 'selected' : ''}>${label}</option>`).join('')}
+                                </select>
+                            </div>
+                        `;
+                    }
+                }).join('');
+
+                return `
+                    <div class="hub-customize">
+                        <button type="button" class="hub-customize__toggle" onclick="HubRio.toggleCustomize(this)">
+                            <i class="ri-paint-brush-line"></i>
+                            <span>Personalizar</span>
+                            <i class="ri-arrow-down-s-line"></i>
+                        </button>
+                        <div class="hub-customize__content">
+                            <div class="hub-customize__grid">
+                                ${fieldHTML}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            getInlineStyles(styles) {
+                if (!styles) return '';
+                const map = {
+                    color: 'color',
+                    bgColor: 'background-color',
+                    textColor: 'color',
+                    iconColor: 'color',
+                    fontSize: 'font-size',
+                    fontWeight: 'font-weight'
+                };
+                return Object.entries(styles).map(([key, value]) => {
+                    if (key === 'bgColor2' || key === 'gradientAngle') return '';
+                    const cssKey = map[key] || key;
+                    const cssValue = key.includes('Size') || key === 'fontSize' ? `${value}rem` : value;
+                    return `${cssKey}: ${cssValue}`;
+                }).filter(s => s).join('; ');
+            },
+
+            init() { this.renderAll(); this.initEventListeners(); },
+            renderAll() { this.renderSettings(); this.renderPreview(); },
+
+            renderSettings() {
+                document.getElementById('hub-profile-name').value = this.profileData.name;
+                document.getElementById('hub-profile-bio').value = this.profileData.bio || '';
+                document.getElementById('hub-profile-image').value = this.profileData.imageUrl;
+
+                document.getElementById('hub-blocks-list').innerHTML = this.profileData.elements.map((el, i) => {
+                    const lib = this.ELEMENT_LIBRARY[el.type];
+                    return `
+                        <div class="hub-card" draggable="true" data-index="${i}">
+                            <div class="hub-card__header">
+                                <strong class="hub-card__title">${lib.name}</strong>
+                                <div class="hub-card__actions">
+                                    <button class="button is-small" onclick="HubRio.moveElement(${i}, -1)" ${i === 0 ? 'disabled' : ''}><i class="ri-arrow-up-line"></i></button>
+                                    <button class="button is-small" onclick="HubRio.moveElement(${i}, 1)" ${i === this.profileData.elements.length - 1 ? 'disabled' : ''}><i class="ri-arrow-down-line"></i></button>
+                                    <button class="button is-small is-danger" onclick="HubRio.deleteElement(${i})">Excluir</button>
+                                </div>
+                            </div>
+                            <hr class="hub-card__divider">
+                            ${lib.getSettingsHTML(el, i)}
+                        </div>
+                    `;
+                }).join('');
+
+                this.initDragDrop();
+            },
+
+            renderPreview() {
+                const avatar = document.getElementById('hub-preview-avatar');
+                if (this.profileData.imageUrl && this.profileData.imageUrl.trim()) {
+                    avatar.src = this.profileData.imageUrl;
+                    avatar.classList.remove('is-hidden');
+                } else {
+                    avatar.classList.add('is-hidden');
+                }
+                
+                document.getElementById('hub-preview-profile').innerHTML = `
+                    <h2 class="hub-profile__name">${this.profileData.name}</h2>
+                    ${this.profileData.bio ? `<p class="hub-profile__bio">${this.profileData.bio}</p>` : ''}
+                `;
+                document.getElementById('hub-preview-elements').innerHTML = this.profileData.elements.map((el, i) => this.ELEMENT_LIBRARY[el.type]?.getPreviewHTML(el, i) || '').join('');
+                this.postRender();
+            },
+
+            postRender() { this.initSliderModule(); this.initGalleryModule(); this.initCountdownTimers(); },
+
+            toggleCustomize(btn) {
+                btn.classList.toggle('is-active');
+                btn.nextElementSibling.classList.toggle('is-active');
+            },
+
+            updateStyle(index, field, value) {
+                if (!this.profileData.elements[index].styles) {
+                    this.profileData.elements[index].styles = {};
+                }
+                this.profileData.elements[index].styles[field] = value;
+                this.renderPreview();
+                this.saveDataWithFeedback();
+            },
+
+            openAnalytics(index) {
+                const el = this.profileData.elements[index];
+                const lib = this.ELEMENT_LIBRARY[el.type];
+                
+                document.getElementById('analytics-username').textContent = el.title || lib.name;
+                document.getElementById('analytics-clicks').textContent = (el.clicks || Math.floor(Math.random() * 5000)).toLocaleString();
+                document.getElementById('analytics-week').textContent = Math.floor(Math.random() * 500);
+                document.getElementById('analytics-month').textContent = Math.floor(Math.random() * 2000);
+                
+                document.getElementById('analytics-lightbox').classList.add('is-active');
+                this.drawAnalyticsChart();
+            },
+
+            closeAnalytics(event) {
+                if (event && event.target.id !== 'analytics-lightbox') return;
+                document.getElementById('analytics-lightbox').classList.remove('is-active');
+            },
+
+            drawAnalyticsChart() {
+                const canvas = document.getElementById('analytics-canvas');
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                const data = Array.from({length: 7}, () => Math.random() * 80 + 20);
+                const max = Math.max(...data);
+                const barWidth = canvas.width / 7;
+                
+                ctx.fillStyle = '#549a76';
+                data.forEach((value, i) => {
+                    const height = (value / max) * canvas.height;
+                    const x = i * barWidth;
+                    const y = canvas.height - height;
+                    ctx.fillRect(x + 5, y, barWidth - 10, height);
+                });
+            },
+
+            initEventListeners() {
+                document.addEventListener('click', e => {
+                    if (!document.getElementById('hub-add-dropdown').contains(e.target)) {
+                        document.getElementById('hub-add-dropdown').classList.remove('is-active');
+                    }
+                });
+                document.getElementById('hub-icon-search')?.addEventListener('input', e => {
+                    const query = e.target.value.toLowerCase();
+                    document.querySelectorAll('.hub-icon-picker__item').forEach(item => {
+                        if (item.classList.contains('hub-icon-picker__item--none')) return;
+                        const iconName = item.dataset.icon || '';
+                        item.style.display = iconName.includes(query) ? 'flex' : 'none';
+                    });
+                });
+            },
+
+            initDragDrop() {
+                document.querySelectorAll('.hub-card').forEach(card => {
+                    card.addEventListener('dragstart', (e) => {
+                        this.draggedIndex = parseInt(e.currentTarget.dataset.index);
+                        e.currentTarget.classList.add('is-dragging');
+                    });
+                    card.addEventListener('dragend', (e) => e.currentTarget.classList.remove('is-dragging'));
+                    card.addEventListener('dragover', (e) => e.preventDefault());
+                    card.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        const dropIndex = parseInt(e.currentTarget.dataset.index);
+                        if (this.draggedIndex !== null && this.draggedIndex !== dropIndex) {
+                            const [moved] = this.profileData.elements.splice(this.draggedIndex, 1);
+                            this.profileData.elements.splice(dropIndex, 0, moved);
+                            this.renderAll();
+                            this.saveDataWithFeedback();
+                        }
+                    });
+                });
+            },
+
+            updateProfile(field, value) { this.profileData[field] = value; this.renderPreview(); this.saveDataWithFeedback(); },
+            updateElement(index, field, value) { this.profileData.elements[index][field] = value; this.renderPreview(); this.saveDataWithFeedback(); },
+            updateSocialLink(index, key, value) { this.profileData.elements[index].links[key] = value; this.renderPreview(); this.saveDataWithFeedback(); },
+            updateSliderContent(elIndex, slideIndex, field, value) { this.profileData.elements[elIndex].slides[slideIndex][field] = value; this.renderPreview(); this.saveDataWithFeedback(); },
+            addSlide(elIndex) { this.profileData.elements[elIndex].slides.push({ title: 'Novo Slide', desc: '', bg: '', thumb: '', url: '#' }); this.renderAll(); this.saveDataWithFeedback(); },
+            removeSlide(elIndex, slideIndex) { this.profileData.elements[elIndex].slides.splice(slideIndex, 1); this.renderAll(); this.saveDataWithFeedback(); },
+
+            moveElement(index, direction) {
+                const newIndex = index + direction;
+                if (newIndex < 0 || newIndex >= this.profileData.elements.length) return;
+                [this.profileData.elements[index], this.profileData.elements[newIndex]] = [this.profileData.elements[newIndex], this.profileData.elements[index]];
+                this.renderAll();
+                this.saveDataWithFeedback();
+            },
+
+            deleteElement(index) {
+                if (!confirm('Excluir este bloco?')) return;
+                const element = this.profileData.elements[index];
+                if (element.type === 'countdown' && this.activeTimers[index]) {
+                    clearInterval(this.activeTimers[index]);
+                    delete this.activeTimers[index];
+                }
+                this.profileData.elements.splice(index, 1);
+                this.renderAll();
+                this.saveDataWithFeedback();
+            },
+
+            addElement(type) {
+                this.profileData.elements.push({ ...this.ELEMENT_LIBRARY[type].defaultData, id: Date.now() });
+                this.renderAll();
+                this.saveDataWithFeedback();
+                document.getElementById('hub-add-dropdown').classList.remove('is-active');
+            },
+
+            toggleDropdown() { document.getElementById('hub-add-dropdown').classList.toggle('is-active'); },
+
+            handleLink(event, url, index) {
+                event.preventDefault();
+                if (index !== undefined && this.profileData.elements[index]) {
+                    this.profileData.elements[index].clicks = (this.profileData.elements[index].clicks || 0) + 1;
+                    this.saveDataWithFeedback();
+                }
+                if (!url || url === '#') return false;
+                try {
+                    const urlObj = new URL(url);
+                    const isExternal = urlObj.hostname !== window.location.hostname;
+                    if (isExternal) {
+                        urlObj.searchParams.set('ref', 'apollo.rio.br');
+                        window.open(urlObj.toString(), '_blank');
+                    } else {
+                        window.location.href = url;
+                    }
+                } catch (e) {
+                    console.error('Invalid URL:', url);
+                }
+                return false;
+            },
+
+           
+                
+           
+            
+            renderIconBatch(startIndex) {
+                const BATCH_SIZE = 24;
+                const container = document.getElementById('icon-batch-container');
+                const loader = document.getElementById('icon-loader');
+                
+                if (!container) return;
+                
+                const endIndex = Math.min(startIndex + BATCH_SIZE, this.remixIcons.length);
+                const batch = this.remixIcons.slice(startIndex, endIndex);
+                
+                const batchHTML = batch.map(icon => `
+                    <div data-icon="${icon}" onclick="HubRio.selectIcon('${icon}')" style="display: flex; align-items: center; justify-content: center; height: 40px; border-radius: var(--radius-sm); cursor: pointer; font-size: 1.5rem; transition: background-color var(--transition-fast);">
+                        <i class="${icon}"></i>
+                    </div>
+                `).join('');
+                
+                container.innerHTML += batchHTML;
+                
+                const progress = Math.round((endIndex / this.remixIcons.length) * 100);
+                console.log(`✅ Loaded ${endIndex}/${this.remixIcons.length} icons (${progress}%)`);
+                
+                if (endIndex < this.remixIcons.length) {
+                    if (loader) {
+                        loader.innerHTML = `
+                            <i class="ri-loader-4-line" style="font-size: 2rem; animation: spin 1s linear infinite;"></i>
+                            <p style="margin-top: var(--space-sm); font-size: 0.875rem;">${progress}% carregado...</p>
+                        `;
+                    }
+                    setTimeout(() => this.renderIconBatch(endIndex), 500);
+                } else {
+                    if (loader) loader.remove();
+                    console.log('🎉 All icons loaded successfully!');
+                }
+            },
+
+        openIconPicker(index, field = 'icon') {
+    this.activeIconElementIndex = index;
+    this.activeIconField = field;
+    const modal = document.getElementById('hub-icon-modal');
+    modal.classList.add('is-active');
+
+    // ✅ garantir exibição mesmo se fetch falhar
+    this.remixIconsLoaded ? this.loadRemixIcons() : setTimeout(() => {
+        try { this.loadRemixIcons(); } 
+        catch(e) { 
+            console.warn('Offline mode: icons not loaded.'); 
+            // ainda exibe o modal mesmo sem ícones
+            const grid = document.getElementById('hub-icon-grid');
+            if (grid) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align:center; padding:2rem;">
+                        <p>Não foi possível carregar os ícones (modo offline).</p>
+                    </div>`;
+            }
+        }
+    }, 100);
+},
+
+closeIconPicker() { 
+    document.getElementById('hub-icon-modal').classList.remove('is-active'); 
+},
+
+selectIcon(iconClass) {
+    if (this.activeIconElementIndex === null) return;
+    this.profileData.elements[this.activeIconElementIndex][this.activeIconField] = iconClass;
+    this.closeIconPicker();
+    this.renderAll();
+    this.saveDataWithFeedback();
+},
+
+// 🔧 atualização segura de loadRemixIcons (mantendo tudo o que você já tinha)
+async loadRemixIcons() {
+    try {
+        const response = await fetch('https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css');
+        const cssText = await response.text();
+        const icons = [...cssText.matchAll(/\.ri-([a-z0-9-]+):before/g)].map(match => match[1]);
+        const grid = document.getElementById('hub-icon-grid');
+        grid.innerHTML = icons.map(icon =>
+            `<div class="hub-icon-item" onclick="HubRio.selectIcon('ri-${icon}')">
+                <i class="ri-${icon}"></i>
+            </div>`
+        ).join('');
+        this.remixIconsLoaded = true;
+    } catch (error) {
+        console.warn('⚠️ Falha ao carregar ícones Remixicon:', error);
+        const grid = document.getElementById('hub-icon-grid');
+        if (grid) {
+            grid.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align:center; padding:2rem;">
+                    <p>Não foi possível carregar os ícones (modo offline).</p>
+                </div>`;
+        }
+    }
+},
+
+            initGalleryModule() {
+                const bgEl = document.getElementById('hub-phone-bg');
+                document.querySelectorAll('[data-bg-image]').forEach(item => {
+                    const imgUrl = item.getAttribute('data-bg-image');
+                    const showBg = () => { bgEl.style.backgroundImage = `url(${imgUrl})`; bgEl.classList.add('is-active'); };
+                    const hideBg = () => bgEl.classList.remove('is-active');
+                    item.addEventListener('mouseenter', showBg);
+                    item.addEventListener('mouseleave', hideBg);
+                    item.addEventListener('touchstart', showBg);
+                    item.addEventListener('touchend', hideBg);
+                });
+            },
+
+            initCountdownTimers() {
+                Object.values(this.activeTimers).forEach(clearInterval);
+                this.activeTimers = {};
+                this.profileData.elements.forEach((el, i) => {
+                    if (el.type !== 'countdown') return;
+                    const container = document.getElementById(`countdown-${i}`);
+                    if (!container) return;
+                    const targetTime = new Date(el.targetDate).getTime();
+                    this.activeTimers[i] = setInterval(() => {
+                        const now = new Date().getTime();
+                        const distance = targetTime - now;
+                        if (distance < 0) {
+                            clearInterval(this.activeTimers[i]);
+                            delete this.activeTimers[i];
+                            container.innerHTML = `<a href="${el.buttonUrl}" onclick="return HubRio.handleLink(event, '${el.buttonUrl}', ${i})" style="display: block; font-weight: bold; padding: 0.75rem var(--space-md); border-radius: var(--radius-md); background: rgba(255, 255, 255, 0.2); text-decoration: none; color: inherit;">${el.buttonTitle}</a>`;
+                            return;
+                        }
+                        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                        const s = el.styles || {};
+                        container.innerHTML = `<div class="hub-countdown__grid"><div><div class="hub-countdown__number" style="font-size: ${s.fontSize || 1.875}rem;">${String(days).padStart(2, '0')}</div><div class="hub-countdown__label">DIAS</div></div><div><div class="hub-countdown__number" style="font-size: ${s.fontSize || 1.875}rem;">${String(hours).padStart(2, '0')}</div><div class="hub-countdown__label">HORAS</div></div><div><div class="hub-countdown__number" style="font-size: ${s.fontSize || 1.875}rem;">${String(minutes).padStart(2, '0')}</div><div class="hub-countdown__label">MIN</div></div><div><div class="hub-countdown__number" style="font-size: ${s.fontSize || 1.875}rem;">${String(seconds).padStart(2, '0')}</div><div class="hub-countdown__label">SEG</div></div></div>`;
+                    }, 1000);
+                });
+            },
+
+            initSliderModule() {
+                document.querySelectorAll('.slider-container-wrapper:not([data-slider-init])').forEach(container => {
+                    container.setAttribute('data-slider-init', 'true');
+                    const slides = JSON.parse(container.dataset.slides || '[]');
+                    if (!slides.length) return;
+                    container.innerHTML = `<div style="overflow: hidden;"><div class="hub-slider__track">${slides.map(slide => `<div class="hub-slider__slide"><img class="hub-slider__slide-bg" src="${slide.bg}" alt=""><div style="position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: var(--space-sm); background: linear-gradient(transparent 40%, rgba(255, 255, 255, 0.98) 100%);"><h4 class="hub-slider__slide-title">${slide.title}</h4><div style="display: none; flex-direction: column; align-items: center; padding: var(--space-sm); gap: var(--space-sm);"><img style="width: 6rem; height: 12rem; border-radius: var(--radius-sm); object-fit: cover;" src="${slide.thumb}" alt=""><div style="max-width: 100%; text-align: center;"><p style="color: var(--color-text-secondary); margin-bottom: var(--space-sm); font-size: 0.875rem; line-height: 1.4;">${slide.desc}</p><button onclick="HubRio.handleLink(event, '${slide.url}')" style="background: #3b82f6; color: white; padding: var(--space-sm) var(--space-md); border-radius: var(--radius-full); font-size: 0.875rem; border: none; cursor: pointer;">Detalhes</button></div></div></div></div>`).join('')}</div></div>`;
+                    const cards = Array.from(container.querySelectorAll('.hub-slider__slide'));
+                    cards.forEach(card => {
+                        card.addEventListener('click', () => {
+                            const isActive = card.classList.contains('is-expanded');
+                            cards.forEach(c => { c.classList.remove('is-expanded'); c.children[1].children[0].style.display = ''; c.children[1].children[1].style.display = 'none'; });
+                            if (!isActive) { card.classList.add('is-expanded'); card.children[1].children[0].style.display = 'none'; card.children[1].children[1].style.display = 'flex'; }
+                        });
+                    });
+                });
+            },
+
+            saveDataWithFeedback() {
+                const overlay = document.getElementById('hub-loading');
+                overlay.classList.add('is-active');
+                console.log("Saving to PODS:", this.profileData);
+                setTimeout(() => {
+                    console.log("Data saved to PODS (simulated).");
+                    overlay.classList.remove('is-active');
+                }, 1000);
+            }
+        };
+
+        window.HubRio = HubRio;
+        document.addEventListener('DOMContentLoaded', () => HubRio.init());
+    </script><style>/* Force analytics lightbox to always appear when active */
+.analytics-lightbox.is-active {
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: all !important;
+    z-index: 10000 !important;
+}
+</style>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a236a0832e96c03f',t:'MTc4NTQzODI0NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

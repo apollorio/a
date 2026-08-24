@@ -1,0 +1,60 @@
+/**
+ * SCSS Mixins
+ *
+ * @package Apollo\Social
+ */
+
+// Flexbox helpers
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@mixin flex-start {
+    display: flex;
+    align-items: flex-start;
+}
+
+// Responsive breakpoints (mobile-first)
+@mixin tablet {
+    @media (min-width: 768px) {
+        @content;
+    }
+}
+
+@mixin desktop {
+    @media (min-width: 1024px) {
+        @content;
+    }
+}
+
+@mixin wide {
+    @media (min-width: 1200px) {
+        @content;
+    }
+}
+
+// Utility
+@mixin truncate($lines: 1) {
+    @if $lines == 1 {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    } @else {
+        display: -webkit-box;
+        -webkit-line-clamp: $lines;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+}
+
+@mixin smooth {
+    transition: all $transition-ui;
+}

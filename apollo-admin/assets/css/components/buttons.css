@@ -1,0 +1,26 @@
+/**
+ * Apollo Admin — Save Button
+ */
+
+.apollo-save-btn.button-primary {
+    background: var(--apollo-primary) !important;
+    border-color: var(--apollo-primary) !important;
+    border-radius: 6px !important;
+    padding: 6px 24px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    height: auto !important;
+    line-height: 1.6 !important;
+    transition: all .15s ease;
+    text-shadow: none !important;
+    box-shadow: none !important;
+}
+
+.apollo-save-btn.button-primary:hover {
+    background: var(--apollo-primary-hover) !important;
+    border-color: var(--apollo-primary-hover) !important;
+}
+
+.apollo-save-btn.button-primary:focus {
+    box-shadow: 0 0 0 3px rgba(99,102,241,.3) !important;
+}

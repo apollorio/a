@@ -1,0 +1,41 @@
+/* ═══════════════════════════════════════════════════════════════
+   APOLLO::RIO — HOME / radio.css
+   Vertical left sidebar radio widget
+   ═══════════════════════════════════════════════════════════════ */
+.nh-radio {
+    position: fixed;
+    top: 18%; left: 10px; z-index: 8990;
+    transform-origin: 0 50%;
+    transform: rotate(90deg) translateX(-50%);
+    display: flex; align-items: center; gap: 12px; padding: 8px;
+    background: transparent; color: white;
+    mix-blend-mode: difference;
+    user-select: none; white-space: nowrap; pointer-events: none;
+}
+.nh-radio-btn {
+    pointer-events: all; background: transparent; color: inherit;
+    transition: transform .2s; display: flex; align-items: center; padding: 0;
+}
+@media (hover: hover) { .nh-radio-btn:hover { transform: scale(1.25); } }
+.nh-radio-btn svg { width: 14px; height: 14px; fill: currentColor; display: block; }
+.nh-radio-wave { height: 12px; display: flex; align-items: flex-end; gap: 2px; pointer-events: none; }
+.nh-radio-wave span {
+    width: 2px; height: 100%; background: currentColor; border-radius: 1px;
+    animation: nh-wave 1.3s ease-in-out infinite; transform-origin: bottom;
+}
+.nh-radio.is-paused .nh-radio-wave span { animation-play-state: paused; height: 3px !important; transition: height .3s; }
+.nh-radio-wave span:nth-child(1) { animation-delay: 0s;   height: 25%; }
+.nh-radio-wave span:nth-child(2) { animation-delay: .1s;  height: 65%; }
+.nh-radio-wave span:nth-child(3) { animation-delay: .2s;  height: 100%; }
+.nh-radio-wave span:nth-child(4) { animation-delay: .3s;  height: 70%; }
+.nh-radio-wave span:nth-child(5) { animation-delay: .4s;  height: 45%; }
+@keyframes nh-wave { 0%,100% { transform: scaleY(0.35); } 50% { transform: scaleY(1); } }
+.nh-radio-info { display: flex; align-items: baseline; gap: 7px; pointer-events: none; }
+.nh-radio-track { font-weight: 700; font-size: 0.72rem; letter-spacing: .07em; text-transform: uppercase; }
+.nh-radio-artist { font-size: 0.72rem; opacity: 0.5; }
+.nh-radio-time {
+    font-family: var(--ff-mono, 'Courier New', monospace); font-size: 0.60rem;
+    opacity: 0.35; letter-spacing: 0.06em; margin-top: 4px;
+    pointer-events: none; display: block; text-align: center;
+}
+@media (max-width: 480px) { .nh-radio { display: none; } }

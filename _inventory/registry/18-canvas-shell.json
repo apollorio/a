@@ -1,0 +1,227 @@
+{
+  "$chapter": {
+    "id": "18-canvas-shell",
+    "owner": "apollo-templates",
+    "keys": [
+      "$canvas_shell"
+    ],
+    "source": "migration executed 2026-07-28",
+    "merge": "deep_merge_last_wins"
+  },
+  "$canvas_shell": {
+    "date": "2026-07-28",
+    "status": "COMPLETE",
+    "scope": "All 13 plugins named in the mandatory approved page-layout directive.",
+    "contract": {
+      "apollo": {
+        "name": "Blank Canvas Apollo",
+        "chrome": "none",
+        "rule": "Only charset + 2 preconnects may precede core.js fetchpriority=high, immediately after <head>.",
+        "used_by": [
+          "single-event",
+          "single-dj",
+          "single-local",
+          "/acesso",
+          "/registre",
+          "profile-login-required",
+          "profile-private",
+          "export documents"
+        ]
+      },
+      "plus": {
+        "name": "Blank Canvas Apollo+",
+        "chrome": "MANDATORY app shell: burger + topbar (activities, apps, profile panels) or login button when guest.",
+        "rule": "Apollo+ is NOT a totally blank canvas — it must load the approved shell structure.",
+        "used_by": [
+          "dashboards",
+          "create/edit forms",
+          "app surfaces",
+          "feeds",
+          "/agenda",
+          "/radar",
+          "/modera"
+        ]
+      }
+    },
+    "canonical_source": {
+      "shell_template": "apollo-templates/templates/template-parts/app-shell.php",
+      "shell_function": "apollo_render_app_shell()",
+      "chokepoint": "apollo_render_navbar() / apollo_get_navbar()",
+      "chokepoint_call_sites": 26,
+      "trait": "apollo-core/src/Traits/BlankCanvasTrait.php",
+      "core_api": [
+        "render_blank_canvas($path,$vars,$status,$variant)",
+        "render_blank_canvas_plus()",
+        "apollo_render_blank_canvas_body(['variant'=>'plus'])",
+        "apollo_blank_canvas_variant()",
+        "apollo_blank_canvas_is_plus()",
+        "apollo_render_blank_canvas_shell()"
+      ]
+    },
+    "guards": {
+      "APOLLO_CANVAS_VARIANT": "'apollo' | 'plus' — set by BlankCanvasTrait.",
+      "APOLLO_APP_SHELL_LOADED": "Set once .ax-top has rendered; blocks double-shell.",
+      "APOLLO_NAVBAR_LOADED": "Legacy guard; also set by app-shell.php for back-compat.",
+      "APOLLO_NAVBAR_V2_LOADED": "NEW — separates the navbar.v2 include-guard from APOLLO_NAVBAR_LOADED so the FAB is not skipped."
+    },
+    "migration_shapes": {
+      "trait_switch": "render_blank_canvas_plus() — for classes using BlankCanvasTrait.",
+      "body_helper": "apollo_render_blank_canvas_body(['variant'=>'plus']) — for templates hand-rolling <body>.",
+      "claim_the_slot": "define APOLLO_APP_SHELL_LOADED + APOLLO_NAVBAR_LOADED — for specialised shells kept intact."
+    },
+    "plugins": {
+      "apollo-core": {
+        "variant": "owner",
+        "action": "FIXED",
+        "shape": "variant-contract",
+        "version_after": "6.2.3",
+        "note": "Added $variant to render_blank_canvas() + 4 helper fns. NOTE: source edited but plugin version NOT bumped — divergence, bump before deploy."
+      },
+      "apollo-templates": {
+        "variant": "owner",
+        "action": "FIXED",
+        "shape": "canonical-shell",
+        "version_after": "1.3.0",
+        "note": "app-shell.php is canonical; apollo_render_navbar() rewritten as the chokepoint; navbar.v2 legacy nav guarded, FAB + sheet kept outside the guard."
+      },
+      "apollo-events": {
+        "variant": "plus",
+        "action": "FIXED",
+        "shape": "trait-switch",
+        "version_after": "1.5.0",
+        "note": "3 routes -> render_blank_canvas_plus(); topbar/overlay/panels early-return guarded; aside.php verified as content, untouched."
+      },
+      "apollo-users": {
+        "variant": "plus",
+        "action": "FIXED",
+        "shape": "body-helper",
+        "version_after": "1.1.0",
+        "note": "user-radar migrated; edit-profile + single-profile already compliant; gate pages left bare by doctrine."
+      },
+      "apollo-admin": {
+        "variant": "plus",
+        "action": "FIXED",
+        "shape": "claim-the-slot",
+        "version_after": "1.1.0",
+        "note": "/modera is a specialised Apollo+ shell (Admin<->Mod role-switch, L1<->L2 drawer); slot claimed, markup preserved."
+      },
+      "apollo-dashboard": {
+        "variant": "plus",
+        "action": "FIXED",
+        "shape": "trait-switch",
+        "version_after": "1.1.0",
+        "note": "Route migrated; dashboard.php already compliant via chokepoint."
+      },
+      "apollo-calendar": {
+        "variant": "plus",
+        "action": "FIXED",
+        "shape": "trait-switch+body-helper",
+        "version_after": "1.1.0",
+        "note": "agenda.php had a bare <body> with no chrome — the only genuine gap in the final batch."
+      },
+      "apollo-djs": {
+        "variant": "mixed",
+        "action": "VERIFIED",
+        "shape": "no-change",
+        "version_after": "1.0.1",
+        "note": "archive-dj compliant via apollo_get_navbar(); single-dj bare by doctrine."
+      },
+      "apollo-loc": {
+        "variant": "mixed",
+        "action": "VERIFIED",
+        "shape": "no-change",
+        "version_after": "1.0.1",
+        "note": "archive-local compliant; single-local bare by doctrine."
+      },
+      "apollo-social": {
+        "variant": "plus",
+        "action": "VERIFIED",
+        "shape": "no-change",
+        "version_after": "1.0.1",
+        "note": "explore.php already calls apollo_render_navbar()."
+      },
+      "apollo-elementor": {
+        "variant": "none",
+        "action": "VERIFIED",
+        "shape": "no-canvas",
+        "version_after": "1.0.1",
+        "note": "Zero DOCTYPE/<html> files — widget library rendering inside host pages."
+      },
+      "apollo-elementor-pro": {
+        "variant": "none",
+        "action": "VERIFIED",
+        "shape": "no-canvas",
+        "version_after": "1.0.1",
+        "note": "Pure widget library; no standalone canvas."
+      },
+      "apollo-sheets": {
+        "variant": "none",
+        "action": "VERIFIED",
+        "shape": "no-canvas",
+        "version_after": "1.0.1",
+        "note": "Its only <body> is inside an export-document HTML string, not a rendered page."
+      }
+    },
+    "totals": {
+      "plugins_in_scope": 13,
+      "fixed": 7,
+      "verified_no_change": 6,
+      "versions_bumped": 6,
+      "version_divergences": [
+        "apollo-core"
+      ]
+    },
+    "data_registry_sync": {
+      "date": "2026-07-28",
+      "file": "plugins/_inventory/data-registry.json",
+      "key_added": "$canvas_shell_contract",
+      "binds": "surfaces.shell (4 fields) -> Apollo / Apollo+ variants",
+      "backup": "audit/data-registry.json.bak4",
+      "effect": "additive only — cpts/totals/gaps untouched (event 42, dj 21, local 20, shell 4, all 87, gaps 11)."
+    },
+    "verification": {
+      "method": "Python brace/paren balance + single-<body> grep per template; node --check for JS.",
+      "php_lint": "NOT RUN — no PHP binary in the audit sandbox. Run `php -l` on changed files before deploy."
+    },
+    "deploy_notes": [
+      "Sync files to host.",
+      "Purge page + edge cache.",
+      "php -l all changed files."
+    ],
+    "$unification_2026_08_05": {
+      "summary": "Collapsed THREE competing Apollo+ shells into one. This chapter was written 2026-07-28, before apollo_plus_open() existed, so it documented only the trait path — the divergence grew underneath it.",
+      "the_three_shells_found": {
+        "A_trait": "BlankCanvasTrait::render_blank_canvas_plus() → template hand-rolls apollo_render_document_open() + <body class=\"ax-body\"> + apollo_render_app_shell() + apollo-events LOCAL template-parts/shared/{topbar,overlay,panels,aside}.php + <div class=\"ax-shell\"> + <main class=\"ax-main\">. Used by create-event.php, dashboard-event.php.",
+        "B_plus_api": "apollo_plus_open()/apollo_plus_close() (apollo-templates/includes/apollo-plus-api.php) → head + topbar-styles + app_shell + apollo-plus/aside.php + <main class=\"ax-main\" id=\"axMain\"> + <body class=\"ax-shell\">. Used by every phase-001..010 screen.",
+        "C_body_helper": "apollo_render_blank_canvas_body([variant=>plus]) → <body class=\"ax-body\"> + apollo_render_blank_canvas_shell(). Used by apollo-users/templates/user-radar.php."
+      },
+      "why_it_mattered": [
+        "DIFFERENT ASIDE: path A rendered apollo-events' own shared/aside.php, which has no gestor group — so Meus eventos / Meus anúncios / Minhas Comunas / Meus Núcleos / Meus projetos / Minhas tarefas simply did not exist on /novo-evento or /meus-eventos. Walking /eventos/meus → /novo-evento swapped the sidebar out from under the user.",
+        "DIFFERENT .ax-main GEOMETRY: shell-styles.php declares .ax-main{padding:50px 30px 180px;max-width:1040px}; aside-styles.php declares .ax-main{padding:0;width:100%;max-width:none} plus the >=1000px pinned-aside offsets. Two owners of one selector, opposite intents, winner decided by load order — the exact failure CLAUDE.md calls the cardinal sin.",
+        "DIFFERENT TOPBAR CSS SOURCE, so the two shells drifted independently. This is also why the topbar was completely unstyled on every path-B screen until 2026-07-30 (apollo_plus_open never loaded any topbar CSS at all).",
+        "Mixing A and B on one request emits two <head>/<body> pairs — already documented as a live failure in comunas.php, apollo-events Plugin.php and apollo-adverts Plugin.php."
+      ],
+      "resolution": {
+        "canonical": "apollo_plus_open() / apollo_plus_close() is now THE Apollo+ shell. One head, one topbar, one aside, one <main>, one CSS source.",
+        "api_extended": "apollo_plus_open() gained `theme` and `html_class` (additive, defaults reproduce prior output byte for byte) so the legacy documents could convert without losing the dark + is-logged treatment they already had.",
+        "converted": [
+          "apollo-events/styles/base/create-event.php",
+          "apollo-events/styles/base/dashboard-event.php"
+        ],
+        "guard_added": "apollo-events/styles/base/template-parts/shared/shell-styles.php now wraps its SHELL FRAME block (.ax-top*, .ax-aside, .ax-main, .panel-r, .apps-pop) in `if (! defined(APOLLO_PLUS_TOPBAR_STYLES))`. Kept, not deleted — it is still the shell for a consumer running without apollo-templates. Its component layer (buttons, cards, .field-input, .as2 combobox) stays unconditional because the forms depend on it and it collides with nothing. This makes the unification self-enforcing rather than a one-off cleanup."
+      },
+      "still_open": [
+        "Path C (apollo_render_blank_canvas_body) survives in apollo-users/templates/user-radar.php — not converted this pass, not verified.",
+        "apollo-dashboard/includes/class-plugin.php:207 still calls render_blank_canvas_plus() — works, but inherits whatever shell its template hand-rolls. Audit before trusting.",
+        "apollo-events shared/{topbar,overlay,panels,aside}.php are now unreferenced by the two converted templates. Left on disk deliberately (rollback + non-apollo-templates fallback); delete only after path A is fully retired."
+      ],
+      "verification": "Structural: <style> balance, PHP brace balance, open/close pairing, no orphan </main> or /ax-shell markup. Portal harness 22/22 green. Live: /novo-evento, /eventos/novo, /meus-eventos all return the expected guest 302 to /acesso (unchanged signature); /eventos unchanged and healthy. LOGGED-IN RENDER OF THE TWO CONVERTED SCREENS IS NOT VERIFIED — no authenticated session available this session. Confirm the aside now shows the gestor group on /novo-evento before trusting this."
+    },
+    "$blocks_vs_shells_2026_08_08": {
+      "why_this_note_exists": "$unification_2026_08_05 above is a record of three things that each thought they were the shell. The next reusable piece of Apollo+ chrome landed three days later, so the distinction is worth stating once rather than rediscovering it.",
+      "rule": "A SHELL owns the document: <head>, <body>, topbar, aside, <main>. There is exactly one, apollo_plus_open()/apollo_plus_close(). A BLOCK owns a band inside <main>: it emits no document furniture, calls no shell function, and is included with apollo_plus_part() like any other part. Blocks are unlimited; shells are one.",
+      "first_block": "apollo_listing_header() (apollo-templates 1.5.1, includes/listing-header-api.php) — the month/search/filter band for archive screens. Documented in 09-plugins/apollo-templates.json $listing_header_block_2026_08_08; first mounted on /eventos, see 09-plugins/apollo-events.json $portal_header_swap_2026_08_08.",
+      "where_a_new_block_goes": "apollo-templates/templates/template-parts/{block}/, with its public API in apollo-templates/includes/{block}-api.php — the same place and shape as the shell parts, so apollo_plus_part()'s child-theme → parent-theme → plugin override chain applies to it for free."
+    }
+  }
+}

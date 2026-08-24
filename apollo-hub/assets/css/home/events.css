@@ -1,0 +1,249 @@
+/* ═══════════════════════════════════════════════════════════════
+   APOLLO::RIO — HOME / events.css
+   Event grid + a-eve-card design system
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+    --a-eve-radius: 16px;
+    --a-eve-border: rgba(var(--rgb-d),0.08);
+    --a-eve-shadow: rgba(var(--rgb-d),0.10);
+    --a-eve-shadow-hover: rgba(var(--rgb-d),0.18);
+    --a-eve-text-primary: var(--text);
+    --a-eve-text-sec: var(--muted);
+}
+
+.nh-events-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+@media (max-width: 320px)  { .nh-events-grid { grid-template-columns: 1fr; } }
+@media (min-width: 600px)  { .nh-events-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
+@media (min-width: 900px)  { .nh-events-grid { grid-template-columns: repeat(4, 1fr); gap: 18px; } }
+
+.a-eve-card {
+    display: block; position: relative; width: 100%;
+    text-decoration: none; cursor: pointer;
+    transition: transform .4s var(--ease-out);
+    background: transparent; color: inherit;
+    margin: 14px 0;
+}
+@media (hover: hover) { .a-eve-card:hover { transform: translateY(-5px); } }
+
+/* Date cutout */
+.a-eve-date {
+    position: absolute; top: 5px; left: 7px;
+    width: 68px; height: 62px;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    text-align: center; line-height: 1;
+    z-index: 2; pointer-events: none;
+    transform-origin: top left;
+    transition: transform .45s var(--ease-spring);
+    will-change: transform;
+}
+@media (hover: hover) { .a-eve-card:hover .a-eve-date { transform: scale(1.15); } }
+.a-eve-date-day {
+    font-size: 2.2rem; font-weight: 800;
+    color: var(--a-eve-text-primary); display: block;
+    letter-spacing: -0.03em;
+}
+.a-eve-date-month {
+    font-size: 1rem; font-weight: 700;
+    text-transform: uppercase; color: var(--a-eve-text-sec);
+}
+
+/* Media with corner-cutout mask */
+.a-eve-media {
+    height: 0; padding-bottom: 125%;
+    position: relative; overflow: hidden;
+    border-radius: var(--a-eve-r);
+    border: 1px solid var(--a-eve-border);
+    box-shadow: 0 10px 30px var(--a-eve-shadow);
+    transition: box-shadow .4s var(--ease-out);
+    background: var(--bg-deep);
+    --r: 12px; --s: 12px; --x: 56px; --y: 50px;
+    --_m: /calc(2*var(--r)) calc(2*var(--r)) radial-gradient(#000 70%, #0000 72%);
+    --_g: conic-gradient(at var(--r) var(--r), #000 75%, #0000 0);
+    --_d: (var(--s) + var(--r));
+    mask:
+        calc(var(--_d) + var(--x)) 0 var(--_m),
+        0 calc(var(--_d) + var(--y)) var(--_m),
+        radial-gradient(var(--s) at 0 0, #0000 99%, #000 calc(100% + 1px)) calc(var(--r) + var(--x)) calc(var(--r) + var(--y)),
+        var(--_g) calc(var(--_d) + var(--x)) 0,
+        var(--_g) 0 calc(var(--_d) + var(--y));
+    mask-repeat: no-repeat;
+    -webkit-mask:
+        calc(var(--_d) + var(--x)) 0 var(--_m),
+        0 calc(var(--_d) + var(--y)) var(--_m),
+        radial-gradient(var(--s) at 0 0, #0000 99%, #000 calc(100% + 1px)) calc(var(--r) + var(--x)) calc(var(--r) + var(--y)),
+        var(--_g) calc(var(--_d) + var(--x)) 0,
+        var(--_g) 0 calc(var(--_d) + var(--y));
+    -webkit-mask-repeat: no-repeat;
+}
+@media (hover: hover) { .a-eve-card:hover .a-eve-media { box-shadow: 0 15px 40px var(--a-eve-shadow-hover); } }
+.a-eve-media img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform .5s var(--ease-out); display: block;
+    filter: contrast(1.05) saturate(1.1);
+}
+.a-eve-media::after {
+    content: ''; position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(180deg, transparent 30%, rgba(var(--rgb-d),0.35) 85%, rgba(var(--rgb-d),0.55) 100%);
+    border-radius: var(--a-eve-r); pointer-events: none;
+}
+@media (hover: hover) { .a-eve-card:hover .a-eve-media img { transform: scale(1.15); } }
+
+/* Tags overlay */
+.a-eve-tags { position: absolute; bottom: 10px; right: 10px; display: flex; gap: 6px; z-index: 4; pointer-events: none; }
+.a-eve-tag {
+    padding: 3px 9px; border-radius: 4px;
+    border: 1px solid rgba(var(--rgb-t),0.2);
+    background: linear-gradient(30deg, rgba(var(--rgb-t),0.08) -49%, rgba(var(--rgb-t),0.32) 160%);
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    font-size: 0.58rem; color: #fff; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    font-family: var(--ff-mono);
+}
+
+/* Content */
+.a-eve-content { padding: 0.9em 0.45rem 0.5em; width: 100%; }
+.a-eve-title {
+    font-size: 1.75rem; font-weight: 800;
+    color: var(--a-eve-text-primary); line-height: 1.6;
+    margin: 0 0 0.8rem; margin-block: 0 0.8rem; letter-spacing: -0.03em;
+    overflow: hidden; text-overflow: ellipsis;
+    display: -webkit-box; -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical; text-transform: none;
+    transform-origin: left center;
+    transition: transform .45s var(--ease-spring);
+    will-change: transform;
+}
+@media (hover: hover) { .a-eve-card:hover .a-eve-title { transform: scale(1.15); } }
+.a-eve-meta {
+    color: var(--gray-10); font-size: .85rem;
+    display: flex; align-items: center; gap: 7px;
+    margin-bottom: 0.25rem; font-family: var(--ff-main);
+    letter-spacing: 0.01em;
+}
+.a-eve-meta i { font-size: 1.12rem; color: var(--white-10); flex-shrink: 0; opacity: 0.72; }
+.a-eve-meta span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Explore CTA in event grid */
+.a-eve-explore {
+    display: flex !important; flex-direction: column;
+    align-items: center; justify-content: center;
+    border-radius: var(--a-eve-r) !important;
+    min-height: 280px;
+}
+.a-eve-explore .a-eve-media,
+.a-eve-explore .a-eve-date,
+.a-eve-explore .a-eve-content { display: none !important; }
+
+/* Month dropdown */
+.nh-month-dropdown { display: flex; align-items: center; gap: 8px; position: relative; }
+.nh-month-trigger {
+    display: inline-flex; align-items: center; gap: 8px;
+    height: fit-content; background: transparent !important;
+    border: none !important; box-shadow: none !important;
+    padding: 4px 12px; cursor: pointer;
+    font-family: var(--ff-main);
+    font-size: clamp(1.6rem, 4.5vw, 3rem); font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--white-3); -webkit-text-stroke: 1px var(--white-15);
+    transition: all .3s;
+}
+@media (hover: hover) {
+    .nh-month-trigger:hover { color: var(--text); -webkit-text-stroke-color: var(--text); }
+    .nh-month-trigger:hover i,
+    .nh-month-trigger:hover svg { color: var(--text); }
+}
+.nh-month-trigger i,
+.nh-month-trigger svg {
+    font-size: 12px; color: var(--white-15);
+    width: 12px; height: 12px; flex-shrink: 0; transition: color .3s;
+}
+
+/* Month row — mobile drop-up, desktop inline */
+.nh-month-row {
+    position: absolute; bottom: calc(100% + 10px); left: 0; z-index: 9999;
+    display: flex; flex-direction: column; align-items: flex-start;
+    gap: 8px; list-style: none; padding: 12px 18px; margin: 0;
+    min-width: 170px; height: fit-content;
+    background: rgba(var(--rgb-t),0.04) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(200%);
+    backdrop-filter: blur(10px) saturate(200%);
+    border: 1px solid rgba(var(--rgb-t),0.10) !important;
+    border-radius: var(--r-sm);
+    opacity: 0; pointer-events: none;
+    transform: translateY(6px);
+    transition: opacity .35s var(--ease-out), transform .35s var(--ease-out);
+}
+.nh-month-row.is-visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+@media (min-width: 600px) {
+    .nh-month-row {
+        position: static; flex-direction: row; align-items: center;
+        gap: 15px; padding: 0; min-width: auto;
+        height: fit-content; max-height: 25px;
+        background: transparent; backdrop-filter: none;
+        -webkit-backdrop-filter: none; border: none; border-radius: 0; box-shadow: none;
+        transform: translateX(10px);
+    }
+    .nh-month-row.is-visible { transform: translateX(0); }
+}
+.nh-month-row li a {
+    background: transparent !important; border: none !important; box-shadow: none !important;
+    color: var(--muted); font-family: var(--ff-main);
+    font-size: 1.313rem; font-weight: 500;
+    text-decoration: none; text-transform: uppercase;
+    transition: color .25s; cursor: pointer; white-space: nowrap;
+}
+.nh-month-row li a.active { color: var(--primary); }
+.nh-month-row li a:hover { color: var(--text); }
+.nh-month-row li a.nh-portal-link {
+    color: rgba(var(--rgb-d),.8) !important; font-size: 0.9rem;
+    font-family: var(--ff-main) !important; display: flex; align-items: baseline; gap: 6px;
+}
+.nh-month-row li a.nh-portal-link:hover { color: rgba(168,43,3,.8) !important; }
+.nh-month-row li a.nh-portal-link i:first-child { margin-right: 9px !important; }
+.nh-month-row li a.nh-portal-link::before {
+    content: ''; width: 1px; height: 14px;
+    background: var(--border); margin-right: 10px;
+}
+@media (max-width: 599px) {
+    .nh-month-row li a.nh-portal-link::before { display: none; }
+}
+
+/* Mobile event card overrides */
+@media (max-width: 599px) {
+    .a-eve-date { width: clamp(44px,13dvw,58px); height: clamp(38px,11dvw,50px); top: 4px; left: 5px; }
+    .a-eve-date-day  { font-size: clamp(1.3rem,5dvw,1.8rem); }
+    .a-eve-date-month { font-size: clamp(0.52rem,2dvw,0.72rem); font-weight: 700; }
+    .a-eve-media { --x: clamp(34px,10dvw,46px); --y: clamp(30px,9dvw,42px); }
+    .a-eve-card { margin: 0 !important; }
+    .a-eve-content { padding: 0.6em 0.45rem 0.35em; }
+    .a-eve-title { font-size: clamp(0.82rem,3.5dvw,1.05rem); font-weight: 700; -webkit-line-clamp: 2; margin-bottom: 0.5rem; }
+    .a-eve-meta { font-size: clamp(0.62rem,2.4dvw,0.72rem); gap: 4px; }
+    .a-eve-meta i { font-size: clamp(0.72rem,2.6dvw,0.82rem); }
+    .a-eve-tag { font-size: 0.5rem; padding: 2px 6px; }
+    .nh-events-grid { margin-left: 0; gap: clamp(8px,2.5dvw,14px); grid-auto-rows: auto; }
+}
+
+/* Desktop scale-ups */
+@media (min-width: 1024px) {
+    .a-eve-date-day   { font-size: 2.6rem; }
+    .a-eve-date-month { font-size: 1.5rem; }
+    .a-eve-date       { width: 78px; height: 70px; }
+    .a-eve-media      { --x: 64px; --y: 58px; }
+    .a-eve-title      { font-size: 1.5rem; }
+    .a-eve-meta       { font-size: 0.84rem; }
+    .a-eve-meta i     { font-size: 0.9rem; }
+    .xp-icon          { font-size: 2.8rem; }
+    .xp-all           { font-size: 3.2rem; }
+    .a-eve-explore .xp-inner { padding: 36px 18px; }
+}
+@media (min-width: 1400px) {
+    .a-eve-date-day   { font-size: 3rem; }
+    .a-eve-date-month { font-size: 1.7rem; }
+    .a-eve-date       { width: 88px; height: 78px; }
+    .a-eve-media      { --x: 74px; --y: 66px; }
+    .a-eve-title      { font-size: 1.65rem; }
+    .a-eve-meta       { font-size: 0.9rem; }
+    .a-eve-meta i     { font-size: 1rem; }
+}

@@ -1,0 +1,1393 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-loc",
+    "owner": "apollo-loc",
+    "wrap": "plugins.apollo-loc",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-loc",
+  "namespace": "Apollo\\Local",
+  "priority": 2,
+  "status": "IMPLEMENTED",
+  "description": "Locations CPT (local). Geocoding, maps, nearby search, area zones. Style: apollo-v1.",
+  "dependencies": [
+    "apollo-comment",
+    "apollo-core",
+    "apollo-fav",
+    "apollo-social",
+    "apollo-templates",
+    "apollo-wow"
+  ],
+  "provides": [
+    "loc-cpt",
+    "loc-single",
+    "loc-meta",
+    "geocoding"
+  ],
+  "FORBIDDEN": [
+    "venue",
+    "local",
+    "location"
+  ],
+  "cpts": [
+    "local"
+  ],
+  "taxonomies": [
+    "local_type",
+    "local_area"
+  ],
+  "tables": [],
+  "meta": {
+    "post": {
+      "_event_date": {
+        "_source": "deep_scan"
+      },
+      "_event_dj_ids": {
+        "_source": "deep_scan"
+      },
+      "_event_end_time": {
+        "_source": "deep_scan"
+      },
+      "_event_local_id": {
+        "_source": "deep_scan"
+      },
+      "_event_start_date": {
+        "_source": "deep_scan"
+      },
+      "_event_start_time": {
+        "_source": "deep_scan"
+      },
+      "_event_ticket_url": {
+        "_source": "deep_scan"
+      },
+      "_local_address": {
+        "_source": "deep_scan"
+      },
+      "_local_amenities": {
+        "_source": "deep_scan"
+      },
+      "_local_capacity": {
+        "_source": "deep_scan"
+      },
+      "_local_city": {
+        "_source": "deep_scan"
+      },
+      "_local_country": {
+        "_source": "deep_scan"
+      },
+      "_local_description": {
+        "_source": "deep_scan"
+      },
+      "_local_facebook": {
+        "_source": "deep_scan"
+      },
+      "_local_hours": {
+        "_source": "deep_scan"
+      },
+      "_local_image_1": {
+        "_source": "deep_scan"
+      },
+      "_local_instagram": {
+        "_source": "deep_scan"
+      },
+      "_local_lat": {
+        "_source": "deep_scan"
+      },
+      "_local_lng": {
+        "_source": "deep_scan"
+      },
+      "_local_name": {
+        "_source": "deep_scan"
+      },
+      "_local_phone": {
+        "_source": "deep_scan"
+      },
+      "_local_postal": {
+        "_source": "deep_scan"
+      },
+      "_local_price_range": {
+        "_source": "deep_scan"
+      },
+      "_local_state": {
+        "_source": "deep_scan"
+      },
+      "_local_testimonials": {
+        "_source": "deep_scan"
+      },
+      "_local_visit_count": {
+        "_source": "deep_scan"
+      },
+      "_local_website": {
+        "_source": "deep_scan"
+      },
+      "_local_image_2": {
+        "_source": "data-registry-reconcile-2026-07-21",
+        "expected_single": true
+      },
+      "_local_image_3": {
+        "_source": "data-registry-reconcile-2026-07-21",
+        "expected_single": true
+      },
+      "_local_image_4": {
+        "_source": "data-registry-reconcile-2026-07-21",
+        "expected_single": true
+      },
+      "_local_image_5": {
+        "_source": "data-registry-reconcile-2026-07-21",
+        "expected_single": true
+      },
+      "_local_whatsapp": {
+        "_source": "data-registry-reconcile-2026-07-21",
+        "expected_single": true
+      }
+    },
+    "user": {},
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_items",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/LocalsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PATCH",
+        "POST",
+        "PUT"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_item",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/LocalsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_nearby",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/LocalsController.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "pages": [
+    {
+      "slug": "local",
+      "title": "Locais",
+      "template": "styles/base/archive-local.php",
+      "type": "archive"
+    },
+    {
+      "slug": "local/{slug}",
+      "title": "Local",
+      "template": "styles/base/single-local.php",
+      "type": "single"
+    },
+    {
+      "slug": "mapa",
+      "title": "Mapa",
+      "template": "shortcode:[apollo_map]",
+      "type": "virtual",
+      "description": "Created on activation; renders [apollo_map]"
+    }
+  ],
+  "shortcodes": [
+    {
+      "tag": "apollo_add_loc",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_local",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_locals",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_map",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "version": "1.0.1",
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [
+    "apollo/loc/before_delete",
+    "apollo/loc/checkin",
+    "apollo/loc/core_ready",
+    "apollo/loc/created",
+    "apollo/loc/geocoded",
+    "apollo/loc/meta_saved",
+    "apollo/loc/shared",
+    "apollo/loc/updated",
+    "apollo_local_single_head"
+  ],
+  "hooks_listened": [
+    "apollo/core/initialized",
+    "apollo/fav/supported_post_types",
+    "apollo/social/checkin",
+    "apollo/social/share",
+    "apollo/templates/parts",
+    "apollo/wow/supported_post_types",
+    "apollo_core_register_meta",
+    "apollo_editable_post_types",
+    "apollo_editor_config_local",
+    "apollo_frontend_fields_local",
+    "apollo_shortcodes_registry"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [
+      "apollo-loc-hero",
+      "apollo-loc-map",
+      "apollo-loc-ui",
+      "leaflet"
+    ],
+    "styles": [
+      "apollo-loc-single",
+      "apollo-loc-v1",
+      "leaflet"
+    ]
+  },
+  "options": [
+    "apollo_local_settings"
+  ],
+  "security": {
+    "risk_band": "MEDIUM",
+    "risk_score": 44,
+    "abspath_coverage_pct": 98,
+    "rest_open_routes": 3,
+    "rest_critical_write_public": 2,
+    "rest_open_non_intentional": 3,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 3,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 1
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_frontend_fields_local",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_local_get_events_data",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_local_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_local_state",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_wow_get_count",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [],
+  "query_vars": [],
+  "php_surface": {
+    "files": 63,
+    "loc": 8755,
+    "classes": 39,
+    "functions": 17
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:50.255Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 245,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-loc",
+    "main_file": "apollo-loc.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Local",
+      "plugin_uri": "https://apollo.rio.br/plugins/apollo-local",
+      "description": "Locations CPT (local). Geocoding, maps, nearby search, area zones. Style: apollo-v1.",
+      "version": "1.0.1",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "Proprietary",
+      "text_domain": "apollo-local",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": "false"
+    },
+    "composer": {
+      "name": "apollo/loc",
+      "namespaces": [
+        "Apollo\\Local"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 63,
+        ".css": 1,
+        ".js": 4,
+        ".json": 1,
+        ".md": 1,
+        ".ffs_db": 1
+      },
+      "by_top_directory": {
+        "(root)": 5,
+        "assets": 5,
+        "includes": 6,
+        "src": 39,
+        "styles": 7,
+        "templates": 9
+      },
+      "total_bytes": 310110
+    },
+    "php": {
+      "files": 63,
+      "loc": 8755,
+      "classes": 39,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 17
+    },
+    "architecture": {
+      "namespace": "Apollo\\Local",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Local\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Columns",
+          "fqcn": "Apollo\\Local\\Admin\\Columns",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/Columns.php"
+        },
+        {
+          "kind": "class",
+          "name": "Dashboard",
+          "fqcn": "Apollo\\Local\\Admin\\Dashboard",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Admin/Dashboard.php"
+        },
+        {
+          "kind": "class",
+          "name": "AddressMetabox",
+          "fqcn": "Apollo\\Local\\Admin\\Metabox\\AddressMetabox",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/Metabox/AddressMetabox.php"
+        },
+        {
+          "kind": "class",
+          "name": "ContactMetabox",
+          "fqcn": "Apollo\\Local\\Admin\\Metabox\\ContactMetabox",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/Metabox/ContactMetabox.php"
+        },
+        {
+          "kind": "class",
+          "name": "DetailsMetabox",
+          "fqcn": "Apollo\\Local\\Admin\\Metabox\\DetailsMetabox",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/Metabox/DetailsMetabox.php"
+        },
+        {
+          "kind": "class",
+          "name": "MetaboxManager",
+          "fqcn": "Apollo\\Local\\Admin\\Metabox\\MetaboxManager",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/Metabox/MetaboxManager.php"
+        },
+        {
+          "kind": "class",
+          "name": "MetaboxSaver",
+          "fqcn": "Apollo\\Local\\Admin\\Metabox\\MetaboxSaver",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/Metabox/MetaboxSaver.php"
+        },
+        {
+          "kind": "class",
+          "name": "Metabox",
+          "fqcn": "Apollo\\Local\\Admin\\Metabox",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/Metabox.php"
+        },
+        {
+          "kind": "class",
+          "name": "CreateEndpoint",
+          "fqcn": "Apollo\\Local\\API\\Endpoints\\CreateEndpoint",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/API/Endpoints/CreateEndpoint.php"
+        },
+        {
+          "kind": "class",
+          "name": "DeleteEndpoint",
+          "fqcn": "Apollo\\Local\\API\\Endpoints\\DeleteEndpoint",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/API/Endpoints/DeleteEndpoint.php"
+        },
+        {
+          "kind": "class",
+          "name": "ListEndpoint",
+          "fqcn": "Apollo\\Local\\API\\Endpoints\\ListEndpoint",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/API/Endpoints/ListEndpoint.php"
+        },
+        {
+          "kind": "class",
+          "name": "NearbyEndpoint",
+          "fqcn": "Apollo\\Local\\API\\Endpoints\\NearbyEndpoint",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/API/Endpoints/NearbyEndpoint.php"
+        },
+        {
+          "kind": "class",
+          "name": "SingleEndpoint",
+          "fqcn": "Apollo\\Local\\API\\Endpoints\\SingleEndpoint",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/API/Endpoints/SingleEndpoint.php"
+        },
+        {
+          "kind": "class",
+          "name": "UpdateEndpoint",
+          "fqcn": "Apollo\\Local\\API\\Endpoints\\UpdateEndpoint",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/API/Endpoints/UpdateEndpoint.php"
+        },
+        {
+          "kind": "class",
+          "name": "LocalsController",
+          "fqcn": "Apollo\\Local\\API\\LocalsController",
+          "extends": "RestBase",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/LocalsController.php"
+        },
+        {
+          "kind": "class",
+          "name": "Router",
+          "fqcn": "Apollo\\Local\\API\\Router",
+          "extends": "RestBase",
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/API/Router.php"
+        },
+        {
+          "kind": "class",
+          "name": "LocalSchema",
+          "fqcn": "Apollo\\Local\\API\\Schema\\LocalSchema",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/API/Schema/LocalSchema.php"
+        },
+        {
+          "kind": "class",
+          "name": "AssetLoader",
+          "fqcn": "Apollo\\Local\\Assets\\AssetLoader",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Assets/AssetLoader.php"
+        },
+        {
+          "kind": "class",
+          "name": "CPTRegistrar",
+          "fqcn": "Apollo\\Local\\CPT\\CPTRegistrar",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/CPT/CPTRegistrar.php"
+        },
+        {
+          "kind": "class",
+          "name": "MetaRegistrar",
+          "fqcn": "Apollo\\Local\\CPT\\MetaRegistrar",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/CPT/MetaRegistrar.php"
+        },
+        {
+          "kind": "class",
+          "name": "TaxonomyRegistrar",
+          "fqcn": "Apollo\\Local\\CPT\\TaxonomyRegistrar",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/CPT/TaxonomyRegistrar.php"
+        },
+        {
+          "kind": "class",
+          "name": "Deactivation",
+          "fqcn": "Apollo\\Local\\Deactivation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Deactivation.php"
+        },
+        {
+          "kind": "class",
+          "name": "HaversineCalculator",
+          "fqcn": "Apollo\\Local\\Geo\\HaversineCalculator",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Geo/HaversineCalculator.php"
+        },
+        {
+          "kind": "class",
+          "name": "NearbySearch",
+          "fqcn": "Apollo\\Local\\Geo\\NearbySearch",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Geo/NearbySearch.php"
+        },
+        {
+          "kind": "class",
+          "name": "Geocoder",
+          "fqcn": "Apollo\\Local\\Geocoder",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Geocoder.php"
+        },
+        {
+          "kind": "class",
+          "name": "CoreIntegration",
+          "fqcn": "Apollo\\Local\\Integration\\CoreIntegration",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Integration/CoreIntegration.php"
+        },
+        {
+          "kind": "class",
+          "name": "SocialIntegration",
+          "fqcn": "Apollo\\Local\\Integration\\SocialIntegration",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Integration/SocialIntegration.php"
+        },
+        {
+          "kind": "class",
+          "name": "TemplatesIntegration",
+          "fqcn": "Apollo\\Local\\Integration\\TemplatesIntegration",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Integration/TemplatesIntegration.php"
+        },
+        {
+          "kind": "class",
+          "name": "Integrations",
+          "fqcn": "Apollo\\Local\\Integrations",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Integrations.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Local\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "Registry",
+          "fqcn": "Apollo\\Local\\Registry",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Registry.php"
+        },
+        {
+          "kind": "class",
+          "name": "AddLocShortcode",
+          "fqcn": "Apollo\\Local\\Shortcodes\\AddLocShortcode",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Shortcodes/AddLocShortcode.php"
+        },
+        {
+          "kind": "class",
+          "name": "LocalsGridShortcode",
+          "fqcn": "Apollo\\Local\\Shortcodes\\LocalsGridShortcode",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Shortcodes/LocalsGridShortcode.php"
+        },
+        {
+          "kind": "class",
+          "name": "MapShortcode",
+          "fqcn": "Apollo\\Local\\Shortcodes\\MapShortcode",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Shortcodes/MapShortcode.php"
+        },
+        {
+          "kind": "class",
+          "name": "ShortcodeRegistry",
+          "fqcn": "Apollo\\Local\\Shortcodes\\ShortcodeRegistry",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Shortcodes/ShortcodeRegistry.php"
+        },
+        {
+          "kind": "class",
+          "name": "SingleLocalShortcode",
+          "fqcn": "Apollo\\Local\\Shortcodes\\SingleLocalShortcode",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Shortcodes/SingleLocalShortcode.php"
+        },
+        {
+          "kind": "class",
+          "name": "Shortcodes",
+          "fqcn": "Apollo\\Local\\Shortcodes",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Shortcodes.php"
+        },
+        {
+          "kind": "class",
+          "name": "TemplateLoader",
+          "fqcn": "Apollo\\Local\\TemplateLoader",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/TemplateLoader.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_local_check_dependencies",
+          "file": "apollo-loc.php"
+        },
+        {
+          "name": "apollo_local_init",
+          "file": "apollo-loc.php"
+        },
+        {
+          "name": "apollo_local_get_address",
+          "file": "includes/functions-address.php"
+        },
+        {
+          "name": "apollo_local_get_links",
+          "file": "includes/functions-address.php"
+        },
+        {
+          "name": "apollo_local_get_types",
+          "file": "includes/functions-address.php"
+        },
+        {
+          "name": "apollo_local_get_areas",
+          "file": "includes/functions-address.php"
+        },
+        {
+          "name": "apollo_local_get_image",
+          "file": "includes/functions-address.php"
+        },
+        {
+          "name": "apollo_local_get_upcoming_events",
+          "file": "includes/functions-events.php"
+        },
+        {
+          "name": "apollo_local_count_upcoming_events",
+          "file": "includes/functions-events.php"
+        },
+        {
+          "name": "apollo_local_get_events_data",
+          "file": "includes/functions-events.php"
+        },
+        {
+          "name": "apollo_local_get_coords",
+          "file": "includes/functions-geo.php"
+        },
+        {
+          "name": "apollo_local_distance",
+          "file": "includes/functions-geo.php"
+        },
+        {
+          "name": "apollo_local_route_url",
+          "file": "includes/functions-geo.php"
+        },
+        {
+          "name": "apollo_local_osm_url",
+          "file": "includes/functions-geo.php"
+        },
+        {
+          "name": "apollo_local",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_local_option",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_local_flush_cache",
+          "file": "includes/functions.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 3,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "GET",
+            "POST"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_items",
+          "file": "src/API/LocalsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "DELETE",
+            "GET",
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_item",
+          "file": "src/API/LocalsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_nearby",
+          "file": "src/API/LocalsController.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 2,
+        "HIGH": 1,
+        "MEDIUM": 0,
+        "LOW": 0,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "PUBLIC_UNAUTHENTICATED": 3
+      },
+      "permission_body_resolved": 3,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 2,
+      "open_routes": [
+        {
+          "endpoint": "/",
+          "methods": [
+            "GET",
+            "POST"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/LocalsController.php"
+        },
+        {
+          "endpoint": "/",
+          "methods": [
+            "DELETE",
+            "GET",
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/LocalsController.php"
+        },
+        {
+          "endpoint": "/",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/LocalsController.php"
+        }
+      ],
+      "admin_cap_routes": [],
+      "logged_in_routes": []
+    },
+    "database": {
+      "tables_owned_or_defined": [],
+      "tables_referenced": [
+        "apollo_frontend_fields_local",
+        "apollo_local_get_events_data",
+        "apollo_local_settings",
+        "apollo_local_state",
+        "apollo_wow_get_count"
+      ],
+      "tables_for_registry": [],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_frontend_fields_local",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_local_get_events_data",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_local_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_local_state",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_wow_get_count",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 28,
+      "user_count": 0,
+      "term_count": 0,
+      "post_keys": [
+        "_event_date",
+        "_event_dj_ids",
+        "_event_end_time",
+        "_event_local_id",
+        "_event_start_date",
+        "_event_start_time",
+        "_event_ticket_url",
+        "_local_address",
+        "_local_amenities",
+        "_local_capacity",
+        "_local_city",
+        "_local_country",
+        "_local_description",
+        "_local_facebook",
+        "_local_hours",
+        "_local_image_1",
+        "_local_image_{$i}",
+        "_local_instagram",
+        "_local_lat",
+        "_local_lng",
+        "_local_name",
+        "_local_phone",
+        "_local_postal",
+        "_local_price_range",
+        "_local_state",
+        "_local_testimonials",
+        "_local_visit_count",
+        "_local_website"
+      ],
+      "user_keys": [],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [],
+      "query_vars": [],
+      "pages_derived": []
+    },
+    "cpts": [
+      {
+        "slug": "local",
+        "registered_locally": false,
+        "via_constant": true
+      }
+    ],
+    "taxonomies": [
+      {
+        "slug": "local_type",
+        "registered_locally": false,
+        "via_constant": true
+      },
+      {
+        "slug": "local_area",
+        "registered_locally": false,
+        "via_constant": true
+      }
+    ],
+    "hooks": {
+      "fired_count": 10,
+      "listened_count": 24,
+      "apollo_fired": [
+        "apollo/loc/before_delete",
+        "apollo/loc/checkin",
+        "apollo/loc/core_ready",
+        "apollo/loc/created",
+        "apollo/loc/geocoded",
+        "apollo/loc/meta_saved",
+        "apollo/loc/shared",
+        "apollo/loc/updated",
+        "apollo_local_single_head"
+      ],
+      "apollo_listened": [
+        "apollo/core/initialized",
+        "apollo/fav/supported_post_types",
+        "apollo/social/checkin",
+        "apollo/social/share",
+        "apollo/templates/parts",
+        "apollo/wow/supported_post_types",
+        "apollo_core_register_meta",
+        "apollo_editable_post_types",
+        "apollo_editor_config_local",
+        "apollo_frontend_fields_local",
+        "apollo_shortcodes_registry"
+      ],
+      "critical_wp_listened": [
+        "admin_menu",
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "save_post",
+        "save_post_",
+        "wp_enqueue_scripts"
+      ]
+    },
+    "ajax": {
+      "priv": [],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [
+      "apollo_add_loc",
+      "apollo_local",
+      "apollo_locals",
+      "apollo_map"
+    ],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [
+        "apollo-loc-hero",
+        "apollo-loc-map",
+        "apollo-loc-ui",
+        "leaflet"
+      ],
+      "styles": [
+        "apollo-loc-single",
+        "apollo-loc-v1",
+        "leaflet"
+      ]
+    },
+    "options": [
+      "apollo_local_settings"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_LOCAL_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_LOCAL_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_LOCAL_DIR",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_LOCAL_URL",
+        "value": "plugin_dir_url( __FILE__"
+      },
+      {
+        "name": "APOLLO_LOCAL_BASENAME",
+        "value": "plugin_basename( __FILE__"
+      },
+      {
+        "name": "APOLLO_LOCAL_REST_NAMESPACE",
+        "value": "apollo/v1"
+      },
+      {
+        "name": "APOLLO_LOCAL_CPT",
+        "value": "local"
+      },
+      {
+        "name": "APOLLO_LOCAL_TAX_TYPE",
+        "value": "local_type"
+      },
+      {
+        "name": "APOLLO_LOCAL_TAX_AREA",
+        "value": "local_area"
+      },
+      {
+        "name": "APOLLO_LOCAL_DEFAULT_STYLE",
+        "value": "apollo-v1"
+      },
+      {
+        "name": "APOLLO_LOCAL_CACHE_GROUP",
+        "value": "apollo_locals"
+      },
+      {
+        "name": "APOLLO_LOCAL_CACHE_TTL",
+        "value": "300"
+      },
+      {
+        "name": "APOLLO_LOCAL_META_KEYS",
+        "value": "array(\r\n\t\t'_local_name',\r\n\t\t'_local_address',\r\n\t\t'"
+      }
+    ],
+    "security": {
+      "php_files": 63,
+      "abspath_guard_files": 62,
+      "abspath_coverage_pct": 98,
+      "wpdb_prepare_calls": 3,
+      "wpdb_query_calls": 3,
+      "prepare_to_query_ratio": 1,
+      "nonce_checks": 6,
+      "current_user_can_calls": 5,
+      "raw_superglobal": {
+        "get": 0,
+        "post": 42,
+        "request": 0
+      },
+      "permission_callback_return_true": 6,
+      "escape_helpers": 214,
+      "echo_statements": 233,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 44,
+      "risk_band": "MEDIUM",
+      "rest_permission_critical": 2,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 1,
+      "rest_open_critical": 2,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 3
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-comment",
+        "apollo-core",
+        "apollo-fav",
+        "apollo-social",
+        "apollo-templates",
+        "apollo-wow"
+      ],
+      "signals": [
+        "apollo-comment",
+        "apollo-core",
+        "apollo-fav",
+        "apollo-social",
+        "apollo-templates",
+        "apollo-wow"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.0.1",
+      "version_changed": false,
+      "old_rest": 3,
+      "live_rest": 3,
+      "old_pages": 3,
+      "live_pages": 0,
+      "new_plugin": false
+    }
+  },
+  "canvas_contract": {
+    "variant": "mixed",
+    "action": "VERIFIED",
+    "shape": "no-change",
+    "audited": "2026-07-28",
+    "ref": "$canvas_shell.plugins.apollo-loc"
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 64,
+    "php_loc": 8990,
+    "rest_routes_found": 1,
+    "cpts_found": [],
+    "tables_found": [],
+    "shortcodes_found": [
+      "apollo_add_loc",
+      "apollo_local",
+      "apollo_locals",
+      "apollo_map"
+    ]
+  },
+  "$mockup_parity_not_verifiable_2026_08_17": {
+    "date": "2026-08-17",
+    "action": "GAP_RECORDED",
+    "question_asked": "Do the dj and loc mockups print the same final structure of styles and visuals as the shipped pages?",
+    "answer_for_loc": "UNANSWERABLE AS THE REPO STANDS. Two things are missing at once, and neither can be substituted by inference.",
+    "missing_1_no_mockup_in_repo": "21-mockup-field-contract.json audits 'screen/single cpt/location/loc-single-page.html', which lives OUTSIDE the plugins folder and was never copied in. apollo-djs has its counterpart at _sandbox/dj-single-page.mockup.html; apollo-loc has no _sandbox and no mockup. There is no approved artefact here to compare against.",
+    "missing_2_no_cell_structure": "apollo-loc never went through the cell treatment. styles/base/single-local.php is a monolith with its per-item context inline at the top (_local_name, address, coords, … from line 31), exactly the shape apollo-djs moved away from. There is no template-parts/single/ tree, no generator, and no render SSOT: apollo_loc_render_single(), apollo_loc_single_context() and apollo_loc_can_view() are all undefined — verified by grep across the whole plugin.",
+    "consequence": "The loc surface in includes/surface.php stays correctly DORMANT — apollo_surface_get('loc') returns null, so no REST fragment route is registered and apollo_surface_open_attrs('loc',$id) returns ''. A loc card renders as a plain anchor to /local/{slug}. That is the designed graceful degradation, not a bug.",
+    "what_would_make_it_verifiable": [
+      "1. Copy the approved loc-single-page.html into apollo-loc/_sandbox/ so the design has a home in the repo, as apollo-djs did.",
+      "2. Extract apollo_loc_single_context( int $id ): array out of styles/base/single-local.php; the template extract()s it. Rendered output must not change — that is the whole test.",
+      "3. Add apollo_loc_render_single() + apollo_loc_can_view(). The surface, its REST fragment and the lightbox then light up together with no further wiring.",
+      "4. Only then does a build-loc-cells.py and a parity assertion have anything to compare."
+    ],
+    "warning_inherited_from_djs": "When the loc mockup is copied in, check its encoding FIRST. The DJ mockup is character-corrupted (152 lines) while its generated cells are clean — see 09-plugins/apollo-djs.json $mockup_corrupted_generator_disarmed_2026_08_17. If the two mockups travelled together they were likely damaged together.",
+    "philosophy_violations_still_open_in_the_loc_mockup": "21-mockup-field-contract.json records VIO-02 (#dockFollow 'Seguir' button with a heart icon), VIO-03 ('Siga o local' copy) and VIO-04 (.map-note printing raw lat/lng plus an internal meta name and the non-existent CPT slug 'events_local' — the real slug is 'local'). These must be fixed in the mockup BEFORE any generator slices it, or the violations become permanent in shipped cells. Copy and icon changes only; no new storage — the fav tables already exist.",
+    "risk_if_ignored": "Building loc cells from an unaudited mockup would bake a follow button into production, which 01-philosophy forbids outright (NO_SELECTIVE_FOLLOW, NO_EGO_COUNTERS)."
+  }
+}

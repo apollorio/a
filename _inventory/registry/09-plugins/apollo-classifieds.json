@@ -1,0 +1,82 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-classifieds",
+    "owner": "apollo-classifieds",
+    "wrap": "plugins.apollo-classifieds",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-classifieds",
+  "namespace": "Apollo\\Classifieds",
+  "priority": 2,
+  "status": "DEPRECATED",
+  "deprecated_since": "6.4.1",
+  "merged_into": "apollo-adverts",
+  "description": "[DEPRECATED â€” FASE 1] Absorvido por apollo-adverts. Ver apollo-adverts para templates de marketplace, shortcodes e assets.",
+  "dependencies": [
+    "apollo-core",
+    "apollo-adverts"
+  ],
+  "provides": [
+    "marketplace-page",
+    "classified-templates",
+    "safety-disclaimer",
+    "chat-init"
+  ],
+  "NOTE": "Frontend complement to apollo-adverts. apollo-adverts handles the CPT/REST/meta, apollo-classifieds handles the marketplace template and user-facing features.",
+  "cpts": [
+    {
+      "slug": "classified",
+      "NOTE": "Fallback registration only â€” primary registration is in apollo-core/apollo-adverts",
+      "rewrite": "classificado",
+      "public": true,
+      "supports": [
+        "title",
+        "editor",
+        "thumbnail",
+        "author",
+        "custom-fields"
+      ]
+    }
+  ],
+  "taxonomies": [],
+  "tables": [],
+  "meta": {},
+  "rest": [],
+  "ajax": [
+    {
+      "action": "apollo_classifieds_init_chat",
+      "description": "Initialize chat after disclaimer acceptance",
+      "auth": true,
+      "params": [
+        "user_id",
+        "classified_id"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "slug": "marketplace",
+      "title": "Marketplace",
+      "template": "classifieds-page.php",
+      "type": "virtual"
+    }
+  ],
+  "template_parts": [
+    "templates/parts/page-header.php",
+    "templates/parts/filters-row.php",
+    "templates/parts/section-header.php",
+    "templates/parts/card-ticket.php",
+    "templates/parts/card-accommodation.php",
+    "templates/parts/info-box.php",
+    "templates/parts/modal-disclaimer.php"
+  ],
+  "shortcodes": [],
+  "$disk_status": "ABSENT",
+  "$disk_note": "No folder at plugins/apollo-classifieds on 2026-07-28. Entry PRESERVED (not deleted) — either planned/not-yet-built or removed. Resolve before treating as live.",
+  "$superseded_by_apollo_adverts": {
+    "date": "2026-07-28",
+    "finding": "This chapter still declares a pages[] entry for 'marketplace' -> classifieds-page.php, competing with apollo-adverts for the same route. apollo-classifieds was merged into apollo-adverts (FASE 1 merge, referenced in apollo-adverts/includes/constants.php). Flagged during the phase 1-3 registry compliance audit.",
+    "action": "Left in place rather than deleted: whether this plugin is still on disk/active is an infra fact this session cannot verify. If it is inactive, this chapter should be archived; if active, its marketplace route must be retired so two plugins do not claim /marketplace."
+  }
+}

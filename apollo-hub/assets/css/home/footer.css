@@ -1,0 +1,49 @@
+/* ═══════════════════════════════════════════════════════════════
+   APOLLO::RIO — HOME / footer.css
+   SVG logo background + footer grid
+   ═══════════════════════════════════════════════════════════════ */
+.aprio-ft-v2 {
+    position: absolute; inset: 0; z-index: 0;
+    overflow: hidden; pointer-events: none;
+    background: linear-gradient(180deg, transparent 0%, rgba(var(--rgb-d),0.018) 100%);
+}
+.aprio-ft-v2 svg {
+    position: absolute; bottom: -35%; left: 50%;
+    transform: translateX(-50%);
+    width: 105vw; height: 400px;
+    fill: rgba(var(--rgb-d),0.055); stroke: rgba(var(--rgb-d),0.125);
+    stroke-width: 0.33px;
+    mix-blend-mode: hard-light; pointer-events: none; display: block;
+}
+
+.nh-footer {
+    padding: 72px 0 56px; position: relative;
+    background: transparent; overflow: hidden;
+}
+.nh-footer > .container { position: relative; z-index: 1; }
+.nh-footer-brand h1 { font-size: clamp(1rem,2.5vw,1.5rem); margin-bottom: 14px; }
+.nh-footer-brand p { font-family: var(--ff-mono); font-size: .75rem; color: var(--muted); max-width: 340px; line-height: 1.75; }
+.nh-footer-links ul { display: flex; flex-direction: column; gap: 12px; list-style: none; }
+.nh-footer-links a { font-family: var(--ff-mono); font-size: .7rem; font-weight: 400; transition: color .25s; }
+@media (hover: hover) { .nh-footer-links a:hover { color: var(--primary); } }
+.nh-footer-grid {
+    display: grid; grid-template-columns: 1fr;
+    gap: 28px; padding-bottom: 0; margin-bottom: 170px;
+}
+@media (min-width: 768px) { .nh-footer-grid { grid-template-columns: 1fr auto; gap: 48px; } }
+.nh-footer-bottom {
+    display: flex; position: absolute; bottom: 7px;
+    flex-direction: column; gap: 8px;
+    font-family: var(--ff-mono); font-size: 0.75rem; color: #aaa;
+}
+@media (min-width: 768px) { .nh-footer-bottom { flex-direction: row; justify-content: space-between; } }
+
+@media (max-width: 767px) {
+    .nh-footer { padding: 48px 0 36px; }
+    .nh-footer-brand h1 { font-size: clamp(1.4rem,6dvw,2rem); margin-bottom: 10px; }
+    .nh-footer-brand p  { font-size: 0.82rem; line-height: 1.65; }
+    .nh-footer-links a  { font-size: 0.9rem; font-weight: 600; }
+    .nh-footer-bottom   { font-size: 0.72rem; }
+    .nh-footer-grid     { gap: 20px; padding-bottom: 28px; margin-bottom: 24px; }
+    .aprio-ft-v2 svg { bottom: -35%; height: clamp(280px,55dvw,400px); width: 130vw; transform: translateX(-50%); }
+}

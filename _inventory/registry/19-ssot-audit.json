@@ -1,0 +1,165 @@
+{
+  "$chapter": {
+    "id": "19-ssot-audit",
+    "owner": "apollo-core",
+    "keys": [
+      "$ssot_audit"
+    ],
+    "source": "registry vs disk scan 2026-07-28",
+    "merge": "deep_merge_last_wins"
+  },
+  "$ssot_audit": {
+    "date": "2026-07-28",
+    "method": "Scanned all 40 plugin folders on disk (1327 PHP files, ~259k LOC) and compared every claim in the registry against source.",
+    "ground_truth_file": "audit/ground-truth.json",
+    "findings_file": "audit/registry-ssot-audit.json",
+    "counts": {
+      "registry_entries": 46,
+      "present_on_disk": 40,
+      "absent_from_disk": 6,
+      "findings": 25
+    },
+    "critical": {
+      "phantom_entries": {
+        "plugins": [
+          "apollo-cena",
+          "apollo-classifieds",
+          "apollo-pwa",
+          "apollo-runtime",
+          "apollo-shortcodes",
+          "apollo-suppliers"
+        ],
+        "verdict": "No folder at plugins/{slug} on 2026-07-28.",
+        "action": "Entries PRESERVED and flagged $disk_status=ABSENT — not deleted. Decide per plugin: build, or retire the entry.",
+        "side_effect": "13-runtime declares owner apollo-runtime, which does not exist. Ownership is nominal until the plugin ships."
+      },
+      "missing_entry": {
+        "plugin": "apollo-lux-panels",
+        "version": "1.0.0",
+        "verdict": "Real, implemented plugin (5 PHP files, ~1026 LOC) that the registry never recorded.",
+        "action": "Entry CREATED from a source scan; placed in L7_admin.",
+        "significance": "It is the admin metabox input surface for event/dj/local — 69 meta keys. data-registry.json's input.metabox column was describing a plugin the registry did not know about."
+      }
+    },
+    "high": {
+      "version_drift_corrected": [
+        {
+          "plugin": "apollo-admin",
+          "was": "1.0.2",
+          "now": "1.1.0"
+        },
+        {
+          "plugin": "apollo-calendar",
+          "was": "1.0.1",
+          "now": "1.1.0"
+        },
+        {
+          "plugin": "apollo-dashboard",
+          "was": "1.0.1",
+          "now": "1.1.0"
+        },
+        {
+          "plugin": "apollo-events",
+          "was": "1.4.0",
+          "now": "1.5.0"
+        },
+        {
+          "plugin": "apollo-templates",
+          "was": "1.0.4",
+          "now": "1.3.2"
+        },
+        {
+          "plugin": "apollo-users",
+          "was": "1.0.1",
+          "now": "1.1.0"
+        },
+        {
+          "plugin": "apollo-telegram",
+          "was": "1.1.1",
+          "now": "1.1.2"
+        }
+      ],
+      "version_split_fixed": [
+        {
+          "plugin": "apollo-templates",
+          "docblock": "1.3.0",
+          "constant": "1.3.2",
+          "resolved_to": "1.3.2"
+        },
+        {
+          "plugin": "apollo-telegram",
+          "docblock": "1.1.1",
+          "constant": "1.1.2",
+          "resolved_to": "1.1.2"
+        }
+      ],
+      "note": "WordPress reads the docblock; the constant drives asset cache-busting. They must match or cache busting lies."
+    },
+    "medium": {
+      "count_drift_fixed": [
+        {
+          "key": "architecture.total_plugins",
+          "was": 34,
+          "now": 46
+        },
+        {
+          "key": "summary.total_plugins",
+          "was": 45,
+          "now": 46
+        }
+      ],
+      "layers_assigned": [
+        {
+          "plugin": "apollo-calendar",
+          "layer": "L2_content"
+        },
+        {
+          "plugin": "apollo-dj-sync",
+          "layer": "L2_content"
+        },
+        {
+          "plugin": "apollo-telegram",
+          "layer": "L4_communication"
+        },
+        {
+          "plugin": "apollo-elementor-pro",
+          "layer": "L13_pagebuilder"
+        },
+        {
+          "plugin": "apollo-lux-panels",
+          "layer": "L7_admin"
+        }
+      ],
+      "empty_layers": [
+        "L8_industry",
+        "L9_pwa",
+        "L12_runtime"
+      ],
+      "empty_layers_note": "These layers reference only absent plugins and are effectively empty."
+    },
+    "data_registry": {
+      "file": "plugins/_inventory/data-registry.json",
+      "version": "1.1.0",
+      "merge_verified": "bak/bak2/bak3/bak4 are strict subsets of the live file — no key was ever lost.",
+      "input_surface_audit": "apollo-lux-panels renders 69 meta keys; 50 of 59 declared meta keys have a metabox input.",
+      "corrections": "15 fields had input.metabox=null while the metabox demonstrably renders them — corrected to true.",
+      "gaps_opened": [
+        "dj.name",
+        "local.hero_image"
+      ],
+      "gaps_total": 13,
+      "scanner_caveat": "A call-site regex found only 2 meta keys for apollo-lux-panels; it writes meta through a generic update_post_meta($id,$key,...) loop driven by declarative config. Re-derived from the config literals: 69."
+    },
+    "stale_mirror": {
+      "file": "apollo-registry-2.json",
+      "verdict": "STALE — identical to the canonical monolith except plugins.{events,djs,loc}.meta (pre-rename) and it lacks $data_registry_sync.",
+      "action": "Treat as build output only; never read from it."
+    },
+    "still_open": [
+      "apollo-core source changed for the canvas contract but its version remains 6.2.3 — bump before deploy.",
+      "6 registry entries have no plugin on disk — decide build vs retire.",
+      "dj.name and local.hero_image claim a metabox that apollo-lux-panels does not render.",
+      "php -l not run — no PHP binary in the audit sandbox."
+    ]
+  }
+}

@@ -1,0 +1,23 @@
+# Scratch and machine state — never mirrored, never committed.
+_tmp_*
+_to_delete/
+*.log
+*.bak
+*.bak[0-9]
+sync.ffs_db
+.cursor/
+node_modules/
+vendor/
+.DS_Store
+Thumbs.db
+
+# Guard output
+.apollo-guard-report.json
+
+# Third-party plugins live here but are not ours to version.
+elementor/
+loginizer/
+loginizer-security/
+query-monitor/
+really-simple-ssl/
+wp-debugging/

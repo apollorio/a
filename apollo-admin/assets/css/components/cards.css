@@ -1,0 +1,59 @@
+/**
+ * Apollo Admin — Status Overview Cards
+ */
+
+.apollo-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin: 24px 0 32px;
+}
+
+.apollo-stat-card {
+    background: var(--apollo-card-bg);
+    border: 2px solid var(--apollo-border);
+    border-radius: var(--apollo-r);
+    padding: 20px;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.apollo-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--apollo-shadow-lg);
+}
+
+.apollo-stat-card.active {
+    border-color: var(--apollo-success);
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+}
+
+.apollo-stat-card.installed {
+    border-color: var(--apollo-primary);
+    background: linear-gradient(135deg, var(--apollo-primary-light) 0%, #ddd6fe 100%);
+}
+
+.apollo-stat-card.missing {
+    border-color: var(--apollo-danger);
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+}
+
+.apollo-stat-card.compliance {
+    border-color: var(--apollo-warning);
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+}
+
+.apollo-stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--apollo-text);
+    margin-bottom: 4px;
+}
+
+.apollo-stat-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--apollo-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}

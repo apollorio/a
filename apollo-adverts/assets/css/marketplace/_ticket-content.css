@@ -1,0 +1,112 @@
+/* ===========================================
+   MARKETPLACE — Ticket Inner Content
+   =========================================== */
+
+.ticket-header-block {
+    background: var(--black-1);
+    color: #fff;
+    text-align: center;
+    padding: 8px;
+    font-family: var(--ff-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+article[type=ticket] .top {
+    background-color: #fff;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.ticket-user-info {
+    display: flex;
+    align-items: center;
+    column-gap: 16px;
+}
+
+.ticket-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--border);
+}
+
+.ticket-user-meta {
+    display: flex;
+    flex-direction: column;
+}
+
+.ticket-bandname {
+    font-family: var(--ff-main);
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 1.1;
+    color: var(--black-1);
+}
+
+.ticket-tourname {
+    font-family: var(--ff-mono);
+    font-size: 11px;
+    color: #888;
+    margin-top: 2px;
+}
+
+.ticket-img {
+    width: calc(100% + 40px) !important;
+    height: 160px;
+    padding: 0 !important;
+    margin: 0 -20px 0 -20px !important;
+    object-fit: cover;
+    filter: grayscale(100%);
+    transition: filter 0.5s;
+    pointer-events: none;
+}
+
+article[type=ticket]:hover .ticket-img {
+    filter: grayscale(0%);
+}
+
+.ticket-deetz {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 4px;
+}
+
+.ticket-event-title {
+    font-family: var(--ff-main);
+    font-weight: 800;
+    font-size: 20px;
+    line-height: 1;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+}
+
+.ticket-meta-row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ticket-date,
+.ticket-location {
+    font-family: var(--ff-mono);
+    font-size: 11px;
+    color: #666;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.ticket-price-tag {
+    font-family: var(--ff-mono);
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--black-1);
+    letter-spacing: -0.05em;
+}

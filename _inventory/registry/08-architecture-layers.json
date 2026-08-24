@@ -1,0 +1,103 @@
+{
+  "$chapter": {
+    "id": "08-architecture-layers",
+    "owner": "apollo-core",
+    "keys": [
+      "architecture"
+    ],
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "architecture": {
+    "principle": "Each plugin = ONE focused responsibility. Connected via apollo-core hooks.",
+    "master_registry": "apollo-core owns ALL CPT/Taxonomy/Meta/Table definitions - GLOBAL BRIDGE",
+    "total_plugins": 46,
+    "layers": {
+      "L0_foundation": [
+        "apollo-core"
+      ],
+      "L1_auth": [
+        "apollo-login",
+        "apollo-users",
+        "apollo-membership"
+      ],
+      "L2_content": [
+        "apollo-adverts",
+        "apollo-calendar",
+        "apollo-dj-sync",
+        "apollo-djs",
+        "apollo-events",
+        "apollo-loc",
+        "apollo-maps",
+        "apollo-scheduler",
+        "apollo-suppliers"
+      ],
+      "L3_social": [
+        "apollo-social",
+        "apollo-groups",
+        "apollo-wow",
+        "apollo-fav",
+        "apollo-comment"
+      ],
+      "L4_communication": [
+        "apollo-chat",
+        "apollo-email",
+        "apollo-notif",
+        "apollo-remind",
+        "apollo-telegram"
+      ],
+      "L5_documents": [
+        "apollo-docs",
+        "apollo-sign",
+        "apollo-gestor",
+        "apollo-journal"
+      ],
+      "L6_frontend": [
+        "apollo-templates",
+        "apollo-dashboard",
+        "apollo-hub",
+        "apollo-radio",
+        "apollo-soundcloud",
+        "apollo-pane-engine"
+      ],
+      "L7_admin": [
+        "apollo-admin",
+        "apollo-coauthor",
+        "apollo-lux-panels",
+        "apollo-mod",
+        "apollo-statistics"
+      ],
+      "L8_industry": [
+        "apollo-cena"
+      ],
+      "L9_pwa": [
+        "apollo-pwa"
+      ],
+      "L10_seo": [
+        "apollo-seo"
+      ],
+      "L11_data": [
+        "apollo-sheets"
+      ],
+      "L12_runtime": [
+        "apollo-runtime"
+      ],
+      "L13_pagebuilder": [
+        "apollo-elementor",
+        "apollo-elementor-pro"
+      ]
+    },
+    "total_plugins_on_disk": 40,
+    "total_plugins_absent": 6,
+    "$layers_absent_from_disk": [
+      "apollo-cena",
+      "apollo-pwa",
+      "apollo-runtime",
+      "apollo-suppliers"
+    ],
+    "$layer_notes": {
+      "apollo-lux-panels": "L7_admin — admin metabox input surface for event/dj/local, not a page builder.",
+      "L8_industry / L9_pwa / L12_runtime": "Contain only plugins absent from disk; layers are currently empty in practice."
+    }
+  }
+}

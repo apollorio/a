@@ -1,0 +1,21 @@
+/* ===========================================
+   MARKETPLACE — Carousel (XS <= 480px)
+   =========================================== */
+
+@media (max-width: 480px) {
+    .carousel {
+        height: 500px;
+        max-width: 92vw;
+        margin-top: -20px;
+        -webkit-mask-image: linear-gradient(to right, rgba(var(--rgb-d),0.5), black 8%, black 92%, rgba(var(--rgb-d),0.5));
+        mask-image: linear-gradient(to right, rgba(var(--rgb-d),0.5), black 8%, black 92%, rgba(var(--rgb-d),0.5));
+    }
+
+    article[type=ticket].carousel-item {
+        --width: 230px;
+        --x: calc(var(--active) * 120px);
+        --y: calc(var(--abs-active) * 14px);
+        --rot: calc(var(--active) * 5deg);
+        margin: -180px 0 0 -115px;
+    }
+}

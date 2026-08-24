@@ -1,0 +1,1450 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-djs",
+    "owner": "apollo-djs",
+    "wrap": "plugins.apollo-djs",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-djs",
+  "namespace": "Apollo\\DJs",
+  "priority": 2,
+  "status": "IMPLEMENTED",
+  "description": "DJs CPT: Shared across all plugins. Profile pages, social links, sound genres, carousel/slider/grid views. Style: apollo-v1.",
+  "dependencies": [
+    "apollo-comment",
+    "apollo-core",
+    "apollo-dashboard",
+    "apollo-events",
+    "apollo-fav",
+    "apollo-statistics",
+    "apollo-templates",
+    "apollo-wow"
+  ],
+  "provides": [
+    "dj-cpt",
+    "dj-single",
+    "dj-meta"
+  ],
+  "cpts": [
+    "dj",
+    "track"
+  ],
+  "taxonomies": [
+    "sound"
+  ],
+  "tables": [],
+  "meta": {
+    "post": {
+      "_depoimento_author_name": {
+        "_source": "deep_scan"
+      },
+      "_depoimento_author_role": {
+        "_source": "deep_scan"
+      },
+      "_depoimento_rating": {
+        "_source": "deep_scan"
+      },
+      "_depoimento_source": {
+        "_source": "deep_scan"
+      },
+      "_dj_banner": {
+        "_source": "deep_scan"
+      },
+      "_dj_bio": {
+        "_source": "deep_scan"
+      },
+      "_dj_bio_short": {
+        "_source": "deep_scan"
+      },
+      "_dj_gallery": {
+        "_source": "deep_scan"
+      },
+      "_dj_image": {
+        "_source": "deep_scan"
+      },
+      "_dj_instagram": {
+        "_source": "deep_scan"
+      },
+      "_dj_mixcloud": {
+        "_source": "deep_scan"
+      },
+      "_dj_name": {
+        "_source": "deep_scan"
+      },
+      "_dj_original_project_1": {
+        "_source": "deep_scan"
+      },
+      "_dj_original_project_2": {
+        "_source": "deep_scan"
+      },
+      "_dj_original_project_3": {
+        "_source": "deep_scan"
+      },
+      "_dj_set_url": {
+        "_source": "deep_scan"
+      },
+      "_dj_soundcloud": {
+        "_source": "deep_scan"
+      },
+      "_dj_spotify": {
+        "_source": "deep_scan"
+      },
+      "_dj_user_id": {
+        "_source": "deep_scan"
+      },
+      "_dj_verified": {
+        "_source": "deep_scan"
+      },
+      "_dj_website": {
+        "_source": "deep_scan"
+      },
+      "_dj_youtube": {
+        "_source": "deep_scan"
+      },
+      "_event_dj_ids": {
+        "_source": "deep_scan"
+      },
+      "_event_end_date": {
+        "_source": "deep_scan"
+      },
+      "_event_loc_id": {
+        "_source": "deep_scan"
+      },
+      "_event_start_date": {
+        "_source": "deep_scan"
+      },
+      "_event_start_time": {
+        "_source": "deep_scan"
+      },
+      "_event_status": {
+        "_source": "deep_scan"
+      },
+      "_loc_city": {
+        "_source": "deep_scan"
+      },
+      "_dj_about_photo": {
+        "_source": "data-registry-reconcile-2026-07-21",
+        "expected_single": true
+      },
+      "_dj_about_video": {
+        "_source": "data-registry-reconcile-2026-07-21",
+        "expected_single": true
+      },
+      "_dj_bandcamp": {
+        "_source": "data-registry-reconcile-2026-07-21",
+        "expected_single": true
+      },
+      "_dj_beatport": {
+        "_source": "data-registry-reconcile-2026-07-21",
+        "expected_single": true
+      },
+      "_dj_booking": {
+        "_source": "data-registry-reconcile-2026-07-21",
+        "expected_single": true
+      },
+      "_dj_facebook": {
+        "_source": "data-registry-reconcile-2026-07-21",
+        "expected_single": true
+      },
+      "_dj_media_kit_url": {
+        "_source": "data-registry-reconcile-2026-07-21",
+        "expected_single": true
+      },
+      "_dj_mix_url": {
+        "_source": "data-registry-reconcile-2026-07-21",
+        "expected_single": true
+      },
+      "_dj_resident_advisor": {
+        "_source": "data-registry-reconcile-2026-07-21",
+        "expected_single": true
+      },
+      "_dj_rider_url": {
+        "_source": "data-registry-reconcile-2026-07-21",
+        "expected_single": true
+      },
+      "_dj_statement": {
+        "_source": "data-registry-reconcile-2026-07-21",
+        "expected_single": true
+      },
+      "_dj_tiktok": {
+        "_source": "data-registry-reconcile-2026-07-21",
+        "expected_single": true
+      },
+      "_dj_tracks": {
+        "_source": "registered-2026-07-28",
+        "expected_single": true,
+        "schema_version": "v2",
+        "schema_ref": "registry/20-meta-schemas.json#_dj_tracks",
+        "sanitizer": "apollo_dj_sanitize_tracks_meta() in apollo-djs/includes/functions.php",
+        "note": "REST writes validated against v2; admin UI (apollo-lux-panels DjPanel repeater_card) and its sanitize_callback write v2. Front-end read (apollo_dj_get_tracks()) migrated to v2 2026-07-28 (see $tracks_read_path_migration below) — GAP CLOSED. Returns a superset shape: full v2 fields plus back-compat url/year aliases, so out-now.php / out-now-lightbox.php / dj-card-single.js keep working unchanged."
+      }
+    },
+    "user": {},
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/djs",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "description": "List/Create DJs",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_djs",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/DJsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/djs/(?P<id>\\d+)",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PATCH",
+        "POST",
+        "PUT"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_dj",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/DJsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/djs/(?P<id>\\d+)/eventos",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_dj_events",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/DJsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/djs/por-som/(?P<sound>[a-zA-Z0-9_-]+)",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_by_sound",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/DJsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/djs/buscar",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "search_djs",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/DJsController.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "pages": [
+    {
+      "slug": "djs",
+      "title": "DJs",
+      "template": "styles/base/archive-dj.php",
+      "type": "archive"
+    },
+    {
+      "slug": "dj/{slug}",
+      "title": "DJ",
+      "template": "styles/base/single-dj.php",
+      "type": "single"
+    }
+  ],
+  "shortcodes": [
+    {
+      "tag": "apollo_add_dj",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_dj",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_dj_carousel",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_djs",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "version": "1.0.6",
+  "ajax": {
+    "priv": [
+      "apollo_dj_save_settings"
+    ],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [
+    "apollo/djs/after_bio",
+    "apollo/djs/depoimentos",
+    "apollo_dj_card_avatar_size",
+    "apollo_dj_footer_brand",
+    "apollo_dj_rest_before_delete",
+    "apollo_dj_rest_created",
+    "apollo_dj_rest_updated",
+    "apollo_dj_roster_label",
+    "apollo_dj_single_before_scripts",
+    "apollo_dj_single_body_end",
+    "apollo_dj_single_body_start",
+    "apollo_dj_single_head_after",
+    "apollo_dj_single_head_before",
+    "apollo_statistics_track_view"
+  ],
+  "hooks_listened": [
+    "apollo_core_register_meta",
+    "apollo_dashboard_tabs",
+    "apollo_dj_rest_created",
+    "apollo_editable_post_types",
+    "apollo_editor_can_edit_dj",
+    "apollo_editor_config_dj",
+    "apollo_fav_post_types",
+    "apollo_frontend_fields_dj",
+    "apollo_mod_post_types",
+    "apollo_shortcodes_registry",
+    "apollo_statistics_post_types",
+    "apollo_wow_post_types"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [
+      "apollo-djs"
+    ],
+    "styles": [
+      "apollo-djs",
+      "apollo-djs-v1",
+      "apollo-djs-v3"
+    ]
+  },
+  "options": [
+    "apollo_dj_settings",
+    "apollo_dj_version"
+  ],
+  "security": {
+    "risk_band": "MEDIUM",
+    "risk_score": 31,
+    "abspath_coverage_pct": 98,
+    "rest_open_routes": 5,
+    "rest_critical_write_public": 2,
+    "rest_open_non_intentional": 5,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 5,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": null
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_dj_count_upcoming_events",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_dj_is_verified",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_dj_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_dj_settings_nonce",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_frontend_fields_dj",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_log_activity",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_wow_post_types",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [],
+  "query_vars": [],
+  "php_surface": {
+    "files": 45,
+    "loc": 6112,
+    "classes": 10,
+    "functions": 12
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:48.447Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 249,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-djs",
+    "main_file": "apollo-djs.php",
+    "plugin_header": {
+      "plugin_name": "Apollo DJs",
+      "plugin_uri": "https://apollo.rio.br/plugins/apollo-djs",
+      "description": "DJs CPT: Shared across all plugins. Profile pages, social links, sound genres, carousel/slider/grid views. Style: apollo-v1.",
+      "version": "1.0.1",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "Proprietary",
+      "text_domain": "apollo-djs",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": "false"
+    },
+    "composer": {
+      "name": "apollo/apollo-djs",
+      "namespaces": [
+        "Apollo\\DJs"
+      ],
+      "require": {
+        "php": ">=7.4"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 45,
+        ".css": 5,
+        ".svg": 1,
+        ".js": 2,
+        ".json": 1,
+        ".md": 1,
+        ".ffs_db": 1
+      },
+      "by_top_directory": {
+        "(root)": 5,
+        "assets": 5,
+        "includes": 3,
+        "src": 10,
+        "styles": 12,
+        "templates": 21
+      },
+      "total_bytes": 235505
+    },
+    "php": {
+      "files": 45,
+      "loc": 6112,
+      "classes": 10,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 12
+    },
+    "architecture": {
+      "namespace": "Apollo\\DJs",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\DJs\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Dashboard",
+          "fqcn": "Apollo\\DJs\\Admin\\Dashboard",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Admin/Dashboard.php"
+        },
+        {
+          "kind": "class",
+          "name": "Metabox",
+          "fqcn": "Apollo\\DJs\\Admin\\Metabox",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/Metabox.php"
+        },
+        {
+          "kind": "class",
+          "name": "DJsController",
+          "fqcn": "Apollo\\DJs\\API\\DJsController",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/DJsController.php"
+        },
+        {
+          "kind": "class",
+          "name": "Deactivation",
+          "fqcn": "Apollo\\DJs\\Deactivation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Deactivation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Integrations",
+          "fqcn": "Apollo\\DJs\\Integrations",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Integrations.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\DJs\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "Registry",
+          "fqcn": "Apollo\\DJs\\Registry",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Registry.php"
+        },
+        {
+          "kind": "class",
+          "name": "Shortcodes",
+          "fqcn": "Apollo\\DJs\\Shortcodes",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Shortcodes.php"
+        },
+        {
+          "kind": "class",
+          "name": "TemplateLoader",
+          "fqcn": "Apollo\\DJs\\TemplateLoader",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/TemplateLoader.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_dj_check_dependencies",
+          "file": "apollo-djs.php"
+        },
+        {
+          "name": "apollo_dj_init",
+          "file": "apollo-djs.php"
+        },
+        {
+          "name": "apollo_dj",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_dj_option",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_dj_get_image",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_dj_get_banner",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_dj_get_links",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_dj_get_sounds",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_dj_is_verified",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_dj_get_upcoming_events",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_dj_count_upcoming_events",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_dj_flush_cache",
+          "file": "includes/functions.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 5,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/djs",
+          "methods": [
+            "GET",
+            "POST"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_djs",
+          "file": "src/API/DJsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/djs/(?P<id>\\d+)",
+          "methods": [
+            "DELETE",
+            "GET",
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_dj",
+          "file": "src/API/DJsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/djs/(?P<id>\\d+)/eventos",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_dj_events",
+          "file": "src/API/DJsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/djs/por-som/(?P<sound>[a-zA-Z0-9_-]+)",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_by_sound",
+          "file": "src/API/DJsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/djs/buscar",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "search_djs",
+          "file": "src/API/DJsController.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 2,
+        "HIGH": 3,
+        "MEDIUM": 0,
+        "LOW": 0,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "PUBLIC_UNAUTHENTICATED": 5
+      },
+      "permission_body_resolved": 5,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 2,
+      "open_routes": [
+        {
+          "endpoint": "/djs",
+          "methods": [
+            "GET",
+            "POST"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/DJsController.php"
+        },
+        {
+          "endpoint": "/djs/(?P<id>\\d+)",
+          "methods": [
+            "DELETE",
+            "GET",
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/DJsController.php"
+        },
+        {
+          "endpoint": "/djs/(?P<id>\\d+)/eventos",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/DJsController.php"
+        },
+        {
+          "endpoint": "/djs/por-som/(?P<sound>[a-zA-Z0-9_-]+)",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/DJsController.php"
+        },
+        {
+          "endpoint": "/djs/buscar",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/DJsController.php"
+        }
+      ],
+      "admin_cap_routes": [],
+      "logged_in_routes": []
+    },
+    "database": {
+      "tables_owned_or_defined": [],
+      "tables_referenced": [
+        "apollo_dj_count_upcoming_events",
+        "apollo_dj_is_verified",
+        "apollo_dj_settings",
+        "apollo_dj_settings_nonce",
+        "apollo_frontend_fields_dj",
+        "apollo_log_activity",
+        "apollo_wow_post_types"
+      ],
+      "tables_for_registry": [],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_dj_count_upcoming_events",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_dj_is_verified",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_dj_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_dj_settings_nonce",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_frontend_fields_dj",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_log_activity",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_wow_post_types",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 29,
+      "user_count": 0,
+      "term_count": 0,
+      "post_keys": [
+        "_depoimento_author_name",
+        "_depoimento_author_role",
+        "_depoimento_rating",
+        "_depoimento_source",
+        "_dj_banner",
+        "_dj_bio",
+        "_dj_bio_short",
+        "_dj_gallery",
+        "_dj_image",
+        "_dj_instagram",
+        "_dj_mixcloud",
+        "_dj_name",
+        "_dj_original_project_1",
+        "_dj_original_project_2",
+        "_dj_original_project_3",
+        "_dj_set_url",
+        "_dj_soundcloud",
+        "_dj_spotify",
+        "_dj_user_id",
+        "_dj_verified",
+        "_dj_website",
+        "_dj_youtube",
+        "_event_dj_ids",
+        "_event_end_date",
+        "_event_loc_id",
+        "_event_start_date",
+        "_event_start_time",
+        "_event_status",
+        "_loc_city"
+      ],
+      "user_keys": [],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [],
+      "query_vars": [],
+      "pages_derived": []
+    },
+    "cpts": [
+      {
+        "slug": "dj",
+        "registered_locally": false,
+        "via_constant": true
+      }
+    ],
+    "taxonomies": [
+      {
+        "slug": "sound",
+        "registered_locally": false,
+        "via_constant": true
+      }
+    ],
+    "hooks": {
+      "fired_count": 15,
+      "listened_count": 27,
+      "apollo_fired": [
+        "apollo/djs/after_bio",
+        "apollo/djs/depoimentos",
+        "apollo_dj_card_avatar_size",
+        "apollo_dj_footer_brand",
+        "apollo_dj_rest_before_delete",
+        "apollo_dj_rest_created",
+        "apollo_dj_rest_updated",
+        "apollo_dj_roster_label",
+        "apollo_dj_single_before_scripts",
+        "apollo_dj_single_body_end",
+        "apollo_dj_single_body_start",
+        "apollo_dj_single_head_after",
+        "apollo_dj_single_head_before",
+        "apollo_statistics_track_view"
+      ],
+      "apollo_listened": [
+        "apollo_core_register_meta",
+        "apollo_dashboard_tabs",
+        "apollo_dj_rest_created",
+        "apollo_editable_post_types",
+        "apollo_editor_can_edit_dj",
+        "apollo_editor_config_dj",
+        "apollo_fav_post_types",
+        "apollo_frontend_fields_dj",
+        "apollo_mod_post_types",
+        "apollo_shortcodes_registry",
+        "apollo_statistics_post_types",
+        "apollo_wow_post_types"
+      ],
+      "critical_wp_listened": [
+        "admin_menu",
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "save_post",
+        "save_post_",
+        "template_redirect",
+        "wp_enqueue_scripts"
+      ]
+    },
+    "ajax": {
+      "priv": [
+        "apollo_dj_save_settings"
+      ],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [
+      "apollo_add_dj",
+      "apollo_dj",
+      "apollo_dj_carousel",
+      "apollo_djs"
+    ],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [
+        "apollo-djs"
+      ],
+      "styles": [
+        "apollo-djs",
+        "apollo-djs-v1",
+        "apollo-djs-v3"
+      ]
+    },
+    "options": [
+      "apollo_dj_settings",
+      "apollo_dj_version"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_DJ_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_DJ_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_DJ_DIR",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_DJ_URL",
+        "value": "plugin_dir_url( __FILE__"
+      },
+      {
+        "name": "APOLLO_DJ_BASENAME",
+        "value": "plugin_basename( __FILE__"
+      },
+      {
+        "name": "APOLLO_DJ_REST_NAMESPACE",
+        "value": "apollo/v1"
+      },
+      {
+        "name": "APOLLO_DJ_CPT",
+        "value": "dj"
+      },
+      {
+        "name": "APOLLO_DJ_TAX_SOUND",
+        "value": "sound"
+      },
+      {
+        "name": "APOLLO_DJ_DEFAULT_STYLE",
+        "value": "apollo-v1"
+      },
+      {
+        "name": "APOLLO_DJ_CACHE_GROUP",
+        "value": "apollo_djs"
+      },
+      {
+        "name": "APOLLO_DJ_CACHE_TTL",
+        "value": "300"
+      },
+      {
+        "name": "APOLLO_DJ_META_KEYS",
+        "value": "array(\r\n\t\t'_dj_image',\r\n\t\t'_dj_banner',\r\n\t\t'_dj_we"
+      }
+    ],
+    "security": {
+      "php_files": 45,
+      "abspath_guard_files": 44,
+      "abspath_coverage_pct": 98,
+      "wpdb_prepare_calls": 0,
+      "wpdb_query_calls": 0,
+      "prepare_to_query_ratio": null,
+      "nonce_checks": 4,
+      "current_user_can_calls": 5,
+      "raw_superglobal": {
+        "get": 2,
+        "post": 16,
+        "request": 0
+      },
+      "permission_callback_return_true": 5,
+      "escape_helpers": 184,
+      "echo_statements": 190,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 31,
+      "risk_band": "MEDIUM",
+      "rest_permission_critical": 2,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 3,
+      "rest_open_critical": 2,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 5
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-comment",
+        "apollo-core",
+        "apollo-dashboard",
+        "apollo-events",
+        "apollo-fav",
+        "apollo-statistics",
+        "apollo-templates",
+        "apollo-wow"
+      ],
+      "signals": [
+        "apollo-comment",
+        "apollo-core",
+        "apollo-dashboard",
+        "apollo-events",
+        "apollo-fav",
+        "apollo-statistics",
+        "apollo-templates",
+        "apollo-wow"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.0.1",
+      "version_changed": false,
+      "old_rest": 5,
+      "live_rest": 5,
+      "old_pages": 2,
+      "live_pages": 0,
+      "new_plugin": false
+    }
+  },
+  "canvas_contract": {
+    "variant": "mixed",
+    "action": "VERIFIED",
+    "shape": "no-change",
+    "audited": "2026-07-28",
+    "ref": "$canvas_shell.plugins.apollo-djs"
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 61,
+    "php_loc": 7087,
+    "rest_routes_found": 5,
+    "cpts_found": [],
+    "tables_found": [],
+    "shortcodes_found": [
+      "apollo_add_dj",
+      "apollo_dj",
+      "apollo_dj_carousel",
+      "apollo_djs"
+    ]
+  },
+  "$retired_admin_ui": {
+    "date": "2026-07-28",
+    "class": "Apollo\\DJs\\Admin\\Metabox",
+    "reason": "Duplicated apollo-lux-panels' DjPanel field-for-field (6 plain wp-admin boxes vs. 1 styled tabbed panel), both writing the dj CPT's meta — including two competing _dj_tracks editors on the same edit screen with different schemas.",
+    "action": "Guarded behind class_exists('\\Apollo\\LuxPanels\\DjPanel') in src/Plugin.php — only instantiates if apollo-lux-panels is inactive, so DJ posts are never left with zero admin UI. Class kept in the codebase, not deleted."
+  },
+  "$tracks_read_path_migration": {
+    "date": "2026-07-28",
+    "action": "GAP_CLOSED",
+    "function": "apollo_dj_get_tracks( int $dj_id ): array",
+    "file": "includes/functions.php",
+    "change": "Was reading the retired v1 shape {title,url,year,duration}, silently losing every v2 field (artists/bpm/release_date/album/label/genre/cover_url/cover_id/url_soundcloud/url_spotify/url_bandcamp/url_download) written by the current write paths. Migrated to read v2 in full; rows missing title/artists/any url_* are skipped (mirrors the mandatory-field rules already enforced at write time by apollo_dj_sanitize_tracks_meta()). Added back `url` (first non-empty of the 4 url_* fields) and `year` (derived from release_date) as back-compat aliases — a pure superset, so every existing consumer (out-now.php, out-now-lightbox.php, dj-card-single.js, apollo_dj_format_track_meta()) keeps working unchanged against real v2 data. Result is sorted newest-first by release_date.",
+    "new_function": {
+      "name": "apollo_get_latest_dj_tracks( int $limit = 5 ): array",
+      "purpose": "Aggregates apollo_dj_get_tracks() across every published dj post, tags each track with dj_id/dj_name/dj_permalink, sorts newest-first by release_date, returns top $limit. Powers /casa's real 'Out Now!' section (apollo-templates tracks.php) — registry spec: max 5 + Ver Todos.",
+      "consumer": "apollo-templates/templates/template-parts/new-home/tracks.php"
+    },
+    "versions_bumped": {
+      "apollo-djs": "1.0.3 -> 1.0.4",
+      "apollo-templates": "1.3.7 -> 1.3.8"
+    }
+  },
+  "$surface_confirmed_live_2026_08_17": {
+    "date": "2026-08-17",
+    "action": "DOC_CORRECTED",
+    "finding": "includes/surface.php carried a docblock headed 'DECLARED, NOT YET LIVE' together with a three-step recipe for building the renderer it was waiting for. That renderer already existed: includes/render-single.php defines apollo_dj_render_single(), apollo_dj_single_context() and apollo_dj_can_view(), and apollo-djs.php requires it at line 98 — BEFORE surface.php at line 99. apollo_surface_get('dj') therefore resolves, apollo/v1/djs/{id}/fragmento is registered, and apollo_surface_open_attrs('dj',$id) emits. The surface has been live; only the note was stale.",
+    "why_it_matters": "A stale 'not yet built' comment is worse than no comment — it invites a second implementation of something that exists. The 2026-08-07 modularity audit and the global lightbox plan were both written against this note and both understated what was already shipped.",
+    "guarded_by": "Harness E23 now fails if any surface.php says 'not yet live' while the function named in its 'renderer' key exists in that plugin's includes/render-single.php.",
+    "two_single_dj_paths_recorded": {
+      "ssot": "styles/base/single-dj.php composes template-parts/single/* through apollo_dj_render_single(). This is what the REST fragment and the lightbox render.",
+      "legacy": "templates/single-dj.php — the older monolith: context inline at the top, parts in templates/parts/dj/*. Retained, NOT the surface path.",
+      "rule": "Do not point the renderer at the monolith to 'unify' them. The cell path is the one _sandbox/build-dj-cells.py generates into."
+    },
+    "fragment_runtime": "The DJ `scripts` cell ships the runtime as an inline IIFE and is GENERATED (do-not-hand-edit). innerHTML does not execute <script>, so before 2026-08-17 a DJ fragment injected into the lightbox as correct but dead html. apollo-events 1.7.2 added hydrateScripts() to the shared runtime, which re-executes a fragment's own scripts — no per-plugin work, no mount API to maintain. See 09-plugins/apollo-events.json $reader_surface_white_and_hydration_2026_08_17.",
+    "borrowed_not_forked": "'enqueue' => 'apollo_event_lightbox_enqueue'. The lightbox shell and runtime live in apollo-events and are surface-neutral; apollo-djs borrows them rather than shipping a second overlay. Open item, unchanged: apollo-single-event.css is loaded for the DJ surface too — harmless today, revisit before a fourth surface.",
+    "versions_bumped": {
+      "apollo-djs": "1.0.4 -> 1.0.5 (resolves the drift with includes/render-single.php, which already shipped stamped @since 1.0.5)",
+      "apollo-events": "1.7.1 -> 1.7.2"
+    },
+    "files": [
+      "includes/surface.php (docblock corrected; no behaviour change)",
+      "apollo-djs.php (version bump 1.0.4 -> 1.0.5)"
+    ]
+  },
+  "$mockup_corrupted_generator_disarmed_2026_08_17": {
+    "date": "2026-08-17",
+    "action": "TRAP_DISARMED",
+    "severity": "HIGH — the documented workflow would have corrupted the live DJ page.",
+    "finding": "_sandbox/dj-single-page.mockup.html is character-corrupted; the 17 generated cells in styles/base/template-parts/single/ are not. Measured: 152 mockup lines carry double-encoding signatures, 0 cells do. The corruption therefore happened AFTER the cells were generated — an editor or file transfer round-tripped the mockup through CP1252 and saved it back as UTF-8.",
+    "why_it_is_dangerous": "build-dj-cells.py's own header instructs: 'Edit the mockup, re-run the generator, review the diff.' Following that today would replace 17 clean cells with 17 mojibake ones — 'Cartão de artista' becomes 'CartÃ£o de artista' on the live /dj/{slug} page and inside every DJ lightbox fragment. This folder deploys on save.",
+    "exact_transform_identified": "Not a strict CP1252 round trip — that was the first hypothesis and it was wrong. Bytes 0x81 0x8D 0x8F 0x90 0x9D are UNDEFINED in CP1252 and Python's codec refuses them, but the damaging tool passed them through as raw code points. U+2550 '═' (E2 95 90) became 'â' + '•' + U+0090. Confirmed by reproducing the damage synthetically and matching the real file's byte pattern.",
+    "shipped": {
+      "fail_closed": "build-dj-cells.py now refuses to generate from a mockup it can prove is damaged, prints the damaged line numbers and the fix. Same philosophy as apollo_surface_can_view(): a tool that cannot verify its input does not act on it. --force-dirty exists and is documented as 'do not'.",
+      "repair_path": "build-dj-cells.py --repair-mockup performs the inverse transform in Python, where the C1 bytes are addressable. It is self-proving: the result is written ONLY if it strictly reduces the damage count, so an already-clean file or a differently-damaged file is returned untouched rather than mangled. Verified against a synthetic reproduction — exact byte-for-byte round trip, zero residue, correct refusal on both a clean file and plain ASCII.",
+      "range_validation": "New check_ranges(). The CELLS table is line-number driven and NOTHING validated it: SUBS anchors were checked, but the five cells with no SUBS entry (progress, marquee, toast, dock, lightbox) had no guard at all. One inserted line above 427 would slide every range and emit 17 plausible, wrong cells while reporting success. Now asserts contiguity (each cell starts exactly 2 lines after the previous ends, separator blank) and tag balance per slice."
+    },
+    "guarded_by": "apollo-events harness E25 — asserts no shipped cell carries a mojibake signature AND that the generator still has its guard, its repair path and its range validation. The signature set deliberately excludes bare 'Ã', which is a legitimate Portuguese letter present in these very cells (SEÇÃO, NÃO); matching it would fail on healthy files, which is how a guard gets switched off. Validated against those exact lines — zero false positives.",
+    "operator_action_required": "Run: python3 apollo-djs/_sandbox/build-dj-cells.py --repair-mockup — then re-run without the flag and review the diff. Until that is done the mockup must be treated as a damaged artefact, NOT as the approved design. The cells on disk are the good copy.",
+    "structural_parity_verified": "Independent of the encoding damage, the mockup's structure and the cells still agree: CELLS line ranges resolve to the expected anchors (427 .pg, 429-437 .ev-top, 439 header.hero), and the class/id vocabulary matches. The drift is character-level only, not structural.",
+    "files": [
+      "_sandbox/build-dj-cells.py",
+      "_sandbox/dj-single-page.mockup.html (DAMAGED — repair pending, operator action)"
+    ]
+  },
+  "$quick_add_track_silently_discarded_2026_08_17": {
+    "date": "2026-08-17",
+    "action": "BUG_FIX",
+    "finding": "DJsController::save_meta() (:509-526) built a schema-v1 track row {title,url,duration,year} and wrote it with update_post_meta(). _dj_tracks is registered with apollo_dj_sanitize_tracks_meta() as its sanitize callback, and the v2 rules drop any row missing `artists` or all four `url_*`. Every row this produced was discarded. The caller got a 200 and the track vanished — the 'Cadastrar novo DJ' quick-add track field has never worked.",
+    "root_cause_was_a_false_docblock": "includes/functions.php:269-274 asserted that direct update_post_meta() calls are NOT routed through sanitize_meta(), and that 'WP only invokes sanitize_meta() for the REST/registered-meta path'. That is factually wrong: WP core's update_metadata() calls sanitize_meta() on EVERY write, whatever the caller. The quick-add was written against that belief. The docblock is corrected and now states the opposite explicitly, because the wrong version is what made the bug invisible.",
+    "fix": "The quick-add now builds a v2 row: `artists` defaults to the DJ's own post title (a DJ quick-adding their release is the artist, and it is the only honest default the form can supply); the single track_url is routed to url_soundcloud / url_spotify / url_bandcamp by host, falling back to url_download, because v2 has no generic `url` field; release_date is synthesised from the year so the sort key exists. `duration` remains mandatory and comes from the form — a row without one is still dropped, BY THE ONE FUNCTION THAT DECIDES WHAT A VALID ROW IS. This block deliberately does not re-implement those rules.",
+    "principle_restated": "There is exactly one place that defines a valid track row: apollo_dj_sanitize_tracks_meta(). A second inline copy is how the _dj_tracks duplicate-metabox incident happened. Write through it, never around it.",
+    "files": [
+      "src/API/DJsController.php",
+      "includes/functions.php (docblock corrected)",
+      "apollo-djs.php (version bump 1.0.5 -> 1.0.6)"
+    ]
+  },
+  "$track_releases_credits_previews_card_2026_08_17": {
+    "date": "2026-08-17",
+    "action": "FEATURE_SHIPPED",
+    "plan": "_inventory/PLAN-track-releases.md — phases T1 (storage), T2 (derivation), T3 (the card). T4 (rail player JS), T5 (DJ self-service authoring) and T6 (migration) remain open.",
+    "ghost_credits": {
+      "problem": "A release credits artists who may have no dj post — a guest vocalist, a remixer from outside the roster. _track_dj_ids only holds real posts.",
+      "shipped": "_track_ghost_artists, a comma-separated names string. apollo_track_credits() merges it with _track_dj_ids into ONE ordered list: DJs first with permalinks, then ghosts as names.",
+      "why_two_flat_scalars_and_not_a_repeater": "A repeater cannot be edited from the front end — FrontendEditor::sanitize_field() returns string and has no array branch. That limitation is the entire reason `track` became a CPT instead of staying meta; re-introducing a repeater here would rebuild the wall just removed.",
+      "why_ghosts_are_not_auto_created_dj_posts": "A ghost is a CREDIT, not a profile. Auto-creating a stub dj post per featured artist would fill the curated /djs roster with empty posts nobody claims.",
+      "late_resolution": "apollo_track_credits() checks whether a dj post now exists with that exact title; if so the ghost renders as a link. Nothing is written back — the ghost stays a ghost in storage and simply renders richer the day that person registers."
+    },
+    "preview_audio": {
+      "shipped": "_track_preview_url, _track_preview_start, _track_preview_seconds + apollo_track_preview() provider resolution.",
+      "providers": {
+        "catbox": "catbox.moe / files.catbox.moe — direct MP3 hotlink, free, no account, 200MB. THE BEST CASE: native <audio>, real scrubbing, no third-party script.",
+        "archive": "archive.org and ia*.us.archive.org — permanent, free, direct stream. Upload needs an account.",
+        "youtube": "youtube.com / youtu.be, including /shorts/ and /embed/. Practical fallback. Emitted as youtube-nocookie with rel=0, modestbranding, controls=0, playsinline — the card is the control surface, and YouTube chrome inside a 15-card rail is noise.",
+        "direct": "any other URL, accepted ONLY if the path ends .mp3/.ogg/.oga/.m4a/.wav."
+      },
+      "fail_closed": "An unrecognised host, a Spotify link, a plain web page or an empty value all return provider '' and the caller renders no player — never a broken embed, never an <audio> pointed at HTML. Verified against 12 cases including the four the brief named.",
+      "separate_from_release_links_on_purpose": "_track_url_* are DESTINATIONS — where a listener goes to hear the whole thing on the artist's platform. _track_preview_url is a short in-page taste. Conflating them would mean either a full account-walled embed on /casa or no preview at all wherever the release lives somewhere unembeddable.",
+      "guests_never_receive_a_source": "The preview attributes are not emitted into guest markup at all, rather than hidden with CSS."
+    },
+    "the_locked_design_preserved": {
+      "strict_requirement": "The locked-track treatment was NOT to be deleted or redesigned — it is used across many scenarios and had to become reusable.",
+      "what_was_done": "Lifted verbatim into apollo-templates/templates/template-parts/track/card.php. Every class, ring, aria attribute and ● ● ● label is unchanged.",
+      "parity_verified": "Guest DOM diffed before/after: ZERO classes removed, ZERO attributes removed, tag sequence identical. The only additions are the variant class (nh-track-card--rail) and data-track-id. All 16 load-bearing locked-design elements present.",
+      "why_extraction_was_needed": "new-home/tracks.php contained the card markup TWICE — ~55 lines for real tracks and the same ~55 again for simulated placeholders, differing only in data source. Any change to the locked design had to be made in both, and the second copy is where it would be forgotten. Same defect class as the four accommodation cards and the five Out Now sections.",
+      "reuse": "Variants rail (/casa), grid (/tracks), compact (/dj/{id}). Theme-overridable via locate_template('apollo-templates/track/card.php')."
+    },
+    "card_contract_first_consumer": {
+      "what": "apollo_card_register('track', …) in includes/card-track.php — the Card Contract shipped with zero consumers and this is the first.",
+      "style_ledger": "apollo_track_card_styles() carries ONLY the new rail and playing-state rules. The .nh-track-* base styling already ships in the /casa stylesheet and is UNTOUCHED — re-declaring it would give those selectors two owners, the cardinal sin. The ledger is what makes a card impossible to deploy unstyled, which is the .accom-* defect on /anuncios.",
+      "contract_bug_found_and_fixed": "apollo_card_render() guarded $post_id <= 0, so the placeholder path would have rendered NOTHING. Caught in verification, not in production. A narrow, explicit exception now permits post_id 0 when args['placeholder'] is set — a bare 0 with no flag is still refused. Placeholders must go through the contract precisely so they carry the style ledger; a pre-launch surface showing only placeholders would otherwise ship with no card CSS at all."
+    },
+    "n_plus_1_removed": "apollo_track_query() replaces the get_posts(dj, -1) + one get_post_meta per published DJ that apollo_get_latest_dj_tracks() ran uncached on every /casa render. Undated releases sort behind dated ones rather than being dropped — silently discarding rows is how 'my track isn't showing' becomes an unreproducible support thread.",
+    "casa_changes": "The Out Now section is now a horizontal rail of the 15 newest, rendered through the shared card. data-lenis-prevent is REQUIRED not decorative — Lenis binds a non-passive wheel listener on /casa that would otherwise swallow horizontal gestures. 'Ver Todos' repointed from the dead /lancamentos to /tracks. The section returns early and renders nothing if apollo-djs is inactive, because an empty bordered box reads as broken while a missing section reads as 'not yet'.",
+    "verification": "Card contract re-verified after the placeholder exception (8 behaviours incl. bare-0 still refused, 8 placeholders emitting exactly 1 style block). Preview resolution tested against 12 URLs covering all four providers and every fail-closed case. Guest DOM parity diffed. No PHP binary here — php -l unrun, visual pass belongs to the operator.",
+    "still_open": "T4 the rail player JS (preview buttons only appear once _track_preview_url is populated AND the player ships — no track has one today, so nothing is dangling), T5 DJ self-service authoring on /dj/{id}, T6 the _dj_tracks migration.",
+    "versions_bumped": {
+      "apollo-djs": "1.0.7 -> 1.0.8",
+      "apollo-templates": "1.5.2 -> 1.5.3",
+      "apollo-core": "6.4.0 -> 6.4.1"
+    },
+    "files": [
+      "apollo-djs/includes/tracks.php (new — query + credits + preview + card data)",
+      "apollo-djs/includes/card-track.php (new — Card Contract registration)",
+      "apollo-djs/includes/panel-track.php (4 fields added)",
+      "apollo-templates/templates/template-parts/track/card.php (new — the extracted locked design)",
+      "apollo-templates/templates/template-parts/new-home/tracks.php (rewritten — duplication removed)",
+      "apollo-core/src/Core/MetaRegistry.php (4 meta keys)",
+      "apollo-core/includes/card-contract.php (placeholder exception)"
+    ]
+  }
+}

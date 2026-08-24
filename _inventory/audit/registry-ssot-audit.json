@@ -1,0 +1,115 @@
+{
+  "$description": "Registry vs disk SSOT audit.",
+  "$generated": "2026-07-28",
+  "registry_plugins": 45,
+  "disk_plugins": 40,
+  "total_findings": 25,
+  "findings": {
+    "CRITICAL": [
+      {
+        "code": "PHANTOM_PLUGIN",
+        "message": "apollo-cena: in registry but no folder on disk"
+      },
+      {
+        "code": "PHANTOM_PLUGIN",
+        "message": "apollo-classifieds: in registry but no folder on disk"
+      },
+      {
+        "code": "PHANTOM_PLUGIN",
+        "message": "apollo-pwa: in registry but no folder on disk"
+      },
+      {
+        "code": "PHANTOM_PLUGIN",
+        "message": "apollo-runtime: in registry but no folder on disk"
+      },
+      {
+        "code": "PHANTOM_PLUGIN",
+        "message": "apollo-shortcodes: in registry but no folder on disk"
+      },
+      {
+        "code": "PHANTOM_PLUGIN",
+        "message": "apollo-suppliers: in registry but no folder on disk"
+      },
+      {
+        "code": "MISSING_PLUGIN",
+        "message": "apollo-lux-panels: real plugin on disk, absent from registry"
+      }
+    ],
+    "HIGH": [
+      {
+        "code": "VERSION_SPLIT",
+        "message": "apollo-telegram: docblock 1.1.1 != APOLLO_TELEGRAM_VERSION 1.1.2"
+      },
+      {
+        "code": "VERSION_SPLIT",
+        "message": "apollo-templates: docblock 1.3.0 != APOLLO_TEMPLATES_VERSION 1.3.1"
+      },
+      {
+        "code": "VERSION_DRIFT",
+        "message": "apollo-admin: registry 1.0.2 -> disk 1.1.0"
+      },
+      {
+        "code": "VERSION_DRIFT",
+        "message": "apollo-calendar: registry 1.0.1 -> disk 1.1.0"
+      },
+      {
+        "code": "VERSION_DRIFT",
+        "message": "apollo-dashboard: registry 1.0.1 -> disk 1.1.0"
+      },
+      {
+        "code": "VERSION_DRIFT",
+        "message": "apollo-events: registry 1.4.0 -> disk 1.5.0"
+      },
+      {
+        "code": "VERSION_DRIFT",
+        "message": "apollo-templates: registry 1.0.4 -> disk 1.3.0"
+      },
+      {
+        "code": "VERSION_DRIFT",
+        "message": "apollo-users: registry 1.0.1 -> disk 1.1.0"
+      }
+    ],
+    "MEDIUM": [
+      {
+        "code": "COUNT_DRIFT",
+        "message": "architecture.total_plugins=34 but plugins holds 45"
+      },
+      {
+        "code": "LAYER_UNASSIGNED",
+        "message": "apollo-calendar: real plugin not placed in any architecture layer"
+      },
+      {
+        "code": "LAYER_UNASSIGNED",
+        "message": "apollo-dj-sync: real plugin not placed in any architecture layer"
+      },
+      {
+        "code": "LAYER_UNASSIGNED",
+        "message": "apollo-elementor-pro: real plugin not placed in any architecture layer"
+      },
+      {
+        "code": "LAYER_UNASSIGNED",
+        "message": "apollo-lux-panels: real plugin not placed in any architecture layer"
+      },
+      {
+        "code": "LAYER_UNASSIGNED",
+        "message": "apollo-telegram: real plugin not placed in any architecture layer"
+      },
+      {
+        "code": "LAYER_PHANTOM",
+        "message": "apollo-cena: layer references a plugin not on disk"
+      },
+      {
+        "code": "LAYER_PHANTOM",
+        "message": "apollo-pwa: layer references a plugin not on disk"
+      },
+      {
+        "code": "LAYER_PHANTOM",
+        "message": "apollo-runtime: layer references a plugin not on disk"
+      },
+      {
+        "code": "LAYER_PHANTOM",
+        "message": "apollo-suppliers: layer references a plugin not on disk"
+      }
+    ]
+  }
+}

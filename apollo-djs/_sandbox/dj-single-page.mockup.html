@@ -1,0 +1,1108 @@
+﻿<!DOCTYPE html>
+<!--
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+ APOLLO-DJS Â· DJ BUSINESS CARD â€” PHP HANDOFF MAP
+ Plugin: D:\dev\_apollo.rio.br\plugins\apollo-djs
+ Master: templates/single-dj-v3.php â†’ templates/parts/dj-card/*.php
+ Data:   apollo_get_dj_context( $dj_id ) â†’ wp_localize_script APOLLO_DJ
+ CPT:    dj (APOLLO_DJ_CPT)
+
+ Partial                  | Meta / query
+ -------------------------|-----------------------------------------------
+ progress.php             | â€”
+ ev-top.php               | title / _dj_name
+ hero.php                 | _dj_bio_short, _dj_banner|_dj_image, _dj_booking
+ statement.php            | _dj_statement (fallback _dj_bio_short)
+ marquee.php              | taxonomy sound
+ played-on.php            | event CPT WHERE _event_dj_ids + past dates
+ numbers.php              | computed stats from past events
+ played-with.php          | co-DJs from past lineups (_dj_image avatar)
+ out-now.php              | _dj_tracks[] title/url/year/duration
+                          | display = "{year} Â· RIO DE JANEIRO Â· {duration}"
+                          | first 5 + row 06 Ver todos â†’ #outNowLb
+ out-now-lightbox.php     | full _dj_tracks list
+ kit.php                  | _dj_media_kit_url â†’ "Acessar Kit Promo"
+ about.php                | _dj_bio, _dj_about_video|_dj_about_photo
+ footer.php / dock.php    | platform links, _dj_instagram, banner
+ scripts.php              | enqueue dj-card-single.js + localize
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+-->
+
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#ffffff">
+<title>Leo Janeiro â€” CartÃ£o de Artista Â· apollo.rio.br</title>
+<meta property="og:title" content="Leo Janeiro â€” Rio de Janeiro">
+<meta property="og:description" content="Hard groove com raiz na Zona Norte do Rio. Sets, kit de imprensa e booking â€” tudo em um cartÃ£o.">
+<meta property="og:type" content="profile">
+
+<link rel="preconnect" href="https://assets.apollo.rio.br" crossorigin>
+<link rel="preconnect" href="https://cdn.apollo.rio.br" crossorigin>
+
+<!-- â•â• MANDATORY APOLLO core.js?versao=bb â€” tokens Â· fonts Â· icons Â· GSAP/ScrollTrigger/Lenis (SSOT) â•â• -->
+<script>window.apolloIconConfig=window.apolloIconConfig||{};</script>
+<script src="https://cdn.apollo.rio.br/v1.0.0/core.js?v=1.1.9&versao=bb" fetchpriority="high"></script>
+
+<style>
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   DJ BUSINESS CARD â€” ultra-luxury white Â· Apple-release cadence Â· Apollo DS
+   No aside. Uma Ãºnica .ev-top fixa (voltar Â· nome Â· compartilhar) como PRIMEIRO
+   nÃ³ do <body> â€” nunca aninhada na figura do hero. O scroll Ã© a interface.
+   Depth = inset hairline only Â· squircle Â· accent = var(--accent) #d1860a:
+   the progress hairline, one italic word, the live dot. Nothing else.
+   core.js?versao=bb delivers real tokens/fonts/GSAP/Lenis â€” :root below is offline mirror
+   and every value maps 1:1 onto the core.js?versao=bb injected token system.
+   LAYOUT RULE: every section owns its own padding (.sec / .wrap). Body and
+   html carry ZERO padding/margin â€” so full-bleed media (hero photo, footer
+   photo) sit as true DIRECT children of <header>/<footer> at width:100%,
+   flush to the viewport's top/left/right/bottom with nothing escaping a
+   parent's padding via vw-hacks (that trick is scrollbar-unsafe; a direct,
+   unpadded-ancestor child at width:100% is the bulletproof version).
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+@font-face{font-family:"Black Ridge";font-weight:400;font-display:swap;src:url("https://assets.apollo.rio.br/fonts/black-ridge/black-ridge.woff2") format("woff2");}
+@font-face{font-family:"Resolide Serif";font-weight:400;font-display:swap;src:url("https://assets.apollo.rio.br/fonts.h/resolide-serif/resolide-serif.otf") format("opentype");}
+@font-face{font-family:"Mileast";font-weight:400;font-style:italic;font-display:swap;src:url("https://assets.apollo.rio.br/fonts/mileast/mileast-italic.woff2") format("woff2");}
+
+:root{
+  /* offline mirror of core.js?versao=bb tokens â€” identical values, dark-mode safe via rgb-theme/diff engine */
+  --rgb-theme:255,255,255; --rgb-diff:10,10,10;
+  --bg:rgba(var(--rgb-theme),1);
+  --ink:rgba(var(--rgb-diff),.96);
+  --txt:rgba(var(--rgb-diff),.60);
+  --muted:rgba(var(--rgb-diff),.40);
+  --faint:rgba(var(--rgb-diff),.26);
+  --line:rgba(var(--rgb-diff),.08);
+  --surface:rgba(var(--rgb-diff),.025);
+  --surface-2:rgba(var(--rgb-diff),.05);
+  --accent:#d1860a; /* = core.js?versao=bb var(--accent) rgba(var(--rgb-accent),1) */
+  --ff-display:"Black Ridge",var(--ff-heading,system-ui),sans-serif;
+  --ff-serif:"Resolide Serif",Georgia,serif;
+  --ff-serif-i:"Mileast","Resolide Serif",Georgia,serif;
+  --ff-main:"Space Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --ff-mono:"SUSE Mono","Space Mono",ui-monospace,Menlo,monospace;
+  --r:28px; --r-sm:18px; --r-pill:999px;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --ins:inset 0 1px 0 0 rgba(var(--rgb-theme),.5), inset 0 0 0 1px rgba(var(--rgb-diff),.05);
+  --pad:clamp(24px,6vw,96px);
+  --st:env(safe-area-inset-top,0px);
+  --sb:env(safe-area-inset-bottom,0px);
+  /* page-scoped only (nÃ£o existem no core.js?versao=bb) â€” altura da ev-top e o driver
+     das hairlines que "desenham" no scroll (GSAP anima a var, o ::before lÃª) */
+  --evtop-h:62px;
+  --rl:1; /* 1 = hairline cheia (no-JS/reduced-motion). O GSAP zera e redesenha. */
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;corner-shape:squircle;}
+.pill,[data-round]{corner-shape:round;}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:calc(var(--evtop-h) + var(--st) + 14px);}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);color:var(--txt);
+  font-family:var(--ff-main);font-size:15.5px;line-height:1.6;font-weight:400;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;
+  overflow-x:clip;overscroll-behavior:none;
+}
+html.lenis,html.lenis body{height:auto;}
+/* core.js?versao=bb frames every img/figure by default â€” this page's media is frameless */
+img{display:block;max-width:100%;border:none!important;box-shadow:none!important;}
+figure{border:none!important;box-shadow:none!important;}
+ul{list-style:none;}
+a{color:inherit;text-decoration:none;}
+button{border:0;background:none;font:inherit;color:inherit;cursor:pointer;-webkit-user-select:none;user-select:none;}
+i[class^="ri-"],i[class*=" ri-"]{font-style:normal;line-height:1;vertical-align:-.125em;}
+::selection{background:rgba(209,134,10,.14);color:var(--ink);}
+
+/* type atoms */
+.lbl{font-family:var(--ff-mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);}
+.lbl .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-right:8px;vertical-align:1px;}
+.display{font-family:var(--ff-display);font-weight:400;color:var(--ink);line-height:.86;letter-spacing:-.005em;}
+.serif{font-family:var(--ff-serif);font-weight:400;color:var(--ink);line-height:.98;letter-spacing:-.01em;}
+
+/* layout â€” Apple air Â· each section owns its padding, body/html never do */
+.wrap{width:min(100%,1280px);margin-inline:auto;padding-inline:var(--pad);}
+.sec{padding-block:clamp(96px,14vw,200px);}
+.sec-tight{padding-block:clamp(72px,10vw,140px);}
+.hairline{height:1px;background:var(--line);border:0;}
+/* faixa cinza-clarÃ­ssima â€” a alternÃ¢ncia branco/quase-branco que dÃ¡ ritmo Ã s
+   pÃ¡ginas de produto da Apple. Sem borda: sÃ³ a mudanÃ§a de plano. */
+.band{background:var(--surface);}
+
+/* buttons â€” ink is the luxury primary */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-family:var(--ff-mono);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:17px 30px;border-radius:var(--r-pill);white-space:nowrap;min-height:44px;transition:transform .45s var(--ease),opacity .45s var(--ease),background .45s var(--ease),color .45s var(--ease);}
+.btn:active{transform:scale(.97);}
+.btn-ink{background:var(--ink);color:var(--bg)!important;}
+.btn-ink:hover{opacity:.85;}
+.btn-line{box-shadow:inset 0 0 0 1px rgba(var(--rgb-diff),.16);color:var(--ink);}
+.btn-line:hover{background:var(--surface-2);}
+.btn-ghost{color:var(--muted);padding:0;}
+.btn-ghost:hover{color:var(--ink);}
+.icon-btn{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;font-size:20px;background:var(--surface);color:var(--ink);box-shadow:var(--ins);transition:background .4s var(--ease);}
+.icon-btn:hover{background:var(--surface-2);}
+
+/* progress hairline â€” the single running accent */
+.pg{position:fixed;top:0;left:0;right:0;height:2px;z-index:120;background:var(--accent);transform-origin:0 50%;transform:scaleX(0);}
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   EV-TOP â€” barra REAL no topo do documento: primeiro nÃ³ do <body>, position
+   fixed, top:0. NÃƒO vive mais dentro de .hero-figure (onde ficava abaixo de
+   `.hero div.wrap`, no meio da pÃ¡gina). ZERO gradiente: no branco ultra-luxo a
+   profundidade vem de hairline + glass, nunca de vÃ©u escuro. Estado is-solid
+   entra no scroll e revela o nome do artista â€” cadÃªncia Apple.
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.ev-top{
+  position:fixed;top:0;left:0;right:0;z-index:115;
+  height:calc(var(--evtop-h) + var(--st));
+  padding:var(--st) max(14px,calc(var(--pad) - 40px)) 0;
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  pointer-events:none;
+  transition:background .7s var(--ease),backdrop-filter .7s var(--ease);
+}
+.ev-top > *{pointer-events:auto;}
+.ev-top::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:1px;
+  background:var(--line);transform:scaleX(0);transform-origin:50% 50%;
+  transition:transform .9s var(--ease);
+}
+.ev-top.is-solid{
+  background:rgba(var(--rgb-theme),.72);
+  backdrop-filter:blur(36px) saturate(1.9);-webkit-backdrop-filter:blur(36px) saturate(1.9);
+}
+.ev-top.is-solid::after{transform:scaleX(1);}
+/* identidade central â€” sÃ³ aparece quando o nome gigante do hero jÃ¡ saiu de cena */
+.ev-top-id{
+  flex:1 1 auto;min-width:0;text-align:center;pointer-events:none!important;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  opacity:0;transform:translateY(10px);
+  transition:opacity .6s var(--ease),transform .6s var(--ease);
+}
+.ev-top.is-solid .ev-top-id{opacity:1;transform:none;}
+.ev-top-id b{
+  font-family:var(--ff-display);font-weight:400;font-size:17px;line-height:1;
+  color:var(--ink);letter-spacing:.01em;
+  max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.ev-top-id span{font-family:var(--ff-mono);font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+/* chips â€” ink sobre branco (nunca #fff sobre foto): glass + hairline interna */
+.ev-chip{
+  width:44px;height:44px;flex:0 0 auto;border-radius:999px;
+  display:grid;place-items:center;color:var(--ink);cursor:pointer;
+  background:rgba(var(--rgb-theme),.6);box-shadow:var(--ins);
+  backdrop-filter:blur(22px) saturate(1.6);-webkit-backdrop-filter:blur(22px) saturate(1.6);
+  transition:transform .35s var(--ease),background .45s var(--ease),box-shadow .45s var(--ease);
+}
+.ev-chip:hover{background:var(--surface-2);}
+.ev-chip:active{transform:scale(.94);}
+/* com a barra sÃ³lida o glass Ã© da barra â€” os chips ficam limpos */
+.ev-top.is-solid .ev-chip{background:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;}
+.ev-top.is-solid .ev-chip:hover{background:var(--surface-2);}
+
+/* â•â•â• HERO â€” text column padded via inner .wrap; figure is a direct, unpadded
+   child of <header> so it hits width:100% edge-to-edge with zero gap.
+   O padding-top agora reserva a altura da ev-top fixa. â•â•â• */
+.hero{padding-top:calc(var(--evtop-h) + var(--st) + clamp(40px,9vw,120px));}
+.hero-eyebrow{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:clamp(20px,3vw,36px);}
+.hero-live{display:inline-flex;align-items:center;gap:8px;font-family:var(--ff-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+.hero-live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 3s infinite;}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(209,134,10,.4)}70%{box-shadow:0 0 0 10px rgba(209,134,10,0)}100%{box-shadow:0 0 0 0 rgba(209,134,10,0)}}
+.hero-name{font-size:clamp(52px,15vw,200px);overflow:visible;}
+.hero-name .hn-line{display:block;overflow:hidden;white-space:nowrap;}
+.hero-name .hn-line.is-ac{color:var(--accent);}
+.hero-name .ch-w{display:inline-block;overflow:hidden;vertical-align:top;}
+.hero-name .ch{display:inline-block;will-change:transform;}
+.hero-under{display:flex;flex-direction:column;gap:26px;margin-top:clamp(24px,4vw,44px);}
+.hero-bio{font-size:clamp(15px,1.4vw,18px);line-height:1.7;color:var(--txt);max-width:44ch;}
+.hero-bio strong{color:var(--ink);font-weight:600;}
+.hero-ctas{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+/* full-bleed: direct child of <header class="hero"> (zero horizontal padding on
+   that ancestor). Nasce como card recuado e ABRE pra full-bleed no scrub â€”
+   o movimento-assinatura das pÃ¡ginas de produto da Apple. */
+.hero-figure{position:relative;margin-top:clamp(40px,6vw,88px);width:100%;overflow:hidden;aspect-ratio:4/5;background:var(--surface);will-change:clip-path;}
+.hero-figure img{width:100%;height:100%;object-fit:cover;object-position:center top;filter:saturate(.88) contrast(1.02);will-change:transform;}
+.ev-chip i{font-size:20px;line-height:1;}
+.hero-pills{position:absolute;left:max(14px,var(--pad));bottom:16px;right:max(14px,var(--pad));display:flex;gap:8px;flex-wrap:wrap;z-index:3;}
+.gpill{backdrop-filter:blur(28px) saturate(1.8);-webkit-backdrop-filter:blur(28px) saturate(1.8);background:rgba(255,255,255,.1);border-radius:var(--r-pill);padding:12px 20px;display:inline-flex;align-items:baseline;gap:9px;box-shadow:var(--ins);}
+.gpill strong{font-family:var(--ff-display);font-size:20px;color:rgba(10,10,10,.96);line-height:1;}
+.gpill span{font-family:var(--ff-mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(10,10,10,.4);}
+.hero-cue{
+  position:absolute;top:16px;right:max(16px,var(--pad));z-index:3;
+  font-family:var(--ff-mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;
+  color:#fff;opacity:.78;display:flex;align-items:center;gap:6px;
+  animation:cueY 2.2s ease-in-out infinite;text-shadow:0 1px 8px rgba(0,0,0,.35);
+}
+@keyframes cueY{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+@media(min-width:900px){
+  .hero-under{flex-direction:row;justify-content:space-between;align-items:flex-end;}
+  .hero-figure{aspect-ratio:21/10;}
+  .hero-figure img{object-position:center top;}
+}
+
+/* â•â•â• STATEMENT â€” Apple word-fill on scrub â•â•â• */
+.stmt{padding-block:clamp(120px,18vw,260px);}
+.stmt-txt{font-family:var(--ff-serif);font-size:clamp(30px,5.6vw,68px);line-height:1.22;letter-spacing:-.01em;color:var(--ink);max-width:22ch;}
+.stmt-txt .wd{display:inline-block;margin-right:.24em;}
+.stmt-txt em.gold{font-family:var(--ff-serif-i);font-style:italic;color:var(--accent);}
+
+/* â•â•â• MARQUEE â•â•â• */
+.mq{overflow:hidden;padding-block:clamp(20px,3vw,30px);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+.mq-inner{display:flex;gap:44px;width:max-content;animation:mq 30s linear infinite;}
+.mq span{font-family:var(--ff-mono);font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--faint);white-space:nowrap;}
+.mq span.on{color:var(--ink);}
+@keyframes mq{to{transform:translateX(-50%);}}
+
+/* â•â•â• SECTION HEADS â•â•â• */
+.sh{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:clamp(40px,6vw,84px);}
+.sh .lbl{display:block;margin-bottom:16px;}
+.sh-t{font-size:clamp(52px,9vw,124px);overflow:visible;}
+/* char reveal dos tÃ­tulos de seÃ§Ã£o e do nome do rodapÃ© â€” mesma mecÃ¢nica do hero.
+   O padding/margin negativo compensa descendentes dentro do overflow:hidden. */
+.sh-t .ch-w,.foot-name .ch-w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.1em;margin-bottom:-.1em;}
+.sh-t .ch,.foot-name .ch{display:inline-block;will-change:transform;}
+.sh-side{font-family:var(--ff-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);padding-bottom:10px;}
+
+/* â•â•â• TOCOU EM â€” pinned scrub carousel (desktop) Â· momentum rail (touch) â•â•â• */
+.po{position:relative;}
+.po-stage{position:relative;}
+.po-track{display:flex;gap:14px;padding-inline:var(--pad);overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-padding-inline:var(--pad);}
+.po-track::-webkit-scrollbar{display:none;}
+.po-card{flex:0 0 auto;width:min(80vw,320px);scroll-snap-align:start;border-radius:var(--r);overflow:hidden;background:var(--surface);box-shadow:var(--ins);}
+.po-cover{position:relative;aspect-ratio:4/3;overflow:hidden;}
+.po-cover img{width:116%;max-width:116%;height:100%;object-fit:cover;filter:saturate(.92);will-change:transform;}
+.po-date{position:absolute;top:14px;left:14px;background:rgba(255,255,255,.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:var(--r-pill);padding:7px 14px;font-family:var(--ff-mono);font-size:9.5px;letter-spacing:.08em;color:rgba(10,10,10,.96);}
+.po-body{padding:20px 22px 24px;}
+.po-title{font-family:var(--ff-serif);font-size:clamp(22px,2.4vw,30px);color:var(--ink);line-height:1;}
+.po-meta{margin-top:10px;display:flex;flex-wrap:wrap;gap:4px 16px;font-size:12.5px;color:var(--muted);}
+.po-meta span{display:inline-flex;align-items:center;gap:6px;}
+.po-meta i{color:var(--faint);font-size:13px;}
+.po-bar{margin:26px var(--pad) 0;height:1px;background:var(--line);position:relative;overflow:hidden;}
+.po-bar i{position:absolute;inset:0;background:var(--ink);transform-origin:0 50%;transform:scaleX(0);display:block;}
+@media(min-width:900px){
+  .po-stage{height:100svh;display:flex;flex-direction:column;justify-content:center;overflow:hidden;}
+  .po-track{overflow:visible;scroll-snap-type:none;will-change:transform;}
+  .po-card{width:440px;}
+}
+
+/* â•â•â• EM NÃšMEROS â€” spec-sheet luxury â•â•â• */
+/* hairline "desenhada": o GSAP anima --rl (0â†’1) e o ::before lÃª a var.
+   Sem JS/reduced-motion --rl fica 1 e a rÃ©gua aparece inteira. */
+.rule-draw{position:relative;}
+.rule-draw::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:var(--line);transform:scaleX(var(--rl));transform-origin:0 50%;}
+.nums{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4vw,56px) clamp(20px,4vw,64px);}
+.num{position:relative;padding-top:clamp(18px,2.6vw,30px);}
+.num::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:var(--line);transform:scaleX(var(--rl));transform-origin:0 50%;}
+.num-v{font-family:var(--ff-display);font-size:clamp(58px,9vw,128px);line-height:.9;color:var(--ink);letter-spacing:-.005em;display:flex;align-items:baseline;gap:4px;}
+.num-v small{font-family:var(--ff-serif);font-size:.36em;color:var(--muted);}
+.num-l{margin-top:12px;font-size:13px;color:var(--muted);max-width:24ch;line-height:1.55;}
+@media(min-width:900px){.nums{grid-template-columns:repeat(4,1fr);}}
+
+/* â•â•â• DIVIDIU A CABINE â€” editorial roster â•â•â• */
+.roster{position:relative;}
+.roster::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:var(--line);transform:scaleX(var(--rl));transform-origin:0 50%;}
+.ro{position:relative;display:grid;grid-template-columns:64px 1fr auto;gap:clamp(16px,3vw,32px);align-items:center;padding-block:clamp(18px,2.6vw,28px);transition:padding .5s var(--ease),background .5s var(--ease);}
+.ro::after{content:"";position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--line);transform:scaleX(var(--rl));transform-origin:0 50%;}
+.ro:hover{padding-left:14px;background:var(--surface);}
+.ro-av{width:60px;height:60px;border-radius:50%;overflow:hidden;background:var(--surface);box-shadow:var(--ins);}
+.ro-av img{width:100%;height:100%;object-fit:cover;object-position:center 20%;filter:grayscale(1);transition:filter .55s var(--ease),transform .55s var(--ease);}
+.ro:hover .ro-av img{filter:grayscale(0);transform:scale(1.06);}
+.ro-name{font-family:var(--ff-serif);font-size:clamp(26px,4.4vw,46px);color:var(--ink);line-height:1;}
+.ro-x{display:flex;align-items:center;gap:18px;}
+.ro-role{font-family:var(--ff-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);white-space:nowrap;}
+.ro-arrow{font-size:20px;color:var(--faint);transition:transform .45s var(--ease),color .45s var(--ease);}
+.ro:hover .ro-arrow{transform:translate(4px,-4px);color:var(--ink);}
+
+/* â•â•â• OUT NOW â•â•â• */
+.trk{position:relative;display:grid;grid-template-columns:34px 1fr auto auto;gap:clamp(14px,2.6vw,28px);align-items:center;padding-block:clamp(18px,2.4vw,26px);cursor:pointer;transition:padding .5s var(--ease),background .5s var(--ease);}
+.trk::after{content:"";position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--line);transform:scaleX(var(--rl));transform-origin:0 50%;}
+.trk:hover{padding-left:14px;background:var(--surface);}
+.trk-i{font-family:var(--ff-mono);font-size:11px;color:var(--faint);}
+.trk-t{font-family:var(--ff-serif);font-size:clamp(22px,3.6vw,36px);color:var(--ink);line-height:1.05;}
+.trk-m{font-family:var(--ff-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-top:6px;}
+.trk-share{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:16px;color:var(--muted);transition:color .4s var(--ease),background .4s var(--ease);}
+.trk-share:hover{color:var(--ink);background:var(--surface-2);}
+.trk-play{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;font-size:18px;background:var(--surface);color:var(--ink);box-shadow:var(--ins);transition:background .4s var(--ease),color .4s var(--ease);}
+.trk:hover .trk-play,.trk.is-on .trk-play{background:var(--ink);color:var(--bg);}
+.sc-shelf{overflow:hidden;max-height:0;opacity:0;transition:max-height .8s var(--ease),opacity .6s var(--ease),margin .6s var(--ease);border-radius:var(--r-sm);box-shadow:var(--ins);}
+.sc-shelf.open{max-height:200px;opacity:1;margin-top:28px;}
+.sc-shelf iframe{width:100%;height:166px;border:0;display:block;}
+
+/* â•â•â• KIT DE IMPRENSA â€” the single ink moment â•â•â• */
+.kit{background:var(--ink);color:var(--bg);border-radius:var(--r);padding:clamp(36px,7vw,88px);position:relative;overflow:hidden;scroll-margin-top:calc(var(--evtop-h) + var(--st) + 24px);will-change:transform;}
+/* sheen â€” luz varrendo o Ãºnico bloco ink da pÃ¡gina (scrub no scroll) */
+.kit::before{
+  content:"";position:absolute;inset:-40% -10%;pointer-events:none;z-index:1;
+  background:radial-gradient(42% 52% at var(--sx,20%) 12%,rgba(255,255,255,.10),transparent 70%);
+}
+/* empilhamento do bloco ink: marca d'Ã¡gua (0) â†’ sheen (1) â†’ conteÃºdo (2) */
+.kit > *{position:relative;z-index:2;}
+.kit-wm{position:absolute;right:-4%;bottom:-14%;z-index:0!important;font-family:var(--ff-display);font-size:clamp(140px,26vw,360px);line-height:.8;color:rgba(255,255,255,.045);pointer-events:none;white-space:nowrap;}
+.kit .lbl{color:rgba(255,255,255,.4);}
+.kit .lbl .dot{background:var(--accent);}
+.kit-t{font-family:var(--ff-serif);font-size:clamp(40px,7.4vw,84px);line-height:.98;color:#fff;margin:18px 0 16px;}
+.kit-p{color:rgba(255,255,255,.52);max-width:46ch;line-height:1.75;font-size:14.5px;margin-bottom:34px;}
+.kit-ctas{display:flex;gap:12px;flex-wrap:wrap;position:relative;z-index:2;}
+.kit .btn-white{background:#fff;color:rgba(10,10,10,.96);}
+.kit .btn-white:hover{opacity:.86;}
+.kit .btn-out{box-shadow:inset 0 0 0 1px rgba(255,255,255,.22);color:#fff;}
+.kit .btn-out:hover{background:rgba(255,255,255,.08);}
+.kit-meta{display:flex;gap:26px;flex-wrap:wrap;margin-top:36px;position:relative;z-index:2;}
+.kit-meta div{font-family:var(--ff-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.34);}
+.kit-meta b{display:block;font-family:var(--ff-main);font-size:14px;letter-spacing:0;text-transform:none;color:#fff;margin-bottom:4px;font-weight:500;}
+
+/* â•â•â• SOBRE â€” vÃ­deo tem prioridade sobre a foto: se o DJ tiver vÃ­deo, ele cobre
+   a mesma caixa 4/5 em loop mudo (parece uma foto viva); senÃ£o cai pra uma foto
+   DIFERENTE da imagem principal do hero (nunca repete o 1Âº img). â•â•â• */
+.about{display:grid;grid-template-columns:1fr;gap:clamp(36px,6vw,88px);align-items:center;}
+.about-img{border-radius:var(--r);overflow:hidden;aspect-ratio:4/5;box-shadow:var(--ins);will-change:clip-path;}
+.about-img img{width:100%;height:100%;object-fit:cover;object-position:center top;filter:saturate(.9);will-change:transform;}
+.about-img video{width:100%;height:100%;object-fit:cover;object-position:center center;display:block;}
+.about-p{font-size:clamp(16px,1.6vw,20px);line-height:1.85;color:var(--txt);max-width:52ch;}
+.about-p strong{color:var(--ink);font-weight:600;}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.tag{background:var(--surface);box-shadow:var(--ins);border-radius:var(--r-pill);padding:9px 17px;font-family:var(--ff-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+@media(min-width:900px){.about{grid-template-columns:5fr 7fr;}}
+
+/* â•â•â• FOOTER â€” name block padded via .wrap; foot-img is a direct, unpadded
+   child of <footer> so it hits width:100% flush to the document's bottom â•â•â• */
+.foot{border-top:1px solid var(--line);padding-top:clamp(56px,8vw,110px);overflow:hidden;}
+.foot-name{font-family:var(--ff-display);font-size:clamp(96px,24vw,360px);line-height:.82;text-transform:uppercase;color:var(--ink);white-space:nowrap;will-change:transform;}
+.foot-grid{display:flex;flex-direction:column;gap:28px;padding-block:clamp(36px,5vw,64px);}
+.socials{display:flex;gap:10px;flex-wrap:wrap;}
+.soc{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;font-size:19px;background:var(--surface);color:var(--ink);box-shadow:var(--ins);transition:background .4s var(--ease);}
+.soc:hover{background:var(--surface-2);}
+.foot-copy{font-family:var(--ff-mono);font-size:10px;letter-spacing:.1em;color:var(--faint);}
+@media(min-width:900px){.foot-grid{flex-direction:row;justify-content:space-between;align-items:center;}}
+/* footer image â€” direct child of <footer> (zero horizontal padding on that ancestor),
+   width:100% guarantees flush left/right without any vw/scrollbar mismatch;
+   it is the LAST node in <footer> and body/html carry no padding-bottom,
+   so this is the literal last pixel row of the document â€” true bottom:0. */
+.foot-img{position:relative;width:100%;display:block;height:min(48vh,440px);overflow:hidden;background:var(--surface);margin:0!important;}
+.foot-img img{width:100%;height:126%;object-fit:cover;filter:saturate(.85) contrast(1.02) brightness(.92);will-change:transform;}
+/* hardening â€” zero gap forÃ§ado no rodapÃ©, sem depender de cascade externa */
+.foot,.foot-img{margin-bottom:0!important;padding-bottom:0!important;}
+.foot-img-ov{
+  position:absolute!important;inset:0!important;bottom:0!important;margin:0!important;
+  display:grid;place-content:center;text-align:center;
+  background:linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.42));
+}
+.foot-img-ov small{font-family:var(--ff-mono);font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:rgba(255,255,255,.65);}
+
+/* â•â•â• DOCK â€” 100% icon-only (luxury grade, igual Ã  pÃ¡gina de local) â•â•â• */
+.dock{position:fixed;left:50%;bottom:calc(16px + var(--sb));transform:translate(-50%,180%);z-index:110;display:flex;gap:4px;padding:8px;border-radius:var(--r-pill);background:rgba(255,255,255,.7);backdrop-filter:blur(34px) saturate(1.8);-webkit-backdrop-filter:blur(34px) saturate(1.8);box-shadow:var(--ins),0 24px 60px -30px rgba(10,10,10,.25);transition:transform .6s var(--ease);max-width:calc(100vw - 24px);overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.dock::-webkit-scrollbar{display:none;}
+.dock.show{transform:translate(-50%,0);}
+.dock .icon-btn{width:47px;height:47px;flex-shrink:0;background:transparent;box-shadow:none;}
+.dock .icon-btn.is-active{color:var(--accent);}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:calc(92px + var(--sb));transform:translateX(-50%) translateY(14px);z-index:130;background:var(--ink);color:var(--bg);font-family:var(--ff-mono);font-size:11.5px;letter-spacing:.04em;padding:12px 20px;border-radius:var(--r-pill);display:inline-flex;align-items:center;gap:9px;opacity:0;pointer-events:none;transition:opacity .4s var(--ease),transform .4s var(--ease);white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* â•â•â• OUT NOW LIGHTBOX â•â•â• */
+.outnow-lb{position:fixed;inset:0;z-index:9700;opacity:0;pointer-events:none;display:flex;align-items:flex-end;justify-content:center;background:rgba(5,5,5,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:opacity .35s ease;padding:max(16px,var(--st)) 16px calc(16px + var(--sb));}
+.outnow-lb.open{opacity:1;pointer-events:auto;}
+.outnow-lb-panel{width:min(100%,640px);max-height:min(82vh,720px);overflow:auto;background:var(--bg);border-radius:var(--r);box-shadow:var(--ins);padding:clamp(20px,4vw,36px);transform:translateY(24px);transition:transform .4s var(--ease);}
+.outnow-lb.open .outnow-lb-panel{transform:none;}
+.outnow-lb-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;}
+.outnow-lb-head h3{font-family:var(--ff-serif);font-size:clamp(28px,5vw,40px);color:var(--ink);line-height:1;}
+.outnow-lb-x{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:20px;background:var(--surface);color:var(--ink);box-shadow:var(--ins);flex:0 0 auto;}
+.trk-more .trk-t{font-size:clamp(18px,3vw,28px);}
+.trk-more .trk-play{background:var(--ink);color:var(--bg);}
+
+/* reveal fallback */
+.rv{opacity:0;transform:translateY(28px);transition:opacity 1s var(--ease),transform 1s var(--ease);}
+.rv.in{opacity:1;transform:none;}
+@media(prefers-reduced-motion:reduce){
+  .rv{opacity:1;transform:none;transition:none;}
+  .mq-inner{animation:none;}
+  .hero-cue{animation:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="pg" id="pg" aria-hidden="true"></div>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â• EV-TOP â€” barra REAL no topo: primeiro nÃ³ do <body>, fixed em
+     top:0, ACIMA de `.hero div.wrap`. Antes vivia dentro de .hero-figure (logo,
+     abaixo do wrap, no meio da pÃ¡gina) e carregava um gradiente escuro â€” os
+     dois foram removidos. â•â•â•â•â•â•â•â•â•â•â• -->
+<div class="ev-top" id="evTop">
+  <button type="button" class="ev-chip" aria-label="Voltar" onclick="history.back()"><i class="ri-arrow-left-s-line"></i></button>
+  <div class="ev-top-id" aria-hidden="true"><b id="evTopName">Leo Janeiro</b><span>CartÃ£o de artista</span></div>
+  <button type="button" class="ev-chip" data-share="profile" aria-label="Compartilhar cartÃ£o"><i class="ri-share-forward-box-line"></i></button>
+</div>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â• HERO â€” copy in .wrap (padded) Â· figure is a bare header child (100% flush) â•â•â•â•â•â•â•â•â•â•â• -->
+<header class="hero" id="hero">
+  <div class="wrap">
+    <div class="hero-eyebrow">
+      <span class="lbl">Rio de Janeiro â€” Hard Groove &amp; Peak Time</span>
+      <span class="hero-live">Booking aberto Â· 2026</span>
+    </div>
+
+    <h1 class="display hero-name" id="heroName" aria-label="Leo Janeiro">
+      <span class="hn-line" aria-hidden="true">LEO</span>
+      <span class="hn-line is-ac" aria-hidden="true">JANEIRO</span>
+    </h1>
+
+    <div class="hero-under">
+      <p class="hero-bio rv"><strong>Leo Janeiro.</strong> Hard groove com raiz na Zona Norte do Rio â€” grooves pesados, breaks certeiros e um peak time que nÃ£o perdoa. De warehouse em warehouse, o nome que os line-ups mais afiados do Rio chamam primeiro.</p>
+      <div class="hero-ctas rv">
+        <a class="btn btn-ink pill" id="heroBooking" href="#"><i class="ri-mail-send-line"></i> Contato booking</a>
+        <a class="btn btn-line pill" href="#sound"><i class="ri-soundcloud-fill"></i> Ouvir DJ set</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- full-bleed: direct child of <header class="hero">, width:100%, zero gap top/left/right -->
+  <figure class="hero-figure" id="heroFig">
+    <img id="heroImg" src="https://apollo.rio.br/wp-content/uploads/2026/07/leo-janeiro-1-e1783087749835-853x540-1.jpg" alt="Leo Janeiro">
+    <div class="hero-cue" aria-hidden="true">Deslize <i class="ri-arrow-down-s-line"></i></div>
+    <div class="hero-pills">
+      <span class="gpill pill"><strong>86</strong><span>Eventos</span></span>
+      <span class="gpill pill"><strong>4.1k</strong><span>Seguidores</span></span>
+      <span class="gpill pill"><strong>9</strong><span>Cidades</span></span>
+    </div>
+  </figure>
+</header>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â• STATEMENT â€” word-fill scrub â•â•â•â•â•â•â•â•â•â•â• -->
+<section class="stmt wrap" id="stmt">
+  <p class="stmt-txt" id="stmtTxt">Ele nÃ£o domestica o groove. Ele <em class="gold">solta</em> â€” do primeiro breque atÃ© o sol nascer, cada faixa escolhida pra manter o Rio de pÃ© atÃ© o fim.</p>
+</section>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â• MARQUEE â•â•â•â•â•â•â•â•â•â•â• -->
+<div class="mq" id="mq" aria-hidden="true"><div class="mq-inner" id="mqInner"></div></div>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â• TOCOU EM â€” carrossel de eventos Apollo â•â•â•â•â•â•â•â•â•â•â• -->
+<section class="sec po" id="playedOn">
+  <div class="wrap sh">
+    <div><span class="lbl"><span class="dot"></span>HistÃ³rico ao vivo</span><h2 class="serif sh-t">Tocou em</h2></div>
+    <span class="sh-side">Fonte Â· eventos apollo.rio</span>
+  </div>
+  <div class="po-stage" id="poStage">
+    <div class="po-track" id="poTrack"></div>
+    <div class="po-bar" aria-hidden="true"><i id="poBar"></i></div>
+  </div>
+</section>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â• EM NÃšMEROS â•â•â•â•â•â•â•â•â•â•â• -->
+<section class="sec-tight band" id="numbers">
+  <div class="wrap">
+    <div class="sh"><div><span class="lbl">Retrospecto</span><h2 class="serif sh-t">Em nÃºmeros</h2></div></div>
+    <div class="nums">
+      <div class="num rv"><div class="num-v"><span data-count="86">0</span></div><p class="num-l">Eventos tocados no circuito Apollo</p></div>
+      <div class="num rv"><div class="num-v"><span data-count="6">0</span></div><p class="num-l">Casas e promotoras diferentes que jÃ¡ bookaram</p></div>
+      <div class="num rv"><div class="num-v"><span data-count="9">0</span></div><p class="num-l">Cidades â€” do Rio a Belo Horizonte</p></div>
+      <div class="num rv"><div class="num-v"><span data-count="14">0</span></div><p class="num-l">Amanheceres que a pista se recusou a soltar</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â• DIVIDIU A CABINE â€” roster de line-ups Apollo â•â•â•â•â•â•â•â•â•â•â• -->
+<section class="sec" id="playedWith">
+  <div class="wrap">
+    <div class="sh">
+      <div><span class="lbl"><span class="dot"></span>Ao lado no line-up</span><h2 class="serif sh-t">Tocou com</h2></div>
+      <span class="sh-side">Fonte Â· line-ups apollo</span>
+    </div>
+    <div class="roster" id="roster"></div>
+  </div>
+</section>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â• OUT NOW! â•â•â•â•â•â•â•â•â•â•â• -->
+<section class="sec-tight" id="sound">
+  <div class="wrap">
+    <div class="sh">
+      <div><span class="lbl">Trabalho selecionado</span><h2 class="serif sh-t">Out now!</h2></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <a class="btn btn-line pill" id="scFollow" href="#" target="_blank" rel="noopener"><i class="ri-soundcloud-line"></i> SoundCloud</a>
+        <a class="btn btn-line pill" id="bcFollow" href="#" target="_blank" rel="noopener"><i class="ri-bandcamp-line"></i> Bandcamp</a>
+        <a class="btn btn-line pill" id="spFollow" href="#" target="_blank" rel="noopener"><i class="ri-spotify-line"></i> Spotify</a>
+      </div>
+    </div>
+    <div id="trkList" class="rule-draw"></div>
+    <div class="sc-shelf" id="scShelf"><iframe id="scPlayer" title="Player SoundCloud" allow="autoplay" loading="lazy"></iframe></div>
+  </div>
+</section>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â• KIT DE IMPRENSA â•â•â•â•â•â•â•â•â•â•â• -->
+<section class="sec" id="kitSection">
+  <div class="wrap">
+    <div class="kit rv" id="kit">
+      <div class="kit-wm" aria-hidden="true">EPK</div>
+      <span class="lbl"><span class="dot"></span>Imprensa &amp; contratantes</span>
+      <h2 class="kit-t">Kit de Imprensa 2026</h2>
+      <p class="kit-p">Fotos em alta resoluÃ§Ã£o, rider tÃ©cnico, logos e promos inÃ©ditas â€” tudo em uma pasta sÃ³, pronta pra encaminhar. Compartilhamento global em um toque.</p>
+      <div class="kit-ctas">
+        <a class="btn btn-white pill" id="kitDl" href="#" target="_blank" rel="noopener"><i class="ri-folder-open-line"></i> Acessar Kit Promo</a>
+        <button class="btn btn-out pill" data-share="kit"><i class="ri-share-forward-box-line"></i> Compartilhar kit</button>
+      </div>
+      <div class="kit-meta">
+        <div><b>28 MB</b>Arquivo zip</div>
+        <div><b>12 fotos</b>300 dpi</div>
+        <div><b>Rider v3</b>PDF</div>
+        <div><b>4 promos</b>InÃ©ditas</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â• SOBRE â•â•â•â•â•â•â•â•â•â•â• -->
+<section class="sec-tight">
+  <div class="wrap about">
+    <!-- vÃ­deo (loop mudo) tem prioridade; JS decide o miolo conforme APOLLO_DJ.videoUrl -->
+    <figure class="about-img rv" id="aboutFig"></figure>
+    <div>
+      <span class="lbl" style="display:block;margin-bottom:18px">Sobre</span>
+      <h2 class="serif" style="font-size:clamp(44px,7vw,92px);margin-bottom:26px">O artista</h2>
+      <p class="about-p rv"><strong>Erguendo o hard groove da Zona Norte desde 2018.</strong> Residente nas noites mais suadas do Rio â€” grooves que nÃ£o afrouxam, breaks cirÃºrgicos e uma leitura de pista guiada por instinto, nunca por fÃ³rmula.</p>
+      <div class="tags rv"><span class="tag">Hard Groove</span><span class="tag">Peak Time</span><span class="tag">Tribal House</span><span class="tag">Afro House</span><span class="tag">Techno</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â• FOOTER â€” nome em .wrap Â· foto full-bleed Ã© o Ãºltimo elemento, sem padding depois â•â•â•â•â•â•â•â•â•â•â• -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-name" id="footName">LEO JANEIRO</div>
+    <div class="foot-grid">
+      <div class="socials">
+        <a class="soc pill" id="footSc" href="#" target="_blank" rel="noopener" aria-label="SoundCloud"><i class="ri-soundcloud-line"></i></a>
+        <a class="soc pill" id="footBc" href="#" target="_blank" rel="noopener" aria-label="Bandcamp"><i class="ri-bandcamp-line"></i></a>
+        <a class="soc pill" id="footSp" href="#" target="_blank" rel="noopener" aria-label="Spotify"><i class="ri-spotify-line"></i></a>
+        <a class="soc pill" href="#" aria-label="Instagram"><i class="ri-instagram-line"></i></a>
+        <button class="soc pill" data-share="profile" aria-label="Compartilhar"><i class="ri-share-forward-box-line"></i></button>
+      </div>
+      <span class="foot-copy">Â© 2026 apollo.rio.br â€” cartÃ£o de artista via Apollo</span>
+    </div>
+  </div>
+  <!-- full-bleed footer image â€” Ãºltimo nÃ³ do <footer>, width:100% flush, Ã© o bottom:0 literal da pÃ¡gina -->
+  <figure class="foot-img" id="footImgWrap">
+    <img id="footImg" src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1800&q=82" alt="MultidÃ£o da Apollo ao amanhecer">
+    <div class="foot-img-ov"><small>O Rio nÃ£o fecha</small></div>
+  </figure>
+</footer>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â• DOCK â€” 100% icon-only: booking Â· kit (Drive) Â· soundcloud Â· bandcamp Â· spotify Â· favoritar Â· compartilhar â•â•â•â•â•â•â•â•â•â•â• -->
+<div class="dock" id="dock">
+  <a class="icon-btn pill" id="dockBooking" href="#" aria-label="Contato booking" title="Contato booking"><i class="ri-mail-send-line"></i></a>
+  <a class="icon-btn pill" id="dockKit" href="#" target="_blank" rel="noopener" aria-label="Media kit" title="Media kit"><i class="ri-folder-image-line"></i></a>
+  <a class="icon-btn pill" id="dockSoundcloud" href="#" target="_blank" rel="noopener" aria-label="SoundCloud" title="SoundCloud"><i class="ri-soundcloud-line"></i></a>
+  <a class="icon-btn pill" id="dockBandcamp" href="#" target="_blank" rel="noopener" aria-label="Bandcamp" title="Bandcamp"><i class="ri-bandcamp-line"></i></a>
+  <a class="icon-btn pill" id="dockSpotify" href="#" target="_blank" rel="noopener" aria-label="Spotify" title="Spotify"><i class="ri-spotify-line"></i></a>
+  <button type="button" class="icon-btn pill" id="dockFollow" aria-label="Seguir" title="Seguir"><i class="ri-heart-3-line"></i></button>
+  <button type="button" class="icon-btn pill" data-share="profile" aria-label="Compartilhar" title="Compartilhar"><i class="ri-share-forward-box-line"></i></button>
+</div>
+
+<div class="outnow-lb" id="outNowLb" role="dialog" aria-modal="true" aria-labelledby="outNowLbTitle" aria-hidden="true">
+  <div class="outnow-lb-panel">
+    <div class="outnow-lb-head">
+      <div>
+        <span class="lbl">Trabalho selecionado</span>
+        <h3 id="outNowLbTitle">Out now!</h3>
+      </div>
+      <button type="button" class="outnow-lb-x pill" id="outNowLbClose" aria-label="Fechar"><i class="ri-close-line"></i></button>
+    </div>
+    <div id="outNowLbList" class="rule-draw"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   RUNTIME â€” progressive enhancement in two layers:
+   BASE  (always): render Apollo data, shares, SoundCloud shelf, IO reveals.
+   LUXE  (core.js?versao=bb): Lenis smooth scroll + GSAP ScrollTrigger â€” line-split hero,
+   word-fill statement, PINNED horizontal scrub carousel with per-card parallax
+   (containerAnimation), count-ups, drift marquee/footer, progress hairline,
+   hero + footer full-bleed image parallax.
+   Troque APOLLO_DJ pelo payload REST da Apollo â€” markup intocado.
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+(function () {
+  'use strict';
+  var q = function (s, c) { return (c || document).querySelector(s); };
+  var qq = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); };
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* â•â•â• Dados Apollo â€” CPT dj (â†’ wp_localize_script / apollo_get_dj_context) â•â•â•
+     Cada campo Ã© um INPUT INDEPENDENTE (custom field prÃ³prio).
+       name          â†’ title / meta._dj_name
+       soundcloud    â†’ meta._dj_soundcloud
+       bandcamp      â†’ meta._dj_bandcamp
+       spotify       â†’ meta._dj_spotify
+       bookingEmail  â†’ meta._dj_booking
+       mediaKitUrl   â†’ meta._dj_media_kit_url (pasta Drive; CTA "Acessar Kit Promo")
+       videoUrl      â†’ meta._dj_about_video
+       aboutPhoto    â†’ meta._dj_about_photo (â‰  hero)
+       genres[]      â†’ taxonomy sound
+       playedOn[]    â†’ WP_Query event WHERE _event_dj_ids CONTAINS dj_id (past)
+       playedWith[]  â†’ co-DJs derivados dos mesmos eventos
+       tracks[]      â†’ meta._dj_tracks (title, url, year, duration)
+                       display meta = "{year} Â· RIO DE JANEIRO Â· {duration}"
+     â•â•â• */
+  var APOLLO_DJ = {
+    name: 'Leo Janeiro', // @field: title / meta._dj_name
+    soundcloud: 'https://soundcloud.com/leojaneiro', // @field: meta._dj_soundcloud
+    bandcamp: 'https://leojaneiro.bandcamp.com', // @field: meta._dj_bandcamp
+    spotify: 'https://open.spotify.com/artist/2A3xJnhCPfWLNjPzHIzYfP', // @field: meta._dj_spotify
+    bookingEmail: 'booking@apollo.rio.br', // @field: meta._dj_booking
+    mediaKitUrl: 'https://drive.google.com/drive/folders/1LJnr00kEPKit2026SimAB9xQ?usp=sharing', // @field: meta._dj_media_kit_url
+    videoUrl: '', // @field: meta._dj_about_video
+    aboutPhoto: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=1200&q=82', // @field: meta._dj_about_photo
+    genres: ['Hard Groove','Peak Time','Tribal House','Afro House','Rio de Janeiro','Zona Norte','Apollo Night'], // @field: taxonomy sound
+    playedOn: [
+      { title:'Sunset Theory Vol.04', venue:'Fabrika Â· Rio',    date:'24 FEV 26', withCount:3, cover:'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=900&q=80' }, // @event: 1
+      { title:'Industrial C.',        venue:'Backstage Â· SP',   date:'12 MAR 26', withCount:4, cover:'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=900&q=80' }, // @event: 2
+      { title:'Rara Festival',        venue:'Ãrea VIP Â· Rio',   date:'01 ABR 26', withCount:6, cover:'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=900&q=80' }, // @event: 3
+      { title:'Dismantle #2',         venue:'Mainstage Â· Rio',  date:'15 ABR 26', withCount:5, cover:'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=900&q=80' }, // @event: 4
+      { title:'O/NDA Day',            venue:'Pista Â· NiterÃ³i',  date:'29 ABR 26', withCount:2, cover:'https://images.unsplash.com/photo-1504898770365-14faca6a7320?w=900&q=80' }, // @event: 5
+      { title:'Bunker Nite',          venue:'Club Aurora Â· Rio',date:'17 MAI 26', withCount:3, cover:'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=900&q=80' }  // @event: 6
+    ],
+    playedWith: [
+      { name:'DJ Hell',         role:'Headliner Â· Industrial', avatar:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80', url:'#' }, // @dj: 1
+      { name:'Vintage Culture', role:'Main Â· House',           avatar:'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&q=80', url:'#' }, // @dj: 2
+      { name:'Marta Supernova', role:'HipnÃ³tico Â· Abertura',   avatar:'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80', url:'#' }, // @dj: 3
+      { name:'Mochakk',         role:'B2B Â· Peak Time',        avatar:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&q=80', url:'#' }, // @dj: 4
+      { name:'Ana Klause',      role:'Peak Â· HipnÃ³tico',       avatar:'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&q=80', url:'#' }, // @dj: 5
+      { name:'Renan Void',      role:'Techno Â· Fechamento',    avatar:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&q=80', url:'#' }  // @dj: 6
+    ],
+    /* 6 tracks so row 06 "Ver todos" appears (first 5 listed + lightbox) */
+    tracks: [
+      { title:'Groove Sujo',        year:'2025', duration:'6:12', url:'https://soundcloud.com/leojaneiro' }, // @track: 1 â€” meta._dj_tracks
+      { title:'Zona Norte',         year:'2024', duration:'7:40', url:'https://soundcloud.com/leojaneiro' }, // @track: 2
+      { title:'Breque Certo',       year:'2025', duration:'6:55', url:'https://soundcloud.com/leojaneiro' }, // @track: 3
+      { title:'Sol Nasce Bailando', year:'2024', duration:'8:20', url:'https://soundcloud.com/leojaneiro' }, // @track: 4
+      { title:'Pista Quente',       year:'2025', duration:'7:05', url:'https://soundcloud.com/leojaneiro' }, // @track: 5
+      { title:'Amanhecer Norte',    year:'2026', duration:'9:10', url:'https://soundcloud.com/leojaneiro' }  // @track: 6 â€” lightbox only unless Ver todos
+    ]
+  };
+
+  /* â•â•â• BASE LAYER â•â•â• */
+
+  /* marquee (dobrado para o loop) */
+  q('#mqInner').innerHTML = APOLLO_DJ.genres.concat(APOLLO_DJ.genres).map(function (g, i) {
+    return '<span class="' + (i % 3 === 0 ? 'on' : '') + '">' + esc(g) + '</span><span>Â·</span>';
+  }).join('');
+
+  /* tocou em */
+  q('#poTrack').innerHTML = APOLLO_DJ.playedOn.map(function (e) {
+    return '<article class="po-card"><div class="po-cover"><img src="' + e.cover + '" alt="" loading="lazy"><span class="po-date pill">' + esc(e.date) + '</span></div>'
+      + '<div class="po-body"><h3 class="po-title">' + esc(e.title) + '</h3><div class="po-meta"><span><i class="ri-map-pin-2-line"></i>' + esc(e.venue) + '</span><span><i class="ri-team-line"></i>+' + e.withCount + ' artistas</span></div></div></article>';
+  }).join('');
+
+  /* roster */
+  q('#roster').innerHTML = APOLLO_DJ.playedWith.map(function (d) {
+    return '<a class="ro rv" href="#"><span class="ro-av pill"><img src="' + d.avatar + '" alt="" loading="lazy"></span>'
+      + '<span class="ro-name">' + esc(d.name) + '</span>'
+      + '<span class="ro-x"><span class="ro-role">' + esc(d.role) + '</span><i class="ri-arrow-right-up-line ro-arrow"></i></span></a>';
+  }).join('');
+
+  /* plataformas â€” fonte Ãºnica global (dock + Sons + footer), ver comentÃ¡rio nos dados */
+  q('#scFollow').href = APOLLO_DJ.soundcloud;
+  q('#bcFollow').href = APOLLO_DJ.bandcamp;
+  q('#spFollow').href = APOLLO_DJ.spotify;
+  q('#footSc').href = APOLLO_DJ.soundcloud;
+  q('#footBc').href = APOLLO_DJ.bandcamp;
+  q('#footSp').href = APOLLO_DJ.spotify;
+  q('#dockSoundcloud').href = APOLLO_DJ.soundcloud;
+  q('#dockBandcamp').href = APOLLO_DJ.bandcamp;
+  q('#dockSpotify').href = APOLLO_DJ.spotify;
+  q('#dockKit').href = APOLLO_DJ.mediaKitUrl;
+  var bookingHref = 'mailto:' + APOLLO_DJ.bookingEmail + '?subject=' + encodeURIComponent('Booking â€” ' + APOLLO_DJ.name);
+  q('#heroBooking').href = bookingHref;
+  q('#dockBooking').href = bookingHref;
+
+  /* nome do rodapÃ© â€” sempre o nome do DJ, maiÃºsculo, nunca a marca da plataforma */
+  q('#footName').textContent = APOLLO_DJ.name.toUpperCase();
+  /* identidade da ev-top â€” revelada quando o nome gigante do hero sai de cena */
+  q('#evTopName').textContent = APOLLO_DJ.name;
+
+  /* Sobre â€” vÃ­deo cobre a mesma caixa 4/5 em loop mudo; sem vÃ­deo, cai pra uma
+     foto DIFERENTE da imagem principal do hero (nunca repete o 1Âº img). */
+  (function () {
+    var fig = q('#aboutFig');
+    if (APOLLO_DJ.videoUrl) {
+      fig.innerHTML = '<video id="aboutVideo" src="' + esc(APOLLO_DJ.videoUrl) + '" autoplay muted loop playsinline></video>';
+    } else {
+      fig.innerHTML = '<img id="aboutImg" src="' + esc(APOLLO_DJ.aboutPhoto) + '" alt="' + esc(APOLLO_DJ.name) + ' nos bastidores">';
+    }
+  })();
+
+  /* Out now! â€” max 5 + row 06 Ver todos â†’ lightbox; meta = year Â· RIO DE JANEIRO Â· duration */
+  function trackMeta(t) {
+    if (t.meta) return t.meta;
+    var bits = [];
+    if (t.year) bits.push(t.year);
+    bits.push('RIO DE JANEIRO');
+    if (t.duration) bits.push(t.duration);
+    return bits.join(' Â· ');
+  }
+  function trackRowHtml(t, i) {
+    return '<div class="trk rv" data-url="' + esc(t.url || '') + '"><span class="trk-i">0' + (i + 1) + '</span>'
+      + '<div><div class="trk-t">' + esc(t.title) + '</div><div class="trk-m">' + esc(trackMeta(t)) + '</div></div>'
+      + '<button class="trk-share pill" data-share-track="' + esc(t.url || '') + '" aria-label="Compartilhar faixa"><i class="ri-share-forward-box-line"></i></button>'
+      + '<span class="trk-play pill"><i class="ri-play-fill"></i></span></div>';
+  }
+  var allTracks = Array.isArray(APOLLO_DJ.tracks) ? APOLLO_DJ.tracks : [];
+  var trkList = q('#trkList');
+  if (trkList) {
+    var visible = allTracks.slice(0, 5);
+    var htmlTrk = visible.map(function (t, i) { return trackRowHtml(t, i); }).join('');
+    if (allTracks.length > 5) {
+      htmlTrk += '<button type="button" class="trk trk-more rv" id="trkMore" aria-haspopup="dialog">'
+        + '<span class="trk-i">06</span><div><div class="trk-t">Ver todos</div>'
+        + '<div class="trk-m">' + esc(String(allTracks.length)) + ' lanÃ§amentos</div></div>'
+        + '<span class="trk-play pill"><i class="ri-arrow-right-up-line"></i></span></button>';
+    }
+    trkList.innerHTML = htmlTrk;
+  }
+  var lbFull = q('#outNowLbList');
+  if (lbFull) {
+    lbFull.innerHTML = allTracks.map(function (t, i) { return trackRowHtml(t, i); }).join('');
+  }
+  function playTrack(row) {
+    var url = row.getAttribute('data-url');
+    if (!url) return;
+    qq('.trk').forEach(function (r) { r.classList.toggle('is-on', r === row); });
+    var shelf = q('#scShelf');
+    var player = q('#scPlayer');
+    if (player) {
+      player.src = 'https://w.soundcloud.com/player/?url=' + encodeURIComponent(url) + '&color=%23d1860a&auto_play=true&hide_related=true&show_comments=false&show_user=true';
+    }
+    if (shelf) shelf.classList.add('open');
+  }
+  var outLb = q('#outNowLb');
+  var outLbLastFocus = null;
+  function openOutLb(el) {
+    if (!outLb) return;
+    outLbLastFocus = el || document.activeElement;
+    outLb.classList.add('open');
+    outLb.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    var closer = q('#outNowLbClose');
+    if (closer) closer.focus();
+  }
+  function closeOutLb() {
+    if (!outLb) return;
+    outLb.classList.remove('open');
+    outLb.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (outLbLastFocus && outLbLastFocus.focus) outLbLastFocus.focus();
+  }
+  var moreBtn = q('#trkMore');
+  if (moreBtn) moreBtn.addEventListener('click', function (e) { e.preventDefault(); openOutLb(moreBtn); });
+  var lbClose = q('#outNowLbClose');
+  if (lbClose) lbClose.addEventListener('click', closeOutLb);
+  if (outLb) outLb.addEventListener('click', function (e) { if (e.target === outLb) closeOutLb(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && outLb && outLb.classList.contains('open')) closeOutLb();
+  });
+  function onTrkClick(ev) {
+    var sh = ev.target.closest('[data-share-track]');
+    if (sh) { ev.stopPropagation(); share('Faixa', sh.getAttribute('data-share-track')); return; }
+    if (ev.target.closest('.trk-more')) return;
+    var row = ev.target.closest('.trk'); if (!row || row.classList.contains('trk-more')) return;
+    playTrack(row);
+  }
+  if (trkList) trkList.addEventListener('click', onTrkClick);
+  if (lbFull) lbFull.addEventListener('click', onTrkClick);
+
+  /* Kit Promo â€” #kitDl is an <a> to mediaKitUrl */
+  if (q('#kitDl') && APOLLO_DJ.mediaKitUrl) q('#kitDl').href = APOLLO_DJ.mediaKitUrl;
+
+  /* share + toast */
+  var toastT;
+  function toast(msg, icon) {
+    var t = q('#toast');
+    t.innerHTML = '<i class="' + (icon || 'ri-check-line') + '"></i>' + esc(msg);
+    t.classList.add('show');
+    clearTimeout(toastT); toastT = setTimeout(function () { t.classList.remove('show'); }, 2200);
+  }
+  function share(title, url) {
+    url = url || location.href;
+    if (navigator.share) navigator.share({ title: APOLLO_DJ.name + ' Â· ' + title, url: url }).catch(function () {});
+    else if (navigator.clipboard) { navigator.clipboard.writeText(url); toast('Link copiado'); }
+    if (navigator.vibrate) navigator.vibrate(8);
+  }
+  qq('[data-share]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      share(b.getAttribute('data-share') === 'kit' ? 'Kit de Imprensa' : 'CartÃ£o de Artista',
+            b.getAttribute('data-share') === 'kit' ? location.href + '#kit' : location.href);
+    });
+  });
+
+  /* favoritar (dock 100% Ã­cone) â€” troca o glifo/estado, sem rÃ³tulo de texto */
+  var followed = false;
+  q('#dockFollow').addEventListener('click', function () {
+    followed = !followed;
+    this.classList.toggle('is-active', followed);
+    this.querySelector('i').className = followed ? 'ri-heart-3-fill' : 'ri-heart-3-line';
+    this.setAttribute('aria-label', followed ? 'Seguindo' : 'Seguir');
+    this.setAttribute('title', followed ? 'Seguindo' : 'Seguir');
+    toast(followed ? 'VocÃª segue ' + APOLLO_DJ.name + ' âœ“' : 'Deixou de seguir', 'ri-heart-3-line');
+    if (navigator.vibrate) navigator.vibrate(8);
+  });
+
+  /* IO reveals (com ou sem GSAP) */
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: .1, rootMargin: '0px 0px -6% 0px' });
+  qq('.rv').forEach(function (el) { io.observe(el); });
+
+  /* dock depois do hero */
+  new IntersectionObserver(function (es) { q('#dock').classList.toggle('show', !es[0].isIntersecting); }, { threshold: 0 })
+    .observe(q('#hero'));
+
+  /* progresso do carrossel mobile (rail nativo) */
+  var poTrack = q('#poTrack'), poBar = q('#poBar');
+  poTrack.addEventListener('scroll', function () {
+    var max = poTrack.scrollWidth - poTrack.clientWidth;
+    if (max > 0) poBar.style.transform = 'scaleX(' + (poTrack.scrollLeft / max) + ')';
+  }, { passive: true });
+
+  /* â•â•â• LUXE LAYER â€” core.js?versao=bb GSAP + ScrollTrigger + Lenis â•â•â• */
+  function splitLines(containerSel) {
+    var lines = qq(containerSel + ' .hn-line');
+    var allChars = [];
+    lines.forEach(function (lineEl) {
+      var t = lineEl.textContent;
+      lineEl.textContent = '';
+      t.split('').forEach(function (ch) {
+        var w = document.createElement('span'); w.className = 'ch-w';
+        var i = document.createElement('span'); i.className = 'ch'; i.textContent = ch === ' ' ? 'Â ' : ch;
+        w.appendChild(i); lineEl.appendChild(w); allChars.push(i);
+      });
+    });
+    return allChars;
+  }
+  function splitWords(el) {
+    var out = [];
+    Array.prototype.slice.call(el.childNodes).forEach(function (n) {
+      if (n.nodeType === 3) {
+        n.textContent.split(/\s+/).filter(Boolean).forEach(function (wd) {
+          var s = document.createElement('span'); s.className = 'wd'; s.textContent = wd;
+          el.insertBefore(s, n); out.push(s);
+        });
+        el.removeChild(n);
+      } else if (n.nodeType === 1) { n.classList.add('wd'); out.push(n); }
+    });
+    return out;
+  }
+
+  /* corta um nÃ³ de texto em caracteres mascarados (.ch-w > .ch) â€” mesma
+     mecÃ¢nica do hero, reutilizada por tÃ­tulos de seÃ§Ã£o e nome do rodapÃ© */
+  function splitChars(el) {
+    var t = el.textContent, out = [];
+    el.textContent = '';
+    t.split('').forEach(function (c) {
+      var w = document.createElement('span'); w.className = 'ch-w';
+      var i = document.createElement('span'); i.className = 'ch';
+      i.textContent = c === ' ' ? 'Â ' : c;
+      w.appendChild(i); el.appendChild(w); out.push(i);
+    });
+    return out;
+  }
+
+  function luxe() {
+    if (reduced || !window.gsap || !window.ScrollTrigger) return;
+    var g = window.gsap, ST = window.ScrollTrigger;
+    g.registerPlugin(ST);
+    if (typeof window.initLenisSync === 'function') window.initLenisSync();
+    var mm = g.matchMedia();
+
+    /* â•â•â• 00 Â· o GSAP assume TODOS os reveals â€” desarma a camada CSS/IO (.rv)
+       pra que nenhum `from()` leia opacity:0 como valor final â•â•â• */
+    qq('.rv').forEach(function (el) { el.classList.add('in'); el.style.transition = 'none'; });
+
+    /* â•â•â• 01 Â· fio de progresso â•â•â• */
+    g.to('#pg', { scaleX: 1, ease: 'none', scrollTrigger: { start: 0, end: 'max', scrub: .3 } });
+
+    /* â•â•â• 02 Â· EV-TOP â€” glass + nome do artista assim que o nome gigante sai â•â•â• */
+    var evTop = q('#evTop');
+    ST.create({
+      trigger: '#hero', start: 'top+=150 top', end: 'max',
+      onToggle: function (s) { evTop.classList.toggle('is-solid', s.isActive); }
+    });
+
+    /* â•â•â• 03 Â· HERO â€” abertura em cascata â•â•â• */
+    var chars = splitLines('#heroName');
+    g.timeline({ defaults: { ease: 'expo.out' } })
+      .from('.hero-eyebrow', { y: 16, opacity: 0, duration: .9 }, 0)
+      .from(chars, { yPercent: 112, duration: 1.25, stagger: .045 }, .1)
+      .from('#heroImg', { scale: 1.18, duration: 2, ease: 'power3.out' }, .3)
+      .from('.hero-bio', { y: 26, opacity: 0, duration: 1 }, .62)
+      .from('.hero-ctas', { y: 26, opacity: 0, duration: 1 }, .72)
+      .from('.gpill', { y: 26, opacity: 0, duration: .85, stagger: .08 }, .95)
+      .from('.hero-cue', { opacity: 0, duration: .8 }, 1.2);
+
+    /* â•â•â• 04 Â· HERO FIGURE â€” card recuado ABRE em full-bleed (assinatura Apple) â•â•â• */
+    g.fromTo('#heroFig',
+      { clipPath: 'inset(0% 7% 0% 7% round 28px)' },
+      { clipPath: 'inset(0% 0% 0% 0% round 0px)', ease: 'none',
+        scrollTrigger: { trigger: '#heroFig', start: 'top 94%', end: 'top 24%', scrub: .6 } });
+
+    /* â•â•â• 05 Â· parallax da foto + saÃ­da do bloco de texto â•â•â• */
+    g.to('#heroImg', { yPercent: 7, ease: 'none', scrollTrigger: { trigger: '#heroFig', start: 'top bottom', end: 'bottom top', scrub: true } });
+    g.to('#heroName', { yPercent: -9, opacity: .16, ease: 'none', scrollTrigger: { trigger: '#hero', start: 'bottom 82%', end: 'bottom 16%', scrub: true } });
+    g.to('.hero-under', { y: -34, opacity: .2, ease: 'none', scrollTrigger: { trigger: '#hero', start: 'bottom 88%', end: 'bottom 28%', scrub: true } });
+    g.to('.hero-cue', { opacity: 0, ease: 'none', scrollTrigger: { trigger: '#heroFig', start: 'top 60%', end: 'top 20%', scrub: true } });
+
+    /* â•â•â• 06 Â· reveals globais â€” o GSAP assume o lugar do IntersectionObserver â•â•â• */
+    var rvEls = qq('.rv').filter(function (el) {
+      return !el.closest('#hero') && !el.matches('.ro, .trk') && el.id !== 'kit' && el.id !== 'aboutFig';
+    });
+    ST.batch(rvEls, {
+      start: 'top 90%',
+      onEnter: function (els) { g.from(els, { y: 38, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: .09, overwrite: true }); }
+    });
+
+    /* â•â•â• 07 Â· STATEMENT â€” word-fill pinado â•â•â• */
+    var words = splitWords(q('#stmtTxt'));
+    g.set(words, { opacity: .1 });
+    g.to(words, { opacity: 1, stagger: .05, ease: 'none',
+      scrollTrigger: { trigger: '#stmt', start: 'top 24%', end: '+=120%', scrub: true, pin: true, pinSpacing: true } });
+
+    /* â•â•â• 08 Â· MARQUEE â€” velocidade reativa ao scroll (Lenis alimenta a leitura) â•â•â• */
+    var mqInner = q('#mqInner');
+    mqInner.style.animation = 'none';
+    var mqLoop = g.to(mqInner, { xPercent: -50, duration: 26, ease: 'none', repeat: -1 });
+    var mqDecay;
+    ST.create({ onUpdate: function (self) {
+      mqLoop.timeScale(1 + Math.min(Math.abs(self.getVelocity()) / 800, 4.5));
+      clearTimeout(mqDecay);
+      mqDecay = setTimeout(function () { g.to(mqLoop, { timeScale: 1, duration: 1.2, ease: 'power2.out' }); }, 110);
+    }});
+    g.fromTo('#mq', { xPercent: 2 }, { xPercent: -4, ease: 'none', scrollTrigger: { trigger: '#mq', start: 'top bottom', end: 'bottom top', scrub: true } });
+
+    /* â•â•â• 09 Â· TÃTULOS DE SEÃ‡ÃƒO â€” sobem caractere a caractere â•â•â• */
+    qq('.sh-t').forEach(function (h) {
+      g.from(splitChars(h), { yPercent: 118, duration: 1.15, ease: 'expo.out', stagger: .028,
+        scrollTrigger: { trigger: h, start: 'top 88%', once: true } });
+    });
+    qq('.sh .lbl').forEach(function (l) {
+      g.from(l, { y: 14, opacity: 0, duration: .9, ease: 'expo.out',
+        scrollTrigger: { trigger: l, start: 'top 92%', once: true } });
+    });
+
+    /* â•â•â• 10 Â· EM NÃšMEROS â€” hairline desenha + contador sobe â•â•â• */
+    qq('.num').forEach(function (n) {
+      g.fromTo(n, { '--rl': 0 }, { '--rl': 1, duration: 1.15, ease: 'power2.out',
+        scrollTrigger: { trigger: n, start: 'top 90%', once: true } });
+    });
+    qq('[data-count]').forEach(function (el) {
+      var to = parseFloat(el.getAttribute('data-count')), dec = +(el.getAttribute('data-dec') || 0);
+      var o = { v: 0 };
+      g.to(o, { v: to, duration: 1.9, ease: 'power2.out',
+        onUpdate: function () { el.textContent = (dec ? o.v.toFixed(dec) : Math.round(o.v)).toString().replace('.', ','); },
+        scrollTrigger: { trigger: el, start: 'top 88%', once: true } });
+    });
+
+    /* â•â•â• 11 Â· LISTAS (roster + faixas) â€” cascata + hairline desenhada por linha â•â•â• */
+    ['#roster', '#trkList'].forEach(function (sel) {
+      var host = q(sel); if (!host) return;
+      g.fromTo(host, { '--rl': 0 }, { '--rl': 1, duration: 1.2, ease: 'power2.out',
+        scrollTrigger: { trigger: host, start: 'top 90%', once: true } });
+      var rows = qq('.ro, .trk', host);
+      g.from(rows, { y: 36, opacity: 0, duration: .95, ease: 'expo.out', stagger: .07,
+        scrollTrigger: { trigger: host, start: 'top 84%', once: true } });
+      rows.forEach(function (r) {
+        g.fromTo(r, { '--rl': 0 }, { '--rl': 1, duration: .85, ease: 'power2.out',
+          scrollTrigger: { trigger: r, start: 'top 94%', once: true } });
+      });
+    });
+
+    /* â•â•â• 12 Â· TOCOU EM â€” desktop: scrub horizontal pinado + parallax por card â•â•â• */
+    mm.add('(min-width: 900px)', function () {
+      var stage = q('#poStage'), track = q('#poTrack');
+      var dist = function () { return Math.max(0, track.scrollWidth - stage.clientWidth); };
+      var tween = g.to(track, {
+        x: function () { return -dist(); },
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#poStage', start: 'top top',
+          end: function () { return '+=' + (dist() + innerHeight * .25); },
+          pin: true, scrub: 1, invalidateOnRefresh: true,
+          onUpdate: function (self) { poBar.style.transform = 'scaleX(' + self.progress + ')'; }
+        }
+      });
+      qq('.po-cover img', stage).forEach(function (im) {
+        g.fromTo(im, { xPercent: -7 }, { xPercent: 0, ease: 'none',
+          scrollTrigger: { trigger: im.closest('.po-card'), containerAnimation: tween, start: 'left right', end: 'right left', scrub: true } });
+      });
+      return function () { tween.scrollTrigger && tween.scrollTrigger.kill(); tween.kill(); };
+    });
+    /* mobile: cards entram em cascata no rail nativo */
+    mm.add('(max-width: 899px)', function () {
+      var t = g.from(qq('.po-card'), { y: 44, opacity: 0, duration: 1, ease: 'expo.out', stagger: .08,
+        scrollTrigger: { trigger: '#poStage', start: 'top 86%', once: true } });
+      return function () { t.scrollTrigger && t.scrollTrigger.kill(); t.kill(); };
+    });
+
+    /* â•â•â• 13 Â· elasticidade de scroll â€” as listas inclinam de leve com a velocidade â•â•â• */
+    mm.add('(min-width: 900px)', function () {
+      var setters = ['#roster', '#trkList'].filter(function (s) { return q(s); }).map(function (s) {
+        return g.quickTo(s, 'skewY', { duration: .55, ease: 'power3.out' });
+      });
+      var st = ST.create({ onUpdate: function (self) {
+        var s = g.utils.clamp(-2.6, 2.6, self.getVelocity() / -520);
+        setters.forEach(function (fn) { fn(s); });
+      }});
+      return function () { st.kill(); setters.forEach(function (fn) { fn(0); }); };
+    });
+
+    /* â•â•â• 14 Â· KIT DE IMPRENSA â€” o card ink cresce e a luz varre no scrub â•â•â• */
+    g.fromTo('#kit', { yPercent: 5, scale: .94, opacity: .5 },
+      { yPercent: 0, scale: 1, opacity: 1, ease: 'none',
+        scrollTrigger: { trigger: '#kitSection', start: 'top 90%', end: 'top 32%', scrub: .5 } });
+    g.fromTo('#kit', { '--sx': '2%' }, { '--sx': '98%', ease: 'none',
+      scrollTrigger: { trigger: '#kit', start: 'top bottom', end: 'bottom top', scrub: true } });
+    g.fromTo('.kit-wm', { xPercent: 12 }, { xPercent: -12, ease: 'none',
+      scrollTrigger: { trigger: '#kit', start: 'top bottom', end: 'bottom top', scrub: true } });
+    g.from(qq('.kit-meta div'), { y: 20, opacity: 0, duration: .9, ease: 'expo.out', stagger: .07,
+      scrollTrigger: { trigger: '.kit-meta', start: 'top 92%', once: true } });
+
+    /* â•â•â• 15 Â· SOBRE â€” clip abre no scrub, mÃ­dia deriva, tags entram â•â•â• */
+    g.fromTo('#aboutFig', { clipPath: 'inset(14% 0% 14% 0% round 28px)' },
+      { clipPath: 'inset(0% 0% 0% 0% round 28px)', ease: 'none',
+        scrollTrigger: { trigger: '#aboutFig', start: 'top 92%', end: 'top 32%', scrub: .6 } });
+    g.to('#aboutImg', { yPercent: 6, ease: 'none', scrollTrigger: { trigger: '#aboutFig', start: 'top bottom', end: 'bottom top', scrub: true } });
+    g.from(qq('.tag'), { y: 16, opacity: 0, duration: .7, ease: 'expo.out', stagger: .05,
+      scrollTrigger: { trigger: '.tags', start: 'top 92%', once: true } });
+
+    /* â•â•â• 16 Â· RODAPÃ‰ â€” nome sobe por caractere, deriva no scroll, foto em parallax â•â•â• */
+    g.from(splitChars(q('#footName')), { yPercent: 118, duration: 1.3, ease: 'expo.out', stagger: .03,
+      scrollTrigger: { trigger: '.foot', start: 'top 84%', once: true } });
+    g.fromTo('#footName', { xPercent: 4 }, { xPercent: -8, ease: 'none',
+      scrollTrigger: { trigger: '.foot', start: 'top bottom', end: 'bottom top', scrub: true } });
+    g.fromTo('#footImg', { yPercent: -12 }, { yPercent: 4, ease: 'none',
+      scrollTrigger: { trigger: '#footImgWrap', start: 'top bottom', end: 'bottom bottom', scrub: true } });
+    g.from(qq('.soc'), { y: 18, opacity: 0, duration: .7, ease: 'expo.out', stagger: .06,
+      scrollTrigger: { trigger: '.socials', start: 'top 94%', once: true } });
+
+    /* â•â•â• 17 Â· recalibra depois que as imagens pesam â•â•â• */
+    window.addEventListener('load', function () { ST.refresh(); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { ST.refresh(); });
+  }
+
+  /* boot LUXE apÃ³s o core.js?versao=bb entregar o gsap (nunca em DOMContentLoaded â€” lei do DS) */
+  if (window.gsap && window.ScrollTrigger) luxe();
+  else {
+    var booted = false;
+    var go = function () { if (!booted) { booted = true; luxe(); } };
+    window.addEventListener('apollo:gsap-ready', go, { once: true });
+    document.addEventListener('apollo:gsap-ready', go, { once: true });
+    window.addEventListener('apollo:ready', function () { if (window.gsap) go(); }, { once: true });
+    setTimeout(function () { if (window.gsap && window.ScrollTrigger) go(); }, 4200);
+  }
+})();
+</script>
+</body>
+</html>
+

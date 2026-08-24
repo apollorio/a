@@ -1,0 +1,497 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-maps",
+    "owner": "apollo-maps",
+    "wrap": "plugins.apollo-maps",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-maps",
+  "namespace": "Apollo\\Maps",
+  "priority": 2,
+  "status": "IMPLEMENTED",
+  "type": "integration",
+  "description": "Leaflet-powered map explorer for Apollo events and locs.",
+  "dependencies": [
+    "apollo-core",
+    "apollo-loc"
+  ],
+  "provides": [
+    "osm-map-render",
+    "location-tiles",
+    "map-shortcodes"
+  ],
+  "map_provider": "OpenStreetMap",
+  "tile_source": "CARTO (basemaps.cartocdn.com)",
+  "leaflet_version": "1.9.4",
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [],
+  "meta": {
+    "post": {
+      "_event_loc_id": {
+        "_source": "deep_scan"
+      },
+      "_event_start_date": {
+        "_source": "deep_scan"
+      },
+      "_event_start_time": {
+        "_source": "deep_scan"
+      },
+      "_local_address": {
+        "_source": "deep_scan"
+      },
+      "_local_lat": {
+        "_source": "deep_scan"
+      },
+      "_local_lng": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {},
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/map/explorer",
+      "methods": [
+        "GET"
+      ],
+      "description": "Aggregated events+locs with coordinates for Leaflet map",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_map_data",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/ExplorerController.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "rest_warnings": [
+    "/maps/render â€” NOT YET IMPLEMENTED",
+    "/maps/geocode â€” NOT YET IMPLEMENTED"
+  ],
+  "pages": [],
+  "shortcodes": [
+    {
+      "tag": "apollo_maps",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "version": "1.0.1",
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [],
+  "hooks_listened": [],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [
+      "apollo-cdn",
+      "apollo-maps",
+      "leaflet"
+    ],
+    "styles": [
+      "apollo-maps",
+      "leaflet"
+    ]
+  },
+  "options": [
+    "apollo_maps_activated",
+    "apollo_maps_center_lat",
+    "apollo_maps_center_lng",
+    "apollo_maps_default_zoom"
+  ],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 18,
+    "abspath_coverage_pct": 89,
+    "rest_open_routes": 1,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 1,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 1,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 0.5
+  },
+  "database_schemas": [],
+  "rewrite_rules": [],
+  "query_vars": [],
+  "php_surface": {
+    "files": 9,
+    "loc": 792,
+    "classes": 5,
+    "functions": 3
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:50.623Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 50,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-maps",
+    "main_file": "apollo-maps.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Maps",
+      "plugin_uri": "https://apollo.rio.br/plugins/apollo-maps",
+      "description": "Leaflet-powered map explorer for Apollo events and locs.",
+      "version": "1.0.1",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "Proprietary",
+      "text_domain": "apollo-maps",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": "false"
+    },
+    "composer": {
+      "name": "apollo/apollo-maps",
+      "namespaces": [
+        "Apollo\\Maps"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 9,
+        ".css": 1,
+        ".js": 1,
+        ".json": 1,
+        ".md": 1,
+        ".ffs_db": 1
+      },
+      "by_top_directory": {
+        "(root)": 5,
+        "assets": 2,
+        "includes": 2,
+        "src": 5
+      },
+      "total_bytes": 34880
+    },
+    "php": {
+      "files": 9,
+      "loc": 792,
+      "classes": 5,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 3
+    },
+    "architecture": {
+      "namespace": "Apollo\\Maps",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Maps\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "ExplorerController",
+          "fqcn": "Apollo\\Maps\\API\\ExplorerController",
+          "extends": "RestBase",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/ExplorerController.php"
+        },
+        {
+          "kind": "class",
+          "name": "Deactivation",
+          "fqcn": "Apollo\\Maps\\Deactivation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Deactivation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Maps\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "MapShortcode",
+          "fqcn": "Apollo\\Maps\\Shortcodes\\MapShortcode",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Shortcodes/MapShortcode.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_maps_check_dependencies",
+          "file": "apollo-maps.php"
+        },
+        {
+          "name": "apollo_maps_init",
+          "file": "apollo-maps.php"
+        },
+        {
+          "name": "apollo_maps",
+          "file": "includes/functions.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 1,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/map/explorer",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_map_data",
+          "file": "src/API/ExplorerController.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 1,
+        "MEDIUM": 0,
+        "LOW": 0,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "PUBLIC_UNAUTHENTICATED": 1
+      },
+      "permission_body_resolved": 1,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [
+        {
+          "endpoint": "/map/explorer",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/ExplorerController.php"
+        }
+      ],
+      "admin_cap_routes": [],
+      "logged_in_routes": []
+    },
+    "database": {
+      "tables_owned_or_defined": [],
+      "tables_referenced": [],
+      "tables_for_registry": [],
+      "schemas_with_columns": 0,
+      "schemas": []
+    },
+    "meta": {
+      "post_count": 6,
+      "user_count": 0,
+      "term_count": 0,
+      "post_keys": [
+        "_event_loc_id",
+        "_event_start_date",
+        "_event_start_time",
+        "_local_address",
+        "_local_lat",
+        "_local_lng"
+      ],
+      "user_keys": [],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [],
+      "query_vars": [],
+      "pages_derived": []
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 0,
+      "listened_count": 4,
+      "apollo_fired": [],
+      "apollo_listened": [],
+      "critical_wp_listened": [
+        "init",
+        "plugins_loaded",
+        "rest_api_init"
+      ]
+    },
+    "ajax": {
+      "priv": [],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [
+      "apollo_maps"
+    ],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [
+        "apollo-cdn",
+        "apollo-maps",
+        "leaflet"
+      ],
+      "styles": [
+        "apollo-maps",
+        "leaflet"
+      ]
+    },
+    "options": [
+      "apollo_maps_activated",
+      "apollo_maps_center_lat",
+      "apollo_maps_center_lng",
+      "apollo_maps_default_zoom"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_MAPS_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_MAPS_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_MAPS_DIR",
+        "value": "plugin_dir_path(__FILE__"
+      },
+      {
+        "name": "APOLLO_MAPS_URL",
+        "value": "plugin_dir_url(__FILE__"
+      },
+      {
+        "name": "APOLLO_MAPS_BASENAME",
+        "value": "plugin_basename(__FILE__"
+      },
+      {
+        "name": "APOLLO_MAPS_REST_NAMESPACE",
+        "value": "apollo/v1"
+      },
+      {
+        "name": "APOLLO_MAPS_REST_NAMESPACE",
+        "value": "apollo/v1"
+      },
+      {
+        "name": "APOLLO_MAPS_TABLE_EXAMPLE",
+        "value": "apollo_maps_example"
+      }
+    ],
+    "security": {
+      "php_files": 9,
+      "abspath_guard_files": 8,
+      "abspath_coverage_pct": 89,
+      "wpdb_prepare_calls": 2,
+      "wpdb_query_calls": 4,
+      "prepare_to_query_ratio": 0.5,
+      "nonce_checks": 1,
+      "current_user_can_calls": 0,
+      "raw_superglobal": {
+        "get": 0,
+        "post": 0,
+        "request": 0
+      },
+      "permission_callback_return_true": 1,
+      "escape_helpers": 4,
+      "echo_statements": 1,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 18,
+      "risk_band": "LOW",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 1,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 1
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core",
+        "apollo-loc"
+      ],
+      "signals": [
+        "apollo-core"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.0.1",
+      "version_changed": false,
+      "old_rest": 1,
+      "live_rest": 1,
+      "old_pages": 0,
+      "live_pages": 0,
+      "new_plugin": false
+    }
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 9,
+    "php_loc": 783,
+    "rest_routes_found": 1,
+    "cpts_found": [],
+    "tables_found": [],
+    "shortcodes_found": [
+      "apollo_maps"
+    ]
+  }
+}

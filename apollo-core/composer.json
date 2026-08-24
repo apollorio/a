@@ -1,0 +1,37 @@
+{
+    "name": "apollo/core",
+    "description": "Apollo Core - Bridge Strategy Plugin for UsersWP + Hide My WP",
+    "type": "wordpress-plugin",
+    "version": "6.0.0",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Apollo Team",
+            "email": "dev@apollo.rio.br"
+        }
+    ],
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Apollo\\Core\\": "src/Core/",
+            "Apollo\\Core\\API\\": "src/API/"
+        },
+        "classmap": [
+            "includes/"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "@composer dump-autoload -o"
+        ],
+        "post-update-cmd": [
+            "@composer dump-autoload -o"
+        ]
+    }
+}

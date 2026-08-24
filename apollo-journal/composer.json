@@ -1,0 +1,23 @@
+{
+    "name": "apollo/apollo-journal",
+    "description": "Apollo Journal — Magazine & editorial platform with NREP auto-coding",
+    "type": "wordpress-plugin",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Apollo::Rio",
+            "homepage": "https://apollo.rio.br"
+        }
+    ],
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Apollo\\Journal\\": "src/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true
+    }
+}

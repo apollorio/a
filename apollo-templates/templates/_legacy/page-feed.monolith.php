@@ -1,0 +1,1133 @@
+<?php
+
+/**
+ * Template Name: Apollo Feed
+ * Template Post Type: page
+ *
+ * Social feed for logged-in users.
+ * Tabs: Feed / Eventos / Comuna / Market / Favs / Settings
+ * Blank Canvas — CDN loads CSS vars, GSAP, jQuery, Icons.
+ *
+ * @package Apollo\Templates
+ * @since   6.0.0
+ */
+
+if (! defined('ABSPATH')) {
+    exit;
+}
+
+// Auth gate — guests to /acesso.
+if (! is_user_logged_in()) {
+    wp_safe_redirect(home_url('/acesso'));
+    exit;
+}
+
+$current_user = wp_get_current_user();
+$user_id      = $current_user->ID;
+
+// User data.
+$social_name  = get_user_meta($user_id, '_apollo_social_name', true);
+$display_name = $social_name ?: $current_user->display_name;
+$first_name   = explode(' ', $display_name)[0];
+$avatar_url   = get_avatar_url($user_id, array('size' => 80));
+$user_location = get_user_meta($user_id, 'user_location', true) ?: 'Rio de Janeiro';
+
+// Sound preferences.
+$sound_prefs = get_user_meta($user_id, '_apollo_sound_preferences', true);
+$sound_tags  = array();
+if (! empty($sound_prefs) && is_array($sound_prefs)) {
+    foreach ($sound_prefs as $term_id) {
+        $term = get_term((int) $term_id);
+        if ($term && ! is_wp_error($term)) {
+            $sound_tags[] = $term->name;
+        }
+    }
+}
+
+// Upcoming events (next 6).
+$upcoming_events = get_posts(array(
+    'post_type'      => 'event',
+    'posts_per_page' => 6,
+    'post_status'    => 'publish',
+    'meta_key'       => '_event_start_date',
+    'orderby'        => 'meta_value',
+    'order'          => 'ASC',
+    'meta_query'     => array(array(
+        'key'     => '_event_start_date',
+        'value'   => current_time('Y-m-d'),
+        'compare' => '>=',
+        'type'    => 'DATE',
+    )),
+));
+
+// Favorited events.
+$fav_ids = array();
+if (function_exists('apollo_get_user_favs')) {
+    $fav_rows = apollo_get_user_favs($user_id, 'event', 12, 0);
+    $fav_ids  = wp_list_pluck($fav_rows, 'post_id');
+} else {
+    $fav_ids = get_user_meta($user_id, '_apollo_favorite_events', true);
+}
+$fav_events = array();
+if (! empty($fav_ids) && is_array($fav_ids)) {
+    $fav_events = get_posts(array(
+        'post_type'      => 'event',
+        'post__in'       => array_map('intval', $fav_ids),
+        'posts_per_page' => 12,
+        'post_status'    => 'publish',
+        'orderby'        => 'meta_value',
+        'meta_key'       => '_event_start_date',
+        'order'          => 'ASC',
+    ));
+}
+
+// Latest blog posts (for sidebar news).
+$news_posts = get_posts(array(
+    'post_type'      => 'post',
+    'posts_per_page' => 5,
+    'post_status'    => 'publish',
+    'orderby'        => 'date',
+    'order'          => 'DESC',
+));
+
+// Classifieds for market sidebar.
+$market_items = get_posts(array(
+    'post_type'      => 'classified',
+    'posts_per_page' => 4,
+    'post_status'    => 'publish',
+    'orderby'        => 'date',
+    'order'          => 'DESC',
+));
+
+// Community stats.
+$total_users  = count_users();
+$total_events = wp_count_posts('event')->publish ?? 0;
+$total_locs   = wp_count_posts('loc')->publish ?? 0;
+$total_djs    = wp_count_posts('dj')->publish ?? 0;
+
+$ver = defined('APOLLO_TEMPLATES_VERSION') ? APOLLO_TEMPLATES_VERSION : '6.0.0';
+$cdn = defined('APOLLO_CDN_URL') ? APOLLO_CDN_URL : 'https://cdn.apollo.rio.br/v1.0.0/';
+
+// Parts directory for persistent UI.
+$parts = plugin_dir_path(__FILE__) . 'template-parts/new-home/';
+
+if (function_exists('apollo_render_document_open')) {
+    apollo_render_document_open(
+        array(
+            'title' => get_bloginfo('name') . ' — Feed',
+        )
+    );
+} else {
+    ?>
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+    <?php
+}
+?>
+
+    <!-- Navbar v2 CSS/JS -->
+    <?php if (defined('APOLLO_TEMPLATES_URL')) : ?>
+        <link rel="stylesheet" href="<?php echo esc_url(APOLLO_TEMPLATES_URL . 'assets/css/navbar.v2.css'); ?>?v=<?php echo esc_attr($ver); ?>">
+        <script src="<?php echo esc_url(APOLLO_TEMPLATES_URL . 'assets/js/navbar.v2.js'); ?>?v=<?php echo esc_attr($ver); ?>" defer></script>
+    <?php endif; ?>
+
+    <style id="apollo-feed-styles">
+        /* ── Design tokens ── */
+        :root {
+            --feed-max: 680px;
+            --sidebar-w: 340px;
+            --feed-gap: 24px;
+            --radius-card: 14px;
+            --r-pill: 100px;
+            --ease-out: cubic-bezier(.22, 1, .36, 1);
+            --ease-spring: cubic-bezier(.34, 1.56, .64, 1);
+            --primary-rgb: 244, 95, 0;
+        }
+
+        /* ── Layout ── */
+        .feed-shell {
+            display: grid;
+            grid-template-columns: 1fr minmax(0, var(--feed-max)) var(--sidebar-w);
+            gap: var(--feed-gap);
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 80px 20px 40px;
+            min-height: 100vh;
+            min-height: 100dvh;
+        }
+
+        .feed-spacer {
+            display: block
+        }
+
+        .feed-main {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .feed-sidebar {
+            position: sticky;
+            top: 80px;
+            height: fit-content;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        @media (max-width: 1024px) {
+            .feed-shell {
+                grid-template-columns: 1fr;
+                max-width: var(--feed-max);
+            }
+
+            .feed-spacer,
+            .feed-sidebar {
+                display: none
+            }
+        }
+
+        /* ── Tab Bar ── */
+        .feed-tabs {
+            display: flex;
+            gap: 4px;
+            padding: 6px;
+            background: var(--surface, #f5f5f5);
+            border-radius: var(--r-pill);
+            margin-bottom: 20px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .feed-tabs::-webkit-scrollbar {
+            display: none
+        }
+
+        .feed-tab {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 16px;
+            border: none;
+            background: transparent;
+            border-radius: var(--r-pill);
+            font: 500 13px/1 var(--ff-main, system-ui);
+            color: var(--txt-muted, #666);
+            cursor: pointer;
+            transition: all .25s var(--ease-out);
+            white-space: nowrap;
+        }
+
+        .feed-tab i {
+            font-size: 16px
+        }
+
+        .feed-tab:hover {
+            color: var(----txt-color-hover, #111)
+        }
+
+        .feed-tab--active {
+            background: var(--bg, #fff);
+            color: var(----txt-color-hover, #111);
+            box-shadow: 0 1px 4px rgba(var(--rgb-d), .08);
+            font-weight: 600;
+        }
+
+        /* ── Tab Panels ── */
+        .feed-panel {
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .feed-panel--active {
+            display: flex
+        }
+
+        /* ── Compose Box ── */
+        .feed-compose {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            background: var(--surface, #f8f8f8);
+            border: 1px solid var(--border, #e5e5e5);
+            border-radius: var(--radius-card);
+        }
+
+        .feed-compose__avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .feed-compose__input {
+            flex: 1;
+            background: var(--bg, #fff);
+            border: 1px solid var(--border, #e5e5e5);
+            border-radius: var(--r-pill);
+            padding: 10px 16px;
+            font: 400 14px/1.4 var(--ff-main, system-ui);
+            color: var(----txt-color-hover, #111);
+            outline: none;
+            cursor: pointer;
+            transition: border-color .2s;
+        }
+
+        .feed-compose__input:hover,
+        .feed-compose__input:focus {
+            border-color: var(--primary, FF9820);
+        }
+
+        /* ── Post Card ── */
+        .post-card {
+            background: var(--surface, #f8f8f8);
+            border: 1px solid var(--border, #e5e5e5);
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            transition: transform .2s var(--ease-out), box-shadow .2s;
+        }
+
+        .post-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(var(--rgb-d), .06);
+        }
+
+        .post-card__head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 16px 0;
+        }
+
+        .post-card__avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .post-card__meta {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .post-card__name {
+            font: 600 14px/1.2 var(--ff-main, system-ui);
+            color: var(----txt-color-hover, #111);
+            margin: 0;
+        }
+
+        .post-card__time {
+            font: 400 12px/1 var(--ff-main, system-ui);
+            color: var(--txt-muted, #888);
+        }
+
+        .post-card__more {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: var(--txt-muted, #888);
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .post-card__body {
+            padding: 12px 16px;
+        }
+
+        .post-card__text {
+            font: 400 14px/1.6 var(--ff-main, system-ui);
+            color: var(----txt-color-hover, #111);
+            margin: 0;
+        }
+
+        .post-card__text a {
+            color: var(--primary, FF9820);
+            text-decoration: none;
+        }
+
+        /* ── Embeds (SoundCloud, Spotify, YouTube) ── */
+        .post-card__embed {
+            padding: 0 16px 4px;
+        }
+
+        .post-card__embed iframe {
+            width: 100%;
+            border: none;
+            border-radius: 12px;
+        }
+
+        .post-card__embed--sc iframe {
+            height: 166px
+        }
+
+        .post-card__embed--spotify iframe {
+            height: 152px
+        }
+
+        .post-card__embed--yt iframe {
+            aspect-ratio: 16/9;
+            height: auto
+        }
+
+        /* ── Post Image ── */
+        .post-card__image {
+            padding: 0 16px;
+        }
+
+        .post-card__image img {
+            width: 100%;
+            border-radius: 12px;
+            display: block;
+        }
+
+        /* ── Event Share Card ── */
+        .post-card__event {
+            margin: 0 16px;
+            background: var(--bg, #fff);
+            border: 1px solid var(--border, #e5e5e5);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .post-card__event-img {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+        }
+
+        .post-card__event-info {
+            padding: 12px 14px;
+        }
+
+        .post-card__event-title {
+            font: 600 14px/1.3 var(--ff-main, system-ui);
+            color: var(----txt-color-hover, #111);
+            margin: 0 0 4px;
+        }
+
+        .post-card__event-meta {
+            font: 400 12px/1.4 var(--ff-main, system-ui);
+            color: var(--txt-muted, #888);
+        }
+
+        /* ── Post Actions ── */
+        .post-card__actions {
+            display: flex;
+            gap: 0;
+            padding: 4px 8px;
+            border-top: 1px solid var(--border, #e5e5e5);
+        }
+
+        .post-card__action {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 0;
+            background: none;
+            border: none;
+            font: 400 13px/1 var(--ff-main, system-ui);
+            color: var(--txt-muted, #888);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background .15s, color .15s;
+        }
+
+        .post-card__action i {
+            font-size: 18px
+        }
+
+        .post-card__action:hover {
+            background: rgba(var(--primary-rgb), .08);
+            color: var(--primary, FF9820);
+        }
+
+        .post-card__action--active {
+            color: var(--primary, FF9820);
+        }
+
+        /* ── Sidebar Widgets ── */
+        .sw-box {
+            background: var(--surface, #f8f8f8);
+            border: 1px solid var(--border, #e5e5e5);
+            border-radius: var(--radius-card);
+            overflow: hidden;
+        }
+
+        .sw-box__head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px 10px;
+        }
+
+        .sw-box__title {
+            font: 700 13px/1 var(--ff-mono, monospace);
+            color: var(----txt-color-hover, #111);
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        .sw-box__link {
+            font: 500 11px/1 var(--ff-main, system-ui);
+            color: var(--primary, FF9820);
+            text-decoration: none;
+        }
+
+        .sw-box__link:hover {
+            text-decoration: underline
+        }
+
+        .sw-box__list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sw-box__item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-top: 1px solid var(--border, #e5e5e5);
+            transition: background .15s;
+            cursor: pointer;
+        }
+
+        .sw-box__item:hover {
+            background: rgba(var(--rgb-d), .02)
+        }
+
+        .sw-box__item-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(var(--primary-rgb), .1);
+            display: grid;
+            place-items: center;
+            font-size: 15px;
+            color: var(--primary, FF9820);
+            flex-shrink: 0;
+        }
+
+        .sw-box__item-text {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .sw-box__item-label {
+            font: 500 13px/1.3 var(--ff-main, system-ui);
+            color: var(----txt-color-hover, #111);
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .sw-box__item-sub {
+            font: 400 11px/1 var(--ff-main, system-ui);
+            color: var(--txt-muted, #888);
+        }
+
+        /* ── Stats Grid ── */
+        .sw-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--border, #e5e5e5);
+        }
+
+        .sw-stat {
+            background: var(--surface, #f8f8f8);
+            padding: 14px 16px;
+            text-align: center;
+        }
+
+        .sw-stat__num {
+            font: 800 20px/1 var(--ff-mono, monospace);
+            color: var(----txt-color-hover, #111);
+            display: block;
+        }
+
+        .sw-stat__label {
+            font: 400 10px/1 var(--ff-mono, monospace);
+            color: var(--txt-muted, #888);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            margin-top: 4px;
+            display: block;
+        }
+
+        /* ── Safety Modal ── */
+        .safety-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(var(--rgb-d), .6);
+            z-index: 9999;
+            display: none;
+            place-items: center;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+
+        .safety-overlay--open {
+            display: grid
+        }
+
+        .safety-modal {
+            background: var(--bg, #fff);
+            border-radius: 20px;
+            max-width: 420px;
+            width: 90%;
+            padding: 32px;
+            text-align: center;
+        }
+
+        .safety-modal__icon {
+            font-size: 40px;
+            color: var(--primary, FF9820);
+            margin-bottom: 12px;
+        }
+
+        .safety-modal__title {
+            font: 700 18px/1.3 var(--ff-main, system-ui);
+            color: var(----txt-color-hover, #111);
+            margin: 0 0 8px;
+        }
+
+        .safety-modal__text {
+            font: 400 14px/1.6 var(--ff-main, system-ui);
+            color: var(--txt-muted, #666);
+            margin: 0 0 20px;
+        }
+
+        .safety-modal__btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 28px;
+            background: var(--primary, FF9820);
+            color: #fff;
+            border: none;
+            border-radius: var(--r-pill);
+            font: 600 14px/1 var(--ff-main, system-ui);
+            cursor: pointer;
+            transition: transform .2s, opacity .2s;
+        }
+
+        .safety-modal__btn:hover {
+            transform: scale(1.04)
+        }
+
+        /* ── Empty state ── */
+        .feed-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .feed-empty__icon {
+            font-size: 48px;
+            color: var(--txt-muted, #ccc);
+        }
+
+        .feed-empty__title {
+            font: 600 16px/1.3 var(--ff-main, system-ui);
+            color: var(----txt-color-hover, #111);
+            margin: 0;
+        }
+
+        .feed-empty__desc {
+            font: 400 14px/1.5 var(--ff-main, system-ui);
+            color: var(--txt-muted, #888);
+            margin: 0;
+            max-width: 320px;
+        }
+
+        /* ── Trending Tags ── */
+        .sw-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 0 16px 14px;
+        }
+
+        .sw-tag {
+            font: 500 11px/1 var(--ff-mono, monospace);
+            color: var(--txt-muted, #888);
+            background: var(--bg, #fff);
+            border: 1px solid var(--border, #e5e5e5);
+            border-radius: var(--r-pill);
+            padding: 6px 12px;
+            text-decoration: none;
+            transition: all .15s;
+        }
+
+        .sw-tag:hover {
+            border-color: var(--primary, FF9820);
+            color: var(--primary, FF9820);
+        }
+    </style>
+
+    <!-- Apollo Social Scripts -->
+    <?php if (defined('APOLLO_SOCIAL_URL') && defined('APOLLO_SOCIAL_VERSION')) : ?>
+        <script src="<?php echo esc_url(APOLLO_SOCIAL_URL . 'assets/js/explore.js'); ?>?v=<?php echo esc_attr(APOLLO_SOCIAL_VERSION); ?>" defer></script>
+    <?php endif; ?>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            /* Init ApolloExplore */
+            if (typeof ApolloExplore !== 'undefined') {
+                ApolloExplore.init({
+                    rest: '<?php echo esc_js(rest_url('apollo/v1/feed')); ?>',
+                    nonce: '<?php echo esc_js(wp_create_nonce('wp_rest')); ?>',
+                    limit: 280,
+                    userId: <?php echo (int) $user_id; ?>
+                });
+            }
+        });
+    </script>
+
+<body>
+
+    <!-- ── Persistent UI ── -->
+    <?php
+    apollo_render_navbar();
+    if (file_exists($parts . 'menu-fab.php')) {
+        require $parts . 'menu-fab.php';
+    }
+    ?>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         FEED LAYOUT  — 3-column grid: spacer | main | sidebar
+    ═══════════════════════════════════════════════════════════════ -->
+    <div class="feed-shell">
+
+        <div class="feed-spacer"></div>
+
+        <!-- ── MAIN COLUMN ── -->
+        <div class="feed-main">
+
+            <!-- Tab Bar -->
+            <nav class="feed-tabs" role="tablist">
+                <button class="feed-tab feed-tab--active" role="tab" data-tab="feed" aria-selected="true">
+                    <i class="ri-newspaper-line"></i> Feed
+                </button>
+                <button class="feed-tab" role="tab" data-tab="event" aria-selected="false">
+                    <i class="ri-calendar-event-line"></i> Eventos
+                </button>
+                <button class="feed-tab" role="tab" data-tab="comuna" aria-selected="false">
+                    <i class="ri-group-line"></i> Comuna
+                </button>
+                <button class="feed-tab" role="tab" data-tab="market" aria-selected="false">
+                    <i class="ri-store-2-line"></i> Market
+                </button>
+                <button class="feed-tab" role="tab" data-tab="favs" aria-selected="false">
+                    <i class="ri-heart-3-line"></i> Favs
+                </button>
+                <button class="feed-tab" role="tab" data-tab="settings" aria-selected="false">
+                    <i class="ri-compasses-2-line"></i> Config
+                </button>
+            </nav>
+
+            <!-- ════════════ TAB: FEED ════════════ -->
+            <div class="feed-panel feed-panel--active" data-tab-panel="feed">
+
+                <!-- Compose Box -->
+                <?php
+                $char_limit = 280;
+                $avatar     = $avatar_url;
+                include plugin_dir_path(__FILE__) . '../../apollo-social/templates/parts/compose-box.php';
+                ?>
+
+                <!-- Dynamic Social Feed -->
+                <div id="feed-container" class="feed-container">
+                    <?php echo do_shortcode('[apollo_feed limit="20"]'); ?>
+                </div>
+
+                <!-- Load More Button -->
+                <div class="feed-load-more" style="text-align: center; margin: 20px 0; display: none;">
+                    <button class="btn btn-secondary" id="loadMoreFeed">
+                        <i class="ri-refresh-line"></i> Carregar mais
+                    </button>
+                </div>
+
+            <!-- ════════════ TAB: EVENTOS ════════════ -->
+            <div class="feed-panel" data-tab-panel="event">
+                <?php if (! empty($upcoming_events)) : ?>
+                    <?php foreach ($upcoming_events as $ev) :
+                        $ev_date  = get_post_meta($ev->ID, '_event_start_date', true);
+                        $ev_loc   = get_post_meta($ev->ID, '_event_loc_id', true);
+                        $loc_name = $ev_loc ? get_the_title((int) $ev_loc) : '';
+                        $ev_thumb = get_the_post_thumbnail_url($ev->ID, 'medium_large');
+                    ?>
+                        <article class="post-card">
+                            <div class="post-card__event">
+                                <?php if ($ev_thumb) : ?>
+                                    <img src="<?php echo esc_url($ev_thumb); ?>" alt="" class="post-card__event-img">
+                                <?php endif; ?>
+                                <div class="post-card__event-info">
+                                    <h4 class="post-card__event-title"><?php echo esc_html($ev->post_title); ?></h4>
+                                    <span class="post-card__event-meta">
+                                        <?php if ($ev_date) : ?>
+                                            <i class="ri-calendar-line"></i> <?php echo esc_html(date_i18n('d M Y', strtotime($ev_date))); ?>
+                                        <?php endif; ?>
+                                        <?php if ($loc_name) : ?>
+                                            &bull; <i class="ri-map-pin-line"></i> <?php echo esc_html($loc_name); ?>
+                                        <?php endif; ?>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="post-card__actions">
+                                <button class="post-card__action"><i class="ri-heart-3-line"></i> Fav</button>
+                                <button class="post-card__action"><i class="ri-share-forward-line"></i> Share</button>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+                <?php else : ?>
+                    <div class="feed-empty">
+                        <i class="feed-empty__icon ri-calendar-todo-line"></i>
+                        <h3 class="feed-empty__title">Sem eventos próximos</h3>
+                        <p class="feed-empty__desc">Novos eventos serão listados aqui em breve.</p>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- ════════════ TAB: COMUNA ════════════ -->
+            <div class="feed-panel" data-tab-panel="comuna">
+                <div class="feed-empty">
+                    <i class="feed-empty__icon ri-group-line"></i>
+                    <h3 class="feed-empty__title">Comuna</h3>
+                    <p class="feed-empty__desc">Grupos e núcleos da comunidade. Em breve.</p>
+                </div>
+            </div>
+
+            <!-- ════════════ TAB: MARKET ════════════ -->
+            <div class="feed-panel" data-tab-panel="market">
+                <?php if (! empty($market_items)) : ?>
+                    <?php foreach ($market_items as $item) :
+                        $price = get_post_meta($item->ID, '_classified_price', true);
+                    ?>
+                        <article class="post-card">
+                            <div class="post-card__head">
+                                <img src="<?php echo esc_url(get_avatar_url($item->post_author, array('size' => 80))); ?>" alt="" class="post-card__avatar">
+                                <div class="post-card__meta">
+                                    <p class="post-card__name"><?php echo esc_html(get_the_author_meta('display_name', $item->post_author)); ?></p>
+                                    <span class="post-card__time"><?php echo esc_html(human_time_diff(strtotime($item->post_date), current_time('timestamp'))); ?></span>
+                                </div>
+                            </div>
+                            <div class="post-card__body">
+                                <p class="post-card__text">
+                                    <strong><?php echo esc_html($item->post_title); ?></strong>
+                                    <?php if ($price) : ?>
+                                        — R$ <?php echo esc_html($price); ?>
+                                    <?php endif; ?>
+                                </p>
+                            </div>
+                            <div class="post-card__actions">
+                                <button class="post-card__action"><i class="ri-message-3-line"></i> Contato</button>
+                                <button class="post-card__action"><i class="ri-share-forward-line"></i> Share</button>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+                <?php else : ?>
+                    <div class="feed-empty">
+                        <i class="feed-empty__icon ri-store-2-line"></i>
+                        <h3 class="feed-empty__title">Market vazio</h3>
+                        <p class="feed-empty__desc">Ingressos e classificados aparecerão aqui.</p>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- ════════════ TAB: FAVS ════════════ -->
+            <div class="feed-panel" data-tab-panel="favs">
+                <?php if (! empty($fav_events)) : ?>
+                    <?php foreach ($fav_events as $ev) :
+                        $ev_date  = get_post_meta($ev->ID, '_event_start_date', true);
+                        $ev_thumb = get_the_post_thumbnail_url($ev->ID, 'medium_large');
+                    ?>
+                        <article class="post-card">
+                            <div class="post-card__event">
+                                <?php if ($ev_thumb) : ?>
+                                    <img src="<?php echo esc_url($ev_thumb); ?>" alt="" class="post-card__event-img">
+                                <?php endif; ?>
+                                <div class="post-card__event-info">
+                                    <h4 class="post-card__event-title"><?php echo esc_html($ev->post_title); ?></h4>
+                                    <span class="post-card__event-meta">
+                                        <?php if ($ev_date) : ?>
+                                            <i class="ri-calendar-line"></i> <?php echo esc_html(date_i18n('d M Y', strtotime($ev_date))); ?>
+                                        <?php endif; ?>
+                                    </span>
+                                </div>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+                <?php else : ?>
+                    <div class="feed-empty">
+                        <i class="feed-empty__icon ri-heart-3-line"></i>
+                        <h3 class="feed-empty__title">Nenhum favorito</h3>
+                        <p class="feed-empty__desc">Marque eventos como favorito para acompanhar aqui.</p>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- ════════════ TAB: SETTINGS ════════════ -->
+            <div class="feed-panel" data-tab-panel="settings">
+                <div class="post-card">
+                    <div class="post-card__body">
+                        <p class="post-card__text">
+                            <i class="ri-user-line"></i>
+                            <strong><?php echo esc_html($display_name); ?></strong><br>
+                            <span style="color:var(--txt-muted)"><?php echo esc_html($current_user->user_email); ?></span>
+                        </p>
+                        <p class="post-card__text" style="margin-top:12px">
+                            <i class="ri-map-pin-line"></i> <?php echo esc_html($user_location); ?>
+                        </p>
+                        <?php if (! empty($sound_tags)) : ?>
+                            <p class="post-card__text" style="margin-top:12px">
+                                <i class="ri-music-2-line"></i>
+                                <?php echo esc_html(implode(', ', $sound_tags)); ?>
+                            </p>
+                        <?php endif; ?>
+                        <p style="margin-top:20px">
+                            <a href="<?php echo esc_url(home_url('/id/' . $current_user->user_login)); ?>" style="color:var(--primary);font-weight:600;text-decoration:none">
+                                <i class="ri-external-link-line"></i> Ver Perfil
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- .feed-main -->
+
+        <!-- ── SIDEBAR ── -->
+        <aside class="feed-sidebar">
+
+            <!-- News -->
+            <?php if (! empty($news_posts)) : ?>
+                <div class="sw-box">
+                    <div class="sw-box__head">
+                        <span class="sw-box__title">Notícias</span>
+                        <a href="<?php echo esc_url(home_url('/blog')); ?>" class="sw-box__link">Ver tudo</a>
+                    </div>
+                    <ul class="sw-box__list">
+                        <?php foreach ($news_posts as $np) : ?>
+                            <li class="sw-box__item">
+                                <div class="sw-box__item-icon"><i class="ri-newspaper-line"></i></div>
+                                <div class="sw-box__item-text">
+                                    <span class="sw-box__item-label"><?php echo esc_html($np->post_title); ?></span>
+                                    <span class="sw-box__item-sub"><?php echo esc_html(human_time_diff(strtotime($np->post_date), current_time('timestamp'))); ?> atrás</span>
+                                </div>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
+
+            <!-- Upcoming Events -->
+            <?php if (! empty($upcoming_events)) : ?>
+                <div class="sw-box">
+                    <div class="sw-box__head">
+                        <span class="sw-box__title">Eventos</span>
+                        <a href="<?php echo esc_url(home_url('/eventos')); ?>" class="sw-box__link">Todos</a>
+                    </div>
+                    <ul class="sw-box__list">
+                        <?php foreach (array_slice($upcoming_events, 0, 4) as $ev) :
+                            $ev_date = get_post_meta($ev->ID, '_event_start_date', true);
+                        ?>
+                            <li class="sw-box__item">
+                                <div class="sw-box__item-icon"><i class="ri-calendar-event-line"></i></div>
+                                <div class="sw-box__item-text">
+                                    <span class="sw-box__item-label"><?php echo esc_html($ev->post_title); ?></span>
+                                    <?php if ($ev_date) : ?>
+                                        <span class="sw-box__item-sub"><?php echo esc_html(date_i18n('d M', strtotime($ev_date))); ?></span>
+                                    <?php endif; ?>
+                                </div>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
+
+            <!-- Trending -->
+            <div class="sw-box">
+                <div class="sw-box__head">
+                    <span class="sw-box__title">Trending</span>
+                </div>
+                <div class="sw-tags">
+                    <?php
+                    $trending = get_terms(array(
+                        'taxonomy'   => 'sound',
+                        'number'     => 8,
+                        'orderby'    => 'count',
+                        'order'      => 'DESC',
+                        'hide_empty' => true,
+                    ));
+                    if (! is_wp_error($trending) && ! empty($trending)) :
+                        foreach ($trending as $tag) :
+                    ?>
+                            <a href="#" class="sw-tag">#<?php echo esc_html($tag->name); ?></a>
+                        <?php
+                        endforeach;
+                    else :
+                        ?>
+                        <a href="#" class="sw-tag">#techno</a>
+                        <a href="#" class="sw-tag">#house</a>
+                        <a href="#" class="sw-tag">#dnb</a>
+                        <a href="#" class="sw-tag">#trance</a>
+                        <a href="#" class="sw-tag">#afrohouse</a>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Community Stats -->
+            <div class="sw-box">
+                <div class="sw-box__head">
+                    <span class="sw-box__title">Comunidade</span>
+                </div>
+                <div class="sw-stats">
+                    <div class="sw-stat">
+                        <span class="sw-stat__num"><?php echo esc_html(number_format_i18n($total_users['total_users'])); ?></span>
+                        <span class="sw-stat__label">Membros</span>
+                    </div>
+                    <div class="sw-stat">
+                        <span class="sw-stat__num"><?php echo esc_html(number_format_i18n($total_events)); ?></span>
+                        <span class="sw-stat__label">Eventos</span>
+                    </div>
+                    <div class="sw-stat">
+                        <span class="sw-stat__num"><?php echo esc_html(number_format_i18n($total_locs)); ?></span>
+                        <span class="sw-stat__label">Locais</span>
+                    </div>
+                    <div class="sw-stat">
+                        <span class="sw-stat__num"><?php echo esc_html(number_format_i18n($total_djs)); ?></span>
+                        <span class="sw-stat__label">DJs</span>
+                    </div>
+                </div>
+            </div>
+
+        </aside>
+
+    </div><!-- .feed-shell -->
+
+    <!-- ── Safety Modal ── -->
+    <div class="safety-overlay" id="safetyModal">
+        <div class="safety-modal">
+            <div class="safety-modal__icon"><i class="ri-shield-check-line"></i></div>
+            <h2 class="safety-modal__title">Segurança primeiro</h2>
+            <p class="safety-modal__text">
+                O Apollo preza pela segurança da comunidade. Nunca compartilhe dados pessoais
+                com desconhecidos e reporte qualquer comportamento suspeito.
+            </p>
+            <button class="safety-modal__btn" id="safetyClose">
+                <i class="ri-check-line"></i> Entendi
+            </button>
+        </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         SCRIPTS
+    ═══════════════════════════════════════════════════════════════ -->
+    <script>
+        (function() {
+            'use strict';
+
+            /* ── Tab switching ── */
+            var tabs = document.querySelectorAll('.feed-tab');
+            var panels = document.querySelectorAll('.feed-panel');
+
+            tabs.forEach(function(tab) {
+                tab.addEventListener('click', function() {
+                    var target = this.getAttribute('data-tab');
+
+                    tabs.forEach(function(t) {
+                        t.classList.remove('feed-tab--active');
+                        t.setAttribute('aria-selected', 'false');
+                    });
+                    this.classList.add('feed-tab--active');
+                    this.setAttribute('aria-selected', 'true');
+
+                    panels.forEach(function(p) {
+                        p.classList.toggle('feed-panel--active', p.getAttribute('data-tab-panel') === target);
+                    });
+                });
+            });
+
+            /* ── Safety modal (show once per session) ── */
+            var modal = document.getElementById('safetyModal');
+            var closeBtn = document.getElementById('safetyClose');
+            if (modal && closeBtn && !sessionStorage.getItem('apollo_safety_seen')) {
+                setTimeout(function() {
+                    modal.classList.add('safety-overlay--open');
+                }, 3000);
+                closeBtn.addEventListener('click', function() {
+                    modal.classList.remove('safety-overlay--open');
+                    sessionStorage.setItem('apollo_safety_seen', '1');
+                });
+            }
+
+            /* ── Scroll detection for navbar ── */
+            var nav = document.getElementById('nhNav');
+            if (nav) {
+                var sTick = false;
+                window.addEventListener('scroll', function() {
+                    if (!sTick) {
+                        requestAnimationFrame(function() {
+                            nav.classList.toggle('scrolled', window.scrollY > 20);
+                            sTick = false;
+                        });
+                        sTick = true;
+                    }
+                }, {
+                    passive: true
+                });
+                if (window.scrollY > 20) nav.classList.add('scrolled');
+            }
+
+            /* ── GSAP entrance animations (if available from CDN) ── */
+            if (typeof gsap !== 'undefined') {
+                gsap.from('.feed-tabs', {
+                    y: -20,
+                    opacity: 0,
+                    duration: 0.5,
+                    ease: 'power2.out'
+                });
+                gsap.from('.post-card, .feed-compose', {
+                    y: 30,
+                    opacity: 0,
+                    duration: 0.5,
+                    stagger: 0.1,
+                    ease: 'power2.out',
+                    delay: 0.2
+                });
+                gsap.from('.sw-box', {
+                    x: 30,
+                    opacity: 0,
+                    duration: 0.5,
+                    stagger: 0.1,
+                    ease: 'power2.out',
+                    delay: 0.3
+                });
+            }
+        })();
+    </script>
+
+    <?php
+    do_action('apollo/feed/after_content');
+    /* Canvas Mode — NO wp_footer() to prevent theme interference */
+    ?>
+
+</body>
+
+</html>

@@ -1,0 +1,136 @@
+/**
+ * Apollo Admin — Sidebar
+ */
+
+.apollo-admin-sidebar {
+    width: var(--apollo-sidebar-w);
+    min-width: var(--apollo-sidebar-w);
+    background: var(--apollo-card-bg);
+    border-right: 1px solid var(--apollo-border);
+    padding: 12px 0;
+    overflow-y: auto;
+    max-height: 80dvh;
+}
+
+.apollo-layer-header {
+    padding: 10px 16px 4px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--apollo-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.apollo-layer-header:first-child {
+    margin-top: 0;
+}
+
+.apollo-layer-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--apollo-primary-light);
+    color: var(--apollo-primary);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 9px;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+.apollo-tab-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    text-decoration: none;
+    color: var(--apollo-text);
+    font-size: 13px;
+    font-weight: 500;
+    transition: all .15s ease;
+    border-left: 3px solid transparent;
+    position: relative;
+}
+
+.apollo-tab-link:hover {
+    background: var(--apollo-primary-light);
+    color: var(--apollo-primary);
+    text-decoration: none;
+}
+
+.apollo-tab-link:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 1px var(--apollo-primary);
+}
+
+.apollo-tab-link.active {
+    background: var(--apollo-primary-light);
+    color: var(--apollo-primary);
+    border-left-color: var(--apollo-primary);
+    font-weight: 600;
+}
+
+.apollo-tab-link.not-installed {
+    opacity: .5;
+}
+
+.apollo-tab-link.not-installed:hover {
+    opacity: .8;
+}
+
+.apollo-tab-link .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: inherit;
+    opacity: .7;
+}
+
+.apollo-tab-label {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.apollo-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.apollo-status-dot.active {
+    background: var(--apollo-success);
+    box-shadow: 0 0 0 2px rgba(34,197,94,.2);
+}
+
+.apollo-status-dot.installed {
+    background: var(--apollo-warning);
+}
+
+.apollo-status-dot.missing {
+    background: var(--apollo-border);
+}
+
+/* Scrollbar */
+.apollo-admin-sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.apollo-admin-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.apollo-admin-sidebar::-webkit-scrollbar-thumb {
+    background: var(--apollo-border);
+    border-radius: 4px;
+}
+
+.apollo-admin-sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--apollo-muted);
+}

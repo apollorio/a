@@ -1,0 +1,117 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-lux-panels",
+    "owner": "apollo-lux-panels",
+    "wrap": "plugins.apollo-lux-panels",
+    "source": "scanned from disk 2026-07-28",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-lux-panels",
+  "namespace": "Apollo\\LuxPanels",
+  "priority": 60,
+  "status": "IMPLEMENTED",
+  "version": "1.0.1",
+  "description": "Luxury-grade advanced data panels for the event, dj and local CPTs — one high-priority tabbed metabox per CPT, 1:1 with the Apollo add-new form design system.",
+  "dependencies": [
+    "apollo-core",
+    "apollo-events"
+  ],
+  "provides": [
+    "admin metaboxes for event/dj/local",
+    "coauthor multi-select picker"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [],
+  "consumes_cpts": [
+    "event",
+    "dj",
+    "local"
+  ],
+  "consumes_taxonomies": [
+    "sound",
+    "event_season"
+  ],
+  "meta": {
+    "owns": [],
+    "writes": [
+      "_event_dj_ids",
+      "_event_dj_slots"
+    ],
+    "note": "Owns no meta — it is an INPUT SURFACE writing meta owned by apollo-events / apollo-djs / apollo-loc."
+  },
+  "rest": {
+    "namespace": null,
+    "routes": []
+  },
+  "pages": [],
+  "shortcodes": [],
+  "ajax": [],
+  "cron": [],
+  "hooks_fired": [
+    "apollo/lux/saved"
+  ],
+  "hooks_listened": [
+    "plugins_loaded",
+    "add_meta_boxes",
+    "save_post_event",
+    "save_post_dj",
+    "save_post_local",
+    "admin_enqueue_scripts",
+    "admin_head"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "css": [
+      "assets/lux-panel.css"
+    ],
+    "js": [
+      "assets/lux-panel.js"
+    ]
+  },
+  "options": [],
+  "rewrite_rules": [],
+  "query_vars": [],
+  "security": {
+    "nonce": "save_post capability + nonce guarded",
+    "open_rest": 0
+  },
+  "canvas_contract": {
+    "variant": "none",
+    "action": "VERIFIED",
+    "shape": "admin-only",
+    "audited": "2026-07-28",
+    "ref": "admin metabox surface — emits no <body>, no canvas involvement"
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 5,
+    "php_loc": 1026,
+    "rest_routes_found": 0,
+    "cpts_found": [],
+    "tables_found": [],
+    "shortcodes_found": []
+  },
+  "$provenance": "Added 2026-07-28 — real plugin on disk that the registry never recorded.",
+  "$field_parity_2026_07_28": {
+    "closed_gap": [
+      "_dj_name",
+      "_dj_statement",
+      "_dj_original_project_1",
+      "_dj_original_project_2",
+      "_dj_original_project_3"
+    ],
+    "reason": "These 5 fields existed only in the now-retired apollo-djs Admin\\Metabox; added to DjPanel's Identidade card so lux-panels has 100% field parity before that metabox was disabled."
+  },
+  "$new_field_type": {
+    "name": "repeater_card",
+    "added_in": "includes/Panel.php (render_repeater_card / save_repeater_card)",
+    "purpose": "Repeater whose row is a mini-card of many sub-fields (vs. render_repeater()'s single flat-column row) — needed once a schema outgrows ~5 columns, e.g. _dj_tracks v2 (14 fields/row). Reuses the same .field/.apollo-input/.cover-upload primitives as every other field type — no new visual language.",
+    "opts_contract": {
+      "fields": "array of {name,label,type,ph} — type: text|url|number|date|media_single",
+      "sanitize_callback": "optional callable(array $rows): array, run on the assembled rows before update_post_meta() — lets the owning plugin enforce its own validation (e.g. apollo_dj_sanitize_tracks_meta) in one place."
+    },
+    "first_consumer": "DjPanel.php — _dj_tracks (schema v2)"
+  }
+}

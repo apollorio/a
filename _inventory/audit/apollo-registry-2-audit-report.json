@@ -1,0 +1,1269 @@
+{
+  "generated": "2026-07-20",
+  "out": "D:\\dev\\_apollo.rio.br\\plugins\\_inventory\\apollo-registry-2.json",
+  "summary": {
+    "total_plugins": 45,
+    "total_cpts": 16,
+    "total_taxonomies": 18,
+    "total_tables": 77,
+    "total_rest_endpoints": 350,
+    "total_pages": 73,
+    "total_shortcodes": 153,
+    "status_breakdown": {
+      "IMPLEMENTED": 39,
+      "DEPRECATED": 2,
+      "LOCKED_NEXT_VERSION": 2,
+      "PLANNED": 2
+    },
+    "plugins_in_workspace_audited": 39,
+    "plugins_missing_on_disk": 0,
+    "plugins_new_vs_old_registry": 3,
+    "plugins_version_changed": 11,
+    "target_audit_count": 39,
+    "completion_percentage": "87%",
+    "registry_version": "6.6.1",
+    "last_updated": "2026-07-20",
+    "last_deep_investigation": "2026-07-20",
+    "audit_mode": "FULL_TECHNICAL_LIVE_SCAN",
+    "note": "summary recounts after live audit of 39 target plugins; non-target plugins preserved from source registry."
+  },
+  "reports": [
+    {
+      "slug": "apollo-admin",
+      "status": "AUDITED",
+      "version": "1.0.2",
+      "namespace": "Apollo\\{Namespace}",
+      "php_files": 123,
+      "php_loc_approx": 16062,
+      "rest": 18,
+      "cpts": [],
+      "taxonomies": [],
+      "tables": [],
+      "shortcodes": [],
+      "ajax_count": 4,
+      "cron": [],
+      "dependencies": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-adverts",
+      "status": "AUDITED",
+      "version": "1.0.2",
+      "namespace": "Apollo\\Adverts",
+      "php_files": 52,
+      "php_loc_approx": 10925,
+      "rest": 5,
+      "cpts": [
+        "classified",
+        "event"
+      ],
+      "taxonomies": [],
+      "tables": [],
+      "shortcodes": [
+        "apollo_classified",
+        "apollo_classified_form",
+        "apollo_classifieds",
+        "apollo_classifieds_rent_space",
+        "apollo_classifieds_sell_ticket",
+        "apollo_related_classifieds"
+      ],
+      "ajax_count": 7,
+      "cron": [],
+      "dependencies": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-calendar",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Calendar",
+      "php_files": 16,
+      "php_loc_approx": 2883,
+      "rest": 5,
+      "cpts": [
+        "appointment"
+      ],
+      "taxonomies": [],
+      "tables": [],
+      "shortcodes": [],
+      "ajax_count": 0,
+      "cron": [
+        "yearly"
+      ],
+      "dependencies": [
+        "apollo-core"
+      ],
+      "new_plugin": true,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-chat",
+      "status": "AUDITED",
+      "version": "2.0.1",
+      "namespace": "Apollo\\Chat",
+      "php_files": 9,
+      "php_loc_approx": 4272,
+      "rest": 29,
+      "cpts": [],
+      "taxonomies": [],
+      "tables": [
+        "apollo_chat_attachments",
+        "apollo_chat_blocks",
+        "apollo_chat_messages",
+        "apollo_chat_participants",
+        "apollo_chat_presence",
+        "apollo_chat_threads",
+        "apollo_chat_typing"
+      ],
+      "shortcodes": [],
+      "ajax_count": 0,
+      "cron": [],
+      "dependencies": [
+        "apollo-core",
+        "apollo-notif",
+        "apollo-users"
+      ],
+      "new_plugin": false,
+      "version_changed": true,
+      "old_version": "2.0.0"
+    },
+    {
+      "slug": "apollo-coauthor",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\CoAuthor",
+      "php_files": 18,
+      "php_loc_approx": 3707,
+      "rest": 3,
+      "cpts": [],
+      "taxonomies": [
+        "coauthor"
+      ],
+      "tables": [],
+      "shortcodes": [
+        "apollo_coauthor_count",
+        "apollo_coauthors"
+      ],
+      "ajax_count": 0,
+      "cron": [],
+      "dependencies": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-comment",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Comment",
+      "php_files": 10,
+      "php_loc_approx": 1659,
+      "rest": 2,
+      "cpts": [],
+      "taxonomies": [],
+      "tables": [],
+      "shortcodes": [
+        "apollo_depoimento_form",
+        "apollo_depoimentos"
+      ],
+      "ajax_count": 0,
+      "cron": [],
+      "dependencies": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-core",
+      "status": "AUDITED",
+      "version": "6.2.3",
+      "namespace": "Apollo\\Core",
+      "php_files": 63,
+      "php_loc_approx": 18781,
+      "rest": 19,
+      "cpts": [],
+      "taxonomies": [],
+      "tables": [
+        "apollo_audit_log",
+        "apollo_remind_telegram"
+      ],
+      "shortcodes": [],
+      "ajax_count": 0,
+      "cron": [
+        "five_minutes"
+      ],
+      "dependencies": [
+        "apollo-pane-engine"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-dashboard",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Dashboard",
+      "php_files": 16,
+      "php_loc_approx": 4358,
+      "rest": 4,
+      "cpts": [
+        "event"
+      ],
+      "taxonomies": [],
+      "tables": [
+        "apollo_accommodations",
+        "apollo_activity",
+        "apollo_connections",
+        "apollo_favs",
+        "apollo_group_members",
+        "apollo_groups",
+        "apollo_resale"
+      ],
+      "shortcodes": [
+        "apollo_dashboard",
+        "apollo_dashboard_menu"
+      ],
+      "ajax_count": 0,
+      "cron": [],
+      "dependencies": [
+        "apollo-core",
+        "apollo-templates",
+        "apollo-users"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-dj-sync",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\DJSync",
+      "php_files": 5,
+      "php_loc_approx": 765,
+      "rest": 1,
+      "cpts": [],
+      "taxonomies": [],
+      "tables": [],
+      "shortcodes": [],
+      "ajax_count": 0,
+      "cron": [],
+      "dependencies": [
+        "apollo-core",
+        "apollo-login",
+        "apollo-users"
+      ],
+      "new_plugin": false,
+      "version_changed": true,
+      "old_version": "1.0.0"
+    },
+    {
+      "slug": "apollo-djs",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\DJs",
+      "php_files": 45,
+      "php_loc_approx": 6112,
+      "rest": 5,
+      "cpts": [
+        "dj",
+        "event"
+      ],
+      "taxonomies": [
+        "sound"
+      ],
+      "tables": [],
+      "shortcodes": [
+        "apollo_add_dj",
+        "apollo_dj",
+        "apollo_dj_carousel",
+        "apollo_djs"
+      ],
+      "ajax_count": 1,
+      "cron": [],
+      "dependencies": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-docs",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Docs",
+      "php_files": 13,
+      "php_loc_approx": 2709,
+      "rest": 8,
+      "cpts": [
+        "doc"
+      ],
+      "taxonomies": [
+        "doc_folder",
+        "doc_type"
+      ],
+      "tables": [
+        "apollo_doc_downloads",
+        "apollo_doc_versions"
+      ],
+      "shortcodes": [],
+      "ajax_count": 1,
+      "cron": [],
+      "dependencies": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": true,
+      "old_version": "1.0.0"
+    },
+    {
+      "slug": "apollo-elementor",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\ElementorAE",
+      "php_files": 48,
+      "php_loc_approx": 3862,
+      "rest": 0,
+      "cpts": [
+        "appointment"
+      ],
+      "taxonomies": [],
+      "tables": [],
+      "shortcodes": [],
+      "ajax_count": 0,
+      "cron": [],
+      "dependencies": [
+        "apollo-core",
+        "elementor"
+      ],
+      "new_plugin": false,
+      "version_changed": true,
+      "old_version": "1.0.0"
+    },
+    {
+      "slug": "apollo-elementor-pro",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Elementor",
+      "php_files": 23,
+      "php_loc_approx": 1712,
+      "rest": 0,
+      "cpts": [],
+      "taxonomies": [],
+      "tables": [],
+      "shortcodes": [],
+      "ajax_count": 0,
+      "cron": [],
+      "dependencies": [
+        "apollo-core"
+      ],
+      "new_plugin": true,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-email",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Email",
+      "php_files": 46,
+      "php_loc_approx": 10797,
+      "rest": 16,
+      "cpts": [
+        "email_aprio"
+      ],
+      "taxonomies": [],
+      "tables": [
+        "apollo_cron_execution_log",
+        "apollo_email_log",
+        "apollo_email_queue",
+        "apollo_newsletter_campaigns",
+        "apollo_newsletter_subscribers"
+      ],
+      "shortcodes": [
+        "apollo_email_prefs",
+        "apollo_newsletter"
+      ],
+      "ajax_count": 0,
+      "cron": [
+        "apollo_five_minutes"
+      ],
+      "dependencies": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-events",
+      "status": "AUDITED",
+      "version": "1.4.0",
+      "namespace": "Apollo\\Event",
+      "php_files": 94,
+      "php_loc_approx": 16930,
+      "rest": 24,
+      "cpts": [
+        "classified",
+        "dj",
+        "event",
+        "loc",
+        "local"
+      ],
+      "taxonomies": [
+        "event_category",
+        "event_tag",
+        "event_type",
+        "season",
+        "sound"
+      ],
+      "tables": [
+        "apollo_event_rsvp"
+      ],
+      "shortcodes": [
+        "a-eve",
+        "apollo_calendar",
+        "apollo_cena_submit_event",
+        "apollo_event",
+        "apollo_event_form",
+        "apollo_events"
+      ],
+      "ajax_count": 1,
+      "cron": [
+        "every_five_minutes"
+      ],
+      "dependencies": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-fav",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Fav",
+      "php_files": 11,
+      "php_loc_approx": 3988,
+      "rest": 3,
+      "cpts": [],
+      "taxonomies": [],
+      "tables": [
+        "apollo_activity",
+        "apollo_connections",
+        "apollo_favs"
+      ],
+      "shortcodes": [
+        "apollo_fav",
+        "apollo_fav_dashboard",
+        "apollo_interesse_dashboard",
+        "apollo_my_favs",
+        "apollo_top_sounds"
+      ],
+      "ajax_count": 4,
+      "cron": [],
+      "dependencies": [
+        "apollo-core",
+        "apollo-event",
+        "apollo-events",
+        "apollo-social",
+        "apollo-users"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-gestor",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Gestor",
+      "php_files": 46,
+      "php_loc_approx": 6890,
+      "rest": 0,
+      "cpts": [
+        "event",
+        "supplier"
+      ],
+      "taxonomies": [],
+      "tables": [
+        "apollo_gestor_activity",
+        "apollo_gestor_income",
+        "apollo_gestor_milestones",
+        "apollo_gestor_payments",
+        "apollo_gestor_reminder_log",
+        "apollo_gestor_staff",
+        "apollo_gestor_tasks",
+        "apollo_gestor_team"
+      ],
+      "shortcodes": [],
+      "ajax_count": 2,
+      "cron": [
+        "apollo_five_minutes"
+      ],
+      "dependencies": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": true,
+      "old_version": "1.0.0"
+    },
+    {
+      "slug": "apollo-groups",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Groups",
+      "php_files": 43,
+      "php_loc_approx": 5712,
+      "rest": 24,
+      "cpts": [],
+      "taxonomies": [],
+      "tables": [
+        "apollo_activity",
+        "apollo_group_members",
+        "apollo_group_meta",
+        "apollo_groups",
+        "apollo_social_posts"
+      ],
+      "shortcodes": [
+        "apollo_create_comuna",
+        "apollo_create_nucleo",
+        "apollo_group",
+        "apollo_groups",
+        "apollo_my_groups"
+      ],
+      "ajax_count": 0,
+      "cron": [],
+      "dependencies": [
+        "apollo-core",
+        "apollo-templates",
+        "apollo-users"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-hub",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Hub",
+      "php_files": 31,
+      "php_loc_approx": 4970,
+      "rest": 6,
+      "cpts": [
+        "event",
+        "hub"
+      ],
+      "taxonomies": [],
+      "tables": [],
+      "shortcodes": [
+        "apollo_hub",
+        "apollo_hub_builder"
+      ],
+      "ajax_count": 0,
+      "cron": [],
+      "dependencies": [
+        "apollo-core",
+        "apollo-users"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-journal",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Journal",
+      "php_files": 16,
+      "php_loc_approx": 4517,
+      "rest": 3,
+      "cpts": [
+        "journal_news",
+        "journal_nota"
+      ],
+      "taxonomies": [],
+      "tables": [],
+      "shortcodes": [
+        "apollo_add_news",
+        "apollo_add_nrep",
+        "apollo_journal",
+        "apollo_journal_card",
+        "apollo_journal_marquee"
+      ],
+      "ajax_count": 0,
+      "cron": [
+        "apollo_journal_retry_nrep"
+      ],
+      "dependencies": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-loc",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Local",
+      "php_files": 63,
+      "php_loc_approx": 8755,
+      "rest": 2,
+      "cpts": [
+        "dj",
+        "event",
+        "local"
+      ],
+      "taxonomies": [
+        "local_area",
+        "local_type"
+      ],
+      "tables": [],
+      "shortcodes": [
+        "apollo_add_loc",
+        "apollo_local",
+        "apollo_locals",
+        "apollo_map"
+      ],
+      "ajax_count": 0,
+      "cron": [],
+      "dependencies": [
+        "apollo-core",
+        "apollo-templates"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-login",
+      "status": "AUDITED",
+      "version": "1.0.41",
+      "namespace": "Apollo\\Login",
+      "php_files": 53,
+      "php_loc_approx": 14933,
+      "rest": 26,
+      "cpts": [],
+      "taxonomies": [],
+      "tables": [
+        "apollo_app_activity",
+        "apollo_jwt_refresh",
+        "apollo_login_attempts",
+        "apollo_quiz_results",
+        "apollo_simon_scores",
+        "apollo_url_rewrites"
+      ],
+      "shortcodes": [
+        "apollo_login",
+        "apollo_password_reset",
+        "apollo_quiz",
+        "apollo_register",
+        "apollo_simon",
+        "apollo_verify_email"
+      ],
+      "ajax_count": 12,
+      "cron": [],
+      "dependencies": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-maps",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Maps",
+      "php_files": 9,
+      "php_loc_approx": 792,
+      "rest": 1,
+      "cpts": [
+        "event",
+        "local"
+      ],
+      "taxonomies": [],
+      "tables": [
+        "apollo_maps_example"
+      ],
+      "shortcodes": [
+        "apollo_maps"
+      ],
+      "ajax_count": 0,
+      "cron": [],
+      "dependencies": [
+        "apollo-core",
+        "apollo-loc"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-membership",
+      "status": "AUDITED",
+      "version": "1.0.3",
+      "namespace": "Apollo\\Membership",
+      "php_files": 42,
+      "php_loc_approx": 7989,
+      "rest": 23,
+      "cpts": [],
+      "taxonomies": [],
+      "tables": [
+        "apollo_achievements",
+        "apollo_membership_log",
+        "apollo_points",
+        "apollo_ranks",
+        "apollo_steps",
+        "apollo_triggers"
+      ],
+      "shortcodes": [
+        "apollo_achievement",
+        "apollo_achievements",
+        "apollo_evidence",
+        "apollo_leaderboard",
+        "apollo_points",
+        "apollo_rank",
+        "apollo_ranks",
+        "apollo_user_achievements",
+        "apollo_user_rank"
+      ],
+      "ajax_count": 6,
+      "cron": [],
+      "dependencies": [
+        "apollo-core",
+        "apollo-notif",
+        "apollo-users"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-mod",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Mod",
+      "php_files": 7,
+      "php_loc_approx": 959,
+      "rest": 7,
+      "cpts": [],
+      "taxonomies": [],
+      "tables": [
+        "apollo_mod_actions",
+        "apollo_mod_log",
+        "apollo_mod_queue",
+        "apollo_mod_reports"
+      ],
+      "shortcodes": [],
+      "ajax_count": 1,
+      "cron": [],
+      "dependencies": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-notif",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Notif",
+      "php_files": 8,
+      "php_loc_approx": 3645,
+      "rest": 13,
+      "cpts": [],
+      "taxonomies": [],
+      "tables": [
+        "apollo_activity",
+        "apollo_notif_prefs",
+        "apollo_notifications"
+      ],
+      "shortcodes": [
+        "apollo_notif",
+        "apollo_notif_badge"
+      ],
+      "ajax_count": 0,
+      "cron": [],
+      "dependencies": [
+        "apollo-core",
+        "apollo-templates"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-pane-engine",
+      "status": "AUDITED",
+      "version": "2.0.1",
+      "namespace": "Apollo\\PaneEngine",
+      "php_files": 7,
+      "php_loc_approx": 1651,
+      "rest": 5,
+      "cpts": [
+        "dj",
+        "event",
+        "local"
+      ],
+      "taxonomies": [],
+      "tables": [],
+      "shortcodes": [],
+      "ajax_count": 0,
+      "cron": [],
+      "dependencies": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": true,
+      "old_version": "2.0.0"
+    },
+    {
+      "slug": "apollo-radio",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Radio",
+      "php_files": 9,
+      "php_loc_approx": 964,
+      "rest": 1,
+      "cpts": [],
+      "taxonomies": [],
+      "tables": [],
+      "shortcodes": [
+        "apollo_radio"
+      ],
+      "ajax_count": 0,
+      "cron": [],
+      "dependencies": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": true,
+      "old_version": "1.0.0"
+    },
+    {
+      "slug": "apollo-remind",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Remind",
+      "php_files": 16,
+      "php_loc_approx": 2092,
+      "rest": 12,
+      "cpts": [],
+      "taxonomies": [],
+      "tables": [
+        "apollo_remind_log",
+        "apollo_remind_push_subs",
+        "apollo_remind_telegram",
+        "apollo_reminders"
+      ],
+      "shortcodes": [],
+      "ajax_count": 0,
+      "cron": [
+        "apollo_remind_two_minutes"
+      ],
+      "dependencies": [
+        "apollo-core",
+        "apollo-email",
+        "apollo-notif"
+      ],
+      "new_plugin": false,
+      "version_changed": true,
+      "old_version": "1.0.0"
+    },
+    {
+      "slug": "apollo-scheduler",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Scheduler",
+      "php_files": 33,
+      "php_loc_approx": 2864,
+      "rest": 4,
+      "cpts": [
+        "appointment",
+        "event",
+        "resource",
+        "service"
+      ],
+      "taxonomies": [],
+      "tables": [],
+      "shortcodes": [
+        "apollo_scheduler_book",
+        "apollo_scheduler_manager"
+      ],
+      "ajax_count": 0,
+      "cron": [],
+      "dependencies": [
+        "apollo-core",
+        "apollo-groups",
+        "apollo-users"
+      ],
+      "new_plugin": false,
+      "version_changed": true,
+      "old_version": "1.0.0"
+    },
+    {
+      "slug": "apollo-seo",
+      "status": "AUDITED",
+      "version": "1.0.3",
+      "namespace": "Apollo\\SEO",
+      "php_files": 10,
+      "php_loc_approx": 4317,
+      "rest": 3,
+      "cpts": [],
+      "taxonomies": [],
+      "tables": [],
+      "shortcodes": [],
+      "ajax_count": 0,
+      "cron": [],
+      "dependencies": [],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-sheets",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Sheets",
+      "php_files": 27,
+      "php_loc_approx": 8523,
+      "rest": 3,
+      "cpts": [
+        "apollo_sheet"
+      ],
+      "taxonomies": [],
+      "tables": [],
+      "shortcodes": [
+        "apollo-sheet",
+        "apollo-sheet-info"
+      ],
+      "ajax_count": 13,
+      "cron": [],
+      "dependencies": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-sign",
+      "status": "AUDITED",
+      "version": "1.2.1",
+      "namespace": "Apollo\\Sign",
+      "php_files": 39,
+      "php_loc_approx": 7938,
+      "rest": 3,
+      "cpts": [],
+      "taxonomies": [],
+      "tables": [
+        "apollo_signature_audit",
+        "apollo_signatures"
+      ],
+      "shortcodes": [
+        "apollo_signature_pad"
+      ],
+      "ajax_count": 1,
+      "cron": [],
+      "dependencies": [
+        "apollo-core",
+        "apollo-docs",
+        "openssl"
+      ],
+      "new_plugin": false,
+      "version_changed": true,
+      "old_version": "1.2.0"
+    },
+    {
+      "slug": "apollo-social",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Social",
+      "php_files": 24,
+      "php_loc_approx": 3821,
+      "rest": 11,
+      "cpts": [
+        "classified",
+        "event"
+      ],
+      "taxonomies": [],
+      "tables": [
+        "apollo_activity",
+        "apollo_blocks",
+        "apollo_connections",
+        "apollo_follows"
+      ],
+      "shortcodes": [
+        "apollo_feed",
+        "apollo_follow_btn"
+      ],
+      "ajax_count": 0,
+      "cron": [],
+      "dependencies": [
+        "apollo-core",
+        "apollo-templates",
+        "apollo-users"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-statistics",
+      "status": "AUDITED",
+      "version": "2.0.6",
+      "namespace": "Apollo\\Statistics",
+      "php_files": 47,
+      "php_loc_approx": 10518,
+      "rest": 12,
+      "cpts": [],
+      "taxonomies": [],
+      "tables": [
+        "apollo_event_rsvp",
+        "apollo_stats_clicks",
+        "apollo_stats_content",
+        "apollo_stats_events",
+        "apollo_stats_pageviews",
+        "apollo_stats_radio",
+        "apollo_stats_sessions",
+        "apollo_stats_users"
+      ],
+      "shortcodes": [
+        "apollo_stats_widget",
+        "apollo_user_stats"
+      ],
+      "ajax_count": 4,
+      "cron": [],
+      "dependencies": [
+        "apollo-core",
+        "apollo-login",
+        "apollo-membership"
+      ],
+      "new_plugin": false,
+      "version_changed": true,
+      "old_version": "2.0.0"
+    },
+    {
+      "slug": "apollo-telegram",
+      "status": "AUDITED",
+      "version": "1.1.1",
+      "namespace": "Apollo\\Telegram",
+      "php_files": 58,
+      "php_loc_approx": 9880,
+      "rest": 7,
+      "cpts": [
+        "event"
+      ],
+      "taxonomies": [],
+      "tables": [
+        "apollo_telegram_verif"
+      ],
+      "shortcodes": [],
+      "ajax_count": 0,
+      "cron": [],
+      "dependencies": [
+        "apollo-core"
+      ],
+      "new_plugin": true,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-templates",
+      "status": "AUDITED",
+      "version": "1.0.4",
+      "namespace": "Apollo\\Templates",
+      "php_files": 78,
+      "php_loc_approx": 19976,
+      "rest": 6,
+      "cpts": [
+        "classified",
+        "dj",
+        "dj_profile",
+        "event",
+        "local"
+      ],
+      "taxonomies": [],
+      "tables": [],
+      "shortcodes": [
+        "apollo_calendar",
+        "apollo_event",
+        "apollo_event_form",
+        "apollo_events",
+        "apollo_user_badge",
+        "apollo_user_ranking"
+      ],
+      "ajax_count": 10,
+      "cron": [],
+      "dependencies": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-users",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Users",
+      "php_files": 30,
+      "php_loc_approx": 13169,
+      "rest": 18,
+      "cpts": [],
+      "taxonomies": [],
+      "tables": [
+        "apollo_activity",
+        "apollo_chat_messages",
+        "apollo_chat_participants",
+        "apollo_event_rsvp",
+        "apollo_favs",
+        "apollo_group_members",
+        "apollo_matchmaking",
+        "apollo_matchmaking_scores",
+        "apollo_profile_views",
+        "apollo_user_fields",
+        "apollo_user_ratings",
+        "apollo_wows"
+      ],
+      "shortcodes": [
+        "apollo_matchmaking",
+        "apollo_profile",
+        "apollo_profile_edit",
+        "apollo_profile_fields",
+        "apollo_radar",
+        "apollo_user_card"
+      ],
+      "ajax_count": 13,
+      "cron": [
+        "five_minutes"
+      ],
+      "dependencies": [
+        "apollo-core",
+        "apollo-login",
+        "apollo-templates"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    },
+    {
+      "slug": "apollo-wow",
+      "status": "AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Wow",
+      "php_files": 6,
+      "php_loc_approx": 596,
+      "rest": 4,
+      "cpts": [],
+      "taxonomies": [],
+      "tables": [
+        "apollo_wow_reactions",
+        "apollo_wow_types",
+        "apollo_wows"
+      ],
+      "shortcodes": [
+        "apollo_wow",
+        "apollo_wow_chart"
+      ],
+      "ajax_count": 0,
+      "cron": [],
+      "dependencies": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null
+    }
+  ],
+  "new_plugins": [
+    "apollo-calendar",
+    "apollo-elementor-pro",
+    "apollo-telegram"
+  ],
+  "version_changes": [
+    {
+      "slug": "apollo-chat",
+      "from": "2.0.0",
+      "to": "2.0.1"
+    },
+    {
+      "slug": "apollo-dj-sync",
+      "from": "1.0.0",
+      "to": "1.0.1"
+    },
+    {
+      "slug": "apollo-docs",
+      "from": "1.0.0",
+      "to": "1.0.1"
+    },
+    {
+      "slug": "apollo-elementor",
+      "from": "1.0.0",
+      "to": "1.0.1"
+    },
+    {
+      "slug": "apollo-gestor",
+      "from": "1.0.0",
+      "to": "1.0.1"
+    },
+    {
+      "slug": "apollo-pane-engine",
+      "from": "2.0.0",
+      "to": "2.0.1"
+    },
+    {
+      "slug": "apollo-radio",
+      "from": "1.0.0",
+      "to": "1.0.1"
+    },
+    {
+      "slug": "apollo-remind",
+      "from": "1.0.0",
+      "to": "1.0.1"
+    },
+    {
+      "slug": "apollo-scheduler",
+      "from": "1.0.0",
+      "to": "1.0.1"
+    },
+    {
+      "slug": "apollo-sign",
+      "from": "1.2.0",
+      "to": "1.2.1"
+    },
+    {
+      "slug": "apollo-statistics",
+      "from": "2.0.0",
+      "to": "2.0.6"
+    }
+  ],
+  "not_in_target": [
+    "apollo-classifieds",
+    "apollo-suppliers",
+    "apollo-shortcodes",
+    "apollo-cena",
+    "apollo-pwa",
+    "apollo-runtime"
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-shortcodes",
+    "owner": "apollo-shortcodes",
+    "wrap": "plugins.apollo-shortcodes",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-shortcodes",
+  "namespace": "Apollo\\Shortcodes",
+  "priority": 4,
+  "status": "DEPRECATED",
+  "deprecated_since": "6.4.2",
+  "merged_into": "apollo-core",
+  "description": "[DEPRECATED â€” FASE 2] ShortcodeRegistry e ShortcodesController migrados para apollo-core. REST /shortcodes/* agora em apollo-core.",
+  "dependencies": [
+    "apollo-core"
+  ],
+  "provides": [
+    "shortcode-registry",
+    "shortcode-rendering",
+    "frontend-components"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [],
+  "meta": {},
+  "rest": [
+    {
+      "endpoint": "/shortcodes",
+      "methods": [
+        "GET"
+      ],
+      "description": "List all shortcodes"
+    },
+    {
+      "endpoint": "/shortcodes/{tag}",
+      "methods": [
+        "GET"
+      ],
+      "description": "Get shortcode info"
+    },
+    {
+      "endpoint": "/shortcodes/render",
+      "methods": [
+        "POST"
+      ],
+      "description": "Render shortcode"
+    }
+  ],
+  "_migrated_routes_v6.4.0": {
+    "/search/*": "â†’ apollo-core (SearchController.php)",
+    "/cena-rio/*": "â†’ apollo-events (CenaRio.php)",
+    "/newsletter/*": "â†’ apollo-email (Newsletter.php)"
+  },
+  "pages": [],
+  "shortcodes": "ALL - This plugin REGISTERS all shortcodes from other plugins",
+  "$disk_status": "ABSENT",
+  "$disk_note": "No folder at plugins/apollo-shortcodes on 2026-07-28. Entry PRESERVED (not deleted) — either planned/not-yet-built or removed. Resolve before treating as live."
+}

@@ -1,0 +1,10 @@
+/* ===========================================
+   MARKETPLACE — CSS Variables (overrides/fallbacks)
+   Apollo CDN provides base vars; these are
+   marketplace-specific additions only.
+   =========================================== */
+
+:root {
+    --ff-ticket: "Lato", sans-serif;
+    --ease-lux: cubic-bezier(0.16, 1, 0.3, 1);
+}

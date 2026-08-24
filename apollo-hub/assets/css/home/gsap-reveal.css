@@ -1,0 +1,14 @@
+/* ═══════════════════════════════════════════════════════════════
+   APOLLO::RIO — HOME / gsap-reveal.css
+   .ai utility for GSAP scroll reveal + CSS fallback
+   ═══════════════════════════════════════════════════════════════ */
+@keyframes nh-ai-reveal {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+[data-panel] .ai {
+    opacity: 0;
+    transform: translateY(14px);
+    animation: nh-ai-reveal 0.6s var(--ease-out) forwards;
+    animation-delay: 2.5s;
+}

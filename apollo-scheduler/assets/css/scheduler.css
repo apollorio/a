@@ -1,0 +1,206 @@
+/**
+ * Apollo Scheduler — luxury dark theme (Apollo::rio harmony).
+ */
+:root {
+	--apollo-sched-bg: #0a0a0f;
+	--apollo-sched-surface: #12121a;
+	--apollo-sched-border: rgba(255, 255, 255, 0.08);
+	--apollo-sched-text: #f5f5f7;
+	--apollo-sched-muted: #8e8e93;
+	--apollo-sched-accent: #c9a962;
+	--apollo-sched-accent-dim: rgba(201, 169, 98, 0.15);
+	--apollo-sched-radius: 16px;
+}
+
+body.apollo-scheduler {
+	background: var(--apollo-sched-bg);
+	color: var(--apollo-sched-text);
+	margin: 0;
+	font-family: system-ui, -apple-system, sans-serif;
+}
+
+.apollo-scheduler-canvas {
+	max-width: 960px;
+	margin: 0 auto;
+	padding: 2rem 1.25rem 4rem;
+}
+
+.apollo-scheduler-header h1 {
+	font-weight: 300;
+	letter-spacing: 0.04em;
+	margin: 0 0 1.5rem;
+}
+
+.apollo-scheduler-steps {
+	display: flex;
+	gap: 0.5rem;
+	list-style: none;
+	padding: 0;
+	margin: 0 0 2rem;
+	overflow-x: auto;
+}
+
+.apollo-scheduler-steps li {
+	display: flex;
+	align-items: center;
+	gap: 0.35rem;
+	padding: 0.5rem 0.75rem;
+	border: 1px solid var(--apollo-sched-border);
+	border-radius: 999px;
+	color: var(--apollo-sched-muted);
+	font-size: 0.85rem;
+	white-space: nowrap;
+	transition: border-color 0.3s, color 0.3s, box-shadow 0.3s;
+}
+
+.apollo-scheduler-steps li.is-active {
+	border-color: var(--apollo-sched-accent);
+	color: var(--apollo-sched-accent);
+	box-shadow: 0 0 24px var(--apollo-sched-accent-dim);
+}
+
+.apollo-scheduler-panel.is-hidden {
+	display: none;
+}
+
+.apollo-scheduler-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: 1rem;
+}
+
+.apollo-scheduler-card {
+	background: var(--apollo-sched-surface);
+	border: 1px solid var(--apollo-sched-border);
+	border-radius: var(--apollo-sched-radius);
+	padding: 1.25rem;
+	cursor: pointer;
+	transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s;
+	will-change: transform;
+}
+
+.apollo-scheduler-card:hover {
+	transform: translateY(-4px);
+	border-color: var(--apollo-sched-accent);
+}
+
+.apollo-scheduler-card.is-selected {
+	border-color: var(--apollo-sched-accent);
+	box-shadow: 0 0 32px var(--apollo-sched-accent-dim);
+}
+
+.apollo-scheduler-card h3 {
+	margin: 0 0 0.35rem;
+	font-size: 1rem;
+	font-weight: 500;
+}
+
+.apollo-scheduler-card p {
+	margin: 0;
+	color: var(--apollo-sched-muted);
+	font-size: 0.875rem;
+}
+
+.apollo-scheduler-date {
+	background: var(--apollo-sched-surface);
+	border: 1px solid var(--apollo-sched-border);
+	color: var(--apollo-sched-text);
+	border-radius: 12px;
+	padding: 0.75rem 1rem;
+	margin-bottom: 1rem;
+	width: 100%;
+	max-width: 280px;
+}
+
+.apollo-scheduler-slots {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+	gap: 0.65rem;
+}
+
+.apollo-scheduler-slot {
+	background: var(--apollo-sched-surface);
+	border: 1px solid var(--apollo-sched-border);
+	border-radius: 10px;
+	padding: 0.65rem;
+	text-align: center;
+	cursor: pointer;
+	font-size: 0.9rem;
+	transition: background 0.25s, border-color 0.25s;
+}
+
+.apollo-scheduler-slot.is-available:hover {
+	border-color: var(--apollo-sched-accent);
+	animation: apollo-pulse 1.5s ease-in-out infinite;
+}
+
+.apollo-scheduler-slot.is-disabled {
+	opacity: 0.35;
+	cursor: not-allowed;
+}
+
+.apollo-scheduler-slot.is-selected {
+	background: var(--apollo-sched-accent-dim);
+	border-color: var(--apollo-sched-accent);
+	color: var(--apollo-sched-accent);
+}
+
+@keyframes apollo-pulse {
+	0%, 100% { box-shadow: 0 0 0 0 var(--apollo-sched-accent-dim); }
+	50% { box-shadow: 0 0 16px 2px var(--apollo-sched-accent-dim); }
+}
+
+.apollo-scheduler-confirm {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin-top: 1.5rem;
+	padding: 0.85rem 1.5rem;
+	background: var(--apollo-sched-accent);
+	color: #0a0a0f;
+	border: none;
+	border-radius: 999px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: transform 0.2s;
+}
+
+.apollo-scheduler-confirm:hover {
+	transform: scale(1.03);
+}
+
+.apollo-scheduler-kpis {
+	display: flex;
+	gap: 1rem;
+	margin-bottom: 1.5rem;
+}
+
+.apollo-scheduler-kpi {
+	background: var(--apollo-sched-surface);
+	border: 1px solid var(--apollo-sched-border);
+	border-radius: 12px;
+	padding: 0.75rem 1rem;
+	min-width: 120px;
+}
+
+.apollo-scheduler-kpi span {
+	display: block;
+	font-size: 0.75rem;
+	color: var(--apollo-sched-muted);
+}
+
+.apollo-scheduler-manager-calendar,
+.apollo-scheduler-manager-list,
+.apollo-scheduler-agent-plan {
+	background: var(--apollo-sched-surface);
+	border: 1px solid var(--apollo-sched-border);
+	border-radius: var(--apollo-sched-radius);
+	padding: 1rem;
+	min-height: 320px;
+	margin-bottom: 1rem;
+}
+
+@media (max-width: 640px) {
+	.apollo-scheduler-canvas { padding: 1rem 0.75rem 3rem; }
+	.apollo-scheduler-steps li span { display: none; }
+}

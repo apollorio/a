@@ -1,0 +1,289 @@
+<?php
+/**
+ * Apollo — Card Contract. One card, one owner, every context.
+ *
+ * WHAT A "CARD" IS
+ * ----------------
+ * A card is the small, repeated representation of one item inside a list, grid,
+ * rail or embed — an accommodation in the marketplace, a track in Out Now, an
+ * event in a portal rail. It is the sibling of the Surface Contract: a SURFACE
+ * is the full single page opened in place, a CARD is the item you click to open
+ * it.
+ *
+ * WHY THIS EXISTS
+ * ---------------
+ * An audit on 2026-08-17 counted what "no shared card" had cost:
+ *
+ *   · The accommodation card exists FOUR times, with completely different DOM —
+ *     apollo-adverts/templates/marketplace/parts/card-accommodation.php
+ *     (.accom-*), apollo-adverts/templates/list-item.php (.resale-ticket),
+ *     apollo-templates/.../new-home/crash.php (.nh-mq-card), and
+ *     apollo-dashboard/.../panel-feed.php (.ap-accom-embed).
+ *   · The dashboard copy REDECLARES the bare selectors .accom-badge, .accom-title
+ *     and .accom-price (apollo-dashboard/.../dashboard/styles.php:800, 869, 917)
+ *     — a cross-plugin instance of the cardinal sin CLAUDE.md names: two owners
+ *     for one selector, whichever loads last silently wins.
+ *   · An "Out Now" section exists FIVE times in three different shapes.
+ *   · Worst of all: .accom-* CSS is NOT LOADED on /anuncios at all.
+ *     archive-classified.php:10 deliberately stopped linking marketplace.css,
+ *     and the only head payload (parts/mk/styles.php) styles the grid but not
+ *     the card. The live marketplace renders accommodation cards with NO card
+ *     CSS, while parts/mk/styles.php:42-71 styles a .mk-ticket*/.mk-ac*
+ *     vocabulary no template emits.
+ *
+ * Shortcodes and get_template_part() conventions both already existed here and
+ * neither prevented any of that, because neither gives a card a SINGLE OWNER or
+ * a STYLE LEDGER. A registry does. It turns "there is exactly one accommodation
+ * card" from a habit into a checkable fact.
+ *
+ * REGISTERING A CARD
+ * ------------------
+ *     apollo_card_register( 'accommodation', array(
+ *         'renderer'  => 'apollo_adverts_render_accommodation_card', // fn( int, array ): string
+ *         'styles'    => 'apollo_adverts_accommodation_card_styles', // fn(): string
+ *         'post_type' => 'classified',
+ *         'variants'  => array( 'grid', 'rail', 'embed' ),
+ *     ) );
+ *
+ * Then, from anywhere in the ecosystem:
+ *
+ *     echo apollo_card_render( 'accommodation', $id, array( 'variant' => 'rail' ) );
+ *
+ * THE STYLE LEDGER IS THE POINT
+ * -----------------------------
+ * apollo_card_render() emits the card's stylesheet the FIRST time that card type
+ * is rendered in a request, and never again. That is what structurally fixes
+ * "the CSS is not loaded on this screen": a consumer cannot forget to enqueue
+ * something it never had to know about. Same mechanism as
+ * apollo_event_lightbox_state(), which exists because three boot paths each kept
+ * a private `static $printed` and could not see one another.
+ *
+ * SAFETY PROPERTIES, INHERITED FROM THE SURFACE CONTRACT ON PURPOSE
+ * -----------------------------------------------------------------
+ *   · DORMANT-SAFE. A card whose renderer is not callable returns ''. A screen
+ *     can be written against a card before that card exists, and lights up when
+ *     the callable appears. No fatals, no half-built output.
+ *   · NEVER CLOBBERS. Re-registering an existing type is ignored unless
+ *     $replace is explicit, so load order cannot silently swap a card.
+ *   · REGISTERS NOTHING. No CPT, taxonomy, meta key or table is created here —
+ *     apollo-core's existing registries remain the only place those happen, per
+ *     02-header.CRITICAL_apollo_core_centralization.
+ *
+ * @package Apollo\Core
+ * @since   6.3.0
+ * @see     apollo-core/includes/surface-contract.php  the sibling contract
+ * @see     _inventory/PLAN-outnow-and-hostel.md §1     why this was built
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+if ( ! function_exists( 'apollo_card_registry' ) ) {
+	/**
+	 * The card table. Read-mostly; written only by apollo_card_register().
+	 *
+	 * @param string|null              $type Card key to set.
+	 * @param array<string,mixed>|null $args Definition.
+	 * @return array<string,array<string,mixed>>
+	 */
+	function apollo_card_registry( ?string $type = null, ?array $args = null ): array {
+		static $cards = array();
+		if ( null !== $type && null !== $args ) {
+			$cards[ $type ] = $args;
+		}
+		return $cards;
+	}
+}
+
+if ( ! function_exists( 'apollo_card_register' ) ) {
+	/**
+	 * Declare a card type.
+	 *
+	 * Safe to call on every request and safe to call before the renderer exists.
+	 *
+	 * @param string              $type    Card key: 'accommodation' | 'track' | ….
+	 * @param array<string,mixed> $args    renderer, styles, post_type, variants.
+	 * @param bool                $replace Overwrite an existing registration.
+	 * @return void
+	 */
+	function apollo_card_register( string $type, array $args, bool $replace = false ): void {
+		$type = sanitize_key( $type );
+		if ( '' === $type ) {
+			return;
+		}
+
+		/*
+		 * A second registration for a live type is almost always two plugins
+		 * fighting over one card — the exact situation this file exists to end.
+		 * Losing silently would reintroduce it, so the first registration wins
+		 * and replacing is something you have to say out loud.
+		 */
+		$existing = apollo_card_registry();
+		if ( isset( $existing[ $type ] ) && ! $replace ) {
+			return;
+		}
+
+		$args = wp_parse_args(
+			$args,
+			array(
+				'renderer'  => '',
+				'styles'    => '',           // Optional: fn(): string, emitted once.
+				'post_type' => '',
+				'variants'  => array( 'default' ),
+				'owner'     => '',           // Optional: plugin slug, for debugging.
+			)
+		);
+
+		apollo_card_registry( $type, $args );
+	}
+}
+
+if ( ! function_exists( 'apollo_card_get' ) ) {
+	/**
+	 * Fetch a card definition, but only if it is actually usable.
+	 *
+	 * "Usable" means the renderer is callable right now. Everything downstream
+	 * checks through here, which is what makes a half-declared card inert rather
+	 * than a fatal.
+	 *
+	 * @param string $type Card key.
+	 * @return array<string,mixed>|null
+	 */
+	function apollo_card_get( string $type ): ?array {
+		$all = apollo_card_registry();
+		if ( ! isset( $all[ $type ] ) ) {
+			return null;
+		}
+		$c = $all[ $type ];
+		return is_callable( $c['renderer'] ) ? $c : null;
+	}
+}
+
+if ( ! function_exists( 'apollo_card_styles_once' ) ) {
+	/**
+	 * Emit a card type's stylesheet the first time it is needed, once.
+	 *
+	 * Returns '' on every later call in the same request. A consumer never has
+	 * to know a card has styles, which is precisely why it cannot forget to
+	 * load them.
+	 *
+	 * @param string $type Card key.
+	 * @return string CSS wrapped in <style>, or ''.
+	 */
+	function apollo_card_styles_once( string $type ): string {
+		static $printed = array();
+
+		if ( isset( $printed[ $type ] ) ) {
+			return '';
+		}
+
+		$card = apollo_card_get( $type );
+		if ( ! $card || ! is_callable( $card['styles'] ) ) {
+			return '';
+		}
+
+		$printed[ $type ] = true;
+
+		$css = (string) call_user_func( $card['styles'] );
+		if ( '' === trim( $css ) ) {
+			return '';
+		}
+
+		return sprintf(
+			'<style id="apollo-card-%s">%s</style>',
+			esc_attr( $type ),
+			$css
+		);
+	}
+}
+
+if ( ! function_exists( 'apollo_card_render' ) ) {
+	/**
+	 * Render one item as its card.
+	 *
+	 * THE single entry point. Every list, grid, rail and embed goes through
+	 * here, which is what stops four copies of one card drifting apart.
+	 *
+	 * @param string              $type    Card key.
+	 * @param int                 $post_id Item id.
+	 * @param array<string,mixed> $args    variant, plus anything the renderer takes.
+	 * @return string Markup, or '' when the card is dormant.
+	 */
+	function apollo_card_render( string $type, int $post_id, array $args = array() ): string {
+		$card = apollo_card_get( $type );
+		if ( ! $card ) {
+			return '';
+		}
+
+		$args = wp_parse_args( $args, array( 'variant' => 'default', 'placeholder' => false ) );
+
+		/*
+		 * A post id of 0 is garbage — EXCEPT when the caller explicitly asks for
+		 * a placeholder (added 2026-08-17, when the track card became the first
+		 * consumer).
+		 *
+		 * Pre-launch surfaces render on-brand placeholder cards before any real
+		 * content exists. Those must go through THIS function rather than calling
+		 * the renderer directly, for one reason: the print-once style ledger. A
+		 * surface showing only placeholders would otherwise ship with no card CSS
+		 * at all — which is precisely the `.accom-*` defect on /anuncios that
+		 * this contract exists to make impossible.
+		 *
+		 * The exception is narrow and explicit: a bare 0 with no placeholder flag
+		 * is still refused.
+		 */
+		if ( $post_id <= 0 && empty( $args['placeholder'] ) ) {
+			return '';
+		}
+
+		/*
+		 * An unknown variant falls back to the first declared one rather than
+		 * rendering nothing. A typo in a template should degrade to the default
+		 * card, not to an invisible row in a grid — an empty string in a list is
+		 * a defect that reads as "no results".
+		 */
+		$variants = (array) $card['variants'];
+		if ( ! in_array( $args['variant'], $variants, true ) ) {
+			$args['variant'] = (string) reset( $variants );
+		}
+
+		$html = (string) call_user_func( $card['renderer'], $post_id, $args );
+		if ( '' === $html ) {
+			return '';
+		}
+
+		/**
+		 * Filter one rendered card.
+		 *
+		 * @param string              $html    Markup.
+		 * @param string              $type    Card key.
+		 * @param int                 $post_id Item id.
+		 * @param array<string,mixed> $args    Render args.
+		 */
+		$html = (string) apply_filters( 'apollo_card_render', $html, $type, $post_id, $args );
+
+		return apollo_card_styles_once( $type ) . $html;
+	}
+}
+
+if ( ! function_exists( 'apollo_card_render_many' ) ) {
+	/**
+	 * Render a list of items as cards.
+	 *
+	 * Exists so a grid does not hand-roll a foreach and forget the style ledger
+	 * or the dormant-card guard. Skips ids the card declines to render.
+	 *
+	 * @param string              $type Card key.
+	 * @param int[]               $ids  Item ids.
+	 * @param array<string,mixed> $args Passed through to each render.
+	 * @return string
+	 */
+	function apollo_card_render_many( string $type, array $ids, array $args = array() ): string {
+		$out = '';
+		foreach ( $ids as $id ) {
+			$out .= apollo_card_render( $type, (int) $id, $args );
+		}
+		return $out;
+	}
+}

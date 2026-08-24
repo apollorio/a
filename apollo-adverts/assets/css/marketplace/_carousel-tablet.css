@@ -1,0 +1,60 @@
+/* ===========================================
+   MARKETPLACE — Carousel (Tablet <= 850px)
+   =========================================== */
+
+@media (max-width: 850px) {
+    .carousel {
+        position: relative;
+        z-index: 1;
+        min-height: 360px;
+        height: auto;
+        min-width: 120vw;
+        max-width: 100%;
+        margin-left: -13%;
+        margin-right: auto;
+        overflow-x: hidden !important;
+        pointer-events: none;
+        margin-top: -100px;
+        margin-bottom: 10px;
+        -webkit-mask-image: linear-gradient(to right, rgba(var(--rgb-d),0.5), black 12%, black 88%, rgba(var(--rgb-d),0.5));
+        mask-image: linear-gradient(to right, rgba(var(--rgb-d),0.5), black 12%, black 88%, rgba(var(--rgb-d),0.5));
+    }
+
+    article[type=ticket].carousel-item {
+        --items: 99990;
+        --width: 550px;
+        --x: calc(var(--active) * 60px);
+        --y: calc(var(--abs-active) * -55px);
+        --rot: calc(var(--active) * 7deg);
+        --opacity: calc(1 - (var(--abs-active) * 0.005));
+
+        overflow-x: hidden !important;
+        overflow: hidden;
+        position: absolute;
+        z-index: var(--zIndex);
+        min-width: var(--width);
+        top: 18%;
+        left: 50%;
+        margin: -260px 0 0 -240px;
+        transform-origin: 0% 60%;
+
+        background: #fff;
+        font-family: var(--ff-ticket);
+        display: flex;
+        flex-direction: column;
+        border-radius: var(--r);
+        border: 1px solid var(--border);
+
+        pointer-events: all;
+        transform: translate(var(--x), var(--y)) rotate(var(--rot)) scale(0.6);
+        transition: transform 0.8s cubic-bezier(0, 0.02, 0, 1),
+                    opacity 0.8s cubic-bezier(0, 0.02, 0, 1);
+        opacity: var(--opacity);
+        user-select: none;
+    }
+
+    article[type=ticket].carousel-item:hover {
+        box-shadow: 0 20px 60px 15px rgba(var(--rgb-d), 0.02);
+        transform: translate(var(--x), calc(var(--y) + 49px)) rotate(var(--rot)) scale(0.65);
+    }
+}

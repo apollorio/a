@@ -1,0 +1,2160 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-groups",
+    "owner": "apollo-groups",
+    "wrap": "plugins.apollo-groups",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-groups",
+  "namespace": "Apollo\\Groups",
+  "priority": 3,
+  "status": "IMPLEMENTED",
+  "description": "Comunas (public communities) — adapted from BuddyPress bp-groups. Public-only, flat, no hierarchy.",
+  "dependencies": [
+    "apollo-core",
+    "apollo-mod",
+    "apollo-templates",
+    "apollo-users"
+  ],
+  "provides": [
+    "nucleo",
+    "comuna",
+    "group-membership",
+    "group-discussions",
+    "group-invitations",
+    "group-moderation",
+    "group-avatar",
+    "group-cover"
+  ],
+  "TERMS": {
+    "nucleo": "private work teams",
+    "comuna": "public communities"
+  },
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [
+    "apollo_activity",
+    "apollo_group_bans",
+    "apollo_group_invitations",
+    "apollo_group_meta",
+    "apollo_group_requests",
+    "apollo_social_posts"
+  ],
+  "meta": {
+    "post": {},
+    "user": {
+      "_apollo_avatar_url": {
+        "_source": "deep_scan"
+      }
+    },
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/groups",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "description": "List/Create groups",
+      "body_params": {
+        "POST": {
+          "name": "string (required)",
+          "description": "string",
+          "type": "comuna|nucleo (nucleo requires manage_options)",
+          "tags": "string (comma separated)",
+          "rules": "string (one per line)",
+          "admin_ids": "int[] — users assigned role=admin in apollo_group_members at creation (creator always admin; max 20)"
+        }
+      },
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_list_groups",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/groups/(?P<id>\\d+)",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ],
+      "description": "Live apollo/v1 (CAPABILITY_CHECK)",
+      "auth": "CAPABILITY_CHECK",
+      "permission_risk": "LOW",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Requires capability: apollo_moderate_content",
+      "permission_capabilities": [
+        "apollo_moderate_content"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can('apollo_moderate_content');",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_group",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/groups/(?P<id>\\d+)/members",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_members",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/groups/(?P<id>\\d+)/join",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_join_group",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/groups/(?P<id>\\d+)/leave",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_leave_group",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/groups/comunas",
+      "methods": [
+        "GET"
+      ],
+      "description": "List comunas",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/groups/nucleos",
+      "methods": [
+        "DELETE",
+        "GET",
+        "POST"
+      ],
+      "description": "List nÃºcleos",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_my_groups",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/groups/my",
+      "methods": [
+        "GET"
+      ],
+      "description": "User's groups",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_my_groups",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/groups/(?P<id>\\d+)/members/(?P<user_id>\\d+)/promote",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_promote_member",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/groups/(?P<id>\\d+)/members/(?P<user_id>\\d+)/demote",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_demote_member",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/groups/(?P<id>\\d+)/members/(?P<user_id>\\d+)/ban",
+      "methods": [
+        "DELETE",
+        "POST"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_ban_member",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/groups/(?P<id>\\d+)/members/(?P<user_id>\\d+)",
+      "methods": [
+        "DELETE"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_remove_member",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/groups/(?P<id>\\d+)/bans",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_bans",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/groups/(?P<id>\\d+)/invitations",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_group_invitations",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/groups/(?P<id>\\d+)/invitations/accept",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_accept_invitation",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/groups/(?P<id>\\d+)/invitations/reject",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_reject_invitation",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/my/group-invitations",
+      "methods": [
+        "GET"
+      ],
+      "description": "All pending group invitations for current user",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_my_invitations",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/groups/(?P<id>\\d+)/requests",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_requests",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/groups/(?P<id>\\d+)/requests/(?P<user_id>\\d+)/accept",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_accept_request",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/groups/(?P<id>\\d+)/requests/(?P<user_id>\\d+)/reject",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_reject_request",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/groups/search",
+      "methods": [
+        "GET"
+      ],
+      "description": "Search groups",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_search_groups",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/groups/(?P<id>\\d+)/feed",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_group_feed",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/groups/(?P<id>\\d+)/avatar",
+      "methods": [
+        "DELETE",
+        "POST"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_upload_group_avatar",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/groups/(?P<id>\\d+)/cover",
+      "methods": [
+        "DELETE",
+        "POST"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_upload_group_cover",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "pages": [
+    {
+      "slug": "grupos",
+      "rewrite": "^grupos/?$",
+      "query": "index.php?apollo_groups_page=directory",
+      "query_vars": [
+        "apollo_groups_page=directory"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "comunas",
+      "rewrite": "^comunas/?$",
+      "query": "index.php?apollo_groups_page=comunas",
+      "query_vars": [
+        "apollo_groups_page=comunas"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan",
+      "template": "templates/comunas.php",
+      "auth": false,
+      "shell": "blank-canvas-apollo-plus",
+      "note": "PHASE 004: rebuilt as an Apollo+ mount point. Was a wrapper delegating to groups-directory.php through render_blank_canvas(), i.e. the PLAIN canvas with no .ax-aside."
+    },
+    {
+      "slug": "nucleos",
+      "rewrite": "^nucleos/?$",
+      "query": "index.php?apollo_groups_page=nucleos",
+      "query_vars": [
+        "apollo_groups_page=nucleos"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "grupo/{param}",
+      "rewrite": "^grupo/([^/]+)/?$",
+      "query": "index.php?apollo_groups_page=single&apollo_group_slug=$matches[1]",
+      "query_vars": [
+        "apollo_groups_page=single",
+        "apollo_group_slug=$matches[1]"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "criar-comuna",
+      "rewrite": "^criar-comuna/?$",
+      "query": "index.php?apollo_groups_page=create",
+      "query_vars": [
+        "apollo_groups_page=create"
+      ],
+      "type": "virtual_rewrite",
+      "shell": "blank-canvas-apollo-plus",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "criar-grupo",
+      "rewrite": "^criar-grupo/?$",
+      "query": "index.php?apollo_groups_page=create_legacy",
+      "query_vars": [
+        "apollo_groups_page=create_legacy"
+      ],
+      "type": "virtual_rewrite",
+      "redirects_to": "/criar-comuna/",
+      "redirect_status": 301,
+      "_source": "live_scan"
+    }
+  ],
+  "shortcodes": [
+    {
+      "tag": "apollo_create_comuna",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_create_nucleo",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_group",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_groups",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_my_groups",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "version": "1.2.0",
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [
+    "apollo/groups/allow_system_nucleo",
+    "apollo/groups/avatar_updated",
+    "apollo/groups/cover_updated",
+    "apollo/groups/created",
+    "apollo/groups/group_deleted",
+    "apollo/groups/group_deleting",
+    "apollo/groups/invite_accepted",
+    "apollo/groups/member_banned",
+    "apollo/groups/member_demoted",
+    "apollo/groups/member_left",
+    "apollo/groups/member_promoted",
+    "apollo/groups/member_unbanned",
+    "apollo/groups/membership_requested",
+    "apollo/groups/ownership_transferred",
+    "apollo/groups/request_accepted",
+    "apollo/groups/user_invited",
+    "apollo/groups/user_joined"
+  ],
+  "hooks_listened": [
+    "apollo/groups/render_create_form"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [],
+    "styles": []
+  },
+  "options": [
+    "apollo_groups_rewrite_version",
+    "apollo_groups_version"
+  ],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 15,
+    "abspath_coverage_pct": 98,
+    "rest_open_routes": 0,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 0,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 1,
+    "permission_methods_unresolved": 23,
+    "prepare_ratio": 0.94
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_activity",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_group_bans",
+      "column_count": 6,
+      "columns": [
+        "id:BIGINT UNSIGNED NOT",
+        "group_id:BIGINT UNSIGNED NOT",
+        "user_id:BIGINT UNSIGNED NOT",
+        "banned_by:BIGINT UNSIGNED NOT",
+        "reason:VARCHAR(500)",
+        "created_at:DATETIME NOT NULL"
+      ],
+      "indexes": [
+        "PRIMARY KEY (id)",
+        "UNIQUE KEY group_user_ban (group_id,user_id)",
+        "KEY group_id (group_id)",
+        "KEY user_id (user_id)"
+      ],
+      "source": "create_var_prefix",
+      "ref_only": false,
+      "defined": true,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_group_invitations",
+      "column_count": 8,
+      "columns": [
+        "id:BIGINT UNSIGNED NOT",
+        "group_id:BIGINT UNSIGNED NOT",
+        "user_id:BIGINT UNSIGNED NOT",
+        "inviter_id:BIGINT UNSIGNED NOT",
+        "status:ENUM(",
+        "message:TEXT",
+        "created_at:DATETIME NOT NULL",
+        "updated_at:DATETIME NOT NULL"
+      ],
+      "indexes": [
+        "PRIMARY KEY (id)",
+        "UNIQUE KEY group_user_invite (group_id,user_id)",
+        "KEY group_id (group_id)",
+        "KEY user_id (user_id)",
+        "KEY inviter_id (inviter_id)",
+        "KEY status (status)"
+      ],
+      "source": "create_var_prefix",
+      "ref_only": false,
+      "defined": true,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_group_members",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "prefix_var_ref_prefix",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_group_meta",
+      "column_count": 4,
+      "columns": [
+        "id:BIGINT UNSIGNED NOT",
+        "group_id:BIGINT UNSIGNED NOT",
+        "meta_key:VARCHAR(255) NOT NULL",
+        "meta_value:LONGTEXT"
+      ],
+      "indexes": [
+        "PRIMARY KEY (id)",
+        "KEY group_id (group_id)",
+        "KEY meta_key (meta_key(191))"
+      ],
+      "source": "create_var_prefix",
+      "ref_only": false,
+      "defined": true,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_group_requests",
+      "column_count": 8,
+      "columns": [
+        "id:BIGINT UNSIGNED NOT",
+        "group_id:BIGINT UNSIGNED NOT",
+        "user_id:BIGINT UNSIGNED NOT",
+        "message:TEXT",
+        "status:ENUM(",
+        "handled_by:BIGINT UNSIGNED",
+        "created_at:DATETIME NOT NULL",
+        "updated_at:DATETIME NOT NULL"
+      ],
+      "indexes": [
+        "PRIMARY KEY (id)",
+        "UNIQUE KEY group_user_request (group_id,user_id)",
+        "KEY group_id (group_id)",
+        "KEY user_id (user_id)",
+        "KEY status (status)"
+      ],
+      "source": "create_var_prefix",
+      "ref_only": false,
+      "defined": true,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_groups",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "prefix_var_ref_prefix",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_log_activity",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_moderate_content",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_social_posts",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [
+    {
+      "pattern": "^grupos/?$",
+      "query": "index.php?apollo_groups_page=directory"
+    },
+    {
+      "pattern": "^comunas/?$",
+      "query": "index.php?apollo_groups_page=comunas"
+    },
+    {
+      "pattern": "^nucleos/?$",
+      "query": "index.php?apollo_groups_page=nucleos"
+    },
+    {
+      "pattern": "^grupo/([^/]+)/?$",
+      "query": "index.php?apollo_groups_page=single&apollo_group_slug=$matches[1]"
+    },
+    {
+      "pattern": "^criar-comuna/?$",
+      "query": "index.php?apollo_groups_page=create"
+    },
+    {
+      "pattern": "^criar-grupo/?$",
+      "query": "index.php?apollo_groups_page=create_legacy"
+    }
+  ],
+  "query_vars": [
+    "apollo_group_slug",
+    "apollo_groups_page"
+  ],
+  "php_surface": {
+    "files": 43,
+    "loc": 5712,
+    "classes": 4,
+    "functions": 35
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:49.855Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 127,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-groups",
+    "main_file": "apollo-groups.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Groups",
+      "plugin_uri": "https://apollo.rio.br",
+      "description": "Comunas (public communities) — adapted from BuddyPress bp-groups. Public-only, flat, no hierarchy.",
+      "version": "1.0.1",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "GPL-2.0-or-later",
+      "text_domain": "apollo-groups",
+      "domain_path": null,
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": null
+    },
+    "composer": {
+      "name": "apollo/groups",
+      "namespaces": [
+        "Apollo\\Groups"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 43,
+        ".css": 2,
+        ".json": 1,
+        ".md": 1
+      },
+      "by_top_directory": {
+        "(root)": 4,
+        "assets": 2,
+        "includes": 1,
+        "src": 4,
+        "templates": 36
+      },
+      "total_bytes": 222142
+    },
+    "php": {
+      "files": 43,
+      "loc": 5712,
+      "classes": 4,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 35
+    },
+    "architecture": {
+      "namespace": "Apollo\\Groups",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Groups\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Deactivation",
+          "fqcn": "Apollo\\Groups\\Deactivation",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Deactivation.php"
+        },
+        {
+          "kind": "class",
+          "name": "FrontendForm",
+          "fqcn": "Apollo\\Groups\\FrontendForm",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/FrontendForm.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Groups\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_create_group",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_join_group",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_leave_group",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_group",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_group_members",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_is_group_member",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_can_view_group",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_user_groups",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_group_role",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_user_can_manage_group",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_is_group_admin",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_is_group_banned",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_promote_group_member",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_demote_group_member",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_ban_group_member",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_unban_group_member",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_remove_group_member",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_group_bans",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_invite_to_group",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_accept_group_invite",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_reject_group_invite",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_user_group_invitations",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_group_invitations",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_group_invite_count_for_user",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_send_group_request",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_accept_group_request",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_reject_group_request",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_group_requests",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_group_admins",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_group_mods",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_groups",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_search_groups",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_total_group_count",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_user_group_count",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_transfer_group_ownership",
+          "file": "includes/functions.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 24,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/groups",
+          "methods": [
+            "GET",
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $public_read"
+            }
+          },
+          "callback": "rest_list_groups",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/groups/(?P<id>\\d+)",
+          "methods": [
+            "DELETE",
+            "GET",
+            "PUT"
+          ],
+          "permission": {
+            "class": "CAPABILITY_CHECK",
+            "risk": "LOW",
+            "method": null,
+            "analysis": {
+              "effective_class": "CAPABILITY_CHECK",
+              "risk": "LOW",
+              "summary": "Requires capability: apollo_moderate_content",
+              "capabilities": [
+                "apollo_moderate_content"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can('apollo_moderate_content')"
+                ]
+              },
+              "body_preview": "return current_user_can('apollo_moderate_content');",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_get_group",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/groups/(?P<id>\\d+)/members",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $public_read"
+            }
+          },
+          "callback": "rest_get_members",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/groups/(?P<id>\\d+)/join",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $logged"
+            }
+          },
+          "callback": "rest_join_group",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/groups/(?P<id>\\d+)/leave",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $logged"
+            }
+          },
+          "callback": "rest_leave_group",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/groups/comunas",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $public_read"
+            }
+          },
+          "callback": null,
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/groups/nucleos",
+          "methods": [
+            "DELETE",
+            "GET",
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $public_read"
+            }
+          },
+          "callback": "rest_my_groups",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/groups/my",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $logged"
+            }
+          },
+          "callback": "rest_my_groups",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/groups/(?P<id>\\d+)/members/(?P<user_id>\\d+)/promote",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $logged"
+            }
+          },
+          "callback": "rest_promote_member",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/groups/(?P<id>\\d+)/members/(?P<user_id>\\d+)/demote",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $logged"
+            }
+          },
+          "callback": "rest_demote_member",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/groups/(?P<id>\\d+)/members/(?P<user_id>\\d+)/ban",
+          "methods": [
+            "DELETE",
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $logged"
+            }
+          },
+          "callback": "rest_ban_member",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/groups/(?P<id>\\d+)/members/(?P<user_id>\\d+)",
+          "methods": [
+            "DELETE"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $logged"
+            }
+          },
+          "callback": "rest_remove_member",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/groups/(?P<id>\\d+)/bans",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $logged"
+            }
+          },
+          "callback": "rest_get_bans",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/groups/(?P<id>\\d+)/invitations",
+          "methods": [
+            "GET",
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $logged"
+            }
+          },
+          "callback": "rest_get_group_invitations",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/groups/(?P<id>\\d+)/invitations/accept",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $logged"
+            }
+          },
+          "callback": "rest_accept_invitation",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/groups/(?P<id>\\d+)/invitations/reject",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $logged"
+            }
+          },
+          "callback": "rest_reject_invitation",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/my/group-invitations",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $logged"
+            }
+          },
+          "callback": "rest_my_invitations",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/groups/(?P<id>\\d+)/requests",
+          "methods": [
+            "GET",
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $logged"
+            }
+          },
+          "callback": "rest_get_requests",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/groups/(?P<id>\\d+)/requests/(?P<user_id>\\d+)/accept",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $logged"
+            }
+          },
+          "callback": "rest_accept_request",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/groups/(?P<id>\\d+)/requests/(?P<user_id>\\d+)/reject",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $logged"
+            }
+          },
+          "callback": "rest_reject_request",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/groups/search",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $public_read"
+            }
+          },
+          "callback": "rest_search_groups",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/groups/(?P<id>\\d+)/feed",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $public_read,\r\n                "
+            }
+          },
+          "callback": "rest_group_feed",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/groups/(?P<id>\\d+)/avatar",
+          "methods": [
+            "DELETE",
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $logged"
+            }
+          },
+          "callback": "rest_upload_group_avatar",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/groups/(?P<id>\\d+)/cover",
+          "methods": [
+            "DELETE",
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $logged"
+            }
+          },
+          "callback": "rest_upload_group_cover",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 1,
+        "REVIEW": 23
+      },
+      "effective_class_counts": {
+        "OTHER": 23,
+        "CAPABILITY_CHECK": 1
+      },
+      "permission_body_resolved": 1,
+      "permission_body_unresolved": 23,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [],
+      "admin_cap_routes": [],
+      "logged_in_routes": []
+    },
+    "database": {
+      "tables_owned_or_defined": [
+        "apollo_activity",
+        "apollo_group_bans",
+        "apollo_group_invitations",
+        "apollo_group_meta",
+        "apollo_group_requests",
+        "apollo_social_posts"
+      ],
+      "tables_referenced": [
+        "apollo_activity",
+        "apollo_group_bans",
+        "apollo_group_invitations",
+        "apollo_group_members",
+        "apollo_group_meta",
+        "apollo_group_requests",
+        "apollo_groups",
+        "apollo_log_activity",
+        "apollo_moderate_content",
+        "apollo_social_posts"
+      ],
+      "tables_for_registry": [
+        "apollo_activity",
+        "apollo_group_bans",
+        "apollo_group_invitations",
+        "apollo_group_meta",
+        "apollo_group_requests",
+        "apollo_social_posts"
+      ],
+      "schemas_with_columns": 4,
+      "schemas": [
+        {
+          "table": "apollo_activity",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_group_bans",
+          "column_count": 6,
+          "columns": [
+            "id:BIGINT UNSIGNED NOT",
+            "group_id:BIGINT UNSIGNED NOT",
+            "user_id:BIGINT UNSIGNED NOT",
+            "banned_by:BIGINT UNSIGNED NOT",
+            "reason:VARCHAR(500)",
+            "created_at:DATETIME NOT NULL"
+          ],
+          "indexes": [
+            "PRIMARY KEY (id)",
+            "UNIQUE KEY group_user_ban (group_id,user_id)",
+            "KEY group_id (group_id)",
+            "KEY user_id (user_id)"
+          ],
+          "source": "create_var_prefix",
+          "ref_only": false,
+          "defined": true,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_group_invitations",
+          "column_count": 8,
+          "columns": [
+            "id:BIGINT UNSIGNED NOT",
+            "group_id:BIGINT UNSIGNED NOT",
+            "user_id:BIGINT UNSIGNED NOT",
+            "inviter_id:BIGINT UNSIGNED NOT",
+            "status:ENUM(",
+            "message:TEXT",
+            "created_at:DATETIME NOT NULL",
+            "updated_at:DATETIME NOT NULL"
+          ],
+          "indexes": [
+            "PRIMARY KEY (id)",
+            "UNIQUE KEY group_user_invite (group_id,user_id)",
+            "KEY group_id (group_id)",
+            "KEY user_id (user_id)",
+            "KEY inviter_id (inviter_id)",
+            "KEY status (status)"
+          ],
+          "source": "create_var_prefix",
+          "ref_only": false,
+          "defined": true,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_group_members",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "prefix_var_ref_prefix",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_group_meta",
+          "column_count": 4,
+          "columns": [
+            "id:BIGINT UNSIGNED NOT",
+            "group_id:BIGINT UNSIGNED NOT",
+            "meta_key:VARCHAR(255) NOT NULL",
+            "meta_value:LONGTEXT"
+          ],
+          "indexes": [
+            "PRIMARY KEY (id)",
+            "KEY group_id (group_id)",
+            "KEY meta_key (meta_key(191))"
+          ],
+          "source": "create_var_prefix",
+          "ref_only": false,
+          "defined": true,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_group_requests",
+          "column_count": 8,
+          "columns": [
+            "id:BIGINT UNSIGNED NOT",
+            "group_id:BIGINT UNSIGNED NOT",
+            "user_id:BIGINT UNSIGNED NOT",
+            "message:TEXT",
+            "status:ENUM(",
+            "handled_by:BIGINT UNSIGNED",
+            "created_at:DATETIME NOT NULL",
+            "updated_at:DATETIME NOT NULL"
+          ],
+          "indexes": [
+            "PRIMARY KEY (id)",
+            "UNIQUE KEY group_user_request (group_id,user_id)",
+            "KEY group_id (group_id)",
+            "KEY user_id (user_id)",
+            "KEY status (status)"
+          ],
+          "source": "create_var_prefix",
+          "ref_only": false,
+          "defined": true,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_groups",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "prefix_var_ref_prefix",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_log_activity",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_moderate_content",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_social_posts",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 0,
+      "user_count": 1,
+      "term_count": 0,
+      "post_keys": [],
+      "user_keys": [
+        "_apollo_avatar_url"
+      ],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [
+        {
+          "pattern": "^grupos/?$",
+          "query": "index.php?apollo_groups_page=directory",
+          "position": "top",
+          "file": "src/Plugin.php"
+        },
+        {
+          "pattern": "^comunas/?$",
+          "query": "index.php?apollo_groups_page=comunas",
+          "position": "top",
+          "file": "src/Plugin.php"
+        },
+        {
+          "pattern": "^nucleos/?$",
+          "query": "index.php?apollo_groups_page=nucleos",
+          "position": "top",
+          "file": "src/Plugin.php"
+        },
+        {
+          "pattern": "^grupo/([^/]+)/?$",
+          "query": "index.php?apollo_groups_page=single&apollo_group_slug=$matches[1]",
+          "position": "top",
+          "file": "src/Plugin.php"
+        },
+        {
+          "pattern": "^criar-grupo/?$",
+          "query": "index.php?apollo_groups_page=create",
+          "position": "top",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "query_vars": [
+        "apollo_group_slug",
+        "apollo_groups_page"
+      ],
+      "pages_derived": [
+        {
+          "slug": "grupos",
+          "rewrite": "^grupos/?$",
+          "query": "index.php?apollo_groups_page=directory",
+          "query_vars": [
+            "apollo_groups_page=directory"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "comunas",
+          "rewrite": "^comunas/?$",
+          "query": "index.php?apollo_groups_page=comunas",
+          "query_vars": [
+            "apollo_groups_page=comunas"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "nucleos",
+          "rewrite": "^nucleos/?$",
+          "query": "index.php?apollo_groups_page=nucleos",
+          "query_vars": [
+            "apollo_groups_page=nucleos"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "grupo/{param}",
+          "rewrite": "^grupo/([^/]+)/?$",
+          "query": "index.php?apollo_groups_page=single&apollo_group_slug=$matches[1]",
+          "query_vars": [
+            "apollo_groups_page=single",
+            "apollo_group_slug=$matches[1]"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "criar-grupo",
+          "rewrite": "^criar-grupo/?$",
+          "query": "index.php?apollo_groups_page=create",
+          "query_vars": [
+            "apollo_groups_page=create"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        }
+      ]
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 17,
+      "listened_count": 6,
+      "apollo_fired": [
+        "apollo/groups/allow_system_nucleo",
+        "apollo/groups/avatar_updated",
+        "apollo/groups/cover_updated",
+        "apollo/groups/created",
+        "apollo/groups/group_deleted",
+        "apollo/groups/group_deleting",
+        "apollo/groups/invite_accepted",
+        "apollo/groups/member_banned",
+        "apollo/groups/member_demoted",
+        "apollo/groups/member_left",
+        "apollo/groups/member_promoted",
+        "apollo/groups/member_unbanned",
+        "apollo/groups/membership_requested",
+        "apollo/groups/ownership_transferred",
+        "apollo/groups/request_accepted",
+        "apollo/groups/user_invited",
+        "apollo/groups/user_joined"
+      ],
+      "apollo_listened": [
+        "apollo/groups/render_create_form"
+      ],
+      "critical_wp_listened": [
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "template_redirect"
+      ]
+    },
+    "ajax": {
+      "priv": [],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [
+      "apollo_create_comuna",
+      "apollo_create_nucleo",
+      "apollo_group",
+      "apollo_groups",
+      "apollo_my_groups"
+    ],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [],
+      "styles": []
+    },
+    "options": [
+      "apollo_groups_rewrite_version",
+      "apollo_groups_version"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_GROUPS_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_GROUPS_PATH",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_GROUPS_URL",
+        "value": "plugin_dir_url( __FILE__"
+      },
+      {
+        "name": "APOLLO_GROUPS_FILE",
+        "value": "__FILE__"
+      }
+    ],
+    "security": {
+      "php_files": 43,
+      "abspath_guard_files": 42,
+      "abspath_coverage_pct": 98,
+      "wpdb_prepare_calls": 48,
+      "wpdb_query_calls": 51,
+      "prepare_to_query_ratio": 0.94,
+      "nonce_checks": 5,
+      "current_user_can_calls": 15,
+      "raw_superglobal": {
+        "get": 1,
+        "post": 0,
+        "request": 0
+      },
+      "permission_callback_return_true": 0,
+      "escape_helpers": 144,
+      "echo_statements": 165,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 15,
+      "risk_band": "LOW",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 23,
+      "rest_open_high": 0,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 0
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core",
+        "apollo-mod",
+        "apollo-templates",
+        "apollo-users"
+      ],
+      "signals": [
+        "apollo-core",
+        "apollo-mod",
+        "apollo-templates"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.0.1",
+      "version_changed": false,
+      "old_rest": 24,
+      "live_rest": 24,
+      "old_pages": 5,
+      "live_pages": 5,
+      "new_plugin": false
+    }
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 43,
+    "php_loc": 5669,
+    "rest_routes_found": 24,
+    "cpts_found": [],
+    "tables_found": [
+      "apollo_",
+      "apollo_activity",
+      "apollo_group_members",
+      "apollo_group_meta",
+      "apollo_groups",
+      "apollo_social_posts"
+    ],
+    "shortcodes_found": [
+      "apollo_create_comuna",
+      "apollo_create_nucleo",
+      "apollo_group",
+      "apollo_groups",
+      "apollo_my_groups"
+    ]
+  },
+  "$phase_004_comunas_2026_07_28": {
+    "date": "2026-07-28",
+    "phase": "004 — COMUNA on /comunas",
+    "built": "Screen rebuilt from screen/_official_layout/css/comunas.css + view.comunas.js as modular parts under templates/parts/cmn/: styles, data, hero, card, layout. /comunas is now a mount point on the Blank Canvas Apollo+ shell, matching phases 001-003.",
+    "data_layer": "apollo-groups stores groups in its OWN tables ({prefix}apollo_groups + apollo_group_members), NOT a CPT — so the provider reads SQL directly rather than WP_Query. New apollo_cmn_list() returns public comunas with live membership counts and the viewer's own role, guarded by a SHOW TABLES check so a fresh install returns [] instead of fataling. The mockup's APOLLO_COMUNAS fixture global is NOT ported; only its shape is honoured.",
+    "bug_double_document": "First deploy rendered a BLANK page. Cause: handle_virtual_pages() routes every group template through render_blank_canvas(), which opens a document itself — so an Apollo+ screen calling apollo_plus_open() emitted TWO <head>/<body> pairs. Fixed with an explicit apollo_plus_screens allow-list that includes the template directly; every other group screen keeps the legacy wrapper untouched. THIS TRAP APPLIES TO EVERY REMAINING PHASE: any plugin whose router pre-opens a document must be bypassed the same way (apollo-adverts already did this correctly via include+exit).",
+    "strict_tokens": "comunas.css ported verbatim; every token probed against a live Apollo page first. All resolve except --fs-body-sm and --fs-caption, rewritten to core.js's --fs-u at port time. No token declared, no :root block.",
+    "verified": "Rendered in-browser (cache-busted, logged-in): Apollo+ aside with Comuna highlighted, hero with real zero-counts, search, honest empty state ('Nenhuma comuna criada ainda') and the create CTA. 0 comunas exist in the DB, so the empty state is correct — the populated path is unproven until a comuna is created.",
+    "files": [
+      "templates/comunas.php",
+      "templates/parts/cmn/{styles,data,hero,card,layout}.php (new)",
+      "src/Plugin.php (Apollo+ bypass of render_blank_canvas)",
+      "apollo-groups.php (version bump 1.0.1 -> 1.1.1)"
+    ]
+  }
+}

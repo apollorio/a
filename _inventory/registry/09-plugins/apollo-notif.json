@@ -1,0 +1,1516 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-notif",
+    "owner": "apollo-notif",
+    "wrap": "plugins.apollo-notif",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-notif",
+  "namespace": "Apollo\\Notif",
+  "priority": 3,
+  "status": "IMPLEMENTED",
+  "description": "In-app notifications, preferences, badge counts — adapted from BNFW engine patterns.",
+  "dependencies": [
+    "apollo-core",
+    "apollo-email",
+    "apollo-hub",
+    "apollo-templates"
+  ],
+  "provides": [
+    "notifications",
+    "notif-preferences",
+    "notif-badge",
+    "push-notif",
+    "web-push"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [
+    "apollo_activity",
+    "apollo_notif_prefs",
+    "apollo_notifications"
+  ],
+  "meta": {
+    "post": {},
+    "user": {
+      "_apollo_email_prefs": {
+        "_source": "deep_scan"
+      },
+      "_apollo_last_seen": {
+        "_source": "deep_scan"
+      },
+      "_apollo_notif_prefs": {
+        "_source": "deep_scan"
+      },
+      "_apollo_notif_unread": {
+        "_source": "deep_scan"
+      },
+      "_apollo_push_subscriptions": {
+        "_source": "deep_scan"
+      },
+      "_apollo_social_name": {
+        "_source": "deep_scan"
+      }
+    },
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/notifications",
+      "methods": [
+        "GET"
+      ],
+      "description": "Get notifications",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_notifications",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/notifications/(?P<id>\\d+)/read",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_mark_read",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/notifications/read-all",
+      "methods": [
+        "POST"
+      ],
+      "description": "Mark all as read",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_mark_all_read",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/notifications/unread-count",
+      "methods": [
+        "GET"
+      ],
+      "description": "Get unread count",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_unread_count",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/notifications/preferences",
+      "methods": [
+        "GET",
+        "PUT"
+      ],
+      "description": "Preferences",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_prefs",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/notifications/(?P<id>\\d+)",
+      "methods": [
+        "DELETE"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_delete_notification",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/notifications/read",
+      "methods": [
+        "DELETE"
+      ],
+      "description": "Delete all read notifications",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_delete_read",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/notifications/(?P<id>\\d+)/displayed",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_mark_displayed",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/notifications/preferences/snooze",
+      "methods": [
+        "POST"
+      ],
+      "description": "Snooze/unsnooze notification type",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_snooze_type",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/notifications/preferences/snooze",
+      "methods": [
+        "DELETE"
+      ],
+      "description": "Snooze/unsnooze notification type",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_unsnooze_type",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/notifications/push/subscribe",
+      "methods": [
+        "POST"
+      ],
+      "description": "Subscribe to Web Push (saves PushSubscription)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_push_subscribe",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/notifications/push/unsubscribe",
+      "methods": [
+        "DELETE"
+      ],
+      "description": "Remove Web Push subscription",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_push_unsubscribe",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/notifications/push/vapid-public-key",
+      "methods": [
+        "GET"
+      ],
+      "description": "Get VAPID public key for PushManager.subscribe()",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_push_vapid_key",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "hooks": {
+    "listens": [
+      "apollo/chat/message_sent",
+      "apollo/social/activity_created",
+      "apollo/social/reply_created",
+      "apollo/groups/user_joined",
+      "apollo/wow/added",
+      "apollo/mod/reported",
+      "comment_post",
+      "user_register",
+      "wp_login",
+      "apollo/social/new_user",
+      "apollo/notif/mention",
+      "apollo/event/published",
+      "apollo/fav/added",
+      "apollo/coauthor/added",
+      "apollo/membership/upgraded",
+      "apollo/users/profile_visited"
+    ],
+    "fires": [
+      "apollo/notif/push_subscribed",
+      "apollo/notif/push_unsubscribed"
+    ]
+  },
+  "pages": [
+    {
+      "slug": "notificacoes",
+      "rewrite": "^notificacoes/?$",
+      "query": "index.php?apollo_notif_page=notifications",
+      "query_vars": [
+        "apollo_notif_page=notifications"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    }
+  ],
+  "shortcodes": [
+    {
+      "tag": "apollo_notif",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_notif_badge",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "version": "1.0.1",
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [
+    "apollo/email/digest/chat",
+    "apollo/email/digest/comuna",
+    "apollo/email/digest/event_match",
+    "apollo/email/digest/fav_events",
+    "apollo/email/digest/news",
+    "apollo/email/digest/social",
+    "apollo/notif/admin_login_alert",
+    "apollo/notif/created",
+    "apollo/notif/deleted",
+    "apollo/notif/deleted_all_read",
+    "apollo/notif/digest",
+    "apollo/notif/digest/batch_size",
+    "apollo/notif/digest/chat_items",
+    "apollo/notif/digest/classify_segments",
+    "apollo/notif/digest/comuna_items",
+    "apollo/notif/digest/event_match_items",
+    "apollo/notif/digest/fav_events_items",
+    "apollo/notif/digest/news_items",
+    "apollo/notif/digest/notifications_items",
+    "apollo/notif/digest/social_items",
+    "apollo/notif/push_subscribed",
+    "apollo/notif/push_unsubscribed",
+    "apollo/notif/type_snoozed",
+    "apollo/social/get_followers"
+  ],
+  "hooks_listened": [
+    "apollo/chat/message_sent",
+    "apollo/coauthor/added",
+    "apollo/event/published",
+    "apollo/fav/added",
+    "apollo/groups/user_joined",
+    "apollo/membership/rank_awarded",
+    "apollo/mod/reported",
+    "apollo/notif/created",
+    "apollo/notif/mention",
+    "apollo/social/activity_created",
+    "apollo/social/new_user",
+    "apollo/social/reply_created",
+    "apollo/users/profile_visited",
+    "apollo/wow/added",
+    "apollo_navbar_notifications",
+    "apollo_notif_cleanup",
+    "apollo_notif_digest_dispatch"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [],
+    "styles": []
+  },
+  "options": [
+    "apollo_notif_version",
+    "apollo_vapid_private_key",
+    "apollo_vapid_public_key"
+  ],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 18,
+    "abspath_coverage_pct": 88,
+    "rest_open_routes": 1,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 1,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 13,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 0.68
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_activity",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_cleanup_expired_notifications",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_get_thread_participants",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_get_wow_types",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_navbar_notifications",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_notif_prefs",
+      "column_count": 6,
+      "columns": [
+        "id:BIGINT UNSIGNED NOT",
+        "user_id:BIGINT UNSIGNED NOT",
+        "notif_type:VARCHAR(50) NOT NULL",
+        "channel:ENUM(",
+        "snoozed_until:DATETIME NULL",
+        "updated_at:DATETIME NOT NULL"
+      ],
+      "indexes": [
+        "PRIMARY KEY (id)",
+        "UNIQUE KEY user_type (user_id, notif_type)"
+      ],
+      "source": "create_var_prefix",
+      "ref_only": false,
+      "defined": true,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_notifications",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [
+    {
+      "pattern": "^notificacoes/?$",
+      "query": "index.php?apollo_notif_page=notifications"
+    }
+  ],
+  "query_vars": [
+    "apollo_notif_page"
+  ],
+  "php_surface": {
+    "files": 8,
+    "loc": 3645,
+    "classes": 4,
+    "functions": 13
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:50.837Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 67,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-notif",
+    "main_file": "apollo-notif.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Notifications",
+      "plugin_uri": "https://apollo.rio.br",
+      "description": "In-app notifications, preferences, badge counts — adapted from BNFW engine patterns.",
+      "version": "1.0.1",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "GPL-2.0-or-later",
+      "text_domain": "apollo-notif",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": null
+    },
+    "composer": {
+      "name": "apollo/notif",
+      "namespaces": [
+        "Apollo\\Notif"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 8,
+        ".json": 1,
+        ".md": 1,
+        ".bak": 1
+      },
+      "by_top_directory": {
+        "(root)": 4,
+        "includes": 1,
+        "src": 4,
+        "templates": 2
+      },
+      "total_bytes": 156601
+    },
+    "php": {
+      "files": 8,
+      "loc": 3645,
+      "classes": 4,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 13
+    },
+    "architecture": {
+      "namespace": "Apollo\\Notif",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Notif\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Admin",
+          "fqcn": "Apollo\\Notif\\Admin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin.php"
+        },
+        {
+          "kind": "class",
+          "name": "Deactivation",
+          "fqcn": "Apollo\\Notif\\Deactivation",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Deactivation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Notif\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_create_notification",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_notification",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_unread_notif_count",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_mark_notif_read",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_mark_all_notifs_read",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_mark_notif_displayed",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_delete_notification",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_delete_all_read_notifications",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_notifications",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_snooze_type",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_unsnooze_type",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_is_type_snoozed",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_cleanup_expired_notifications",
+          "file": "includes/functions.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 13,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/notifications",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_get_notifications",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/notifications/(?P<id>\\d+)/read",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_mark_read",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/notifications/read-all",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_mark_all_read",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/notifications/unread-count",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_unread_count",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/notifications/preferences",
+          "methods": [
+            "GET",
+            "PUT"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_get_prefs",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/notifications/(?P<id>\\d+)",
+          "methods": [
+            "DELETE"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_delete_notification",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/notifications/read",
+          "methods": [
+            "DELETE"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_delete_read",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/notifications/(?P<id>\\d+)/displayed",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_mark_displayed",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/notifications/preferences/snooze",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_snooze_type",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/notifications/preferences/snooze",
+          "methods": [
+            "DELETE"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_unsnooze_type",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/notifications/push/subscribe",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_push_subscribe",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/notifications/push/unsubscribe",
+          "methods": [
+            "DELETE"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_push_unsubscribe",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/notifications/push/vapid-public-key",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "rest_push_vapid_key",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 1,
+        "MEDIUM": 12,
+        "LOW": 0,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "LOGGED_IN_ONLY": 12,
+        "PUBLIC_UNAUTHENTICATED": 1
+      },
+      "permission_body_resolved": 13,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [
+        {
+          "endpoint": "/notifications/push/vapid-public-key",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/Plugin.php"
+        }
+      ],
+      "admin_cap_routes": [],
+      "logged_in_routes": [
+        "/notifications",
+        "/notifications/(?P<id>\\d+)/read",
+        "/notifications/read-all",
+        "/notifications/unread-count",
+        "/notifications/preferences",
+        "/notifications/(?P<id>\\d+)",
+        "/notifications/read",
+        "/notifications/(?P<id>\\d+)/displayed",
+        "/notifications/preferences/snooze",
+        "/notifications/preferences/snooze",
+        "/notifications/push/subscribe",
+        "/notifications/push/unsubscribe"
+      ]
+    },
+    "database": {
+      "tables_owned_or_defined": [
+        "apollo_activity",
+        "apollo_notif_prefs",
+        "apollo_notifications"
+      ],
+      "tables_referenced": [
+        "apollo_activity",
+        "apollo_cleanup_expired_notifications",
+        "apollo_get_thread_participants",
+        "apollo_get_wow_types",
+        "apollo_navbar_notifications",
+        "apollo_notif_prefs",
+        "apollo_notifications"
+      ],
+      "tables_for_registry": [
+        "apollo_activity",
+        "apollo_notif_prefs",
+        "apollo_notifications"
+      ],
+      "schemas_with_columns": 1,
+      "schemas": [
+        {
+          "table": "apollo_activity",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_cleanup_expired_notifications",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_get_thread_participants",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_get_wow_types",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_navbar_notifications",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_notif_prefs",
+          "column_count": 6,
+          "columns": [
+            "id:BIGINT UNSIGNED NOT",
+            "user_id:BIGINT UNSIGNED NOT",
+            "notif_type:VARCHAR(50) NOT NULL",
+            "channel:ENUM(",
+            "snoozed_until:DATETIME NULL",
+            "updated_at:DATETIME NOT NULL"
+          ],
+          "indexes": [
+            "PRIMARY KEY (id)",
+            "UNIQUE KEY user_type (user_id, notif_type)"
+          ],
+          "source": "create_var_prefix",
+          "ref_only": false,
+          "defined": true,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_notifications",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 0,
+      "user_count": 6,
+      "term_count": 0,
+      "post_keys": [],
+      "user_keys": [
+        "_apollo_email_prefs",
+        "_apollo_last_seen",
+        "_apollo_notif_prefs",
+        "_apollo_notif_unread",
+        "_apollo_push_subscriptions",
+        "_apollo_social_name"
+      ],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [
+        {
+          "pattern": "^notificacoes/?$",
+          "query": "index.php?apollo_notif_page=notifications",
+          "position": "top",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "query_vars": [
+        "apollo_notif_page"
+      ],
+      "pages_derived": [
+        {
+          "slug": "notificacoes",
+          "rewrite": "^notificacoes/?$",
+          "query": "index.php?apollo_notif_page=notifications",
+          "query_vars": [
+            "apollo_notif_page=notifications"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        }
+      ]
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 24,
+      "listened_count": 28,
+      "apollo_fired": [
+        "apollo/email/digest/chat",
+        "apollo/email/digest/comuna",
+        "apollo/email/digest/event_match",
+        "apollo/email/digest/fav_events",
+        "apollo/email/digest/news",
+        "apollo/email/digest/social",
+        "apollo/notif/admin_login_alert",
+        "apollo/notif/created",
+        "apollo/notif/deleted",
+        "apollo/notif/deleted_all_read",
+        "apollo/notif/digest",
+        "apollo/notif/digest/batch_size",
+        "apollo/notif/digest/chat_items",
+        "apollo/notif/digest/classify_segments",
+        "apollo/notif/digest/comuna_items",
+        "apollo/notif/digest/event_match_items",
+        "apollo/notif/digest/fav_events_items",
+        "apollo/notif/digest/news_items",
+        "apollo/notif/digest/notifications_items",
+        "apollo/notif/digest/social_items",
+        "apollo/notif/push_subscribed",
+        "apollo/notif/push_unsubscribed",
+        "apollo/notif/type_snoozed",
+        "apollo/social/get_followers"
+      ],
+      "apollo_listened": [
+        "apollo/chat/message_sent",
+        "apollo/coauthor/added",
+        "apollo/event/published",
+        "apollo/fav/added",
+        "apollo/groups/user_joined",
+        "apollo/membership/rank_awarded",
+        "apollo/mod/reported",
+        "apollo/notif/created",
+        "apollo/notif/mention",
+        "apollo/social/activity_created",
+        "apollo/social/new_user",
+        "apollo/social/reply_created",
+        "apollo/users/profile_visited",
+        "apollo/wow/added",
+        "apollo_navbar_notifications",
+        "apollo_notif_cleanup",
+        "apollo_notif_digest_dispatch"
+      ],
+      "critical_wp_listened": [
+        "admin_menu",
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "template_redirect",
+        "user_register",
+        "wp_login"
+      ]
+    },
+    "ajax": {
+      "priv": [],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [
+      "apollo_notif",
+      "apollo_notif_badge"
+    ],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [],
+      "styles": []
+    },
+    "options": [
+      "apollo_notif_version",
+      "apollo_vapid_private_key",
+      "apollo_vapid_public_key"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_NOTIF_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_NOTIF_PATH",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_NOTIF_URL",
+        "value": "plugin_dir_url( __FILE__"
+      },
+      {
+        "name": "APOLLO_NOTIF_FILE",
+        "value": "__FILE__"
+      }
+    ],
+    "security": {
+      "php_files": 8,
+      "abspath_guard_files": 7,
+      "abspath_coverage_pct": 88,
+      "wpdb_prepare_calls": 23,
+      "wpdb_query_calls": 34,
+      "prepare_to_query_ratio": 0.68,
+      "nonce_checks": 3,
+      "current_user_can_calls": 2,
+      "raw_superglobal": {
+        "get": 4,
+        "post": 3,
+        "request": 0
+      },
+      "permission_callback_return_true": 1,
+      "escape_helpers": 30,
+      "echo_statements": 32,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 18,
+      "risk_band": "LOW",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 1,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 1
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core",
+        "apollo-email",
+        "apollo-hub",
+        "apollo-templates"
+      ],
+      "signals": [
+        "apollo-core",
+        "apollo-email",
+        "apollo-hub",
+        "apollo-templates"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.0.1",
+      "version_changed": false,
+      "old_rest": 12,
+      "live_rest": 13,
+      "old_pages": 1,
+      "live_pages": 1,
+      "new_plugin": false
+    }
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 8,
+    "php_loc": 3637,
+    "rest_routes_found": 12,
+    "cpts_found": [],
+    "tables_found": [
+      "apollo_",
+      "apollo_activity",
+      "apollo_notif_prefs",
+      "apollo_notifications"
+    ],
+    "shortcodes_found": [
+      "apollo_notif",
+      "apollo_notif_badge"
+    ]
+  }
+}

@@ -1,0 +1,269 @@
+/**
+ * Apollo Events — Calendar CSS
+ *
+ * @package Apollo\Event
+ */
+
+/* ─── Calendar Base ─────────────────────────────────────────────────── */
+.a-eve-calendar {
+	margin-bottom: 24px;
+}
+
+.a-eve-calendar--bimonth-cal {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
+}
+
+/* ─── Header ────────────────────────────────────────────────────────── */
+.a-eve-cal-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 12px 16px;
+	margin-bottom: 4px;
+}
+
+.a-eve-cal-title {
+	font-size: 1.1rem;
+	font-weight: 700;
+	margin: 0;
+}
+
+.a-eve-cal-nav {
+	background: transparent;
+	border: 1px solid var(--a-eve-border, #e0e0e0);
+	border-radius: 4px;
+	padding: 4px 10px;
+	cursor: pointer;
+	font-size: 1rem;
+	transition: all .2s;
+}
+
+.a-eve-cal-nav:hover {
+	border-color: var(--a-eve-accent, #e74c3c);
+	color: var(--a-eve-accent, #e74c3c);
+}
+
+/* ─── Grid ──────────────────────────────────────────────────────────── */
+.a-eve-cal-grid {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	gap: 2px;
+}
+
+.a-eve-cal-dow {
+	text-align: center;
+	padding: 8px 4px;
+	font-weight: 600;
+	font-size: .75rem;
+	text-transform: uppercase;
+	color: var(--a-eve-secondary, #666);
+}
+
+.a-eve-cal-day {
+	text-align: center;
+	padding: 8px 4px;
+	min-height: 40px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	border-radius: 4px;
+	transition: background .2s;
+	position: relative;
+}
+
+.a-eve-cal-day--empty {
+	opacity: 0;
+}
+
+.a-eve-cal-day-num {
+	font-size: .9rem;
+}
+
+.a-eve-cal-day--has-event {
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.a-eve-cal-day--has-event:hover {
+	background: rgba(231, 76, 60, .1);
+}
+
+.a-eve-cal-day--today {
+	background: var(--a-eve-accent, #e74c3c);
+	color: #fff;
+}
+
+.a-eve-cal-day--today:hover {
+	background: var(--a-eve-accent, #e74c3c);
+	opacity: .9;
+}
+
+.a-eve-cal-day--selected {
+	outline: 2px solid var(--a-eve-accent, #e74c3c);
+	outline-offset: -2px;
+}
+
+.a-eve-cal-dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--a-eve-accent, #e74c3c);
+	display: block;
+	margin-top: 2px;
+}
+
+/* ─── Week Calendar ─────────────────────────────────────────────────── */
+.a-eve-cal-week-grid {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	gap: 4px;
+}
+
+.a-eve-cal-week-day {
+	border: 1px solid var(--a-eve-border, #e0e0e0);
+	border-radius: 6px;
+	min-height: 120px;
+	padding: 8px;
+}
+
+.a-eve-cal-week-day__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	margin-bottom: 8px;
+	padding-bottom: 4px;
+	border-bottom: 1px solid var(--a-eve-border, #e0e0e0);
+}
+
+.a-eve-cal-week-day__name {
+	font-size: .75rem;
+	color: var(--a-eve-secondary, #666);
+	font-weight: 600;
+}
+
+.a-eve-cal-week-day__num {
+	font-size: 1.1rem;
+	font-weight: 700;
+}
+
+.a-eve-cal-day--today .a-eve-cal-week-day__num {
+	color: var(--a-eve-accent, #e74c3c);
+}
+
+.a-eve-cal-week-event {
+	display: block;
+	padding: 4px 6px;
+	margin-bottom: 4px;
+	background: rgba(231, 76, 60, .08);
+	border-left: 3px solid var(--a-eve-accent, #e74c3c);
+	border-radius: 2px;
+	text-decoration: none;
+	color: inherit;
+	font-size: .8rem;
+	transition: background .2s;
+}
+
+.a-eve-cal-week-event:hover {
+	background: rgba(231, 76, 60, .15);
+}
+
+.a-eve-cal-week-event__time {
+	display: block;
+	font-size: .7rem;
+	color: var(--a-eve-accent, #e74c3c);
+	font-weight: 600;
+}
+
+.a-eve-cal-week-event__title {
+	display: block;
+	font-weight: 600;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* ─── Month Extra Calendar ──────────────────────────────────────────── */
+.a-eve-cal-extra-layout {
+	display: grid;
+	grid-template-columns: 1fr 300px;
+	gap: 20px;
+}
+
+.a-eve-cal-extra-sidebar {
+	border: 1px solid var(--a-eve-border, #e0e0e0);
+	border-radius: 6px;
+	padding: 16px;
+}
+
+.a-eve-cal-sidebar-title {
+	font-size: .95rem;
+	font-weight: 700;
+	margin: 0 0 12px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid var(--a-eve-border, #e0e0e0);
+}
+
+.a-eve-cal-sidebar-event {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 10px;
+	border: 1px solid var(--a-eve-border, #e0e0e0);
+	border-radius: 4px;
+	margin-bottom: 8px;
+	text-decoration: none;
+	color: inherit;
+	transition: border-color .2s;
+}
+
+.a-eve-cal-sidebar-event:hover {
+	border-color: var(--a-eve-accent, #e74c3c);
+}
+
+.a-eve-cal-sidebar-event strong {
+	font-size: .9rem;
+}
+
+.a-eve-cal-sidebar-event span {
+	font-size: .8rem;
+	color: var(--a-eve-secondary, #666);
+}
+
+.a-eve-cal-sidebar-empty {
+	color: var(--a-eve-secondary, #666);
+	font-size: .85rem;
+	text-align: center;
+	padding: 20px 0;
+}
+
+/* ─── Map Container ─────────────────────────────────────────────────── */
+.a-eve-map-container {
+	margin-top: 20px;
+}
+
+.a-eve-map {
+	border-radius: var(--a-eve-radius, 8px);
+	border: 1px solid var(--a-eve-border, #e0e0e0);
+}
+
+/* ─── Responsive ────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+	.a-eve-calendar--bimonth-cal {
+		grid-template-columns: 1fr;
+	}
+
+	.a-eve-cal-week-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.a-eve-cal-week-day {
+		min-height: auto;
+	}
+
+	.a-eve-cal-extra-layout {
+		grid-template-columns: 1fr;
+	}
+}

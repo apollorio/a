@@ -1,0 +1,316 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   EVENT CARD — Style 01
+   Apollo Templates · assets/css/event-card.css
+
+   Design System Tokens:
+     --eve-radius     Card border radius
+     --eve-gap        Grid gap
+     --eve-shadow     Card resting shadow
+     --eve-bg         Card background
+     --eve-text       Primary text color
+     --eve-muted      Secondary text color
+     --eve-accent     Accent / highlight color
+     --eve-mask-size  Date-box cutout dimension
+
+   Uses .a-eve-* namespace to avoid collisions.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Tokens ──────────────────────────────────────────────────────────────── */
+
+:root {
+	--eve-radius:    var(--av2-radius, 16px);
+	--eve-gap:       1.5rem;
+	--eve-shadow:    0 2px 12px rgba(var(--rgb-d), .06);
+	--eve-bg:        var(--av2-bg, #ffffff);
+	--eve-text:      var(--av2-black, #121214);
+	--eve-muted:     var(--av2-grey, #666);
+	--eve-accent:    var(--av2-primary, FF9820);
+	--eve-mask-size: 5.5rem;
+	--eve-tag-bg:    rgba(var(--rgb-d), .55);
+	--eve-tag-text:  #ffffff;
+	--eve-ff:        var(--av2-ff-main, "Space Grotesk", sans-serif);
+	--eve-ff-mono:   var(--av2-ff-mono, "Space Mono", monospace);
+}
+
+/* Dark mode (matches apollo CDN dark-theme toggle) */
+[data-theme="dark"],
+.dark-mode {
+	--eve-shadow:   0 2px 16px rgba(var(--rgb-d), .35);
+	--eve-bg:       #1e1e22;
+	--eve-text:     #e4e4e7;
+	--eve-muted:    #a1a1aa;
+	--eve-accent:   var(--av2-primary, FF9820);
+	--eve-tag-bg:   rgba(var(--rgb-t), .15);
+	--eve-tag-text: #f4f4f5;
+}
+
+/* ── Grid ────────────────────────────────────────────────────────────────── */
+
+.a-eve-grid {
+	display: grid;
+	grid-template-columns: repeat(var(--eve-columns, 3), 1fr);
+	gap: var(--eve-gap);
+}
+
+@media (max-width: 1024px) {
+	.a-eve-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+	.a-eve-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Card ────────────────────────────────────────────────────────────────── */
+
+.a-eve-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	background: var(--eve-bg);
+	border: 1px solid var(--av2-border, #e4e4e7);
+	border-radius: var(--eve-r);
+	box-shadow: none;
+	overflow: hidden;
+	transition: transform .3s cubic-bezier(0.16, 1, 0.3, 1);
+	font-family: var(--eve-ff);
+}
+
+.a-eve-card:hover {
+	transform: translateY(-4px);
+}
+
+/* ── Date box (top-left, overlaid on media) ──────────────────────────────── */
+
+.a-eve-date {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 3;
+	width: var(--eve-mask-size);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: .5rem .25rem;
+	background: var(--av2-black, #121214);
+	color: #fff;
+	border-radius: var(--eve-r) 0 var(--eve-r) 0;
+	font-family: var(--eve-ff-mono);
+	line-height: 1.15;
+	text-align: center;
+}
+
+.a-eve-date__day {
+	font-size: 1.75rem;
+	font-weight: 800;
+	letter-spacing: -.02em;
+}
+
+.a-eve-date__month {
+	font-size: .75rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .1em;
+}
+
+.a-eve-date__year {
+	font-size: .65rem;
+	font-weight: 400;
+	opacity: .7;
+}
+
+/* ── Media / Banner ──────────────────────────────────────────────────────── */
+
+.a-eve-media {
+	position: relative;
+	overflow: hidden;
+	aspect-ratio: 16 / 9;
+
+	/* CSS mask cutout for the date box */
+	-webkit-mask-image:
+		radial-gradient(
+			circle at calc(var(--eve-mask-size) + .25rem) calc(var(--eve-mask-size) - .25rem),
+			transparent calc(var(--eve-mask-size) * .18),
+			black calc(var(--eve-mask-size) * .18 + 1px)
+		);
+	mask-image:
+		radial-gradient(
+			circle at calc(var(--eve-mask-size) + .25rem) calc(var(--eve-mask-size) - .25rem),
+			transparent calc(var(--eve-mask-size) * .18),
+			black calc(var(--eve-mask-size) * .18 + 1px)
+		);
+}
+
+.a-eve-media__link {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.a-eve-media__img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	filter: grayscale(100%);
+	transition: filter .5s cubic-bezier(0.16, 1, 0.3, 1), transform .4s ease;
+}
+
+.a-eve-card:hover .a-eve-media__img {
+	filter: grayscale(0%);
+	transform: scale(1.04);
+}
+
+/* ── Tags overlay (bottom of media) ──────────────────────────────────────── */
+
+.a-eve-tags {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 2;
+	display: flex;
+	flex-wrap: wrap;
+	gap: .35rem;
+	padding: .5rem .75rem;
+	background: linear-gradient(transparent, rgba(var(--rgb-d), .45));
+}
+
+.a-eve-tag {
+	display: inline-block;
+	padding: .2rem .55rem;
+	font-size: .7rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+	color: var(--eve-tag-text);
+	background: var(--eve-tag-bg);
+	border-radius: .3rem;
+	backdrop-filter: blur(4px);
+	-webkit-backdrop-filter: blur(4px);
+	text-decoration: none;
+	transition: background .2s;
+}
+
+.a-eve-tag:hover {
+	background: var(--eve-accent);
+	color: #fff;
+}
+
+/* ── Content ─────────────────────────────────────────────────────────────── */
+
+.a-eve-content {
+	display: flex;
+	flex-direction: column;
+	gap: .75rem;
+	padding: 1rem 1.15rem 1.25rem;
+	flex: 1;
+}
+
+.a-eve-title {
+	margin: 0;
+	font-size: 1.1rem;
+	font-weight: 700;
+	line-height: 1.3;
+	color: var(--eve-text);
+}
+
+.a-eve-title a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.a-eve-title a:hover {
+	color: var(--eve-accent);
+}
+
+/* ── Meta rows ───────────────────────────────────────────────────────────── */
+
+.a-eve-meta {
+	display: flex;
+	flex-direction: column;
+	gap: .4rem;
+}
+
+.a-eve-meta__row {
+	display: flex;
+	align-items: center;
+	gap: .45rem;
+	font-size: .82rem;
+	color: var(--eve-muted);
+}
+
+.a-eve-meta__row i {
+	flex-shrink: 0;
+	font-size: 1rem;
+	color: var(--eve-accent);
+	width: 1.2rem;
+	text-align: center;
+}
+
+.a-eve-meta__row a {
+	color: var(--eve-muted);
+	text-decoration: none;
+}
+
+.a-eve-meta__row a:hover {
+	color: var(--eve-accent);
+}
+
+/* ── Actions bar ─────────────────────────────────────────────────────────── */
+
+.a-eve-actions {
+	display: flex;
+	gap: .5rem;
+	margin-top: auto;
+	padding-top: .5rem;
+}
+
+.a-eve-actions .a-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: .35rem;
+	padding: .45rem .9rem;
+	font-size: .78rem;
+	font-weight: 600;
+	border-radius: .5rem;
+	cursor: pointer;
+	text-decoration: none;
+	transition: all .2s ease;
+	white-space: nowrap;
+}
+
+.a-eve-actions .a-btn--outline {
+	border: 1px solid var(--eve-accent);
+	color: var(--eve-accent);
+	background: transparent;
+}
+
+.a-eve-actions .a-btn--outline:hover {
+	background: var(--eve-accent);
+	color: #fff;
+}
+
+.a-eve-actions .a-btn--primary {
+	border: 1px solid var(--eve-accent);
+	color: #fff;
+	background: var(--eve-accent);
+}
+
+.a-eve-actions .a-btn--primary:hover {
+	filter: brightness(1.12);
+}
+
+.a-btn--sm {
+	font-size: .75rem;
+	padding: .35rem .7rem;
+}
+
+/* ── Empty state ─────────────────────────────────────────────────────────── */
+
+.a-eve-empty {
+	grid-column: 1 / -1;
+	text-align: center;
+	padding: 3rem 1rem;
+	color: var(--eve-muted);
+	font-size: .95rem;
+}

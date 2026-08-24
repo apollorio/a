@@ -1,0 +1,41 @@
+/**
+ * Apollo Admin — Responsive Breakpoints
+ */
+
+@media (max-width: 960px) {
+    .apollo-admin-layout {
+        flex-direction: column;
+    }
+    .apollo-admin-sidebar {
+        width: 100%;
+        min-width: 100%;
+        max-height: none;
+        border-right: none;
+        border-bottom: 1px solid var(--apollo-border);
+        display: flex;
+        flex-wrap: wrap;
+        padding: 8px;
+        gap: 4px;
+    }
+    .apollo-layer-header {
+        width: 100%;
+        padding: 6px 8px 2px;
+    }
+    .apollo-tab-link {
+        padding: 6px 10px;
+        border-radius: 6px;
+        border-left: none;
+        font-size: 12px;
+    }
+    .apollo-tab-link.active {
+        background: var(--apollo-primary);
+        color: #fff;
+        border-left-color: transparent;
+    }
+    .apollo-tab-link.active .dashicons {
+        color: #fff;
+    }
+    .apollo-admin-content {
+        padding: 20px;
+    }
+}

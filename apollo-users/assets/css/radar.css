@@ -1,0 +1,251 @@
+/**
+ * Apollo Users - Radar Styles
+ *
+ * @package Apollo\Users
+ */
+
+/* ============================================
+   Radar Page
+   ============================================ */
+.apollo-radar-page {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 40px 20px;
+}
+
+.apollo-radar-header {
+	text-align: center;
+	margin-bottom: 40px;
+}
+
+.apollo-radar-header h1 {
+	font-size: 32px;
+	font-weight: 700;
+	color: var(--apollo-text);
+	margin: 0 0 8px;
+}
+
+.apollo-radar-header p {
+	font-size: 16px;
+	color: var(--apollo-text-muted);
+	margin: 0;
+}
+
+/* ============================================
+   Filters
+   ============================================ */
+.apollo-radar-filters {
+	background: var(--apollo-card-bg);
+	border-radius: var(--apollo-r);
+	padding: 24px;
+	margin-bottom: 32px;
+	box-shadow: var(--apollo-shadow);
+}
+
+.apollo-filter-form {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	align-items: flex-end;
+}
+
+.apollo-filter-group {
+	flex: 1;
+	min-width: 200px;
+}
+
+.apollo-filter-group label {
+	display: block;
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--apollo-text-muted);
+	margin-bottom: 6px;
+}
+
+.apollo-filter-group input,
+.apollo-filter-group select {
+	width: 100%;
+	padding: 10px 14px;
+	border: 1px solid var(--apollo-border);
+	border-radius: var(--apollo-r-sm);
+	font-size: 14px;
+	color: var(--apollo-text);
+	background: var(--apollo-bg);
+	transition: var(--apollo-transition);
+}
+
+.apollo-filter-group input:focus,
+.apollo-filter-group select:focus {
+	outline: none;
+	border-color: var(--apollo-primary);
+	box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.apollo-filter-group input::placeholder {
+	color: var(--apollo-text-muted);
+}
+
+/* ============================================
+   User Grid
+   ============================================ */
+.apollo-user-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	gap: 20px;
+}
+
+.apollo-user-card {
+	background: var(--apollo-card-bg);
+	border-radius: var(--apollo-r);
+	overflow: hidden;
+	box-shadow: var(--apollo-shadow);
+	transition: var(--apollo-transition);
+}
+
+.apollo-user-card:hover {
+	transform: translateY(-4px);
+	box-shadow: var(--apollo-shadow-lg);
+}
+
+.apollo-user-link {
+	display: block;
+	text-decoration: none;
+	padding: 24px;
+	text-align: center;
+}
+
+.apollo-user-avatar {
+	width: 100px;
+	height: 100px;
+	margin: 0 auto 16px;
+}
+
+.apollo-user-avatar img {
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 3px solid var(--apollo-bg);
+}
+
+.apollo-user-info {
+	text-align: center;
+}
+
+.apollo-user-name {
+	font-size: 18px;
+	font-weight: 600;
+	color: var(--apollo-text);
+	margin: 0 0 4px;
+}
+
+.apollo-user-username {
+	font-size: 14px;
+	color: var(--apollo-text-muted);
+	margin: 0 0 8px;
+}
+
+.apollo-user-location {
+	font-size: 13px;
+	color: var(--apollo-text-muted);
+	margin: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+}
+
+.apollo-user-location .dashicons {
+	font-size: 14px;
+	width: 14px;
+	height: 14px;
+}
+
+/* ============================================
+   Loading & Results
+   ============================================ */
+.apollo-loading {
+	grid-column: 1 / -1;
+	text-align: center;
+	padding: 60px 20px;
+	color: var(--apollo-text-muted);
+}
+
+.apollo-loading .dashicons {
+	font-size: 32px;
+	width: 32px;
+	height: 32px;
+	margin-bottom: 12px;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.spin {
+	animation: apollo-spin 1s linear infinite;
+}
+
+@keyframes apollo-spin {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
+}
+
+.apollo-no-results,
+.apollo-error {
+	grid-column: 1 / -1;
+	text-align: center;
+	padding: 60px 20px;
+	font-size: 16px;
+	color: var(--apollo-text-muted);
+}
+
+.apollo-error {
+	color: var(--apollo-danger);
+}
+
+/* ============================================
+   Pagination
+   ============================================ */
+.apollo-pagination {
+	text-align: center;
+	margin-top: 40px;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 768px) {
+	.apollo-radar-page {
+		padding: 20px 16px;
+	}
+
+	.apollo-radar-header h1 {
+		font-size: 24px;
+	}
+
+	.apollo-filter-form {
+		flex-direction: column;
+	}
+
+	.apollo-filter-group {
+		width: 100%;
+	}
+
+	.apollo-user-grid {
+		grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+		gap: 12px;
+	}
+
+	.apollo-user-link {
+		padding: 16px;
+	}
+
+	.apollo-user-avatar {
+		width: 72px;
+		height: 72px;
+	}
+
+	.apollo-user-name {
+		font-size: 15px;
+	}
+}

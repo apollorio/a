@@ -1,0 +1,179 @@
+/**
+ * Apollo Adverts — Admin Stylesheet
+ *
+ * Adapted from WPAdverts assets/css/adverts-admin.css
+ *
+ * @package Apollo\Adverts
+ */
+
+/* ============================
+   DASHBOARD
+   ============================ */
+.apollo-adverts-dashboard .stats-grid {
+	display: grid;
+	grid-template-columns: repeat( auto-fill, minmax( 180px, 1fr ) );
+	gap: 16px;
+	margin-bottom: 24px;
+}
+
+.apollo-adverts-dashboard .stat-card {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	padding: 20px 16px;
+	text-align: center;
+}
+
+.apollo-adverts-dashboard .stat-number {
+	display: block;
+	font-size: 32px;
+	font-weight: 700;
+	color: #1d2327;
+	line-height: 1.2;
+}
+
+.apollo-adverts-dashboard .stat-label {
+	display: block;
+	font-size: 13px;
+	color: #666;
+	margin-top: 4px;
+}
+
+.apollo-adverts-dashboard .stat-card:nth-child(1) .stat-number { color: #1e8a3e; }
+.apollo-adverts-dashboard .stat-card:nth-child(2) .stat-number { color: #856404; }
+.apollo-adverts-dashboard .stat-card:nth-child(3) .stat-number { color: #c62828; }
+.apollo-adverts-dashboard .stat-card:nth-child(4) .stat-number { color: #999; }
+
+.apollo-adverts-dashboard .recent-ads-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.apollo-adverts-dashboard .recent-ads-table th,
+.apollo-adverts-dashboard .recent-ads-table td {
+	padding: 8px 12px;
+	text-align: left;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.apollo-adverts-dashboard .recent-ads-table th {
+	font-weight: 600;
+	font-size: 13px;
+	color: #1d2327;
+}
+
+.apollo-adverts-dashboard .recent-ads-table td {
+	font-size: 13px;
+}
+
+/* ============================
+   META BOX
+   ============================ */
+.apollo-adverts-meta-box .meta-field {
+	margin-bottom: 14px;
+}
+
+.apollo-adverts-meta-box .meta-field label {
+	display: block;
+	font-weight: 600;
+	font-size: 13px;
+	margin-bottom: 4px;
+	color: #1d2327;
+}
+
+.apollo-adverts-meta-box .meta-field input[type="text"],
+.apollo-adverts-meta-box .meta-field input[type="number"],
+.apollo-adverts-meta-box .meta-field input[type="date"],
+.apollo-adverts-meta-box .meta-field select {
+	width: 100%;
+	max-width: 300px;
+}
+
+.apollo-adverts-meta-box .meta-field-checkbox label {
+	display: inline;
+	font-weight: normal;
+	margin-left: 4px;
+}
+
+.apollo-adverts-meta-box .meta-field-row {
+	display: flex;
+	gap: 16px;
+	flex-wrap: wrap;
+}
+
+.apollo-adverts-meta-box .meta-field-row .meta-field {
+	flex: 1;
+	min-width: 140px;
+}
+
+/* ============================
+   SETTINGS PAGE
+   ============================ */
+.apollo-adverts-settings .form-table th {
+	width: 200px;
+	padding: 15px 10px 15px 0;
+}
+
+.apollo-adverts-settings .form-table td {
+	padding: 15px 10px;
+}
+
+.apollo-adverts-settings .section-title {
+	border-bottom: 1px solid #c3c4c7;
+	padding-bottom: 8px;
+	margin-top: 28px;
+}
+
+.apollo-adverts-settings .section-title:first-child {
+	margin-top: 0;
+}
+
+.apollo-adverts-settings .description {
+	font-size: 12px;
+	color: #666;
+	margin-top: 4px;
+}
+
+/* ============================
+   ADMIN COLUMNS
+   ============================ */
+.column-classified_price {
+	width: 100px;
+	font-weight: 600;
+	color: #1e8a3e;
+}
+
+.column-classified_intent {
+	width: 90px;
+}
+
+.column-classified_expires {
+	width: 100px;
+}
+
+.column-classified_expires .expired {
+	color: #d63638;
+	font-weight: 600;
+}
+
+/* ============================
+   STATUS BADGES (Admin list)
+   ============================ */
+.post-status-expired {
+	color: #c62828;
+}
+
+/* ============================
+   INLINE STATUS TOGGLE
+   ============================ */
+.apollo-admin-toggle-featured {
+	cursor: pointer;
+}
+
+.apollo-admin-toggle-featured .dashicons-star-filled {
+	color: #f0c14b;
+}
+
+.apollo-admin-toggle-featured .dashicons-star-empty {
+	color: #c3c4c7;
+}

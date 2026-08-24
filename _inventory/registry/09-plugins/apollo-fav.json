@@ -1,0 +1,1050 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-fav",
+    "owner": "apollo-fav",
+    "wrap": "plugins.apollo-fav",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-fav",
+  "namespace": "Apollo\\Fav",
+  "priority": 3,
+  "status": "IMPLEMENTED",
+  "description": "Sistema universal de favoritos para TODOS os CPTs do Apollo. Tabela própria apollo_favs para lookups de alta performance. Integração com notificações inteligentes (apollo-notif) e perfil do usuário.",
+  "dependencies": [
+    "apollo-core",
+    "apollo-dashboard",
+    "apollo-events",
+    "apollo-login",
+    "apollo-notif",
+    "apollo-social",
+    "apollo-statistics",
+    "apollo-users"
+  ],
+  "provides": [
+    "fav-system",
+    "fav-toggle",
+    "fav-list",
+    "user-favs",
+    "fav-user"
+  ],
+  "FORBIDDEN": [
+    "interesse",
+    "interessado",
+    "interest",
+    "bookmark"
+  ],
+  "supported_types": [
+    "event",
+    "dj",
+    "classified",
+    "loc",
+    "hub",
+    "supplier",
+    "doc",
+    "user"
+  ],
+  "user_fav_note": "post_type='user', post_id=target_user_id. Triggers 3Ã— matchmaking boost in MatchmakingEngine.compute_pair().",
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [
+    "apollo_activity",
+    "apollo_connections",
+    "apollo_favs"
+  ],
+  "meta": {
+    "post": {
+      "_classified_condition": {
+        "_source": "deep_scan"
+      },
+      "_classified_price": {
+        "_source": "deep_scan"
+      },
+      "_classified_status": {
+        "_source": "deep_scan"
+      },
+      "_event_dj_ids": {
+        "_source": "deep_scan"
+      },
+      "_event_loc_id": {
+        "_source": "deep_scan"
+      },
+      "_event_start_date": {
+        "_source": "deep_scan"
+      },
+      "_event_start_time": {
+        "_source": "deep_scan"
+      },
+      "_fav_count": {
+        "_source": "deep_scan"
+      },
+      "_loc_city": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {
+      "_apollo_privacy_profile": {
+        "_source": "deep_scan"
+      },
+      "apollo_user_bubbles": {
+        "_source": "deep_scan"
+      },
+      "apollo_user_communities": {
+        "_source": "deep_scan"
+      },
+      "apollo_user_nucleos": {
+        "_source": "deep_scan"
+      }
+    },
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_PLUS)",
+      "auth": "LOGGED_IN_PLUS",
+      "permission_risk": "MEDIUM",
+      "permission_method": "check_auth",
+      "permission_binding": "REST_Controller::check_auth",
+      "permission_summary": "is_user_logged_in present; may have extra checks",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "if ( ! is_user_logged_in() ) { return new \\WP_Error( 'rest_not_logged_in', __( 'Você precisa estar logado.', 'apollo-fav' ), array( 'status' => 401 ) ); } return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_user_favs",
+      "rest_namespace": "apollo/v1",
+      "file": "includes/class-rest-controller.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/",
+      "methods": [
+        "DELETE"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_PLUS)",
+      "auth": "LOGGED_IN_PLUS",
+      "permission_risk": "MEDIUM",
+      "permission_method": "check_auth",
+      "permission_binding": "REST_Controller::check_auth",
+      "permission_summary": "is_user_logged_in present; may have extra checks",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "if ( ! is_user_logged_in() ) { return new \\WP_Error( 'rest_not_logged_in', __( 'Você precisa estar logado.', 'apollo-fav' ), array( 'status' => 401 ) ); } return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "remove_fav",
+      "rest_namespace": "apollo/v1",
+      "file": "includes/class-rest-controller.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_PLUS)",
+      "auth": "LOGGED_IN_PLUS",
+      "permission_risk": "MEDIUM",
+      "permission_method": "check_auth",
+      "permission_binding": "REST_Controller::check_auth",
+      "permission_summary": "is_user_logged_in present; may have extra checks",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "if ( ! is_user_logged_in() ) { return new \\WP_Error( 'rest_not_logged_in', __( 'Você precisa estar logado.', 'apollo-fav' ), array( 'status' => 401 ) ); } return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "toggle_fav",
+      "rest_namespace": "apollo/v1",
+      "file": "includes/class-rest-controller.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_count",
+      "rest_namespace": "apollo/v1",
+      "file": "includes/class-rest-controller.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "pages": [],
+  "shortcodes": [
+    {
+      "tag": "apollo_fav",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_fav_dashboard",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_interesse_dashboard",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_my_favs",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_top_sounds",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "version": "1.0.1",
+  "ajax": {
+    "priv": [
+      "apollo_fav_load_more",
+      "apollo_fav_toggle",
+      "apollo_get_ranking_data",
+      "apollo_get_user_top_sounds",
+      "nopriv_apollo_fav_toggle",
+      "nopriv_apollo_get_user_top_sounds"
+    ],
+    "nopriv": [
+      "apollo_fav_toggle",
+      "apollo_get_user_top_sounds"
+    ]
+  },
+  "cron": [
+    "apollo_fav_daily_stats"
+  ],
+  "hooks_fired": [
+    "apollo/fav/added",
+    "apollo/fav/allow_toggle",
+    "apollo/fav/fanboy_triggered",
+    "apollo/fav/hype_triggered",
+    "apollo/fav/marketplace_triggered",
+    "apollo/fav/removed",
+    "apollo/fav/removing",
+    "apollo/fav/supported_cpts",
+    "apollo/statistics/daily_snapshot",
+    "apollo_fav_added",
+    "apollo_fav_enqueue_assets"
+  ],
+  "hooks_listened": [
+    "apollo/dashboard/page_content",
+    "apollo/dashboard/widgets",
+    "apollo/statistics/collect",
+    "apollo/statistics/data_providers",
+    "apollo/statistics/fav_data",
+    "apollo/template/after_title",
+    "apollo/users/profile_sidebar",
+    "apollo/users/profile_stats",
+    "apollo/users/profile_tab_content",
+    "apollo/users/profile_tabs",
+    "apollo_fav_daily_stats",
+    "apollo_user_dashboard_sounds_section",
+    "apollo_user_profile_after_header"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [
+      "apollo-fav"
+    ],
+    "styles": [
+      "apollo-fav"
+    ]
+  },
+  "options": [
+    "apollo_fav_db_version",
+    "apollo_fav_settings"
+  ],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 3,
+    "abspath_coverage_pct": 91,
+    "rest_open_routes": 1,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 1,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 4,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 1.02
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_activity",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_connections",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_fav_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_favorites",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_favs",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_users",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [],
+  "query_vars": [
+    "apollo_profile_user_id"
+  ],
+  "php_surface": {
+    "files": 11,
+    "loc": 4074,
+    "classes": 8,
+    "functions": 14
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:49.515Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 27,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-fav",
+    "main_file": "apollo-fav.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Fav",
+      "plugin_uri": "https://apollo.rio.br",
+      "description": "Sistema universal de favoritos para TODOS os CPTs do Apollo. Tabela própria apollo_favs para lookups de alta performance. Integração com notificações inteligentes (apollo-notif) e perfil do usuário.",
+      "version": "1.0.1",
+      "author": "Apollo RIO",
+      "author_uri": "https://apollo.rio.br",
+      "license": "GPL-2.0+",
+      "text_domain": "apollo-fav",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": null
+    },
+    "composer": {
+      "name": "apollo/fav",
+      "namespaces": [
+        "Apollo\\Fav"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 11,
+        ".css": 1,
+        ".js": 1,
+        ".json": 1,
+        ".md": 1,
+        ".ffs_db": 1
+      },
+      "by_top_directory": {
+        "(root)": 5,
+        "assets": 2,
+        "includes": 9
+      },
+      "total_bytes": 165518
+    },
+    "php": {
+      "files": 11,
+      "loc": 4074,
+      "classes": 8,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 14
+    },
+    "architecture": {
+      "namespace": "Apollo\\Fav",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "CBX_Bridge",
+          "fqcn": "Apollo\\Fav\\CBX_Bridge",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/class-cbx-bridge.php"
+        },
+        {
+          "kind": "class",
+          "name": "Dashboard",
+          "fqcn": "Apollo\\Fav\\Dashboard",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/class-dashboard.php"
+        },
+        {
+          "kind": "class",
+          "name": "Fav_Ranking",
+          "fqcn": "Apollo\\Fav\\Fav_Ranking",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "includes/class-fav-ranking.php"
+        },
+        {
+          "kind": "class",
+          "name": "Fav_Sound_Dashboard",
+          "fqcn": "Apollo\\Fav\\Fav_Sound_Dashboard",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "includes/class-fav-sound-dashboard.php"
+        },
+        {
+          "kind": "class",
+          "name": "Notif_Triggers",
+          "fqcn": "Apollo\\Fav\\Notif_Triggers",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/class-notif-triggers.php"
+        },
+        {
+          "kind": "class",
+          "name": "Profile_Integration",
+          "fqcn": "Apollo\\Fav\\Profile_Integration",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/class-profile-integration.php"
+        },
+        {
+          "kind": "class",
+          "name": "REST_Controller",
+          "fqcn": "Apollo\\Fav\\REST_Controller",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/class-rest-controller.php"
+        },
+        {
+          "kind": "class",
+          "name": "Statistics_Merge",
+          "fqcn": "Apollo\\Fav\\Statistics_Merge",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/class-statistics-merge.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_add_fav",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_remove_fav",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_toggle_fav",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_is_fav",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_fav_count",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_user_favs",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_fav_users",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_fav_users_by_meta",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_dj_fans",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_fav_update_count",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_user_fav_total",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_user_fav_count_by_type",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_most_faved",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_fav_button",
+          "file": "includes/functions.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 4,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "GET",
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_PLUS",
+            "risk": "MEDIUM",
+            "method": "check_auth",
+            "target": "REST_Controller",
+            "analysis": {
+              "effective_class": "LOGGED_IN_PLUS",
+              "risk": "MEDIUM",
+              "summary": "is_user_logged_in present; may have extra checks",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "new \\WP_Error( 'rest_not_logged_in', __( 'Você precisa estar logado.', 'apollo-fav' ), array( 'statu",
+                  "true"
+                ]
+              },
+              "body_preview": "if ( ! is_user_logged_in() ) { return new \\WP_Error( 'rest_not_logged_in', __( 'Você precisa estar logado.', 'apollo-fav' ), array( 'status' => 401 ) ); } return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "REST_Controller::check_auth",
+              "method_file": "includes/class-rest-controller.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_user_favs",
+          "file": "includes/class-rest-controller.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "DELETE"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_PLUS",
+            "risk": "MEDIUM",
+            "method": "check_auth",
+            "target": "REST_Controller",
+            "analysis": {
+              "effective_class": "LOGGED_IN_PLUS",
+              "risk": "MEDIUM",
+              "summary": "is_user_logged_in present; may have extra checks",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "new \\WP_Error( 'rest_not_logged_in', __( 'Você precisa estar logado.', 'apollo-fav' ), array( 'statu",
+                  "true"
+                ]
+              },
+              "body_preview": "if ( ! is_user_logged_in() ) { return new \\WP_Error( 'rest_not_logged_in', __( 'Você precisa estar logado.', 'apollo-fav' ), array( 'status' => 401 ) ); } return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "REST_Controller::check_auth",
+              "method_file": "includes/class-rest-controller.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "remove_fav",
+          "file": "includes/class-rest-controller.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_PLUS",
+            "risk": "MEDIUM",
+            "method": "check_auth",
+            "target": "REST_Controller",
+            "analysis": {
+              "effective_class": "LOGGED_IN_PLUS",
+              "risk": "MEDIUM",
+              "summary": "is_user_logged_in present; may have extra checks",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "new \\WP_Error( 'rest_not_logged_in', __( 'Você precisa estar logado.', 'apollo-fav' ), array( 'statu",
+                  "true"
+                ]
+              },
+              "body_preview": "if ( ! is_user_logged_in() ) { return new \\WP_Error( 'rest_not_logged_in', __( 'Você precisa estar logado.', 'apollo-fav' ), array( 'status' => 401 ) ); } return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "REST_Controller::check_auth",
+              "method_file": "includes/class-rest-controller.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "toggle_fav",
+          "file": "includes/class-rest-controller.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_count",
+          "file": "includes/class-rest-controller.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 1,
+        "MEDIUM": 3,
+        "LOW": 0,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "LOGGED_IN_PLUS": 3,
+        "PUBLIC_UNAUTHENTICATED": 1
+      },
+      "permission_body_resolved": 4,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [
+        {
+          "endpoint": "/",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "includes/class-rest-controller.php"
+        }
+      ],
+      "admin_cap_routes": [],
+      "logged_in_routes": [
+        "/",
+        "/",
+        "/"
+      ]
+    },
+    "database": {
+      "tables_owned_or_defined": [
+        "apollo_activity",
+        "apollo_connections",
+        "apollo_favs"
+      ],
+      "tables_referenced": [
+        "apollo_activity",
+        "apollo_connections",
+        "apollo_fav_settings",
+        "apollo_favorites",
+        "apollo_favs",
+        "apollo_users"
+      ],
+      "tables_for_registry": [
+        "apollo_activity",
+        "apollo_connections",
+        "apollo_favs"
+      ],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_activity",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_connections",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_fav_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_favorites",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_favs",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_users",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 9,
+      "user_count": 4,
+      "term_count": 0,
+      "post_keys": [
+        "_classified_condition",
+        "_classified_price",
+        "_classified_status",
+        "_event_dj_ids",
+        "_event_loc_id",
+        "_event_start_date",
+        "_event_start_time",
+        "_fav_count",
+        "_loc_city"
+      ],
+      "user_keys": [
+        "_apollo_privacy_profile",
+        "apollo_user_bubbles",
+        "apollo_user_communities",
+        "apollo_user_nucleos"
+      ],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [],
+      "query_vars": [
+        "apollo_profile_user_id"
+      ],
+      "pages_derived": []
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 11,
+      "listened_count": 33,
+      "apollo_fired": [
+        "apollo/fav/added",
+        "apollo/fav/allow_toggle",
+        "apollo/fav/fanboy_triggered",
+        "apollo/fav/hype_triggered",
+        "apollo/fav/marketplace_triggered",
+        "apollo/fav/removed",
+        "apollo/fav/removing",
+        "apollo/fav/supported_cpts",
+        "apollo/statistics/daily_snapshot",
+        "apollo_fav_added",
+        "apollo_fav_enqueue_assets"
+      ],
+      "apollo_listened": [
+        "apollo/dashboard/page_content",
+        "apollo/dashboard/widgets",
+        "apollo/statistics/collect",
+        "apollo/statistics/data_providers",
+        "apollo/statistics/fav_data",
+        "apollo/template/after_title",
+        "apollo/users/profile_sidebar",
+        "apollo/users/profile_stats",
+        "apollo/users/profile_tab_content",
+        "apollo/users/profile_tabs",
+        "apollo_fav_daily_stats",
+        "apollo_user_dashboard_sounds_section",
+        "apollo_user_profile_after_header"
+      ],
+      "critical_wp_listened": [
+        "admin_init",
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "save_post_classified",
+        "save_post_event",
+        "wp_enqueue_scripts"
+      ]
+    },
+    "ajax": {
+      "priv": [
+        "apollo_fav_load_more",
+        "apollo_fav_toggle",
+        "apollo_get_ranking_data",
+        "apollo_get_user_top_sounds",
+        "nopriv_apollo_fav_toggle",
+        "nopriv_apollo_get_user_top_sounds"
+      ],
+      "nopriv": [
+        "apollo_fav_toggle",
+        "apollo_get_user_top_sounds"
+      ]
+    },
+    "cron": [
+      "apollo_fav_daily_stats"
+    ],
+    "shortcodes": [
+      "apollo_fav",
+      "apollo_fav_dashboard",
+      "apollo_interesse_dashboard",
+      "apollo_my_favs",
+      "apollo_top_sounds"
+    ],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [
+        "apollo-fav"
+      ],
+      "styles": [
+        "apollo-fav"
+      ]
+    },
+    "options": [
+      "apollo_fav_db_version",
+      "apollo_fav_settings"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_FAV_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_FAV_PATH",
+        "value": "plugin_dir_path(__FILE__"
+      },
+      {
+        "name": "APOLLO_FAV_URL",
+        "value": "plugin_dir_url(__FILE__"
+      },
+      {
+        "name": "APOLLO_FAV_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_FAV_TABLE",
+        "value": "apollo_favs"
+      }
+    ],
+    "security": {
+      "php_files": 11,
+      "abspath_guard_files": 10,
+      "abspath_coverage_pct": 91,
+      "wpdb_prepare_calls": 54,
+      "wpdb_query_calls": 53,
+      "prepare_to_query_ratio": 1.02,
+      "nonce_checks": 7,
+      "current_user_can_calls": 6,
+      "raw_superglobal": {
+        "get": 4,
+        "post": 14,
+        "request": 0
+      },
+      "permission_callback_return_true": 1,
+      "escape_helpers": 55,
+      "echo_statements": 89,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 3,
+      "risk_band": "LOW",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 1,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 1
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core",
+        "apollo-dashboard",
+        "apollo-events",
+        "apollo-login",
+        "apollo-notif",
+        "apollo-social",
+        "apollo-statistics",
+        "apollo-users"
+      ],
+      "signals": [
+        "apollo-core",
+        "apollo-dashboard",
+        "apollo-events",
+        "apollo-login",
+        "apollo-notif",
+        "apollo-social",
+        "apollo-statistics",
+        "apollo-users"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.0.1",
+      "version_changed": false,
+      "old_rest": 6,
+      "live_rest": 4,
+      "old_pages": 0,
+      "live_pages": 0,
+      "new_plugin": false
+    }
+  },
+  "security_remediation": {
+    "note": "P2: stats queries prepared; uninstall DROP prepared",
+    "last_updated": "2026-07-20"
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 11,
+    "php_loc": 4063,
+    "rest_routes_found": 1,
+    "cpts_found": [],
+    "tables_found": [
+      "apollo_activity",
+      "apollo_connections",
+      "apollo_favs",
+      "bp_activity",
+      "statistics_pages",
+      "statistics_visit",
+      "statistics_visitor"
+    ],
+    "shortcodes_found": [
+      "apollo_fav",
+      "apollo_fav_dashboard",
+      "apollo_interesse_dashboard",
+      "apollo_my_favs",
+      "apollo_top_sounds"
+    ]
+  }
+}

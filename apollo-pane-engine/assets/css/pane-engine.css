@@ -1,0 +1,850 @@
+/**
+ * Apollo Pane Engine — CSS
+ * Side-by-slide panel layout + transitions + skeleton loading.
+ * Mobile-first, dark theme aligned with Apollo CDN universal.css.
+ *
+ * @version 2.0.0
+ */
+
+/* ── Reset & Base ──────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --pane-bg:        #0a0a0f;
+    --pane-surface:   #13131a;
+    --pane-border:    #1e1e2a;
+    --pane-text:      #e4e4e7;
+    --pane-text-dim:  #71717a;
+    --pane-accent:    #a78bfa;
+    --pane-accent-2:  #818cf8;
+    --pane-success:   #34d399;
+    --pane-ok:        var(--pane-success);
+    --pane-warn:      #fbbf24;
+    --pane-error:     #f87171;
+    --pane-radius:    12px;
+    --pane-gap:       16px;
+    --pane-transition: 420ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --pane-nav-h:     56px;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+    background: var(--pane-bg);
+    color: var(--pane-text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Blank-canvas body uses flexbox column to correctly size panels under header/nav */
+.pane-body {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh; /* dvh respects mobile browser chrome */
+    overflow: hidden;
+}
+
+/* ── Viewport Container ────────────────────────────────── */
+.pane-viewport {
+    position: relative;
+    width: 100%;
+    flex: 1;        /* grows to fill remaining height after header */
+    min-height: 0;  /* required for flex children to respect overflow */
+    overflow: hidden;
+}
+
+/* ── Pane Panels ───────────────────────────────────────── */
+.pane-panel {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: transform var(--pane-transition), opacity var(--pane-transition);
+    will-change: transform, opacity;
+    background: var(--pane-bg);
+    padding-bottom: var(--pane-nav-h);
+}
+
+/* Center (static, visible by default) */
+.pane-panel--center {
+    transform: translate3d(0, 0, 0);
+    z-index: 1;
+}
+
+/* Left (offscreen left) */
+.pane-panel--left {
+    transform: translate3d(-100%, 0, 0);
+    z-index: 2;
+}
+.pane-panel--left.is-active {
+    transform: translate3d(0, 0, 0);
+}
+
+/* Up (offscreen top) */
+.pane-panel--up {
+    transform: translate3d(0, -100%, 0);
+    z-index: 3;
+}
+.pane-panel--up.is-active {
+    transform: translate3d(0, 0, 0);
+}
+
+/* Down (offscreen bottom) */
+.pane-panel--down {
+    transform: translate3d(0, 100%, 0);
+    z-index: 3;
+}
+.pane-panel--down.is-active {
+    transform: translate3d(0, 0, 0);
+}
+
+/* ── Bottom Navigation ─────────────────────────────────── */
+.pane-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--pane-nav-h);
+    background: var(--pane-surface);
+    border-top: 1px solid var(--pane-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    z-index: 100;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+}
+
+.pane-nav__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 12px;
+    border: none;
+    background: transparent;
+    color: var(--pane-text-dim);
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 200ms, transform 200ms;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.pane-nav__item i {
+    font-size: 20px;
+    line-height: 1;
+}
+
+.pane-nav__item.is-active {
+    color: var(--pane-accent);
+}
+
+.pane-nav__item:active {
+    transform: scale(0.92);
+}
+
+/* Header is a flex child — must not shrink */
+.pane-header {
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: var(--pane-gap);
+    padding: 12px var(--pane-gap);
+    background: var(--pane-surface);
+    border-bottom: 1px solid var(--pane-border);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+}
+
+.pane-header__title {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.pane-header__back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    color: var(--pane-text);
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background 200ms;
+}
+
+.pane-header__back:hover {
+    background: var(--pane-border);
+}
+
+/* ── Content Area ─────────────────────────────────────── */
+.pane-content {
+    padding: var(--pane-gap);
+    min-height: calc(100vh - var(--pane-nav-h) - 60px);
+}
+
+/* ── Cards ─────────────────────────────────────────────── */
+.pane-card {
+    background: var(--pane-surface);
+    border: 1px solid var(--pane-border);
+    border-radius: var(--pane-r);
+    padding: var(--pane-gap);
+    margin-bottom: var(--pane-gap);
+    transition: border-color 200ms;
+}
+
+.pane-card:hover {
+    border-color: var(--pane-accent);
+}
+
+.pane-card__title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pane-card__title i {
+    color: var(--pane-accent);
+    font-size: 18px;
+}
+
+.pane-card__body {
+    color: var(--pane-text-dim);
+    font-size: 13px;
+}
+
+/* ── Skeleton Loading ─────────────────────────────────── */
+.pane-skeleton {
+    position: relative;
+    overflow: hidden;
+    background: var(--pane-border);
+    border-radius: 6px;
+}
+
+.pane-skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(var(--rgb-t), 0.04) 50%,
+        transparent 100%
+    );
+    animation: pane-shimmer 1.5s infinite;
+}
+
+@keyframes pane-shimmer {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.pane-skeleton--text {
+    height: 14px;
+    width: 80%;
+    margin-bottom: 8px;
+}
+
+.pane-skeleton--text:last-child {
+    width: 60%;
+}
+
+.pane-skeleton--card {
+    height: 80px;
+    margin-bottom: var(--pane-gap);
+}
+
+.pane-skeleton--circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+/* ── REST Probe Status ────────────────────────────────── */
+.pane-probe {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--pane-gap);
+}
+
+.pane-endpoint {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--pane-surface);
+    border: 1px solid var(--pane-border);
+    border-radius: 8px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 12px;
+    transition: border-color 200ms;
+}
+
+.pane-endpoint__status {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.pane-endpoint__status--ok      { background: var(--pane-success); box-shadow: 0 0 6px var(--pane-success); }
+.pane-endpoint__status--auth    { background: var(--pane-warn);    box-shadow: 0 0 6px var(--pane-warn); }
+.pane-endpoint__status--error   { background: var(--pane-error);   box-shadow: 0 0 6px var(--pane-error); }
+.pane-endpoint__status--pending { background: var(--pane-text-dim); }
+
+.pane-endpoint__method {
+    font-weight: 700;
+    color: var(--pane-accent-2);
+    min-width: 36px;
+}
+
+.pane-endpoint__path {
+    color: var(--pane-text);
+    word-break: break-all;
+}
+
+.pane-endpoint__ms {
+    margin-left: auto;
+    color: var(--pane-text-dim);
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+/* ── Status Badge ──────────────────────────────────────── */
+.pane-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.pane-badge--ok    { background: rgba(52, 211, 153, 0.15); color: var(--pane-success); }
+.pane-badge--warn  { background: rgba(251, 191, 36, 0.15); color: var(--pane-warn); }
+.pane-badge--error { background: rgba(248, 113, 113, 0.15); color: var(--pane-error); }
+.pane-badge--info  { background: rgba(167, 139, 250, 0.15); color: var(--pane-accent); }
+
+/* ── View Transition ───────────────────────────────────── */
+/* Single view-transition-name owner — no inner div may duplicate this */
+#casa-root {
+    view-transition-name: pane-content;
+}
+
+::view-transition-old(pane-content),
+::view-transition-new(pane-content) {
+    animation-duration: 300ms;
+}
+
+::view-transition-old(pane-content) {
+    animation: pane-fade-out 300ms ease-out forwards;
+}
+
+::view-transition-new(pane-content) {
+    animation: pane-fade-in 300ms ease-in forwards;
+}
+
+@keyframes pane-fade-out {
+    from { opacity: 1; transform: scale(1); }
+    to   { opacity: 0; transform: scale(0.97); }
+}
+
+@keyframes pane-fade-in {
+    from { opacity: 0; transform: scale(1.03); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Responsive ────────────────────────────────────────── */
+@media (min-width: 768px) {
+    :root {
+        --pane-gap: 20px;
+        --pane-nav-h: 60px;
+    }
+
+    .pane-nav__item {
+        font-size: 12px;
+        padding: 8px 16px;
+    }
+
+    .pane-probe {
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    }
+}
+
+@media (min-width: 1200px) {
+    :root {
+        --pane-gap: 24px;
+    }
+
+    .pane-header__title {
+        font-size: 22px;
+    }
+}
+
+/* ── Scrollbar (dark theme) ────────────────────────────── */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--pane-border);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--pane-text-dim);
+}
+
+/* ── Utilities ─────────────────────────────────────────── */
+/* ── Header Layout ─────────────────────────────────────── */
+.pane-header__left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pane-header__left i {
+    color: var(--pane-accent);
+    font-size: 22px;
+}
+
+.pane-header__right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pane-header__user {
+    font-size: 13px;
+    color: var(--pane-text-dim);
+    font-weight: 500;
+}
+
+.pane-header__avatar {
+    display: flex;
+    align-items: center;
+}
+
+.pane-header__avatar img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--pane-border);
+    transition: border-color 200ms;
+}
+
+.pane-header__avatar:hover img {
+    border-color: var(--pane-accent);
+}
+
+/* ── Probe Grid (route modules) ────────────────────────── */
+.pane-probe-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+}
+
+@media (min-width: 768px) {
+    .pane-probe-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.pane-probe-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    background: rgba(var(--rgb-t), 0.02);
+    border-radius: 6px;
+    font-size: 12px;
+    transition: background 200ms;
+}
+
+.pane-probe-item:hover {
+    background: rgba(var(--rgb-t), 0.05);
+}
+
+.pane-probe-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: var(--pane-text-dim);
+}
+
+.pane-probe-item--ok .pane-probe-dot {
+    background: var(--pane-success);
+    box-shadow: 0 0 6px var(--pane-success);
+}
+
+/* ── Alpine.js — x-cloak ──────────────────────────────── */
+[x-cloak] { display: none !important; }
+
+/* ── HTMX Indicator ───────────────────────────────────── */
+.htmx-indicator {
+    opacity: 0;
+    transition: opacity 300ms ease-in;
+}
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+    opacity: 1;
+}
+
+/* ── Skeleton Wrapper ──────────────────────────────────── */
+.pane-skeleton-wrap {
+    padding: var(--pane-gap);
+}
+
+/* ── Alpine Overlay Transitions ────────────────────────── */
+/* Enter */
+.pane-overlay-enter {
+    transition: transform 420ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                opacity 420ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* LEFT panel */
+.pane-overlay-enter-start {
+    transform: translateX(-100%);
+    opacity: 0;
+}
+.pane-overlay-enter-end {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+/* UP panel */
+.pane-overlay-enter-start-up {
+    transform: translateY(-100%);
+    opacity: 0;
+}
+
+/* DOWN panel */
+.pane-overlay-enter-start-down {
+    transform: translateY(100%);
+    opacity: 0;
+}
+
+/* Leave */
+.pane-overlay-leave {
+    transition: transform 350ms cubic-bezier(0.55, 0.085, 0.68, 0.53),
+                opacity 350ms cubic-bezier(0.55, 0.085, 0.68, 0.53);
+}
+.pane-overlay-leave-start {
+    transform: translateX(0) translateY(0);
+    opacity: 1;
+}
+.pane-overlay-leave-end {
+    transform: translateX(-100%);
+    opacity: 0;
+}
+.pane-overlay-leave-end-up {
+    transform: translateY(-100%);
+    opacity: 0;
+}
+.pane-overlay-leave-end-down {
+    transform: translateY(100%);
+    opacity: 0;
+}
+
+/* ── Navigation link (inside left panel) ───────────────── */
+.pane-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    background: transparent;
+    color: var(--pane-text);
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 200ms, color 200ms;
+    text-align: left;
+}
+
+.pane-nav-link:hover {
+    background: var(--pane-border);
+    color: var(--pane-accent);
+}
+
+.pane-nav-link i {
+    font-size: 18px;
+    color: var(--pane-accent);
+    width: 24px;
+    text-align: center;
+}
+
+.pane-probe-item--auth .pane-probe-dot {
+    background: var(--pane-warn);
+    box-shadow: 0 0 6px var(--pane-warn);
+}
+
+.pane-probe-item--error .pane-probe-dot {
+    background: var(--pane-error);
+    box-shadow: 0 0 6px var(--pane-error);
+}
+
+.pane-probe-item--pending .pane-probe-dot {
+    animation: pane-shimmer 1.5s infinite;
+}
+
+.pane-probe-path {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    color: var(--pane-text);
+    word-break: break-all;
+}
+
+.pane-probe-status {
+    margin-left: auto;
+    color: var(--pane-text-dim);
+    font-size: 11px;
+    white-space: nowrap;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+/* ── List Items ────────────────────────────────────────── */
+.pane-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--pane-border);
+    font-size: 13px;
+}
+
+.pane-list-item:last-child {
+    border-bottom: none;
+}
+
+.pane-list-item strong {
+    color: var(--pane-text);
+    font-weight: 600;
+}
+
+/* ── Muted Text ────────────────────────────────────────── */
+.pane-muted {
+    color: var(--pane-text-dim);
+    font-size: 13px;
+    font-style: italic;
+}
+
+/* ── Utilities ─────────────────────────────────────────── */
+.pane-hidden { display: none !important; }
+.pane-flex   { display: flex; }
+.pane-gap-sm { gap: 8px; }
+.pane-gap-md { gap: var(--pane-gap); }
+.pane-mt-sm  { margin-top: 8px; }
+.pane-mt-md  { margin-top: var(--pane-gap); }
+.pane-center { text-align: center; }
+.pane-mono   { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; }
+.pane-placeholder { color: var(--pane-text-dim); padding: var(--pane-gap); text-align: center; }
+
+/* ── Plugin Status Grid ────────────────────────────────── */
+.pane-plugin-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.pane-plugin-layer {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.pane-plugin-dot {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    cursor: default;
+    transition: opacity .15s;
+}
+
+.pane-plugin-dot--active {
+    background: color-mix(in srgb, var(--pane-ok) 15%, transparent);
+    color: var(--pane-ok);
+    border: 1px solid color-mix(in srgb, var(--pane-ok) 30%, transparent);
+}
+
+.pane-plugin-dot--inactive {
+    background: color-mix(in srgb, var(--pane-border) 30%, transparent);
+    color: var(--pane-text-dim);
+    border: 1px solid var(--pane-border);
+    opacity: .55;
+}
+
+/* ══════════════════════════════════════════════════════════
+ *  CLICKABLE CARDS
+ * ══════════════════════════════════════════════════════════ */
+
+.pane-card--clickable {
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.pane-card--clickable:hover {
+    border-color: color-mix(in srgb, var(--pane-accent) 60%, transparent);
+    background: color-mix(in srgb, var(--pane-accent) 4%, transparent);
+}
+
+.pane-card--clickable:active {
+    opacity: 0.85;
+}
+
+/* ══════════════════════════════════════════════════════════
+ *  CPT DETAIL VIEW
+ * ══════════════════════════════════════════════════════════ */
+
+.pane-detail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pane-gap);
+    padding: var(--pane-gap);
+    animation: pane-fade-in 0.2s ease;
+}
+
+.pane-detail__nav {
+    display: flex;
+    align-items: center;
+}
+
+.pane-detail__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: 1px solid var(--pane-border);
+    border-radius: 8px;
+    color: var(--pane-text-dim);
+    font-size: 13px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+    line-height: 1;
+}
+
+.pane-detail__back:hover {
+    color: var(--pane-text);
+    border-color: var(--pane-accent);
+}
+
+.pane-detail__back i {
+    font-size: 16px;
+}
+
+.pane-detail__cover {
+    border-radius: var(--pane-r);
+    overflow: hidden;
+    line-height: 0;
+}
+
+.pane-detail__img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--pane-r);
+    object-fit: cover;
+    display: block;
+}
+
+.pane-detail__title {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0;
+    color: var(--pane-text);
+}
+
+.pane-detail__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+}
+
+.pane-detail__meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    color: var(--pane-text-dim);
+}
+
+.pane-detail__meta-item i {
+    font-size: 15px;
+    color: var(--pane-accent);
+}
+
+.pane-detail__excerpt {
+    font-size: 14px;
+    line-height: 1.6;
+    color: color-mix(in srgb, var(--pane-text) 80%, transparent);
+    margin: 0;
+    padding: 12px;
+    border-left: 2px solid var(--pane-accent);
+    background: color-mix(in srgb, var(--pane-accent) 4%, transparent);
+    border-radius: 0 6px 6px 0;
+}
+
+.pane-detail__body {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--pane-text);
+}
+
+.pane-detail__body p { margin: 0 0 12px; }
+.pane-detail__body h2,
+.pane-detail__body h3 { color: var(--pane-text); margin-bottom: 8px; }
+.pane-detail__body a { color: var(--pane-accent); }
+
+/* ── Header back button ───────────────────────────────── */
+
+.pane-header__back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: var(--pane-text);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 8px 4px 0;
+    margin-right: 4px;
+    opacity: 0.8;
+    transition: opacity 0.15s ease;
+}
+
+.pane-header__back:hover { opacity: 1; }
+
+/* ── Fade-in animation for detail swap ─────────────────── */
+
+@keyframes pane-fade-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}

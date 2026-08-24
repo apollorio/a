@@ -1,0 +1,15 @@
+{
+    "name": "apollo/apollo-elementor-pro",
+    "description": "Native Elementor widgets for the Apollo ecosystem",
+    "type": "wordpress-plugin",
+    "require": {
+        "php": ">=8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Apollo\\Elementor\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

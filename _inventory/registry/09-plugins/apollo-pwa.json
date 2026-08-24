@@ -1,0 +1,70 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-pwa",
+    "owner": "apollo-pwa",
+    "wrap": "plugins.apollo-pwa",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-pwa",
+  "namespace": "Apollo\\PWA",
+  "priority": 6,
+  "status": "PLANNED",
+  "description": "PWA: Service Workers, Offline support, Web App Manifest",
+  "dependencies": [
+    "apollo-core",
+    "apollo-templates"
+  ],
+  "provides": [
+    "pwa",
+    "service-worker",
+    "offline",
+    "manifest"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [],
+  "meta": {},
+  "rest": [
+    {
+      "endpoint": "/pwa/manifest",
+      "methods": [
+        "GET"
+      ],
+      "description": "Web app manifest"
+    },
+    {
+      "endpoint": "/pwa/sw",
+      "methods": [
+        "GET"
+      ],
+      "description": "Service worker"
+    }
+  ],
+  "pages": [
+    {
+      "slug": "offline",
+      "title": "Offline",
+      "template": "offline.php",
+      "type": "virtual"
+    }
+  ],
+  "files": [
+    {
+      "path": "/manifest.json",
+      "description": "Web App Manifest"
+    },
+    {
+      "path": "/sw.js",
+      "description": "Service Worker"
+    }
+  ],
+  "shortcodes": [
+    {
+      "tag": "apollo_install_pwa",
+      "description": "PWA install button"
+    }
+  ],
+  "$disk_status": "ABSENT",
+  "$disk_note": "No folder at plugins/apollo-pwa on 2026-07-28. Entry PRESERVED (not deleted) — either planned/not-yet-built or removed. Resolve before treating as live."
+}

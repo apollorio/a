@@ -1,0 +1,38 @@
+/**
+ * Apollo Social — Explore Feed Stylesheet (SCSS)
+ *
+ * Modular structure:
+ * - _base.scss: CSS resets, typography
+ * - _layout.scss: app-main, columns, responsive
+ * - _posts.scss: post cards and variants
+ * - _media.scss: image/video/audio players
+ * - _cards.scss: event, ticket, sidebar cards
+ * - _sidebar.scss: right sidebar sections
+ * - _modals.scss: safety modal, overlays
+ * - _responsive.scss: mobile-first breakpoints
+ *
+ * @package Apollo\Social
+ * @version 6.5.0
+ */
+
+// ═════════════════════════════════════════
+// VARIABLES & MIXINS
+// ═════════════════════════════════════════
+
+@import 'variables';
+@import 'mixins';
+
+// ═════════════════════════════════════════
+// MODULES
+// ═════════════════════════════════════════
+
+@import 'modules/base';
+@import 'modules/typography';
+@import 'modules/layout';
+@import 'modules/posts';
+@import 'modules/media';
+@import 'modules/cards';
+@import 'modules/sidebar';
+@import 'modules/modals';
+@import 'modules/responsive';
+@import 'modules/animations';

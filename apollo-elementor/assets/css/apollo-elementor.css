@@ -1,0 +1,92 @@
+/* Apollo Elementor — shared tokens and atomic styles */
+
+/* DO NOT redefine :root, body, html — core.js owns those.
+   All vars scoped under [class^="ae-"] */
+
+[class^="ae-"],
+[class*=" ae-"] {
+  --ae-accent: #FF5C00;
+  --ae-accent-dim: rgba(255,92,0,0.10);
+  --ae-primary: rgba(192, 192, 192, 0.42);
+  --ae-primary-gradient: linear-gradient(to bottom right, rgba(255,255,255,0.92), rgba(192,192,192,0.55));
+  --ae-primary-shadow: 0 8px 24px rgba(120,120,120,0.12);
+  --ae-radius: 20px;
+  --ae-radius-pill: 100px;
+  --ae-hairline: rgba(17,17,17,0.06);
+  --ae-ink: rgba(17,17,17,0.88);
+  --ae-ink-2: rgba(17,17,17,0.55);
+  --ae-ink-3: rgba(17,17,17,0.35);
+  --ae-bg: #ffffff;
+  --ae-surface: rgba(17,17,17,0.03);
+  --ae-surface-2: rgba(17,17,17,0.055);
+}
+
+/* Universal smooth transition for AE widgets */
+[class^="ae-"] *,
+[class^="ae-"] *::before,
+[class^="ae-"] *::after { transition: all 0.65s ease; }
+
+/* Eyebrow / block label pattern */
+.ae-eyebrow {
+  font-family: var(--ff-mono, 'Space Mono', monospace);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ae-ink-2);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+.ae-eyebrow::before {
+  content: "";
+  width: 26px; height: 1px;
+  background: var(--ae-ink-2);
+  opacity: 0.5;
+}
+
+/* Accent utilities */
+.ae-accent { color: var(--ae-accent); }
+.ae-accent-bg { background: var(--ae-accent); }
+
+/* Pill button */
+.ae-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 22px;
+  border-radius: var(--ae-radius-pill);
+  font-family: var(--ff-main, 'Space Grotesk', sans-serif);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  background: var(--ae-surface-2);
+  color: var(--ae-ink);
+}
+.ae-btn:hover { background: rgba(17,17,17,0.08); transform: translateY(-1px); }
+.ae-btn.ae-btn-accent { background: var(--ae-accent); color: #fff; }
+.ae-btn.ae-btn-accent:hover { background: #ff6f1c; }
+
+/* Card base (draggable items inherit this) */
+.ae-card-drag {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+  touch-action: none !important;
+}
+
+/* Mono label */
+.ae-mono {
+  font-family: var(--ff-mono, 'Space Mono', monospace);
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ae-ink-2);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  [class^="ae-"] *,
+  [class^="ae-"] *::before,
+  [class^="ae-"] *::after { transition: none !important; animation: none !important; }
+}

@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark-mode" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Apollo · Importador de Eventos</title>
+<script>/* skip remote SVG tier on this origin; RemixIcon webfont still loads. */
+window.apolloIconConfig = { remoteFetch: false };</script>
+<script src="https://cdn.apollo.rio.br/v1.0.0/core.js?v=Random.x.1&versao=bb" fetchpriority="high"></script>
+<link rel="stylesheet" href="https://cdn.apollo.rio.br/v1.0.0/css/uni.theme.v2.1.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+<style id="importer-layout">
+/* Layout/LED/console glue only — tokens from core.js */
+.imp-wrap{max-width:980px;margin-inline:auto;padding:var(--s-5) var(--s-3) var(--s-7)}
+.imp-header{margin-bottom:var(--s-5)}
+.imp-header .display-text{font-size:clamp(1.6rem,3.5vw,2.4rem);margin:0 0 var(--s-2)}
+.imp-header .display-text span{color:var(--muted);font-weight:500}
+.imp-sub{max-width:620px}
+.imp-sub code{font-family:var(--ff-mono);font-size:var(--fs-caption);color:var(--accent);background:var(--surface);padding:1px 6px;border-radius:var(--r-xs)}
+.imp-card{margin-bottom:var(--s-4)}
+.imp-card-head{display:flex;align-items:center;justify-content:space-between;gap:var(--s-3);margin-bottom:var(--s-3)}
+.imp-card-title{display:inline-flex;align-items:center;gap:10px;font-family:var(--ff-mono);font-size:var(--fs-caption);text-transform:uppercase;letter-spacing:.1em;color:var(--txt-heading);font-weight:600}
+details.imp-card>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:var(--s-3);padding:0;margin:0}
+details.imp-card>summary::-webkit-details-marker{display:none}
+details.imp-card>summary .imp-chev{color:var(--muted);transition:transform .22s var(--ease,ease)}
+details.imp-card[open]>summary .imp-chev{transform:rotate(90deg)}
+.imp-config-body{margin-top:var(--s-3);padding-top:var(--s-3)}
+.imp-hint{font-size:var(--fs-caption);color:var(--muted);line-height:1.55;margin-bottom:var(--s-3)}
+.imp-hint code{font-family:var(--ff-mono);color:var(--txt-heading)}
+.imp-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3)}
+.imp-field-grid .full{grid-column:1/-1}
+.imp-import-row{display:flex;gap:var(--s-2);align-items:stretch}
+.imp-import-row .apollo-input{flex:1}
+.imp-actions,.imp-row-actions{display:flex;gap:var(--s-2);flex-wrap:wrap;margin-top:var(--s-3)}
+.imp-console,.imp-payload{max-height:220px;overflow:auto;padding:var(--s-3);font-family:var(--ff-mono);font-size:var(--fs-caption);line-height:1.8;color:var(--txt-color);background:var(--surface);border-radius:var(--r-sm)}
+.imp-console{display:none;margin-top:var(--s-3)}.imp-console.show{display:block}
+.imp-log{display:flex;gap:10px}.imp-log .t{color:var(--muted);flex-shrink:0}
+.imp-log.info .m{color:var(--txt-color)}.imp-log.ok .m{color:#34C759}.imp-log.warn .m{color:var(--accent)}.imp-log.err .m{color:var(--alert-red)}
+.imp-paste{display:none;margin-top:var(--s-3)}.imp-paste.show{display:block}
+.imp-paste-note{font-size:var(--fs-caption);color:var(--accent);line-height:1.55;background:var(--accent-bg);border-radius:var(--r-sm);padding:var(--s-2) var(--s-3);margin-bottom:var(--s-3)}
+.imp-led-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:var(--s-3)}
+.imp-led-card{padding:var(--s-3)}.imp-led-head{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.imp-led{width:9px;height:9px;border-radius:50%;flex-shrink:0;background:var(--muted);transition:background .25s var(--ease,ease)}
+.imp-led.on{background:#34C759}.imp-led.off{background:var(--alert-red)}.imp-led.optional-off{background:var(--muted)}
+.imp-led-label{font-family:var(--ff-mono);font-size:calc(var(--fsx,1)*10.5px);letter-spacing:.05em;text-transform:uppercase;color:var(--txt-color)}
+.imp-led-label .req{color:var(--accent);margin-left:3px}
+.imp-verify{display:flex;justify-content:space-between;align-items:center;gap:var(--s-3);flex-wrap:wrap;margin-top:var(--s-4)}
+.imp-gate{font-family:var(--ff-mono);font-size:var(--fs-caption);color:var(--muted)}.imp-gate.ready{color:#34C759}.imp-gate.blocked{color:var(--accent)}
+.imp-empty{text-align:center;padding:var(--s-6) var(--s-3);color:var(--muted);font-family:var(--ff-mono);font-size:var(--fs-caption)}
+.imp-row{margin-bottom:var(--s-3)}.imp-row-top{display:flex;gap:var(--s-3);align-items:flex-start}
+.imp-thumb{width:64px;height:64px;border-radius:var(--r-xs);flex-shrink:0;background:var(--surface);background-size:cover;background-position:center;box-shadow:var(--img-border);display:flex;align-items:center;justify-content:center;font-family:var(--ff-mono);font-size:9px;color:var(--muted);text-align:center}
+.imp-row-info{flex:1;min-width:0}
+.imp-row-title{font-family:var(--ff-heading);font-weight:700;font-size:var(--fs-body);color:var(--txt-heading);margin-bottom:6px;letter-spacing:-.01em}
+.imp-row-meta{display:flex;flex-wrap:wrap;gap:6px}
+.imp-row-detail{display:none;margin-top:var(--s-3);padding-top:var(--s-3)}.imp-row-detail.show{display:block}
+.imp-locid{display:flex;gap:8px;align-items:center;margin-top:var(--s-2);flex-wrap:wrap}
+.imp-locid label{font-family:var(--ff-mono);font-size:var(--fs-caption);color:var(--muted);white-space:nowrap}
+.imp-locid .apollo-input{width:140px}
+.imp-tabs{display:flex;gap:6px;margin:var(--s-3) 0 var(--s-2);align-items:center;flex-wrap:wrap}
+.imp-tab{font-family:var(--ff-mono);font-size:var(--fs-caption);padding:6px 12px;border-radius:var(--r-pill);color:var(--muted);background:transparent;cursor:pointer}
+.imp-tab.active{background:var(--accent-bg);color:var(--accent)}
+.imp-payload{max-height:340px;margin:0;white-space:pre-wrap;word-break:break-word;line-height:1.7}
+.imp-payload .k{color:var(--txt-heading)}.imp-payload .s{color:#34C759}.imp-payload .n{color:var(--accent)}
+.imp-source-shotgun{color:#c084fc}.imp-source-blueticket{color:#60a5fa}
+.imp-danger{color:var(--alert-red)}
+.btn:disabled{opacity:.35;pointer-events:none}
+@media(max-width:640px){.imp-field-grid{grid-template-columns:1fr}.imp-import-row{flex-direction:column}.imp-led-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="imp-wrap">
+
+  <header class="imp-header">
+    <p class="label-section"><i class="ri-calendar-event-line"></i> apollo-events · importador</p>
+    <h1 class="display-text">Importador de Eventos <span>/ Shotgun + BlueTicket</span></h1>
+    <p class="txt-secondary muted imp-sub">Cola a URL do evento. O importador detecta a plataforma, busca o HTML, extrai os campos mapeados para o CPT <code>event</code> e só libera o envio quando todas as luzes ficarem verdes.</p>
+  </header>
+
+  <!-- ===================== CONFIG ===================== -->
+  <details class="card ins imp-card" id="configPanel">
+    <summary>
+      <span class="imp-card-title"><span class="tag"><i class="ri-settings-3-line"></i></span> Configuração de conexão</span>
+      <i class="ri-arrow-right-s-line imp-chev" aria-hidden="true"></i>
+    </summary>
+    <div class="imp-config-body">
+      <p class="imp-hint">
+        O navegador não consegue buscar HTML de <code>shotgun.live</code> / <code>blueticket.com.br</code> diretamente (CORS bloqueia o fetch cross-origin — nenhum dos dois envia cabeçalho <code>Access-Control-Allow-Origin</code>). Duas saídas: (1) configurar um endpoint no WP que faça o <code>wp_remote_get()</code> por você e devolva o HTML bruto, ou (2) colar o HTML manualmente quando pedido — abra a página do evento, "Exibir código-fonte" (Ctrl+U), copie tudo e cole aqui.
+      </p>
+      <div class="imp-field-grid">
+        <div class="field full">
+          <label class="field-label" for="cfgFetchProxy">Endpoint de fetch server-side (opcional)</label>
+          <input class="apollo-input" type="text" id="cfgFetchProxy" placeholder="https://apollo.rio.br/wp-json/apollo/v1/fetch-html?url={url}">
+        </div>
+        <div class="field full">
+          <label class="field-label" for="cfgWpBase">Base da REST API do WP</label>
+          <input class="apollo-input" type="text" id="cfgWpBase" placeholder="https://apollo.rio.br/wp-json" value="">
+        </div>
+        <div class="field">
+          <label class="field-label" for="cfgInsertPath">Endpoint de inserção</label>
+          <input class="apollo-input" type="text" id="cfgInsertPath" placeholder="apollo/v1/eventos" value="apollo/v1/eventos">
+        </div>
+        <div class="field">
+          <label class="field-label" for="cfgLocPath">Endpoint de busca de loc</label>
+          <input class="apollo-input" type="text" id="cfgLocPath" placeholder="apollo/v1/local" value="apollo/v1/local">
+        </div>
+        <div class="field full">
+          <label class="field-label" for="cfgAuth">Header Authorization (Application Password)</label>
+          <input class="apollo-input" type="password" id="cfgAuth" placeholder="Basic dXNlcjpzZW5oYS1kZS1hcGxpY2F0aXZv">
+        </div>
+        <div class="field">
+          <label class="field-label" for="cfgStatus">Status do post</label>
+          <select class="apollo-select" id="cfgStatus">
+            <option value="draft">draft</option>
+            <option value="publish">publish</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label" for="cfgCoupon">Cupom padrão</label>
+          <input class="apollo-input" type="text" id="cfgCoupon" value="apollo">
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ===================== IMPORT ===================== -->
+  <div class="card ins imp-card">
+    <div class="imp-card-head">
+      <span class="imp-card-title"><span class="tag">1</span> URL do evento</span>
+    </div>
+    <div class="imp-import-row">
+      <input class="apollo-input" type="text" id="urlInput" placeholder="https://www.blueticket.com.br/evento/41379?c=apollo  ou  https://shotgun.live/pt-br/events/...">
+      <button type="button" class="btn btn-accent" id="btnImport"><i class="ri-radar-line"></i> Detectar &amp; Importar</button>
+    </div>
+
+    <div class="imp-console ins" id="logConsole"></div>
+
+    <div class="imp-paste" id="pasteBox">
+      <p class="imp-paste-note">Não foi possível buscar a página automaticamente. Abra a URL acima em outra aba, use "Exibir código-fonte da página" (Ctrl+U ou View Source), copie tudo (Ctrl+A, Ctrl+C) e cole abaixo.</p>
+      <div class="field">
+        <label class="field-label" for="pasteHtml">HTML colado</label>
+        <textarea class="apollo-input" id="pasteHtml" rows="6" placeholder="<!DOCTYPE html>..."></textarea>
+      </div>
+      <div class="imp-actions">
+        <button type="button" class="btn btn-primary btn-sm" id="btnParsePasted"><i class="ri-code-s-slash-line"></i> Parsear HTML colado</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="btnCancelPaste">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== CHECKLIST ===================== -->
+  <div class="card ins imp-card" id="checklistPanel" style="display:none;">
+    <div class="imp-card-head">
+      <span class="imp-card-title"><span class="tag">2</span> Console de validação</span>
+      <span class="tag" id="platformPill">—</span>
+    </div>
+    <div class="imp-led-grid" id="ledGrid"></div>
+    <div class="imp-verify">
+      <span class="imp-gate" id="gateMsg">preencha os campos obrigatórios para liberar a importação</span>
+      <button type="button" class="btn btn-accent" id="btnConfirmRow" disabled>Confirmar importação <i class="ri-arrow-right-line"></i></button>
+    </div>
+  </div>
+
+  <!-- ===================== RESULTS ===================== -->
+  <div class="card ins imp-card">
+    <div class="imp-card-head">
+      <span class="imp-card-title"><span class="tag">3</span> Eventos importados nesta sessão</span>
+      <span class="tag" id="countPill">0</span>
+    </div>
+    <div id="resultsList">
+      <div class="imp-empty">nenhum evento importado ainda — os dados ficam apenas em memória enquanto a página estiver aberta</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ============== state ============== */
+  const state = { rows: [], counter: 0, currentExtract: null };
+
+  /* ============== promoter → loc map (extensível) ============== */
+  const PROMOTER_LOC_MAP = {
+    'd-edge': { slug:'dedge', name:'D-EDGE' },
+    'dedge':  { slug:'dedge', name:'D-EDGE' }
+  };
+
+  /* ============== dom refs ============== */
+  const $ = id => document.getElementById(id);
+  const urlInput = $('urlInput');
+  const logConsole = $('logConsole');
+  const pasteBox = $('pasteBox');
+  const pasteHtml = $('pasteHtml');
+  const checklistPanel = $('checklistPanel');
+  const ledGrid = $('ledGrid');
+  const platformPill = $('platformPill');
+  const gateMsg = $('gateMsg');
+  const btnConfirmRow = $('btnConfirmRow');
+  const resultsList = $('resultsList');
+  const countPill = $('countPill');
+
+  /* ============== WP boot (injected on /eventos/url) ============== */
+  const boot = window.ApolloEventUrlImporter || {};
+  if (boot.wpBase && !$('cfgWpBase').value.trim()) $('cfgWpBase').value = String(boot.wpBase).replace(/\/$/, '');
+  if (boot.insertPath && !$('cfgInsertPath').value.trim()) $('cfgInsertPath').value = boot.insertPath;
+  if (boot.locPath && !$('cfgLocPath').value.trim()) $('cfgLocPath').value = boot.locPath;
+
+  function restHeaders(extra){
+    const headers = Object.assign({ 'Content-Type': 'application/json' }, extra || {});
+    if (boot.restNonce) headers['X-WP-Nonce'] = boot.restNonce;
+    const auth = $('cfgAuth').value.trim();
+    if (auth) headers['Authorization'] = auth;
+    return headers;
+  }
+
+  /* ============== log console ============== */
+  function log(msg, level){
+    level = level || 'info';
+    logConsole.classList.add('show');
+    const line = document.createElement('div');
+    line.className = 'imp-log ' + level;
+    const time = new Date().toLocaleTimeString('pt-BR', {hour12:false});
+    line.innerHTML = '<span class="t">' + time + '</span><span class="m"></span>';
+    line.querySelector('.m').textContent = msg;
+    logConsole.appendChild(line);
+    logConsole.scrollTop = logConsole.scrollHeight;
+  }
+  function clearLog(){ logConsole.innerHTML=''; logConsole.classList.remove('show'); }
+
+  /* ============== helpers ============== */
+  function escapeHtml(str){
+    return String(str==null?'':str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function slugify(str){
+    if(!str) return '';
+    return str.toString().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+  }
+  function detectPlatform(rawUrl){
+    let u;
+    try { u = new URL(rawUrl); } catch(e){ return null; }
+    const h = u.hostname.replace(/^www\./,'');
+    if (h.endsWith('blueticket.com.br')) return 'blueticket';
+    if (h.endsWith('shotgun.live')) return 'shotgun';
+    return null;
+  }
+
+  /* ============== fetch HTML (proxy first, then paste fallback) ============== */
+  async function fetchHTML(rawUrl){
+    const proxyTemplate = $('cfgFetchProxy').value.trim();
+
+    try {
+      log('tentando fetch direto...', 'info');
+      const res = await fetch(rawUrl, { mode:'cors' });
+      if (res.ok) {
+        const text = await res.text();
+        if (text && text.length > 200) { log('fetch direto funcionou.', 'ok'); return text; }
+      }
+    } catch(e){ /* expected to fail on cross-origin — falling through */ }
+
+    if (proxyTemplate) {
+      try {
+        log('tentando endpoint de fetch server-side configurado...', 'info');
+        const proxyUrl = proxyTemplate.includes('{url}')
+          ? proxyTemplate.replace('{url}', encodeURIComponent(rawUrl))
+          : proxyTemplate + encodeURIComponent(rawUrl);
+        const res = await fetch(proxyUrl);
+        if (res.ok) {
+          const raw = await res.text();
+          try {
+            const j = JSON.parse(raw);
+            const html = j.html || j.contents || j.body || null;
+            if (html) { log('HTML recebido via proxy (JSON).', 'ok'); return html; }
+          } catch(e){ /* not JSON, treat as raw HTML */ }
+          if (raw && raw.length > 200) { log('HTML recebido via proxy.', 'ok'); return raw; }
+        }
+        log('proxy respondeu, mas sem HTML utilizável.', 'warn');
+      } catch(e){ log('proxy configurado falhou: ' + e.message, 'warn'); }
+    } else {
+      log('nenhum endpoint de fetch configurado.', 'warn');
+    }
+
+    return null;
+  }
+
+  /* ============== JSON-LD + date helpers ============== */
+  function metaContent(doc, prop){
+    return (
+      doc.querySelector('meta[property="' + prop + '"]')?.getAttribute('content') ||
+      doc.querySelector('meta[name="' + prop + '"]')?.getAttribute('content') ||
+      ''
+    ).trim();
+  }
+
+  function ldTypeList(t){
+    if (!t) return [];
+    return (Array.isArray(t) ? t : [t]).map(String);
+  }
+
+  function isLdEventType(t){
+    return ldTypeList(t).some(x => {
+      const leaf = x.includes('/') ? x.split('/').pop() : x;
+      return leaf === 'MusicEvent' || leaf === 'Event';
+    });
+  }
+
+  function collectLdEvents(node, out){
+    if (!node || typeof node !== 'object') return;
+    if (Array.isArray(node)) { node.forEach(n => collectLdEvents(n, out)); return; }
+    if (isLdEventType(node['@type'])) out.push(node);
+    if (node['@graph']) collectLdEvents(node['@graph'], out);
+  }
+
+  function parseJsonLdEvents(doc){
+    const hits = [];
+    doc.querySelectorAll('script[type="application/ld+json"]').forEach(s => {
+      try { collectLdEvents(JSON.parse(s.textContent || ''), hits); } catch (e) { /* ignore bad LD */ }
+    });
+    return hits.find(e => ldTypeList(e['@type']).some(t => (t.includes('/') ? t.split('/').pop() : t) === 'MusicEvent'))
+      || hits[0]
+      || null;
+  }
+
+  function firstHttpUrl(val){
+    if (!val) return '';
+    if (typeof val === 'string') return /^https?:\/\//i.test(val) ? val : '';
+    if (Array.isArray(val)) {
+      for (let i = 0; i < val.length; i++) {
+        const u = firstHttpUrl(val[i]);
+        if (u) return u;
+      }
+      return '';
+    }
+    if (typeof val === 'object') return firstHttpUrl(val.url || val.contentUrl || val['@id'] || '');
+    return '';
+  }
+
+  function cheapestOfferPrice(offers){
+    const list = !offers ? [] : (Array.isArray(offers) ? offers : [offers]);
+    let best = null;
+    list.forEach(o => {
+      if (!o || o.price == null || o.price === '') return;
+      const n = Number(String(o.price).replace(',', '.'));
+      if (!Number.isFinite(n)) return;
+      if (best == null || n < best) best = n;
+    });
+    return best == null ? '' : String(best);
+  }
+
+  function ymdInSaoPaulo(iso){
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return '';
+    try {
+      return new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'America/Sao_Paulo',
+        year: 'numeric', month: '2-digit', day: '2-digit'
+      }).format(d);
+    } catch (e) {
+      return '';
+    }
+  }
+
+  /** Apollo nightclub hours: party day 23:00 → next calendar day 07:00. */
+  function apolloNightHours(startDateYmd){
+    const empty = { start_date: '', start_time: '23:00', end_date: '', end_time: '07:00' };
+    if (!startDateYmd || !/^\d{4}-\d{2}-\d{2}$/.test(startDateYmd)) return empty;
+    const parts = startDateYmd.split('-').map(Number);
+    const next = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+    next.setUTCDate(next.getUTCDate() + 1);
+    const ey = next.getUTCFullYear();
+    const em = String(next.getUTCMonth() + 1).padStart(2, '0');
+    const ed = String(next.getUTCDate()).padStart(2, '0');
+    return {
+      start_date: startDateYmd,
+      start_time: '23:00',
+      end_date: ey + '-' + em + '-' + ed,
+      end_time: '07:00'
+    };
+  }
+
+  const PT_MONTHS = {
+    jan:1, janeiro:1, fev:2, fevereiro:2, mar:3, marco:3, 'março':3,
+    abr:4, abril:4, mai:5, maio:5, jun:6, junho:6, jul:7, julho:7,
+    ago:8, agosto:8, set:9, setembro:9, out:10, outubro:10,
+    nov:11, novembro:11, dez:12, dezembro:12
+  };
+
+  function resolvePtYear(month, day){
+    const now = new Date();
+    let year = now.getFullYear();
+    const candidate = new Date(year, month - 1, day);
+    if (candidate.getTime() < now.getTime() - 31 * 86400000) year += 1;
+    return year;
+  }
+
+  /** Small JS port of PtDate::date — title/meta fallbacks when LD lacks startDate. */
+  function parsePtDate(text){
+    let t = String(text || '').toLowerCase().replace(/\s+/g, ' ').trim();
+    if (!t) return '';
+    const iso = t.match(/(\d{4})-(\d{2})-(\d{2})/);
+    if (iso) return iso[1] + '-' + iso[2] + '-' + iso[3];
+    t = t.replace(/^(?:dom|seg|ter|qua|qui|sex|s[áa]b)[a-zç-]*\.?,?\s*/u, '');
+    const names = Object.keys(PT_MONTHS).join('|');
+    let m = t.match(new RegExp('(\\d{1,2})\\s*(?:de\\s+)?(' + names + ')\\b(?:\\s*(?:de\\s+)?(\\d{4}))?', 'u'));
+    if (m) {
+      const day = parseInt(m[1], 10);
+      const month = PT_MONTHS[m[2]] || 0;
+      if (!month || day < 1 || day > 31) return '';
+      const year = m[3] ? parseInt(m[3], 10) : resolvePtYear(month, day);
+      return year + '-' + String(month).padStart(2,'0') + '-' + String(day).padStart(2,'0');
+    }
+    m = t.match(/\b(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?\b/);
+    if (m) {
+      const day = parseInt(m[1], 10);
+      const month = parseInt(m[2], 10);
+      if (month < 1 || month > 12) return '';
+      let year = m[3] ? parseInt(m[3], 10) : resolvePtYear(month, day);
+      if (year < 100) year += 2000;
+      return year + '-' + String(month).padStart(2,'0') + '-' + String(day).padStart(2,'0');
+    }
+    return '';
+  }
+
+  function pageTicketUrl(doc, rawUrl){
+    if (rawUrl) {
+      try { return new URL(rawUrl).href; } catch (e) { /* fall through */ }
+    }
+    const og = metaContent(doc, 'og:url');
+    if (og) return og;
+    const can = doc.querySelector('link[rel="canonical"]')?.getAttribute('href') || '';
+    return can || rawUrl || '';
+  }
+
+  function couponFromUrl(rawUrl){
+    try { return new URL(rawUrl).searchParams.get('c') || ''; } catch (e) { return ''; }
+  }
+
+  /** Split "<PRESENTER> apresenta <TITLE>" (mirrors BlueTicketProvider::split_presenter). */
+  function splitPresenter(name){
+    const raw = String(name || '').replace(/\s+/g, ' ').trim();
+    if (!raw) return { presenter: '', title: '' };
+    const m = raw.match(/^(.{2,80}?)\s+(?:apresenta(?:m)?|apresentando|presents?|pres\.|feat\.)\s+(.+)$/i);
+    if (m) return { presenter: m[1].trim(), title: m[2].trim() };
+    return { presenter: '', title: raw };
+  }
+
+  function cleanBtTitle(raw){
+    return String(raw || '')
+      .replace(/\s+/g, ' ')
+      .replace(/\s*[-–—]\s*Rio de Janeiro\s*\/\s*RJ\s*$/i, '')
+      .trim();
+  }
+
+  function applyPromoterLoc(presenter, loc){
+    const out = { locSlug: loc.locSlug || '', locName: loc.locName || '' };
+    if (!presenter) return out;
+    const key = slugify(presenter);
+      if (PROMOTER_LOC_MAP[key]) {
+      out.locSlug = PROMOTER_LOC_MAP[key].slug;
+      out.locName = PROMOTER_LOC_MAP[key].name;
+    } else if (/d[\s-]?edge/i.test(presenter)) {
+      out.locSlug = 'dedge';
+      out.locName = 'D-EDGE';
+    } else if (!out.locName) {
+      out.locName = presenter;
+      out.locSlug = slugify(presenter);
+    }
+    return out;
+  }
+
+  function coverFromBtDom(doc){
+    const coverEl = doc.querySelector('.v-image__image--cover');
+    if (!coverEl) return '';
+      const style = coverEl.getAttribute('style') || '';
+      const m = style.match(/url\((?:&quot;|"|')?(https?:\/\/[^)"'&]+)/i);
+    return m ? m[1] : '';
+  }
+
+  function bioFromBtDom(doc){
+    const el = doc.querySelector('#section-descricao .event-text')
+      || doc.querySelector('.event-text.image-mobile');
+    if (!el) return '';
+    return (el.textContent || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function locFromBtDom(doc){
+    const spans = Array.from(doc.querySelectorAll('.event-subinfos .event-description'))
+      .map(s => (s.textContent || '').replace(/\s+/g, ' ').trim())
+      .filter(t => t && t !== '•');
+    return spans[0] || '';
+  }
+
+  /* ============== parsers ============== */
+  function parseBlueTicket(doc, rawUrl){
+    const ld = parseJsonLdEvents(doc);
+    const ticketUrl = pageTicketUrl(doc, rawUrl);
+    const coupon = couponFromUrl(ticketUrl) || $('cfgCoupon').value || '';
+
+    let title = '';
+    let cover = '';
+    let bio = '';
+    let locName = '';
+    let ticket_price = '';
+    let startDay = '';
+    let presenter = '';
+
+    if (ld) {
+      const split = splitPresenter(cleanBtTitle(ld.name || ''));
+      title = split.title;
+      presenter = split.presenter;
+      cover = firstHttpUrl(ld.image);
+      const loc = ld.location;
+      if (loc && typeof loc === 'object') locName = String(loc.name || '').trim().replace(/\s+/g, ' ');
+      else if (typeof loc === 'string') locName = loc.trim();
+      ticket_price = cheapestOfferPrice(ld.offers);
+      startDay = ymdInSaoPaulo(ld.startDate);
+    }
+
+    /* DOM / og fallbacks when LD missing or incomplete */
+    if (!title) {
+      const rawTitle = cleanBtTitle(
+        doc.querySelector('.event-name')?.textContent || metaContent(doc, 'og:title') || ''
+      );
+      const split = splitPresenter(rawTitle);
+      title = split.title || rawTitle;
+      if (!presenter) presenter = split.presenter;
+    }
+    if (!cover) {
+      cover = coverFromBtDom(doc) || metaContent(doc, 'og:image') || '';
+    }
+    if (!locName) {
+      locName = locFromBtDom(doc) || '';
+      if (!locName) {
+        const ogDesc = metaContent(doc, 'og:description');
+        const dash = ogDesc.lastIndexOf(' - ');
+        if (dash >= 0) locName = ogDesc.slice(dash + 3).trim();
+      }
+    }
+    if (!bio) bio = bioFromBtDom(doc);
+    if (!startDay) {
+      startDay = parsePtDate(metaContent(doc, 'og:description'))
+        || parsePtDate(metaContent(doc, 'og:title'))
+        || parsePtDate(doc.querySelector('.event-name')?.textContent || '')
+        || parsePtDate(doc.body?.textContent?.slice(0, 1200) || '');
+    }
+
+    const hours = apolloNightHours(startDay);
+    const mapped = applyPromoterLoc(presenter, { locSlug: '', locName });
+    const locSlug = mapped.locSlug || slugify(mapped.locName || locName);
+
+    return {
+      platform: 'blueticket',
+      title, locSlug, locName: mapped.locName || locName, locId: '',
+      cover, video: '', bio,
+      start_date: hours.start_date,
+      start_time: hours.start_time,
+      end_date: hours.end_date,
+      end_time: hours.end_time,
+      ticket_price,
+      ticketUrl, coupon,
+      performers: []
+    };
+  }
+
+  function parseShotgun(doc, rawUrl){
+    const ld = parseJsonLdEvents(doc);
+    const ticketUrl = pageTicketUrl(doc, rawUrl);
+    const coupon = couponFromUrl(ticketUrl);
+
+    let title = '';
+    let cover = '';
+    let video = '';
+    let bio = '';
+    let locName = '';
+    let ticket_price = '';
+    let performers = [];
+    let startDay = '';
+
+    if (ld) {
+      title = String(ld.name || '').trim().replace(/\s+/g, ' ');
+      cover = firstHttpUrl(ld.image);
+      bio = String(ld.description || '').trim();
+      const loc = ld.location;
+      if (loc && typeof loc === 'object') locName = String(loc.name || '').trim().replace(/\s+/g, ' ');
+      else if (typeof loc === 'string') locName = loc.trim();
+      ticket_price = cheapestOfferPrice(ld.offers);
+      const perf = ld.performer;
+      if (Array.isArray(perf)) {
+        performers = perf.map(p => (typeof p === 'string' ? p : (p && p.name) || '')).filter(Boolean);
+      } else if (perf) {
+        const n = typeof perf === 'string' ? perf : (perf.name || '');
+        if (n) performers = [n];
+      }
+      startDay = ymdInSaoPaulo(ld.startDate);
+    }
+
+    /* DOM / og fallbacks when LD missing or incomplete */
+    if (!title) {
+      title = (doc.querySelector('h1[data-slot="heading"]')?.textContent || metaContent(doc, 'og:title') || '').trim().replace(/\s+/g, ' ');
+    }
+    if (!cover) {
+      cover = metaContent(doc, 'og:image') || '';
+    const videoEl = doc.querySelector('video');
+    const poster = videoEl ? (videoEl.getAttribute('poster') || '') : '';
+      if (!cover && /^https?:\/\//i.test(poster)) cover = poster;
+    }
+    video = metaContent(doc, 'og:video') || metaContent(doc, 'og:video:url') || '';
+    if (!video) {
+      const videoEl = doc.querySelector('video');
+      video = videoEl ? (videoEl.getAttribute('src') || '') : '';
+    }
+    if (!locName) {
+    let venueEl = doc.querySelector('div.flex-1.py-4.text-foreground');
+    if (!venueEl) {
+      venueEl = Array.from(doc.querySelectorAll('div')).find(d => {
+        const cls = d.className || '';
+        return typeof cls === 'string' && cls.includes('flex-1') && cls.includes('py-4') && cls.includes('text-foreground');
+      });
+    }
+      locName = venueEl ? venueEl.textContent.trim().replace(/\s+/g, ' ') : '';
+    }
+    if (!bio) {
+    const bioEl = doc.querySelector('.break-words.whitespace-pre-wrap');
+      bio = bioEl ? bioEl.textContent.trim() : '';
+    }
+    if (!startDay) {
+      startDay = parsePtDate(title) || parsePtDate(metaContent(doc, 'og:title')) || parsePtDate(doc.body?.textContent?.slice(0, 800) || '');
+    }
+
+    const hours = apolloNightHours(startDay);
+    const locSlug = slugify(locName);
+
+    return {
+      platform: 'shotgun',
+      title, locSlug, locName, locId: '',
+      cover, video, bio,
+      start_date: hours.start_date,
+      start_time: hours.start_time,
+      end_date: hours.end_date,
+      end_time: hours.end_time,
+      ticket_price,
+      ticketUrl, coupon,
+      performers
+    };
+  }
+
+  /* ============== field spec per platform ============== */
+  function buildFieldSpec(extract){
+    const couponDefault = extract.platform === 'blueticket'
+      ? (extract.coupon || $('cfgCoupon').value || '')
+      : (extract.coupon || '');
+    return [
+      { id:'title',        label:'Título',                 required:true,  type:'text',     value:extract.title||'' },
+      { id:'start_date',   label:'Data início',            required:true,  type:'text',     value:extract.start_date||'' },
+      { id:'start_time',   label:'Hora início',            required:true,  type:'text',     value:extract.start_time||'23:00' },
+      { id:'end_date',     label:'Data fim',               required:true,  type:'text',     value:extract.end_date||'' },
+      { id:'end_time',     label:'Hora fim',               required:true,  type:'text',     value:extract.end_time||'07:00' },
+      { id:'cover',        label:'Capa (imagem)',          required:extract.platform==='blueticket', type:'text', value:extract.cover||'' },
+      { id:'video',        label:'Capa (vídeo)',           required:false, type:'text',     value:extract.video||'' },
+      { id:'locName',      label:'Local (nome)',           required:false, type:'text',     value:extract.locName||'' },
+      /* NOTE (2026-08-05) — these two READ as duplicates and half-are.
+         Only locId reaches the DB (buildPayload → loc_id → _event_loc_id).
+         locSlug is never sent; it exists solely as the lookup key that
+         resolveLoc() (line ~982) posts to /apollo/v1/local?slug= to FIND that
+         id — and it carries the promoter mapping ("D-EDGE RIO" → "dedge"),
+         which a plain slugify(locName) would give as "d-edge-rio" and miss.
+
+         Collapsing to one visible field is right, but it is NOT just deleting
+         this line: collectChecklistValues() only reads RENDERED [data-field]
+         inputs, so removing it makes values.locSlug undefined and silently
+         degrades the resolver to name-only matching. Doing it properly means
+         either rendering locSlug as a hidden [data-field] input (renderer
+         needs a 'hidden' type) or seeding it into values outside the form.
+         Left as-is deliberately rather than shipping that regression. */
+      { id:'locSlug',      label:'Local (slug WP)',        required:false, type:'text',     value:extract.locSlug||'' },
+      { id:'locId',        label:'Local (ID WP)',          required:false, type:'text',     value:extract.locId||'' },
+      { id:'bio',          label:'Bio / descrição',        required:false, type:'textarea', value:extract.bio||'' },
+      { id:'ticket_price', label:'Preço (menor oferta)',   required:false, type:'text',     value:extract.ticket_price||'' },
+      { id:'coupon',       label:'Cupom',                  required:false, type:'text',     value:couponDefault },
+      { id:'ticketUrl',    label:'URL do ingresso',        required:true,  type:'text',     value:extract.ticketUrl||'' }
+    ];
+  }
+
+  /* ============== render checklist ============== */
+  function renderChecklist(extract){
+    state.currentExtract = extract;
+    checklistPanel.style.display = 'block';
+    platformPill.textContent = extract.platform;
+    platformPill.className = 'tag imp-source-' + extract.platform;
+
+    const spec = buildFieldSpec(extract);
+    ledGrid.innerHTML = '';
+
+    spec.forEach(f => {
+      const card = document.createElement('div');
+      card.className = 'card ins imp-led-card';
+      card.dataset.fieldId = f.id;
+      card.dataset.required = f.required ? '1' : '0';
+
+      const filled = !!(f.value && f.value.trim());
+      const ledClass = filled ? 'on' : (f.required ? 'off' : 'optional-off');
+
+      card.innerHTML =
+        '<div class="imp-led-head"><span class="imp-led ' + ledClass + '"></span>' +
+        '<span class="imp-led-label">' + escapeHtml(f.label) + (f.required ? '<span class="req">*</span>' : '') + '</span></div>' +
+        (f.type === 'textarea'
+          ? '<textarea class="apollo-input" data-field="' + f.id + '">' + escapeHtml(f.value) + '</textarea>'
+          : '<input class="apollo-input" type="text" data-field="' + f.id + '" value="' + escapeHtml(f.value) + '">');
+
+      ledGrid.appendChild(card);
+    });
+
+    ledGrid.querySelectorAll('input,textarea').forEach(el => {
+      el.addEventListener('input', () => {
+        const card = el.closest('.imp-led-card');
+        const required = card.dataset.required === '1';
+        const filled = !!el.value.trim();
+        const led = card.querySelector('.imp-led');
+        led.className = 'imp-led ' + (filled ? 'on' : (required ? 'off' : 'optional-off'));
+        evaluateGate();
+      });
+    });
+
+    evaluateGate();
+  }
+
+  function evaluateGate(){
+    const cards = Array.from(ledGrid.querySelectorAll('.imp-led-card'));
+    const requiredCards = cards.filter(c => c.dataset.required === '1');
+    const allGreen = requiredCards.every(c => c.querySelector('.imp-led').classList.contains('on'));
+    btnConfirmRow.disabled = !allGreen;
+    if (allGreen) {
+      gateMsg.textContent = 'todas as luzes obrigatórias verdes — pronto para importar';
+      gateMsg.className = 'imp-gate ready';
+    } else {
+      const missing = requiredCards.filter(c => !c.querySelector('.imp-led').classList.contains('on')).length;
+      gateMsg.textContent = missing + ' campo(s) obrigatório(s) pendente(s)';
+      gateMsg.className = 'imp-gate blocked';
+    }
+  }
+
+  function collectChecklistValues(){
+    const out = {};
+    ledGrid.querySelectorAll('[data-field]').forEach(el => { out[el.dataset.field] = el.value.trim(); });
+    return out;
+  }
+
+  /* ============== payload builder (flat keys for POST /apollo/v1/eventos) ============== */
+  function buildPayload(values, extract){
+    const status = $('cfgStatus').value || 'draft';
+    const payload = {
+      title: values.title || '',
+      content: values.bio || '',
+      post_status: status,
+      start_date: values.start_date || '',
+      start_time: values.start_time || '',
+      end_date: values.end_date || '',
+      end_time: values.end_time || '',
+      banner: values.cover || '',
+      ticket_url: values.ticketUrl || '',
+      coupon_code: values.coupon || '',
+      video_url: values.video || '',
+      ticket_price: values.ticket_price || '',
+      loc_id: values.locId || ''
+    };
+    Object.keys(payload).forEach(k => {
+      if (payload[k] === '' && k !== 'title' && k !== 'post_status') delete payload[k];
+    });
+    return payload;
+  }
+
+  /* ============== import pipeline ============== */
+  async function runImport(){
+    const rawUrl = urlInput.value.trim();
+    clearLog();
+    pasteBox.classList.remove('show');
+
+    if (!rawUrl) { log('cole uma URL antes de importar.', 'err'); return; }
+
+    let parsedUrl;
+    try { parsedUrl = new URL(rawUrl); } catch(e){ log('URL inválida.', 'err'); return; }
+
+    log('detectando plataforma para ' + parsedUrl.hostname + '...', 'info');
+    const platform = detectPlatform(rawUrl);
+    if (!platform) {
+      log('plataforma não reconhecida — esperado blueticket.com.br ou shotgun.live.', 'err');
+      return;
+    }
+    log('plataforma detectada: ' + platform, 'ok');
+
+    const html = await fetchHTML(rawUrl);
+    if (!html) {
+      log('busca automática indisponível — cole o HTML manualmente abaixo.', 'warn');
+      pasteBox.classList.add('show');
+      pasteBox.dataset.pendingUrl = rawUrl;
+      pasteBox.dataset.pendingPlatform = platform;
+      return;
+    }
+    parseAndRender(html, rawUrl, platform);
+  }
+
+  function parseAndRender(html, rawUrl, platform){
+    log('parseando HTML (' + html.length + ' chars)...', 'info');
+    let doc;
+    try {
+      doc = new DOMParser().parseFromString(html, 'text/html');
+    } catch(e){
+      log('falha ao parsear HTML: ' + e.message, 'err');
+      return;
+    }
+
+    const extract = platform === 'blueticket' ? parseBlueTicket(doc, rawUrl) : parseShotgun(doc, rawUrl);
+    log('título → ' + (extract.title || '(vazio)'), extract.title ? 'ok' : 'warn');
+    log('agenda → ' + (extract.start_date || '?') + ' ' + (extract.start_time || '') + ' → ' + (extract.end_date || '?') + ' ' + (extract.end_time || ''), extract.start_date ? 'ok' : 'warn');
+    log('capa → ' + (extract.cover || extract.video || '(vazia)'), (extract.cover||extract.video) ? 'ok' : 'warn');
+    log('local → ' + (extract.locName || '(vazio)'), extract.locName ? 'ok' : 'warn');
+    if (extract.bio) log('bio → ' + extract.bio.slice(0, 80) + (extract.bio.length > 80 ? '…' : ''), 'ok');
+    if (extract.ticket_price) log('preço (menor oferta) → ' + extract.ticket_price, 'ok');
+    if (extract.performers && extract.performers.length) log('performers → ' + extract.performers.length + ' (não linkados a DJ ainda)', 'info');
+    if (extract.coupon) log('cupom detectado → ' + extract.coupon, 'ok');
+    log('pronto — revise o console de validação abaixo.', 'ok');
+
+    renderChecklist(extract);
+    checklistPanel.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  /* ============== confirm row ============== */
+  function confirmRow(){
+    const extract = state.currentExtract;
+    if (!extract) return;
+    const values = collectChecklistValues();
+    const payload = buildPayload(values, extract);
+
+    state.counter++;
+    const row = {
+      id: 'row-' + state.counter,
+      platform: extract.platform,
+      values,
+      payload,
+      status: 'pending'
+    };
+    state.rows.unshift(row);
+    renderResults();
+
+    checklistPanel.style.display = 'none';
+    urlInput.value = '';
+    clearLog();
+    state.currentExtract = null;
+    resultsList.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  /* ============== results rendering ============== */
+  function renderResults(){
+    countPill.textContent = state.rows.length;
+    if (!state.rows.length) {
+      resultsList.innerHTML = '<div class="imp-empty">nenhum evento importado ainda — os dados ficam apenas em memória enquanto a página estiver aberta</div>';
+      return;
+    }
+    resultsList.innerHTML = '';
+    state.rows.forEach(row => resultsList.appendChild(renderRowCard(row)));
+  }
+
+  function statusTagClass(s){
+    if (s === 'sent') return 'tag tag-success';
+    if (s === 'failed') return 'tag tag-danger';
+    if (s === 'sending') return 'tag tag-accent';
+    return 'tag';
+  }
+
+  function renderRowCard(row){
+    const v = row.values;
+    const card = document.createElement('div');
+    card.className = 'card ins imp-row';
+    card.id = row.id;
+
+    const thumbStyle = v.cover ? ('background-image:url(\'' + v.cover.replace(/'/g,"\\'") + '\')') : '';
+    const thumbLabel = v.cover ? '' : (v.video ? 'VÍDEO' : 'SEM CAPA');
+
+    card.innerHTML =
+      '<div class="imp-row-top">' +
+        '<div class="imp-thumb" style="' + thumbStyle + '">' + thumbLabel + '</div>' +
+        '<div class="imp-row-info">' +
+          '<div class="imp-row-title">' + escapeHtml(v.title || '(sem título)') + '</div>' +
+          '<div class="imp-row-meta">' +
+            '<span class="tag imp-source-' + row.platform + '">' + row.platform + '</span>' +
+            (v.locName ? '<span class="tag">' + escapeHtml(v.locName) + '</span>' : '') +
+            (v.coupon ? '<span class="tag tag-accent">cupom: ' + escapeHtml(v.coupon) + '</span>' : '') +
+            '<span class="' + statusTagClass(row.status) + '" data-status-tag>' + statusLabel(row.status) + '</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="imp-row-actions">' +
+        '<button type="button" class="btn btn-ghost btn-sm" data-action="toggle"><i class="ri-eye-line"></i> Ver payload</button>' +
+        '<button type="button" class="btn btn-primary btn-sm" data-action="send"><i class="ri-send-plane-line"></i> Enviar ao WordPress</button>' +
+        '<button type="button" class="btn btn-ghost btn-sm imp-danger" data-action="remove"><i class="ri-delete-bin-line"></i> Remover</button>' +
+      '</div>' +
+      '<div class="imp-row-detail" data-detail>' +
+        '<div class="imp-locid">' +
+          '<label>loc_id</label>' +
+          '<input class="apollo-input" type="text" data-locid placeholder="resolver ou preencher manualmente" value="' + escapeHtml(row.payload.loc_id || row.values.locId || '') + '">' +
+          '<button type="button" class="btn btn-ghost btn-sm" data-action="resolve-loc">Resolver no WP</button>' +
+        '</div>' +
+        '<div class="imp-tabs">' +
+          '<button type="button" class="imp-tab active" data-tab="json">JSON</button>' +
+          '<button type="button" class="imp-tab" data-tab="php">PHP</button>' +
+          '<button type="button" class="btn btn-ghost btn-sm" data-action="copy" style="margin-left:auto;"><i class="ri-clipboard-line"></i> Copiar</button>' +
+        '</div>' +
+        '<pre class="imp-payload" data-payload-view></pre>' +
+      '</div>';
+
+    card.querySelector('[data-action="toggle"]').addEventListener('click', () => {
+      const detail = card.querySelector('[data-detail]');
+      const willShow = !detail.classList.contains('show');
+      detail.classList.toggle('show');
+      if (willShow) renderPayloadView(card, row, 'json');
+    });
+    card.querySelectorAll('.imp-tab[data-tab]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        card.querySelectorAll('.imp-tab[data-tab]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderPayloadView(card, row, btn.dataset.tab);
+      });
+    });
+    card.querySelector('[data-action="copy"]').addEventListener('click', () => {
+      const text = card.querySelector('[data-payload-view]').textContent;
+      navigator.clipboard.writeText(text).then(() => flashCopy(card));
+    });
+    card.querySelector('[data-locid]').addEventListener('input', (e) => {
+      const id = e.target.value.trim();
+      row.payload.loc_id = id;
+      row.values.locId = id;
+    });
+    card.querySelector('[data-action="resolve-loc"]').addEventListener('click', () => resolveLoc(row, card));
+    card.querySelector('[data-action="send"]').addEventListener('click', () => sendToWordPress(row, card));
+    card.querySelector('[data-action="remove"]').addEventListener('click', () => {
+      state.rows = state.rows.filter(r => r.id !== row.id);
+      renderResults();
+    });
+
+    return card;
+  }
+
+  function statusLabel(s){
+    return { pending:'aguardando envio', sending:'enviando...', sent:'importado ✓', failed:'falhou — tentar novamente' }[s] || s;
+  }
+
+  function flashCopy(card){
+    const btn = card.querySelector('[data-action="copy"]');
+    const original = btn.innerHTML;
+    btn.innerHTML = '<i class="ri-check-line"></i> Copiado';
+    setTimeout(() => { btn.innerHTML = original; }, 1200);
+  }
+
+  function renderPayloadView(card, row, tab){
+    const view = card.querySelector('[data-payload-view]');
+    if (tab === 'json') {
+      view.textContent = JSON.stringify(row.payload, null, 2);
+    } else {
+      view.textContent = toPhpArray(row.payload);
+    }
+  }
+
+  function toPhpArray(obj, indent){
+    indent = indent || 1;
+    const pad = '    '.repeat(indent);
+    const lines = [];
+    Object.keys(obj).forEach(key => {
+      const val = obj[key];
+      if (val && typeof val === 'object' && !Array.isArray(val)) {
+        lines.push(pad + "'" + key + "' => [");
+        lines.push(toPhpArray(val, indent + 1));
+        lines.push(pad + '],');
+      } else {
+        const phpVal = typeof val === 'string' ? "'" + String(val).replace(/'/g,"\\'") + "'" : val;
+        lines.push(pad + "'" + key + "' => " + phpVal + ',');
+      }
+    });
+    return lines.join('\n');
+  }
+
+  /* ============== resolve loc via GET /apollo/v1/local?slug= (CPT local post_name) ============== */
+  async function resolveLoc(row, card){
+    const base = $('cfgWpBase').value.trim();
+    const locPath = $('cfgLocPath').value.trim() || 'apollo/v1/local';
+    const locSlug = (row.values.locSlug || '').trim();
+    const locName = (row.values.locName || '').trim();
+    if (!base) { alert('configure a base da REST API primeiro.'); return; }
+    if (!locSlug && !locName) { alert('não há slug/nome de local para buscar.'); return; }
+    try {
+      const path = base.replace(/\/$/,'') + '/' + locPath.replace(/^\//,'');
+      /* Prefer exact CPT slug (post_type=local, post_name=dedge) over title search. */
+      let url = locSlug
+        ? path + '?slug=' + encodeURIComponent(locSlug)
+        : path + '?search=' + encodeURIComponent(locName) + '&per_page=10';
+      let res = await fetch(url, { headers: restHeaders(), credentials: 'same-origin' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      let data = await res.json();
+      let items = Array.isArray(data) ? data : (Array.isArray(data?.data) ? data.data : []);
+
+      if (!items.length && locSlug && locName) {
+        url = path + '?search=' + encodeURIComponent(locName) + '&per_page=10';
+        res = await fetch(url, { headers: restHeaders(), credentials: 'same-origin' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        data = await res.json();
+        items = Array.isArray(data) ? data : (Array.isArray(data?.data) ? data.data : []);
+      }
+
+      if (!items.length) {
+        alert('nenhum local encontrado para slug "' + (locSlug || locName) + '" — crie o CPT local no WP ou deixe loc_id vazio.');
+        return;
+      }
+
+      let match = null;
+      if (locSlug) {
+        const want = locSlug.toLowerCase();
+        match = items.find(i => String(i.slug || '').toLowerCase() === want)
+          || items.find(i => slugify(i.slug || '') === slugify(locSlug));
+      }
+      if (!match && locName) {
+        const want = slugify(locName);
+        match = items.find(i => slugify(i.title || i.slug || '') === want)
+          || items.find(i => slugify(i.title || '').includes(want) || want.includes(slugify(i.title || '')));
+      }
+      if (!match) match = items[0];
+
+      const id = match && match.id != null ? String(match.id) : '';
+      if (id) {
+        row.payload.loc_id = id;
+        row.values.locId = id;
+        if (match.slug) {
+          row.values.locSlug = String(match.slug);
+        }
+        card.querySelector('[data-locid]').value = id;
+      } else {
+        alert('endpoint respondeu, mas sem ID — preencha manualmente.');
+      }
+    } catch(e) {
+      alert('falha ao buscar local: ' + e.message);
+    }
+  }
+
+  /* ============== send to WordPress ============== */
+  async function sendToWordPress(row, card){
+    const base = $('cfgWpBase').value.trim();
+    const insertPath = $('cfgInsertPath').value.trim();
+    if (!base || !insertPath) { alert('configure a base da REST API e o endpoint de inserção primeiro.'); return; }
+
+    setRowStatus(row, card, 'sending');
+    try {
+      const res = await fetch(base.replace(/\/$/,'') + '/' + insertPath.replace(/^\//,''), {
+        method: 'POST',
+        headers: restHeaders(),
+        credentials: 'same-origin',
+        body: JSON.stringify(row.payload)
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      setRowStatus(row, card, 'sent');
+    } catch(e) {
+      setRowStatus(row, card, 'failed');
+      alert('falha ao enviar: ' + e.message);
+    }
+  }
+
+  function setRowStatus(row, card, status){
+    row.status = status;
+    const tag = card.querySelector('[data-status-tag]');
+    tag.className = statusTagClass(status);
+    tag.textContent = statusLabel(status);
+  }
+
+  /* ============== wire top-level buttons ============== */
+  $('btnImport').addEventListener('click', runImport);
+  urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') runImport(); });
+
+  $('btnParsePasted').addEventListener('click', () => {
+    const html = pasteHtml.value;
+    const rawUrl = pasteBox.dataset.pendingUrl;
+    const platform = pasteBox.dataset.pendingPlatform;
+    if (!html.trim()) { log('cole o HTML antes de parsear.', 'err'); return; }
+    pasteBox.classList.remove('show');
+    parseAndRender(html, rawUrl, platform);
+  });
+  $('btnCancelPaste').addEventListener('click', () => {
+    pasteBox.classList.remove('show');
+    pasteHtml.value = '';
+  });
+  $('btnConfirmRow').addEventListener('click', confirmRow);
+
+})();
+</script>
+</body>
+</html>

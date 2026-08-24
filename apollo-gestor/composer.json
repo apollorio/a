@@ -1,0 +1,24 @@
+{
+    "name": "apollo/gestor",
+    "description": "Event Planning & Staff Management for Apollo ecosystem",
+    "type": "wordpress-plugin",
+    "version": "1.0.0",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Apollo",
+            "homepage": "https://apollo.rio.br"
+        }
+    ],
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Apollo\\Gestor\\": "src/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true
+    }
+}

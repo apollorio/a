@@ -1,0 +1,253 @@
+/**
+ * Apollo Users - Edit Profile Styles
+ *
+ * @package Apollo\Users
+ */
+
+/* ============================================
+   Edit Profile Page
+   ============================================ */
+.apollo-edit-profile-page {
+	max-width: 700px;
+	margin: 0 auto;
+	padding: 40px 20px;
+}
+
+.apollo-page-header {
+	margin-bottom: 32px;
+}
+
+.apollo-page-header h1 {
+	font-size: 28px;
+	font-weight: 700;
+	color: var(--apollo-text);
+	margin: 0 0 8px;
+}
+
+.apollo-page-header a {
+	color: rgba(var(--rgb-d),0.45);
+	text-decoration: none;
+	font-size: 14px;
+}
+
+.apollo-page-header a:hover {
+	text-decoration: underline;
+}
+
+/* ============================================
+   Form Styles
+   ============================================ */
+.apollo-form {
+	background: transparent;
+	border-radius: var(--apollo-r);
+	box-shadow: none;
+}
+
+.apollo-form-section {
+	padding: 24px;
+	border-bottom: none;
+}
+
+.apollo-form-section:last-of-type {
+	border-bottom: none;
+}
+
+.apollo-form-section h2 {
+	font-size: 18px;
+	font-weight: 600;
+	color: var(--apollo-text);
+	margin: 0 0 20px;
+}
+
+.apollo-form-row {
+	margin-bottom: 20px;
+}
+
+.apollo-form-row:last-child {
+	margin-bottom: 0;
+}
+
+.apollo-form-row label {
+	display: block;
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--apollo-text);
+	margin-bottom: 8px;
+}
+
+.apollo-form-row input[type="text"],
+.apollo-form-row input[type="email"],
+.apollo-form-row input[type="tel"],
+.apollo-form-row input[type="url"],
+.apollo-form-row textarea,
+.apollo-form-row select {
+	width: 100%;
+	padding: 12px 0;
+	border: none;
+	border-bottom: 1px solid rgba(var(--rgb-d),0.08);
+	border-radius: 0;
+	font-size: 15px;
+	color: var(--apollo-text);
+	background: transparent;
+	transition: border-color 0.4s;
+	font-family: inherit;
+}
+
+.apollo-form-row input:focus,
+.apollo-form-row textarea:focus,
+.apollo-form-row select:focus {
+	outline: none;
+	border-color: rgba(var(--rgb-d),0.25);
+	box-shadow: none;
+	background: var(--apollo-card-bg);
+}
+
+.apollo-form-row input::placeholder,
+.apollo-form-row textarea::placeholder {
+	color: var(--apollo-text-muted);
+}
+
+.apollo-form-row textarea {
+	resize: vertical;
+	min-height: 100px;
+}
+
+.apollo-form-row small {
+	display: block;
+	font-size: 12px;
+	color: var(--apollo-text-muted);
+	margin-top: 6px;
+}
+
+/* Checkbox */
+.apollo-form-checkbox label {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	cursor: pointer;
+	font-weight: 400;
+}
+
+.apollo-form-checkbox input[type="checkbox"] {
+	width: 18px;
+	height: 18px;
+	accent-color: var(--apollo-primary);
+}
+
+/* ============================================
+   Media Uploads
+   ============================================ */
+.apollo-media-uploads {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 24px;
+}
+
+.apollo-media-item {
+	flex: 1;
+	min-width: 200px;
+}
+
+.apollo-media-item label {
+	display: block;
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--apollo-text);
+	margin-bottom: 12px;
+}
+
+.apollo-avatar-preview {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+}
+
+.apollo-avatar-preview img {
+	width: 120px;
+	height: 120px;
+	border-radius: 50%;
+	object-fit: cover;
+	border: none;
+}
+
+.apollo-avatar-actions {
+	display: flex;
+	gap: 8px;
+}
+
+.apollo-media-cover {
+	flex: 2;
+}
+
+.apollo-cover-preview {
+	height: 140px;
+	border-radius: var(--apollo-r-sm);
+	background: rgba(var(--rgb-d),0.06);
+	background-size: cover;
+	background-position: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.apollo-cover-actions {
+	display: flex;
+	gap: 8px;
+}
+
+/* ============================================
+   Form Actions
+   ============================================ */
+.apollo-form-actions {
+	padding: 24px;
+	text-align: center;
+	border-top: none;
+}
+
+/* ============================================
+   Messages
+   ============================================ */
+.apollo-message {
+	padding: 16px 20px;
+	border-radius: var(--apollo-r-sm);
+	font-size: 14px;
+	margin: 20px 24px;
+}
+
+.apollo-message-success {
+	background: rgba(var(--rgb-d),0.03);
+	color: #065f46;
+	border: none;
+}
+
+.apollo-message-error {
+	background: rgba(var(--rgb-d),0.03);
+	color: #991b1b;
+	border: none;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 768px) {
+	.apollo-edit-profile-page {
+		padding: 20px 16px;
+	}
+
+	.apollo-page-header h1 {
+		font-size: 22px;
+	}
+
+	.apollo-form-section {
+		padding: 20px;
+	}
+
+	.apollo-media-uploads {
+		flex-direction: column;
+	}
+
+	.apollo-media-item {
+		min-width: 100%;
+	}
+}

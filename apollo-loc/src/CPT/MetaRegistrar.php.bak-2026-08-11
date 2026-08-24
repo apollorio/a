@@ -1,0 +1,154 @@
+<?php
+/**
+ * MetaRegistrar — registra meta keys do CPT "local" no REST schema
+ *
+ * Expõe cada campo para a REST API e para apollo-core MetaRegistry.
+ *
+ * @package Apollo\Local\CPT
+ */
+
+declare(strict_types=1);
+
+namespace Apollo\Local\CPT;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+final class MetaRegistrar {
+
+	/** @var array<string, array{type:string, single:bool, show_in_rest:bool}> */
+	private const META = array(
+		'_local_name'        => array( 'type' => 'string',  'single' => true, 'show_in_rest' => true ),
+		'_local_address'     => array( 'type' => 'string',  'single' => true, 'show_in_rest' => true ),
+		'_local_city'        => array( 'type' => 'string',  'single' => true, 'show_in_rest' => true ),
+		'_local_state'       => array( 'type' => 'string',  'single' => true, 'show_in_rest' => true ),
+		'_local_country'     => array( 'type' => 'string',  'single' => true, 'show_in_rest' => true ),
+		'_local_postal'      => array( 'type' => 'string',  'single' => true, 'show_in_rest' => true ),
+		'_local_lat'         => array( 'type' => 'number',  'single' => true, 'show_in_rest' => true ),
+		'_local_lng'         => array( 'type' => 'number',  'single' => true, 'show_in_rest' => true ),
+		'_local_phone'       => array( 'type' => 'string',  'single' => true, 'show_in_rest' => true ),
+		'_local_website'     => array( 'type' => 'string',  'single' => true, 'show_in_rest' => true ),
+		'_local_instagram'   => array( 'type' => 'string',  'single' => true, 'show_in_rest' => true ),
+		'_local_facebook'    => array( 'type' => 'string',  'single' => true, 'show_in_rest' => true ),
+		'_local_whatsapp'    => array( 'type' => 'string',  'single' => true, 'show_in_rest' => true ),
+		'_local_capacity'    => array( 'type' => 'integer', 'single' => true, 'show_in_rest' => true ),
+		'_local_price_range' => array( 'type' => 'string',  'single' => true, 'show_in_rest' => true ),
+		'_local_description' => array( 'type' => 'string',  'single' => true, 'show_in_rest' => true ),
+		'_local_image_1'     => array( 'type' => 'integer', 'single' => true, 'show_in_rest' => true ),
+		'_local_image_2'     => array( 'type' => 'integer', 'single' => true, 'show_in_rest' => true ),
+		'_local_image_3'     => array( 'type' => 'integer', 'single' => true, 'show_in_rest' => true ),
+		'_local_image_4'     => array( 'type' => 'integer', 'single' => true, 'show_in_rest' => true ),
+		'_local_image_5'     => array( 'type' => 'integer', 'single' => true, 'show_in_rest' => true ),
+	);
+
+	public function __construct() {
+		add_action( 'init', array( $this, 'register' ), 10 );
+		add_filter( 'apollo_core_register_meta', array( $this, 'register_core_meta' ) );
+	}
+
+	public function register(): void {
+		foreach ( self::META as $key => $args ) {
+			register_post_meta(
+				APOLLO_LOCAL_CPT,
+				$key,
+				array(
+					'type'         => $args['type'],
+					'single'       => $args['single'],
+					'show_in_rest' => $args['show_in_rest'],
+					'auth_callback' => function () {
+						return current_user_can( 'edit_posts' );
+					},
+				)
+			);
+		}
+
+		// Opening hours — per-day indexed array of time strings (0=Seg … 6=Dom).
+		register_post_meta(
+			APOLLO_LOCAL_CPT,
+			'_local_hours',
+			array(
+				'type'          => 'array',
+				'single'        => true,
+				'show_in_rest'  => array(
+					'schema' => array(
+						'type'  => 'array',
+						'items' => array( 'type' => 'string' ),
+					),
+				),
+				'auth_callback' => function () {
+					return current_user_can( 'edit_posts' );
+				},
+			)
+		);
+
+		// Amenities repeater — array of { icon, name, sub }. Registered with an
+		// explicit REST schema (kept out of the scalar META map above).
+		register_post_meta(
+			APOLLO_LOCAL_CPT,
+			'_local_amenities',
+			array(
+				'type'          => 'array',
+				'single'        => true,
+				'show_in_rest'  => array(
+					'schema' => array(
+						'type'  => 'array',
+						'items' => array(
+							'type'       => 'object',
+							'properties' => array(
+								'icon' => array( 'type' => 'string' ),
+								'name' => array( 'type' => 'string' ),
+								'sub'  => array( 'type' => 'string' ),
+							),
+						),
+					),
+				),
+				'auth_callback' => function () {
+					return current_user_can( 'edit_posts' );
+				},
+			)
+		);
+	}
+
+	/**
+	 * Expõe metadados para apollo-core MetaRegistry centralizado.
+	 */
+	public function register_core_meta( array $meta_config ): array {
+		$sanitizers = array(
+			'string'  => 'sanitize_text_field',
+			'number'  => 'floatval',
+			'integer' => 'absint',
+		);
+
+		foreach ( self::META as $key => $def ) {
+			$sanitize = $sanitizers[ $def['type'] ] ?? 'sanitize_text_field';
+			if ( in_array( $key, array( '_local_website', '_local_instagram', '_local_facebook', '_local_whatsapp' ), true ) ) {
+				$sanitize = 'esc_url_raw';
+			}
+			$meta_config[ APOLLO_LOCAL_CPT ][ $key ] = array(
+				'type'     => $def['type'],
+				'sanitize' => $sanitize,
+			);
+		}
+
+		return $meta_config;
+	}
+
+	/**
+	 * Retorna array de todas as meta keys (uso externo).
+	 *
+	 * @return string[]
+	 */
+	public static function get_keys(): array {
+		return array_keys( self::META );
+	}
+
+	/**
+	 * Retorna full META definitions (uso de CoreIntegration).
+	 *
+	 * @return array<string, array{type:string, single:bool, show_in_rest:bool}>
+	 */
+	public static function get_definitions(): array {
+		return self::META;
+	}
+}

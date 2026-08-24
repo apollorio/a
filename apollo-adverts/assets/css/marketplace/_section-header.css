@@ -1,0 +1,73 @@
+/* ===========================================
+   MARKETPLACE — Section Header
+   =========================================== */
+
+.marketplace-section {
+    margin-bottom: 60px;
+}
+
+.marketplace-empty {
+    text-align: center;
+    color: #888;
+    font-size: 14px;
+    padding: 40px 0;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border, #e4e4e7);
+}
+
+.section-header .filters-row {
+    margin-left: auto;
+    margin-bottom: 0;
+}
+
+.section-title {
+    font-size: 24px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    letter-spacing: -0.03em;
+    margin: 0;
+}
+
+.section-title i {
+    color: #e5e5e5;
+    font-size: 135%;
+}
+
+.section-header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.section-count {
+    font-family: var(--ff-mono);
+    font-size: 11px;
+    color: var(--gray-2, #888888);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.view-toggle {
+    display: flex;
+    gap: 6px;
+}
+
+.view-toggle .filter-pill {
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+.view-toggle .filter-pill i {
+    font-size: 14px;
+}

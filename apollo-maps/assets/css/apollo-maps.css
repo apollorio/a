@@ -1,0 +1,165 @@
+/* Apollo Maps — Leaflet overlay + marker styling
+ * White/light Leaflet theme — kept in sync with the venue map theme in
+ * apollo-events (.loc-map, assets/css/apollo-single-event.css). Both share
+ * the same tile source (CartoDB light_all), the same desaturation filter and
+ * the same hidden-chrome treatment so every Apollo map reads as one system.
+ */
+:root {
+    --apollo-maps-tile-bg: #e8e4df;
+    --apollo-maps-border: var(--border, rgba(10, 10, 10, .08));
+    --apollo-maps-surface: var(--card, rgba(10, 10, 10, .04));
+    --apollo-maps-text: var(--txt-color, rgba(10, 10, 10, .75));
+    --apollo-maps-heading: var(--txt-heading, rgba(10, 10, 10, .88));
+    --apollo-maps-muted: var(--muted-txt, rgba(10, 10, 10, .4));
+    --apollo-maps-primary: var(--primary, #FF9820);
+    --apollo-maps-secondary: #3b82f6;
+}
+
+.apollo-maps-wrap {
+    position: relative;
+    width: 100%;
+    background: var(--apollo-maps-tile-bg);
+    border: 1px solid var(--apollo-maps-border);
+    border-radius: var(--r-lg, 18px);
+    overflow: hidden;
+    box-shadow: var(--shadow-2, 0 18px 50px rgba(10, 10, 10, .12));
+}
+
+.apollo-maps-canvas {
+    width: 100%;
+    height: var(--apollo-maps-height, 520px);
+    min-height: 360px;
+    background: var(--apollo-maps-tile-bg);
+}
+
+.apollo-map-legend {
+    position: absolute;
+    z-index: 10;
+    top: 14px;
+    right: 14px;
+    display: inline-flex;
+    gap: 8px;
+    padding: 8px 10px;
+    background: var(--glass, rgba(255, 255, 255, .78));
+    border-radius: 999px;
+    border: 1px solid var(--apollo-maps-border);
+    color: var(--apollo-maps-heading);
+    font: 600 12px/1 var(--ff-main, sans-serif);
+    backdrop-filter: blur(14px) saturate(180%);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+    box-shadow: var(--shadow-1, 0 4px 12px rgba(10, 10, 10, .06));
+}
+
+.apollo-map-legend .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: var(--apollo-maps-surface);
+    border: 1px solid var(--apollo-maps-border);
+    color: var(--apollo-maps-muted);
+}
+
+.apollo-map-legend .pill:before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    background: currentColor;
+}
+
+.apollo-map-legend .pill.event { color: var(--apollo-maps-primary); }
+.apollo-map-legend .pill.loc { color: var(--apollo-maps-secondary); }
+
+/* Pulse marker (events) */
+.apollo-map-pulse-wrap {
+    width: 64px;
+    height: 64px;
+    position: relative;
+    transform: translate(-32px, -32px);
+}
+
+.apollo-map-pulse-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 152, 32, .22);
+    animation: apollo-map-pulse 2.4s ease-out infinite;
+    box-shadow: 0 0 0 1px rgba(255, 152, 32, .06);
+}
+
+.apollo-map-pulse-ring:nth-child(2) { animation-delay: 0.8s; }
+
+.apollo-map-pulse-dot {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--apollo-maps-primary);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 0 6px rgba(255, 152, 32, .22), 0 2px 8px rgba(10, 10, 10, .18);
+    border: 1.5px solid rgba(255, 255, 255, .9);
+}
+
+@keyframes apollo-map-pulse {
+    0% { transform: scale(0.35); opacity: 0.9; }
+    70% { transform: scale(1); opacity: 0; }
+    100% { transform: scale(1); opacity: 0; }
+}
+
+/* Loc marker */
+.apollo-map-marker-loc {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--apollo-maps-secondary);
+    border: 2px solid rgba(255, 255, 255, .9);
+    box-shadow: 0 4px 10px rgba(10, 10, 10, .18);
+}
+
+/* ══ White Leaflet theme — desaturated CartoDB light_all tiles, native chrome hidden ══
+   Same recipe as .loc-map in apollo-events/assets/css/apollo-single-event.css
+   (both replicate screen/mapa/index.legacy.html). Keep these three rules identical
+   across plugins — that's what makes every Apollo map read as the same theme. */
+.apollo-maps-canvas .leaflet-container { background: var(--apollo-maps-tile-bg); }
+.apollo-maps-canvas .leaflet-tile-pane { filter: grayscale(1) contrast(.82) brightness(1.12); }
+.apollo-maps-canvas .leaflet-control-container { display: none !important; }
+
+/* Popups stay functional here (apollo-maps has no card/sheet UI to fall back
+   on), but are reskinned to the same white-glass language as the rest of the
+   theme instead of Leaflet's default chrome. */
+.apollo-maps-canvas .leaflet-popup-content-wrapper,
+.apollo-maps-canvas .leaflet-popup-tip {
+    background: var(--card, #fff);
+    color: var(--apollo-maps-text);
+    border: 1px solid var(--apollo-maps-border);
+    box-shadow: var(--shadow-2, 0 12px 30px rgba(10, 10, 10, .16));
+}
+
+.apollo-maps-canvas .leaflet-popup-content-wrapper { border-radius: var(--r, 16px); }
+
+.apollo-map-popup h4 {
+    margin: 0 0 4px;
+    font-size: 14px;
+    color: var(--apollo-maps-heading);
+}
+
+.apollo-map-popup p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--apollo-maps-muted);
+}
+
+.apollo-map-popup a { color: var(--apollo-maps-primary); }
+
+@media (max-width: 640px) {
+    .apollo-map-legend {
+        top: auto;
+        bottom: 12px;
+        right: 12px;
+    }
+}

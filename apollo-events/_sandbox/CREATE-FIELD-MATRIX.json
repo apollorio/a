@@ -1,0 +1,81 @@
+{
+  "$schema": "apollo-events/create-field-matrix-v1",
+  "$generated": "2026-08-06",
+  "$source": [
+    "styles/base/template-parts/create/*.php",
+    "assets/js/apollo-events-create-bridge.js#collectPayload",
+    "src/API/EventsController.php#save_event_meta",
+    "registry/09-plugins/apollo-events.json"
+  ],
+  "relations": {
+    "_event_loc_id": {
+      "cpt": "local",
+      "owner_plugin": "apollo-loc",
+      "loc_meta_family": "_local_*"
+    },
+    "_event_dj_ids": {
+      "cpt": "dj",
+      "owner_plugin": "apollo-djs"
+    },
+    "_event_dj_slots": {
+      "cpt": "dj",
+      "owner_plugin": "apollo-djs"
+    }
+  },
+  "rows": [
+    { "form_id": "ev-title", "name_attr": "title", "payload_key": "title", "meta_key": "post_title", "registry_owner": "wp_core", "notes": "required" },
+    { "form_id": "ev-about", "name_attr": "content", "payload_key": "content", "meta_key": "post_content", "registry_owner": "wp_core", "notes": "about editor syncs hidden" },
+    { "form_id": "start_date", "name_attr": "start_date", "payload_key": "start_date", "meta_key": "_event_start_date", "registry_owner": "apollo-events", "notes": "hidden; filled by dtp" },
+    { "form_id": "start_time", "name_attr": "start_time", "payload_key": "start_time", "meta_key": "_event_start_time", "registry_owner": "apollo-events", "notes": "hidden; filled by dtp" },
+    { "form_id": "end_date", "name_attr": "end_date", "payload_key": "end_date", "meta_key": "_event_end_date", "registry_owner": "apollo-events", "notes": "hidden; filled by dtp" },
+    { "form_id": "end_time", "name_attr": "end_time", "payload_key": "end_time", "meta_key": "_event_end_time", "registry_owner": "apollo-events", "notes": "hidden; filled by dtp" },
+    { "form_id": "ev-bg-color", "name_attr": "bg_color", "payload_key": "bg_color", "meta_key": "_event_bg_color", "registry_owner": "apollo-events", "notes": "synced from #ev-bg-color-picker" },
+    { "form_id": "ev-banner", "name_attr": "banner", "payload_key": "banner", "meta_key": "_event_banner", "registry_owner": "apollo-events", "notes": "attachment id or URL" },
+    { "form_id": "ev-gallery", "name_attr": "gallery", "payload_key": "gallery", "meta_key": "_event_gallery", "registry_owner": "apollo-events", "notes": "array of ids/URLs" },
+    { "form_id": "ev-video", "name_attr": "video_url", "payload_key": "video_url", "meta_key": "_event_video_url", "registry_owner": "apollo-events", "notes": "" },
+    { "form_id": "ev-audio", "name_attr": "audio_url", "payload_key": "audio_url", "meta_key": "_event_audio_url", "registry_owner": "apollo-events", "notes": "" },
+    { "form_id": "ev-loc-id", "name_attr": "loc_id", "payload_key": "loc_id", "meta_key": "_event_loc_id", "registry_owner": "apollo-events", "notes": "FK → local CPT; ONLY venue write on /eventos/novo" },
+    { "form_id": "ev-dj-ids", "name_attr": "dj_ids", "payload_key": "dj_ids", "meta_key": "_event_dj_ids", "registry_owner": "apollo-events", "notes": "int[] of dj CPT ids" },
+    { "form_id": "ev-dj-slots", "name_attr": "dj_slots", "payload_key": "dj_slots", "meta_key": "_event_dj_slots", "registry_owner": "apollo-events", "notes": "rows without dj_id discarded" },
+    { "form_id": "ev-ticket-price", "name_attr": "ticket_price", "payload_key": "ticket_price", "meta_key": "_event_ticket_price", "registry_owner": "apollo-events", "notes": "primary ingresso label" },
+    { "form_id": "ev-tickets-url", "name_attr": "ticket_url", "payload_key": "ticket_url", "meta_key": "_event_ticket_url", "registry_owner": "apollo-events", "notes": "primary ingresso URL" },
+    { "form_id": "ev-tickets", "name_attr": "ticket_status", "payload_key": "ticket_status", "meta_key": "_event_ticket_status", "registry_owner": "apollo-events", "notes": "" },
+    { "form_id": "ev-list-url", "name_attr": "list_url", "payload_key": "list_url", "meta_key": "_event_list_url", "registry_owner": "apollo-events", "notes": "legacy hidden preserve" },
+    { "form_id": "ev-lista-cta-label", "name_attr": "lista_cta_label", "payload_key": "lista_cta_label", "meta_key": "_event_lista_cta_label", "registry_owner": "apollo-events", "notes": "legacy hidden preserve" },
+    { "form_id": "ev-access-buttons", "name_attr": "access_buttons", "payload_key": "access_buttons", "meta_key": "_event_access_buttons", "registry_owner": "apollo-events", "notes": "replaces earlybird/lista_* toggles" },
+    { "form_id": "ev-coupon-code", "name_attr": "coupon_code", "payload_key": "coupon_code", "meta_key": "_event_coupon_code", "registry_owner": "apollo-events", "notes": "" },
+    { "form_id": "ev-privacy", "name_attr": "privacy", "payload_key": "privacy", "meta_key": "_event_privacy", "registry_owner": "apollo-events", "notes": "" },
+    { "form_id": "ev-status", "name_attr": "event_status", "payload_key": "event_status", "meta_key": "_event_status", "registry_owner": "apollo-events", "notes": "" },
+    { "form_id": "ev-season", "name_attr": "seasons", "payload_key": "seasons", "meta_key": "taxonomy:season", "registry_owner": "apollo-events", "notes": "save_event_taxonomies" },
+    { "form_id": ".ev-genre", "name_attr": "sounds[]", "payload_key": "sounds", "meta_key": "taxonomy:sound", "registry_owner": "apollo-events", "notes": "checkboxes" },
+    { "form_id": "ev-coauthors", "name_attr": "coauthors", "payload_key": "coauthors", "meta_key": "_event_coauthors", "registry_owner": "apollo-events", "notes": "save_event_coauthors" },
+    { "form_id": null, "name_attr": null, "payload_key": "post_status", "meta_key": "post_status", "registry_owner": "wp_core", "notes": "hardcoded draft in collectPayload" }
+  ],
+  "omitted_from_payload_no_ui": [
+    { "payload_key": "ticket_btn_style", "meta_key": "_event_ticket_btn_style", "notes": "removed from collectPayload 2026-08-06 — no DOM; save_event_meta still accepts if API sends" },
+    { "payload_key": "list_btn_style", "meta_key": "_event_list_btn_style", "notes": "removed from collectPayload 2026-08-06 — no DOM; save_event_meta still accepts if API sends" }
+  ],
+  "display_only_not_persisted": [
+    { "form_id": "lat", "notes": "weather widget; fed from loc CPT via applyLoc(); must NOT be in collectPayload" },
+    { "form_id": "lon", "notes": "weather widget; fed from loc CPT via applyLoc(); must NOT be in collectPayload" },
+    { "form_id": "ev-venue-search", "notes": "UI search only; real value is #ev-loc-id" }
+  ],
+  "forbidden_on_novo_form": [
+    "_event_local_name",
+    "_event_lat",
+    "_event_lng"
+  ],
+  "api_only_no_ui": [
+    { "payload_key": "tags", "meta_key": "taxonomy:tag", "notes": "save_event_taxonomies accepts tags; no chips on /eventos/novo — documented gap, not a bug unless product requires it" }
+  ],
+  "legacy_not_sent_from_novo": [
+    "earlybird_enabled",
+    "earlybird_name",
+    "earlybird_sub",
+    "earlybird_url",
+    "lista_geral_enabled",
+    "lista_geral_sub",
+    "lista_fem_enabled",
+    "lista_fem_sub"
+  ]
+}

@@ -1,0 +1,420 @@
+/**
+ * Apollo Hub — Admin CSS (hub-admin.css)
+ *
+ * Estilos para a área administrativa:
+ * - Colunas na listagem de hubs
+ * - Metabox de edição
+ *
+ * @package Apollo\Hub
+ */
+
+/* ── Colunas da listagem ─────────────────────────────────────────────────── */
+
+.column-hub_username  { width: 14%; }
+.column-hub_theme     { width: 10%; }
+.column-hub_links     { width: 8%; text-align: center; }
+.column-hub_url       { width: 22%; }
+
+.hub-admin-public-link {
+    display     : inline-flex;
+    align-items : center;
+    gap         : 4px;
+    font-size   : 13px;
+    color       : #2271b1;
+    text-decoration: none;
+    word-break  : break-all;
+}
+
+.hub-admin-public-link:hover { text-decoration: underline; }
+
+/* ── Badge de tema ───────────────────────────────────────────────────────── */
+
+.hub-theme-badge {
+    display         : inline-block;
+    padding         : 2px 8px;
+    border-radius   : 3px;
+    font-size       : 11px;
+    font-weight     : 600;
+    text-transform  : uppercase;
+    letter-spacing  : .5px;
+    color           : #fff;
+    background      : #555;
+}
+
+.hub-theme-badge--dark     { background: #7b3fc4; }
+.hub-theme-badge--light    { background: #666; color: #fff; }
+.hub-theme-badge--midnight { background: #0e6a97; }
+.hub-theme-badge--aurora   { background: #0e7a4a; }
+.hub-theme-badge--rio      { background: #a36c00; }
+
+/* ── Metabox ─────────────────────────────────────────────────────────────── */
+
+#hub-meta-box .inside {
+    padding : 8px 12px 12px;
+}
+
+.hub-metabox-row {
+    display        : flex;
+    flex-direction : column;
+    gap            : 4px;
+    margin-bottom  : 14px;
+}
+
+.hub-metabox-row label {
+    font-weight : 600;
+    font-size   : 13px;
+    color       : #3c434a;
+}
+
+.hub-metabox-row input[type="text"],
+.hub-metabox-row textarea,
+.hub-metabox-row select {
+    max-width   : 100%;
+    width       : 100%;
+    font-size   : 13px;
+}
+
+.hub-metabox-row textarea          { min-height: 70px; resize: vertical; }
+.hub-metabox-row .hub-char-hint    { font-size: 11px; color: #666; }
+
+.hub-metabox-preview-thumb {
+    display         : block;
+    margin-top      : 6px;
+    max-width       : 120px;
+    max-height      : 80px;
+    object-fit      : cover;
+    border-radius   : 4px;
+    border          : 1px solid #ddd;
+}
+
+/* ── Blocks Metabox ──────────────────────────────────────────────────── */
+
+.column-hub_block_count { width: 8%; text-align: center; }
+
+.ahb-toolbar {
+    display      : flex;
+    align-items  : center;
+    gap          : 8px;
+    padding      : 10px 0;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 12px;
+}
+
+.ahb-toolbar strong {
+    font-size   : 18px;
+    color       : #1d2327;
+    min-width   : 20px;
+    text-align  : center;
+}
+
+.ahb-toolbar-sep {
+    color: #ccc;
+}
+
+.ahb-add-block-btn,
+.ahb-migrate-btn {
+    display     : inline-flex;
+    align-items : center;
+    gap         : 4px;
+}
+
+.ahb-add-block-btn .dashicons,
+.ahb-migrate-btn .dashicons {
+    font-size : 16px;
+    width     : 16px;
+    height    : 16px;
+}
+
+/* ── Add menu dropdown ───────────────────────────────────────────────── */
+
+.ahb-add-menu {
+    position      : relative;
+    background    : #fff;
+    border        : 1px solid #c3c4c7;
+    border-radius : 4px;
+    padding       : 8px;
+    margin-bottom : 12px;
+    box-shadow    : 0 2px 8px rgba(var(--rgb-d),0.08);
+    z-index       : 10;
+}
+
+.ahb-add-group {
+    margin-bottom: 8px;
+}
+
+.ahb-add-group:last-child {
+    margin-bottom: 0;
+}
+
+.ahb-add-group-label {
+    display       : block;
+    font-size     : 11px;
+    font-weight   : 600;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color         : #999;
+    margin-bottom : 4px;
+    padding-left  : 4px;
+}
+
+.ahb-add-type-btn {
+    display       : inline-flex;
+    align-items   : center;
+    gap           : 4px;
+    padding       : 6px 12px;
+    margin        : 2px;
+    background    : #f0f0f1;
+    border        : 1px solid #ddd;
+    border-radius : 3px;
+    cursor        : pointer;
+    font-size     : 12px;
+    color         : #1d2327;
+    transition    : all .15s;
+}
+
+.ahb-add-type-btn:hover {
+    background    : #2271b1;
+    color         : #fff;
+    border-color  : #2271b1;
+}
+
+.ahb-add-type-btn i {
+    font-size : 14px;
+}
+
+/* ── Block card ──────────────────────────────────────────────────────── */
+
+.ahb-blocks-list {
+    min-height: 40px;
+}
+
+.ahb-empty {
+    text-align : center;
+    padding    : 30px 20px;
+    color      : #999;
+}
+
+.ahb-empty .dashicons {
+    font-size : 40px;
+    width     : 40px;
+    height    : 40px;
+    color     : #ddd;
+    display   : block;
+    margin    : 0 auto 10px;
+}
+
+.ahb-block-card {
+    display       : flex;
+    align-items   : center;
+    gap           : 8px;
+    padding       : 8px 10px;
+    margin-bottom : 4px;
+    background    : #fff;
+    border        : 1px solid #ddd;
+    border-radius : 4px;
+    transition    : all .15s;
+    cursor        : default;
+}
+
+.ahb-block-card:hover {
+    border-color : #2271b1;
+    box-shadow   : 0 1px 4px rgba(34,113,177,0.12);
+}
+
+.ahb-block-card.ahb-inactive {
+    opacity    : 0.5;
+    background : #f9f9f9;
+}
+
+.ahb-block-card.ahb-dragging {
+    opacity    : 0.4;
+    border-style: dashed;
+}
+
+.ahb-block-card.ahb-dragover {
+    border-color : #2271b1;
+    border-style : dashed;
+    background   : #f0f6fc;
+}
+
+.ahb-block-handle {
+    cursor    : grab;
+    color     : #bbb;
+    flex      : 0 0 auto;
+}
+
+.ahb-block-handle:active { cursor: grabbing; }
+
+.ahb-block-handle .dashicons {
+    font-size : 16px;
+    width     : 16px;
+    height    : 16px;
+}
+
+.ahb-block-icon {
+    flex       : 0 0 28px;
+    text-align : center;
+}
+
+.ahb-block-icon i {
+    font-size : 18px;
+    color     : #2271b1;
+}
+
+.ahb-block-info {
+    flex      : 1 1 auto;
+    min-width : 0;
+    display   : flex;
+    flex-direction: column;
+    gap       : 1px;
+}
+
+.ahb-block-type-label {
+    font-weight : 600;
+    font-size   : 12px;
+    color       : #1d2327;
+}
+
+.ahb-block-preview {
+    font-size    : 11px;
+    color        : #888;
+    white-space  : nowrap;
+    overflow     : hidden;
+    text-overflow: ellipsis;
+    max-width    : 400px;
+}
+
+.ahb-block-actions {
+    display     : flex;
+    gap         : 2px;
+    flex        : 0 0 auto;
+}
+
+.ahb-block-actions button {
+    background : transparent;
+    border     : none;
+    cursor     : pointer;
+    padding    : 4px;
+    color      : #888;
+    border-radius: 3px;
+    transition : all .15s;
+}
+
+.ahb-block-actions button:hover {
+    color      : #1d2327;
+    background : #f0f0f1;
+}
+
+.ahb-delete-btn:hover {
+    color      : #d63638 !important;
+    background : #fef1f1 !important;
+}
+
+.ahb-block-actions .dashicons {
+    font-size : 16px;
+    width     : 16px;
+    height    : 16px;
+}
+
+/* ── Editor modal ────────────────────────────────────────────────────── */
+
+.ahb-editor-overlay {
+    position   : fixed;
+    inset      : 0;
+    background : rgba(var(--rgb-d),0.5);
+    z-index    : 100100;
+    display    : flex;
+    align-items: center;
+    justify-content: center;
+    padding    : 20px;
+}
+
+.ahb-editor-modal {
+    background    : #fff;
+    border-radius : 8px;
+    width         : 100%;
+    max-width     : 560px;
+    max-height    : 80dvh;
+    display       : flex;
+    flex-direction: column;
+    box-shadow    : 0 8px 32px rgba(var(--rgb-d),0.2);
+}
+
+.ahb-editor-header {
+    display      : flex;
+    align-items  : center;
+    gap          : 8px;
+    padding      : 14px 18px;
+    border-bottom: 1px solid #ddd;
+    font-size    : 14px;
+}
+
+.ahb-editor-header i {
+    font-size : 18px;
+    color     : #2271b1;
+}
+
+.ahb-editor-close {
+    margin-left: auto;
+    background : transparent;
+    border     : none;
+    font-size  : 22px;
+    cursor     : pointer;
+    color      : #888;
+    line-height: 1;
+    padding    : 0 4px;
+}
+
+.ahb-editor-close:hover { color: #d63638; }
+
+.ahb-editor-body {
+    padding    : 16px 18px;
+    overflow-y : auto;
+    flex       : 1;
+}
+
+.ahb-editor-footer {
+    display      : flex;
+    gap          : 8px;
+    justify-content: flex-end;
+    padding      : 12px 18px;
+    border-top   : 1px solid #ddd;
+}
+
+/* ── Field rows ──────────────────────────────────────────────────────── */
+
+.ahb-field-row {
+    margin-bottom: 12px;
+}
+
+.ahb-field-row:last-child {
+    margin-bottom: 0;
+}
+
+.ahb-field-row label {
+    display     : block;
+    font-weight : 600;
+    font-size   : 12px;
+    color       : #3c434a;
+    margin-bottom: 4px;
+}
+
+.ahb-field-row input.widefat,
+.ahb-field-row textarea.widefat,
+.ahb-field-row select.widefat {
+    width     : 100%;
+    font-size : 13px;
+}
+
+.ahb-field-row textarea {
+    resize     : vertical;
+    font-family: monospace;
+    font-size  : 12px;
+}
+
+.ahb-field-row .description {
+    font-size  : 11px;
+    color      : #888;
+    margin-top : 3px;
+    font-style : italic;
+}

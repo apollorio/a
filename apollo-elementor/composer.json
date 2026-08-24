@@ -1,0 +1,17 @@
+{
+	"name": "apollo/elementor-ae",
+	"description": "Server-rendered Elementor widgets for the Apollo ecosystem.",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"autoload": {
+		"psr-4": {
+			"Apollo\\ElementorAE\\": "src/"
+		},
+		"files": [
+			"src/helpers.php"
+		]
+	},
+	"require": {
+		"php": ">=8.2"
+	}
+}

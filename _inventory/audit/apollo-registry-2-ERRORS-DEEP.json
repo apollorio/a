@@ -1,0 +1,1657 @@
+{
+  "generated": "2026-07-20T21:34:30.377Z",
+  "excluded": [
+    "apollo-login",
+    "apollo-telegram"
+  ],
+  "counts": {
+    "HIGH": 6,
+    "MEDIUM": 66,
+    "LOW": 8,
+    "INFO": 4
+  },
+  "categories": {
+    "SENSITIVE_PUBLIC_READ": 6,
+    "PUBLIC_READ_REVIEW": 46,
+    "ABSPATH_COVERAGE": 10,
+    "LOW_PREPARE_RATIO": 4,
+    "PERM_REVIEW": 12,
+    "EXAMPLE_CODE_ROUTE": 2,
+    "INTENTIONAL_PUBLIC_WRITE": 4
+  },
+  "ranked": [
+    {
+      "slug": "apollo-users",
+      "CRITICAL": 0,
+      "HIGH": 4,
+      "MEDIUM": 0,
+      "LOW": 0,
+      "INFO": 1
+    },
+    {
+      "slug": "apollo-core",
+      "CRITICAL": 0,
+      "HIGH": 1,
+      "MEDIUM": 2,
+      "LOW": 0,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-events",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 12,
+      "LOW": 0,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-dashboard",
+      "CRITICAL": 0,
+      "HIGH": 1,
+      "MEDIUM": 0,
+      "LOW": 0,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-hub",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 6,
+      "LOW": 0,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-statistics",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 6,
+      "LOW": 0,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-djs",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 5,
+      "LOW": 0,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-groups",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 4,
+      "LOW": 0,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-radio",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 4,
+      "LOW": 1,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-wow",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 4,
+      "LOW": 0,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-adverts",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 3,
+      "LOW": 0,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-email",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 3,
+      "LOW": 0,
+      "INFO": 1
+    },
+    {
+      "slug": "apollo-loc",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 3,
+      "LOW": 0,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-comment",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 2,
+      "LOW": 0,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-fav",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 2,
+      "LOW": 0,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-remind",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 2,
+      "LOW": 1,
+      "INFO": 1
+    },
+    {
+      "slug": "apollo-scheduler",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 2,
+      "LOW": 0,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-dj-sync",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 1,
+      "LOW": 0,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-docs",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 1,
+      "LOW": 0,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-mod",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 1,
+      "LOW": 1,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-pane-engine",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 1,
+      "LOW": 0,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-sign",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 1,
+      "LOW": 0,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-social",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 1,
+      "LOW": 0,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-chat",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 0,
+      "LOW": 1,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-maps",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 0,
+      "LOW": 1,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-notif",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 0,
+      "LOW": 1,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-templates",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 0,
+      "LOW": 2,
+      "INFO": 0
+    },
+    {
+      "slug": "apollo-membership",
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 0,
+      "LOW": 0,
+      "INFO": 1
+    }
+  ],
+  "criticals": [],
+  "highs": [
+    {
+      "plugin": "apollo-core",
+      "endpoint": "/pane-mode/status",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "HIGH",
+      "category": "SENSITIVE_PUBLIC_READ",
+      "note": "Public read of potentially sensitive/internal data",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_status",
+      "file": "src/API/PaneModeController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_status' ), 'permission_callback' => '__return_true', )"
+    },
+    {
+      "plugin": "apollo-dashboard",
+      "endpoint": "/dashboard/widgets",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "HIGH",
+      "category": "SENSITIVE_PUBLIC_READ",
+      "note": "Public read of potentially sensitive/internal data",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "rest_list_widgets",
+      "file": "includes/class-plugin.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => 'GET', 'callback' => array($this, 'rest_list_widgets'), 'permission_callback' => '__return_true', )"
+    },
+    {
+      "plugin": "apollo-users",
+      "endpoint": "/users/radar",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "HIGH",
+      "category": "SENSITIVE_PUBLIC_READ",
+      "note": "Public read of potentially sensitive/internal data",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_radar_users",
+      "file": "src/API/UsersController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_radar_users' ), 'permission_callback' => '__return_true', // Public endpoint for user discovery 'args' => array( 'limit' => a"
+    },
+    {
+      "plugin": "apollo-users",
+      "endpoint": "/users/(?P<username>[a-zA-Z0-9_-]+)",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "HIGH",
+      "category": "SENSITIVE_PUBLIC_READ",
+      "note": "Public read of potentially sensitive/internal data",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_user_by_username",
+      "file": "src/API/UsersController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_user_by_username' ), 'permission_callback' => '__return_true', 'args' => array( 'username' => array( 'required' => true, 'typ"
+    },
+    {
+      "plugin": "apollo-users",
+      "endpoint": "/users/(?P<id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "HIGH",
+      "category": "SENSITIVE_PUBLIC_READ",
+      "note": "Public read of potentially sensitive/internal data",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_user_by_id",
+      "file": "src/API/UsersController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_user_by_id' ), 'permission_callback' => '__return_true', 'args' => array( 'id' => array( 'required' => true, 'type' => 'integ"
+    },
+    {
+      "plugin": "apollo-users",
+      "endpoint": "/profile/(?P<username>[a-zA-Z0-9_-]+)",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "HIGH",
+      "category": "SENSITIVE_PUBLIC_READ",
+      "note": "Public read of potentially sensitive/internal data",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_public_profile",
+      "file": "src/API/UsersController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_public_profile' ), 'permission_callback' => '__return_true', 'args' => array( 'username' => array( 'required' => true, 'type'"
+    }
+  ],
+  "all": [
+    {
+      "plugin": "apollo-core",
+      "endpoint": "/pane-mode/status",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "HIGH",
+      "category": "SENSITIVE_PUBLIC_READ",
+      "note": "Public read of potentially sensitive/internal data",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_status",
+      "file": "src/API/PaneModeController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_status' ), 'permission_callback' => '__return_true', )"
+    },
+    {
+      "plugin": "apollo-dashboard",
+      "endpoint": "/dashboard/widgets",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "HIGH",
+      "category": "SENSITIVE_PUBLIC_READ",
+      "note": "Public read of potentially sensitive/internal data",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "rest_list_widgets",
+      "file": "includes/class-plugin.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => 'GET', 'callback' => array($this, 'rest_list_widgets'), 'permission_callback' => '__return_true', )"
+    },
+    {
+      "plugin": "apollo-users",
+      "endpoint": "/users/radar",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "HIGH",
+      "category": "SENSITIVE_PUBLIC_READ",
+      "note": "Public read of potentially sensitive/internal data",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_radar_users",
+      "file": "src/API/UsersController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_radar_users' ), 'permission_callback' => '__return_true', // Public endpoint for user discovery 'args' => array( 'limit' => a"
+    },
+    {
+      "plugin": "apollo-users",
+      "endpoint": "/users/(?P<username>[a-zA-Z0-9_-]+)",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "HIGH",
+      "category": "SENSITIVE_PUBLIC_READ",
+      "note": "Public read of potentially sensitive/internal data",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_user_by_username",
+      "file": "src/API/UsersController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_user_by_username' ), 'permission_callback' => '__return_true', 'args' => array( 'username' => array( 'required' => true, 'typ"
+    },
+    {
+      "plugin": "apollo-users",
+      "endpoint": "/users/(?P<id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "HIGH",
+      "category": "SENSITIVE_PUBLIC_READ",
+      "note": "Public read of potentially sensitive/internal data",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_user_by_id",
+      "file": "src/API/UsersController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_user_by_id' ), 'permission_callback' => '__return_true', 'args' => array( 'id' => array( 'required' => true, 'type' => 'integ"
+    },
+    {
+      "plugin": "apollo-users",
+      "endpoint": "/profile/(?P<username>[a-zA-Z0-9_-]+)",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "HIGH",
+      "category": "SENSITIVE_PUBLIC_READ",
+      "note": "Public read of potentially sensitive/internal data",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_public_profile",
+      "file": "src/API/UsersController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_public_profile' ), 'permission_callback' => '__return_true', 'args' => array( 'username' => array( 'required' => true, 'type'"
+    },
+    {
+      "plugin": "apollo-adverts",
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_items",
+      "file": "src/API/ClassifiedsController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_items' ), 'permission_callback' => '__return_true', 'args' => $this->get_collection_params(), )"
+    },
+    {
+      "plugin": "apollo-adverts",
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_item",
+      "file": "src/API/ClassifiedsController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_item' ), 'permission_callback' => '__return_true', 'args' => array( 'id' => array( 'type' => 'integer', 'required' => true, )"
+    },
+    {
+      "plugin": "apollo-adverts",
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "search_items",
+      "file": "src/API/SearchController.php",
+      "method_body_preview": null,
+      "config_snippet": "( array( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'search_items' ), 'permission_callback' => '__return_true', 'args' => $this->get_search_params(), ), )"
+    },
+    {
+      "plugin": "apollo-comment",
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_items",
+      "file": "src/API/DepoimentoController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_items' ), 'permission_callback' => '__return_true', 'args' => array( 'post_id' => array( 'required' => true, 'type' => 'integ"
+    },
+    {
+      "plugin": "apollo-comment",
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_item",
+      "file": "src/API/DepoimentoController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_item' ), 'permission_callback' => '__return_true', 'args' => array( 'id' => array( 'type' => 'integer', 'sanitize_callback' ="
+    },
+    {
+      "plugin": "apollo-core",
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_items",
+      "file": "src/API/ShortcodesController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array($this, 'get_items'), 'permission_callback' => '__return_true', )"
+    },
+    {
+      "plugin": "apollo-core",
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_item",
+      "file": "src/API/ShortcodesController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array($this, 'get_item'), 'permission_callback' => '__return_true', 'args' => array( 'tag' => array( 'description' => __('Shortcode tag (e.g. ap"
+    },
+    {
+      "plugin": "apollo-dj-sync",
+      "severity": "MEDIUM",
+      "category": "ABSPATH_COVERAGE",
+      "note": "ABSPATH coverage 80%",
+      "endpoint": null,
+      "methods": []
+    },
+    {
+      "plugin": "apollo-djs",
+      "endpoint": "/djs",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_djs",
+      "file": "src/API/DJsController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_djs' ), 'permission_callback' => '__return_true', 'args' => array( 'page' => array( 'type' => 'integer', 'default' => 1, 'min"
+    },
+    {
+      "plugin": "apollo-djs",
+      "endpoint": "/djs/(?P<id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_dj",
+      "file": "src/API/DJsController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_dj' ), 'permission_callback' => '__return_true', )"
+    },
+    {
+      "plugin": "apollo-djs",
+      "endpoint": "/djs/(?P<id>\\d+)/eventos",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_dj_events",
+      "file": "src/API/DJsController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_dj_events' ), 'permission_callback' => '__return_true', )"
+    },
+    {
+      "plugin": "apollo-djs",
+      "endpoint": "/djs/por-som/(?P<sound>[a-zA-Z0-9_-]+)",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_by_sound",
+      "file": "src/API/DJsController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_by_sound' ), 'permission_callback' => '__return_true', )"
+    },
+    {
+      "plugin": "apollo-djs",
+      "endpoint": "/djs/buscar",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "search_djs",
+      "file": "src/API/DJsController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'search_djs' ), 'permission_callback' => '__return_true', 'args' => array( 'q' => array( 'type' => 'string', 'required' => true, '"
+    },
+    {
+      "plugin": "apollo-docs",
+      "severity": "MEDIUM",
+      "category": "LOW_PREPARE_RATIO",
+      "note": "prepare_ratio=0.2 on 2709 LOC — review raw SQL",
+      "endpoint": null,
+      "methods": []
+    },
+    {
+      "plugin": "apollo-email",
+      "endpoint": "/email/track/open/(?P<token>[a-zA-Z0-9]+)",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "track_open",
+      "file": "src/API/EmailController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array($this, 'track_open'), 'permission_callback' => '__return_true', 'args' => array( 'token' => array( 'required' => true, 'type' => 'string',"
+    },
+    {
+      "plugin": "apollo-email",
+      "endpoint": "/email/track/click/(?P<token>[a-zA-Z0-9]+)",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "track_click",
+      "file": "src/API/EmailController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array($this, 'track_click'), 'permission_callback' => '__return_true', 'args' => array( 'token' => array( 'required' => true, 'type' => 'string'"
+    },
+    {
+      "plugin": "apollo-email",
+      "severity": "MEDIUM",
+      "category": "ABSPATH_COVERAGE",
+      "note": "ABSPATH coverage 76%",
+      "endpoint": null,
+      "methods": []
+    },
+    {
+      "plugin": "apollo-events",
+      "endpoint": "/eventos",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_events",
+      "file": "src/API/EventsController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_events' ), 'permission_callback' => '__return_true', 'args' => $this->get_collection_params(), )"
+    },
+    {
+      "plugin": "apollo-events",
+      "endpoint": "/eventos/(?P<id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_event",
+      "file": "src/API/EventsController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_event' ), 'permission_callback' => '__return_true', 'args' => array( 'id' => array( 'type' => 'integer', 'required' => true, "
+    },
+    {
+      "plugin": "apollo-events",
+      "endpoint": "/eventos/por-data/(?P<date>[\\d-]+)",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_by_date",
+      "file": "src/API/EventsController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_by_date' ), 'permission_callback' => '__return_true', 'args' => array( 'date' => array( 'type' => 'string', 'required' => tru"
+    },
+    {
+      "plugin": "apollo-events",
+      "endpoint": "/eventos/por-local/(?P<loc_id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_by_loc",
+      "file": "src/API/EventsController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_by_loc' ), 'permission_callback' => '__return_true', 'args' => array( 'loc_id' => array( 'type' => 'integer', 'required' => t"
+    },
+    {
+      "plugin": "apollo-events",
+      "endpoint": "/eventos/por-dj/(?P<dj_id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_by_dj",
+      "file": "src/API/EventsController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_by_dj' ), 'permission_callback' => '__return_true', 'args' => array( 'dj_id' => array( 'type' => 'integer', 'required' => tru"
+    },
+    {
+      "plugin": "apollo-events",
+      "endpoint": "/eventos/(?P<id>\\d+)/djs",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_event_djs",
+      "file": "src/API/EventsController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_event_djs' ), 'permission_callback' => '__return_true', )"
+    },
+    {
+      "plugin": "apollo-events",
+      "endpoint": "/eventos/buscar",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "search_events",
+      "file": "src/API/EventsController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'search_events' ), 'permission_callback' => '__return_true', 'args' => array( 'q' => array( 'type' => 'string', 'required' => true"
+    },
+    {
+      "plugin": "apollo-events",
+      "endpoint": "/eventos/(?P<id>\\d+)/estatisticas",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_event_stats",
+      "file": "src/API/EventsController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_event_stats' ), 'permission_callback' => '__return_true', )"
+    },
+    {
+      "plugin": "apollo-events",
+      "endpoint": "/cena-rio/agenda",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PERM_REVIEW",
+      "note": "Permission binding needs manual review",
+      "permission_kind": "OTHER",
+      "permission_detail": "unparsed",
+      "callback": null,
+      "file": "src/Cena_Rio_Submissions.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => 'GET', 'callback' => array(self::class, 'rest_get_events'), 'permission_callback' => array(self::class, 'check_submission_permission'), // Only CENA members. )"
+    },
+    {
+      "plugin": "apollo-events",
+      "endpoint": "/cena-rio/enviar",
+      "methods": [
+        "POST"
+      ],
+      "write": true,
+      "severity": "MEDIUM",
+      "category": "PERM_REVIEW",
+      "note": "Permission binding needs manual review",
+      "permission_kind": "OTHER",
+      "permission_detail": "unparsed",
+      "callback": null,
+      "file": "src/Cena_Rio_Submissions.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => 'POST', 'callback' => array(__CLASS__, 'rest_submit_event'), 'permission_callback' => array(__CLASS__, 'check_submission_permission'), 'args' => array( 'event_title' => array( 'required"
+    },
+    {
+      "plugin": "apollo-events",
+      "endpoint": "/cena-rio/confirmar/(?P<id>\\d+)",
+      "methods": [
+        "POST"
+      ],
+      "write": true,
+      "severity": "MEDIUM",
+      "category": "PERM_REVIEW",
+      "note": "Permission binding needs manual review",
+      "permission_kind": "OTHER",
+      "permission_detail": "unparsed",
+      "callback": null,
+      "file": "src/Cena_Rio_Submissions.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => 'POST', 'callback' => array(__CLASS__, 'rest_confirm_event'), 'permission_callback' => array(__CLASS__, 'check_submission_permission'), 'args' => array( 'id' => array( 'required' => tru"
+    },
+    {
+      "plugin": "apollo-events",
+      "endpoint": "/cena-rio/cancelar/(?P<id>\\d+)",
+      "methods": [
+        "POST"
+      ],
+      "write": true,
+      "severity": "MEDIUM",
+      "category": "PERM_REVIEW",
+      "note": "Permission binding needs manual review",
+      "permission_kind": "OTHER",
+      "permission_detail": "unparsed",
+      "callback": null,
+      "file": "src/Cena_Rio_Submissions.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => 'POST', 'callback' => array(__CLASS__, 'rest_unconfirm_event'), 'permission_callback' => array(__CLASS__, 'check_submission_permission'), 'args' => array( 'id' => array( 'required' => t"
+    },
+    {
+      "plugin": "apollo-fav",
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_count",
+      "file": "includes/class-rest-controller.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_count' ), 'permission_callback' => '__return_true', // Público 'args' => array( 'post_id' => array( 'type' => 'integer', 'san"
+    },
+    {
+      "plugin": "apollo-fav",
+      "severity": "MEDIUM",
+      "category": "LOW_PREPARE_RATIO",
+      "note": "prepare_ratio=0.42 on 3988 LOC — review raw SQL",
+      "endpoint": null,
+      "methods": []
+    },
+    {
+      "plugin": "apollo-groups",
+      "endpoint": "/groups",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "$public_read→return true",
+      "callback": "rest_list_groups",
+      "file": "src/Plugin.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => 'GET', 'callback' => array($this, 'rest_list_groups'), 'permission_callback' => $public_read, )"
+    },
+    {
+      "plugin": "apollo-groups",
+      "endpoint": "/groups/(?P<id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "$public_read→return true",
+      "callback": "rest_get_group",
+      "file": "src/Plugin.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => 'GET', 'callback' => array($this, 'rest_get_group'), 'permission_callback' => $public_read, )"
+    },
+    {
+      "plugin": "apollo-groups",
+      "endpoint": "/groups/comunas",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "$public_read→return true",
+      "callback": null,
+      "file": "src/Plugin.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => 'GET', 'callback' => function (\\WP_REST_Request $request) { $request->set_param('type', 'comuna'); return $this->rest_list_groups($request); }, 'permission_callback' => $public_read, )"
+    },
+    {
+      "plugin": "apollo-groups",
+      "endpoint": "/groups/(?P<id>\\d+)/feed",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "$public_read→return true",
+      "callback": "rest_group_feed",
+      "file": "src/Plugin.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => 'GET', 'callback' => array($this, 'rest_group_feed'), 'permission_callback' => $public_read, 'args' => array( 'per_page' => array( 'default' => 20, 'sanitize_callback' => 'absint', ), '"
+    },
+    {
+      "plugin": "apollo-hub",
+      "endpoint": "/hubs",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_hubs",
+      "file": "src/API/HubController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_hubs' ), 'permission_callback' => '__return_true', 'args' => array( 'page' => array( 'type' => 'integer', 'default' => 1, 'mi"
+    },
+    {
+      "plugin": "apollo-hub",
+      "endpoint": "/hubs/(?P<username>[a-zA-Z0-9._-]+)",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_hub",
+      "file": "src/API/HubController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_hub' ), 'permission_callback' => '__return_true', 'args' => array( 'username' => array( 'type' => 'string', 'required' => tru"
+    },
+    {
+      "plugin": "apollo-hub",
+      "endpoint": "/hubs/(?P<username>[a-zA-Z0-9._-]+)/links",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_links",
+      "file": "src/API/HubController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_links' ), 'permission_callback' => '__return_true', 'args' => array( 'username' => array( 'type' => 'string', 'required' => t"
+    },
+    {
+      "plugin": "apollo-hub",
+      "endpoint": "/hubs/(?P<username>[a-zA-Z0-9._-]+)/blocks",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_blocks",
+      "file": "src/API/HubController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_blocks' ), 'permission_callback' => '__return_true', 'args' => array( 'username' => array( 'type' => 'string', 'required' => "
+    },
+    {
+      "plugin": "apollo-hub",
+      "endpoint": "/hubs/(?P<username>[a-zA-Z0-9._-]+)/share/(?P<post_id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_share_urls",
+      "file": "src/API/HubController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array( $this, 'get_share_urls' ), 'permission_callback' => '__return_true', 'args' => array( 'username' => array( 'type' => 'string', 'required'"
+    },
+    {
+      "plugin": "apollo-hub",
+      "severity": "MEDIUM",
+      "category": "LOW_PREPARE_RATIO",
+      "note": "prepare_ratio=0.25 on 4970 LOC — review raw SQL",
+      "endpoint": null,
+      "methods": []
+    },
+    {
+      "plugin": "apollo-loc",
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_items",
+      "file": "src/API/LocalsController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array($this, 'get_items'), 'permission_callback' => '__return_true', 'args' => $this->get_collection_params(), )"
+    },
+    {
+      "plugin": "apollo-loc",
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_item",
+      "file": "src/API/LocalsController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array($this, 'get_item'), 'permission_callback' => '__return_true', 'args' => array( 'id' => array( 'type' => 'integer', 'required' => true, 'va"
+    },
+    {
+      "plugin": "apollo-loc",
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_nearby",
+      "file": "src/API/LocalsController.php",
+      "method_body_preview": null,
+      "config_snippet": "( array( 'methods' => \\WP_REST_Server::READABLE, 'callback' => array($this, 'get_nearby'), 'permission_callback' => '__return_true', 'args' => array( 'lat' => array( 'type' => 'number', 'required' => "
+    },
+    {
+      "plugin": "apollo-mod",
+      "severity": "MEDIUM",
+      "category": "LOW_PREPARE_RATIO",
+      "note": "prepare_ratio=0.43 on 959 LOC — review raw SQL",
+      "endpoint": null,
+      "methods": []
+    },
+    {
+      "plugin": "apollo-pane-engine",
+      "severity": "MEDIUM",
+      "category": "ABSPATH_COVERAGE",
+      "note": "ABSPATH coverage 71%",
+      "endpoint": null,
+      "methods": []
+    },
+    {
+      "plugin": "apollo-radio",
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_status",
+      "file": "src/API/RadioController.php",
+      "method_body_preview": null,
+      "config_snippet": "( $this->namespace, '/' . $this->rest_base . '/status', [ [ 'methods' => 'GET', 'callback' => [ $this, 'get_status' ], 'permission_callback' => '__return_true', ], ] )"
+    },
+    {
+      "plugin": "apollo-radio",
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_now",
+      "file": "src/API/RadioController.php",
+      "method_body_preview": null,
+      "config_snippet": "( $this->namespace, '/' . $this->rest_base . '/now', [ [ 'methods' => 'GET', 'callback' => [ $this, 'get_now' ], 'permission_callback' => '__return_true', ], ] )"
+    },
+    {
+      "plugin": "apollo-radio",
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_playlist",
+      "file": "src/API/RadioController.php",
+      "method_body_preview": null,
+      "config_snippet": "( $this->namespace, '/' . $this->rest_base . '/playlist', [ [ 'methods' => 'GET', 'callback' => [ $this, 'get_playlist' ], 'permission_callback' => '__return_true', 'args' => [ 'block' => [ 'type' => "
+    },
+    {
+      "plugin": "apollo-radio",
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_stream",
+      "file": "src/API/RadioController.php",
+      "method_body_preview": null,
+      "config_snippet": "( $this->namespace, '/' . $this->rest_base . '/stream', [ [ 'methods' => 'GET', 'callback' => [ $this, 'get_stream' ], 'permission_callback' => '__return_true', 'args' => [ 'url' => [ 'required' => tr"
+    },
+    {
+      "plugin": "apollo-remind",
+      "endpoint": "/remind/push/subscribe",
+      "methods": [
+        "POST"
+      ],
+      "write": true,
+      "severity": "MEDIUM",
+      "category": "PERM_REVIEW",
+      "note": "Permission binding needs manual review",
+      "permission_kind": "OTHER",
+      "permission_detail": "unparsed",
+      "callback": "subscribe",
+      "file": "src/API/PushController.php",
+      "method_body_preview": null,
+      "config_snippet": "( $this->namespace, '/remind/push/subscribe', [ 'methods' => 'POST', 'callback' => [ $this, 'subscribe' ], 'permission_callback' => fn() => is_user_logged_in(), ] )"
+    },
+    {
+      "plugin": "apollo-remind",
+      "endpoint": "/remind/push/unsubscribe",
+      "methods": [
+        "DELETE"
+      ],
+      "write": true,
+      "severity": "MEDIUM",
+      "category": "PERM_REVIEW",
+      "note": "Permission binding needs manual review",
+      "permission_kind": "OTHER",
+      "permission_detail": "unparsed",
+      "callback": "unsubscribe",
+      "file": "src/API/PushController.php",
+      "method_body_preview": null,
+      "config_snippet": "( $this->namespace, '/remind/push/unsubscribe', [ 'methods' => 'DELETE', 'callback' => [ $this, 'unsubscribe' ], 'permission_callback' => fn() => is_user_logged_in(), ] )"
+    },
+    {
+      "plugin": "apollo-scheduler",
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_hours",
+      "file": "src/API/AvailabilityController.php",
+      "method_body_preview": null,
+      "config_snippet": "( array( 'methods' => WP_REST_Server::READABLE, 'callback' => array( $this, 'get_hours' ), 'permission_callback' => '__return_true', 'args' => $this->common_args(), ), )"
+    },
+    {
+      "plugin": "apollo-scheduler",
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "get_grid",
+      "file": "src/API/AvailabilityController.php",
+      "method_body_preview": null,
+      "config_snippet": "( array( 'methods' => WP_REST_Server::READABLE, 'callback' => array( $this, 'get_grid' ), 'permission_callback' => '__return_true', 'args' => $this->common_args(), ), )"
+    },
+    {
+      "plugin": "apollo-sign",
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "verify_signature",
+      "file": "src/API/VerifyController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => 'GET', 'callback' => array($this, 'verify_signature'), 'permission_callback' => '__return_true', 'args' => array( 'hash' => array( 'required' => true, 'type' => 'string', 'sanitize_call"
+    },
+    {
+      "plugin": "apollo-social",
+      "endpoint": "/activity/(?P<id>\\d+)/replies",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "rest_get_replies",
+      "file": "src/Plugin.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => 'GET', 'callback' => array($this, 'rest_get_replies'), 'permission_callback' => '__return_true', )"
+    },
+    {
+      "plugin": "apollo-statistics",
+      "endpoint": "/",
+      "methods": [
+        "POST"
+      ],
+      "write": true,
+      "severity": "MEDIUM",
+      "category": "PERM_REVIEW",
+      "note": "Permission binding needs manual review",
+      "permission_kind": "OTHER",
+      "permission_detail": "$throttled unresolved",
+      "callback": "record_pageview",
+      "file": "src/API/TrackController.php",
+      "method_body_preview": null,
+      "config_snippet": "( array( 'methods' => \\WP_REST_Server::CREATABLE, 'callback' => array($this, 'record_pageview'), 'permission_callback' => $throttled, 'args' => $this->get_pageview_args(), ), )"
+    },
+    {
+      "plugin": "apollo-statistics",
+      "endpoint": "/",
+      "methods": [
+        "POST"
+      ],
+      "write": true,
+      "severity": "MEDIUM",
+      "category": "PERM_REVIEW",
+      "note": "Permission binding needs manual review",
+      "permission_kind": "OTHER",
+      "permission_detail": "$throttled unresolved",
+      "callback": "record_click",
+      "file": "src/API/TrackController.php",
+      "method_body_preview": null,
+      "config_snippet": "( array( 'methods' => \\WP_REST_Server::CREATABLE, 'callback' => array($this, 'record_click'), 'permission_callback' => $throttled, 'args' => $this->get_click_args(), ), )"
+    },
+    {
+      "plugin": "apollo-statistics",
+      "endpoint": "/",
+      "methods": [
+        "POST"
+      ],
+      "write": true,
+      "severity": "MEDIUM",
+      "category": "PERM_REVIEW",
+      "note": "Permission binding needs manual review",
+      "permission_kind": "OTHER",
+      "permission_detail": "$throttled unresolved",
+      "callback": "record_session",
+      "file": "src/API/TrackController.php",
+      "method_body_preview": null,
+      "config_snippet": "( array( 'methods' => \\WP_REST_Server::CREATABLE, 'callback' => array($this, 'record_session'), 'permission_callback' => $throttled, 'args' => $this->get_session_args(), ), )"
+    },
+    {
+      "plugin": "apollo-statistics",
+      "endpoint": "/",
+      "methods": [
+        "POST"
+      ],
+      "write": true,
+      "severity": "MEDIUM",
+      "category": "PERM_REVIEW",
+      "note": "Permission binding needs manual review",
+      "permission_kind": "OTHER",
+      "permission_detail": "$throttled unresolved",
+      "callback": "record_event",
+      "file": "src/API/TrackController.php",
+      "method_body_preview": null,
+      "config_snippet": "( array( 'methods' => \\WP_REST_Server::CREATABLE, 'callback' => array($this, 'record_event'), 'permission_callback' => $throttled, 'args' => $this->get_event_args(), ), )"
+    },
+    {
+      "plugin": "apollo-statistics",
+      "endpoint": "/",
+      "methods": [
+        "POST"
+      ],
+      "write": true,
+      "severity": "MEDIUM",
+      "category": "PERM_REVIEW",
+      "note": "Permission binding needs manual review",
+      "permission_kind": "OTHER",
+      "permission_detail": "$throttled unresolved",
+      "callback": "record_radio",
+      "file": "src/API/TrackController.php",
+      "method_body_preview": null,
+      "config_snippet": "( array( 'methods' => \\WP_REST_Server::CREATABLE, 'callback' => array($this, 'record_radio'), 'permission_callback' => $throttled, 'args' => $this->get_radio_args(), ), )"
+    },
+    {
+      "plugin": "apollo-statistics",
+      "endpoint": "/",
+      "methods": [
+        "POST"
+      ],
+      "write": true,
+      "severity": "MEDIUM",
+      "category": "PERM_REVIEW",
+      "note": "Permission binding needs manual review",
+      "permission_kind": "OTHER",
+      "permission_detail": "$throttled unresolved",
+      "callback": "record_batch",
+      "file": "src/API/TrackController.php",
+      "method_body_preview": null,
+      "config_snippet": "( array( 'methods' => \\WP_REST_Server::CREATABLE, 'callback' => array($this, 'record_batch'), 'permission_callback' => $throttled, 'args' => array( 'events' => array( 'required' => true, 'type' => 'ar"
+    },
+    {
+      "plugin": "apollo-wow",
+      "endpoint": "/wows/(?P<post_id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "rest_get_wows",
+      "file": "src/Plugin.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => 'GET', 'callback' => array( $this, 'rest_get_wows' ), 'permission_callback' => '__return_true', )"
+    },
+    {
+      "plugin": "apollo-wow",
+      "endpoint": "/wows/types",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "rest_get_types",
+      "file": "src/Plugin.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => 'GET', 'callback' => array( $this, 'rest_get_types' ), 'permission_callback' => '__return_true', )"
+    },
+    {
+      "plugin": "apollo-wow",
+      "endpoint": "/wows/chart/(?P<post_id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "MEDIUM",
+      "category": "PUBLIC_READ_REVIEW",
+      "note": "Public GET — confirm no private fields in response payload",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "rest_get_chart",
+      "file": "src/Plugin.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => 'GET', 'callback' => array( $this, 'rest_get_chart' ), 'permission_callback' => '__return_true', )"
+    },
+    {
+      "plugin": "apollo-wow",
+      "severity": "MEDIUM",
+      "category": "ABSPATH_COVERAGE",
+      "note": "ABSPATH coverage 83%",
+      "endpoint": null,
+      "methods": []
+    },
+    {
+      "plugin": "apollo-chat",
+      "severity": "LOW",
+      "category": "ABSPATH_COVERAGE",
+      "note": "ABSPATH coverage 89%",
+      "endpoint": null,
+      "methods": []
+    },
+    {
+      "plugin": "apollo-maps",
+      "severity": "LOW",
+      "category": "ABSPATH_COVERAGE",
+      "note": "ABSPATH coverage 89%",
+      "endpoint": null,
+      "methods": []
+    },
+    {
+      "plugin": "apollo-mod",
+      "severity": "LOW",
+      "category": "ABSPATH_COVERAGE",
+      "note": "ABSPATH coverage 86%",
+      "endpoint": null,
+      "methods": []
+    },
+    {
+      "plugin": "apollo-notif",
+      "severity": "LOW",
+      "category": "ABSPATH_COVERAGE",
+      "note": "ABSPATH coverage 88%",
+      "endpoint": null,
+      "methods": []
+    },
+    {
+      "plugin": "apollo-radio",
+      "severity": "LOW",
+      "category": "ABSPATH_COVERAGE",
+      "note": "ABSPATH coverage 89%",
+      "endpoint": null,
+      "methods": []
+    },
+    {
+      "plugin": "apollo-remind",
+      "severity": "LOW",
+      "category": "ABSPATH_COVERAGE",
+      "note": "ABSPATH coverage 88%",
+      "endpoint": null,
+      "methods": []
+    },
+    {
+      "plugin": "apollo-templates",
+      "endpoint": "/radar/stats",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "LOW",
+      "category": "EXAMPLE_CODE_ROUTE",
+      "note": "Route registered from examples/ — remove from production bootstrap",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "apollo_get_radar_stats",
+      "file": "examples/user-radar-examples.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => 'GET', 'callback' => 'apollo_get_radar_stats', 'permission_callback' => '__return_true', )"
+    },
+    {
+      "plugin": "apollo-templates",
+      "endpoint": "/radar/top",
+      "methods": [
+        "GET"
+      ],
+      "write": false,
+      "severity": "LOW",
+      "category": "EXAMPLE_CODE_ROUTE",
+      "note": "Route registered from examples/ — remove from production bootstrap",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "apollo_get_top_users_api",
+      "file": "examples/user-radar-examples.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => 'GET', 'callback' => 'apollo_get_top_users_api', 'permission_callback' => '__return_true', 'args' => array( 'limit' => array( 'default' => 10, 'sanitize_callback' => 'absint', ), ), )"
+    },
+    {
+      "plugin": "apollo-email",
+      "endpoint": "/newsletter/subscribe",
+      "methods": [
+        "POST"
+      ],
+      "write": true,
+      "severity": "INFO",
+      "category": "INTENTIONAL_PUBLIC_WRITE",
+      "note": "Public write by design (subscribe/webhook/contact form) — ensure rate-limit + validation",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": null,
+      "file": "src/Newsletter.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => 'POST', 'callback' => array(__CLASS__, 'rest_subscribe'), 'permission_callback' => '__return_true', )"
+    },
+    {
+      "plugin": "apollo-membership",
+      "endpoint": "/report",
+      "methods": [
+        "POST"
+      ],
+      "write": true,
+      "severity": "INFO",
+      "category": "INTENTIONAL_PUBLIC_WRITE",
+      "note": "Public write by design (subscribe/webhook/contact form) — ensure rate-limit + validation",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "submit_report",
+      "file": "src/API/ReportController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => 'POST', 'callback' => array( $this, 'submit_report' ), 'permission_callback' => '__return_true', // Public endpoint 'args' => array( 'name' => array( 'required' => true, 'type' => 'stri"
+    },
+    {
+      "plugin": "apollo-remind",
+      "endpoint": "/remind/telegram/webhook",
+      "methods": [
+        "POST"
+      ],
+      "write": true,
+      "severity": "INFO",
+      "category": "INTENTIONAL_PUBLIC_WRITE",
+      "note": "Public write by design (subscribe/webhook/contact form) — ensure rate-limit + validation",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "handle",
+      "file": "src/API/TelegramWebhook.php",
+      "method_body_preview": null,
+      "config_snippet": "( $this->namespace, '/remind/telegram/webhook', [ 'methods' => 'POST', 'callback' => [ $this, 'handle' ], 'permission_callback' => '__return_true', // Telegram sends unsigned — verified by token in UR"
+    },
+    {
+      "plugin": "apollo-users",
+      "endpoint": "/profile/(?P<username>[a-zA-Z0-9_-]+)/view",
+      "methods": [
+        "POST"
+      ],
+      "write": true,
+      "severity": "INFO",
+      "category": "INTENTIONAL_PUBLIC_WRITE",
+      "note": "Public write by design (subscribe/webhook/contact form) — ensure rate-limit + validation",
+      "permission_kind": "PUBLIC",
+      "permission_detail": "__return_true",
+      "callback": "record_profile_view",
+      "file": "src/API/UsersController.php",
+      "method_body_preview": null,
+      "config_snippet": "( 'methods' => \\WP_REST_Server::CREATABLE, 'callback' => array( $this, 'record_profile_view' ), 'permission_callback' => '__return_true', 'args' => array( 'username' => array( 'required' => true, 'typ"
+    }
+  ]
+}

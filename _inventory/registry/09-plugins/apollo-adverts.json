@@ -1,0 +1,2128 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-adverts",
+    "owner": "apollo-adverts",
+    "wrap": "plugins.apollo-adverts",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-adverts",
+  "namespace": "Apollo\\Adverts",
+  "priority": 2,
+  "status": "IMPLEMENTED",
+  "description": "Classificados/Marketplace: CPT classified, formulários frontend, galeria, busca, gerenciamento. Integrado com BuddyPress, Fav, WOW, Notif.",
+  "dependencies": [
+    "apollo-admin",
+    "apollo-chat",
+    "apollo-core",
+    "apollo-dashboard",
+    "apollo-fav",
+    "apollo-login",
+    "apollo-notif",
+    "apollo-social",
+    "apollo-templates",
+    "apollo-wow"
+  ],
+  "provides": [
+    "classified-cpt",
+    "classified-listing",
+    "marketplace"
+  ],
+  "cpts": [
+    "classified",
+    "hostel"
+  ],
+  "taxonomies": [],
+  "tables": [],
+  "meta": {
+    "post": {
+      "_badge": {
+        "_source": "deep_scan"
+      },
+      "_classified_badge": {
+        "_source": "deep_scan"
+      },
+      "_classified_condition": {
+        "_source": "deep_scan"
+      },
+      "_classified_contact_phone": {
+        "_source": "deep_scan"
+      },
+      "_classified_contact_whatsapp": {
+        "_source": "deep_scan"
+      },
+      "_classified_currency": {
+        "_source": "deep_scan"
+      },
+      "_classified_event_date": {
+        "_source": "deep_scan"
+      },
+      "_classified_event_id": {
+        "_source": "deep_scan"
+      },
+      "_classified_event_loc": {
+        "_source": "deep_scan"
+      },
+      "_classified_event_title": {
+        "_source": "deep_scan"
+      },
+      "_classified_expires_at": {
+        "_source": "deep_scan"
+      },
+      "_classified_expiring_notified": {
+        "_source": "deep_scan"
+      },
+      "_classified_featured": {
+        "_source": "deep_scan"
+      },
+      "_classified_intention": {
+        "_source": "deep_scan"
+      },
+      "_classified_loc": {
+        "_source": "deep_scan"
+      },
+      "_classified_negotiable": {
+        "_source": "deep_scan"
+      },
+      "_classified_original_price": {
+        "_source": "deep_scan"
+      },
+      "_classified_price": {
+        "_source": "deep_scan"
+      },
+      "_classified_rating": {
+        "_source": "deep_scan"
+      },
+      "_classified_type": {
+        "_source": "deep_scan"
+      },
+      "_classified_views": {
+        "_source": "deep_scan"
+      },
+      "_event_date": {
+        "_source": "deep_scan"
+      },
+      "_event_title": {
+        "_source": "deep_scan"
+      },
+      "_price": {
+        "_source": "deep_scan"
+      },
+      "_rating": {
+        "_source": "deep_scan"
+      },
+      "single": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {
+      "_apollo_max_classifieds": {
+        "_source": "deep_scan"
+      }
+    },
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/events/request",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "is_user_logged_in",
+      "permission_binding": "is_user_logged_in",
+      "permission_summary": "WP core is_user_logged_in callback",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo/v1",
+      "file": "includes/event-selector.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_items",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/ClassifiedsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PATCH",
+        "POST",
+        "PUT"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_item",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/ClassifiedsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_my_items",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/ClassifiedsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/classifieds/(?P<id>[\\d]+)/related",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_related",
+      "rest_namespace": "apollo/v1",
+      "file": "src/RelatedAds.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "ajax": {
+    "priv": [
+      "apollo_adverts_change_status",
+      "apollo_adverts_dashboard_stats",
+      "apollo_adverts_gallery_delete",
+      "apollo_adverts_gallery_reorder",
+      "apollo_adverts_gallery_set_featured",
+      "apollo_adverts_gallery_upload",
+      "apollo_adverts_toggle_featured"
+    ],
+    "nopriv": []
+  },
+  "pages": [
+    {
+      "slug": "marketplace",
+      "rewrite": "^marketplace/?$",
+      "query": "index.php?apollo_adverts_page=marketplace",
+      "query_vars": [
+        "apollo_adverts_page=marketplace"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "novo-anuncio",
+      "rewrite": "^novo-anuncio/?$",
+      "query": "index.php?apollo_adverts_page=create",
+      "query_vars": [
+        "apollo_adverts_page=create"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "criar-anuncio",
+      "rewrite": "^criar-anuncio/?$",
+      "query": "index.php?apollo_adverts_page=create",
+      "query_vars": [
+        "apollo_adverts_page=create"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "route": "anuncios",
+      "template": "templates/archive-classified.php",
+      "auth": false,
+      "shell": "blank-canvas-apollo-plus",
+      "note": "PHASE 003: CANONICAL Marketplace route — what the Apollo+ aside links to. Was NEVER registered in code OR registry; only /marketplace existed, so /anuncios fell through to the plain CPT archive and the active THEME rendered it. Now claimed three ways: rewrite rule, parse_request fallback, and a template_include filter on the classified post-type archive."
+    },
+    {
+      "route": "marketplace",
+      "template": "templates/archive-classified.php",
+      "auth": false,
+      "shell": "blank-canvas-apollo-plus",
+      "note": "Alias of /anuncios, kept for back-compat."
+    }
+  ],
+  "shortcodes": [
+    {
+      "tag": "apollo_classified",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_classified_form",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_classifieds",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_classifieds_rent_space",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_classifieds_sell_ticket",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_related_classifieds",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "hooks": {
+    "fires": [
+      "apollo/classifieds/spam_detected"
+    ],
+    "listens": [
+      "transition_post_status",
+      "apollo/core/initialized"
+    ]
+  },
+  "version": "1.1.1",
+  "cron": [],
+  "hooks_fired": [
+    "apollo/adverts/form/load",
+    "apollo/adverts/form/load/{$scheme}",
+    "apollo/classifieds/created",
+    "apollo/classifieds/deleted",
+    "apollo/classifieds/expiration_days",
+    "apollo/classifieds/expired",
+    "apollo/classifieds/expiring_soon",
+    "apollo/classifieds/featured",
+    "apollo/classifieds/list_query_args",
+    "apollo/classifieds/max_active_listings",
+    "apollo/classifieds/price_format",
+    "apollo/classifieds/renewed",
+    "apollo/classifieds/search_query_args",
+    "apollo/classifieds/spam_detected",
+    "apollo/classifieds/updated",
+    "apollo/events/request_created"
+  ],
+  "hooks_listened": [
+    "apollo/admin/dashboard_tabs",
+    "apollo/adverts/form/load",
+    "apollo/adverts/render_create_form",
+    "apollo/classifieds/can_submit",
+    "apollo/classifieds/created",
+    "apollo/classifieds/expired",
+    "apollo/classifieds/form/after_fields",
+    "apollo/classifieds/pre_create",
+    "apollo/classifieds/renewed",
+    "apollo/classifieds/single/after_content",
+    "apollo/classifieds/spam_detected",
+    "apollo/classifieds/updated",
+    "apollo/classifieds/validate_submission",
+    "apollo/fav/supported_types",
+    "apollo/shortcodes/registered",
+    "apollo/templates/registered",
+    "apollo/users/profile_data",
+    "apollo/wow/supported_types",
+    "apollo_classifieds_check_expired",
+    "apollo_classifieds_gc_temp",
+    "apollo_classifieds_notify_expiring",
+    "apollo_core_register_meta"
+  ],
+  "admin_menus": [
+    {
+      "page_title": "edit.php?post_type=classified",
+      "menu_title": "Generate Demo Data",
+      "capability": "Demo Data",
+      "menu_slug": "manage_options"
+    }
+  ],
+  "assets": {
+    "scripts": [
+      "apollo-adverts",
+      "apollo-adverts-admin",
+      "apollo-adverts-gallery",
+      "apollo-adverts-marketplace",
+      "apollo-chat"
+    ],
+    "styles": [
+      "apollo-adverts",
+      "apollo-adverts-admin",
+      "apollo-adverts-marketplace"
+    ]
+  },
+  "options": [
+    "apollo_adverts_archive_page_id",
+    "apollo_adverts_settings",
+    "apollo_adverts_spam_log",
+    "apollo_adverts_submit_page_id",
+    "apollo_adverts_version",
+    "apollo_event_requests"
+  ],
+  "security": {
+    "risk_band": "MEDIUM",
+    "risk_score": 38,
+    "abspath_coverage_pct": 98,
+    "rest_open_routes": 3,
+    "rest_critical_write_public": 2,
+    "rest_open_non_intentional": 3,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 5,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 0.5
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_adverts_admin_dashboard_tab_content",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_adverts_bp_content_create",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_adverts_bp_content_favorites",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_adverts_bp_content_list",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_adverts_bp_screen_favorites",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_adverts_log",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_adverts_save_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_adverts_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_adverts_settings_nonce",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_adverts_spam_log",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_adverts_users_profile_data",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_adverts_wow_register",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_fav_get_user_favorites",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_get_membership_badge_html",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_log_activity",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_log_audit",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_url",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_wow_reactions",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [
+    {
+      "pattern": "^marketplace/?$",
+      "query": "index.php?apollo_adverts_page=marketplace"
+    },
+    {
+      "pattern": "^novo-anuncio/?$",
+      "query": "index.php?apollo_adverts_page=create"
+    },
+    {
+      "pattern": "^criar-anuncio/?$",
+      "query": "index.php?apollo_adverts_page=create"
+    }
+  ],
+  "query_vars": [
+    "apollo_adverts_page"
+  ],
+  "php_surface": {
+    "files": 52,
+    "loc": 10925,
+    "classes": 13,
+    "functions": 91
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:47.407Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 228,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-adverts",
+    "main_file": "apollo-adverts.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Adverts",
+      "plugin_uri": "https://apollo.rio.br/plugins/apollo-adverts",
+      "description": "Classificados/Marketplace: CPT classified, formulários frontend, galeria, busca, gerenciamento. Integrado com BuddyPress, Fav, WOW, Notif.",
+      "version": "1.0.2",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "Proprietary",
+      "text_domain": "apollo-adverts",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": "false"
+    },
+    "composer": {
+      "name": "apollo/adverts",
+      "namespaces": [
+        "Apollo\\Adverts"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 52,
+        ".css": 23,
+        ".js": 15,
+        ".json": 1,
+        ".md": 1
+      },
+      "by_top_directory": {
+        "(root)": 4,
+        "assets": 38,
+        "includes": 19,
+        "src": 11,
+        "templates": 20
+      },
+      "total_bytes": 462141
+    },
+    "php": {
+      "files": 52,
+      "loc": 10925,
+      "classes": 13,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 91
+    },
+    "architecture": {
+      "namespace": "Apollo\\Adverts",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Apollo_Classifieds_Categories_Widget",
+          "fqcn": "Apollo_Classifieds_Categories_Widget",
+          "extends": "WP_Widget",
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/widgets/class-categories-widget.php"
+        },
+        {
+          "kind": "class",
+          "name": "Apollo_Classifieds_Widget",
+          "fqcn": "Apollo_Classifieds_Widget",
+          "extends": "WP_Widget",
+          "implements": [],
+          "modifiers": null,
+          "file": "includes/widgets/class-classifieds-widget.php"
+        },
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Adverts\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "ClassifiedsController",
+          "fqcn": "Apollo\\Adverts\\API\\ClassifiedsController",
+          "extends": "\\WP_REST_Controller",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/ClassifiedsController.php"
+        },
+        {
+          "kind": "class",
+          "name": "SearchController",
+          "fqcn": "Apollo\\Adverts\\API\\SearchController",
+          "extends": "\\WP_REST_Controller",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/SearchController.php"
+        },
+        {
+          "kind": "class",
+          "name": "Deactivation",
+          "fqcn": "Apollo\\Adverts\\Deactivation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Deactivation.php"
+        },
+        {
+          "kind": "class",
+          "name": "ForceFeaturedImage",
+          "fqcn": "Apollo\\Adverts\\ForceFeaturedImage",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/ForceFeaturedImage.php"
+        },
+        {
+          "kind": "class",
+          "name": "Form",
+          "fqcn": "Apollo\\Adverts\\Form",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Form.php"
+        },
+        {
+          "kind": "class",
+          "name": "FrontendForm",
+          "fqcn": "Apollo\\Adverts\\FrontendForm",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/FrontendForm.php"
+        },
+        {
+          "kind": "class",
+          "name": "LimitActiveListings",
+          "fqcn": "Apollo\\Adverts\\LimitActiveListings",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/LimitActiveListings.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Adverts\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "RelatedAds",
+          "fqcn": "Apollo\\Adverts\\RelatedAds",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/RelatedAds.php"
+        },
+        {
+          "kind": "class",
+          "name": "SpamProtection",
+          "fqcn": "Apollo\\Adverts\\SpamProtection",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/SpamProtection.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_adverts_check_dependencies",
+          "file": "apollo-adverts.php"
+        },
+        {
+          "name": "apollo_adverts_load_includes",
+          "file": "apollo-adverts.php"
+        },
+        {
+          "name": "apollo_adverts_init",
+          "file": "apollo-adverts.php"
+        },
+        {
+          "name": "apollo_adverts_ajax_change_status",
+          "file": "includes/ajax-handlers.php"
+        },
+        {
+          "name": "apollo_adverts_ajax_toggle_featured",
+          "file": "includes/ajax-handlers.php"
+        },
+        {
+          "name": "apollo_adverts_ajax_dashboard_stats",
+          "file": "includes/ajax-handlers.php"
+        },
+        {
+          "name": "apollo_adverts_bp_is_active",
+          "file": "includes/buddypress.php"
+        },
+        {
+          "name": "apollo_adverts_bp_setup_nav",
+          "file": "includes/buddypress.php"
+        },
+        {
+          "name": "apollo_adverts_bp_screen_list",
+          "file": "includes/buddypress.php"
+        },
+        {
+          "name": "apollo_adverts_bp_content_list",
+          "file": "includes/buddypress.php"
+        },
+        {
+          "name": "apollo_adverts_bp_screen_create",
+          "file": "includes/buddypress.php"
+        },
+        {
+          "name": "apollo_adverts_bp_content_create",
+          "file": "includes/buddypress.php"
+        },
+        {
+          "name": "apollo_adverts_bp_screen_favorites",
+          "file": "includes/buddypress.php"
+        },
+        {
+          "name": "apollo_adverts_bp_content_favorites",
+          "file": "includes/buddypress.php"
+        },
+        {
+          "name": "apollo_adverts_bp_nav_count",
+          "file": "includes/buddypress.php"
+        },
+        {
+          "name": "apollo_adverts_handle_renew_ad",
+          "file": "includes/buddypress.php"
+        },
+        {
+          "name": "apollo_adverts_handle_delete_ad",
+          "file": "includes/buddypress.php"
+        },
+        {
+          "name": "apollo_adverts_register_cpt",
+          "file": "includes/cpt.php"
+        },
+        {
+          "name": "apollo_adverts_register_taxonomies",
+          "file": "includes/cpt.php"
+        },
+        {
+          "name": "apollo_adverts_register_post_statuses",
+          "file": "includes/cpt.php"
+        },
+        {
+          "name": "apollo_adverts_register_meta",
+          "file": "includes/cpt.php"
+        },
+        {
+          "name": "apollo_adverts_sanitize_meta_float",
+          "file": "includes/cpt.php"
+        },
+        {
+          "name": "apollo_adverts_sanitize_meta_string",
+          "file": "includes/cpt.php"
+        },
+        {
+          "name": "apollo_adverts_sanitize_meta_bool",
+          "file": "includes/cpt.php"
+        },
+        {
+          "name": "apollo_adverts_sanitize_meta_int",
+          "file": "includes/cpt.php"
+        },
+        {
+          "name": "apollo_adverts_sanitize_meta_date",
+          "file": "includes/cpt.php"
+        },
+        {
+          "name": "apollo_adverts_admin_status_display",
+          "file": "includes/cpt.php"
+        },
+        {
+          "name": "apollo_adverts_schedule_cron",
+          "file": "includes/cron.php"
+        },
+        {
+          "name": "apollo_adverts_cron_check_expired",
+          "file": "includes/cron.php"
+        },
+        {
+          "name": "apollo_adverts_cron_notify_expiring",
+          "file": "includes/cron.php"
+        },
+        {
+          "name": "apollo_adverts_send_expiring_email",
+          "file": "includes/cron.php"
+        },
+        {
+          "name": "apollo_adverts_cron_gc_temp",
+          "file": "includes/cron.php"
+        },
+        {
+          "name": "apollo_adverts_clear_expiring_flag",
+          "file": "includes/cron.php"
+        },
+        {
+          "name": "apollo_classifieds_generate_demo",
+          "file": "includes/demo-data.php"
+        },
+        {
+          "name": "apollo_adverts_add_event_field",
+          "file": "includes/event-selector.php"
+        },
+        {
+          "name": "apollo_adverts_register_event_field_type",
+          "file": "includes/event-selector.php"
+        },
+        {
+          "name": "apollo_adverts_render_event_search_field",
+          "file": "includes/event-selector.php"
+        },
+        {
+          "name": "apollo_adverts_save_event_meta",
+          "file": "includes/event-selector.php"
+        },
+        {
+          "name": "apollo_adverts_register_event_request_endpoint",
+          "file": "includes/event-selector.php"
+        },
+        {
+          "name": "apollo_adverts_handle_event_request",
+          "file": "includes/event-selector.php"
+        },
+        {
+          "name": "apollo_adverts_register_field_types",
+          "file": "includes/form-fields.php"
+        },
+        {
+          "name": "apollo_adverts_register_validators",
+          "file": "includes/form-fields.php"
+        },
+        {
+          "name": "apollo_adverts_register_filters",
+          "file": "includes/form-fields.php"
+        },
+        {
+          "name": "apollo_adverts_form_scheme_publish",
+          "file": "includes/form-fields.php"
+        },
+        {
+          "name": "apollo_adverts_form_scheme_search",
+          "file": "includes/form-fields.php"
+        },
+        {
+          "name": "apollo_adverts_config",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_adverts_get_directory_path",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_adverts_format_price",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_adverts_get_the_price",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_adverts_request",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_adverts_get_expiration",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_adverts_set_expiration",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_adverts_is_expired",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_adverts_is_featured",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_adverts_get_main_image",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_adverts_increment_views",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_adverts_get_condition_label",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_adverts_get_intent_label",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_adverts_user_ad_count",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_adverts_get_template",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_adverts_load_template",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_adverts_log",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_adverts_gallery_render",
+          "file": "includes/gallery.php"
+        },
+        {
+          "name": "apollo_adverts_register_gallery_field_type",
+          "file": "includes/gallery.php"
+        },
+        {
+          "name": "apollo_adverts_ajax_gallery_upload",
+          "file": "includes/gallery.php"
+        },
+        {
+          "name": "apollo_adverts_ajax_gallery_delete",
+          "file": "includes/gallery.php"
+        },
+        {
+          "name": "apollo_adverts_ajax_gallery_reorder",
+          "file": "includes/gallery.php"
+        },
+        {
+          "name": "apollo_adverts_ajax_gallery_set_featured",
+          "file": "includes/gallery.php"
+        },
+        {
+          "name": "apollo_adverts_fav_register",
+          "file": "includes/integrations.php"
+        },
+        {
+          "name": "apollo_adverts_fav_button",
+          "file": "includes/integrations.php"
+        },
+        {
+          "name": "apollo_adverts_wow_register",
+          "file": "includes/integrations.php"
+        },
+        {
+          "name": "apollo_adverts_wow_reactions",
+          "file": "includes/integrations.php"
+        },
+        {
+          "name": "apollo_adverts_notif_new_ad",
+          "file": "includes/integrations.php"
+        },
+        {
+          "name": "apollo_adverts_notif_expired",
+          "file": "includes/integrations.php"
+        },
+        {
+          "name": "apollo_adverts_notif_expiring_soon",
+          "file": "includes/integrations.php"
+        },
+        {
+          "name": "apollo_adverts_social_new_ad",
+          "file": "includes/integrations.php"
+        },
+        {
+          "name": "apollo_adverts_chat_button",
+          "file": "includes/integrations.php"
+        },
+        {
+          "name": "apollo_adverts_admin_dashboard_tab",
+          "file": "includes/integrations.php"
+        },
+        {
+          "name": "apollo_adverts_admin_dashboard_tab_content",
+          "file": "includes/integrations.php"
+        },
+        {
+          "name": "apollo_adverts_templates_register",
+          "file": "includes/integrations.php"
+        },
+        {
+          "name": "apollo_adverts_shortcodes_register",
+          "file": "includes/integrations.php"
+        },
+        {
+          "name": "apollo_adverts_users_profile_data",
+          "file": "includes/integrations.php"
+        },
+        {
+          "name": "apollo_adverts_shortcode_form",
+          "file": "includes/shortcodes/apollo-classified-form.php"
+        },
+        {
+          "name": "apollo_adverts_shortcode_single",
+          "file": "includes/shortcodes/apollo-classified-single.php"
+        },
+        {
+          "name": "apollo_adverts_shortcode_list",
+          "file": "includes/shortcodes/apollo-classifieds-list.php"
+        },
+        {
+          "name": "apollo_adverts_marketplace_check_login",
+          "file": "includes/shortcodes/apollo-marketplace-forms.php"
+        },
+        {
+          "name": "apollo_adverts_marketplace_form_styles",
+          "file": "includes/shortcodes/apollo-marketplace-forms.php"
+        },
+        {
+          "name": "apollo_adverts_shortcode_sell_ticket",
+          "file": "includes/shortcodes/apollo-marketplace-forms.php"
+        },
+        {
+          "name": "apollo_adverts_shortcode_rent_space",
+          "file": "includes/shortcodes/apollo-marketplace-forms.php"
+        },
+        {
+          "name": "apollo_adverts_register_shortcodes",
+          "file": "includes/shortcodes.php"
+        },
+        {
+          "name": "apollo_adverts_register_widgets",
+          "file": "includes/widgets.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 5,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/events/request",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "is_user_logged_in",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "WP core is_user_logged_in callback",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "is_user_logged_in"
+            }
+          },
+          "callback": null,
+          "file": "includes/event-selector.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "GET",
+            "POST"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_items",
+          "file": "src/API/ClassifiedsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "DELETE",
+            "GET",
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_item",
+          "file": "src/API/ClassifiedsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "get_my_items",
+          "file": "src/API/ClassifiedsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/classifieds/(?P<id>[\\d]+)/related",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "rest_get_related",
+          "file": "src/RelatedAds.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 2,
+        "HIGH": 1,
+        "MEDIUM": 2,
+        "LOW": 0,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "LOGGED_IN_ONLY": 2,
+        "PUBLIC_UNAUTHENTICATED": 3
+      },
+      "permission_body_resolved": 5,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 2,
+      "open_routes": [
+        {
+          "endpoint": "/",
+          "methods": [
+            "GET",
+            "POST"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/ClassifiedsController.php"
+        },
+        {
+          "endpoint": "/",
+          "methods": [
+            "DELETE",
+            "GET",
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/ClassifiedsController.php"
+        },
+        {
+          "endpoint": "/classifieds/(?P<id>[\\d]+)/related",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/RelatedAds.php"
+        }
+      ],
+      "admin_cap_routes": [],
+      "logged_in_routes": [
+        "/events/request",
+        "/"
+      ]
+    },
+    "database": {
+      "tables_owned_or_defined": [],
+      "tables_referenced": [
+        "apollo_adverts_admin_dashboard_tab_content",
+        "apollo_adverts_bp_content_create",
+        "apollo_adverts_bp_content_favorites",
+        "apollo_adverts_bp_content_list",
+        "apollo_adverts_bp_screen_favorites",
+        "apollo_adverts_log",
+        "apollo_adverts_save_settings",
+        "apollo_adverts_settings",
+        "apollo_adverts_settings_nonce",
+        "apollo_adverts_spam_log",
+        "apollo_adverts_users_profile_data",
+        "apollo_adverts_wow_register",
+        "apollo_fav_get_user_favorites",
+        "apollo_get_membership_badge_html",
+        "apollo_log_activity",
+        "apollo_log_audit",
+        "apollo_login_url",
+        "apollo_wow_reactions"
+      ],
+      "tables_for_registry": [],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_adverts_admin_dashboard_tab_content",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_adverts_bp_content_create",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_adverts_bp_content_favorites",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_adverts_bp_content_list",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_adverts_bp_screen_favorites",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_adverts_log",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_adverts_save_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_adverts_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_adverts_settings_nonce",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_adverts_spam_log",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_adverts_users_profile_data",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_adverts_wow_register",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_fav_get_user_favorites",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_get_membership_badge_html",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_log_activity",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_log_audit",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_url",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_wow_reactions",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 26,
+      "user_count": 1,
+      "term_count": 0,
+      "post_keys": [
+        "_badge",
+        "_classified_badge",
+        "_classified_condition",
+        "_classified_contact_phone",
+        "_classified_contact_whatsapp",
+        "_classified_currency",
+        "_classified_event_date",
+        "_classified_event_id",
+        "_classified_event_loc",
+        "_classified_event_title",
+        "_classified_expires_at",
+        "_classified_expiring_notified",
+        "_classified_featured",
+        "_classified_intention",
+        "_classified_loc",
+        "_classified_negotiable",
+        "_classified_original_price",
+        "_classified_price",
+        "_classified_rating",
+        "_classified_type",
+        "_classified_views",
+        "_event_date",
+        "_event_title",
+        "_price",
+        "_rating",
+        "single"
+      ],
+      "user_keys": [
+        "_apollo_max_classifieds"
+      ],
+      "term_keys": [],
+      "registered_calls": [
+        {
+          "kind": "post",
+          "object": ") directly.\r\n * Adapted config is merged into core map via filter.\r\n *\r\n * @param array $meta_config Existing post meta map from apollo-core.\r\n * @return array\r\n */\r\nfunction apollo_adverts_register_meta( array $meta_config ): array {\r\n\tif ( ! isset( $meta_config[ APOLLO_CPT_CLASSIFIED ] ) || ! is_array( $meta_config[ APOLLO_CPT_CLASSIFIED ] ) ) {\r\n\t\t$meta_config[ APOLLO_CPT_CLASSIFIED ] = array();\r\n\t}\r\n\r\n\t$meta_keys = APOLLO_ADVERTS_META_KEYS;\r\n\r\n\tforeach ( $meta_keys as $key => $config ) {\r\n\t\t$type = 'string';\r\n\t\tif ( $config['type'] === 'float' ) {\r\n\t\t\t$type = 'number';\r\n\t\t} elseif ( $config['type'] === 'bool' ) {\r\n\t\t\t$type = 'boolean';\r\n\t\t} elseif ( $config['type'] === 'int' ) {\r\n\t\t\t$type = 'integer';\r\n\t\t}\r\n\r\n\t\t$meta_config[ APOLLO_CPT_CLASSIFIED ][ $key ] = array(\r\n\t\t\t'type'          => $type",
+          "key": "single"
+        }
+      ]
+    },
+    "routing": {
+      "rewrite_rules": [
+        {
+          "pattern": "^marketplace/?$",
+          "query": "index.php?apollo_adverts_page=marketplace",
+          "position": "top",
+          "file": "src/Plugin.php"
+        },
+        {
+          "pattern": "^novo-anuncio/?$",
+          "query": "index.php?apollo_adverts_page=create",
+          "position": "top",
+          "file": "src/Plugin.php"
+        },
+        {
+          "pattern": "^criar-anuncio/?$",
+          "query": "index.php?apollo_adverts_page=create",
+          "position": "top",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "query_vars": [
+        "apollo_adverts_page"
+      ],
+      "pages_derived": [
+        {
+          "slug": "marketplace",
+          "rewrite": "^marketplace/?$",
+          "query": "index.php?apollo_adverts_page=marketplace",
+          "query_vars": [
+            "apollo_adverts_page=marketplace"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "novo-anuncio",
+          "rewrite": "^novo-anuncio/?$",
+          "query": "index.php?apollo_adverts_page=create",
+          "query_vars": [
+            "apollo_adverts_page=create"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "criar-anuncio",
+          "rewrite": "^criar-anuncio/?$",
+          "query": "index.php?apollo_adverts_page=create",
+          "query_vars": [
+            "apollo_adverts_page=create"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        }
+      ]
+    },
+    "cpts": [
+      {
+        "slug": "classified",
+        "registered_locally": false,
+        "via_constant": true
+      }
+    ],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 17,
+      "listened_count": 51,
+      "apollo_fired": [
+        "apollo/adverts/form/load",
+        "apollo/adverts/form/load/{$scheme}",
+        "apollo/classifieds/created",
+        "apollo/classifieds/deleted",
+        "apollo/classifieds/expiration_days",
+        "apollo/classifieds/expired",
+        "apollo/classifieds/expiring_soon",
+        "apollo/classifieds/featured",
+        "apollo/classifieds/list_query_args",
+        "apollo/classifieds/max_active_listings",
+        "apollo/classifieds/price_format",
+        "apollo/classifieds/renewed",
+        "apollo/classifieds/search_query_args",
+        "apollo/classifieds/spam_detected",
+        "apollo/classifieds/updated",
+        "apollo/events/request_created"
+      ],
+      "apollo_listened": [
+        "apollo/admin/dashboard_tabs",
+        "apollo/adverts/form/load",
+        "apollo/adverts/render_create_form",
+        "apollo/classifieds/can_submit",
+        "apollo/classifieds/created",
+        "apollo/classifieds/expired",
+        "apollo/classifieds/form/after_fields",
+        "apollo/classifieds/pre_create",
+        "apollo/classifieds/renewed",
+        "apollo/classifieds/single/after_content",
+        "apollo/classifieds/spam_detected",
+        "apollo/classifieds/updated",
+        "apollo/classifieds/validate_submission",
+        "apollo/fav/supported_types",
+        "apollo/shortcodes/registered",
+        "apollo/templates/registered",
+        "apollo/users/profile_data",
+        "apollo/wow/supported_types",
+        "apollo_classifieds_check_expired",
+        "apollo_classifieds_gc_temp",
+        "apollo_classifieds_notify_expiring",
+        "apollo_core_register_meta"
+      ],
+      "critical_wp_listened": [
+        "admin_menu",
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "save_post_",
+        "template_redirect",
+        "wp_enqueue_scripts"
+      ]
+    },
+    "ajax": {
+      "priv": [
+        "apollo_adverts_change_status",
+        "apollo_adverts_dashboard_stats",
+        "apollo_adverts_gallery_delete",
+        "apollo_adverts_gallery_reorder",
+        "apollo_adverts_gallery_set_featured",
+        "apollo_adverts_gallery_upload",
+        "apollo_adverts_toggle_featured"
+      ],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [
+      "apollo_classified",
+      "apollo_classified_form",
+      "apollo_classifieds",
+      "apollo_classifieds_rent_space",
+      "apollo_classifieds_sell_ticket",
+      "apollo_related_classifieds"
+    ],
+    "admin_menus": [
+      {
+        "page_title": "edit.php?post_type=classified",
+        "menu_title": "Generate Demo Data",
+        "capability": "Demo Data",
+        "menu_slug": "manage_options"
+      }
+    ],
+    "assets": {
+      "scripts": [
+        "apollo-adverts",
+        "apollo-adverts-admin",
+        "apollo-adverts-gallery",
+        "apollo-adverts-marketplace",
+        "apollo-chat"
+      ],
+      "styles": [
+        "apollo-adverts",
+        "apollo-adverts-admin",
+        "apollo-adverts-marketplace"
+      ]
+    },
+    "options": [
+      "apollo_adverts_archive_page_id",
+      "apollo_adverts_settings",
+      "apollo_adverts_spam_log",
+      "apollo_adverts_submit_page_id",
+      "apollo_adverts_version",
+      "apollo_event_requests"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_ADVERTS_VERSION",
+        "value": "1.0.2"
+      },
+      {
+        "name": "APOLLO_ADVERTS_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_ADVERTS_DIR",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_ADVERTS_URL",
+        "value": "plugin_dir_url( __FILE__"
+      },
+      {
+        "name": "APOLLO_ADVERTS_BASENAME",
+        "value": "plugin_basename( __FILE__"
+      },
+      {
+        "name": "APOLLO_ADVERTS_REST_NAMESPACE",
+        "value": "apollo/v1"
+      },
+      {
+        "name": "APOLLO_CPT_CLASSIFIED",
+        "value": "classified"
+      },
+      {
+        "name": "APOLLO_ADVERTS_META_KEYS",
+        "value": "array(\n        '_classified_price'            => a"
+      },
+      {
+        "name": "APOLLO_ADVERTS_INTENTS",
+        "value": "array(\n        'vendo'   => 'Vendo',\n        'comp"
+      },
+      {
+        "name": "APOLLO_ADVERTS_CONDITIONS",
+        "value": "array(\n        'novo'           => 'Novo',\n       "
+      },
+      {
+        "name": "APOLLO_ADVERTS_DEFAULT_EXPIRATION",
+        "value": "30"
+      },
+      {
+        "name": "APOLLO_ADVERTS_MAX_IMAGES",
+        "value": "8"
+      },
+      {
+        "name": "APOLLO_ADVERTS_POSTS_PER_PAGE",
+        "value": "12"
+      },
+      {
+        "name": "APOLLO_ADVERTS_CURRENCY",
+        "value": "array(\n        'code'          => 'BRL',\n        '"
+      },
+      {
+        "name": "APOLLO_ADVERTS_IMAGE_SIZES",
+        "value": "array(\n        'classified-list'    => array(\n    "
+      }
+    ],
+    "security": {
+      "php_files": 52,
+      "abspath_guard_files": 51,
+      "abspath_coverage_pct": 98,
+      "wpdb_prepare_calls": 1,
+      "wpdb_query_calls": 2,
+      "prepare_to_query_ratio": 0.5,
+      "nonce_checks": 23,
+      "current_user_can_calls": 18,
+      "raw_superglobal": {
+        "get": 13,
+        "post": 54,
+        "request": 0
+      },
+      "permission_callback_return_true": 4,
+      "escape_helpers": 280,
+      "echo_statements": 284,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 38,
+      "risk_band": "MEDIUM",
+      "rest_permission_critical": 2,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 1,
+      "rest_open_critical": 2,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 3
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-admin",
+        "apollo-chat",
+        "apollo-core",
+        "apollo-dashboard",
+        "apollo-fav",
+        "apollo-login",
+        "apollo-notif",
+        "apollo-social",
+        "apollo-templates",
+        "apollo-wow"
+      ],
+      "signals": [
+        "apollo-admin",
+        "apollo-chat",
+        "apollo-core",
+        "apollo-dashboard",
+        "apollo-fav",
+        "apollo-login",
+        "apollo-notif",
+        "apollo-social",
+        "apollo-templates",
+        "apollo-wow"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.0.2",
+      "version_changed": false,
+      "old_rest": 4,
+      "live_rest": 5,
+      "old_pages": 4,
+      "live_pages": 3,
+      "new_plugin": false
+    }
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 52,
+    "php_loc": 10873,
+    "rest_routes_found": 3,
+    "cpts_found": [],
+    "tables_found": [],
+    "shortcodes_found": [
+      "apollo_classified",
+      "apollo_classified_form",
+      "apollo_classifieds",
+      "apollo_classifieds_rent_space",
+      "apollo_classifieds_sell_ticket",
+      "apollo_related_classifieds"
+    ]
+  },
+  "$seller_privacy_leak_fix_2026_07_28": {
+    "date": "2026-07-28",
+    "reason": "User reported that classified/accommodation adverts must never show seller avatar, display name, or @handle, and that the chat/message button must be reachable by logged-in members only — with the strict requirement that this be enforced server-side ('lock to even if user open code = not written there due not loaded'), not merely CSS-hidden. Investigated because the site already promises this elsewhere ('Identidade do vendedor visível apenas para membros' on apollo-templates' /casa classifieds/crash sections, which already gate correctly) but the actual advert-listing/detail templates in this plugin did not.",
+    "findings": [
+      "templates/single-classified.php: 'Dados do anunciante' sidebar block printed seller avatar + display_name + badge, and the 'Contato' block printed raw phone + WhatsApp links, BOTH unconditionally regardless of is_user_logged_in() — a real leak, not a display bug.",
+      "templates/single.php ([apollo_classified] shortcode view): same seller avatar/name/profile-link leak plus unconditional phone/WhatsApp. Worse: the always-rendered 'Iniciar Chat' trigger + safety-disclaimer modal embedded $author_url (contains user_login) and $author->ID directly in an inline <script> block, visible in page source to any guest regardless of the safety-modal's checkbox theater.",
+      "templates/list-item.php (classifieds archive/grid card): unconditionally printed seller avatar, display_name, and '@' . user_login, plus a plain always-active 'CHAT' link with no login gate at all.",
+      "templates/marketplace/parts/card-ticket.php (carousel ticket card): same avatar/name/@handle leak, plus a chat-modal trigger button that leaked data-a-user (numeric user ID) and data-username (handle) as HTML attributes unconditionally.",
+      "templates/marketplace/parts/card-accommodation.php: no visible name/avatar, but still leaked data-a-user/data-username attributes on its 'Ver' button regardless of login state.",
+      "By contrast, apollo_adverts_chat_button() in includes/integrations.php (the shortcode used inside apollo-templates' own /casa sections) was already correct: guests get a plain 'Faça login para contatar' link with zero author identity in the markup."
+    ],
+    "fix": "All 5 templates now compute $is_logged_in_viewer = is_user_logged_in() up front and gate every seller-identity element (avatar, display_name, @user_login) and every direct-contact element (phone, WhatsApp, chat/message trigger incl. its data-a-user/data-username attributes) behind it. Guests receive a locked placeholder (lock icon + 'Vendedor/Identidade visível para membros' note, matching the site's existing copy) instead of the real data — the seller's name/avatar/handle/phone/WhatsApp/user-ID are genuinely absent from the HTML/JS source for guests, not hidden via CSS. Guest chat CTAs now link to /acesso?redirect=<back to the ad> instead of opening any modal or printing owner identity, mirroring the already-correct apollo_adverts_chat_button() pattern. Title, price, event details (event_title/event_date/event_location), and location remain always visible for every advert type (ticket resale and accommodation) per the user's explicit 'title and Event true' requirement.",
+    "not_touched": "apollo-loc's single-local.php / loc-sidebar.php / loc-residents.php (business venue profile pages) were checked and are NOT part of this leak — the phone shown there is the venue's own public business number, and 'DJs Residentes' links to DJs' own public artist profiles, not a private seller's identity. Those are a different, legitimately-public category from the peer-to-peer marketplace seller privacy this fix addresses.",
+    "files": [
+      "templates/single-classified.php",
+      "templates/single.php",
+      "templates/list-item.php",
+      "templates/marketplace/parts/card-ticket.php",
+      "templates/marketplace/parts/card-accommodation.php",
+      "apollo-adverts.php (version bump 1.0.2 -> 1.0.3)"
+    ]
+  },
+  "$accommodation_meta_and_depoimentos_2026_07_28": {
+    "date": "2026-07-28",
+    "reason": "Second half of the same user request: surface the new apollo-core accommodation meta in the adverts admin + cards, enforce the padlock rule (resale always locked for guests; accommodation locked unless flagged hostel), and enable Depoimentos on accommodation adverts.",
+    "meta_mirror": "includes/constants.php -- APOLLO_ADVERTS_META_KEYS gained the six accommodation keys, plus two new constants APOLLO_ADVERTS_ACCOMMODATION_TYPES ('accommodation','rent_space') and APOLLO_ADVERTS_TICKET_TYPES ('ticket','ticket_sell') so the type checks stop being inline string literals. Two new meta 'type' values were introduced (url, date); includes/cpt.php gained apollo_adverts_sanitize_meta_url() to match (sanitize_meta_date already existed). Verified every declared type now resolves to an existing sanitizer.",
+    "helpers": "includes/cpt.php -- apollo_adverts_is_accommodation(), apollo_adverts_is_hostel(), apollo_adverts_is_identity_locked(), apollo_adverts_hostel_url(). is_hostel() deliberately reads the meta on ANY post ID without a post-type check, so the /casa Acomoda strip (which lists the `local` CPT, not `classified`) can honour the same switch -- see the cross-surface note below.",
+    "metabox": "src/Plugin.php -- new 'Hospedagem' block after the existing table, folded away entirely when _classified_type isn't an accommodation. Hostel URL row shows only with the hostel box ticked; availability-date rows only without it (small inline script, no dependency added). save_meta_box() persists all six, clamps the two integers at 0, accepts dates only in strict Y-m-d, and DELETES the hostel URL when the box is un-ticked so a stale URL can never resurface and send guests to an unrelated site.",
+    "lock_rule": "templates/marketplace/parts/card-accommodation.php -- hostel listings render an outbound 'Reservar' link (target=_blank) and no padlock; non-hostel listings show a padlock ('ri-lock-2-line') on the CTA for guests and route to /acesso?redirect=. Hostel-flagged-but-no-URL falls back to the listing permalink, still unlocked (nothing private to protect). card-ticket.php was checked and already carried the padlock for guests from the 2026-07-28 seller-privacy pass -- left unchanged, no regression.",
+    "depoimentos": "'comments' added to the CPT supports array, plus an init:20 add_post_type_support() so it applies even when apollo-core registered the CPT first (apollo_adverts_register_cpt() self-skips in that case, so its supports array would silently never run). A comments_open filter (apollo_adverts_depoimentos_open) then narrows the surface to accommodations only -- ticket/general adverts are one-off private transactions and a public thread on them would be both noise and a leak of a conversation meant to be private. Admin strings relabelled Comments->Depoimentos via a scoped gettext filter. New frontend part templates/parts/depoimentos.php (timeline, mirrors apollo-events' single/depoimentos.php design language, apl-depo prefix, tokens only), included from single-classified.php for accommodations. Guests see the thread but get a locked CTA to /acesso instead of the form.",
+    "naming": "'Depoimentos' is both the registry naming convention (15-conventions: comment/review -> depoimento) and the literal pt-BR word for 'testimonials', so the internal term and the user-facing label are the same word -- no separate translation layer, which is what the user asked for.",
+    "stay_rules_ui": "single-classified.php also gained a 'Regras da estadia' info box rendering min nights / max days / availability window (dates hidden for hostels, which instead show 'disponível o ano todo').",
+    "open_divergence": "ACCOMMODATION EXISTS ON TWO SURFACES and they use different post types: apollo-adverts lists `classified` posts with _classified_type=accommodation|rent_space (where this meta lives), while apollo-templates' /casa Acomoda::Rio strip lists the `local` CPT filtered by the local_type taxonomy. The hostel switch is registered against `classified` only. crash.php reads the same meta key so it honours the switch the moment a `local` post carries it, but until then every stay on /casa is locked (safe default). Unifying the two surfaces -- or registering the block on `local` as well -- is a product decision and was deliberately NOT made silently.",
+    "files": [
+      "includes/constants.php",
+      "includes/cpt.php",
+      "src/Plugin.php",
+      "templates/parts/depoimentos.php (new)",
+      "templates/single-classified.php",
+      "templates/marketplace/parts/card-accommodation.php",
+      "apollo-adverts.php (version bump 1.0.3 -> 1.0.4)"
+    ]
+  },
+  "$hostel_admin_only_audit_2026_07_28": {
+    "date": "2026-07-28",
+    "reason": "User asked to AUDIT that the HOSTEL option is wp-admin only, and that every OTHER accommodation meta reaches both the metabox and the frontend advert-registration forms, with an Airbnb-grade host UX.",
+    "audit_verdict_hostel": "PASS on visibility, FAIL on enforcement (now fixed). The hostel pair was absent from every frontend form and from ClassifiedsController's field map, so nothing could POST it through the plugin's own API. BUT apollo_adverts_register_meta() gave EVERY key show_in_rest=true with a blanket auth_callback of current_user_can('edit_posts'), and the CPT itself is show_in_rest with rest_base 'classifieds' -- so any contributor ('cena') could PATCH _classified_hostel straight through WordPress's generic post-meta REST endpoint and self-declare their spare room a public business, unmasking the auth gate. Admin-only was true of the UI, not of the write boundary.",
+    "fix_hostel": "New APOLLO_ADVERTS_ADMIN_ONLY_META constant (includes/constants.php) listing _classified_hostel, _classified_hostel_url, and -- same class of risk -- the pre-existing _classified_featured and _classified_badge. apollo_adverts_register_meta() now branches the auth_callback: keys in that list require manage_options, everything else keeps edit_posts. Enforced at the write boundary, so UI omission is no longer the only thing standing between a seller and an editorial flag.",
+    "adjacent_bug_found": "_classified_featured was ALSO in ClassifiedsController::save_meta_from_request()'s seller field map, i.e. genuinely exploitable, not merely theoretical: any logged-in user could POST featured:1 and promote their own listing across the marketplace. Removed from the map. Not part of the literal ask but the same audit question, and leaving it would have meant reporting the hostel flag secure while an identical hole stayed open next to it.",
+    "audit_verdict_other_metas": "FAIL, now fixed. The stay-rule fields were reaching the metabox only. min_nights/max_days did not exist on any frontend form. avail_start WAS posted by the rent_space form but silently dropped -- no entry in the REST field map, so it hit no meta key at all. avail_end was worse: posted as 'expires_at', which wrote the availability window's end into the ADVERT'S expiry date, so a room advertised as free until December made the entire listing auto-expire in December. Both now map to their real keys.",
+    "fix_rest": "ClassifiedsController: min_nights/max_days (clamped >=0), avail_start/avail_end (strict Y-m-d or empty, same guard as the metabox and apollo_adverts_sanitize_meta_date) added to save_meta_from_request(); all four declared in get_create_params(). hostel/hostel_url deliberately NOT declared, with an inline comment saying why.",
+    "fix_forms": "BOTH frontend registration surfaces now carry the four seller-owned fields: the [apollo_classifieds_rent_space] shortcode and the 3-step create-classified.php wizard (where the block is revealed only when the 'Hospedagem' type is chosen). UX modelled on Airbnb's host flow: one-tap presets for the common answers (1/2/3 nights, 1 week; 7/14/30 days, no limit), +/- steppers for everything else, a validated date range (end date's min= is bound to the start date), and a live plain-language summary that reads the rules back as a sentence ('Minimo 2 noites - ate 14 dias - de 01/08 a 30/09'). The two impossible combinations -- max below min, end before start -- are caught inline AND blocked at submit, so a guest never discovers the contradiction instead of the host.",
+    "fix_single": "single-classified.php gained the 'Regras da estadia' box rendering min/max/window, with hostels showing 'disponivel o ano todo' instead of a date range.",
+    "verification": "Brace/paren/bracket + PHP alt-syntax balance on all 5 touched files; node --check on all 3 inline script blocks (PHP echo expressions substituted with a literal first); and a generated 9-column audit matrix asserting per key: present in apollo-core, present in adverts constants, present in metabox, reachable/unreachable from the REST write path, declared/undeclared as a create param, present/absent in each of the two frontend forms, and membership of the admin-only list. Matrix result: hostel pair NO across all four write/form columns and YES in admin-only; the other four Y across every column. Also asserted 'featured' is gone from the field map and the avail_end->expires_at mis-mapping is gone. No PHP binary in the sandbox, so php -l was unavailable.",
+    "files": [
+      "includes/constants.php",
+      "includes/cpt.php",
+      "src/API/ClassifiedsController.php",
+      "includes/shortcodes/apollo-marketplace-forms.php",
+      "templates/create-classified.php",
+      "apollo-adverts.php (version bump 1.0.4 -> 1.0.5)"
+    ]
+  },
+  "$resell_accommodation_pipeline_audit_2026_07_28": {
+    "date": "2026-07-28",
+    "reason": "User asked to audit whether resale-ticket and accommodation adverts have their CPT metas properly registered, DB-connected, and wired to BOTH the wp-admin form and the frontend user forms, with hostel admin-only.",
+    "verdict": "FAIL on the whole write pipeline. Hostel was correctly admin-only (confirmed again), but nothing else was connected end-to-end: no advert submitted from the site could reach the database at all, and even the wp-admin form could not author a ticket. Five defects, each masking the next.",
+    "defect_1_blocking": "ClassifiedsController::get_create_params() declared 'content' as required=true, while all three frontend forms post the body as 'description' and never send 'content'. Every create request therefore failed REST arg validation with a 400 before any handler ran. This is the root cause that hid everything below -- no frontend advert had ever been created, so no downstream meta bug could surface. FIX: 'content' is no longer required (a classified with a clear title and no body is valid, and every form treats description as optional) and 'description' is accepted as an alias on both create and update.",
+    "defect_2_type_never_saved": "create_item() never persisted _classified_type despite all three forms posting classified_type. Frontend adverts would have carried no type meta, while ticket-carousel.php, accommodation-grid.php and classifieds-page.php all filter on it -- so they would never have appeared in either marketplace section. FIX: create_item() now writes it, update_item() can correct it, and it is a declared create param.",
+    "defect_3_split_vocabulary": "The type enum carries two names per kind: ticket_sell == ticket and rent_space == accommodation. The forms speak the first of each pair; every read query filters the second. Both spellings are legal per the enum, which is precisely why this never errored -- adverts would simply never match. FIX: new APOLLO_ADVERTS_TYPE_CANONICAL map plus apollo_adverts_canonical_type(), applied on every write path (REST create, REST update, wp-admin save). Aliases stay ACCEPTED on input for old clients/drafts/the demo seeder but are normalised before storage, so there is one stored vocabulary and the read queries needed no change.",
+    "defect_4_ticket_data_dropped": "The sell form posted event_id and quantity from day one. Neither had a handler, and _classified_quantity had no meta key to land in at all -- so a seller picked their event and said '2 ingressos' and the resulting card rendered with an empty event block and no count. FIX: registered _classified_quantity and _classified_event_id; new apollo_adverts_link_event() stores the relation and refreshes the denormalised _classified_event_title/_date/_loc snapshot the cards read (title from the event post, date from _event_start_date, venue via apollo_event_get_loc() so the loc naming convention stays owned by apollo-events). Wired into REST create/update AND wp-admin save. card-ticket.php now renders the quantity.",
+    "defect_5_admin_form_incomplete": "The metabox had no _classified_type control and no ticket fields whatsoever, so an admin could neither author a resale advert nor repair a mis-typed one -- the only route was the REST API. FIX: type selector (showing legacy aliases normalised, with a notice when a stored value will change on save) plus a full 'Ingresso (revenda)' block (event picker, title/date/venue, quantity). Both the ticket and hospedagem blocks now reveal/hide live on type change. On save the manual event fields are written first and link_event() then overwrites them, so picking an event is authoritative while 'Nenhum' preserves hand-typed values.",
+    "core_map_sync": "apollo-core's `classified` meta map was missing 7 of the 24 keys apollo-adverts declares (type, views, rating, badge, event_title, event_date, event_loc). They still registered via the apollo_core_register_meta filter, so nothing was functionally broken, but core's own map -- the thing the registry treats as the declaration of record -- was an incomplete mirror. All 24 keys now present in both; parity asserted programmatically (0 keys in either direction).",
+    "hostel_reconfirmed": "Hostel remains wp-admin only and is now verified at four layers, not just the UI: absent from both frontend forms, absent from the REST field map, undeclared as a create param, and gated behind manage_options in its register_meta auth_callback via APOLLO_ADVERTS_ADMIN_ONLY_META. Re-asserted by the audit matrix in this pass.",
+    "verification": "Generated a write-path matrix per meta for BOTH advert kinds, asserting each of: present in apollo-core, present in adverts constants, present in the wp-admin metabox, reachable from the REST write path, reachable from a frontend form, and admin-gate membership. Ticket + accommodation rows all connected end-to-end except the three event snapshot fields, which are DERIVED by link_event() rather than user-entered (verified as written inside that function, and that the function is reachable from both REST and wp-admin) and the hostel pair, which is intentionally NO across every write column. Plus: brace/paren/bracket + alt-syntax balance on all 6 touched files, node --check on the metabox script, core-vs-constants key parity, and explicit assertions that content is no longer required, description is aliased, and the type is persisted through the canonicaliser. No PHP binary in the sandbox, so php -l was unavailable.",
+    "files": [
+      "includes/constants.php",
+      "includes/cpt.php",
+      "src/Plugin.php",
+      "src/API/ClassifiedsController.php",
+      "templates/marketplace/parts/card-ticket.php",
+      "apollo-adverts.php (version bump 1.0.5 -> 1.0.6)"
+    ]
+  },
+  "$phase_1_2_3_registry_compliance_audit_2026_07_28": {
+    "date": "2026-07-28",
+    "scope": "Audit of _inventory/registry against what phases 001-003 actually ship and render, plus a DB->render trace for the Marketplace.",
+    "verdict": "NON-COMPLIANT on 3 real counts (not 4 — see finding_3 retraction). /anuncios and /eventos were undeclared, and the Marketplace could not render untyped adverts. All 3 fixed. Two items remain OPEN and need decisions I cannot make from here: the apollo-classifieds duplicate /marketplace route, and pages[] schema drift.",
+    "finding_1_anuncios_unregistered": "/anuncios -- the canonical Marketplace route and the one the Apollo+ aside links to -- was registered NOWHERE: not in code, not in the registry. Only /marketplace existed. Consequence verified live: /anuncios fell through to the plain classified CPT archive and the ACTIVE THEME rendered it (Twenty Twenty-Five, 'Arquivos: Anuncios'). Fixed in code three ways (rewrite rule, parse_request fallback, template_include filter on the post-type archive) and now declared in apollo-adverts' pages[].",
+    "finding_2_eventos_unregistered": "/eventos was likewise absent from apollo-events' pages[] -- only 'portal' and 'portal/eventos' were declared, even though /eventos is the primary route. Now declared, with the standing note that production serves a STATIC file at that path ahead of PHP, so WordPress never sees the request. That is an infra removal, not a code fix.",
+    "finding_3_feed_ownership": "RETRACTED — I got this wrong. apollo-social's /feed entry ALREADY carried the correct note: 'Canonical social page - owned by apollo-templates. apollo-social provides REST + assets only.', with auth:true. My reconciliation pass keyed on a 'route' field; apollo-social's pages[] uses 'slug', so the loop never matched and nothing was changed there. Nothing was broken and nothing needed fixing. Recording the false positive rather than leaving a fix claimed for a defect that never existed.",
+    "finding_4_duplicate_marketplace": "apollo-classifieds' chapter still declares a 'marketplace' page -> classifieds-page.php, competing with apollo-adverts for the same route, despite that plugin having been merged into apollo-adverts (FASE 1). Flagged in its own chapter rather than deleted: whether it is still on disk/active is an infra fact this session cannot verify. OPEN -- needs a decision.",
+    "db_render_trace_marketplace": "Traced every meta the Marketplace renders back to its registration. All 24 classified keys are declared in BOTH apollo-core's MetaRegistry classified map and apollo-adverts' APOLLO_ADVERTS_META_KEYS (parity asserted programmatically earlier: 0 divergent either direction), and reach the DB through apollo_adverts_register_meta()'s apollo_core_register_meta filter. The screen reads _classified_type (section routing), _classified_price, _classified_loc, _classified_event_title/_date/_loc, _classified_quantity, _classified_rating, _classified_badge, _classified_hostel(+_url) -- every one registered. Cards reuse the hardened card-ticket/card-accommodation parts, so seller-privacy and hostel-lock rules hold on this surface too.",
+    "gap_found_all_adverts": "The user's requirement was that the page render ALL adverts. It did not. The two sections query _classified_type IN (ticket types) and IN (accommodation types), so an advert was visible only if it carried a type the screen explicitly asks for. TWO real populations fell outside: type 'general', and adverts with NO type meta at all -- which is EVERY advert created through the frontend before create_item() began persisting classified_type. Those rendered in neither section and were silently invisible on the page meant to list them. FIXED: a catch-all 'Outros anuncios' section using OR( NOT EXISTS, NOT IN ) -- NOT EXISTS is required because an IN comparison cannot match a missing meta row. It renders nothing when empty, which is the expected steady state.",
+    "live_state": "0 published classifieds at audit time (wp/v2/classifieds returned X-WP-Total: 0), so the Marketplace's empty states are CORRECT rather than a failure. That also means the render path could not be proven against real rows this session -- publishing one ticket and one accommodation would close that.",
+    "files": [
+      "templates/marketplace/parts/mk/section.php",
+      "templates/marketplace/parts/mk/layout.php",
+      "registry/09-plugins/{apollo-adverts,apollo-events,apollo-social,apollo-classifieds}.json"
+    ],
+    "finding_5_schema_drift": "REAL finding surfaced by the above: pages[] has NO consistent shape across chapters. apollo-events and apollo-adverts use 'route'; apollo-social uses 'slug' plus a 'type' discriminator (virtual | redirect_301) and an uppercase 'NOTE'. Any audit that greps one key silently misses the other half of the ecosystem — which is exactly what happened here. Worth normalising to one shape before phases 004-011 add nine more screens, or every future compliance check inherits the same blind spot."
+  },
+  "$rest_pii_leak_closed_2026_08_17": {
+    "date": "2026-08-17",
+    "action": "SECURITY_FIX",
+    "severity": "HIGH — live PII disclosure to anonymous callers.",
+    "finding": "ClassifiedsController::prepare_item() looped APOLLO_ADVERTS_META_KEYS and returned EVERY key, with no allow-list and no login check, while GET /apollo/v1/classifieds carries permission_callback => '__return_true'. That set contains _classified_contact_phone and _classified_contact_whatsapp. Lines 355-356 additionally returned 'author' (user id) and 'author_name' (display_name). So an anonymous GET /wp-json/apollo/v1/classifieds returned every seller's phone number, WhatsApp, user id and display name.",
+    "why_it_survived": "$seller_privacy_leak_fix_2026_07_28 addressed exactly this disclosure and hardened FIVE TEMPLATES — card-accommodation, card-ticket, list-item, single-classified, single — then stopped. A template is one consumer of this data; the API is every other one. This is the canonical shape of a fix applied at the render layer instead of the data layer.",
+    "fix": {
+      "new_constant": "APOLLO_ADVERTS_MEMBER_ONLY_META in includes/constants.php — the READ-side counterpart to APOLLO_ADVERTS_ADMIN_ONLY_META, which had only ever guarded the WRITE boundary. That asymmetry was the whole defect.",
+      "redaction": "prepare_item() computes $is_member once, blanks member-only meta values for guests, and returns author => 0 / author_name => '' for guests.",
+      "shape_preserved_deliberately": "Values are blanked, NOT removed. A consumer reading $item['author_name'] keeps working and gets nothing, where a missing key would throw. Guests could never render identity anyway — the templates already withhold it.",
+      "not_hostel_exempt": "A hostel listing is deliberately public, but that means its title, price, image and booking URL. It never means a person's phone number."
+    },
+    "verified_clean": "SearchController::prepare_search_item() was checked and is already safe — it returns id/title/excerpt/link/image/price/location/condition/is_featured/date, with no author and no contact meta. The leak was confined to ClassifiedsController.",
+    "still_open": "GET /classifieds returns every published advert to guests regardless of hostel status. Restricting the guest SCOPE (hostel inventory only) is Phase B2 of _inventory/PLAN-outnow-and-hostel.md and is gated on an open decision. This entry closes the DISCLOSURE, not the scope.",
+    "files": [
+      "includes/constants.php",
+      "src/API/ClassifiedsController.php",
+      "apollo-adverts.php (version bump 1.1.0 -> 1.1.1)"
+    ]
+  },
+  "$moderation_setting_never_worked_2026_08_17": {
+    "date": "2026-08-17",
+    "action": "BUG_FIX",
+    "finding": "apollo_adverts_config() declared the default key 'moderate_new' => false. NOTHING reads that key. Every actual consumer asks for 'moderation' and compares it to the string 'manual': src/API/ClassifiedsController.php:181, includes/shortcodes/apollo-classified-form.php:74 and :92, templates/admin/settings.php:72-73. Both writers store 'auto'|'manual' — src/Activation.php:44 and templates/admin/settings.php:23.",
+    "effect": "On any install where the option row lacked a value, the read was an undefined-key warning evaluating to null, null is never 'manual', and every advert went straight to publish. MANUAL MODERATION COULD NOT BE SWITCHED ON.",
+    "second_bug_same_family": "templates/form.php:95 read the same setting as `(bool) $settings['moderation']`. (bool) 'auto' is TRUE, so the form promised EVERY user 'Seu anúncio será revisado antes de ser publicado' — including on the default setting where it publishes instantly. A user-facing false statement. Now compares to 'manual' and reads through apollo_adverts_config() so it inherits the default.",
+    "fix": "Defaults array now declares 'moderation' => 'auto', aligning it with both writers and all four readers. The dead 'moderate_new' key is gone.",
+    "files": [
+      "includes/functions.php",
+      "templates/form.php"
+    ]
+  }
+}

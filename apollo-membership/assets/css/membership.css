@@ -1,0 +1,432 @@
+/**
+ * Apollo Membership — Frontend Styles
+ *
+ * @package Apollo\Membership
+ */
+
+/* ═══════════════════════════════════════════════════════════════
+   BADGES
+   ═══════════════════════════════════════════════════════════════ */
+
+.apollo-membership-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 2px 8px;
+	border-radius: 12px;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+.apollo-membership-badge .dashicons {
+	font-size: 14px;
+	width: 14px;
+	height: 14px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ACHIEVEMENTS LIST
+   ═══════════════════════════════════════════════════════════════ */
+
+.apollo-achievements-list {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: 16px;
+}
+
+.apollo-achievement-item {
+	display: flex;
+	gap: 12px;
+	padding: 16px;
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	background: #fff;
+	transition: box-shadow 0.2s;
+}
+
+.apollo-achievement-item:hover {
+	box-shadow: 0 2px 8px rgba(var(--rgb-d), 0.08);
+}
+
+.apollo-achievement-item.earned {
+	border-color: #4caf50;
+	background: #f8fff8;
+}
+
+.apollo-achievement-item.not-earned {
+	opacity: 0.7;
+}
+
+.apollo-achievement-item .achievement-thumb img {
+	border-radius: 8px;
+}
+
+.apollo-achievement-item .achievement-title {
+	margin: 0 0 4px;
+	font-size: 15px;
+}
+
+.apollo-achievement-item .achievement-points {
+	display: inline-block;
+	padding: 1px 6px;
+	background: #f0f0f0;
+	border-radius: 4px;
+	font-size: 11px;
+	color: #666;
+}
+
+.apollo-achievement-item .achievement-earned-badge {
+	display: inline-block;
+	padding: 1px 6px;
+	background: #4caf50;
+	color: #fff;
+	border-radius: 4px;
+	font-size: 11px;
+	margin-top: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SINGLE ACHIEVEMENT
+   ═══════════════════════════════════════════════════════════════ */
+
+.apollo-achievement-single .achievement-header {
+	display: flex;
+	gap: 16px;
+	margin-bottom: 20px;
+}
+
+.apollo-achievement-single .achievement-steps ul {
+	list-style: none;
+	padding: 0;
+}
+
+.apollo-achievement-single .achievement-steps li {
+	padding: 6px 0;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.apollo-achievement-single .achievement-steps li.complete {
+	color: #4caf50;
+}
+
+.apollo-achievement-single .achievement-steps li.incomplete {
+	color: #999;
+}
+
+.apollo-achievement-single .earners-list {
+	display: flex;
+	gap: 4px;
+	flex-wrap: wrap;
+}
+
+.apollo-achievement-single .earner-avatar img {
+	border-radius: 50%;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   USER ACHIEVEMENTS GRID
+   ═══════════════════════════════════════════════════════════════ */
+
+.apollo-user-achievements .achievements-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+	gap: 12px;
+}
+
+.achievement-earned-item {
+	display: flex;
+	gap: 8px;
+	padding: 10px;
+	background: #fff;
+	border: 1px solid #e8e8e8;
+	border-radius: 6px;
+}
+
+.achievement-earned-item .achievement-meta {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.achievement-earned-item .achievement-title {
+	font-weight: 600;
+	font-size: 13px;
+}
+
+.achievement-earned-item .achievement-date {
+	font-size: 11px;
+	color: #888;
+}
+
+.achievement-earned-item .achievement-points {
+	font-size: 11px;
+	color: #4caf50;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   POINTS DISPLAY
+   ═══════════════════════════════════════════════════════════════ */
+
+.apollo-points-display .points-summary {
+	padding: 20px;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: #fff;
+	border-radius: 12px;
+	margin-bottom: 20px;
+}
+
+.apollo-points-display .points-total {
+	text-align: center;
+	margin-bottom: 12px;
+}
+
+.apollo-points-display .points-number {
+	display: block;
+	font-size: 42px;
+	font-weight: 700;
+	line-height: 1.1;
+}
+
+.apollo-points-display .points-label {
+	font-size: 14px;
+	opacity: 0.8;
+}
+
+.apollo-points-display .points-breakdown {
+	display: flex;
+	justify-content: center;
+	gap: 20px;
+	font-size: 13px;
+}
+
+.apollo-points-display .points-position {
+	text-align: center;
+	margin-top: 8px;
+	font-size: 13px;
+	opacity: 0.9;
+}
+
+.apollo-points-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.apollo-points-table th,
+.apollo-points-table td {
+	padding: 8px 12px;
+	text-align: left;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.apollo-points-table .type-award td:nth-child(3) {
+	color: #4caf50;
+}
+
+.apollo-points-table .type-deduct td:nth-child(3) {
+	color: #f44336;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RANKS LIST
+   ═══════════════════════════════════════════════════════════════ */
+
+.apollo-ranks-list {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.apollo-rank-item {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 16px;
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	background: #fff;
+}
+
+.apollo-rank-item.current-rank {
+	border-color: #667eea;
+	background: #f5f7ff;
+}
+
+.apollo-rank-item.locked {
+	opacity: 0.6;
+}
+
+.apollo-rank-item .rank-title {
+	margin: 0;
+	font-size: 15px;
+}
+
+.apollo-rank-item .current-badge {
+	display: inline-block;
+	padding: 1px 6px;
+	background: #667eea;
+	color: #fff;
+	border-radius: 4px;
+	font-size: 10px;
+	margin-left: 4px;
+}
+
+.apollo-rank-item .rank-progress {
+	margin-left: auto;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PROGRESS BAR (shared)
+   ═══════════════════════════════════════════════════════════════ */
+
+.progress-bar {
+	width: 120px;
+	height: 6px;
+	background: #e0e0e0;
+	border-radius: 3px;
+	overflow: hidden;
+}
+
+.progress-fill {
+	height: 100%;
+	background: linear-gradient(90deg, #667eea, #764ba2);
+	border-radius: 3px;
+	transition: width 0.3s;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LEADERBOARD
+   ═══════════════════════════════════════════════════════════════ */
+
+.apollo-leaderboard-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.apollo-leaderboard-table th,
+.apollo-leaderboard-table td {
+	padding: 10px 12px;
+	text-align: left;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.apollo-leaderboard-table tr.current-user {
+	background: #f5f7ff;
+	font-weight: 600;
+}
+
+.apollo-leaderboard-table .medal {
+	font-size: 18px;
+}
+
+.apollo-leaderboard-table .pos {
+	width: 40px;
+	text-align: center;
+}
+
+.apollo-leaderboard-table .avatar img {
+	border-radius: 50%;
+}
+
+.leaderboard-my-position {
+	text-align: center;
+	padding: 12px;
+	margin-top: 8px;
+	background: #f5f7ff;
+	border-radius: 6px;
+	font-weight: 600;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   EVIDENCE
+   ═══════════════════════════════════════════════════════════════ */
+
+.apollo-evidence {
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.apollo-evidence .evidence-header {
+	padding: 12px 16px;
+	background: #f5f5f5;
+	border-bottom: 1px solid #e0e0e0;
+}
+
+.apollo-evidence .evidence-header h3 {
+	margin: 0;
+	font-size: 14px;
+}
+
+.apollo-evidence .evidence-body {
+	padding: 16px;
+}
+
+.apollo-evidence .evidence-achievement {
+	display: flex;
+	gap: 12px;
+	margin-bottom: 12px;
+}
+
+.apollo-evidence .evidence-meta {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	font-size: 13px;
+	color: #666;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   WIDGET STYLES
+   ═══════════════════════════════════════════════════════════════ */
+
+.apollo-widget-achievements .widget-achievement-item {
+	display: flex;
+	gap: 8px;
+	padding: 6px 0;
+	border-bottom: 1px solid #f0f0f0;
+	align-items: center;
+}
+
+.apollo-widget-achievements .widget-ach-thumb img {
+	width: 24px;
+	height: 24px;
+	border-radius: 4px;
+}
+
+.apollo-widget-achievements .widget-ach-title {
+	font-size: 13px;
+}
+
+.apollo-widget-points {
+	text-align: center;
+}
+
+.apollo-widget-points .points-number {
+	display: block;
+	font-size: 28px;
+	font-weight: 700;
+	color: #667eea;
+}
+
+.apollo-widget-rank {
+	text-align: center;
+}
+
+.apollo-widget-rank .rank-thumb {
+	border-radius: 50%;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BP PROFILE WIDGET
+   ═══════════════════════════════════════════════════════════════ */
+
+.apollo-membership-profile-widget {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+	margin: 8px 0;
+}

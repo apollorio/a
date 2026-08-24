@@ -1,0 +1,819 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-coauthor",
+    "owner": "apollo-coauthor",
+    "wrap": "plugins.apollo-coauthor",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-coauthor",
+  "namespace": "Apollo\\CoAuthor",
+  "priority": 4,
+  "status": "IMPLEMENTED",
+  "description": "Co-authorship system for all Apollo CPTs — events, DJs, classifieds, docs, locals & groups. Taxonomy-based multi-author management with admin metabox, REST API, and deep WP_Query integration. Adapted from Co-Authors Plus patterns.",
+  "dependencies": [
+    "apollo-core"
+  ],
+  "provides": [
+    "coauthor-system",
+    "coauthor-management",
+    "coauthor-permissions"
+  ],
+  "cpts": [],
+  "taxonomies": [
+    "coauthor"
+  ],
+  "tables": [],
+  "meta": {
+    "post": {
+      "_coauthors": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {},
+    "term": {
+      "_guest_avatar_url": {
+        "_source": "deep_scan"
+      },
+      "_guest_description": {
+        "_source": "deep_scan"
+      },
+      "_guest_display_name": {
+        "_source": "deep_scan"
+      },
+      "_guest_first_name": {
+        "_source": "deep_scan"
+      },
+      "_guest_last_name": {
+        "_source": "deep_scan"
+      },
+      "_guest_linked_account": {
+        "_source": "deep_scan"
+      },
+      "_guest_user_email": {
+        "_source": "deep_scan"
+      },
+      "_guest_website": {
+        "_source": "deep_scan"
+      },
+      "_is_guest_author": {
+        "_source": "deep_scan"
+      }
+    }
+  },
+  "rest": [
+    {
+      "endpoint": "/",
+      "methods": [
+        "GET",
+        "PATCH",
+        "POST",
+        "PUT"
+      ],
+      "description": "Live apollo/v1 (CAPABILITY_CHECK)",
+      "auth": "CAPABILITY_CHECK",
+      "permission_risk": "LOW",
+      "permission_method": "get_items_permissions_check",
+      "permission_binding": "CoauthorController::get_items_permissions_check",
+      "permission_summary": "Requires capability: read_post",
+      "permission_capabilities": [
+        "read_post"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "$post_id = (int) $request->get_param( 'post_id' ); $post = get_post( $post_id ); if ( ! $post ) { return new WP_Error( 'apollo_coauthor_not_found', __( 'Post não encontrado.', 'apollo-coauthor' ), array( 'status' => 404 ) ); } // Public posts are readable by anyone. if ( 'publish",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_items",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/CoauthorController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (CAPABILITY_CHECK)",
+      "auth": "CAPABILITY_CHECK",
+      "permission_risk": "LOW",
+      "permission_method": "search_users_permissions_check",
+      "permission_binding": "CoauthorController::search_users_permissions_check",
+      "permission_summary": "Requires capability: edit_posts",
+      "permission_capabilities": [
+        "edit_posts"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "if ( ! current_user_can( 'edit_posts' ) ) { return new WP_Error( 'apollo_coauthor_forbidden', __( 'Sem permissão.', 'apollo-coauthor' ), array( 'status' => 403 ) ); } return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "search_users",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/CoauthorController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/coauthors/bulk",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (CAPABILITY_CHECK)",
+      "auth": "CAPABILITY_CHECK",
+      "permission_risk": "LOW",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Requires capability: edit_others_posts",
+      "permission_capabilities": [
+        "edit_others_posts"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can( 'edit_others_posts' );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_bulk_update",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Components/BulkEdit.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "pages": [],
+  "shortcodes": [
+    {
+      "tag": "apollo_coauthor_count",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_coauthors",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "version": "1.0.1",
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [
+    "apollo/coauthor/activated",
+    "apollo/coauthor/added",
+    "apollo/coauthor/append_byline",
+    "apollo/coauthor/can_add",
+    "apollo/coauthor/cleared",
+    "apollo/coauthor/comment_approved",
+    "apollo/coauthor/count_post_types",
+    "apollo/coauthor/deactivated",
+    "apollo/coauthor/display_format",
+    "apollo/coauthor/guest_created",
+    "apollo/coauthor/guest_saved",
+    "apollo/coauthor/names_separator",
+    "apollo/coauthor/removed",
+    "apollo/coauthor/supported_post_types",
+    "apollo/coauthor/updated"
+  ],
+  "hooks_listened": [
+    "apollo/coauthor/search_results",
+    "apollo_core_register_meta"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [
+      "apollo-coauthor-admin",
+      "select2"
+    ],
+    "styles": [
+      "select2"
+    ]
+  },
+  "options": [
+    "apollo_coauthor_keep_data",
+    "apollo_coauthor_settings",
+    "apollo_coauthor_version"
+  ],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 10,
+    "abspath_coverage_pct": 94,
+    "rest_open_routes": 0,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 0,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 3,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 0.5
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_coauthor_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [],
+  "query_vars": [],
+  "php_surface": {
+    "files": 18,
+    "loc": 3707,
+    "classes": 14,
+    "functions": 11
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:47.675Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 86,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-coauthor",
+    "main_file": "apollo-coauthor.php",
+    "plugin_header": {
+      "plugin_name": "Apollo CoAuthor",
+      "plugin_uri": "https://apollo.rio.br",
+      "description": "Co-authorship system for all Apollo CPTs — events, DJs, classifieds, docs, locals & groups. Taxonomy-based multi-author management with admin metabox, REST API, and deep WP_Query integration. Adapted from Co-Authors Plus patterns.",
+      "version": "1.0.1",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "Proprietary",
+      "text_domain": "apollo-coauthor",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": null
+    },
+    "composer": {
+      "name": "apollo/coauthor",
+      "namespaces": [
+        "Apollo\\CoAuthor"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 18,
+        ".js": 1,
+        ".json": 1,
+        ".md": 1,
+        ".ffs_db": 1
+      },
+      "by_top_directory": {
+        "(root)": 5,
+        "assets": 1,
+        "includes": 2,
+        "src": 14
+      },
+      "total_bytes": 113077
+    },
+    "php": {
+      "files": 18,
+      "loc": 3707,
+      "classes": 14,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 11
+    },
+    "architecture": {
+      "namespace": "Apollo\\CoAuthor",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\CoAuthor\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "CoauthorController",
+          "fqcn": "Apollo\\CoAuthor\\API\\CoauthorController",
+          "extends": "WP_REST_Controller",
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/CoauthorController.php"
+        },
+        {
+          "kind": "class",
+          "name": "BulkEdit",
+          "fqcn": "Apollo\\CoAuthor\\Components\\BulkEdit",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Components/BulkEdit.php"
+        },
+        {
+          "kind": "class",
+          "name": "CoauthorIterator",
+          "fqcn": "Apollo\\CoAuthor\\Components\\CoauthorIterator",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Components/CoauthorIterator.php"
+        },
+        {
+          "kind": "class",
+          "name": "ContentFilter",
+          "fqcn": "Apollo\\CoAuthor\\Components\\ContentFilter",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Components/ContentFilter.php"
+        },
+        {
+          "kind": "class",
+          "name": "GuestAuthors",
+          "fqcn": "Apollo\\CoAuthor\\Components\\GuestAuthors",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Components/GuestAuthors.php"
+        },
+        {
+          "kind": "class",
+          "name": "MetaBox",
+          "fqcn": "Apollo\\CoAuthor\\Components\\MetaBox",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Components/MetaBox.php"
+        },
+        {
+          "kind": "class",
+          "name": "NotifyCoauthors",
+          "fqcn": "Apollo\\CoAuthor\\Components\\NotifyCoauthors",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Components/NotifyCoauthors.php"
+        },
+        {
+          "kind": "class",
+          "name": "QueryIntegration",
+          "fqcn": "Apollo\\CoAuthor\\Components\\QueryIntegration",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Components/QueryIntegration.php"
+        },
+        {
+          "kind": "class",
+          "name": "Shortcodes",
+          "fqcn": "Apollo\\CoAuthor\\Components\\Shortcodes",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Components/Shortcodes.php"
+        },
+        {
+          "kind": "class",
+          "name": "Taxonomy",
+          "fqcn": "Apollo\\CoAuthor\\Components\\Taxonomy",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Components/Taxonomy.php"
+        },
+        {
+          "kind": "class",
+          "name": "UserPostCount",
+          "fqcn": "Apollo\\CoAuthor\\Components\\UserPostCount",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Components/UserPostCount.php"
+        },
+        {
+          "kind": "class",
+          "name": "Deactivation",
+          "fqcn": "Apollo\\CoAuthor\\Deactivation",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Deactivation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\CoAuthor\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_coauthor_check_dependencies",
+          "file": "apollo-coauthor.php"
+        },
+        {
+          "name": "apollo_coauthor_init",
+          "file": "apollo-coauthor.php"
+        },
+        {
+          "name": "apollo_coauthor",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_set_coauthors",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_coauthors",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_add_coauthor",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_remove_coauthor",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_is_coauthor",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_coauthor_posts",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_coauthor_get_supported_post_types",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_coauthor_count",
+          "file": "includes/functions.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 3,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "GET",
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "permission": {
+            "class": "CAPABILITY_CHECK",
+            "risk": "LOW",
+            "method": "get_items_permissions_check",
+            "target": "CoauthorController",
+            "analysis": {
+              "effective_class": "CAPABILITY_CHECK",
+              "risk": "LOW",
+              "summary": "Requires capability: read_post",
+              "capabilities": [
+                "read_post"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "new WP_Error( 'apollo_coauthor_not_found', __( 'Post não encontrado.', 'apollo-coauthor' ), array( '",
+                  "true",
+                  "new WP_Error( 'apollo_coauthor_forbidden', __( 'Sem permissão para ler co-autores deste post.', 'apo",
+                  "true"
+                ]
+              },
+              "body_preview": "$post_id = (int) $request->get_param( 'post_id' ); $post = get_post( $post_id ); if ( ! $post ) { return new WP_Error( 'apollo_coauthor_not_found', __( 'Post não encontrado.', 'apollo-coauthor' ), array( 'status' => 404 ) ); } // Public posts are readable by anyone. if ( 'publish",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "CoauthorController::get_items_permissions_check",
+              "method_file": "src/API/CoauthorController.php",
+              "method_signature": "$request"
+            }
+          },
+          "callback": "get_items",
+          "file": "src/API/CoauthorController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "CAPABILITY_CHECK",
+            "risk": "LOW",
+            "method": "search_users_permissions_check",
+            "target": "CoauthorController",
+            "analysis": {
+              "effective_class": "CAPABILITY_CHECK",
+              "risk": "LOW",
+              "summary": "Requires capability: edit_posts",
+              "capabilities": [
+                "edit_posts"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "new WP_Error( 'apollo_coauthor_forbidden', __( 'Sem permissão.', 'apollo-coauthor' ), array( 'status",
+                  "true"
+                ]
+              },
+              "body_preview": "if ( ! current_user_can( 'edit_posts' ) ) { return new WP_Error( 'apollo_coauthor_forbidden', __( 'Sem permissão.', 'apollo-coauthor' ), array( 'status' => 403 ) ); } return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "CoauthorController::search_users_permissions_check",
+              "method_file": "src/API/CoauthorController.php",
+              "method_signature": "$request"
+            }
+          },
+          "callback": "search_users",
+          "file": "src/API/CoauthorController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/coauthors/bulk",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "CAPABILITY_CHECK",
+            "risk": "LOW",
+            "method": null,
+            "analysis": {
+              "effective_class": "CAPABILITY_CHECK",
+              "risk": "LOW",
+              "summary": "Requires capability: edit_others_posts",
+              "capabilities": [
+                "edit_others_posts"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can( 'edit_others_posts' )"
+                ]
+              },
+              "body_preview": "return current_user_can( 'edit_others_posts' );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_bulk_update",
+          "file": "src/Components/BulkEdit.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 0,
+        "MEDIUM": 0,
+        "LOW": 3,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "CAPABILITY_CHECK": 3
+      },
+      "permission_body_resolved": 3,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [],
+      "admin_cap_routes": [],
+      "logged_in_routes": []
+    },
+    "database": {
+      "tables_owned_or_defined": [],
+      "tables_referenced": [
+        "apollo_coauthor_settings"
+      ],
+      "tables_for_registry": [],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_coauthor_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 1,
+      "user_count": 0,
+      "term_count": 9,
+      "post_keys": [
+        "_coauthors"
+      ],
+      "user_keys": [],
+      "term_keys": [
+        "_guest_avatar_url",
+        "_guest_description",
+        "_guest_display_name",
+        "_guest_first_name",
+        "_guest_last_name",
+        "_guest_linked_account",
+        "_guest_user_email",
+        "_guest_website",
+        "_is_guest_author"
+      ],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [],
+      "query_vars": [],
+      "pages_derived": []
+    },
+    "cpts": [],
+    "taxonomies": [
+      {
+        "slug": "coauthor",
+        "registered_locally": false,
+        "via_constant": true
+      }
+    ],
+    "hooks": {
+      "fired_count": 15,
+      "listened_count": 25,
+      "apollo_fired": [
+        "apollo/coauthor/activated",
+        "apollo/coauthor/added",
+        "apollo/coauthor/append_byline",
+        "apollo/coauthor/can_add",
+        "apollo/coauthor/cleared",
+        "apollo/coauthor/comment_approved",
+        "apollo/coauthor/count_post_types",
+        "apollo/coauthor/deactivated",
+        "apollo/coauthor/display_format",
+        "apollo/coauthor/guest_created",
+        "apollo/coauthor/guest_saved",
+        "apollo/coauthor/names_separator",
+        "apollo/coauthor/removed",
+        "apollo/coauthor/supported_post_types",
+        "apollo/coauthor/updated"
+      ],
+      "apollo_listened": [
+        "apollo/coauthor/search_results",
+        "apollo_core_register_meta"
+      ],
+      "critical_wp_listened": [
+        "admin_init",
+        "admin_menu",
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "save_post"
+      ]
+    },
+    "ajax": {
+      "priv": [],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [
+      "apollo_coauthor_count",
+      "apollo_coauthors"
+    ],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [
+        "apollo-coauthor-admin",
+        "select2"
+      ],
+      "styles": [
+        "select2"
+      ]
+    },
+    "options": [
+      "apollo_coauthor_keep_data",
+      "apollo_coauthor_settings",
+      "apollo_coauthor_version"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_COAUTHOR_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_COAUTHOR_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_COAUTHOR_DIR",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_COAUTHOR_URL",
+        "value": "plugin_dir_url( __FILE__"
+      },
+      {
+        "name": "APOLLO_COAUTHOR_BASENAME",
+        "value": "plugin_basename( __FILE__"
+      },
+      {
+        "name": "APOLLO_COAUTHOR_REST_NAMESPACE",
+        "value": "apollo/v1"
+      },
+      {
+        "name": "APOLLO_COAUTHOR_TAX",
+        "value": "coauthor"
+      },
+      {
+        "name": "APOLLO_COAUTHOR_POST_TYPES",
+        "value": "array( 'event', 'dj', 'classified', 'doc', 'loc', "
+      },
+      {
+        "name": "APOLLO_COAUTHOR_META_KEY",
+        "value": "_coauthors"
+      },
+      {
+        "name": "APOLLO_COAUTHOR_CACHE_GROUP",
+        "value": "apollo_coauthor"
+      }
+    ],
+    "security": {
+      "php_files": 18,
+      "abspath_guard_files": 17,
+      "abspath_coverage_pct": 94,
+      "wpdb_prepare_calls": 1,
+      "wpdb_query_calls": 2,
+      "prepare_to_query_ratio": 0.5,
+      "nonce_checks": 8,
+      "current_user_can_calls": 12,
+      "raw_superglobal": {
+        "get": 13,
+        "post": 12,
+        "request": 8
+      },
+      "permission_callback_return_true": 0,
+      "escape_helpers": 46,
+      "echo_statements": 62,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 10,
+      "risk_band": "LOW",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 0,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 0
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core"
+      ],
+      "signals": [
+        "apollo-core"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.0.1",
+      "version_changed": false,
+      "old_rest": 1,
+      "live_rest": 3,
+      "old_pages": 0,
+      "live_pages": 0,
+      "new_plugin": false
+    }
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 18,
+    "php_loc": 3689,
+    "rest_routes_found": 2,
+    "cpts_found": [],
+    "tables_found": [],
+    "shortcodes_found": [
+      "apollo_coauthor_count",
+      "apollo_coauthors"
+    ]
+  }
+}

@@ -1,0 +1,2845 @@
+{
+  "generated": "2026-07-20",
+  "summary": {
+    "total_plugins": 45,
+    "total_cpts_unique": 14,
+    "total_taxonomies_unique": 12,
+    "total_tables_unique": 78,
+    "total_meta_keys_unique": 492,
+    "total_rest_endpoints": 352,
+    "total_rest_open_high_risk": 102,
+    "total_pages": 92,
+    "total_shortcodes": 151,
+    "total_php_loc_audited": 254993,
+    "total_classes_audited": 559,
+    "status_breakdown": {
+      "IMPLEMENTED": 39,
+      "DEPRECATED": 2,
+      "LOCKED_NEXT_VERSION": 2,
+      "PLANNED": 2
+    },
+    "deep_audited": 39,
+    "security_high_risk_plugins": [
+      "apollo-events",
+      "apollo-login",
+      "apollo-membership"
+    ],
+    "security_medium_risk_plugins": [
+      "apollo-templates",
+      "apollo-users",
+      "apollo-wow",
+      "apollo-adverts",
+      "apollo-chat",
+      "apollo-core",
+      "apollo-djs",
+      "apollo-dj-sync",
+      "apollo-email",
+      "apollo-hub",
+      "apollo-loc",
+      "apollo-mod",
+      "apollo-radio",
+      "apollo-remind",
+      "apollo-sheets"
+    ],
+    "plugins_new_vs_old_registry": [
+      "apollo-calendar",
+      "apollo-elementor-pro",
+      "apollo-telegram"
+    ],
+    "plugins_version_changed": [
+      {
+        "slug": "apollo-chat",
+        "from": "2.0.0",
+        "to": "2.0.1"
+      },
+      {
+        "slug": "apollo-dj-sync",
+        "from": "1.0.0",
+        "to": "1.0.1"
+      },
+      {
+        "slug": "apollo-docs",
+        "from": "1.0.0",
+        "to": "1.0.1"
+      },
+      {
+        "slug": "apollo-elementor",
+        "from": "1.0.0",
+        "to": "1.0.1"
+      },
+      {
+        "slug": "apollo-gestor",
+        "from": "1.0.0",
+        "to": "1.0.1"
+      },
+      {
+        "slug": "apollo-pane-engine",
+        "from": "2.0.0",
+        "to": "2.0.1"
+      },
+      {
+        "slug": "apollo-radio",
+        "from": "1.0.0",
+        "to": "1.0.1"
+      },
+      {
+        "slug": "apollo-remind",
+        "from": "1.0.0",
+        "to": "1.0.1"
+      },
+      {
+        "slug": "apollo-scheduler",
+        "from": "1.0.0",
+        "to": "1.0.1"
+      },
+      {
+        "slug": "apollo-sign",
+        "from": "1.2.0",
+        "to": "1.2.1"
+      },
+      {
+        "slug": "apollo-statistics",
+        "from": "2.0.0",
+        "to": "2.0.6"
+      }
+    ],
+    "target_audit_count": 39,
+    "completion_percentage": "87%",
+    "registry_version": "6.6.1",
+    "last_updated": "2026-07-20",
+    "last_deep_investigation": "2026-07-20",
+    "audit_mode": "DEEP_TECHNICAL_STATIC_ANALYSIS",
+    "note": "Deep PHP tree scan is SSOT for audited plugins. pages/meta/rest enriched from live code; narrative-only fields may remain from prior registry clone."
+  },
+  "reports": [
+    {
+      "slug": "apollo-admin",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.2",
+      "namespace": "Apollo\\Admin",
+      "php_files": 123,
+      "php_loc": 16062,
+      "classes": 28,
+      "rest": 18,
+      "rest_open": 0,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 0,
+      "perm_resolved": 18,
+      "perm_unresolved": 0,
+      "tables": 0,
+      "tables_defined": 0,
+      "table_schemas_with_columns": 0,
+      "meta_post": 20,
+      "meta_user": 3,
+      "rewrites": 4,
+      "pages": 4,
+      "shortcodes": 0,
+      "ajax_priv": 4,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "LOW",
+      "security_score": 10,
+      "abspath_pct": 99,
+      "deps": [
+        "apollo-adverts",
+        "apollo-chat",
+        "apollo-coauthor",
+        "apollo-comment",
+        "apollo-core",
+        "apollo-dashboard",
+        "apollo-djs",
+        "apollo-docs",
+        "apollo-email",
+        "apollo-events",
+        "apollo-fav",
+        "apollo-groups",
+        "apollo-hub",
+        "apollo-loc",
+        "apollo-login",
+        "apollo-membership",
+        "apollo-mod",
+        "apollo-notif",
+        "apollo-seo",
+        "apollo-social",
+        "apollo-statistics",
+        "apollo-templates",
+        "apollo-users",
+        "apollo-wow"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 110
+    },
+    {
+      "slug": "apollo-adverts",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.2",
+      "namespace": "Apollo\\Adverts",
+      "php_files": 52,
+      "php_loc": 10925,
+      "classes": 13,
+      "rest": 5,
+      "rest_open": 3,
+      "rest_critical": 2,
+      "rest_open_non_intentional": 3,
+      "perm_resolved": 5,
+      "perm_unresolved": 0,
+      "tables": 0,
+      "tables_defined": 0,
+      "table_schemas_with_columns": 0,
+      "meta_post": 26,
+      "meta_user": 1,
+      "rewrites": 3,
+      "pages": 3,
+      "shortcodes": 6,
+      "ajax_priv": 7,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "MEDIUM",
+      "security_score": 38,
+      "abspath_pct": 98,
+      "deps": [
+        "apollo-admin",
+        "apollo-chat",
+        "apollo-core",
+        "apollo-dashboard",
+        "apollo-fav",
+        "apollo-login",
+        "apollo-notif",
+        "apollo-social",
+        "apollo-templates",
+        "apollo-wow"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 67
+    },
+    {
+      "slug": "apollo-calendar",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Calendar",
+      "php_files": 16,
+      "php_loc": 2883,
+      "classes": 12,
+      "rest": 5,
+      "rest_open": 1,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 1,
+      "perm_resolved": 1,
+      "perm_unresolved": 4,
+      "tables": 0,
+      "tables_defined": 0,
+      "table_schemas_with_columns": 0,
+      "meta_post": 8,
+      "meta_user": 2,
+      "rewrites": 1,
+      "pages": 1,
+      "shortcodes": 0,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 1,
+      "security_risk": "LOW",
+      "security_score": 15,
+      "abspath_pct": 94,
+      "deps": [
+        "apollo-core",
+        "apollo-remind"
+      ],
+      "new_plugin": true,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 22
+    },
+    {
+      "slug": "apollo-chat",
+      "status": "DEEP_AUDITED",
+      "version": "2.0.1",
+      "namespace": "Apollo\\Chat",
+      "php_files": 9,
+      "php_loc": 4272,
+      "classes": 3,
+      "rest": 29,
+      "rest_open": 0,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 0,
+      "perm_resolved": 2,
+      "perm_unresolved": 27,
+      "tables": 9,
+      "tables_defined": 9,
+      "table_schemas_with_columns": 9,
+      "meta_post": 0,
+      "meta_user": 1,
+      "rewrites": 2,
+      "pages": 2,
+      "shortcodes": 0,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "MEDIUM",
+      "security_score": 30,
+      "abspath_pct": 89,
+      "deps": [
+        "apollo-core",
+        "apollo-notif",
+        "apollo-users"
+      ],
+      "new_plugin": false,
+      "version_changed": true,
+      "old_version": "2.0.0",
+      "duration_ms": 33
+    },
+    {
+      "slug": "apollo-coauthor",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\CoAuthor",
+      "php_files": 18,
+      "php_loc": 3707,
+      "classes": 14,
+      "rest": 3,
+      "rest_open": 0,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 0,
+      "perm_resolved": 3,
+      "perm_unresolved": 0,
+      "tables": 0,
+      "tables_defined": 0,
+      "table_schemas_with_columns": 0,
+      "meta_post": 1,
+      "meta_user": 0,
+      "rewrites": 0,
+      "pages": 0,
+      "shortcodes": 2,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "LOW",
+      "security_score": 10,
+      "abspath_pct": 94,
+      "deps": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 20
+    },
+    {
+      "slug": "apollo-comment",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Comment",
+      "php_files": 10,
+      "php_loc": 1659,
+      "classes": 6,
+      "rest": 2,
+      "rest_open": 2,
+      "rest_critical": 2,
+      "rest_open_non_intentional": 2,
+      "perm_resolved": 2,
+      "perm_unresolved": 0,
+      "tables": 0,
+      "tables_defined": 0,
+      "table_schemas_with_columns": 0,
+      "meta_post": 0,
+      "meta_user": 0,
+      "rewrites": 0,
+      "pages": 0,
+      "shortcodes": 2,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "LOW",
+      "security_score": 22,
+      "abspath_pct": 90,
+      "deps": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 11
+    },
+    {
+      "slug": "apollo-core",
+      "status": "DEEP_AUDITED",
+      "version": "6.2.3",
+      "namespace": "Apollo\\Core",
+      "php_files": 63,
+      "php_loc": 18781,
+      "classes": 39,
+      "rest": 19,
+      "rest_open": 11,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 10,
+      "perm_resolved": 19,
+      "perm_unresolved": 0,
+      "tables": 23,
+      "tables_defined": 23,
+      "table_schemas_with_columns": 22,
+      "meta_post": 99,
+      "meta_user": 39,
+      "rewrites": 1,
+      "pages": 1,
+      "shortcodes": 0,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 1,
+      "security_risk": "MEDIUM",
+      "security_score": 35,
+      "abspath_pct": 98,
+      "deps": [
+        "apollo-admin",
+        "apollo-adverts",
+        "apollo-calendar",
+        "apollo-chat",
+        "apollo-coauthor",
+        "apollo-comment",
+        "apollo-dashboard",
+        "apollo-djs",
+        "apollo-docs",
+        "apollo-email",
+        "apollo-events",
+        "apollo-fav",
+        "apollo-gestor",
+        "apollo-groups",
+        "apollo-hub",
+        "apollo-journal",
+        "apollo-loc",
+        "apollo-login",
+        "apollo-membership",
+        "apollo-mod",
+        "apollo-notif",
+        "apollo-pane-engine",
+        "apollo-scheduler",
+        "apollo-seo",
+        "apollo-sheets",
+        "apollo-sign",
+        "apollo-social",
+        "apollo-statistics",
+        "apollo-templates",
+        "apollo-users",
+        "apollo-wow"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 85
+    },
+    {
+      "slug": "apollo-dashboard",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Dashboard",
+      "php_files": 16,
+      "php_loc": 4358,
+      "classes": 3,
+      "rest": 4,
+      "rest_open": 1,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 1,
+      "perm_resolved": 4,
+      "perm_unresolved": 0,
+      "tables": 5,
+      "tables_defined": 5,
+      "table_schemas_with_columns": 0,
+      "meta_post": 2,
+      "meta_user": 12,
+      "rewrites": 5,
+      "pages": 5,
+      "shortcodes": 2,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "LOW",
+      "security_score": 3,
+      "abspath_pct": 94,
+      "deps": [
+        "apollo-core",
+        "apollo-groups",
+        "apollo-templates",
+        "apollo-users"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 22
+    },
+    {
+      "slug": "apollo-dj-sync",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\DJSync",
+      "php_files": 5,
+      "php_loc": 765,
+      "classes": 3,
+      "rest": 1,
+      "rest_open": 0,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 0,
+      "perm_resolved": 1,
+      "perm_unresolved": 0,
+      "tables": 0,
+      "tables_defined": 0,
+      "table_schemas_with_columns": 0,
+      "meta_post": 0,
+      "meta_user": 0,
+      "rewrites": 0,
+      "pages": 0,
+      "shortcodes": 0,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "MEDIUM",
+      "security_score": 28,
+      "abspath_pct": 80,
+      "deps": [
+        "apollo-core",
+        "apollo-login",
+        "apollo-users"
+      ],
+      "new_plugin": false,
+      "version_changed": true,
+      "old_version": "1.0.0",
+      "duration_ms": 11
+    },
+    {
+      "slug": "apollo-djs",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\DJs",
+      "php_files": 45,
+      "php_loc": 6112,
+      "classes": 10,
+      "rest": 5,
+      "rest_open": 5,
+      "rest_critical": 2,
+      "rest_open_non_intentional": 5,
+      "perm_resolved": 5,
+      "perm_unresolved": 0,
+      "tables": 0,
+      "tables_defined": 0,
+      "table_schemas_with_columns": 0,
+      "meta_post": 29,
+      "meta_user": 0,
+      "rewrites": 0,
+      "pages": 0,
+      "shortcodes": 4,
+      "ajax_priv": 1,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "MEDIUM",
+      "security_score": 31,
+      "abspath_pct": 98,
+      "deps": [
+        "apollo-comment",
+        "apollo-core",
+        "apollo-dashboard",
+        "apollo-events",
+        "apollo-fav",
+        "apollo-statistics",
+        "apollo-templates",
+        "apollo-wow"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 37
+    },
+    {
+      "slug": "apollo-docs",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Docs",
+      "php_files": 13,
+      "php_loc": 2709,
+      "classes": 9,
+      "rest": 4,
+      "rest_open": 0,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 0,
+      "perm_resolved": 4,
+      "perm_unresolved": 0,
+      "tables": 2,
+      "tables_defined": 2,
+      "table_schemas_with_columns": 0,
+      "meta_post": 9,
+      "meta_user": 1,
+      "rewrites": 1,
+      "pages": 1,
+      "shortcodes": 0,
+      "ajax_priv": 1,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "LOW",
+      "security_score": 10,
+      "abspath_pct": 92,
+      "deps": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": true,
+      "old_version": "1.0.0",
+      "duration_ms": 23
+    },
+    {
+      "slug": "apollo-elementor",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\ElementorAE",
+      "php_files": 48,
+      "php_loc": 3862,
+      "classes": 26,
+      "rest": 0,
+      "rest_open": 0,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 0,
+      "perm_resolved": 0,
+      "perm_unresolved": 0,
+      "tables": 0,
+      "tables_defined": 0,
+      "table_schemas_with_columns": 0,
+      "meta_post": 16,
+      "meta_user": 8,
+      "rewrites": 0,
+      "pages": 0,
+      "shortcodes": 0,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "LOW",
+      "security_score": 0,
+      "abspath_pct": 98,
+      "deps": [
+        "apollo-core",
+        "elementor"
+      ],
+      "new_plugin": false,
+      "version_changed": true,
+      "old_version": "1.0.0",
+      "duration_ms": 39
+    },
+    {
+      "slug": "apollo-elementor-pro",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Elementor",
+      "php_files": 23,
+      "php_loc": 1712,
+      "classes": 21,
+      "rest": 0,
+      "rest_open": 0,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 0,
+      "perm_resolved": 0,
+      "perm_unresolved": 0,
+      "tables": 0,
+      "tables_defined": 0,
+      "table_schemas_with_columns": 0,
+      "meta_post": 2,
+      "meta_user": 3,
+      "rewrites": 0,
+      "pages": 0,
+      "shortcodes": 0,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "LOW",
+      "security_score": 0,
+      "abspath_pct": 96,
+      "deps": [
+        "apollo-core",
+        "apollo-elementor",
+        "apollo-events",
+        "apollo-fav",
+        "apollo-hub",
+        "apollo-membership",
+        "apollo-wow"
+      ],
+      "new_plugin": true,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 17
+    },
+    {
+      "slug": "apollo-email",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Email",
+      "php_files": 46,
+      "php_loc": 10797,
+      "classes": 19,
+      "rest": 16,
+      "rest_open": 3,
+      "rest_critical": 1,
+      "rest_open_non_intentional": 3,
+      "perm_resolved": 16,
+      "perm_unresolved": 0,
+      "tables": 4,
+      "tables_defined": 4,
+      "table_schemas_with_columns": 3,
+      "meta_post": 6,
+      "meta_user": 8,
+      "rewrites": 0,
+      "pages": 0,
+      "shortcodes": 2,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 1,
+      "security_risk": "MEDIUM",
+      "security_score": 42,
+      "abspath_pct": 76,
+      "deps": [
+        "apollo-admin",
+        "apollo-core",
+        "apollo-events",
+        "apollo-gestor",
+        "apollo-login",
+        "apollo-membership",
+        "apollo-users"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 97
+    },
+    {
+      "slug": "apollo-events",
+      "status": "DEEP_AUDITED",
+      "version": "1.4.0",
+      "namespace": "Apollo\\Event",
+      "php_files": 94,
+      "php_loc": 16930,
+      "classes": 14,
+      "rest": 24,
+      "rest_open": 12,
+      "rest_critical": 3,
+      "rest_open_non_intentional": 12,
+      "perm_resolved": 24,
+      "perm_unresolved": 0,
+      "tables": 1,
+      "tables_defined": 1,
+      "table_schemas_with_columns": 0,
+      "meta_post": 76,
+      "meta_user": 1,
+      "rewrites": 6,
+      "pages": 6,
+      "shortcodes": 6,
+      "ajax_priv": 1,
+      "ajax_nopriv": 0,
+      "cron": 1,
+      "security_risk": "HIGH",
+      "security_score": 69,
+      "abspath_pct": 98,
+      "deps": [
+        "apollo-coauthor",
+        "apollo-core",
+        "apollo-fav",
+        "apollo-loc",
+        "apollo-mod",
+        "apollo-social",
+        "apollo-statistics",
+        "apollo-wow"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 152
+    },
+    {
+      "slug": "apollo-fav",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Fav",
+      "php_files": 11,
+      "php_loc": 3988,
+      "classes": 8,
+      "rest": 4,
+      "rest_open": 1,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 1,
+      "perm_resolved": 4,
+      "perm_unresolved": 0,
+      "tables": 3,
+      "tables_defined": 3,
+      "table_schemas_with_columns": 0,
+      "meta_post": 9,
+      "meta_user": 4,
+      "rewrites": 0,
+      "pages": 0,
+      "shortcodes": 5,
+      "ajax_priv": 6,
+      "ajax_nopriv": 2,
+      "cron": 1,
+      "security_risk": "LOW",
+      "security_score": 3,
+      "abspath_pct": 91,
+      "deps": [
+        "apollo-core",
+        "apollo-dashboard",
+        "apollo-events",
+        "apollo-login",
+        "apollo-notif",
+        "apollo-social",
+        "apollo-statistics",
+        "apollo-users"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 33
+    },
+    {
+      "slug": "apollo-gestor",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Gestor",
+      "php_files": 46,
+      "php_loc": 6890,
+      "classes": 24,
+      "rest": 0,
+      "rest_open": 0,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 0,
+      "perm_resolved": 0,
+      "perm_unresolved": 0,
+      "tables": 8,
+      "tables_defined": 8,
+      "table_schemas_with_columns": 0,
+      "meta_post": 10,
+      "meta_user": 1,
+      "rewrites": 0,
+      "pages": 0,
+      "shortcodes": 0,
+      "ajax_priv": 2,
+      "ajax_nopriv": 0,
+      "cron": 1,
+      "security_risk": "LOW",
+      "security_score": 0,
+      "abspath_pct": 98,
+      "deps": [
+        "apollo-core",
+        "apollo-email"
+      ],
+      "new_plugin": false,
+      "version_changed": true,
+      "old_version": "1.0.0",
+      "duration_ms": 54
+    },
+    {
+      "slug": "apollo-groups",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Groups",
+      "php_files": 43,
+      "php_loc": 5712,
+      "classes": 4,
+      "rest": 24,
+      "rest_open": 0,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 0,
+      "perm_resolved": 1,
+      "perm_unresolved": 23,
+      "tables": 6,
+      "tables_defined": 6,
+      "table_schemas_with_columns": 4,
+      "meta_post": 0,
+      "meta_user": 1,
+      "rewrites": 5,
+      "pages": 5,
+      "shortcodes": 5,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "LOW",
+      "security_score": 15,
+      "abspath_pct": 98,
+      "deps": [
+        "apollo-core",
+        "apollo-mod",
+        "apollo-templates",
+        "apollo-users"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 43
+    },
+    {
+      "slug": "apollo-hub",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Hub",
+      "php_files": 31,
+      "php_loc": 4970,
+      "classes": 11,
+      "rest": 6,
+      "rest_open": 5,
+      "rest_critical": 3,
+      "rest_open_non_intentional": 5,
+      "perm_resolved": 6,
+      "perm_unresolved": 0,
+      "tables": 0,
+      "tables_defined": 0,
+      "table_schemas_with_columns": 0,
+      "meta_post": 11,
+      "meta_user": 3,
+      "rewrites": 2,
+      "pages": 2,
+      "shortcodes": 2,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "MEDIUM",
+      "security_score": 39,
+      "abspath_pct": 97,
+      "deps": [
+        "apollo-admin",
+        "apollo-core",
+        "apollo-events",
+        "apollo-login",
+        "apollo-maps",
+        "apollo-social",
+        "apollo-users"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 34
+    },
+    {
+      "slug": "apollo-journal",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Journal",
+      "php_files": 16,
+      "php_loc": 4517,
+      "classes": 7,
+      "rest": 3,
+      "rest_open": 3,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 3,
+      "perm_resolved": 3,
+      "perm_unresolved": 0,
+      "tables": 0,
+      "tables_defined": 0,
+      "table_schemas_with_columns": 0,
+      "meta_post": 8,
+      "meta_user": 0,
+      "rewrites": 1,
+      "pages": 1,
+      "shortcodes": 5,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 1,
+      "security_risk": "LOW",
+      "security_score": 9,
+      "abspath_pct": 94,
+      "deps": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 24
+    },
+    {
+      "slug": "apollo-loc",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Local",
+      "php_files": 63,
+      "php_loc": 8755,
+      "classes": 39,
+      "rest": 3,
+      "rest_open": 3,
+      "rest_critical": 2,
+      "rest_open_non_intentional": 3,
+      "perm_resolved": 3,
+      "perm_unresolved": 0,
+      "tables": 0,
+      "tables_defined": 0,
+      "table_schemas_with_columns": 0,
+      "meta_post": 28,
+      "meta_user": 0,
+      "rewrites": 0,
+      "pages": 0,
+      "shortcodes": 4,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "MEDIUM",
+      "security_score": 44,
+      "abspath_pct": 98,
+      "deps": [
+        "apollo-comment",
+        "apollo-core",
+        "apollo-fav",
+        "apollo-social",
+        "apollo-templates",
+        "apollo-wow"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 55
+    },
+    {
+      "slug": "apollo-login",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.41",
+      "namespace": "Apollo\\Login",
+      "php_files": 53,
+      "php_loc": 14933,
+      "classes": 23,
+      "rest": 26,
+      "rest_open": 16,
+      "rest_critical": 11,
+      "rest_open_non_intentional": 0,
+      "perm_resolved": 26,
+      "perm_unresolved": 0,
+      "tables": 0,
+      "tables_defined": 0,
+      "table_schemas_with_columns": 0,
+      "meta_post": 18,
+      "meta_user": 26,
+      "rewrites": 6,
+      "pages": 6,
+      "shortcodes": 6,
+      "ajax_priv": 20,
+      "ajax_nopriv": 8,
+      "cron": 0,
+      "security_risk": "HIGH",
+      "security_score": 75,
+      "abspath_pct": 92,
+      "deps": [
+        "apollo-chat",
+        "apollo-core",
+        "apollo-email",
+        "apollo-loc",
+        "apollo-membership",
+        "apollo-social",
+        "apollo-telegram",
+        "apollo-templates"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 93
+    },
+    {
+      "slug": "apollo-maps",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Maps",
+      "php_files": 9,
+      "php_loc": 792,
+      "classes": 5,
+      "rest": 1,
+      "rest_open": 1,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 1,
+      "perm_resolved": 1,
+      "perm_unresolved": 0,
+      "tables": 0,
+      "tables_defined": 0,
+      "table_schemas_with_columns": 0,
+      "meta_post": 6,
+      "meta_user": 0,
+      "rewrites": 0,
+      "pages": 0,
+      "shortcodes": 1,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "LOW",
+      "security_score": 18,
+      "abspath_pct": 89,
+      "deps": [
+        "apollo-core",
+        "apollo-loc"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 6
+    },
+    {
+      "slug": "apollo-membership",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.3",
+      "namespace": "Apollo\\Membership",
+      "php_files": 42,
+      "php_loc": 7989,
+      "classes": 12,
+      "rest": 23,
+      "rest_open": 11,
+      "rest_critical": 1,
+      "rest_open_non_intentional": 11,
+      "perm_resolved": 23,
+      "perm_unresolved": 0,
+      "tables": 5,
+      "tables_defined": 5,
+      "table_schemas_with_columns": 0,
+      "meta_post": 13,
+      "meta_user": 8,
+      "rewrites": 0,
+      "pages": 0,
+      "shortcodes": 9,
+      "ajax_priv": 6,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "HIGH",
+      "security_score": 53,
+      "abspath_pct": 98,
+      "deps": [
+        "apollo-core",
+        "apollo-login",
+        "apollo-notif",
+        "apollo-statistics",
+        "apollo-users"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 53
+    },
+    {
+      "slug": "apollo-mod",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Mod",
+      "php_files": 7,
+      "php_loc": 959,
+      "classes": 4,
+      "rest": 7,
+      "rest_open": 0,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 0,
+      "perm_resolved": 1,
+      "perm_unresolved": 6,
+      "tables": 4,
+      "tables_defined": 4,
+      "table_schemas_with_columns": 0,
+      "meta_post": 4,
+      "meta_user": 0,
+      "rewrites": 0,
+      "pages": 0,
+      "shortcodes": 0,
+      "ajax_priv": 1,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "MEDIUM",
+      "security_score": 30,
+      "abspath_pct": 86,
+      "deps": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 8
+    },
+    {
+      "slug": "apollo-notif",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Notif",
+      "php_files": 8,
+      "php_loc": 3645,
+      "classes": 4,
+      "rest": 13,
+      "rest_open": 1,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 1,
+      "perm_resolved": 13,
+      "perm_unresolved": 0,
+      "tables": 3,
+      "tables_defined": 3,
+      "table_schemas_with_columns": 1,
+      "meta_post": 0,
+      "meta_user": 6,
+      "rewrites": 1,
+      "pages": 1,
+      "shortcodes": 2,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "LOW",
+      "security_score": 18,
+      "abspath_pct": 88,
+      "deps": [
+        "apollo-core",
+        "apollo-email",
+        "apollo-hub",
+        "apollo-templates"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 25
+    },
+    {
+      "slug": "apollo-pane-engine",
+      "status": "DEEP_AUDITED",
+      "version": "2.0.1",
+      "namespace": "Apollo\\PaneEngine",
+      "php_files": 7,
+      "php_loc": 1651,
+      "classes": 0,
+      "rest": 5,
+      "rest_open": 0,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 0,
+      "perm_resolved": 5,
+      "perm_unresolved": 0,
+      "tables": 0,
+      "tables_defined": 0,
+      "table_schemas_with_columns": 0,
+      "meta_post": 5,
+      "meta_user": 0,
+      "rewrites": 4,
+      "pages": 4,
+      "shortcodes": 0,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "LOW",
+      "security_score": 15,
+      "abspath_pct": 71,
+      "deps": [
+        "apollo-adverts",
+        "apollo-chat",
+        "apollo-comment",
+        "apollo-core",
+        "apollo-dashboard",
+        "apollo-djs",
+        "apollo-email",
+        "apollo-events",
+        "apollo-fav",
+        "apollo-groups",
+        "apollo-hub",
+        "apollo-loc",
+        "apollo-login",
+        "apollo-maps",
+        "apollo-membership",
+        "apollo-mod",
+        "apollo-notif",
+        "apollo-radio",
+        "apollo-seo",
+        "apollo-sheets",
+        "apollo-social",
+        "apollo-statistics",
+        "apollo-templates",
+        "apollo-users",
+        "apollo-wow"
+      ],
+      "new_plugin": false,
+      "version_changed": true,
+      "old_version": "2.0.0",
+      "duration_ms": 11
+    },
+    {
+      "slug": "apollo-radio",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Radio",
+      "php_files": 9,
+      "php_loc": 964,
+      "classes": 5,
+      "rest": 1,
+      "rest_open": 1,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 1,
+      "perm_resolved": 1,
+      "perm_unresolved": 0,
+      "tables": 0,
+      "tables_defined": 0,
+      "table_schemas_with_columns": 0,
+      "meta_post": 0,
+      "meta_user": 0,
+      "rewrites": 0,
+      "pages": 0,
+      "shortcodes": 1,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "MEDIUM",
+      "security_score": 27,
+      "abspath_pct": 89,
+      "deps": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": true,
+      "old_version": "1.0.0",
+      "duration_ms": 9
+    },
+    {
+      "slug": "apollo-remind",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Remind",
+      "php_files": 16,
+      "php_loc": 2092,
+      "classes": 11,
+      "rest": 13,
+      "rest_open": 2,
+      "rest_critical": 1,
+      "rest_open_non_intentional": 2,
+      "perm_resolved": 13,
+      "perm_unresolved": 0,
+      "tables": 4,
+      "tables_defined": 4,
+      "table_schemas_with_columns": 0,
+      "meta_post": 2,
+      "meta_user": 1,
+      "rewrites": 0,
+      "pages": 0,
+      "shortcodes": 0,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 2,
+      "security_risk": "MEDIUM",
+      "security_score": 29,
+      "abspath_pct": 88,
+      "deps": [
+        "apollo-core",
+        "apollo-email",
+        "apollo-notif",
+        "apollo-telegram"
+      ],
+      "new_plugin": false,
+      "version_changed": true,
+      "old_version": "1.0.0",
+      "duration_ms": 19
+    },
+    {
+      "slug": "apollo-scheduler",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Scheduler",
+      "php_files": 33,
+      "php_loc": 2864,
+      "classes": 25,
+      "rest": 3,
+      "rest_open": 1,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 1,
+      "perm_resolved": 3,
+      "perm_unresolved": 0,
+      "tables": 0,
+      "tables_defined": 0,
+      "table_schemas_with_columns": 0,
+      "meta_post": 23,
+      "meta_user": 7,
+      "rewrites": 6,
+      "pages": 6,
+      "shortcodes": 2,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "LOW",
+      "security_score": 6,
+      "abspath_pct": 94,
+      "deps": [
+        "apollo-core",
+        "apollo-email",
+        "apollo-events",
+        "apollo-gestor",
+        "apollo-groups",
+        "apollo-users"
+      ],
+      "new_plugin": false,
+      "version_changed": true,
+      "old_version": "1.0.0",
+      "duration_ms": 23
+    },
+    {
+      "slug": "apollo-seo",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.3",
+      "namespace": "Apollo\\SEO",
+      "php_files": 10,
+      "php_loc": 4317,
+      "classes": 8,
+      "rest": 3,
+      "rest_open": 3,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 3,
+      "perm_resolved": 3,
+      "perm_unresolved": 0,
+      "tables": 0,
+      "tables_defined": 0,
+      "table_schemas_with_columns": 0,
+      "meta_post": 23,
+      "meta_user": 0,
+      "rewrites": 3,
+      "pages": 3,
+      "shortcodes": 0,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "LOW",
+      "security_score": 9,
+      "abspath_pct": 90,
+      "deps": [],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 23
+    },
+    {
+      "slug": "apollo-sheets",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Sheets",
+      "php_files": 27,
+      "php_loc": 8523,
+      "classes": 19,
+      "rest": 4,
+      "rest_open": 0,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 0,
+      "perm_resolved": 4,
+      "perm_unresolved": 0,
+      "tables": 0,
+      "tables_defined": 0,
+      "table_schemas_with_columns": 0,
+      "meta_post": 4,
+      "meta_user": 0,
+      "rewrites": 0,
+      "pages": 0,
+      "shortcodes": 2,
+      "ajax_priv": 13,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "MEDIUM",
+      "security_score": 40,
+      "abspath_pct": 96,
+      "deps": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 48
+    },
+    {
+      "slug": "apollo-sign",
+      "status": "DEEP_AUDITED",
+      "version": "1.2.1",
+      "namespace": "Apollo\\Sign",
+      "php_files": 39,
+      "php_loc": 7938,
+      "classes": 10,
+      "rest": 2,
+      "rest_open": 0,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 0,
+      "perm_resolved": 2,
+      "perm_unresolved": 0,
+      "tables": 2,
+      "tables_defined": 2,
+      "table_schemas_with_columns": 0,
+      "meta_post": 9,
+      "meta_user": 0,
+      "rewrites": 1,
+      "pages": 1,
+      "shortcodes": 1,
+      "ajax_priv": 1,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "LOW",
+      "security_score": 3,
+      "abspath_pct": 97,
+      "deps": [
+        "apollo-core",
+        "apollo-docs",
+        "apollo-email",
+        "openssl"
+      ],
+      "new_plugin": false,
+      "version_changed": true,
+      "old_version": "1.2.0",
+      "duration_ms": 44
+    },
+    {
+      "slug": "apollo-social",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Social",
+      "php_files": 24,
+      "php_loc": 3821,
+      "classes": 7,
+      "rest": 11,
+      "rest_open": 3,
+      "rest_critical": 1,
+      "rest_open_non_intentional": 3,
+      "perm_resolved": 11,
+      "perm_unresolved": 0,
+      "tables": 4,
+      "tables_defined": 4,
+      "table_schemas_with_columns": 1,
+      "meta_post": 5,
+      "meta_user": 0,
+      "rewrites": 0,
+      "pages": 0,
+      "shortcodes": 2,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "LOW",
+      "security_score": 17,
+      "abspath_pct": 96,
+      "deps": [
+        "apollo-core",
+        "apollo-membership",
+        "apollo-mod",
+        "apollo-templates",
+        "apollo-users"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 29
+    },
+    {
+      "slug": "apollo-statistics",
+      "status": "DEEP_AUDITED",
+      "version": "2.0.6",
+      "namespace": "Apollo\\Statistics",
+      "php_files": 47,
+      "php_loc": 10518,
+      "classes": 42,
+      "rest": 11,
+      "rest_open": 0,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 0,
+      "perm_resolved": 9,
+      "perm_unresolved": 2,
+      "tables": 8,
+      "tables_defined": 8,
+      "table_schemas_with_columns": 0,
+      "meta_post": 2,
+      "meta_user": 5,
+      "rewrites": 1,
+      "pages": 1,
+      "shortcodes": 2,
+      "ajax_priv": 5,
+      "ajax_nopriv": 1,
+      "cron": 4,
+      "security_risk": "LOW",
+      "security_score": 6,
+      "abspath_pct": 96,
+      "deps": [
+        "apollo-admin",
+        "apollo-core",
+        "apollo-dj-sync",
+        "apollo-fav",
+        "apollo-login",
+        "apollo-membership",
+        "apollo-radio",
+        "apollo-users"
+      ],
+      "new_plugin": false,
+      "version_changed": true,
+      "old_version": "2.0.0",
+      "duration_ms": 71
+    },
+    {
+      "slug": "apollo-telegram",
+      "status": "DEEP_AUDITED",
+      "version": "1.1.1",
+      "namespace": "Apollo\\Telegram",
+      "php_files": 58,
+      "php_loc": 9880,
+      "classes": 47,
+      "rest": 7,
+      "rest_open": 0,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 0,
+      "perm_resolved": 7,
+      "perm_unresolved": 0,
+      "tables": 1,
+      "tables_defined": 1,
+      "table_schemas_with_columns": 0,
+      "meta_post": 4,
+      "meta_user": 2,
+      "rewrites": 2,
+      "pages": 2,
+      "shortcodes": 0,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "LOW",
+      "security_score": 15,
+      "abspath_pct": 24,
+      "deps": [
+        "apollo-core",
+        "apollo-events"
+      ],
+      "new_plugin": true,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 65
+    },
+    {
+      "slug": "apollo-templates",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.4",
+      "namespace": "Apollo\\Templates",
+      "php_files": 78,
+      "php_loc": 19976,
+      "classes": 10,
+      "rest": 6,
+      "rest_open": 5,
+      "rest_critical": 0,
+      "rest_open_non_intentional": 5,
+      "perm_resolved": 6,
+      "perm_unresolved": 0,
+      "tables": 0,
+      "tables_defined": 0,
+      "table_schemas_with_columns": 0,
+      "meta_post": 38,
+      "meta_user": 3,
+      "rewrites": 10,
+      "pages": 10,
+      "shortcodes": 6,
+      "ajax_priv": 11,
+      "ajax_nopriv": 3,
+      "cron": 1,
+      "security_risk": "MEDIUM",
+      "security_score": 25,
+      "abspath_pct": 95,
+      "deps": [
+        "apollo-admin",
+        "apollo-adverts",
+        "apollo-chat",
+        "apollo-coauthor",
+        "apollo-comment",
+        "apollo-core",
+        "apollo-dashboard",
+        "apollo-djs",
+        "apollo-docs",
+        "apollo-email",
+        "apollo-events",
+        "apollo-fav",
+        "apollo-groups",
+        "apollo-hub",
+        "apollo-loc",
+        "apollo-login",
+        "apollo-membership",
+        "apollo-mod",
+        "apollo-notif",
+        "apollo-radio",
+        "apollo-sign",
+        "apollo-social",
+        "apollo-statistics",
+        "apollo-users",
+        "apollo-wow"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 150
+    },
+    {
+      "slug": "apollo-users",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Users",
+      "php_files": 30,
+      "php_loc": 13169,
+      "classes": 11,
+      "rest": 23,
+      "rest_open": 5,
+      "rest_critical": 1,
+      "rest_open_non_intentional": 5,
+      "perm_resolved": 23,
+      "perm_unresolved": 0,
+      "tables": 8,
+      "tables_defined": 8,
+      "table_schemas_with_columns": 0,
+      "meta_post": 5,
+      "meta_user": 23,
+      "rewrites": 3,
+      "pages": 3,
+      "shortcodes": 6,
+      "ajax_priv": 13,
+      "ajax_nopriv": 0,
+      "cron": 1,
+      "security_risk": "MEDIUM",
+      "security_score": 33,
+      "abspath_pct": 93,
+      "deps": [
+        "apollo-core",
+        "apollo-login",
+        "apollo-membership",
+        "apollo-social",
+        "apollo-templates"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 72
+    },
+    {
+      "slug": "apollo-wow",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.1",
+      "namespace": "Apollo\\Wow",
+      "php_files": 6,
+      "php_loc": 596,
+      "classes": 3,
+      "rest": 4,
+      "rest_open": 3,
+      "rest_critical": 1,
+      "rest_open_non_intentional": 3,
+      "perm_resolved": 3,
+      "perm_unresolved": 1,
+      "tables": 3,
+      "tables_defined": 3,
+      "table_schemas_with_columns": 0,
+      "meta_post": 2,
+      "meta_user": 0,
+      "rewrites": 0,
+      "pages": 0,
+      "shortcodes": 2,
+      "ajax_priv": 0,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "MEDIUM",
+      "security_score": 35,
+      "abspath_pct": 83,
+      "deps": [
+        "apollo-core"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 7
+    }
+  ],
+  "coupling": [
+    {
+      "from": "apollo-core",
+      "to": "apollo-admin"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-adverts"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-calendar"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-chat"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-coauthor"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-comment"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-dashboard"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-djs"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-docs"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-email"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-events"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-fav"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-gestor"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-groups"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-hub"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-journal"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-loc"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-login"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-membership"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-mod"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-notif"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-pane-engine"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-scheduler"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-seo"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-sheets"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-sign"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-social"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-statistics"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-templates"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-users"
+    },
+    {
+      "from": "apollo-core",
+      "to": "apollo-wow"
+    },
+    {
+      "from": "apollo-login",
+      "to": "apollo-chat"
+    },
+    {
+      "from": "apollo-login",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-login",
+      "to": "apollo-email"
+    },
+    {
+      "from": "apollo-login",
+      "to": "apollo-loc"
+    },
+    {
+      "from": "apollo-login",
+      "to": "apollo-membership"
+    },
+    {
+      "from": "apollo-login",
+      "to": "apollo-social"
+    },
+    {
+      "from": "apollo-login",
+      "to": "apollo-telegram"
+    },
+    {
+      "from": "apollo-login",
+      "to": "apollo-templates"
+    },
+    {
+      "from": "apollo-users",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-users",
+      "to": "apollo-login"
+    },
+    {
+      "from": "apollo-users",
+      "to": "apollo-membership"
+    },
+    {
+      "from": "apollo-users",
+      "to": "apollo-social"
+    },
+    {
+      "from": "apollo-users",
+      "to": "apollo-templates"
+    },
+    {
+      "from": "apollo-membership",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-membership",
+      "to": "apollo-login"
+    },
+    {
+      "from": "apollo-membership",
+      "to": "apollo-notif"
+    },
+    {
+      "from": "apollo-membership",
+      "to": "apollo-statistics"
+    },
+    {
+      "from": "apollo-membership",
+      "to": "apollo-users"
+    },
+    {
+      "from": "apollo-events",
+      "to": "apollo-coauthor"
+    },
+    {
+      "from": "apollo-events",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-events",
+      "to": "apollo-fav"
+    },
+    {
+      "from": "apollo-events",
+      "to": "apollo-loc"
+    },
+    {
+      "from": "apollo-events",
+      "to": "apollo-mod"
+    },
+    {
+      "from": "apollo-events",
+      "to": "apollo-social"
+    },
+    {
+      "from": "apollo-events",
+      "to": "apollo-statistics"
+    },
+    {
+      "from": "apollo-events",
+      "to": "apollo-wow"
+    },
+    {
+      "from": "apollo-djs",
+      "to": "apollo-comment"
+    },
+    {
+      "from": "apollo-djs",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-djs",
+      "to": "apollo-dashboard"
+    },
+    {
+      "from": "apollo-djs",
+      "to": "apollo-events"
+    },
+    {
+      "from": "apollo-djs",
+      "to": "apollo-fav"
+    },
+    {
+      "from": "apollo-djs",
+      "to": "apollo-statistics"
+    },
+    {
+      "from": "apollo-djs",
+      "to": "apollo-templates"
+    },
+    {
+      "from": "apollo-djs",
+      "to": "apollo-wow"
+    },
+    {
+      "from": "apollo-loc",
+      "to": "apollo-comment"
+    },
+    {
+      "from": "apollo-loc",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-loc",
+      "to": "apollo-fav"
+    },
+    {
+      "from": "apollo-loc",
+      "to": "apollo-social"
+    },
+    {
+      "from": "apollo-loc",
+      "to": "apollo-templates"
+    },
+    {
+      "from": "apollo-loc",
+      "to": "apollo-wow"
+    },
+    {
+      "from": "apollo-maps",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-maps",
+      "to": "apollo-loc"
+    },
+    {
+      "from": "apollo-adverts",
+      "to": "apollo-admin"
+    },
+    {
+      "from": "apollo-adverts",
+      "to": "apollo-chat"
+    },
+    {
+      "from": "apollo-adverts",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-adverts",
+      "to": "apollo-dashboard"
+    },
+    {
+      "from": "apollo-adverts",
+      "to": "apollo-fav"
+    },
+    {
+      "from": "apollo-adverts",
+      "to": "apollo-login"
+    },
+    {
+      "from": "apollo-adverts",
+      "to": "apollo-notif"
+    },
+    {
+      "from": "apollo-adverts",
+      "to": "apollo-social"
+    },
+    {
+      "from": "apollo-adverts",
+      "to": "apollo-templates"
+    },
+    {
+      "from": "apollo-adverts",
+      "to": "apollo-wow"
+    },
+    {
+      "from": "apollo-fav",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-fav",
+      "to": "apollo-dashboard"
+    },
+    {
+      "from": "apollo-fav",
+      "to": "apollo-events"
+    },
+    {
+      "from": "apollo-fav",
+      "to": "apollo-login"
+    },
+    {
+      "from": "apollo-fav",
+      "to": "apollo-notif"
+    },
+    {
+      "from": "apollo-fav",
+      "to": "apollo-social"
+    },
+    {
+      "from": "apollo-fav",
+      "to": "apollo-statistics"
+    },
+    {
+      "from": "apollo-fav",
+      "to": "apollo-users"
+    },
+    {
+      "from": "apollo-wow",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-comment",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-social",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-social",
+      "to": "apollo-membership"
+    },
+    {
+      "from": "apollo-social",
+      "to": "apollo-mod"
+    },
+    {
+      "from": "apollo-social",
+      "to": "apollo-templates"
+    },
+    {
+      "from": "apollo-social",
+      "to": "apollo-users"
+    },
+    {
+      "from": "apollo-groups",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-groups",
+      "to": "apollo-mod"
+    },
+    {
+      "from": "apollo-groups",
+      "to": "apollo-templates"
+    },
+    {
+      "from": "apollo-groups",
+      "to": "apollo-users"
+    },
+    {
+      "from": "apollo-notif",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-notif",
+      "to": "apollo-email"
+    },
+    {
+      "from": "apollo-notif",
+      "to": "apollo-hub"
+    },
+    {
+      "from": "apollo-notif",
+      "to": "apollo-templates"
+    },
+    {
+      "from": "apollo-email",
+      "to": "apollo-admin"
+    },
+    {
+      "from": "apollo-email",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-email",
+      "to": "apollo-events"
+    },
+    {
+      "from": "apollo-email",
+      "to": "apollo-gestor"
+    },
+    {
+      "from": "apollo-email",
+      "to": "apollo-login"
+    },
+    {
+      "from": "apollo-email",
+      "to": "apollo-membership"
+    },
+    {
+      "from": "apollo-email",
+      "to": "apollo-users"
+    },
+    {
+      "from": "apollo-chat",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-chat",
+      "to": "apollo-notif"
+    },
+    {
+      "from": "apollo-chat",
+      "to": "apollo-users"
+    },
+    {
+      "from": "apollo-remind",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-remind",
+      "to": "apollo-email"
+    },
+    {
+      "from": "apollo-remind",
+      "to": "apollo-notif"
+    },
+    {
+      "from": "apollo-remind",
+      "to": "apollo-telegram"
+    },
+    {
+      "from": "apollo-docs",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-sign",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-sign",
+      "to": "apollo-docs"
+    },
+    {
+      "from": "apollo-sign",
+      "to": "apollo-email"
+    },
+    {
+      "from": "apollo-sign",
+      "to": "openssl"
+    },
+    {
+      "from": "apollo-gestor",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-gestor",
+      "to": "apollo-email"
+    },
+    {
+      "from": "apollo-journal",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-admin"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-adverts"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-chat"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-coauthor"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-comment"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-dashboard"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-djs"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-docs"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-email"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-events"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-fav"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-groups"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-hub"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-loc"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-login"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-membership"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-mod"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-notif"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-radio"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-sign"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-social"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-statistics"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-users"
+    },
+    {
+      "from": "apollo-templates",
+      "to": "apollo-wow"
+    },
+    {
+      "from": "apollo-dashboard",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-dashboard",
+      "to": "apollo-groups"
+    },
+    {
+      "from": "apollo-dashboard",
+      "to": "apollo-templates"
+    },
+    {
+      "from": "apollo-dashboard",
+      "to": "apollo-users"
+    },
+    {
+      "from": "apollo-hub",
+      "to": "apollo-admin"
+    },
+    {
+      "from": "apollo-hub",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-hub",
+      "to": "apollo-events"
+    },
+    {
+      "from": "apollo-hub",
+      "to": "apollo-login"
+    },
+    {
+      "from": "apollo-hub",
+      "to": "apollo-maps"
+    },
+    {
+      "from": "apollo-hub",
+      "to": "apollo-social"
+    },
+    {
+      "from": "apollo-hub",
+      "to": "apollo-users"
+    },
+    {
+      "from": "apollo-coauthor",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-mod",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-adverts"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-chat"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-coauthor"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-comment"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-dashboard"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-djs"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-docs"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-email"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-events"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-fav"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-groups"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-hub"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-loc"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-login"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-membership"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-mod"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-notif"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-seo"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-social"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-statistics"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-templates"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-users"
+    },
+    {
+      "from": "apollo-admin",
+      "to": "apollo-wow"
+    },
+    {
+      "from": "apollo-statistics",
+      "to": "apollo-admin"
+    },
+    {
+      "from": "apollo-statistics",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-statistics",
+      "to": "apollo-dj-sync"
+    },
+    {
+      "from": "apollo-statistics",
+      "to": "apollo-fav"
+    },
+    {
+      "from": "apollo-statistics",
+      "to": "apollo-login"
+    },
+    {
+      "from": "apollo-statistics",
+      "to": "apollo-membership"
+    },
+    {
+      "from": "apollo-statistics",
+      "to": "apollo-radio"
+    },
+    {
+      "from": "apollo-statistics",
+      "to": "apollo-users"
+    },
+    {
+      "from": "apollo-sheets",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-radio",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-adverts"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-chat"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-comment"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-dashboard"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-djs"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-email"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-events"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-fav"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-groups"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-hub"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-loc"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-login"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-maps"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-membership"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-mod"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-notif"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-radio"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-seo"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-sheets"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-social"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-statistics"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-templates"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-users"
+    },
+    {
+      "from": "apollo-pane-engine",
+      "to": "apollo-wow"
+    },
+    {
+      "from": "apollo-elementor",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-elementor",
+      "to": "elementor"
+    },
+    {
+      "from": "apollo-dj-sync",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-dj-sync",
+      "to": "apollo-login"
+    },
+    {
+      "from": "apollo-dj-sync",
+      "to": "apollo-users"
+    },
+    {
+      "from": "apollo-scheduler",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-scheduler",
+      "to": "apollo-email"
+    },
+    {
+      "from": "apollo-scheduler",
+      "to": "apollo-events"
+    },
+    {
+      "from": "apollo-scheduler",
+      "to": "apollo-gestor"
+    },
+    {
+      "from": "apollo-scheduler",
+      "to": "apollo-groups"
+    },
+    {
+      "from": "apollo-scheduler",
+      "to": "apollo-users"
+    },
+    {
+      "from": "apollo-calendar",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-calendar",
+      "to": "apollo-remind"
+    },
+    {
+      "from": "apollo-elementor-pro",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-elementor-pro",
+      "to": "apollo-elementor"
+    },
+    {
+      "from": "apollo-elementor-pro",
+      "to": "apollo-events"
+    },
+    {
+      "from": "apollo-elementor-pro",
+      "to": "apollo-fav"
+    },
+    {
+      "from": "apollo-elementor-pro",
+      "to": "apollo-hub"
+    },
+    {
+      "from": "apollo-elementor-pro",
+      "to": "apollo-membership"
+    },
+    {
+      "from": "apollo-elementor-pro",
+      "to": "apollo-wow"
+    },
+    {
+      "from": "apollo-telegram",
+      "to": "apollo-core"
+    },
+    {
+      "from": "apollo-telegram",
+      "to": "apollo-events"
+    }
+  ],
+  "high_risk": [
+    {
+      "slug": "apollo-events",
+      "status": "DEEP_AUDITED",
+      "version": "1.4.0",
+      "namespace": "Apollo\\Event",
+      "php_files": 94,
+      "php_loc": 16930,
+      "classes": 14,
+      "rest": 24,
+      "rest_open": 12,
+      "rest_critical": 3,
+      "rest_open_non_intentional": 12,
+      "perm_resolved": 24,
+      "perm_unresolved": 0,
+      "tables": 1,
+      "tables_defined": 1,
+      "table_schemas_with_columns": 0,
+      "meta_post": 76,
+      "meta_user": 1,
+      "rewrites": 6,
+      "pages": 6,
+      "shortcodes": 6,
+      "ajax_priv": 1,
+      "ajax_nopriv": 0,
+      "cron": 1,
+      "security_risk": "HIGH",
+      "security_score": 69,
+      "abspath_pct": 98,
+      "deps": [
+        "apollo-coauthor",
+        "apollo-core",
+        "apollo-fav",
+        "apollo-loc",
+        "apollo-mod",
+        "apollo-social",
+        "apollo-statistics",
+        "apollo-wow"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 152
+    },
+    {
+      "slug": "apollo-login",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.41",
+      "namespace": "Apollo\\Login",
+      "php_files": 53,
+      "php_loc": 14933,
+      "classes": 23,
+      "rest": 26,
+      "rest_open": 16,
+      "rest_critical": 11,
+      "rest_open_non_intentional": 0,
+      "perm_resolved": 26,
+      "perm_unresolved": 0,
+      "tables": 0,
+      "tables_defined": 0,
+      "table_schemas_with_columns": 0,
+      "meta_post": 18,
+      "meta_user": 26,
+      "rewrites": 6,
+      "pages": 6,
+      "shortcodes": 6,
+      "ajax_priv": 20,
+      "ajax_nopriv": 8,
+      "cron": 0,
+      "security_risk": "HIGH",
+      "security_score": 75,
+      "abspath_pct": 92,
+      "deps": [
+        "apollo-chat",
+        "apollo-core",
+        "apollo-email",
+        "apollo-loc",
+        "apollo-membership",
+        "apollo-social",
+        "apollo-telegram",
+        "apollo-templates"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 93
+    },
+    {
+      "slug": "apollo-membership",
+      "status": "DEEP_AUDITED",
+      "version": "1.0.3",
+      "namespace": "Apollo\\Membership",
+      "php_files": 42,
+      "php_loc": 7989,
+      "classes": 12,
+      "rest": 23,
+      "rest_open": 11,
+      "rest_critical": 1,
+      "rest_open_non_intentional": 11,
+      "perm_resolved": 23,
+      "perm_unresolved": 0,
+      "tables": 5,
+      "tables_defined": 5,
+      "table_schemas_with_columns": 0,
+      "meta_post": 13,
+      "meta_user": 8,
+      "rewrites": 0,
+      "pages": 0,
+      "shortcodes": 9,
+      "ajax_priv": 6,
+      "ajax_nopriv": 0,
+      "cron": 0,
+      "security_risk": "HIGH",
+      "security_score": 53,
+      "abspath_pct": 98,
+      "deps": [
+        "apollo-core",
+        "apollo-login",
+        "apollo-notif",
+        "apollo-statistics",
+        "apollo-users"
+      ],
+      "new_plugin": false,
+      "version_changed": false,
+      "old_version": null,
+      "duration_ms": 53
+    }
+  ]
+}

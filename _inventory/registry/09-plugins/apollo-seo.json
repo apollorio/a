@@ -1,0 +1,905 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-seo",
+    "owner": "apollo-seo",
+    "wrap": "plugins.apollo-seo",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-seo",
+  "namespace": "Apollo\\SEO",
+  "priority": 7,
+  "status": "IMPLEMENTED",
+  "description": "Premium SEO engine — meta titles, descriptions, Open Graph, Twitter Cards, Schema.org JSON-LD, XML sitemaps, canonical URLs, robots directives, webmaster verification. Optimized for ALL Apollo CPTs, taxonomies, virtual pages, and blank canvas templates.",
+  "dependencies": [],
+  "provides": [
+    "seo-meta",
+    "open-graph",
+    "schema-org",
+    "sitemap",
+    "title-management",
+    "term-seo",
+    "post-seo"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [],
+  "meta": {
+    "post": {
+      "_apollo_seo": {
+        "_source": "deep_scan"
+      },
+      "_apollo_seo_term": {
+        "_source": "deep_scan"
+      },
+      "_classified_price": {
+        "_source": "deep_scan"
+      },
+      "_dj_banner": {
+        "_source": "deep_scan"
+      },
+      "_dj_image": {
+        "_source": "deep_scan"
+      },
+      "_dj_instagram": {
+        "_source": "deep_scan"
+      },
+      "_dj_soundcloud": {
+        "_source": "deep_scan"
+      },
+      "_dj_spotify": {
+        "_source": "deep_scan"
+      },
+      "_event_address": {
+        "_source": "deep_scan"
+      },
+      "_event_banner": {
+        "_source": "deep_scan"
+      },
+      "_event_date": {
+        "_source": "deep_scan"
+      },
+      "_event_dj_ids": {
+        "_source": "deep_scan"
+      },
+      "_event_end_date": {
+        "_source": "deep_scan"
+      },
+      "_event_end_time": {
+        "_source": "deep_scan"
+      },
+      "_event_loc_id": {
+        "_source": "deep_scan"
+      },
+      "_event_loc_name": {
+        "_source": "deep_scan"
+      },
+      "_event_start_date": {
+        "_source": "deep_scan"
+      },
+      "_event_start_time": {
+        "_source": "deep_scan"
+      },
+      "_local_address": {
+        "_source": "deep_scan"
+      },
+      "_local_lat": {
+        "_source": "deep_scan"
+      },
+      "_local_lng": {
+        "_source": "deep_scan"
+      },
+      "_local_phone": {
+        "_source": "deep_scan"
+      },
+      "_wp_attachment_image_alt": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {},
+    "term": {}
+  },
+  "constants": {
+    "APOLLO_SEO_VERSION": "1.0.0",
+    "APOLLO_SEO_PATH": "plugin_dir_path",
+    "APOLLO_SEO_URL": "plugin_dir_url",
+    "APOLLO_SEO_FILE": "__FILE__",
+    "APOLLO_SEO_OPTION": "apollo_seo_settings",
+    "APOLLO_SEO_POST_META": "_apollo_seo",
+    "APOLLO_SEO_TERM_META": "_apollo_seo_term"
+  },
+  "src_classes": [
+    "Plugin",
+    "Admin",
+    "Meta",
+    "Metabox",
+    "Schema",
+    "Settings",
+    "Sitemap",
+    "TermMetabox"
+  ],
+  "seo_post_types": [
+    "event",
+    "dj",
+    "local",
+    "classified",
+    "hub",
+    "post",
+    "page"
+  ],
+  "seo_taxonomies": [
+    "event_category",
+    "event_type",
+    "event_tag",
+    "sound",
+    "season",
+    "local_type",
+    "local_area",
+    "classified_domain",
+    "classified_intent",
+    "category",
+    "post_tag"
+  ],
+  "hooks": {
+    "frontend": [
+      "wp_head â†’ Meta::output_head (priority 1)",
+      "pre_get_document_title â†’ Meta::filter_document_title",
+      "document_title_parts â†’ Meta::filter_title_parts"
+    ],
+    "admin": [
+      "admin_menu â†’ Admin::add_menu_page",
+      "add_meta_boxes â†’ Metabox::register",
+      "save_post â†’ Metabox::save"
+    ],
+    "blank_canvas": "apollo/seo/head â†’ Meta::output_head_tags_only",
+    "sitemap": [
+      "template_redirect â†’ Sitemap::render",
+      "save_post â†’ Sitemap::invalidate_cache",
+      "publish_post â†’ Sitemap::ping_engines"
+    ]
+  },
+  "rest": [
+    {
+      "endpoint": "/seo/post/(?P<id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/seo/term/(?P<id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/seo/home",
+      "methods": [
+        "GET"
+      ],
+      "description": "SEO data for the homepage",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "pages": [
+    {
+      "slug": "sitemap\\.xml",
+      "rewrite": "sitemap\\.xml$",
+      "query": "index.php?apollo_sitemap=index",
+      "query_vars": [
+        "apollo_sitemap=index"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "sitemap-{param}\\.xml",
+      "rewrite": "sitemap-([a-z0-9_-]+)\\.xml$",
+      "query": "index.php?apollo_sitemap=$matches[1]",
+      "query_vars": [
+        "apollo_sitemap=$matches[1]"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "sitemap-xsl\\.xsl",
+      "rewrite": "sitemap-xsl\\.xsl$",
+      "query": "index.php?apollo_sitemap=xsl",
+      "query_vars": [
+        "apollo_sitemap=xsl"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    }
+  ],
+  "admin_pages": [
+    {
+      "slug": "apollo-seo",
+      "title": "Apollo SEO",
+      "capability": "manage_options"
+    }
+  ],
+  "shortcodes": [],
+  "version": "1.0.3",
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [
+    "apollo/seo/virtual_context"
+  ],
+  "hooks_listened": [
+    "apollo/seo/head"
+  ],
+  "admin_menus": [
+    {
+      "page_title": "Apollo SEO",
+      "menu_title": "Apollo SEO",
+      "capability": "manage_options",
+      "menu_slug": "apollo-seo"
+    }
+  ],
+  "assets": {
+    "scripts": [
+      "apollo-seo-admin"
+    ],
+    "styles": [
+      "apollo-seo-admin"
+    ]
+  },
+  "options": [
+    "apollo_seo_settings",
+    "apollo_seo_sitemap_version",
+    "apollo_seo_version"
+  ],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 9,
+    "abspath_coverage_pct": 90,
+    "rest_open_routes": 3,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 3,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 3,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 1
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_seo_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [
+    {
+      "pattern": "sitemap\\.xml$",
+      "query": "index.php?apollo_sitemap=index"
+    },
+    {
+      "pattern": "sitemap-([a-z0-9_-]+)\\.xml$",
+      "query": "index.php?apollo_sitemap=$matches[1]"
+    },
+    {
+      "pattern": "sitemap-xsl\\.xsl$",
+      "query": "index.php?apollo_sitemap=xsl"
+    }
+  ],
+  "query_vars": [
+    "apollo_event_page",
+    "apollo_home_page",
+    "apollo_sitemap"
+  ],
+  "php_surface": {
+    "files": 10,
+    "loc": 4317,
+    "classes": 8,
+    "functions": 0
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:51.092Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 75,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-seo",
+    "main_file": "apollo-seo.php",
+    "plugin_header": {
+      "plugin_name": "Apollo SEO",
+      "plugin_uri": "https://apollo.rio.br",
+      "description": "Premium SEO engine — meta titles, descriptions, Open Graph, Twitter Cards, Schema.org JSON-LD, XML sitemaps, canonical URLs, robots directives, webmaster verification. Optimized for ALL Apollo CPTs, taxonomies, virtual pages, and blank canvas templates.",
+      "version": "1.0.3",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "GPL-2.0-or-later",
+      "text_domain": "apollo-seo",
+      "domain_path": null,
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": null
+    },
+    "composer": {
+      "name": "apollo/apollo-seo",
+      "namespaces": [
+        "Apollo\\SEO"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 10,
+        ".css": 1,
+        ".js": 1,
+        ".json": 1,
+        ".md": 2,
+        ".ffs_db": 1
+      },
+      "by_top_directory": {
+        "(root)": 6,
+        "assets": 2,
+        "src": 8
+      },
+      "total_bytes": 156793
+    },
+    "php": {
+      "files": 10,
+      "loc": 4317,
+      "classes": 8,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 0
+    },
+    "architecture": {
+      "namespace": "Apollo\\SEO",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Admin",
+          "fqcn": "Apollo\\SEO\\Admin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin.php"
+        },
+        {
+          "kind": "class",
+          "name": "Meta",
+          "fqcn": "Apollo\\SEO\\Meta",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Meta.php"
+        },
+        {
+          "kind": "class",
+          "name": "Metabox",
+          "fqcn": "Apollo\\SEO\\Metabox",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Metabox.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\SEO\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "Schema",
+          "fqcn": "Apollo\\SEO\\Schema",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Schema.php"
+        },
+        {
+          "kind": "class",
+          "name": "Settings",
+          "fqcn": "Apollo\\SEO\\Settings",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Settings.php"
+        },
+        {
+          "kind": "class",
+          "name": "Sitemap",
+          "fqcn": "Apollo\\SEO\\Sitemap",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Sitemap.php"
+        },
+        {
+          "kind": "class",
+          "name": "TermMetabox",
+          "fqcn": "Apollo\\SEO\\TermMetabox",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/TermMetabox.php"
+        }
+      ],
+      "public_functions": []
+    },
+    "rest": {
+      "count": 3,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/seo/post/(?P<id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": null,
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/seo/term/(?P<id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": null,
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/seo/home",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": null,
+          "file": "src/Plugin.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 3,
+        "MEDIUM": 0,
+        "LOW": 0,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "PUBLIC_UNAUTHENTICATED": 3
+      },
+      "permission_body_resolved": 3,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [
+        {
+          "endpoint": "/seo/post/(?P<id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/Plugin.php"
+        },
+        {
+          "endpoint": "/seo/term/(?P<id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/Plugin.php"
+        },
+        {
+          "endpoint": "/seo/home",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/Plugin.php"
+        }
+      ],
+      "admin_cap_routes": [],
+      "logged_in_routes": []
+    },
+    "database": {
+      "tables_owned_or_defined": [],
+      "tables_referenced": [
+        "apollo_seo_settings"
+      ],
+      "tables_for_registry": [],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_seo_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 23,
+      "user_count": 0,
+      "term_count": 0,
+      "post_keys": [
+        "_apollo_seo",
+        "_apollo_seo_term",
+        "_classified_price",
+        "_dj_banner",
+        "_dj_image",
+        "_dj_instagram",
+        "_dj_soundcloud",
+        "_dj_spotify",
+        "_event_address",
+        "_event_banner",
+        "_event_date",
+        "_event_dj_ids",
+        "_event_end_date",
+        "_event_end_time",
+        "_event_loc_id",
+        "_event_loc_name",
+        "_event_start_date",
+        "_event_start_time",
+        "_local_address",
+        "_local_lat",
+        "_local_lng",
+        "_local_phone",
+        "_wp_attachment_image_alt"
+      ],
+      "user_keys": [],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [
+        {
+          "pattern": "sitemap\\.xml$",
+          "query": "index.php?apollo_sitemap=index",
+          "position": "top",
+          "file": "src/Sitemap.php"
+        },
+        {
+          "pattern": "sitemap-([a-z0-9_-]+)\\.xml$",
+          "query": "index.php?apollo_sitemap=$matches[1]",
+          "position": "top",
+          "file": "src/Sitemap.php"
+        },
+        {
+          "pattern": "sitemap-xsl\\.xsl$",
+          "query": "index.php?apollo_sitemap=xsl",
+          "position": "top",
+          "file": "src/Sitemap.php"
+        }
+      ],
+      "query_vars": [
+        "apollo_event_page",
+        "apollo_home_page",
+        "apollo_sitemap"
+      ],
+      "pages_derived": [
+        {
+          "slug": "sitemap\\.xml",
+          "rewrite": "sitemap\\.xml$",
+          "query": "index.php?apollo_sitemap=index",
+          "query_vars": [
+            "apollo_sitemap=index"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "sitemap-{param}\\.xml",
+          "rewrite": "sitemap-([a-z0-9_-]+)\\.xml$",
+          "query": "index.php?apollo_sitemap=$matches[1]",
+          "query_vars": [
+            "apollo_sitemap=$matches[1]"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "sitemap-xsl\\.xsl",
+          "rewrite": "sitemap-xsl\\.xsl$",
+          "query": "index.php?apollo_sitemap=xsl",
+          "query_vars": [
+            "apollo_sitemap=xsl"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        }
+      ]
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 1,
+      "listened_count": 23,
+      "apollo_fired": [
+        "apollo/seo/virtual_context"
+      ],
+      "apollo_listened": [
+        "apollo/seo/head"
+      ],
+      "critical_wp_listened": [
+        "admin_init",
+        "admin_menu",
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "save_post",
+        "template_redirect"
+      ]
+    },
+    "ajax": {
+      "priv": [],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [],
+    "admin_menus": [
+      {
+        "page_title": "Apollo SEO",
+        "menu_title": "Apollo SEO",
+        "capability": "manage_options",
+        "menu_slug": "apollo-seo"
+      }
+    ],
+    "assets": {
+      "scripts": [
+        "apollo-seo-admin"
+      ],
+      "styles": [
+        "apollo-seo-admin"
+      ]
+    },
+    "options": [
+      "apollo_seo_settings",
+      "apollo_seo_sitemap_version",
+      "apollo_seo_version"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_SEO_VERSION",
+        "value": "1.0.3"
+      },
+      {
+        "name": "APOLLO_SEO_PATH",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_SEO_URL",
+        "value": "plugin_dir_url( __FILE__"
+      },
+      {
+        "name": "APOLLO_SEO_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_SEO_OPTION",
+        "value": "apollo_seo_settings"
+      },
+      {
+        "name": "APOLLO_SEO_POST_META",
+        "value": "_apollo_seo"
+      },
+      {
+        "name": "APOLLO_SEO_TERM_META",
+        "value": "_apollo_seo_term"
+      }
+    ],
+    "security": {
+      "php_files": 10,
+      "abspath_guard_files": 9,
+      "abspath_coverage_pct": 90,
+      "wpdb_prepare_calls": 1,
+      "wpdb_query_calls": 1,
+      "prepare_to_query_ratio": 1,
+      "nonce_checks": 2,
+      "current_user_can_calls": 3,
+      "raw_superglobal": {
+        "get": 1,
+        "post": 6,
+        "request": 0
+      },
+      "permission_callback_return_true": 3,
+      "escape_helpers": 107,
+      "echo_statements": 170,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 9,
+      "risk_band": "LOW",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 3,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 3
+    },
+    "coupling": {
+      "depends_on": [],
+      "signals": []
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.0.3",
+      "version_changed": false,
+      "old_rest": 3,
+      "live_rest": 3,
+      "old_pages": 0,
+      "live_pages": 3,
+      "new_plugin": false
+    }
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 10,
+    "php_loc": 4307,
+    "rest_routes_found": 3,
+    "cpts_found": [],
+    "tables_found": [],
+    "shortcodes_found": []
+  }
+}

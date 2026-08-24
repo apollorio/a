@@ -1,0 +1,254 @@
+/**
+ * Apollo Sign — Signature Pad CSS
+ * Styles for hand-drawn signature capture widget.
+ *
+ * @package Apollo\Sign
+ * @version 1.2.0
+ */
+
+/* ===== Pad Section ===== */
+.sigpad-section {
+    margin-bottom: 16px;
+}
+
+.sigpad-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--sf2);
+    border: 1px solid var(--brd);
+    border-radius: 8px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+    font-family: var(--ff);
+    cursor: pointer;
+    transition: .15s;
+}
+
+.sigpad-toggle:hover,
+.sigpad-toggle.active {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.sigpad-toggle i {
+    font-size: 16px;
+}
+
+.sigpad-toggle .sigpad-toggle-arrow {
+    margin-left: auto;
+    font-size: 14px;
+    transition: transform .2s;
+}
+
+.sigpad-toggle.active .sigpad-toggle-arrow {
+    transform: rotate(180deg);
+}
+
+/* ===== Pad Inner ===== */
+.sigpad-inner {
+    margin-top: 8px;
+    background: var(--sf2);
+    border: 1px solid var(--brd);
+    border-radius: var(--r);
+    overflow: hidden;
+}
+
+.sigpad-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    border-bottom: 1px solid var(--brd);
+}
+
+.sigpad-label-hint {
+    font-size: 10px;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 400;
+    color: var(--dim);
+    opacity: .7;
+}
+
+/* ===== Canvas ===== */
+.sigpad-canvas-wrap {
+    position: relative;
+    background: #16161a;
+    cursor: crosshair;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.sigpad-canvas-wrap canvas {
+    display: block;
+    width: 100%;
+}
+
+/* Guide line (horizontal center) */
+.sigpad-canvas-wrap::after {
+    content: '';
+    position: absolute;
+    left: 10%;
+    right: 10%;
+    bottom: 35%;
+    height: 1px;
+    background: rgba(var(--rgb-t), .06);
+    pointer-events: none;
+}
+
+/* ===== Toolbar ===== */
+.sigpad-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 8px;
+    border-top: 1px solid var(--brd);
+    flex-wrap: wrap;
+}
+
+.sigpad-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 5px 8px;
+    background: var(--sf3);
+    border: 1px solid var(--brd);
+    border-radius: 6px;
+    color: var(--muted);
+    font-size: 11px;
+    font-family: var(--ff);
+    cursor: pointer;
+    transition: .15s;
+    white-space: nowrap;
+}
+
+.sigpad-btn:hover {
+    border-color: var(--primary);
+    color: var(--ink);
+}
+
+.sigpad-btn i {
+    font-size: 14px;
+}
+
+.sigpad-btn--danger:hover {
+    border-color: var(--error);
+    color: var(--error);
+}
+
+/* Color picker mini */
+.sigpad-color-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.sigpad-color-input {
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--brd);
+    border-radius: 50%;
+    padding: 0;
+    cursor: pointer;
+    background: none;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.sigpad-color-input::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.sigpad-color-input::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
+.sigpad-color-input::-moz-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
+/* Spacer */
+.sigpad-sep {
+    width: 1px;
+    height: 18px;
+    background: var(--brd);
+    margin: 0 2px;
+}
+
+/* Upload file input — hidden */
+.sigpad-file-hidden {
+    display: none !important;
+}
+
+/* ===== Preview ===== */
+.sigpad-preview {
+    display: none;
+    padding: 8px 12px;
+    border-top: 1px solid var(--brd);
+}
+
+.sigpad-preview-label {
+    font-size: 10px;
+    color: var(--dim);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.sigpad-preview img {
+    max-width: 100%;
+    max-height: 60px;
+    border-radius: 4px;
+    background: #0e0e10;
+    padding: 4px;
+}
+
+/* ===== OR Divider ===== */
+.sigpad-or {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 12px 0;
+    font-size: 11px;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
+
+.sigpad-or::before,
+.sigpad-or::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--brd);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 480px) {
+    .sigpad-toolbar {
+        gap: 3px;
+        padding: 5px 6px;
+    }
+
+    .sigpad-btn {
+        padding: 4px 6px;
+        font-size: 10px;
+    }
+
+    .sigpad-btn i {
+        font-size: 13px;
+    }
+}

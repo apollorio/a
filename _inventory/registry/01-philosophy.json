@@ -1,0 +1,28 @@
+{
+  "$chapter": {
+    "id": "01-philosophy",
+    "owner": "apollo-core",
+    "keys": [
+      "$philosophy"
+    ],
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "$philosophy": {
+    "PARTY_MODEL": "ALL users are auto-connected on registration â€” everyone is linked to everyone. Like a party, everyone is reachable.",
+    "NO_SELECTIVE_FOLLOW": "There is NO follow/unfollow mechanism. No selective connections. Auto-connect only.",
+    "NO_FRIENDS_HIERARCHY": "No friends list, no followers hierarchy, no following hierarchy. Everyone = connected.",
+    "NO_EGO_COUNTERS": "No followers count, no following count, no friend counts displayed as status. AGAINST numbers ego and status.",
+    "WOW_NOT_LIKE": "Reactions use WOW (fire, clap, etc.) instead of likes. No like buttons, no like counts as vanity metric.",
+    "SHARE_YES": "Sharing content is allowed and encouraged.",
+    "FORBIDDEN_CONCEPTS": [
+      "follow button",
+      "unfollow button",
+      "followers count",
+      "following count",
+      "like button",
+      "friend request",
+      "friend count"
+    ]
+  }
+}

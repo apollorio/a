@@ -1,0 +1,126 @@
+<?php if ( ! defined( 'ABSPATH' ) ) { exit; } // plan-001 · G07 — file was directly reachable over HTTP ?>
+<div class="apollo-login-form-wrapper">
+	<form id="apollo-login-form" method="post"
+		action="<?php echo esc_url( rest_url( APOLLO_LOGIN_REST_NAMESPACE . '/auth/login' ) ); ?>">
+
+		<div class="input-group">
+			<label for="username"><?php esc_html_e( 'Username or Email', 'apollo-login' ); ?></label>
+			<input type="text" id="username" name="username" required autocomplete="username"
+				placeholder="<?php esc_attr_e( 'Enter your username or email', 'apollo-login' ); ?>" class="apollo-input" />
+		</div>
+
+		<div class="input-group">
+			<label for="password"><?php esc_html_e( 'Password', 'apollo-login' ); ?></label>
+			<input type="password" id="password" name="password" required autocomplete="current-password"
+				placeholder="<?php esc_attr_e( 'Enter your password', 'apollo-login' ); ?>" class="apollo-input" />
+		</div>
+
+		<div class="input-group custom-checkbox">
+			<label class="custom-checkbox">
+				<input type="checkbox" name="remember" value="1" />
+				<?php esc_html_e( 'Remember me', 'apollo-login' ); ?>
+			</label>
+		</div>
+
+		<div class="apollo-form-actions">
+			<button type="submit" class="apollo-btn apollo-btn-primary">
+				<?php esc_html_e( 'Login', 'apollo-login' ); ?>
+			</button>
+		</div>
+
+		<div class="apollo-form-message" style="display:none;"></div>
+
+	</form>
+</div>
+
+<script>
+	jQuery(document).ready(function($) {
+		$('#apollo-login-form').on('submit', function(e) {
+			e.preventDefault();
+
+			const $form = $(this);
+			const $message = $form.find('.apollo-form-message');
+			const $button = $form.find('button[type="submit"]');
+
+			$button.prop('disabled', true).text('<?php esc_html_e( 'Logging in...', 'apollo-login' ); ?>');
+			$message.hide();
+
+			$.ajax({
+				url: $form.attr('action'),
+				method: 'POST',
+				data: {
+					username: $('#username').val(),
+					password: $('#password').val()
+				},
+				success: function(response) {
+					if (response.success) {
+						$message.removeClass('error').addClass('success').text(response.message)
+							.show();
+						window.location.href = response.redirect || '<?php echo esc_url( home_url( '/' ) ); ?>';
+					}
+				},
+				error: function(xhr) {
+					const error = xhr.responseJSON?.message ||
+						'<?php esc_html_e( 'Login failed. Please try again.', 'apollo-login' ); ?>';
+					$message.removeClass('success').addClass('error').text(error).show();
+					$button.prop('disabled', false).text(
+						'<?php esc_html_e( 'Login', 'apollo-login' ); ?>');
+				}
+			});
+		});
+	});
+</script>
+
+
+<script>
+	// Array of phrases
+	const phrases = [
+		"e-mail, CPF ou passaporte"
+	];
+
+	// Config
+	const typeSpeed = 75;
+	const deleteSpeed = 35;
+	const pauseAtEnd = 1700; // time the full text stays
+	const pauseBeforeNext = 600;
+
+	// Target the input
+	const input = document.getElementById('username');
+
+	let phraseIndex = 0;
+	let charIndex = 0;
+	let isDeleting = false;
+
+	function typeEffect() {
+		const currentPhrase = phrases[phraseIndex];
+
+		if (isDeleting) {
+			// Deleting
+			input.placeholder = currentPhrase.substring(0, charIndex - 1) + '|';
+			charIndex--;
+		} else {
+			// Typing
+			input.placeholder = currentPhrase.substring(0, charIndex + 1) + '|';
+			charIndex++;
+		}
+
+		let delay = isDeleting ? deleteSpeed : typeSpeed;
+
+		// Finished typing
+		if (!isDeleting && charIndex === currentPhrase.length) {
+			isDeleting = true;
+			delay = pauseAtEnd;
+		}
+		// Finished deleting → go to next phrase
+		else if (isDeleting && charIndex === 0) {
+			isDeleting = false;
+			phraseIndex = (phraseIndex + 1) % phrases.length;
+			delay = pauseBeforeNext;
+		}
+
+		setTimeout(typeEffect, delay);
+	}
+
+	// Start the effect
+	typeEffect();
+</script>

@@ -1,0 +1,2703 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-admin",
+    "owner": "apollo-admin",
+    "wrap": "plugins.apollo-admin",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-admin",
+  "namespace": "Apollo\\Admin",
+  "priority": 5,
+  "status": "IMPLEMENTED",
+  "description": "Painel administrativo unificado com abas de configuração para TODOS os plugins Apollo",
+  "dependencies": [
+    "apollo-adverts",
+    "apollo-chat",
+    "apollo-coauthor",
+    "apollo-comment",
+    "apollo-core",
+    "apollo-dashboard",
+    "apollo-djs",
+    "apollo-docs",
+    "apollo-email",
+    "apollo-events",
+    "apollo-fav",
+    "apollo-groups",
+    "apollo-hub",
+    "apollo-loc",
+    "apollo-login",
+    "apollo-membership",
+    "apollo-mod",
+    "apollo-notif",
+    "apollo-seo",
+    "apollo-social",
+    "apollo-statistics",
+    "apollo-templates",
+    "apollo-users",
+    "apollo-wow"
+  ],
+  "provides": [
+    "admin-panel",
+    "plugin-tabs",
+    "settings-hub",
+    "admin-dashboard"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [],
+  "meta": {
+    "post": {
+      "_classified_condition": {
+        "_source": "deep_scan"
+      },
+      "_classified_currency": {
+        "_source": "deep_scan"
+      },
+      "_classified_price": {
+        "_source": "deep_scan"
+      },
+      "_dj_bio_short": {
+        "_source": "deep_scan"
+      },
+      "_dj_instagram": {
+        "_source": "deep_scan"
+      },
+      "_dj_user_id": {
+        "_source": "deep_scan"
+      },
+      "_dj_verified": {
+        "_source": "deep_scan"
+      },
+      "_event_loc_id": {
+        "_source": "deep_scan"
+      },
+      "_event_privacy": {
+        "_source": "deep_scan"
+      },
+      "_event_start_date": {
+        "_source": "deep_scan"
+      },
+      "_event_start_time": {
+        "_source": "deep_scan"
+      },
+      "_event_ticket_price": {
+        "_source": "deep_scan"
+      },
+      "_hub_view_count": {
+        "_source": "deep_scan"
+      },
+      "_local_address": {
+        "_source": "deep_scan"
+      },
+      "_local_capacity": {
+        "_source": "deep_scan"
+      },
+      "_local_city": {
+        "_source": "deep_scan"
+      },
+      "_local_price_range": {
+        "_source": "deep_scan"
+      },
+      "_membership_features": {
+        "_source": "deep_scan"
+      },
+      "_membership_period": {
+        "_source": "deep_scan"
+      },
+      "_membership_price": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {
+      "_apollo_points": {
+        "_source": "deep_scan"
+      },
+      "_apollo_rank": {
+        "_source": "deep_scan"
+      },
+      "_apollo_status": {
+        "_source": "deep_scan"
+      }
+    },
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/errorlog",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (ADMIN_CAPABILITY)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can( 'manage_options' );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_error_items",
+      "rest_namespace": "apollo/v1",
+      "file": "src/ErrorLogViewer.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/errorlog",
+      "methods": [
+        "DELETE"
+      ],
+      "description": "Live apollo/v1 (ADMIN_CAPABILITY)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can( 'manage_options' );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "clear_error_log",
+      "rest_namespace": "apollo/v1",
+      "file": "src/ErrorLogViewer.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/admin/memberships",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (ADMIN_CAPABILITY)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can( 'manage_options' );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_memberships",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Frontend/Controller/MembershipController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/admin/pending",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (ADMIN_CAPABILITY)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can( 'manage_options' );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_pending",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Frontend/Controller/PendingController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/admin/pending/(?P<id>\\d+)/approve",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (ADMIN_CAPABILITY)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can( 'manage_options' );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_approve",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Frontend/Controller/PendingController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/admin/pending/(?P<id>\\d+)/reject",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (ADMIN_CAPABILITY)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can( 'manage_options' );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_reject",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Frontend/Controller/PendingController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/settings",
+      "methods": [
+        "GET"
+      ],
+      "description": "All settings",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "admin_permission",
+      "permission_binding": "SettingsController::admin_permission",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can('manage_options');",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_all_settings",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Rest/SettingsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/settings/(?P<slug>[a-z0-9_-]+)",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "description": "Live apollo/v1 (ADMIN_CAPABILITY)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "admin_permission",
+      "permission_binding": "SettingsController::admin_permission",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can('manage_options');",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_plugin_settings",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Rest/SettingsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/settings/(?P<slug>[a-z0-9_-]+)/schema",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (ADMIN_CAPABILITY)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "admin_permission",
+      "permission_binding": "SettingsController::admin_permission",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can('manage_options');",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_schema",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Rest/SettingsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/admin/registry",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (ADMIN_CAPABILITY)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "admin_permission",
+      "permission_binding": "SettingsController::admin_permission",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can('manage_options');",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_registry",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Rest/SettingsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/admin/registry/refresh",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (ADMIN_CAPABILITY)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "admin_permission",
+      "permission_binding": "SettingsController::admin_permission",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can('manage_options');",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "refresh_registry",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Rest/SettingsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/settings/export",
+      "methods": [
+        "GET"
+      ],
+      "description": "Export all settings",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "admin_permission",
+      "permission_binding": "SettingsController::admin_permission",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can('manage_options');",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "export_settings",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Rest/SettingsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/settings/import",
+      "methods": [
+        "POST"
+      ],
+      "description": "Import settings",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "admin_permission",
+      "permission_binding": "SettingsController::admin_permission",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can('manage_options');",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "import_settings",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Rest/SettingsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/toolbar",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (ADMIN_CAPABILITY)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can( 'manage_options' );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_toolbar",
+      "rest_namespace": "apollo/v1",
+      "file": "src/ToolbarCustomizer.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/toolbar",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (ADMIN_CAPABILITY)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Requires capability: manage_options",
+      "permission_capabilities": [
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can( 'manage_options' );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_save_toolbar",
+      "rest_namespace": "apollo/v1",
+      "file": "src/ToolbarCustomizer.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/preferences",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_preferences",
+      "rest_namespace": "apollo/v1",
+      "file": "src/UserPreferences.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/preferences",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_update_preferences",
+      "rest_namespace": "apollo/v1",
+      "file": "src/UserPreferences.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/preferences/(?P<key>[a-z0-9_-]+)",
+      "methods": [
+        "DELETE"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_delete_preference",
+      "rest_namespace": "apollo/v1",
+      "file": "src/UserPreferences.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "pages": [
+    {
+      "slug": "admin/{param}",
+      "rewrite": "^admin/(panel|pending|memberships)/?$",
+      "query": "index.php?apollo_admin_page=$matches[1]",
+      "query_vars": [
+        "apollo_admin_page=$matches[1]"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "modera/{param}/{param}",
+      "rewrite": "^modera/([a-z0-9_-]+)/([a-z0-9_-]+)/?$",
+      "query": "index.php?apollo_modera=1&apollo_modera_plugin=$matches[1]&apollo_modera_sub=$matches[2]",
+      "query_vars": [
+        "apollo_modera=1",
+        "apollo_modera_plugin=$matches[1]",
+        "apollo_modera_sub=$matches[2]"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "modera/{param}",
+      "rewrite": "^modera/([a-z0-9_-]+)/?$",
+      "query": "index.php?apollo_modera=1&apollo_modera_plugin=$matches[1]",
+      "query_vars": [
+        "apollo_modera=1",
+        "apollo_modera_plugin=$matches[1]"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "modera",
+      "rewrite": "^modera/?$",
+      "query": "index.php?apollo_modera=1",
+      "query_vars": [
+        "apollo_modera=1"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    }
+  ],
+  "admin_pages": [
+    {
+      "slug": "apollo",
+      "title": "Apollo",
+      "menu_title": "Apollo",
+      "capability": "manage_options",
+      "icon": "dashicons-superhero"
+    },
+    {
+      "slug": "apollo-settings",
+      "title": "ConfiguraÃ§Ãµes",
+      "parent": "apollo",
+      "capability": "manage_options"
+    },
+    {
+      "slug": "apollo-events",
+      "title": "Eventos",
+      "parent": "apollo",
+      "capability": "edit_posts"
+    },
+    {
+      "slug": "apollo-djs",
+      "title": "DJs",
+      "parent": "apollo",
+      "capability": "edit_posts"
+    },
+    {
+      "slug": "apollo-locs",
+      "title": "Locais",
+      "parent": "apollo",
+      "capability": "edit_posts"
+    },
+    {
+      "slug": "apollo-users",
+      "title": "UsuÃ¡rios",
+      "parent": "apollo",
+      "capability": "list_users"
+    },
+    {
+      "slug": "apollo-mod",
+      "title": "ModeraÃ§Ã£o",
+      "parent": "apollo",
+      "capability": "moderate_comments"
+    },
+    {
+      "slug": "apollo-stats",
+      "title": "EstatÃ­sticas",
+      "parent": "apollo",
+      "capability": "manage_options"
+    }
+  ],
+  "shortcodes": [],
+  "version": "1.1.0",
+  "ajax": {
+    "priv": [
+      "apollo_admin_create_draft",
+      "apollo_approve_post",
+      "apollo_cpanel_save",
+      "apollo_reject_post"
+    ],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [
+    "apollo/admin/draft_created",
+    "apollo/admin/post_approved",
+    "apollo/admin/post_rejected",
+    "apollo/admin/report_submitted",
+    "apollo/admin/settings_saved",
+    "apollo_admin_route_map"
+  ],
+  "hooks_listened": [
+    "apollo_admin_route_map"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [
+      "jquery"
+    ],
+    "styles": [
+      "apollo-cpanel-fonts",
+      "remixicon"
+    ]
+  },
+  "options": [
+    "apollo_admin_activated",
+    "apollo_admin_frontend_rewrite_v2",
+    "apollo_admin_settings",
+    "apollo_admin_version"
+  ],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 10,
+    "abspath_coverage_pct": 99,
+    "rest_open_routes": 0,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 0,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 18,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": null
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_admin_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_cf_num_fields",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_et_widget_fields",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_events_archive_slug",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_events_card_radius",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_events_date_format",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_events_map_enabled",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_events_per_page",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_events_primary_color",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_events_show_past",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_evt_theme_events_found",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_evt_theme_live_no_events",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_bg_color",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_logo_url",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_primary_color",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_login_slug",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_maps_logged_only",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_max_login_attempts",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_agent_enabled",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_default",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_require_email_verify",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_membership_trial_days",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_radio_autoplay",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_radio_default_volume",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_radio_show_metadata",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_radio_stream_url",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_recaptcha_on_login",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_single_restrict_logged",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [
+    {
+      "pattern": "^admin/(panel|pending|memberships)/?$",
+      "query": "index.php?apollo_admin_page=$matches[1]"
+    },
+    {
+      "pattern": "^modera/([a-z0-9_-]+)/([a-z0-9_-]+)/?$",
+      "query": "index.php?apollo_modera=1&apollo_modera_plugin=$matches[1]&apollo_modera_sub=$matches[2]"
+    },
+    {
+      "pattern": "^modera/([a-z0-9_-]+)/?$",
+      "query": "index.php?apollo_modera=1&apollo_modera_plugin=$matches[1]"
+    },
+    {
+      "pattern": "^modera/?$",
+      "query": "index.php?apollo_modera=1"
+    }
+  ],
+  "query_vars": [
+    "apollo_admin_page",
+    "apollo_modera",
+    "apollo_modera_plugin",
+    "apollo_modera_sub"
+  ],
+  "php_surface": {
+    "files": 123,
+    "loc": 16062,
+    "classes": 28,
+    "functions": 7
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:47.178Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 515,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-admin",
+    "main_file": "apollo-admin.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Admin",
+      "plugin_uri": "https://apollo.rio.br/plugins/apollo-admin",
+      "description": "Painel administrativo unificado com abas de configuração para TODOS os plugins Apollo",
+      "version": "1.0.2",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "Proprietary",
+      "text_domain": "apollo-admin",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": "false"
+    },
+    "composer": {
+      "name": "apollo/apollo-{slug}",
+      "namespaces": [
+        "Apollo\\{Namespace}"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 123,
+        ".css": 13,
+        ".js": 8,
+        ".deprecated": 1,
+        ".html": 2,
+        ".json": 1,
+        ".md": 1,
+        ".ffs_db": 1
+      },
+      "by_top_directory": {
+        "(root)": 7,
+        "assets": 22,
+        "includes": 2,
+        "src": 59,
+        "templates": 60
+      },
+      "total_bytes": 1109317
+    },
+    "php": {
+      "files": 123,
+      "loc": 16062,
+      "classes": 28,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 7
+    },
+    "architecture": {
+      "namespace": "Apollo\\Admin",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Admin\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "DraftHandler",
+          "fqcn": "Apollo\\Admin\\Admin\\DraftHandler",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/DraftHandler.php"
+        },
+        {
+          "kind": "class",
+          "name": "FieldRenderer",
+          "fqcn": "Apollo\\Admin\\Admin\\FieldRenderer",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/FieldRenderer.php"
+        },
+        {
+          "kind": "class",
+          "name": "RouteRegistry",
+          "fqcn": "Apollo\\Admin\\Admin\\RouteRegistry",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/RouteRegistry.php"
+        },
+        {
+          "kind": "class",
+          "name": "SaveHandler",
+          "fqcn": "Apollo\\Admin\\Admin\\SaveHandler",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/SaveHandler.php"
+        },
+        {
+          "kind": "class",
+          "name": "SettingsBridge",
+          "fqcn": "Apollo\\Admin\\Admin\\SettingsBridge",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/SettingsBridge.php"
+        },
+        {
+          "kind": "class",
+          "name": "StatusRenderer",
+          "fqcn": "Apollo\\Admin\\Admin\\StatusRenderer",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/StatusRenderer.php"
+        },
+        {
+          "kind": "class",
+          "name": "TabManager",
+          "fqcn": "Apollo\\Admin\\Admin\\TabManager",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/TabManager.php"
+        },
+        {
+          "kind": "class",
+          "name": "AdminAssets",
+          "fqcn": "Apollo\\Admin\\AdminAssets",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/AdminAssets.php"
+        },
+        {
+          "kind": "class",
+          "name": "AdminMenuCustomizer",
+          "fqcn": "Apollo\\Admin\\AdminMenuCustomizer",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/AdminMenuCustomizer.php"
+        },
+        {
+          "kind": "class",
+          "name": "AdminPage",
+          "fqcn": "Apollo\\Admin\\AdminPage",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/AdminPage.php"
+        },
+        {
+          "kind": "class",
+          "name": "Deactivation",
+          "fqcn": "Apollo\\Admin\\Deactivation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Deactivation.php"
+        },
+        {
+          "kind": "class",
+          "name": "EditorSupport",
+          "fqcn": "Apollo\\Admin\\EditorSupport",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/EditorSupport.php"
+        },
+        {
+          "kind": "class",
+          "name": "ErrorLogViewer",
+          "fqcn": "Apollo\\Admin\\ErrorLogViewer",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/ErrorLogViewer.php"
+        },
+        {
+          "kind": "class",
+          "name": "MembershipController",
+          "fqcn": "Apollo\\Admin\\Frontend\\Controller\\MembershipController",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Frontend/Controller/MembershipController.php"
+        },
+        {
+          "kind": "class",
+          "name": "PendingController",
+          "fqcn": "Apollo\\Admin\\Frontend\\Controller\\PendingController",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Frontend/Controller/PendingController.php"
+        },
+        {
+          "kind": "class",
+          "name": "ModeraData",
+          "fqcn": "Apollo\\Admin\\Frontend\\ModeraData",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Frontend/ModeraData.php"
+        },
+        {
+          "kind": "class",
+          "name": "Router",
+          "fqcn": "Apollo\\Admin\\Frontend\\Router",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Frontend/Router.php"
+        },
+        {
+          "kind": "class",
+          "name": "FrontendPanel",
+          "fqcn": "Apollo\\Admin\\FrontendPanel",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/FrontendPanel.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Admin\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "Registry",
+          "fqcn": "Apollo\\Admin\\Registry",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Registry.php"
+        },
+        {
+          "kind": "class",
+          "name": "SettingsController",
+          "fqcn": "Apollo\\Admin\\Rest\\SettingsController",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Rest/SettingsController.php"
+        },
+        {
+          "kind": "class",
+          "name": "Exporter",
+          "fqcn": "Apollo\\Admin\\Settings\\Exporter",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Settings/Exporter.php"
+        },
+        {
+          "kind": "class",
+          "name": "SchemaRegistry",
+          "fqcn": "Apollo\\Admin\\Settings\\SchemaRegistry",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Settings/SchemaRegistry.php"
+        },
+        {
+          "kind": "class",
+          "name": "Store",
+          "fqcn": "Apollo\\Admin\\Settings\\Store",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Settings/Store.php"
+        },
+        {
+          "kind": "class",
+          "name": "Settings",
+          "fqcn": "Apollo\\Admin\\Settings",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Settings.php"
+        },
+        {
+          "kind": "class",
+          "name": "ToolbarCustomizer",
+          "fqcn": "Apollo\\Admin\\ToolbarCustomizer",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/ToolbarCustomizer.php"
+        },
+        {
+          "kind": "class",
+          "name": "UserPreferences",
+          "fqcn": "Apollo\\Admin\\UserPreferences",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/UserPreferences.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_admin_check_dependencies",
+          "file": "apollo-admin.php"
+        },
+        {
+          "name": "apollo_admin_init",
+          "file": "apollo-admin.php"
+        },
+        {
+          "name": "apollo_admin",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_admin_get_setting",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_admin_update_setting",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_admin_get_plugin_settings",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_is_plugin_active",
+          "file": "includes/functions.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 18,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/errorlog",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": null,
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can( 'manage_options' )"
+                ]
+              },
+              "body_preview": "return current_user_can( 'manage_options' );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "get_error_items",
+          "file": "src/ErrorLogViewer.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/errorlog",
+          "methods": [
+            "DELETE"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": null,
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can( 'manage_options' )"
+                ]
+              },
+              "body_preview": "return current_user_can( 'manage_options' );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "clear_error_log",
+          "file": "src/ErrorLogViewer.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/admin/memberships",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": null,
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can( 'manage_options' )"
+                ]
+              },
+              "body_preview": "return current_user_can( 'manage_options' );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_get_memberships",
+          "file": "src/Frontend/Controller/MembershipController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/admin/pending",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": null,
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can( 'manage_options' )"
+                ]
+              },
+              "body_preview": "return current_user_can( 'manage_options' );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_get_pending",
+          "file": "src/Frontend/Controller/PendingController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/admin/pending/(?P<id>\\d+)/approve",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": null,
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can( 'manage_options' )"
+                ]
+              },
+              "body_preview": "return current_user_can( 'manage_options' );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_approve",
+          "file": "src/Frontend/Controller/PendingController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/admin/pending/(?P<id>\\d+)/reject",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": null,
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can( 'manage_options' )"
+                ]
+              },
+              "body_preview": "return current_user_can( 'manage_options' );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_reject",
+          "file": "src/Frontend/Controller/PendingController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/settings",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "admin_permission",
+            "target": "SettingsController",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can('manage_options')"
+                ]
+              },
+              "body_preview": "return current_user_can('manage_options');",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "SettingsController::admin_permission",
+              "method_file": "src/Rest/SettingsController.php",
+              "method_signature": "\\WP_REST_Request $request"
+            }
+          },
+          "callback": "get_all_settings",
+          "file": "src/Rest/SettingsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/settings/(?P<slug>[a-z0-9_-]+)",
+          "methods": [
+            "GET",
+            "POST"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "admin_permission",
+            "target": "SettingsController",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can('manage_options')"
+                ]
+              },
+              "body_preview": "return current_user_can('manage_options');",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "SettingsController::admin_permission",
+              "method_file": "src/Rest/SettingsController.php",
+              "method_signature": "\\WP_REST_Request $request"
+            }
+          },
+          "callback": "get_plugin_settings",
+          "file": "src/Rest/SettingsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/settings/(?P<slug>[a-z0-9_-]+)/schema",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "admin_permission",
+            "target": "SettingsController",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can('manage_options')"
+                ]
+              },
+              "body_preview": "return current_user_can('manage_options');",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "SettingsController::admin_permission",
+              "method_file": "src/Rest/SettingsController.php",
+              "method_signature": "\\WP_REST_Request $request"
+            }
+          },
+          "callback": "get_schema",
+          "file": "src/Rest/SettingsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/admin/registry",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "admin_permission",
+            "target": "SettingsController",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can('manage_options')"
+                ]
+              },
+              "body_preview": "return current_user_can('manage_options');",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "SettingsController::admin_permission",
+              "method_file": "src/Rest/SettingsController.php",
+              "method_signature": "\\WP_REST_Request $request"
+            }
+          },
+          "callback": "get_registry",
+          "file": "src/Rest/SettingsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/admin/registry/refresh",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "admin_permission",
+            "target": "SettingsController",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can('manage_options')"
+                ]
+              },
+              "body_preview": "return current_user_can('manage_options');",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "SettingsController::admin_permission",
+              "method_file": "src/Rest/SettingsController.php",
+              "method_signature": "\\WP_REST_Request $request"
+            }
+          },
+          "callback": "refresh_registry",
+          "file": "src/Rest/SettingsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/settings/export",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "admin_permission",
+            "target": "SettingsController",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can('manage_options')"
+                ]
+              },
+              "body_preview": "return current_user_can('manage_options');",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "SettingsController::admin_permission",
+              "method_file": "src/Rest/SettingsController.php",
+              "method_signature": "\\WP_REST_Request $request"
+            }
+          },
+          "callback": "export_settings",
+          "file": "src/Rest/SettingsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/settings/import",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "admin_permission",
+            "target": "SettingsController",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can('manage_options')"
+                ]
+              },
+              "body_preview": "return current_user_can('manage_options');",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "SettingsController::admin_permission",
+              "method_file": "src/Rest/SettingsController.php",
+              "method_signature": "\\WP_REST_Request $request"
+            }
+          },
+          "callback": "import_settings",
+          "file": "src/Rest/SettingsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/toolbar",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": null,
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can( 'manage_options' )"
+                ]
+              },
+              "body_preview": "return current_user_can( 'manage_options' );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_get_toolbar",
+          "file": "src/ToolbarCustomizer.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/toolbar",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": null,
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: manage_options",
+              "capabilities": [
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can( 'manage_options' )"
+                ]
+              },
+              "body_preview": "return current_user_can( 'manage_options' );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_save_toolbar",
+          "file": "src/ToolbarCustomizer.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/preferences",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_get_preferences",
+          "file": "src/UserPreferences.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/preferences",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_update_preferences",
+          "file": "src/UserPreferences.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/preferences/(?P<key>[a-z0-9_-]+)",
+          "methods": [
+            "DELETE"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_delete_preference",
+          "file": "src/UserPreferences.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 0,
+        "MEDIUM": 3,
+        "LOW": 15,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "ADMIN_CAPABILITY": 15,
+        "LOGGED_IN_ONLY": 3
+      },
+      "permission_body_resolved": 18,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [],
+      "admin_cap_routes": [
+        "/errorlog",
+        "/errorlog",
+        "/admin/memberships",
+        "/admin/pending",
+        "/admin/pending/(?P<id>\\d+)/approve",
+        "/admin/pending/(?P<id>\\d+)/reject",
+        "/settings",
+        "/settings/(?P<slug>[a-z0-9_-]+)",
+        "/settings/(?P<slug>[a-z0-9_-]+)/schema",
+        "/admin/registry",
+        "/admin/registry/refresh",
+        "/settings/export",
+        "/settings/import",
+        "/toolbar",
+        "/toolbar"
+      ],
+      "logged_in_routes": [
+        "/preferences",
+        "/preferences",
+        "/preferences/(?P<key>[a-z0-9_-]+)"
+      ]
+    },
+    "database": {
+      "tables_owned_or_defined": [],
+      "tables_referenced": [
+        "apollo_admin_settings",
+        "apollo_cf_num_fields",
+        "apollo_et_widget_fields",
+        "apollo_events_archive_slug",
+        "apollo_events_card_radius",
+        "apollo_events_date_format",
+        "apollo_events_map_enabled",
+        "apollo_events_per_page",
+        "apollo_events_primary_color",
+        "apollo_events_show_past",
+        "apollo_evt_theme_events_found",
+        "apollo_evt_theme_live_no_events",
+        "apollo_login_bg_color",
+        "apollo_login_logo_url",
+        "apollo_login_primary_color",
+        "apollo_login_slug",
+        "apollo_maps_logged_only",
+        "apollo_max_login_attempts",
+        "apollo_membership_agent_enabled",
+        "apollo_membership_default",
+        "apollo_membership_require_email_verify",
+        "apollo_membership_trial_days",
+        "apollo_radio_autoplay",
+        "apollo_radio_default_volume",
+        "apollo_radio_show_metadata",
+        "apollo_radio_stream_url",
+        "apollo_recaptcha_on_login",
+        "apollo_settings",
+        "apollo_single_restrict_logged"
+      ],
+      "tables_for_registry": [],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_admin_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_cf_num_fields",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_et_widget_fields",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_events_archive_slug",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_events_card_radius",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_events_date_format",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_events_map_enabled",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_events_per_page",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_events_primary_color",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_events_show_past",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_evt_theme_events_found",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_evt_theme_live_no_events",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_bg_color",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_logo_url",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_primary_color",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_login_slug",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_maps_logged_only",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_max_login_attempts",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_agent_enabled",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_default",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_require_email_verify",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_membership_trial_days",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_radio_autoplay",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_radio_default_volume",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_radio_show_metadata",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_radio_stream_url",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_recaptcha_on_login",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_single_restrict_logged",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 20,
+      "user_count": 3,
+      "term_count": 0,
+      "post_keys": [
+        "_classified_condition",
+        "_classified_currency",
+        "_classified_price",
+        "_dj_bio_short",
+        "_dj_instagram",
+        "_dj_user_id",
+        "_dj_verified",
+        "_event_loc_id",
+        "_event_privacy",
+        "_event_start_date",
+        "_event_start_time",
+        "_event_ticket_price",
+        "_hub_view_count",
+        "_local_address",
+        "_local_capacity",
+        "_local_city",
+        "_local_price_range",
+        "_membership_features",
+        "_membership_period",
+        "_membership_price"
+      ],
+      "user_keys": [
+        "_apollo_points",
+        "_apollo_rank",
+        "_apollo_status"
+      ],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [
+        {
+          "pattern": "^admin/(panel|pending|memberships)/?$",
+          "query": "index.php?apollo_admin_page=$matches[1]",
+          "position": "top",
+          "file": "src/Frontend/Router.php"
+        },
+        {
+          "pattern": "^modera/([a-z0-9_-]+)/([a-z0-9_-]+)/?$",
+          "query": "index.php?apollo_modera=1&apollo_modera_plugin=$matches[1]&apollo_modera_sub=$matches[2]",
+          "position": "top",
+          "file": "src/Frontend/Router.php"
+        },
+        {
+          "pattern": "^modera/([a-z0-9_-]+)/?$",
+          "query": "index.php?apollo_modera=1&apollo_modera_plugin=$matches[1]",
+          "position": "top",
+          "file": "src/Frontend/Router.php"
+        },
+        {
+          "pattern": "^modera/?$",
+          "query": "index.php?apollo_modera=1",
+          "position": "top",
+          "file": "src/Frontend/Router.php"
+        }
+      ],
+      "query_vars": [
+        "apollo_admin_page",
+        "apollo_modera",
+        "apollo_modera_plugin",
+        "apollo_modera_sub"
+      ],
+      "pages_derived": [
+        {
+          "slug": "admin/{param}",
+          "rewrite": "^admin/(panel|pending|memberships)/?$",
+          "query": "index.php?apollo_admin_page=$matches[1]",
+          "query_vars": [
+            "apollo_admin_page=$matches[1]"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "modera/{param}/{param}",
+          "rewrite": "^modera/([a-z0-9_-]+)/([a-z0-9_-]+)/?$",
+          "query": "index.php?apollo_modera=1&apollo_modera_plugin=$matches[1]&apollo_modera_sub=$matches[2]",
+          "query_vars": [
+            "apollo_modera=1",
+            "apollo_modera_plugin=$matches[1]",
+            "apollo_modera_sub=$matches[2]"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "modera/{param}",
+          "rewrite": "^modera/([a-z0-9_-]+)/?$",
+          "query": "index.php?apollo_modera=1&apollo_modera_plugin=$matches[1]",
+          "query_vars": [
+            "apollo_modera=1",
+            "apollo_modera_plugin=$matches[1]"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "modera",
+          "rewrite": "^modera/?$",
+          "query": "index.php?apollo_modera=1",
+          "query_vars": [
+            "apollo_modera=1"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        }
+      ]
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 6,
+      "listened_count": 22,
+      "apollo_fired": [
+        "apollo/admin/draft_created",
+        "apollo/admin/post_approved",
+        "apollo/admin/post_rejected",
+        "apollo/admin/report_submitted",
+        "apollo/admin/settings_saved",
+        "apollo_admin_route_map"
+      ],
+      "apollo_listened": [
+        "apollo_admin_route_map"
+      ],
+      "critical_wp_listened": [
+        "admin_init",
+        "admin_menu",
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "template_redirect"
+      ]
+    },
+    "ajax": {
+      "priv": [
+        "apollo_admin_create_draft",
+        "apollo_approve_post",
+        "apollo_cpanel_save",
+        "apollo_reject_post"
+      ],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [
+        "jquery"
+      ],
+      "styles": [
+        "apollo-cpanel-fonts",
+        "remixicon"
+      ]
+    },
+    "options": [
+      "apollo_admin_activated",
+      "apollo_admin_frontend_rewrite_v2",
+      "apollo_admin_settings",
+      "apollo_admin_version"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_ADMIN_VERSION",
+        "value": "1.0.2"
+      },
+      {
+        "name": "APOLLO_ADMIN_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_ADMIN_DIR",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_ADMIN_URL",
+        "value": "plugin_dir_url( __FILE__"
+      },
+      {
+        "name": "APOLLO_ADMIN_BASENAME",
+        "value": "plugin_basename( __FILE__"
+      },
+      {
+        "name": "APOLLO_ADMIN_REST_NAMESPACE",
+        "value": "apollo/v1"
+      },
+      {
+        "name": "APOLLO_ADMIN_OPTION_KEY",
+        "value": "apollo_admin_settings"
+      },
+      {
+        "name": "APOLLO_ADMIN_LAYERS",
+        "value": "array(\r\n\t\t'L0_foundation'    => 'Fundação',\r\n\t\t'L1"
+      }
+    ],
+    "security": {
+      "php_files": 123,
+      "abspath_guard_files": 122,
+      "abspath_coverage_pct": 99,
+      "wpdb_prepare_calls": 0,
+      "wpdb_query_calls": 0,
+      "prepare_to_query_ratio": null,
+      "nonce_checks": 13,
+      "current_user_can_calls": 20,
+      "raw_superglobal": {
+        "get": 2,
+        "post": 37,
+        "request": 0
+      },
+      "permission_callback_return_true": 0,
+      "escape_helpers": 369,
+      "echo_statements": 383,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 1,
+      "risk_score": 10,
+      "risk_band": "LOW",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 0,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 0
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-adverts",
+        "apollo-chat",
+        "apollo-coauthor",
+        "apollo-comment",
+        "apollo-core",
+        "apollo-dashboard",
+        "apollo-djs",
+        "apollo-docs",
+        "apollo-email",
+        "apollo-events",
+        "apollo-fav",
+        "apollo-groups",
+        "apollo-hub",
+        "apollo-loc",
+        "apollo-login",
+        "apollo-membership",
+        "apollo-mod",
+        "apollo-notif",
+        "apollo-seo",
+        "apollo-social",
+        "apollo-statistics",
+        "apollo-templates",
+        "apollo-users",
+        "apollo-wow"
+      ],
+      "signals": [
+        "apollo-adverts",
+        "apollo-chat",
+        "apollo-coauthor",
+        "apollo-comment",
+        "apollo-core",
+        "apollo-dashboard",
+        "apollo-djs",
+        "apollo-docs",
+        "apollo-email",
+        "apollo-events",
+        "apollo-fav",
+        "apollo-groups",
+        "apollo-hub",
+        "apollo-loc",
+        "apollo-login",
+        "apollo-membership",
+        "apollo-mod",
+        "apollo-notif",
+        "apollo-seo",
+        "apollo-social",
+        "apollo-statistics",
+        "apollo-templates",
+        "apollo-users",
+        "apollo-wow"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.0.2",
+      "version_changed": false,
+      "old_rest": 7,
+      "live_rest": 18,
+      "old_pages": 0,
+      "live_pages": 4,
+      "new_plugin": false
+    }
+  },
+  "canvas_contract": {
+    "variant": "plus",
+    "action": "FIXED",
+    "shape": "claim-the-slot",
+    "audited": "2026-07-28",
+    "ref": "$canvas_shell.plugins.apollo-admin"
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 123,
+    "php_loc": 15952,
+    "rest_routes_found": 15,
+    "cpts_found": [],
+    "tables_found": [],
+    "shortcodes_found": []
+  }
+}

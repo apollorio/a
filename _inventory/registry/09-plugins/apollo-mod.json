@@ -1,0 +1,830 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-mod",
+    "owner": "apollo-mod",
+    "wrap": "plugins.apollo-mod",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-mod",
+  "namespace": "Apollo\\Mod",
+  "priority": 5,
+  "status": "IMPLEMENTED",
+  "description": "Content moderation queue, flagging, user reports, audit log — adapted from BuddyPress bp-moderation patterns.",
+  "dependencies": [
+    "apollo-core"
+  ],
+  "provides": [
+    "moderation-queue",
+    "mod-tabs",
+    "content-review",
+    "user-moderation"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [
+    "apollo_mod_actions",
+    "apollo_mod_log",
+    "apollo_mod_queue",
+    "apollo_mod_reports"
+  ],
+  "meta": {
+    "post": {
+      "_mod_notes": {
+        "_source": "deep_scan"
+      },
+      "_mod_reviewed_at": {
+        "_source": "deep_scan"
+      },
+      "_mod_reviewed_by": {
+        "_source": "deep_scan"
+      },
+      "_mod_status": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {},
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/mod/queue",
+      "methods": [
+        "GET"
+      ],
+      "description": "Get moderation queue",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_queue",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/mod/queue/(?P<id>\\d+)/approve",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/mod/queue/(?P<id>\\d+)/reject",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/mod/queue/(?P<id>\\d+)/flag",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (OTHER)",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/mod/log",
+      "methods": [
+        "GET"
+      ],
+      "description": "Get mod log",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_log",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/mod/stats",
+      "methods": [
+        "GET"
+      ],
+      "description": "Moderation stats",
+      "auth": "OTHER",
+      "permission_risk": "REVIEW",
+      "permission_method": null,
+      "permission_binding": null,
+      "permission_summary": "Could not parse permission_callback binding",
+      "permission_capabilities": [],
+      "permission_resolved": false,
+      "permission_body_preview": null,
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_get_stats",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/mod/report",
+      "methods": [
+        "POST"
+      ],
+      "description": "Report content (any logged-in user)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "rest_report",
+      "rest_namespace": "apollo/v1",
+      "file": "src/Plugin.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "ajax": {
+    "priv": [
+      "apollo_report_content"
+    ],
+    "nopriv": []
+  },
+  "pages": [],
+  "shortcodes": [],
+  "version": "1.0.1",
+  "cron": [],
+  "hooks_fired": [
+    "apollo/mod/action_taken",
+    "apollo/mod/report_resolved",
+    "apollo/mod/reported"
+  ],
+  "hooks_listened": [
+    "apollo/mod/render_report_form"
+  ],
+  "admin_menus": [
+    {
+      "page_title": "apollo",
+      "menu_title": "Moderação",
+      "capability": "Moderação",
+      "menu_slug": "manage_options"
+    }
+  ],
+  "assets": {
+    "scripts": [],
+    "styles": []
+  },
+  "options": [
+    "apollo_mod_version"
+  ],
+  "security": {
+    "risk_band": "MEDIUM",
+    "risk_score": 30,
+    "abspath_coverage_pct": 86,
+    "rest_open_routes": 0,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 0,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 1,
+    "permission_methods_unresolved": 6,
+    "prepare_ratio": 0.67
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_mod_actions",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_mod_log",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_mod_queue",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_mod_reports",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_moderate_content",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [],
+  "query_vars": [],
+  "php_surface": {
+    "files": 7,
+    "loc": 964,
+    "classes": 4,
+    "functions": 5
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:50.770Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 8,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-mod",
+    "main_file": "apollo-mod.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Moderation",
+      "plugin_uri": "https://apollo.rio.br",
+      "description": "Content moderation queue, flagging, user reports, audit log — adapted from BuddyPress bp-moderation patterns.",
+      "version": "1.0.1",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "GPL-2.0-or-later",
+      "text_domain": "apollo-mod",
+      "domain_path": null,
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": null
+    },
+    "composer": {
+      "name": "apollo/mod",
+      "namespaces": [
+        "Apollo\\Mod"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 7,
+        ".json": 1,
+        ".md": 1
+      },
+      "by_top_directory": {
+        "(root)": 4,
+        "includes": 1,
+        "src": 4
+      },
+      "total_bytes": 33445
+    },
+    "php": {
+      "files": 7,
+      "loc": 964,
+      "classes": 4,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 5
+    },
+    "architecture": {
+      "namespace": "Apollo\\Mod",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Mod\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Deactivation",
+          "fqcn": "Apollo\\Mod\\Deactivation",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Deactivation.php"
+        },
+        {
+          "kind": "class",
+          "name": "FrontendForm",
+          "fqcn": "Apollo\\Mod\\FrontendForm",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/FrontendForm.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Mod\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_report_content",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_mod_action",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_mod_queue",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_resolve_report",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_get_mod_stats",
+          "file": "includes/functions.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 7,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/mod/queue",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $mod,\r\n\t\t\t\t"
+            }
+          },
+          "callback": "rest_get_queue",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/mod/queue/(?P<id>\\d+)/approve",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $mod"
+            }
+          },
+          "callback": null,
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/mod/queue/(?P<id>\\d+)/reject",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $mod"
+            }
+          },
+          "callback": null,
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/mod/queue/(?P<id>\\d+)/flag",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $mod"
+            }
+          },
+          "callback": null,
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/mod/log",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $mod"
+            }
+          },
+          "callback": "rest_get_log",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/mod/stats",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "OTHER",
+            "risk": "REVIEW",
+            "method": null,
+            "analysis": {
+              "effective_class": "UNPARSED",
+              "risk": "REVIEW",
+              "summary": "Could not parse permission_callback binding",
+              "resolved": false,
+              "raw_snippet": "'permission_callback' => $mod"
+            }
+          },
+          "callback": "rest_get_stats",
+          "file": "src/Plugin.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/mod/report",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "rest_report",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 0,
+        "MEDIUM": 1,
+        "LOW": 0,
+        "REVIEW": 6
+      },
+      "effective_class_counts": {
+        "OTHER": 6,
+        "LOGGED_IN_ONLY": 1
+      },
+      "permission_body_resolved": 1,
+      "permission_body_unresolved": 6,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [],
+      "admin_cap_routes": [],
+      "logged_in_routes": [
+        "/mod/report"
+      ]
+    },
+    "database": {
+      "tables_owned_or_defined": [
+        "apollo_mod_actions",
+        "apollo_mod_log",
+        "apollo_mod_queue",
+        "apollo_mod_reports"
+      ],
+      "tables_referenced": [
+        "apollo_mod_actions",
+        "apollo_mod_log",
+        "apollo_mod_queue",
+        "apollo_mod_reports",
+        "apollo_moderate_content"
+      ],
+      "tables_for_registry": [
+        "apollo_mod_actions",
+        "apollo_mod_log",
+        "apollo_mod_queue",
+        "apollo_mod_reports"
+      ],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_mod_actions",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_mod_log",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_mod_queue",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_mod_reports",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_moderate_content",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 4,
+      "user_count": 0,
+      "term_count": 0,
+      "post_keys": [
+        "_mod_notes",
+        "_mod_reviewed_at",
+        "_mod_reviewed_by",
+        "_mod_status"
+      ],
+      "user_keys": [],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [],
+      "query_vars": [],
+      "pages_derived": []
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 3,
+      "listened_count": 5,
+      "apollo_fired": [
+        "apollo/mod/action_taken",
+        "apollo/mod/report_resolved",
+        "apollo/mod/reported"
+      ],
+      "apollo_listened": [
+        "apollo/mod/render_report_form"
+      ],
+      "critical_wp_listened": [
+        "admin_menu",
+        "plugins_loaded",
+        "rest_api_init"
+      ]
+    },
+    "ajax": {
+      "priv": [
+        "apollo_report_content"
+      ],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [],
+    "admin_menus": [
+      {
+        "page_title": "apollo",
+        "menu_title": "Moderação",
+        "capability": "Moderação",
+        "menu_slug": "manage_options"
+      }
+    ],
+    "assets": {
+      "scripts": [],
+      "styles": []
+    },
+    "options": [
+      "apollo_mod_version"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_MOD_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_MOD_PATH",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_MOD_URL",
+        "value": "plugin_dir_url( __FILE__"
+      },
+      {
+        "name": "APOLLO_MOD_FILE",
+        "value": "__FILE__"
+      }
+    ],
+    "security": {
+      "php_files": 7,
+      "abspath_guard_files": 6,
+      "abspath_coverage_pct": 86,
+      "wpdb_prepare_calls": 4,
+      "wpdb_query_calls": 6,
+      "prepare_to_query_ratio": 0.67,
+      "nonce_checks": 3,
+      "current_user_can_calls": 2,
+      "raw_superglobal": {
+        "get": 0,
+        "post": 4,
+        "request": 0
+      },
+      "permission_callback_return_true": 0,
+      "escape_helpers": 9,
+      "echo_statements": 16,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 30,
+      "risk_band": "MEDIUM",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 6,
+      "rest_open_high": 0,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 0
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core"
+      ],
+      "signals": [
+        "apollo-core"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.0.1",
+      "version_changed": false,
+      "old_rest": 7,
+      "live_rest": 7,
+      "old_pages": 0,
+      "live_pages": 0,
+      "new_plugin": false
+    }
+  },
+  "security_remediation": {
+    "note": "P2: uninstall DROP/delete prepared",
+    "last_updated": "2026-07-20"
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 7,
+    "php_loc": 957,
+    "rest_routes_found": 7,
+    "cpts_found": [],
+    "tables_found": [
+      "apollo_mod_actions",
+      "apollo_mod_log",
+      "apollo_mod_queue",
+      "apollo_mod_reports"
+    ],
+    "shortcodes_found": []
+  }
+}

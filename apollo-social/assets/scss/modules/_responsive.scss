@@ -1,0 +1,108 @@
+/**
+ * Animations & Responsive
+ *
+ * @package Apollo\Social
+ */
+
+@import '../scss/variables';
+
+// ─ Animations ─
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+// ─ Responsive ─
+@media (max-width: 768px) {
+    .app-main {
+        padding: 100px 0 0 0;
+    }
+
+    .sidebar-column {
+        display: none;
+    }
+
+    .feed-column {
+        max-width: 100%;
+        padding: 0 16px;
+    }
+
+    .post {
+        padding: 40px 0 20px;
+    }
+
+    .tab-bar {
+        left: 0;
+        right: 0;
+    }
+
+    .tab-group {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .modal-content {
+        width: 95%;
+        padding: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .app-main {
+        flex-direction: column;
+    }
+
+    .feed-column {
+        max-width: 100%;
+        padding-bottom: 80px;
+    }
+
+    .post {
+        padding: 20px 0;
+    }
+
+    .av-md {
+        width: 40px;
+        height: 40px;
+    }
+
+    .profile-identity {
+        .name { font-size: 13px; }
+        .handle { font-size: 10px; }
+    }
+
+    .sb-card {
+        display: none;
+    }
+
+    .tab-bar {
+        height: 60px;
+    }
+
+    .tab-item {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+
+    .event-share {
+        flex-direction: column;
+
+        .ev-date-col {
+            width: 100%;
+            border-right: none;
+            border-bottom: 1px solid var(--border);
+        }
+    }
+}

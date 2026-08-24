@@ -1,0 +1,3703 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-events",
+    "owner": "apollo-events",
+    "wrap": "plugins.apollo-events",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-events",
+  "namespace": "Apollo\\Event",
+  "priority": 2,
+  "status": "IMPLEMENTED",
+  "description": "Events CPT: Backend, listings, single event, multi-view calendar, card/list/map views, 4 style packs (base, apollo-v1, ui-thim, ui-lis), expiration system 30min. Adapted from WP Event Manager + Apollo Events Manager.",
+  "dependencies": [
+    "apollo-coauthor",
+    "apollo-core",
+    "apollo-fav",
+    "apollo-loc",
+    "apollo-mod",
+    "apollo-social",
+    "apollo-statistics",
+    "apollo-wow"
+  ],
+  "provides": [
+    "event-cpt",
+    "event-listing",
+    "event-single",
+    "event-meta",
+    "event-rsvp",
+    "event-warmup"
+  ],
+  "cpts": [
+    "event"
+  ],
+  "taxonomies": [
+    "event_category",
+    "event_type",
+    "event_tag",
+    "sound",
+    "season"
+  ],
+  "tables": [
+    "apollo_event_rsvp"
+  ],
+  "meta": {
+    "post": {
+      "_apollo_cena_confirmed_at": {
+        "_source": "deep_scan"
+      },
+      "_apollo_cena_confirmed_by": {
+        "_source": "deep_scan"
+      },
+      "_apollo_cena_status": {
+        "_source": "deep_scan"
+      },
+      "_apollo_cena_submitted_at": {
+        "_source": "deep_scan"
+      },
+      "_apollo_cena_submitted_by": {
+        "_source": "deep_scan"
+      },
+      "_apollo_fav_count": {
+        "_source": "deep_scan"
+      },
+      "_apollo_source": {
+        "_source": "deep_scan"
+      },
+      "_apollo_wow_count": {
+        "_source": "deep_scan"
+      },
+      "_classified_currency": {
+        "_source": "deep_scan"
+      },
+      "_classified_negotiable": {
+        "_source": "deep_scan"
+      },
+      "_classified_price": {
+        "_source": "deep_scan"
+      },
+      "_dj_audio_url": {
+        "_source": "deep_scan"
+      },
+      "_dj_city": {
+        "_source": "deep_scan"
+      },
+      "_dj_image": {
+        "_source": "deep_scan"
+      },
+      "_dj_instagram": {
+        "_source": "deep_scan"
+      },
+      "_dj_preview": {
+        "_source": "deep_scan"
+      },
+      "_dj_resident_at": {
+        "_source": "deep_scan"
+      },
+      "_dj_role": {
+        "_source": "deep_scan"
+      },
+      "_dj_set_url": {
+        "_source": "deep_scan"
+      },
+      "_dj_soundcloud_url": {
+        "_source": "deep_scan"
+      },
+      "_dj_website": {
+        "_source": "deep_scan"
+      },
+      "_event_audio_url": {
+        "_source": "deep_scan"
+      },
+      "_event_banner": {
+        "_source": "deep_scan"
+      },
+      "_event_coauthors": {
+        "_source": "deep_scan"
+      },
+      "_event_coupon_code": {
+        "_source": "deep_scan"
+      },
+      "_event_dj_ids": {
+        "_source": "deep_scan"
+      },
+      "_event_dj_slots": {
+        "_source": "deep_scan"
+      },
+      "_event_earlybird_enabled": {
+        "_source": "deep_scan"
+      },
+      "_event_earlybird_name": {
+        "_source": "deep_scan"
+      },
+      "_event_earlybird_sub": {
+        "_source": "deep_scan"
+      },
+      "_event_earlybird_url": {
+        "_source": "deep_scan"
+      },
+      "_event_end_date": {
+        "_source": "deep_scan"
+      },
+      "_event_end_time": {
+        "_source": "deep_scan"
+      },
+      "_event_gallery": {
+        "_source": "deep_scan"
+      },
+      "_event_is_gone": {
+        "_source": "deep_scan"
+      },
+      "_event_lat": {
+        "_source": "deep_scan"
+      },
+      "_event_list_btn_style": {
+        "_source": "deep_scan"
+      },
+      "_event_list_url": {
+        "_source": "deep_scan"
+      },
+      "_event_lista_cta_label": {
+        "_source": "deep_scan"
+      },
+      "_event_lista_fem_enabled": {
+        "_source": "deep_scan"
+      },
+      "_event_lista_fem_sub": {
+        "_source": "deep_scan"
+      },
+      "_event_lista_geral_enabled": {
+        "_source": "deep_scan"
+      },
+      "_event_lista_geral_sub": {
+        "_source": "deep_scan"
+      },
+      "_event_lng": {
+        "_source": "deep_scan"
+      },
+      "_event_loc_id": {
+        "_source": "deep_scan"
+      },
+      "_event_local_name": {
+        "_source": "deep_scan"
+      },
+      "_event_privacy": {
+        "_source": "deep_scan"
+      },
+      "_event_reminder_sent": {
+        "_source": "deep_scan"
+      },
+      "_event_start_date": {
+        "_source": "deep_scan"
+      },
+      "_event_start_time": {
+        "_source": "deep_scan"
+      },
+      "_event_status": {
+        "_source": "deep_scan"
+      },
+      "_event_ticket_btn_style": {
+        "_source": "deep_scan"
+      },
+      "_event_ticket_price": {
+        "_source": "deep_scan"
+      },
+      "_event_ticket_status": {
+        "_source": "deep_scan"
+      },
+      "_event_ticket_url": {
+        "_source": "deep_scan"
+      },
+      "_event_video_url": {
+        "_source": "deep_scan"
+      },
+      "_event_view_count": {
+        "_source": "deep_scan"
+      },
+      "_loc_address": {
+        "_source": "deep_scan"
+      },
+      "_loc_endereco": {
+        "_source": "deep_scan"
+      },
+      "_loc_gallery": {
+        "_source": "deep_scan"
+      },
+      "_loc_lat": {
+        "_source": "deep_scan"
+      },
+      "_loc_lng": {
+        "_source": "deep_scan"
+      },
+      "_loc_lon": {
+        "_source": "deep_scan"
+      },
+      "_local_address": {
+        "_source": "deep_scan"
+      },
+      "_local_bairro": {
+        "_source": "deep_scan"
+      },
+      "_local_capacity": {
+        "_source": "deep_scan"
+      },
+      "_local_city": {
+        "_source": "deep_scan"
+      },
+      "_local_country": {
+        "_source": "deep_scan"
+      },
+      "_local_gallery": {
+        "_source": "deep_scan"
+      },
+      "_local_instagram": {
+        "_source": "deep_scan"
+      },
+      "_local_lat": {
+        "_source": "deep_scan"
+      },
+      "_local_lng": {
+        "_source": "deep_scan"
+      },
+      "_local_phone": {
+        "_source": "deep_scan"
+      },
+      "_local_postal": {
+        "_source": "deep_scan"
+      },
+      "_local_state": {
+        "_source": "deep_scan"
+      },
+      "_local_website": {
+        "_source": "deep_scan"
+      },
+      "_event_access_buttons": {
+        "_source": "data-registry-reconcile-2026-07-21",
+        "expected_single": true
+      },
+      "_event_bg_color": {
+        "_source": "data-registry-reconcile-2026-07-21",
+        "expected_single": true
+      },
+      "_event_highlighted": {
+        "_source": "highlighted_meta_field_2026_07_28",
+        "expected_single": true
+      }
+    },
+    "user": {
+      "_apollo_warmup_muted": {
+        "_source": "deep_scan"
+      }
+    },
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/eventos",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "description": "List/Create events. POST body includes coauthors (int[]) = Equipe do Evento — equal edit via map_meta_cap + can_edit_event.",
+      "body_params": {
+        "POST": {
+          "coauthors": "int[] — Equipe do Evento (apollo-coauthor _coauthors); author always edits; max 20; not shown as admins; not on public single"
+        }
+      },
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "INFO",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "SCANNER ARTIFACT CORRECTED 2026-08-05: this entry merges ALL method entries of one register_rest_route() call into a single record, so the READ entry's __return_true was attributed to the write methods too. Verified per-method in src/API/EventsController.php: READABLE=__return_true (intended public read), CREATABLE=can_edit, EDITABLE=can_edit_event, DELETABLE=can_delete_event. No write method is publicly callable.",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_events",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EventsController.php",
+      "_source": "deep_live_scan_perm_body",
+      "permission_verified_2026_08_05": true
+    },
+    {
+      "endpoint": "/eventos/(?P<id>\\d+)",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PATCH",
+        "POST",
+        "PUT"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "INFO",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "SCANNER ARTIFACT CORRECTED 2026-08-05: this entry merges ALL method entries of one register_rest_route() call into a single record, so the READ entry's __return_true was attributed to the write methods too. Verified per-method in src/API/EventsController.php: READABLE=__return_true (intended public read), CREATABLE=can_edit, EDITABLE=can_edit_event, DELETABLE=can_delete_event. No write method is publicly callable.",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_event",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EventsController.php",
+      "_source": "deep_live_scan_perm_body",
+      "permission_verified_2026_08_05": true
+    },
+    {
+      "endpoint": "/eventos/proximos",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_upcoming",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EventsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/eventos/passados",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_past",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EventsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/eventos/hoje",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_today",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EventsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/eventos/por-data/(?P<date>[\\d-]+)",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_by_date",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EventsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/eventos/por-local/(?P<loc_id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_by_loc",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EventsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/eventos/por-dj/(?P<dj_id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_by_dj",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EventsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/eventos/(?P<id>\\d+)/djs",
+      "methods": [
+        "DELETE",
+        "GET",
+        "POST"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "INFO",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "SCANNER ARTIFACT CORRECTED 2026-08-05: this entry merges ALL method entries of one register_rest_route() call into a single record, so the READ entry's __return_true was attributed to the write methods too. Verified per-method in src/API/EventsController.php: READABLE=__return_true (intended public read), CREATABLE=can_edit, EDITABLE=can_edit_event, DELETABLE=can_delete_event. No write method is publicly callable.",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_event_djs",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EventsController.php",
+      "_source": "deep_live_scan_perm_body",
+      "permission_verified_2026_08_05": true
+    },
+    {
+      "endpoint": "/eventos/buscar",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "search_events",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EventsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/eventos/calendario/(?P<year>\\d{4})/(?P<month>\\d{1,2})",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_calendar_month",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EventsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/eventos/(?P<id>\\d+)/banner",
+      "methods": [
+        "DELETE",
+        "POST"
+      ],
+      "description": "Live apollo/v1 (CAPABILITY_CHECK)",
+      "auth": "CAPABILITY_CHECK",
+      "permission_risk": "LOW",
+      "permission_method": "can_edit_event",
+      "permission_binding": "EventsController::can_edit_event",
+      "permission_summary": "Requires capability: edit_post",
+      "permission_capabilities": [
+        "edit_post"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "$id = (int) $request->get_param( 'id' ); if ( current_user_can( 'edit_post', $id ) ) { return true; } $user_id = get_current_user_id(); if ( ! $user_id ) { return false; } $post = get_post( $id ); if ( ! $post || APOLLO_EVENT_CPT !== $post->post_type ) { return false; } if ( (int",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "upload_event_banner",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EventsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/eventos/(?P<id>\\d+)/clonar",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (CAPABILITY_CHECK)",
+      "auth": "CAPABILITY_CHECK",
+      "permission_risk": "LOW",
+      "permission_method": "can_edit_event",
+      "permission_binding": "EventsController::can_edit_event",
+      "permission_summary": "Requires capability: edit_post",
+      "permission_capabilities": [
+        "edit_post"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "$id = (int) $request->get_param( 'id' ); if ( current_user_can( 'edit_post', $id ) ) { return true; } $user_id = get_current_user_id(); if ( ! $user_id ) { return false; } $post = get_post( $id ); if ( ! $post || APOLLO_EVENT_CPT !== $post->post_type ) { return false; } if ( (int",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "clone_event",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EventsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/eventos/(?P<id>\\d+)/estatisticas",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_event_stats",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EventsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/eventos/(?P<id>\\d+)/participantes",
+      "methods": [
+        "DELETE",
+        "GET",
+        "POST"
+      ],
+      "description": "Live apollo/v1 (CAPABILITY_CHECK)",
+      "auth": "CAPABILITY_CHECK",
+      "permission_risk": "LOW",
+      "permission_method": "can_edit_event",
+      "permission_binding": "EventsController::can_edit_event",
+      "permission_summary": "Requires capability: edit_post",
+      "permission_capabilities": [
+        "edit_post"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "$id = (int) $request->get_param( 'id' ); if ( current_user_can( 'edit_post', $id ) ) { return true; } $user_id = get_current_user_id(); if ( ! $user_id ) { return false; } $post = get_post( $id ); if ( ! $post || APOLLO_EVENT_CPT !== $post->post_type ) { return false; } if ( (int",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_event_attendees",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EventsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/eventos/(?P<id>\\d+)/participantes/(?P<user_id>\\d+)/check-in",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (CAPABILITY_CHECK)",
+      "auth": "CAPABILITY_CHECK",
+      "permission_risk": "LOW",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Requires capability: edit_posts",
+      "permission_capabilities": [
+        "edit_posts"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can( 'edit_posts' );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "check_in_attendee",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EventsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/eventos/(?P<id>\\d+)/notificar-warmup",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "toggle_warmup_notify",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EventsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/eventos/meus",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_my_events",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EventsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/eventos/meus/rsvp",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_my_rsvp_events",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EventsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/eventos/lote",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (CAPABILITY_CHECK)",
+      "auth": "CAPABILITY_CHECK",
+      "permission_risk": "LOW",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Requires capability: edit_posts",
+      "permission_capabilities": [
+        "edit_posts"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "return current_user_can( 'edit_posts' );",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "batch_events",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/EventsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/cena-rio/agenda",
+      "methods": [
+        "GET"
+      ],
+      "description": "Cena-rio agenda",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "check_submission_permission",
+      "permission_binding": "Cena_Rio_Submissions::check_submission_permission",
+      "permission_summary": "Requires capability: apollo_access_cena_rio, apollo_cena_submit_events, manage_options",
+      "permission_capabilities": [
+        "apollo_access_cena_rio",
+        "apollo_cena_submit_events",
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "// Check for namespaced or global class. if (class_exists('\\Apollo_Core\\Cena_Rio_Roles')) { return \\Apollo_Core\\Cena_Rio_Roles::user_can_submit(); } if (class_exists('Apollo_Cena_Rio_Roles')) { return \\Apollo_Cena_Rio_Roles::user_can_submit(); } // Fallback to capability check. r",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo/v1",
+      "file": "src/Cena_Rio_Submissions.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/cena-rio/enviar",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (ADMIN_CAPABILITY)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "check_submission_permission",
+      "permission_binding": "Cena_Rio_Submissions::check_submission_permission",
+      "permission_summary": "Requires capability: apollo_access_cena_rio, apollo_cena_submit_events, manage_options",
+      "permission_capabilities": [
+        "apollo_access_cena_rio",
+        "apollo_cena_submit_events",
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "// Check for namespaced or global class. if (class_exists('\\Apollo_Core\\Cena_Rio_Roles')) { return \\Apollo_Core\\Cena_Rio_Roles::user_can_submit(); } if (class_exists('Apollo_Cena_Rio_Roles')) { return \\Apollo_Cena_Rio_Roles::user_can_submit(); } // Fallback to capability check. r",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo/v1",
+      "file": "src/Cena_Rio_Submissions.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/cena-rio/confirmar/(?P<id>\\d+)",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (ADMIN_CAPABILITY)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "check_submission_permission",
+      "permission_binding": "Cena_Rio_Submissions::check_submission_permission",
+      "permission_summary": "Requires capability: apollo_access_cena_rio, apollo_cena_submit_events, manage_options",
+      "permission_capabilities": [
+        "apollo_access_cena_rio",
+        "apollo_cena_submit_events",
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "// Check for namespaced or global class. if (class_exists('\\Apollo_Core\\Cena_Rio_Roles')) { return \\Apollo_Core\\Cena_Rio_Roles::user_can_submit(); } if (class_exists('Apollo_Cena_Rio_Roles')) { return \\Apollo_Cena_Rio_Roles::user_can_submit(); } // Fallback to capability check. r",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo/v1",
+      "file": "src/Cena_Rio_Submissions.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/cena-rio/cancelar/(?P<id>\\d+)",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (ADMIN_CAPABILITY)",
+      "auth": "ADMIN_CAPABILITY",
+      "permission_risk": "LOW",
+      "permission_method": "check_submission_permission",
+      "permission_binding": "Cena_Rio_Submissions::check_submission_permission",
+      "permission_summary": "Requires capability: apollo_access_cena_rio, apollo_cena_submit_events, manage_options",
+      "permission_capabilities": [
+        "apollo_access_cena_rio",
+        "apollo_cena_submit_events",
+        "manage_options"
+      ],
+      "permission_resolved": true,
+      "permission_body_preview": "// Check for namespaced or global class. if (class_exists('\\Apollo_Core\\Cena_Rio_Roles')) { return \\Apollo_Core\\Cena_Rio_Roles::user_can_submit(); } if (class_exists('Apollo_Cena_Rio_Roles')) { return \\Apollo_Cena_Rio_Roles::user_can_submit(); } // Fallback to capability check. r",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": null,
+      "rest_namespace": "apollo/v1",
+      "file": "src/Cena_Rio_Submissions.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "pages": [
+    {
+      "slug": "novo-evento",
+      "rewrite": "^novo-evento/?$",
+      "query": "index.php?apollo_event_page=create",
+      "query_vars": [
+        "apollo_event_page=create"
+      ],
+      "type": "virtual_rewrite",
+      "shell": "blank-canvas-apollo-plus",
+      "notes": "Create/edit form. Mandatory Equipe do Evento section (coauthors). Edit via ?edit={id}. Author + team equal edit.",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "meus-eventos",
+      "rewrite": "^meus-eventos/?$",
+      "query": "index.php?apollo_event_page=dashboard",
+      "query_vars": [
+        "apollo_event_page=dashboard"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "criar-evento",
+      "rewrite": "^criar-evento/?$",
+      "query": "index.php?apollo_event_page=create",
+      "query_vars": [
+        "apollo_event_page=create"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "portal",
+      "rewrite": "^portal/?$",
+      "query": "index.php?apollo_event_page=portal",
+      "query_vars": [
+        "apollo_event_page=portal"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "portal/eventos",
+      "rewrite": "^portal/eventos/?$",
+      "query": "index.php?apollo_event_page=portal",
+      "query_vars": [
+        "apollo_event_page=portal"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "slug": "add-evento",
+      "rewrite": "^add-evento/?$",
+      "query": "index.php?apollo_event_page=create",
+      "query_vars": [
+        "apollo_event_page=create"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    },
+    {
+      "route": "eventos",
+      "template": "styles/base/archive-event.php",
+      "auth": false,
+      "shell": "blank-canvas-apollo-plus",
+      "note": "PHASE 002/003 audit: canonical public Portal de Eventos route. Claimed in route_map() + path_map() as portal_archive. NOTE: production currently serves a STATIC file at this path from the webroot, ahead of PHP — WordPress never sees the request. Removing that file is an infra task, not a code one."
+    },
+    {
+      "route": "portal",
+      "template": "styles/base/archive-event.php",
+      "auth": false,
+      "shell": "blank-canvas-apollo-plus",
+      "note": "Alias of /eventos. Verified rendering in-browser."
+    },
+    {
+      "route": "portal/eventos",
+      "template": "styles/base/archive-event.php",
+      "auth": false,
+      "shell": "blank-canvas-apollo-plus",
+      "note": "Alias of /eventos."
+    },
+    {
+      "slug": "eventos/url",
+      "rewrite": "^eventos/url/?$",
+      "query": "index.php?apollo_event_page=url_import",
+      "query_vars": [
+        "apollo_event_page=url_import"
+      ],
+      "type": "virtual_rewrite",
+      "shell": "none — standalone HTML document",
+      "auth": "REQUIRED — handle_virtual_pages() redirects guests to /acesso before this branch",
+      "template": "templates/events-by-url.php",
+      "asset": "templates/events-by-url.html",
+      "pattern": "hub-app readfile: PHP reads the standalone HTML, injects a boot payload before </head>, echoes it and exit()s. Does NOT use the Apollo+ shell and does NOT call apollo_plus_open().",
+      "boot_payload": {
+        "global": "window.ApolloEventUrlImporter",
+        "wpBase": "untrailingslashit(rest_url())",
+        "restNonce": "wp_create_nonce('wp_rest') — safe here, the route is auth-gated so no nonce ever reaches a guest",
+        "insertPath": "apollo/v1/eventos  → EventsController::create_event, permission_callback can_edit",
+        "locPath": "apollo/v1/loc-resolve"
+      },
+      "purpose": "NEW METHOD OF ADDING EVENTS: import an event from a ticketing URL (Shotgun / BlueTicket) instead of filling the long create form. Complements /eventos/novo, does not replace it.",
+      "known_defect": "boot payload's locPath default 'apollo/v1/loc-resolve' is registered NOWHERE in the ecosystem (apollo-events, apollo-loc and apollo-core all lack it; apollo-loc exposes only '/' and '/proximos'). The importer's venue-resolution call therefore 404s on the shipped default. The HTML exposes a cfgLocPath field so an operator can override it at runtime, which is why this went unnoticed. Either register the route or change the default.",
+      "_source": "code_read_2026-08-05"
+    },
+    {
+      "slug": "eventos/novo",
+      "rewrite": "^eventos/novo/?$",
+      "query": "index.php?apollo_event_page=create",
+      "query_vars": [
+        "apollo_event_page=create"
+      ],
+      "type": "virtual_rewrite",
+      "shell": "blank-canvas-apollo-plus",
+      "auth": "REQUIRED",
+      "template": "styles/base/create-event.php",
+      "note": "PHASE 007 alias matching the Apollo+ aside naming convention. Same create form as /novo-evento, /criar-evento, /add-evento — additive, the 3 legacy slugs are untouched.",
+      "_source": "code_read_2026-08-05"
+    },
+    {
+      "slug": "eventos/meus",
+      "rewrite": "^eventos/meus/?$",
+      "query": "index.php?apollo_event_page=meus_dashboard",
+      "query_vars": [
+        "apollo_event_page=meus_dashboard"
+      ],
+      "type": "virtual_rewrite",
+      "shell": "blank-canvas-apollo-plus",
+      "auth": "REQUIRED",
+      "template": "styles/base/dashboard-meus.php",
+      "note": "PHASE 007 KPI \"Painel de Eventos\" (ticket donut, season/genre bars, monthly timeline, DJ/venue/coauthor leaderboards, readiness checklist). A NEW page value, not an alias for dashboard — /meus-eventos, /painel, /painel/eventos and /dashboard keep serving the older manage list unchanged.",
+      "_source": "code_read_2026-08-05"
+    }
+  ],
+  "shortcodes": [
+    {
+      "tag": "a-eve",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_calendar",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_cena_submit_event",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_event",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_event_form",
+      "_source": "deep_live_scan"
+    },
+    {
+      "tag": "apollo_events",
+      "_source": "deep_live_scan"
+    }
+  ],
+  "user_meta": {
+    "_apollo_warmup_muted": {
+      "type": "array",
+      "items": "int",
+      "description": "Array of event IDs where user muted warm-up mural notifications"
+    }
+  },
+  "hooks": {
+    "listens": [
+      "apollo/depoimento/created"
+    ],
+    "fires": [
+      "apollo/event/rsvp",
+      "apollo/event/rsvp_cancelled"
+    ]
+  },
+  "template_parts": [
+    {
+      "file": "styles/base/template-parts/single/rsvp-warmup.php",
+      "description": "RSVP widget + vibe popup + warm-up mural with composer, GSAP animations, skeleton loading, optimistic UI"
+    }
+  ],
+  "version": "1.7.2",
+  "ajax": {
+    "priv": [
+      "apollo_event_save_settings"
+    ],
+    "nopriv": []
+  },
+  "cron": [
+    "every_five_minutes"
+  ],
+  "hooks_fired": [
+    "apollo/coauthor/cleared",
+    "apollo/event/before-delete",
+    "apollo/event/checked_in",
+    "apollo/event/cloned",
+    "apollo/event/created",
+    "apollo/event/dashboard_transactions",
+    "apollo/event/deleted",
+    "apollo/event/dj-added",
+    "apollo/event/dj-removed",
+    "apollo/event/fab_links",
+    "apollo/event/gone",
+    "apollo/event/published",
+    "apollo/event/reminder",
+    "apollo/event/rsvp",
+    "apollo/event/rsvp_cancelled",
+    "apollo/event/structured_data",
+    "apollo/event/updated",
+    "apollo_dj_single_after",
+    "apollo_event_after_card",
+    "apollo_event_after_map",
+    "apollo_event_after_render",
+    "apollo_event_before_card",
+    "apollo_event_before_render",
+    "apollo_event_dashboard_after",
+    "apollo_event_dashboard_before",
+    "apollo_event_dj_added",
+    "apollo_event_dj_removed",
+    "apollo_event_gone",
+    "apollo_event_register_integrations",
+    "apollo_event_rest_before_delete",
+    "apollo_event_rest_created",
+    "apollo_event_rest_data",
+    "apollo_event_rest_updated",
+    "apollo_event_single_before",
+    "apollo_loc_single_after",
+    "apollo_loc_single_after_content",
+    "apollo_loc_single_sidebar"
+  ],
+  "hooks_listened": [
+    "apollo/coauthor/append_byline",
+    "apollo/depoimento/created",
+    "apollo/events/render_create_form",
+    "apollo/routes/is_blank_canvas",
+    "apollo_comment_post_types",
+    "apollo_core_register_meta",
+    "apollo_dashboard_tab_events",
+    "apollo_dashboard_tabs",
+    "apollo_event_after_card",
+    "apollo_event_check_expiration",
+    "apollo_event_dj_added",
+    "apollo_event_gone",
+    "apollo_event_rest_created",
+    "apollo_event_rest_updated",
+    "apollo_fav_post_types",
+    "apollo_mod_post_types",
+    "apollo_shortcodes_registry",
+    "apollo_statistics_post_types",
+    "apollo_wow_post_types"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [
+      "apollo-events",
+      "apollo-events-calendar",
+      "apollo-events-map",
+      "apollo-lineup-builder",
+      "leaflet"
+    ],
+    "styles": [
+      "apollo-event-metabox",
+      "apollo-events",
+      "apollo-events-calendar",
+      "apollo-events-cards",
+      "apollo-events-style-",
+      "apollo-events-v2",
+      "apollo-lineup-builder",
+      "leaflet"
+    ]
+  },
+  "options": [
+    "apollo_event_settings",
+    "apollo_event_version",
+    "apollo_events_rewrite_version"
+  ],
+  "security": {
+    "risk_band": "HIGH",
+    "risk_score": 69,
+    "abspath_coverage_pct": 98,
+    "rest_open_routes": 12,
+    "rest_critical_write_public": 3,
+    "rest_open_non_intentional": 12,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 24,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 0.95
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_cena_submit_events",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_dashboard_tab_events",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_event_get_all_users_for_coauthor_picker",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_event_get_user_manageable_events",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_event_rsvp",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_event_settings",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_event_settings_group",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_event_settings_nonce",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_events",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_events_rewrite_version",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_loc_single_after_content",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_log_activity",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_mod_log_action",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_wow_post_types",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_wow_reactions",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [
+    {
+      "pattern": "^novo-evento/?$",
+      "query": "index.php?apollo_event_page=create"
+    },
+    {
+      "pattern": "^criar-evento/?$",
+      "query": "index.php?apollo_event_page=create"
+    },
+    {
+      "pattern": "^add-evento/?$",
+      "query": "index.php?apollo_event_page=create"
+    },
+    {
+      "pattern": "^eventos/novo/?$",
+      "query": "index.php?apollo_event_page=create"
+    },
+    {
+      "pattern": "^eventos/url/?$",
+      "query": "index.php?apollo_event_page=url_import"
+    },
+    {
+      "pattern": "^meus-eventos/?$",
+      "query": "index.php?apollo_event_page=dashboard"
+    },
+    {
+      "pattern": "^painel/?$",
+      "query": "index.php?apollo_event_page=dashboard"
+    },
+    {
+      "pattern": "^painel/eventos/?$",
+      "query": "index.php?apollo_event_page=dashboard"
+    },
+    {
+      "pattern": "^dashboard/?$",
+      "query": "index.php?apollo_event_page=dashboard"
+    },
+    {
+      "pattern": "^eventos/meus/?$",
+      "query": "index.php?apollo_event_page=meus_dashboard"
+    },
+    {
+      "pattern": "^portal/?$",
+      "query": "index.php?apollo_event_page=portal_archive"
+    },
+    {
+      "pattern": "^portal/eventos/?$",
+      "query": "index.php?apollo_event_page=portal_archive"
+    },
+    {
+      "pattern": "^eventos/?$",
+      "query": "index.php?apollo_event_page=portal_archive"
+    }
+  ],
+  "query_vars": [
+    "apollo_event_page"
+  ],
+  "php_surface": {
+    "files": 94,
+    "loc": 16930,
+    "classes": 14,
+    "functions": 20
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:49.488Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 750,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-events",
+    "main_file": "apollo-events.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Events",
+      "plugin_uri": "https://apollo.rio.br/plugins/apollo-events",
+      "description": "Events CPT: Backend, listings, single event, multi-view calendar, card/list/map views, 4 style packs (base, apollo-v1, ui-thim, ui-lis), expiration system 30min. Adapted from WP Event Manager + Apollo Events Manager.",
+      "version": "1.4.0",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "Proprietary",
+      "text_domain": "apollo-events",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": "false"
+    },
+    "composer": {
+      "name": "apollo/apollo-events",
+      "namespaces": [
+        "Apollo\\Event"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 94,
+        ".css": 10,
+        ".svg": 1,
+        ".js": 8,
+        ".json": 1,
+        ".md": 1,
+        ".log": 1,
+        ".none": 1,
+        ".ffs_db": 1
+      },
+      "by_top_directory": {
+        "(root)": 8,
+        "assets": 14,
+        "includes": 4,
+        "src": 14,
+        "styles": 78
+      },
+      "total_bytes": 1037486
+    },
+    "php": {
+      "files": 94,
+      "loc": 16930,
+      "classes": 14,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 20
+    },
+    "architecture": {
+      "namespace": "Apollo\\Event",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Event\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Dashboard",
+          "fqcn": "Apollo\\Event\\Admin\\Dashboard",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Admin/Dashboard.php"
+        },
+        {
+          "kind": "class",
+          "name": "Metabox",
+          "fqcn": "Apollo\\Event\\Admin\\Metabox",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/Metabox.php"
+        },
+        {
+          "kind": "class",
+          "name": "EventsController",
+          "fqcn": "Apollo\\Event\\API\\EventsController",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "kind": "class",
+          "name": "Cena_Rio_Submissions",
+          "fqcn": "Apollo\\Event\\Cena_Rio_Submissions",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Cena_Rio_Submissions.php"
+        },
+        {
+          "kind": "class",
+          "name": "Deactivation",
+          "fqcn": "Apollo\\Event\\Deactivation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Deactivation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Expiration",
+          "fqcn": "Apollo\\Event\\Expiration",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Expiration.php"
+        },
+        {
+          "kind": "class",
+          "name": "FrontendForm",
+          "fqcn": "Apollo\\Event\\FrontendForm",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/FrontendForm.php"
+        },
+        {
+          "kind": "class",
+          "name": "Integrations",
+          "fqcn": "Apollo\\Event\\Integrations",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Integrations.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Event\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "Registry",
+          "fqcn": "Apollo\\Event\\Registry",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Registry.php"
+        },
+        {
+          "kind": "class",
+          "name": "Shortcodes",
+          "fqcn": "Apollo\\Event\\Shortcodes",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Shortcodes.php"
+        },
+        {
+          "kind": "class",
+          "name": "StructuredData",
+          "fqcn": "Apollo\\Event\\StructuredData",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/StructuredData.php"
+        },
+        {
+          "kind": "class",
+          "name": "TemplateLoader",
+          "fqcn": "Apollo\\Event\\TemplateLoader",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/TemplateLoader.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_event_check_dependencies",
+          "file": "apollo-events.php"
+        },
+        {
+          "name": "apollo_event_init",
+          "file": "apollo-events.php"
+        },
+        {
+          "name": "apollo_event",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_event_option",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_event_parse_date",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_event_is_gone",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_event_get_djs",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_event_get_loc",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_event_get_banner",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_event_get_active_style",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_event_query",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_event_flush_cache",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_event_user_initials",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_event_user_is_coauthor",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_event_get_coauthor_ids",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_event_save_coauthors",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_event_get_all_users_for_coauthor_picker",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_event_get_user_manageable_events",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_event_prepare_form_payload",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_event_build_access_payload",
+          "file": "includes/functions.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 24,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/eventos",
+          "methods": [
+            "GET",
+            "POST"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_events",
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/eventos/(?P<id>\\d+)",
+          "methods": [
+            "DELETE",
+            "GET",
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_event",
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/eventos/proximos",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_upcoming",
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/eventos/passados",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_past",
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/eventos/hoje",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_today",
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/eventos/por-data/(?P<date>[\\d-]+)",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_by_date",
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/eventos/por-local/(?P<loc_id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_by_loc",
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/eventos/por-dj/(?P<dj_id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_by_dj",
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/eventos/(?P<id>\\d+)/djs",
+          "methods": [
+            "DELETE",
+            "GET",
+            "POST"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_event_djs",
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/eventos/buscar",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "search_events",
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/eventos/calendario/(?P<year>\\d{4})/(?P<month>\\d{1,2})",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_calendar_month",
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/eventos/(?P<id>\\d+)/banner",
+          "methods": [
+            "DELETE",
+            "POST"
+          ],
+          "permission": {
+            "class": "CAPABILITY_CHECK",
+            "risk": "LOW",
+            "method": "can_edit_event",
+            "target": "EventsController",
+            "analysis": {
+              "effective_class": "CAPABILITY_CHECK",
+              "risk": "LOW",
+              "summary": "Requires capability: edit_post",
+              "capabilities": [
+                "edit_post"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true",
+                  "false",
+                  "false",
+                  "true",
+                  "function_exists( 'apollo_event_user_is_coauthor' ) ? apollo_event_user_is_coauthor( $id, $user_id ) "
+                ]
+              },
+              "body_preview": "$id = (int) $request->get_param( 'id' ); if ( current_user_can( 'edit_post', $id ) ) { return true; } $user_id = get_current_user_id(); if ( ! $user_id ) { return false; } $post = get_post( $id ); if ( ! $post || APOLLO_EVENT_CPT !== $post->post_type ) { return false; } if ( (int",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "EventsController::can_edit_event",
+              "method_file": "src/API/EventsController.php",
+              "method_signature": "\\WP_REST_Request $request"
+            }
+          },
+          "callback": "upload_event_banner",
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/eventos/(?P<id>\\d+)/clonar",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "CAPABILITY_CHECK",
+            "risk": "LOW",
+            "method": "can_edit_event",
+            "target": "EventsController",
+            "analysis": {
+              "effective_class": "CAPABILITY_CHECK",
+              "risk": "LOW",
+              "summary": "Requires capability: edit_post",
+              "capabilities": [
+                "edit_post"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true",
+                  "false",
+                  "false",
+                  "true",
+                  "function_exists( 'apollo_event_user_is_coauthor' ) ? apollo_event_user_is_coauthor( $id, $user_id ) "
+                ]
+              },
+              "body_preview": "$id = (int) $request->get_param( 'id' ); if ( current_user_can( 'edit_post', $id ) ) { return true; } $user_id = get_current_user_id(); if ( ! $user_id ) { return false; } $post = get_post( $id ); if ( ! $post || APOLLO_EVENT_CPT !== $post->post_type ) { return false; } if ( (int",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "EventsController::can_edit_event",
+              "method_file": "src/API/EventsController.php",
+              "method_signature": "\\WP_REST_Request $request"
+            }
+          },
+          "callback": "clone_event",
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/eventos/(?P<id>\\d+)/estatisticas",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "get_event_stats",
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/eventos/(?P<id>\\d+)/participantes",
+          "methods": [
+            "DELETE",
+            "GET",
+            "POST"
+          ],
+          "permission": {
+            "class": "CAPABILITY_CHECK",
+            "risk": "LOW",
+            "method": "can_edit_event",
+            "target": "EventsController",
+            "analysis": {
+              "effective_class": "CAPABILITY_CHECK",
+              "risk": "LOW",
+              "summary": "Requires capability: edit_post",
+              "capabilities": [
+                "edit_post"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true",
+                  "false",
+                  "false",
+                  "true",
+                  "function_exists( 'apollo_event_user_is_coauthor' ) ? apollo_event_user_is_coauthor( $id, $user_id ) "
+                ]
+              },
+              "body_preview": "$id = (int) $request->get_param( 'id' ); if ( current_user_can( 'edit_post', $id ) ) { return true; } $user_id = get_current_user_id(); if ( ! $user_id ) { return false; } $post = get_post( $id ); if ( ! $post || APOLLO_EVENT_CPT !== $post->post_type ) { return false; } if ( (int",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "EventsController::can_edit_event",
+              "method_file": "src/API/EventsController.php",
+              "method_signature": "\\WP_REST_Request $request"
+            }
+          },
+          "callback": "get_event_attendees",
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/eventos/(?P<id>\\d+)/participantes/(?P<user_id>\\d+)/check-in",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "CAPABILITY_CHECK",
+            "risk": "LOW",
+            "method": null,
+            "analysis": {
+              "effective_class": "CAPABILITY_CHECK",
+              "risk": "LOW",
+              "summary": "Requires capability: edit_posts",
+              "capabilities": [
+                "edit_posts"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can( 'edit_posts' )"
+                ]
+              },
+              "body_preview": "return current_user_can( 'edit_posts' );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "check_in_attendee",
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/eventos/(?P<id>\\d+)/notificar-warmup",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "toggle_warmup_notify",
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/eventos/meus",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "get_my_events",
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/eventos/meus/rsvp",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "get_my_rsvp_events",
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/eventos/lote",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "CAPABILITY_CHECK",
+            "risk": "LOW",
+            "method": null,
+            "analysis": {
+              "effective_class": "CAPABILITY_CHECK",
+              "risk": "LOW",
+              "summary": "Requires capability: edit_posts",
+              "capabilities": [
+                "edit_posts"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "current_user_can( 'edit_posts' )"
+                ]
+              },
+              "body_preview": "return current_user_can( 'edit_posts' );",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "batch_events",
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/cena-rio/agenda",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "check_submission_permission",
+            "target": "Cena_Rio_Submissions",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: apollo_access_cena_rio, apollo_cena_submit_events, manage_options",
+              "capabilities": [
+                "apollo_access_cena_rio",
+                "apollo_cena_submit_events",
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "\\Apollo_Core\\Cena_Rio_Roles::user_can_submit()",
+                  "\\Apollo_Cena_Rio_Roles::user_can_submit()",
+                  "current_user_can('apollo_cena_submit_events') || current_user_can('apollo_access_cena_rio') || curre"
+                ]
+              },
+              "body_preview": "// Check for namespaced or global class. if (class_exists('\\Apollo_Core\\Cena_Rio_Roles')) { return \\Apollo_Core\\Cena_Rio_Roles::user_can_submit(); } if (class_exists('Apollo_Cena_Rio_Roles')) { return \\Apollo_Cena_Rio_Roles::user_can_submit(); } // Fallback to capability check. r",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "Cena_Rio_Submissions::check_submission_permission",
+              "method_file": "src/Cena_Rio_Submissions.php",
+              "method_signature": ""
+            }
+          },
+          "callback": null,
+          "file": "src/Cena_Rio_Submissions.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/cena-rio/enviar",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "check_submission_permission",
+            "target": "Cena_Rio_Submissions",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: apollo_access_cena_rio, apollo_cena_submit_events, manage_options",
+              "capabilities": [
+                "apollo_access_cena_rio",
+                "apollo_cena_submit_events",
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "\\Apollo_Core\\Cena_Rio_Roles::user_can_submit()",
+                  "\\Apollo_Cena_Rio_Roles::user_can_submit()",
+                  "current_user_can('apollo_cena_submit_events') || current_user_can('apollo_access_cena_rio') || curre"
+                ]
+              },
+              "body_preview": "// Check for namespaced or global class. if (class_exists('\\Apollo_Core\\Cena_Rio_Roles')) { return \\Apollo_Core\\Cena_Rio_Roles::user_can_submit(); } if (class_exists('Apollo_Cena_Rio_Roles')) { return \\Apollo_Cena_Rio_Roles::user_can_submit(); } // Fallback to capability check. r",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "Cena_Rio_Submissions::check_submission_permission",
+              "method_file": "src/Cena_Rio_Submissions.php",
+              "method_signature": ""
+            }
+          },
+          "callback": null,
+          "file": "src/Cena_Rio_Submissions.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/cena-rio/confirmar/(?P<id>\\d+)",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "check_submission_permission",
+            "target": "Cena_Rio_Submissions",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: apollo_access_cena_rio, apollo_cena_submit_events, manage_options",
+              "capabilities": [
+                "apollo_access_cena_rio",
+                "apollo_cena_submit_events",
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "\\Apollo_Core\\Cena_Rio_Roles::user_can_submit()",
+                  "\\Apollo_Cena_Rio_Roles::user_can_submit()",
+                  "current_user_can('apollo_cena_submit_events') || current_user_can('apollo_access_cena_rio') || curre"
+                ]
+              },
+              "body_preview": "// Check for namespaced or global class. if (class_exists('\\Apollo_Core\\Cena_Rio_Roles')) { return \\Apollo_Core\\Cena_Rio_Roles::user_can_submit(); } if (class_exists('Apollo_Cena_Rio_Roles')) { return \\Apollo_Cena_Rio_Roles::user_can_submit(); } // Fallback to capability check. r",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "Cena_Rio_Submissions::check_submission_permission",
+              "method_file": "src/Cena_Rio_Submissions.php",
+              "method_signature": ""
+            }
+          },
+          "callback": null,
+          "file": "src/Cena_Rio_Submissions.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/cena-rio/cancelar/(?P<id>\\d+)",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "ADMIN_CAPABILITY",
+            "risk": "LOW",
+            "method": "check_submission_permission",
+            "target": "Cena_Rio_Submissions",
+            "analysis": {
+              "effective_class": "ADMIN_CAPABILITY",
+              "risk": "LOW",
+              "summary": "Requires capability: apollo_access_cena_rio, apollo_cena_submit_events, manage_options",
+              "capabilities": [
+                "apollo_access_cena_rio",
+                "apollo_cena_submit_events",
+                "manage_options"
+              ],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "\\Apollo_Core\\Cena_Rio_Roles::user_can_submit()",
+                  "\\Apollo_Cena_Rio_Roles::user_can_submit()",
+                  "current_user_can('apollo_cena_submit_events') || current_user_can('apollo_access_cena_rio') || curre"
+                ]
+              },
+              "body_preview": "// Check for namespaced or global class. if (class_exists('\\Apollo_Core\\Cena_Rio_Roles')) { return \\Apollo_Core\\Cena_Rio_Roles::user_can_submit(); } if (class_exists('Apollo_Cena_Rio_Roles')) { return \\Apollo_Cena_Rio_Roles::user_can_submit(); } // Fallback to capability check. r",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "Cena_Rio_Submissions::check_submission_permission",
+              "method_file": "src/Cena_Rio_Submissions.php",
+              "method_signature": ""
+            }
+          },
+          "callback": null,
+          "file": "src/Cena_Rio_Submissions.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 3,
+        "HIGH": 9,
+        "MEDIUM": 3,
+        "LOW": 9,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "PUBLIC_UNAUTHENTICATED": 12,
+        "CAPABILITY_CHECK": 5,
+        "LOGGED_IN_ONLY": 3,
+        "ADMIN_CAPABILITY": 4
+      },
+      "permission_body_resolved": 24,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 3,
+      "open_routes": [
+        {
+          "endpoint": "/eventos",
+          "methods": [
+            "GET",
+            "POST"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "endpoint": "/eventos/(?P<id>\\d+)",
+          "methods": [
+            "DELETE",
+            "GET",
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "endpoint": "/eventos/proximos",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "endpoint": "/eventos/passados",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "endpoint": "/eventos/hoje",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "endpoint": "/eventos/por-data/(?P<date>[\\d-]+)",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "endpoint": "/eventos/por-local/(?P<loc_id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "endpoint": "/eventos/por-dj/(?P<dj_id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "endpoint": "/eventos/(?P<id>\\d+)/djs",
+          "methods": [
+            "DELETE",
+            "GET",
+            "POST"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "endpoint": "/eventos/buscar",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "endpoint": "/eventos/calendario/(?P<year>\\d{4})/(?P<month>\\d{1,2})",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/EventsController.php"
+        },
+        {
+          "endpoint": "/eventos/(?P<id>\\d+)/estatisticas",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/EventsController.php"
+        }
+      ],
+      "admin_cap_routes": [
+        "/cena-rio/agenda",
+        "/cena-rio/enviar",
+        "/cena-rio/confirmar/(?P<id>\\d+)",
+        "/cena-rio/cancelar/(?P<id>\\d+)"
+      ],
+      "logged_in_routes": [
+        "/eventos/(?P<id>\\d+)/notificar-warmup",
+        "/eventos/meus",
+        "/eventos/meus/rsvp"
+      ]
+    },
+    "database": {
+      "tables_owned_or_defined": [
+        "apollo_event_rsvp"
+      ],
+      "tables_referenced": [
+        "apollo_cena_submit_events",
+        "apollo_dashboard_tab_events",
+        "apollo_event_get_all_users_for_coauthor_picker",
+        "apollo_event_get_user_manageable_events",
+        "apollo_event_rsvp",
+        "apollo_event_settings",
+        "apollo_event_settings_group",
+        "apollo_event_settings_nonce",
+        "apollo_events",
+        "apollo_events_rewrite_version",
+        "apollo_loc_single_after_content",
+        "apollo_log_activity",
+        "apollo_mod_log_action",
+        "apollo_wow_post_types",
+        "apollo_wow_reactions"
+      ],
+      "tables_for_registry": [
+        "apollo_event_rsvp"
+      ],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_cena_submit_events",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_dashboard_tab_events",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_event_get_all_users_for_coauthor_picker",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_event_get_user_manageable_events",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_event_rsvp",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_event_settings",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_event_settings_group",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_event_settings_nonce",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_events",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_events_rewrite_version",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_loc_single_after_content",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_log_activity",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_mod_log_action",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_wow_post_types",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_wow_reactions",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 76,
+      "user_count": 1,
+      "term_count": 0,
+      "post_keys": [
+        "_apollo_cena_confirmed_at",
+        "_apollo_cena_confirmed_by",
+        "_apollo_cena_status",
+        "_apollo_cena_submitted_at",
+        "_apollo_cena_submitted_by",
+        "_apollo_fav_count",
+        "_apollo_source",
+        "_apollo_wow_count",
+        "_classified_currency",
+        "_classified_negotiable",
+        "_classified_price",
+        "_dj_audio_url",
+        "_dj_city",
+        "_dj_image",
+        "_dj_instagram",
+        "_dj_preview",
+        "_dj_resident_at",
+        "_dj_role",
+        "_dj_set_url",
+        "_dj_soundcloud_url",
+        "_dj_website",
+        "_event_audio_url",
+        "_event_banner",
+        "_event_coauthors",
+        "_event_coupon_code",
+        "_event_dj_ids",
+        "_event_dj_slots",
+        "_event_earlybird_enabled",
+        "_event_earlybird_name",
+        "_event_earlybird_sub",
+        "_event_earlybird_url",
+        "_event_end_date",
+        "_event_end_time",
+        "_event_gallery",
+        "_event_is_gone",
+        "_event_lat",
+        "_event_list_btn_style",
+        "_event_list_url",
+        "_event_lista_cta_label",
+        "_event_lista_fem_enabled",
+        "_event_lista_fem_sub",
+        "_event_lista_geral_enabled",
+        "_event_lista_geral_sub",
+        "_event_lng",
+        "_event_loc_id",
+        "_event_local_name",
+        "_event_privacy",
+        "_event_reminder_sent",
+        "_event_start_date",
+        "_event_start_time",
+        "_event_status",
+        "_event_ticket_btn_style",
+        "_event_ticket_price",
+        "_event_ticket_status",
+        "_event_ticket_url",
+        "_event_video_url",
+        "_event_view_count",
+        "_loc_address",
+        "_loc_endereco",
+        "_loc_gallery",
+        "_loc_lat",
+        "_loc_lng",
+        "_loc_lon",
+        "_local_address",
+        "_local_bairro",
+        "_local_capacity",
+        "_local_city",
+        "_local_country",
+        "_local_gallery",
+        "_local_instagram",
+        "_local_lat",
+        "_local_lng",
+        "_local_phone",
+        "_local_postal",
+        "_local_state",
+        "_local_website"
+      ],
+      "user_keys": [
+        "_apollo_warmup_muted"
+      ],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [
+        {
+          "pattern": "^novo-evento/?$",
+          "query": "index.php?apollo_event_page=create",
+          "position": "top",
+          "file": "src/Plugin.php"
+        },
+        {
+          "pattern": "^meus-eventos/?$",
+          "query": "index.php?apollo_event_page=dashboard",
+          "position": "top",
+          "file": "src/Plugin.php"
+        },
+        {
+          "pattern": "^criar-evento/?$",
+          "query": "index.php?apollo_event_page=create",
+          "position": "top",
+          "file": "src/Plugin.php"
+        },
+        {
+          "pattern": "^portal/?$",
+          "query": "index.php?apollo_event_page=portal",
+          "position": "top",
+          "file": "src/Plugin.php"
+        },
+        {
+          "pattern": "^portal/eventos/?$",
+          "query": "index.php?apollo_event_page=portal",
+          "position": "top",
+          "file": "src/Plugin.php"
+        },
+        {
+          "pattern": "^add-evento/?$",
+          "query": "index.php?apollo_event_page=create",
+          "position": "top",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "query_vars": [
+        "apollo_event_page"
+      ],
+      "pages_derived": [
+        {
+          "slug": "novo-evento",
+          "rewrite": "^novo-evento/?$",
+          "query": "index.php?apollo_event_page=create",
+          "query_vars": [
+            "apollo_event_page=create"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "meus-eventos",
+          "rewrite": "^meus-eventos/?$",
+          "query": "index.php?apollo_event_page=dashboard",
+          "query_vars": [
+            "apollo_event_page=dashboard"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "criar-evento",
+          "rewrite": "^criar-evento/?$",
+          "query": "index.php?apollo_event_page=create",
+          "query_vars": [
+            "apollo_event_page=create"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "portal",
+          "rewrite": "^portal/?$",
+          "query": "index.php?apollo_event_page=portal",
+          "query_vars": [
+            "apollo_event_page=portal"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "portal/eventos",
+          "rewrite": "^portal/eventos/?$",
+          "query": "index.php?apollo_event_page=portal",
+          "query_vars": [
+            "apollo_event_page=portal"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        },
+        {
+          "slug": "add-evento",
+          "rewrite": "^add-evento/?$",
+          "query": "index.php?apollo_event_page=create",
+          "query_vars": [
+            "apollo_event_page=create"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        }
+      ]
+    },
+    "cpts": [
+      {
+        "slug": "event",
+        "registered_locally": false,
+        "via_constant": true
+      }
+    ],
+    "taxonomies": [
+      {
+        "slug": "event_category",
+        "registered_locally": false,
+        "via_constant": true
+      },
+      {
+        "slug": "event_type",
+        "registered_locally": false,
+        "via_constant": true
+      },
+      {
+        "slug": "event_tag",
+        "registered_locally": false,
+        "via_constant": true
+      },
+      {
+        "slug": "sound",
+        "registered_locally": false,
+        "via_constant": true
+      },
+      {
+        "slug": "season",
+        "registered_locally": false,
+        "via_constant": true
+      }
+    ],
+    "hooks": {
+      "fired_count": 38,
+      "listened_count": 46,
+      "apollo_fired": [
+        "apollo/coauthor/cleared",
+        "apollo/event/before-delete",
+        "apollo/event/checked_in",
+        "apollo/event/cloned",
+        "apollo/event/created",
+        "apollo/event/dashboard_transactions",
+        "apollo/event/deleted",
+        "apollo/event/dj-added",
+        "apollo/event/dj-removed",
+        "apollo/event/fab_links",
+        "apollo/event/gone",
+        "apollo/event/published",
+        "apollo/event/reminder",
+        "apollo/event/rsvp",
+        "apollo/event/rsvp_cancelled",
+        "apollo/event/structured_data",
+        "apollo/event/updated",
+        "apollo_dj_single_after",
+        "apollo_event_after_card",
+        "apollo_event_after_map",
+        "apollo_event_after_render",
+        "apollo_event_before_card",
+        "apollo_event_before_render",
+        "apollo_event_dashboard_after",
+        "apollo_event_dashboard_before",
+        "apollo_event_dj_added",
+        "apollo_event_dj_removed",
+        "apollo_event_gone",
+        "apollo_event_register_integrations",
+        "apollo_event_rest_before_delete",
+        "apollo_event_rest_created",
+        "apollo_event_rest_data",
+        "apollo_event_rest_updated",
+        "apollo_event_single_before",
+        "apollo_loc_single_after",
+        "apollo_loc_single_after_content",
+        "apollo_loc_single_sidebar"
+      ],
+      "apollo_listened": [
+        "apollo/coauthor/append_byline",
+        "apollo/depoimento/created",
+        "apollo/events/render_create_form",
+        "apollo/routes/is_blank_canvas",
+        "apollo_comment_post_types",
+        "apollo_core_register_meta",
+        "apollo_dashboard_tab_events",
+        "apollo_dashboard_tabs",
+        "apollo_event_after_card",
+        "apollo_event_check_expiration",
+        "apollo_event_dj_added",
+        "apollo_event_gone",
+        "apollo_event_rest_created",
+        "apollo_event_rest_updated",
+        "apollo_fav_post_types",
+        "apollo_mod_post_types",
+        "apollo_shortcodes_registry",
+        "apollo_statistics_post_types",
+        "apollo_wow_post_types"
+      ],
+      "critical_wp_listened": [
+        "admin_init",
+        "admin_menu",
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "save_post_",
+        "template_redirect",
+        "wp_enqueue_scripts"
+      ]
+    },
+    "ajax": {
+      "priv": [
+        "apollo_event_save_settings"
+      ],
+      "nopriv": []
+    },
+    "cron": [
+      "every_five_minutes"
+    ],
+    "shortcodes": [
+      "a-eve",
+      "apollo_calendar",
+      "apollo_cena_submit_event",
+      "apollo_event",
+      "apollo_event_form",
+      "apollo_events"
+    ],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [
+        "apollo-events",
+        "apollo-events-calendar",
+        "apollo-events-map",
+        "apollo-lineup-builder",
+        "leaflet"
+      ],
+      "styles": [
+        "apollo-event-metabox",
+        "apollo-events",
+        "apollo-events-calendar",
+        "apollo-events-cards",
+        "apollo-events-style-",
+        "apollo-events-v2",
+        "apollo-lineup-builder",
+        "leaflet"
+      ]
+    },
+    "options": [
+      "apollo_event_settings",
+      "apollo_event_version",
+      "apollo_events_rewrite_version"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_EVENT_VERSION",
+        "value": "1.4.0"
+      },
+      {
+        "name": "APOLLO_EVENT_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_EVENT_DIR",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_EVENT_URL",
+        "value": "plugin_dir_url( __FILE__"
+      },
+      {
+        "name": "APOLLO_EVENT_BASENAME",
+        "value": "plugin_basename( __FILE__"
+      },
+      {
+        "name": "APOLLO_ASSETS_GRAIN_URL",
+        "value": "https://assets.apollo.rio.br/img/bg/grain-001.jpg"
+      },
+      {
+        "name": "APOLLO_EVENT_REST_NAMESPACE",
+        "value": "apollo/v1"
+      },
+      {
+        "name": "APOLLO_EVENT_CPT",
+        "value": "event"
+      },
+      {
+        "name": "APOLLO_EVENT_TAX_CATEGORY",
+        "value": "event_category"
+      },
+      {
+        "name": "APOLLO_EVENT_TAX_TYPE",
+        "value": "event_type"
+      },
+      {
+        "name": "APOLLO_EVENT_TAX_TAG",
+        "value": "event_tag"
+      },
+      {
+        "name": "APOLLO_EVENT_TAX_SOUND",
+        "value": "sound"
+      },
+      {
+        "name": "APOLLO_EVENT_TAX_SEASON",
+        "value": "season"
+      },
+      {
+        "name": "APOLLO_EVENT_GONE_OFFSET_MINUTES",
+        "value": "30"
+      },
+      {
+        "name": "APOLLO_EVENT_STYLES",
+        "value": "array( 'base', 'apollo-v1', 'apollo-v2', 'ui-thim'"
+      },
+      {
+        "name": "APOLLO_EVENT_DEFAULT_STYLE",
+        "value": "base"
+      },
+      {
+        "name": "APOLLO_EVENT_CACHE_GROUP",
+        "value": "apollo_events"
+      },
+      {
+        "name": "APOLLO_EVENT_CACHE_TTL",
+        "value": "300"
+      },
+      {
+        "name": "APOLLO_EVENT_META_KEYS",
+        "value": "array(\r\n\t\t'_event_start_date',\r\n\t\t'_event_end_date"
+      }
+    ],
+    "security": {
+      "php_files": 94,
+      "abspath_guard_files": 92,
+      "abspath_coverage_pct": 98,
+      "wpdb_prepare_calls": 19,
+      "wpdb_query_calls": 20,
+      "prepare_to_query_ratio": 0.95,
+      "nonce_checks": 12,
+      "current_user_can_calls": 28,
+      "raw_superglobal": {
+        "get": 6,
+        "post": 42,
+        "request": 0
+      },
+      "permission_callback_return_true": 12,
+      "escape_helpers": 444,
+      "echo_statements": 506,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 1,
+      "risk_score": 69,
+      "risk_band": "HIGH",
+      "rest_permission_critical": 3,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 9,
+      "rest_open_critical": 3,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 12
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-coauthor",
+        "apollo-core",
+        "apollo-fav",
+        "apollo-loc",
+        "apollo-mod",
+        "apollo-social",
+        "apollo-statistics",
+        "apollo-wow"
+      ],
+      "signals": [
+        "apollo-coauthor",
+        "apollo-core",
+        "apollo-fav",
+        "apollo-loc",
+        "apollo-mod",
+        "apollo-social",
+        "apollo-statistics",
+        "apollo-wow"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": null,
+      "new_version": "1.4.0",
+      "version_changed": false,
+      "old_rest": 24,
+      "live_rest": 24,
+      "old_pages": 5,
+      "live_pages": 6,
+      "new_plugin": false
+    }
+  },
+  "canvas_contract": {
+    "variant": "plus",
+    "action": "FIXED",
+    "shape": "trait-switch",
+    "audited": "2026-07-28",
+    "ref": "$canvas_shell.plugins.apollo-events"
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 94,
+    "php_loc": 17559,
+    "rest_routes_found": 24,
+    "cpts_found": [],
+    "tables_found": [
+      "apollo_event_rsvp"
+    ],
+    "shortcodes_found": [
+      "a-eve",
+      "apollo_calendar",
+      "apollo_cena_submit_event",
+      "apollo_event",
+      "apollo_event_form",
+      "apollo_events"
+    ]
+  },
+  "$highlighted_meta_field_2026_07_28": {
+    "date": "2026-07-28",
+    "reason": "User requested a curation flag so upcoming events can be surfaced in a dedicated hero slider on the Eventos screens (/casa teaser + the full /eventos page being prepped this same pass).",
+    "fix": "New meta key _event_highlighted (string '1'/'', same convention as the pre-existing _event_is_gone), registered three places: (1) src/Registry.php register_meta() — apollo_core_register_meta filter, so it's part of the plugin's declared meta config; (2) src/Admin/Metabox.php render_config() — checkbox at the top of the '⚙ Configurações' side metabox, labelled '⭐ Destacar (Highlighted)'; (3) src/Admin/Metabox.php save() — same isset($_POST[...]) ? '1' : '' pattern as _event_is_gone.",
+    "scope_decision": "Deliberately NOT added to EventsController's REST meta_map (the public-write path used by /novo-evento's frontend submit form) — this is an editorial curation flag an admin sets after the fact, not something an organizer self-selects when submitting their own event. Matches how _event_is_gone (a conceptually similar admin-only status flag) is already scoped: present in the admin metabox, absent from the REST meta_map.",
+    "data_registry": "Added a full field-shape entry (id: event.highlighted) to _inventory/data-registry.json, positioned right after the existing event.is_gone entry, plus listed in the not_in_metabox audit array (accurate — it's covered by apollo-events' own native Metabox.php, not by apollo-lux-panels, which is what that specific audit array tracks).",
+    "not_yet_done": "The actual hero-slider consumer (reading _event_highlighted to build the /eventos .pev-hero slider and the /casa hero) is separate follow-up work, tracked in this same session's task list — this note covers the meta field plumbing only.",
+    "files": [
+      "src/Registry.php",
+      "src/Admin/Metabox.php",
+      "../../_inventory/data-registry.json",
+      "../../_inventory/registry/09-plugins/apollo-events.json (version bump 1.5.0 -> 1.5.1)"
+    ]
+  },
+  "$portal_eventos_build_2026_07_28": {
+    "date": "2026-07-28",
+    "reason": "User asked to refine 6 things on the live /eventos screen (luxury month arrows, month-switch slide animation, filter menu z-index/blur legibility, cap 'Ultimos eventos registrados' to 3 + lightbox, .pev-hero highlighted-events slider, day-window rails with infinite reveal). Investigation found the live archive-event.php was an older 'ev-*' radar-grid template that never had any .pev-* markup at all -- the refinements described code that didn't exist yet. Surfaced this to the user via AskUserQuestion; user chose 'Build the full .pev-* page now' -- i.e. build the whole Portal de Eventos (Netflix-style promoter calendar) screen for real, not just the 6 tweaks in isolation.",
+    "source": "Ported from screen/_official_layout/{simulated.data-portal.js, js/app-portal-eventos.js, css/portal-eventos.css} -- read in full and ported near-verbatim. Both JS files are generic (operate only on window.APOLLO_EVENTS + the DOM), so porting was a straight copy with real WP data standing in for the mockup's fixture array, not a rewrite. All 6 requested refinements were already fully designed in the mockup (including inline before/after doc comments explaining the exact luxury-arrow redesign and the filter-menu legibility fix), so this pass is fidelity-focused porting, not new design work.",
+    "fix": "archive-event.php rewritten: data section now builds $portal_events (one row per published event) shaped to match the mockup's APOLLO_EVENTS contract (id, title, cover, startDate, startTime, venue{name,address}, lineup[{name}], genres[], season, tickets, ticketsUrl, highlight, status, about, url). Body markup replaced with a single #apollo-portal-root mount point -- all DOM is built client-side by the ported JS, same as the mockup. Two new template-parts: portal-styles.php (portal-eventos.css ported verbatim, only the mockup's '#view-eventos' SPA router ID prefix dropped since this page has no router) and portal-scripts.php (window.APOLLO_EVENTS data injection + simulated.data-portal.js ported as portal-data.js + app-portal-eventos.js ported verbatim + a small DOMContentLoaded bootstrap replacing the mockup's view.eventos.js router glue). Old hero.php/toolbar.php/event-card.php/scripts.php/styles.php template-parts left on disk but no longer required by archive-event.php (superseded, not deleted, in case of rollback).",
+    "highlighted_meta_wired": "The .pev-hero slider's data source is APOLLO_PORTAL.highlights(), which the WP side feeds from the _event_highlighted meta added earlier this same session ('1' -> highlight:true in $portal_events) -- this closes the loop the previous note's not_yet_done flagged.",
+    "adaptations_from_mockup": [
+      "season: real events have no hand-authored season tag like the mockup's demo fixtures (summer/winter/rockinrio/nye/carnival). PHP derives one from the event's calendar month using the same BR-seasons-rough heuristic portal-data.js's own seasonBanner() fallback already used (Dec-Feb summer, Mar-May outono, Jun-Aug winter, Sep-Nov primavera). SEASON_LABEL gained two entries (outono/primavera) to label the two buckets the mockup never needed.",
+      "tickets: mapped directly from the real _event_ticket_status meta (enum free|available|soldout_soon|sold_out, already existed in EventsController) -- exact 1:1 match with the mockup's tickets field, no adaptation needed.",
+      "'recent' rail sort: the mockup's recent() sorts by event startDate descending (furthest-future event first), which reads oddly against the Portuguese label 'Ultimos eventos registrados' (last REGISTERED). Not changed in the ported function (kept byte-identical) -- flagging here in case a future pass wants recent() to sort by post_date (creation order) instead to better match the label's literal meaning.",
+      "lineup: DJ start/end set times (_event_dj_slots, used by EventsController's REST enrichment) were not pulled in -- lineup entries carry name only. The modal's lineup list still renders correctly (times just render blank); can be added later if the per-slot schedule is wanted in the quick-view modal.",
+      "openModal() gained one extra action button vs the mockup: 'Ver pagina completa' linking to the real WP permalink (ev.url, a WP-only addition to the data shape). The mockup's modal is a dead end by design (demo data, nothing to navigate to); the live site still needs a path to the full single-event page.",
+      "CSS: appended a small WP-host-only block (not in the mockup) giving .pev-host top padding and offsetting .pev-chrome's sticky top -- the mockup assumes it's mounted inside the SPA's own app-shell layout; this page instead sits under the real fixed .ax-top bar rendered by apollo_get_navbar() -> apollo_render_app_shell(), so the portal needs to clear it. Values (78px / 64px) matched against shell-styles.php's live .ax-top-blur height (78px) and .ax-top position+height (2px + 56px = 58px bottom edge)."
+    ],
+    "not_touched": "TemplateLoader.php routing is unchanged -- /eventos already resolved to styles/base/archive-event.php before this pass, so only the destination template's content changed, not the route. The .ax-aside/.nb sidebar nav flagged as a gap earlier this session (hidden comments in layout.html, tasks around the mandatory header) is still not built; this page renders through apollo_get_navbar() -> apollo_render_app_shell() same as before, so it will inherit the aside automatically whenever that shell component is eventually built -- no extra wiring needed here.",
+    "verification": "node --check run against the mockup's two original JS files (proving the verbatim-ported portions parse cleanly); grep-verified <script>/</script> and IIFE open/close pairing in the written portal-scripts.php; grep-verified no :root redeclaration in portal-styles.php (the mockup's own hard rule); grep-verified both deltas (SEASON_LABEL outono/primavera, 'Ver pagina completa' link) landed at the intended lines. Full node/php execution against the live plugin files was not possible this session -- apollo-events/ is outside the bash sandbox's mounted folders (only apollo-templates is mounted); verification relied on Read/Grep plus the mockup-file node --check proxy described above.",
+    "files": [
+      "styles/base/archive-event.php",
+      "styles/base/template-parts/archive/portal-styles.php (new)",
+      "styles/base/template-parts/archive/portal-scripts.php (new)",
+      "apollo-events.php (version bump 1.5.1 -> 1.5.2)",
+      "../../_inventory/registry/09-plugins/apollo-events.json (version bump 1.5.1 -> 1.5.2)"
+    ]
+  },
+  "$phase_002_eventos_apollo_plus_2026_07_28": {
+    "date": "2026-07-28",
+    "phase": "002 — EVENTOS on /eventos and /portal",
+    "remount": "archive-event.php no longer owns a document. It used to call apollo_render_document_open(), print its own <body> and render its own navbar -- so /eventos had NO .ax-aside at all and duplicated shell logic. It is now a mount point on the Blank Canvas Apollo+ shell (apollo_plus_open/close), same as /feed in phase 001, with a legacy self-hosted-document fallback if apollo-templates is inactive so the archive can never hard-fail on a missing shell.",
+    "routing_divergence_fixed": "/portal and /portal/eventos mapped to 'dashboard' -- the LOGGED-IN promoter panel. Two dead code paths proved this was unintended: archive-event.php has always branched on apollo_event_page === 'portal' (a value neither route map could emit), and handle_virtual_pages() has always handled a 'portal_archive' value that was likewise unreachable. Net effect: the public portal could not be reached, while /portal quietly served the private panel. Both maps now send /portal + /portal/eventos to 'portal_archive'; the panel keeps /meus-eventos, /painel, /painel/eventos, /dashboard. The existing flush signature (md5 of version + route_map) picks the change up automatically on the next request.",
+    "modularised": "portal-styles.php (979 lines) split into portal/styles-{base,chrome,browse,hero,rails,modals,responsive}.php behind portal/styles.php; portal-scripts.php (1258 lines) split into portal/{data,helpers,app,bootstrap}.php behind portal/scripts.php. The CSS split was verified LOSSLESS by rejoining the seven parts and diffing against the original (26014 chars both sides, exact match) -- a split, not a restyle. Both original filenames survive as thin forwarders so theme overrides and stale include paths still resolve.",
+    "shell_fit": "The pre-split file hard-coded .pev-host{padding-top:78px} / .pev-chrome{top:64px} against the standalone navbar this screen used to render for itself. Re-derived against the real shell (.ax-top sits at top:2px, height 56px per shell-styles.php) and, at >=1000px, the portal's own 16px side padding is zeroed because .ax-main already supplies the gutters beside the pinned aside -- otherwise they doubled.",
+    "BLOCKER_not_serving_this_file": "VERIFICATION FAILED AND THE PHASE IS NOT CONFIRMED DONE. After deploy, /portal and /portal/eventos correctly resolve to the portal route (title and canonical are right, proving the routing fix landed), but the RENDERED BODY is the old 'ev-*' radar archive -- hero.php + toolbar.php + event-card.php + the ev-counter, plus the LEGACY navbar rather than .ax-top. No current version of archive-event.php renders that markup in either its Apollo+ or its fallback branch. apollo-templates changes ARE live (/feed now redirects guests to /acesso per phase 001), so RealTimeSync is working -- which means styles/base/archive-event.php is being SHADOWED, not un-synced.",
+    "BLOCKER_cause_hypothesis": "TemplateLoader::locate() resolves THEME-FIRST: wp-content/themes/{child|parent}/apollo-events/{style}/archive-event.php outranks the plugin file. Either (a) the active theme ships an override carrying the old markup, or (b) the active-style option points at a pack other than 'base' and a theme file exists for it. Both make plugin-side edits silently ineffective. Cannot be distinguished from here -- the server filesystem is not reachable from this session.",
+    "diagnostic_added": "archive-event.php now prints a provenance comment into the page source: '<!-- apollo-events {version} | template: styles/base/archive-event.php | style: {style} | portal: {page} -->'. If that comment is ABSENT from view-source on /portal, the plugin file is confirmed shadowed and the override must be removed or updated; if PRESENT, the problem is elsewhere and the marker reports the active style pack directly.",
+    "phase_status": "Code complete and structurally verified (all 17 touched files balance; CSS split proven lossless). Runtime NOT verified. Phase 002 should not be considered closed until the provenance marker is observed on /portal.",
+    "files": [
+      "src/Plugin.php (route_map + path_map: portal -> portal_archive)",
+      "styles/base/archive-event.php (re-mounted on Apollo+ shell + provenance marker)",
+      "styles/base/template-parts/archive/portal/*.php (13 new parts)",
+      "styles/base/template-parts/archive/portal-styles.php + portal-scripts.php (now forwarders)",
+      "apollo-events.php (version bump 1.5.2 -> 1.5.3)"
+    ]
+  },
+  "$phase_002_review_fixes_2026_07_28": {
+    "date": "2026-07-28",
+    "phase": "002 review — user-reported defects on the live portal",
+    "correction_to_previous_note": "The $phase_002 note claimed styles/base/archive-event.php was being SHADOWED by a theme override. THAT DIAGNOSIS WAS WRONG. The user confirmed the new portal is live ('Phase 2 reproved') and reported defects that only exist in the NEW screen. The reason my fetches kept returning the old markup is PAGE CACHE: two fetches ~2 minutes apart returned a byte-identical meta-apollo-csp-nonce (ANCLHEnNtILEY9RRkyEAeA==), which is per-request and cannot repeat on an uncached response. The provenance marker added in that pass stays -- it is still the fastest way to answer 'which template rendered' -- but the shadowing hypothesis is retracted.",
+    "fix_1_collapsed_cards": "REPORTED: 'collapsed event-card opened on page portal; listing events broken'. CAUSE: the portal stylesheet only ever shipped OVERRIDES scoped to .eve-grid.grid-layout, assuming the Design System's .a-eve-card component and .grid-layout grid were already loaded -- true in the mockup (ds-components.css + market.css are linked), false on WordPress, where .a-eve-card lives in apollo-templates/assets/css/event-card.css and .grid-layout existed only in mural.css. Neither is enqueued on a blank-canvas page (no wp_head()). With no base rules every card collapsed to text height. FIX: new portal/styles-cards.php INLINES event-card.css from its real file (so apollo-templates stays the single source of truth and edits there still reach this screen) and defines .grid-layout at component level (2-up mobile, 4-up >=1000px).",
+    "fix_2_fake_highlight": "REPORTED: 'event Dismantle 2 is highlighted true? I dont remember tagging as meta cpt event of highlight TRUE'. CORRECT -- they never did. CAUSE: highlights() was ported verbatim from the mockup, including its fallback: when NO event carries highlight:true it returns featured() -- the best-ranked event of the month -- and the hero then labels that event 'Destaque'. Harmless in a demo, a fabricated editorial claim on a real site. FIX: fallback removed. No _event_highlighted, no highlight. The hero renders an honest empty state ('Nenhum evento em destaque' + how to set one) instead of promoting an event nobody chose.",
+    "fix_3_arrows": "REPORTED: 'Arrows left right broken with wrong border, background, shadow'. TWO causes, both fixed. (a) styles-responsive.php still carried the PRE-redesign arrow rules -- .pev-month-btn--next{font-size:32px;translateX(8px)} / --prev{16px;-8px} -- the exact 'two raw arrows at different sizes with manual offsets' the luxury pill redesign replaced. They survived inside the >=1000px block and silently undid the redesign on desktop: mismatched glyphs shoved sideways inside a 34px pill. Removed; styles-chrome.php is now the single definition at every breakpoint. (b) The portal now renders inside the Apollo+ shell where the Design System's generic button rules apply and were bleeding border/background/box-shadow into the pills. styles-chrome.php now states the pill owns its surface (border:0!important, appearance:none) and neutralises the icon's inherited box + pointer-events.",
+    "fix_4_disponivel_tag": "REPORTED: 'TAG \"DISPONIVEL\" IS FIXED SIMULATED DATA OR CONNECTED TO PROPER CORRECT TAXONOMY SELECTED FROM event_tag + event_type + event_category?'. ANSWER: NEITHER -- and it was wrong. It came from the _event_ticket_status META (enum free|available|soldout_soon|sold_out), and archive-event.php read it as `?: 'available'`, so ANY event with no ticket status set silently rendered a 'Disponível' chip. Not simulated data, but a default that looked like data -- an availability claim the site had no basis for. FIX: the `?: 'available'` default is gone; empty status now stays empty and ticketChip()/ticketStatus() render nothing rather than inventing a label. SEPARATELY, the card's visible tag pills now come from the REAL editorial taxonomies: archive-event.php exposes a `tags` array merged from event_tag + event_type + event_category (human-assigned in wp-admin) and eveCardHTML() prefers it, falling back to the `sound` genre terms only when an event carries none of those -- also real terms, never a defaulted meta value.",
+    "files": [
+      "styles/base/archive-event.php",
+      "styles/base/template-parts/archive/portal/styles-cards.php (new)",
+      "styles/base/template-parts/archive/portal/styles.php",
+      "styles/base/template-parts/archive/portal/styles-chrome.php",
+      "styles/base/template-parts/archive/portal/styles-responsive.php",
+      "styles/base/template-parts/archive/portal/helpers.php",
+      "styles/base/template-parts/archive/portal/app.php",
+      "apollo-events.php (version bump 1.5.3 -> 1.5.4)"
+    ]
+  },
+  "$phase_002_ds_component_port_2026_07_28": {
+    "date": "2026-07-28",
+    "severity": "root-cause — supersedes the styles-cards.php fix from the previous pass",
+    "reported": "'Event listed has no background, and one ton of element that you didnt fix, make sure that you fucking refine luxury grade as exact as mockup shows. Learn from mockup, replicate precisely same as desired on mockup.'",
+    "root_cause": "I substituted the wrong stylesheet. The mockup's event card comes from screen/_official_layout/css/ds-components.css -- itself a byte-for-byte copy of uni.theme.v2.1.css, the Design System handoff. The previous pass instead inlined apollo-templates/assets/css/event-card.css, which is a DIFFERENT and older .a-eve-card implementation: flat panel, no corner-notch mask, no --surface-hover background on .a-eve-media, different sizing and tag treatment. Because the class names matched, it looked like a fix; it was a substitution. That is why the listed events rendered with no background and why 'a ton of elements' were still wrong -- everything downstream of the card component was being styled by the wrong source.",
+    "method_correction": "The instruction from the start was to replicate the mockup precisely. Patching symptoms against a lookalike stylesheet cannot converge on that no matter how many rounds it takes. The correct method -- now applied -- is to port the mockup's own CSS verbatim and let the portal's parts override only what is genuinely portal-specific.",
+    "fix": "New portal/styles-ds.php ports ds-components.css VERBATIM (asserted programmatically: the entire source file is contained in the emitted <style> block), plus the .section-header/.section-title/.section-count block and the .grid-layout grid + its >=999px override, both lifted verbatim from market.css. This brings the real card: 450px .a-eve-media with var(--surface-hover) background, the mask/-webkit-mask corner-notch geometry, the layered inset box-shadow, .a-eve-date cutout, the squircle .a-eve-tag pills, and the .event-row/.date-box listing component. styles-cards.php is now a documented no-op; the cascade runs base -> ds -> chrome -> browse -> hero -> rails -> modals -> responsive, so the portal's own tuning (scoped to .eve-grid.grid-layout) still lands on top of the DS base rather than replacing it.",
+    "standing_rule": "ds-components.css is copied, never authored. If the card must change it changes in the Design System and is re-copied here. Any future screen in phases 003-011 that renders DS components must port from screen/_official_layout/css/*, NOT from a same-named file elsewhere in the plugin tree -- apollo-templates ships several lookalikes that are not the handoff.",
+    "verification": "Programmatic containment check that ds-components.css appears verbatim inside styles-ds.php, plus spot assertions for the seven marker rules (.a-eve-media 450px, --surface-hover, mask-repeat, .a-eve-tag, .date-box, .section-title, .grid-layout). Brace/paren balance across all 15 portal parts. Runtime rendering NOT verified from this session -- the host serves a cached copy to unauthenticated fetches (proven earlier by a repeated per-request CSP nonce), so visual confirmation needs a cache purge and a look by the user.",
+    "files": [
+      "styles/base/template-parts/archive/portal/styles-ds.php (new, verbatim DS port)",
+      "styles/base/template-parts/archive/portal/styles.php (cascade: cards -> ds)",
+      "styles/base/template-parts/archive/portal/styles-cards.php (now a no-op)",
+      "apollo-events.php (version bump 1.5.4 -> 1.5.5)"
+    ]
+  },
+  "$phase_002_visual_verification_2026_07_28": {
+    "date": "2026-07-28",
+    "milestone": "First actual visual verification of an Apollo+ screen.",
+    "how": "Two blockers had made every prior claim unverified: (1) the host serves unauthenticated fetches from cache -- a ?nocache= query string bypasses it; (2) the portal builds its DOM client-side, so a raw fetch only ever sees an empty #apollo-portal-root. Escalated to a real browser (Claude in Chrome), which executes JS and carries the logged-in session. This is now the required verification method for every remaining phase -- structural checks alone demonstrably were not catching these.",
+    "confirmed_working": [
+      "Apollo+ shell: aside, primary nav, Gestor group with live counts, Suporte, user row",
+      "Ajustes correctly hidden for guests / shown for members",
+      "Month label + season banner + glass-pill arrows (DS bleed fixed)",
+      "Sticky chrome and filter toggle",
+      "DS event card: corner-notch mask, date-box cutout, --surface-hover media background, title + 3 meta rows",
+      "Compact .event-row listing with correct date-box and status badge",
+      "Section headers with counts; empty-recorte state"
+    ],
+    "data_findings": [
+      "highlight:false on Dismantle 2 -- the fake-Destaque fallback removal is confirmed working; the hero correctly shows its empty state",
+      "tickets:'available' -- the DISPONIVEL badge is legitimately from _event_ticket_status on that event, not invented. The earlier `?: 'available'` default is gone, so an event with no status set now renders no badge at all",
+      "tags:[] -- the event carries no event_tag/event_type/event_category terms, so no tag pills render. Correct: pills only appear when a human assigns terms"
+    ],
+    "fixed_this_pass": "Hero empty state was unreadable: .pev-hero-body's type is designed to sit over a cover image behind the .pev-hero-fade scrim (var(--white-1) + dark text-shadow), but the empty state has neither, so white type landed on the light --surface panel. Added .pev-hero-body.is-empty which drops the over-image treatment for normal document colours and centres the message.",
+    "files": [
+      "styles/base/template-parts/archive/portal/app.php",
+      "styles/base/template-parts/archive/portal/styles-hero.php",
+      "apollo-events.php (version bump 1.5.5 -> 1.5.6)"
+    ]
+  },
+  "$lightbox_reveal_scroller_fix_2026_08_01": {
+    "date": "2026-08-01",
+    "severity": "root-cause -- facts strip and venue (map + slider) invisible in the lightbox on /eventos and /portal",
+    "reported": "Facts strip and venue/map appear stranded (present in the DOM, unreadable) directly under the hero when an event card opens in the lightbox, but render correctly on /evento/{slug}.",
+    "root_cause": "apollo-single-event.js's initAnim()/bindDjRail() create every ScrollTrigger (facts+panels reveal, hero parallax, footer parallax, word reveal, DJ rail pin, DJ cards) with no `scroller` option, so they all default to `scroller: window`. On the real page the window scrolls and they fire normally. Inside the lightbox the fragment mounts in `.ev-lb-scroll`, a native overflow-y:auto panel; the document is Lenis-locked and the window never moves, so those triggers can never resolve and the affected elements stay at their GSAP inline `opacity:0` forever. A second, independent gap made this invisible to the existing safety nets: bootstrap.php's unstrand() pass and the CSS floor in styles-lightbox.php both queried only the class `.ev-reveal`, which no single-event template actually applies -- the real reveal targets (.ev-fact, .ev-panel, [data-ev=access/about], .ev-spotify, .ev-gallery, .v-slider, .ev-map, .ev-vbody, .ev-dj) are a separate, hardcoded selector list inline in the JS, so both nets matched zero nodes and were dead code for this exact symptom.",
+    "fix": "(A) Instance now resolves `this.scroller = root.closest('.ev-lb-scroll') || undefined` once at construction and passes `scroller: self.scroller` to all 6 ScrollTrigger configs; undefined on /evento/{slug} and inline embeds, so behaviour there is unchanged, byte for byte. (B) Widened bootstrap.php's unstrand() query and styles-lightbox.php's CSS floor to the same selector list initAnim() actually reveals, as a belt-and-braces layer for anything that still slips through (e.g. a late image reflow). Selector is duplicated by hand in three places (apollo-single-event.js, bootstrap.php, styles-lightbox.php) -- keep them in sync if the reveal list changes.",
+    "why_not_scrollerProxy_alone": "bootstrap.php already registers `ScrollTrigger.scrollerProxy('.ev-lb-scroll', {...})`, but a proxy only supplies custom get/set methods for a scroller identifier -- it does not retroactively re-target ScrollTriggers that were created with `scroller: window` (the default). Every trigger must still be told `scroller: panel` explicitly at creation time, which is exactly what was missing.",
+    "verification": "Structural: confirmed via grep that no template-part applies class `ev-reveal` to any node (facts.php inspected directly); confirmed apollo-single-event.js had exactly 6 scrollTrigger call sites, all now carrying `scroller: self.scroller`. Live /eventos + /portal lightbox check pending -- Claude in Chrome was not connected this session (see BLOCKERS chapter note); handed to the user to confirm the facts strip and venue section are no longer stranded on next open.",
+    "files": [
+      "assets/js/apollo-single-event.js (scroller resolution + 6 ScrollTrigger call sites)",
+      "styles/base/template-parts/archive/portal/bootstrap.php (unstrand() selector widened)",
+      "styles/base/template-parts/archive/portal/styles-lightbox.php (CSS floor widened)",
+      "apollo-events.php (version bump 1.6.9 -> 1.6.10)"
+    ]
+  },
+  "$registry_compliance_audit_2026_08_05": {
+    "date": "2026-08-05",
+    "scope": "apollo-events — every registry chapter key checked against the actual code by script, not by eye.",
+    "method": "Parsed route_map()/path_map() out of src/Plugin.php, register_rest_route() out of src/API/*.php, meta keys out of every .php/.js in the plugin, taxonomy defines out of includes/constants.php; diffed each against this chapter.",
+    "result": "PASS on 4 dimensions, FAIL on 4. Nothing found is a runtime break except the /eventos/url locPath default; the rest is the registry having fallen behind the code.",
+    "PASS": [
+      "path_map() ↔ route_map() parity: 13/13, no drift. The SSOT claim in their docblocks holds.",
+      "taxonomies: 5/5 aligned (event_category, event_type, event_tag, sound, season) — registry matches includes/constants.php exactly.",
+      "REST permissions: 0 write methods are publicly callable. All 13 write entries carry can_edit / can_edit_event / can_delete_event / is_user_logged_in / current_user_can. batch_events additionally re-checks edit_post PER ID.",
+      "cena-rio endpoints: the 4 entries the registry lists DO exist — in src/Cena_Rio_Submissions.php, not EventsController. Registry correct."
+    ],
+    "FAIL": {
+      "routes_undocumented": "7 of 13 live routes were absent: /eventos/novo, /eventos/url, /painel, /painel/eventos, /dashboard, /eventos/meus, /eventos. FIXED in this pass — rewrite_rules now carries all 13.",
+      "routes_stale_value": "^portal/?$ and ^portal/eventos/?$ were recorded as apollo_event_page=portal; the live value has been portal_archive since PHASE 002. 'portal' is a value neither map can emit. FIXED.",
+      "version_drift": "registry said 1.6.0; plugin header and APOLLO_EVENT_VERSION both say 1.6.11. FIXED.",
+      "meta_under_documented": "chapter declares 3 meta keys; the code reads/writes 40+ (_event_banner, _event_dj_ids, _event_highlighted, _event_ticket_status, _event_access_buttons, _event_earlybird_*, _event_lat/_event_lng, _event_gallery, …). NOT fixed here — _inventory/data-registry.json is the canonical field→storage map and already carries them; this chapter should either mirror it or point at it rather than holding a third, thinner copy.",
+      "template_parts_under_documented": "chapter declares 1 template part; 82 exist on disk under styles/base/template-parts/. NOT fixed here — enumerating all 82 in the registry duplicates the filesystem. Recommend documenting only the cell CONTRACTS (portal/, single/, dash/, create/) rather than every file."
+    },
+    "permission_risk_flags_corrected": 3,
+    "assets_note": "The assets chapter lists wp_enqueue HANDLES (apollo-events, leaflet, …), not file paths. A path-existence check against them is meaningless — not a finding.",
+    "open_defect_found": "/eventos/url ships locPath='apollo/v1/loc-resolve', a route registered nowhere in the ecosystem. Recorded on the page entry as known_defect."
+  },
+  "$portal_header_swap_2026_08_08": {
+    "date": "2026-08-08",
+    "scope": "/eventos, /portal, /portal/eventos (portal_archive). The screen's header was replaced. Version bump 1.7.0 -> 1.7.1.",
+    "what_was_removed": ".pev-masthead — the month rail, the month stepper, the scroll-dock glass pill and the 13rem período dropdown. It was built as a JavaScript string inside portal/app.php::skeleton() and styled by portal/styles-masthead.php + portal/styles-chrome.php.",
+    "what_replaced_it": "apollo_listing_header() from apollo-templates — the approved 'Header 02 · Kinetic Mask · Apple'. See 09-plugins/apollo-templates.json $listing_header_block_2026_08_08 for the block itself.",
+    "why": [
+      "It was markup inside a JS string: none of it existed in the first paint, and the month only appeared once the runtime had run.",
+      "It could not be reused. Any other listing wanting the same header would have had to copy skeleton().",
+      "The período menu was a dropdown pinned to the masthead, and filtering by taxonomy did not exist on the screen at all."
+    ],
+    "wiring": {
+      "styles/base/archive-event.php": "requires portal/header.php BEFORE the #apollo-portal-root div, and portal/header-bridge.php AFTER portal/scripts.php.",
+      "why_outside_the_root_div": "skeleton() rewrites #apollo-portal-root's innerHTML on every mount, so anything inside it cannot survive a re-render — nor exist before the runtime boots. The header is a SIBLING; the bridge joins the two by CustomEvent.",
+      "portal/header.php": "adapter. Counts events per month out of $portal_events for the scrubber, builds the filter groups from get_terms(hide_empty), calls the block, and publishes window.APOLLO_PEV_HEADER.",
+      "portal/header-bridge.php": "the only file that knows both halves. apollo:lh:month → setMonth(), apollo:lh:filter → setFilters(), apollo:lh:search → setSearch(); apollo:pev:search-clear (from the portal chip) clears the header input."
+    },
+    "group_key_contract": "periodo → radio, drives state.mode with the SAME values the old dropdown used (passados / neste-fds / mes / prox-fds / proximos), so behaviour did not change — only where the user picks. tax_* → checkbox, matched against e.tags (term NAMES). sound → checkbox, matched against e.genres (term SLUGS).",
+    "app_js_changes": "portal/app.php lost skeleton()'s header markup, syncChromeDock(), the dock hysteresis constants, renderMonthLabel() and the filter-menu open/close pair. It gained setMonth()/setFilters()/setSearch() on the public API and a refine() pass applying tags, sounds and the search query. Also removed in the same pass: a leftover debug beacon in eveCardHTML() that POSTed to 127.0.0.1:7514 on every visitor's browser.",
+    "css_ownership": {
+      "deleted": [
+        "portal/styles-masthead.php",
+        "portal/styles-chrome.php"
+      ],
+      "added": "portal/styles-rhythm.php — what survived of masthead: the `--pev-*` scale (gutter/band/stack) that the bands below consume. It never had anything to do with the header, it just lived in the same file. Still the LAST-WORD cell for .pev-layout / .pev-rails / .pev-browse geometry; do not redeclare those anywhere else — two owners for those selectors is what once printed the month on top of the hero.",
+      "styles.php_loop": "'chrome' and 'masthead' removed, 'rhythm' added before 'lightbox'."
+    },
+    "graceful_degradation": "If apollo-templates is inactive, portal/header.php returns early and the portal renders the current month with no header rather than fatalling. If the bridge never loads, the header animates and changes nothing. Neither half takes the other down.",
+    "verification": {
+      "php_l": "23 changed files, clean.",
+      "inline_js": "every <script> block in the changed templates parsed.",
+      "harness": "_sandbox/build-portal-harness.mjs 34/34 PASS, including four new header assertions (H1-H4). The harness now renders the SHIPPED header through _sandbox/render-portal-header.php (php CLI + a thin WP shim) instead of holding a snapshot copy of its markup — a copy would be the second owner the harness exists to forbid.",
+      "not_verified": "No browser was reachable this session. The header's geometry inside the real Apollo+ shell — and the wipe/mask animations — have not been eyeballed. Open _sandbox/portal-harness.html to check."
+    },
+    "files": [
+      "styles/base/archive-event.php",
+      "styles/base/template-parts/archive/portal/header.php (new)",
+      "styles/base/template-parts/archive/portal/header-bridge.php (new)",
+      "styles/base/template-parts/archive/portal/styles-rhythm.php (new)",
+      "styles/base/template-parts/archive/portal/styles-masthead.php (deleted)",
+      "styles/base/template-parts/archive/portal/styles-chrome.php (deleted)",
+      "styles/base/template-parts/archive/portal/{app,styles,styles-browse,styles-hero,styles-responsive,styles-lightbox}.php",
+      "_sandbox/render-portal-header.php (new)",
+      "_sandbox/build-portal-harness.mjs",
+      "apollo-events.php (version bump 1.7.0 -> 1.7.1)"
+    ]
+  },
+  "$reader_surface_white_and_hydration_2026_08_17": {
+    "date": "2026-08-17",
+    "scope": "The shared lightbox — every surface, not just events. Version bump 1.7.1 -> 1.7.2.",
+    "requirement": "The surface behind a fragment is solid #fff, always, in both themes. Never a token that can flip, never rgba with alpha, never a blur that lets the page behind read through. A close control is always present.",
+    "defect_1_panel_was_not_white": {
+      "trace": [
+        ".ev-lb-panel{background:var(--ev-bg)}  assets/css/apollo-single-event.css:1042",
+        "--ev-bg: var(--white-1)                assets/css/apollo-single-event.css:43",
+        "html.dark-mode{--white-1:#0b0b0d}      theme",
+        "html.dark-mode{--rgb-diff:255,255,255} apollo-login/assets/css/apollo-auth-uni.css:121",
+        "--ev-ink: rgba(var(--rgb-diff),1)      assets/css/apollo-single-event.css:45"
+      ],
+      "effect": "In dark mode the reader panel rendered #0b0b0d — near black. The requirement had been silently violated on every dark-theme install since the lightbox shipped.",
+      "the_trap": "Pinning `background` alone produces WHITE TEXT ON WHITE, because --ev-ink inverts independently of --ev-bg. That renders as a blank panel with a working close button — visually identical to the 2026-08-07 stale-asset failure and considerably harder to diagnose a second time. The whole local --ev-* block has to be pinned together or not at all.",
+      "fix": "portal/styles-lightbox.php pins --ev-bg/--ev-ink/--ev-mute/--ev-faint/--ev-line/--ev-line2/--ev-soft to their resolved light-theme literals and sets background:#fff on .ev-lb-panel. Component-scoped custom properties, the form the DS blesses — NOT a :root entry.",
+      "ownership": "styles-lightbox.php is now the DECLARED LAST-WORD OWNER of the reader surface colour (.ev-lb-panel background + token pin, .ev-lb-bd background). The base sheet keeps its own values as the standalone-page default and is out-specified by the doubled selector. Do not edit both — that is the cardinal sin.",
+      "trade_off_accepted": "Dark-mode readers get a light document panel. Deliberate: the fragment is a document, not chrome."
+    },
+    "defect_2_backdrop_had_alpha": "`.ev-lb-bd` was rgba(var(--rgb-diff),.72). The comment above it claimed nothing shows through a full-bleed panel — true once open, false for the ~520ms the panel is still transitioning from opacity:0, during which the backdrop IS the surface. Now an opaque #fff literal with backdrop-filter:none.",
+    "defect_3_nested_css_comment": {
+      "found_in": "portal/styles-lightbox.php §6 READING COLUMN",
+      "what": ":root { --ev-max: 440px }  followed by an inline /* … */ annotation INSIDE an already-open comment block. CSS comments do not nest, so the outer block terminated at that inner close.",
+      "effect": "A .ev-wrap width rule and fourteen lines of English prose were handed to the CSS parser as source. The .ev-wrap rule escaped unscoped into the global cascade — reaching the real /evento/{slug} page, not just the lightbox — and the prose survived only on the parser's silent error recovery.",
+      "why_it_survived": "Syntax highlighters DO nest comments; browsers do not. It read as a comment in every editor for months. That gap is why assertion E24 is mechanical rather than a review note.",
+      "fix": "Inner annotation rewritten without comment syntax. E24 now scans every styles*.php cell in the portal directory for a second opener inside an open span."
+    },
+    "feature_fragment_hydration": {
+      "problem": "innerHTML never executes <script>. For events that was correct and documented — the event fragment's only script is an inert application/json config block and its behaviour comes from ApolloEventSingle.mount(). It stopped being the whole story the moment a second surface existed: apollo-djs ships its runtime as an inline IIFE in its `scripts` cell, and that cell is GENERATED by _sandbox/build-dj-cells.py with a do-not-hand-edit banner. A DJ fragment therefore injected as correct but DEAD html — no dock, no reveals, no shares, no scroll progress.",
+      "rejected_design": "A per-surface mount() API. It would have required hand-editing exactly the generated cell that must not be hand-edited, once per surface, forever.",
+      "shipped": "hydrateScripts() in assets/js/apollo-event-lightbox.js re-creates the fragment's own <script> nodes so the browser executes them. Zero per-plugin work, works for every surface that will ever be registered.",
+      "safety": [
+        "Order preserved; a src= script blocks the ones after it, re-creating the guarantee a parsed document gives for free.",
+        "state.injectToken generation counter — a superseded fragment's async chain detects it lost and stands down, so two fast opens cannot interleave two runtimes.",
+        "EXECUTABLE allow-list — application/json and application/ld+json are data and are left alone.",
+        "Per-script failure containment; a detached node is skipped rather than aborting the chain.",
+        "KNOWN AND ACCEPTED: document-level listeners bound by a fragment runtime outlive the panel, because unmountCurrent() removes their targets but not the listeners. Their selector lookups then resolve to null and the handlers no-op. Revisit if a surface ever binds something with side effects that survive its own DOM."
+      ],
+      "event_path_untouched": "ApolloEventSingle.mount() still runs exactly as before. Hydration is a no-op for events."
+    },
+    "harness": {
+      "added": [
+        "E20 · reader panel background is an opaque literal, never a themed token, and pins all six companion --ev-* tokens",
+        "E21 · backdrop carries no alpha and no backdrop-filter",
+        "E22 · shell always ships the labelled close button, dialog semantics and an Escape binding",
+        "E23 · hydration + generation token + type gate present; event mount intact; dj/loc surfaces declare renderer AND can_view; a surface whose docblock still says 'not yet live' while its renderer exists is a failure",
+        "E24 · no styles*.php cell opens a comment inside a comment"
+      ],
+      "note": "E20/E21 were validated against negative controls — they were confirmed to FAIL on the pre-fix var(--ev-bg) and rgba(...,.72) values before being accepted.",
+      "not_verified": "No PHP binary and no browser in this environment. The live visual pass — solid white in BOTH themes, close button legible, DJ fragment waking up — is unrun and belongs to the operator, 30s after save."
+    },
+    "files": [
+      "styles/base/template-parts/archive/portal/styles-lightbox.php",
+      "assets/js/apollo-event-lightbox.js",
+      "_sandbox/build-portal-harness.mjs",
+      "apollo-events.php (version bump 1.7.1 -> 1.7.2)"
+    ]
+  }
+}

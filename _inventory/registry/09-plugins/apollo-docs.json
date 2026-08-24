@@ -1,0 +1,831 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-docs",
+    "owner": "apollo-docs",
+    "wrap": "plugins.apollo-docs",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-docs",
+  "namespace": "Apollo\\Docs",
+  "priority": 3,
+  "status": "IMPLEMENTED",
+  "version": "1.0.1",
+  "description": "Document lifecycle management — authoring, versioning, folders, PDF generation, storage, download control.",
+  "dependencies": [
+    "apollo-core"
+  ],
+  "provides": [
+    "doc-cpt",
+    "doc-library",
+    "doc-folders",
+    "doc-editor",
+    "doc-storage",
+    "file-manager"
+  ],
+  "cpts": [
+    "doc"
+  ],
+  "taxonomies": [
+    "doc_folder",
+    "doc_type"
+  ],
+  "tables": [
+    "apollo_doc_downloads",
+    "apollo_doc_versions"
+  ],
+  "meta": {
+    "post": {
+      "_doc_access": {
+        "_source": "deep_scan"
+      },
+      "_doc_checksum": {
+        "_source": "deep_scan"
+      },
+      "_doc_cpf": {
+        "_source": "deep_scan"
+      },
+      "_doc_downloads": {
+        "_source": "deep_scan"
+      },
+      "_doc_file_id": {
+        "_source": "deep_scan"
+      },
+      "_doc_folder_id": {
+        "_source": "deep_scan"
+      },
+      "_doc_signers": {
+        "_source": "deep_scan"
+      },
+      "_doc_status": {
+        "_source": "deep_scan"
+      },
+      "_doc_version": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {
+      "_apollo_cena_access": {
+        "_source": "deep_scan"
+      }
+    },
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "check_logged_in",
+      "permission_binding": "DocsController::check_logged_in",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "list_documents",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/DocsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/",
+      "methods": [
+        "POST"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "check_logged_in",
+      "permission_binding": "DocsController::check_logged_in",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "create_document",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/DocsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/",
+      "methods": [
+        "PUT"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "check_logged_in",
+      "permission_binding": "DocsController::check_logged_in",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "update_document",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/DocsController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/",
+      "methods": [
+        "DELETE"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "check_logged_in",
+      "permission_binding": "DocsController::check_logged_in",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "delete_document",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/DocsController.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "ajax": {
+    "priv": [
+      "apollo_docs_"
+    ],
+    "nopriv": []
+  },
+  "pages": [
+    {
+      "slug": "documentos",
+      "rewrite": "^documentos/?$",
+      "query": "index.php?apollo_docs_page=1",
+      "query_vars": [
+        "apollo_docs_page=1"
+      ],
+      "type": "virtual_rewrite",
+      "_source": "live_scan"
+    }
+  ],
+  "shortcodes": [],
+  "cron": [],
+  "hooks_fired": [
+    "apollo/docs/created",
+    "apollo/docs/deleted",
+    "apollo/docs/finalized",
+    "apollo/docs/group_access",
+    "apollo/docs/initialized",
+    "apollo/docs/locked",
+    "apollo/docs/signed",
+    "apollo/docs/updated"
+  ],
+  "hooks_listened": [],
+  "admin_menus": [
+    {
+      "page_title": "Documentos",
+      "menu_title": "Docs",
+      "capability": "edit_posts",
+      "menu_slug": "apollo-docs"
+    }
+  ],
+  "assets": {
+    "scripts": [
+      "apollo-docs",
+      "apollo-docs-js"
+    ],
+    "styles": [
+      "apollo-docs",
+      "apollo-docs-css"
+    ]
+  },
+  "options": [
+    "apollo_docs_db_version"
+  ],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": 10,
+    "abspath_coverage_pct": 92,
+    "rest_open_routes": 0,
+    "rest_critical_write_public": 0,
+    "rest_open_non_intentional": 0,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 4,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 1
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_doc_downloads",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_doc_versions",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [
+    {
+      "pattern": "^documentos/?$",
+      "query": "index.php?apollo_docs_page=1"
+    }
+  ],
+  "query_vars": [
+    "apollo_docs_page"
+  ],
+  "php_surface": {
+    "files": 13,
+    "loc": 2722,
+    "classes": 9,
+    "functions": 0
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:48.484Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 29,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-docs",
+    "main_file": "apollo-docs.php",
+    "plugin_header": {
+      "plugin_name": "Apollo Docs",
+      "plugin_uri": "https://apollo.rio.br",
+      "description": "Document lifecycle management — authoring, versioning, folders, PDF generation, storage, download control.",
+      "version": "1.0.1",
+      "author": "Apollo Platform",
+      "author_uri": "https://apollo.rio.br",
+      "license": "GPL-2.0-or-later",
+      "text_domain": "apollo-docs",
+      "domain_path": "/languages",
+      "requires_at_least": "6.4",
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": null
+    },
+    "composer": {
+      "name": "apollo/docs",
+      "namespaces": [
+        "Apollo\\Docs"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 13,
+        ".css": 1,
+        ".js": 1,
+        ".json": 1
+      },
+      "by_top_directory": {
+        "(root)": 3,
+        "assets": 2,
+        "src": 9,
+        "templates": 2
+      },
+      "total_bytes": 171844
+    },
+    "php": {
+      "files": 13,
+      "loc": 2722,
+      "classes": 9,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 0
+    },
+    "architecture": {
+      "namespace": "Apollo\\Docs",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "Controller",
+          "fqcn": "Apollo\\Docs\\Admin\\Controller",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/Controller.php"
+        },
+        {
+          "kind": "class",
+          "name": "Metabox",
+          "fqcn": "Apollo\\Docs\\Admin\\Metabox",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Admin/Metabox.php"
+        },
+        {
+          "kind": "class",
+          "name": "DocsController",
+          "fqcn": "Apollo\\Docs\\API\\DocsController",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/API/DocsController.php"
+        },
+        {
+          "kind": "class",
+          "name": "FoldersController",
+          "fqcn": "Apollo\\Docs\\API\\FoldersController",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/API/FoldersController.php"
+        },
+        {
+          "kind": "class",
+          "name": "Registrar",
+          "fqcn": "Apollo\\Docs\\Core\\Registrar",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Core/Registrar.php"
+        },
+        {
+          "kind": "class",
+          "name": "Database",
+          "fqcn": "Apollo\\Docs\\Database",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Database.php"
+        },
+        {
+          "kind": "class",
+          "name": "Document",
+          "fqcn": "Apollo\\Docs\\Model\\Document",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Model/Document.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Docs\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "Storage",
+          "fqcn": "Apollo\\Docs\\Storage",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Storage.php"
+        }
+      ],
+      "public_functions": []
+    },
+    "rest": {
+      "count": 4,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "check_logged_in",
+            "target": "DocsController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "DocsController::check_logged_in",
+              "method_file": "src/API/DocsController.php",
+              "method_signature": "\\WP_REST_Request $request"
+            }
+          },
+          "callback": "list_documents",
+          "file": "src/API/DocsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "check_logged_in",
+            "target": "DocsController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "DocsController::check_logged_in",
+              "method_file": "src/API/DocsController.php",
+              "method_signature": "\\WP_REST_Request $request"
+            }
+          },
+          "callback": "create_document",
+          "file": "src/API/DocsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "PUT"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "check_logged_in",
+            "target": "DocsController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "DocsController::check_logged_in",
+              "method_file": "src/API/DocsController.php",
+              "method_signature": "\\WP_REST_Request $request"
+            }
+          },
+          "callback": "update_document",
+          "file": "src/API/DocsController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/",
+          "methods": [
+            "DELETE"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "check_logged_in",
+            "target": "DocsController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "DocsController::check_logged_in",
+              "method_file": "src/API/DocsController.php",
+              "method_signature": "\\WP_REST_Request $request"
+            }
+          },
+          "callback": "delete_document",
+          "file": "src/API/DocsController.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 0,
+        "HIGH": 0,
+        "MEDIUM": 4,
+        "LOW": 0,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "LOGGED_IN_ONLY": 4
+      },
+      "permission_body_resolved": 4,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 0,
+      "open_routes": [],
+      "admin_cap_routes": [],
+      "logged_in_routes": [
+        "/",
+        "/",
+        "/",
+        "/"
+      ]
+    },
+    "database": {
+      "tables_owned_or_defined": [
+        "apollo_doc_downloads",
+        "apollo_doc_versions"
+      ],
+      "tables_referenced": [
+        "apollo_doc_downloads",
+        "apollo_doc_versions"
+      ],
+      "tables_for_registry": [
+        "apollo_doc_downloads",
+        "apollo_doc_versions"
+      ],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_doc_downloads",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_doc_versions",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 9,
+      "user_count": 1,
+      "term_count": 0,
+      "post_keys": [
+        "_doc_access",
+        "_doc_checksum",
+        "_doc_cpf",
+        "_doc_downloads",
+        "_doc_file_id",
+        "_doc_folder_id",
+        "_doc_signers",
+        "_doc_status",
+        "_doc_version"
+      ],
+      "user_keys": [
+        "_apollo_cena_access"
+      ],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [
+        {
+          "pattern": "^documentos/?$",
+          "query": "index.php?apollo_docs_page=1",
+          "position": "top",
+          "file": "src/Plugin.php"
+        }
+      ],
+      "query_vars": [
+        "apollo_docs_page"
+      ],
+      "pages_derived": [
+        {
+          "slug": "documentos",
+          "rewrite": "^documentos/?$",
+          "query": "index.php?apollo_docs_page=1",
+          "query_vars": [
+            "apollo_docs_page=1"
+          ],
+          "type": "virtual_rewrite",
+          "_source": "live_scan"
+        }
+      ]
+    },
+    "cpts": [
+      {
+        "slug": "doc",
+        "registered_locally": true,
+        "public": false,
+        "show_in_rest": true,
+        "menu_icon": "dashicons-media-document"
+      }
+    ],
+    "taxonomies": [
+      {
+        "slug": "doc_folder",
+        "registered_locally": true
+      },
+      {
+        "slug": "doc_type",
+        "registered_locally": true
+      }
+    ],
+    "hooks": {
+      "fired_count": 8,
+      "listened_count": 10,
+      "apollo_fired": [
+        "apollo/docs/created",
+        "apollo/docs/deleted",
+        "apollo/docs/finalized",
+        "apollo/docs/group_access",
+        "apollo/docs/initialized",
+        "apollo/docs/locked",
+        "apollo/docs/signed",
+        "apollo/docs/updated"
+      ],
+      "apollo_listened": [],
+      "critical_wp_listened": [
+        "admin_menu",
+        "init",
+        "plugins_loaded",
+        "rest_api_init",
+        "save_post_doc",
+        "template_redirect"
+      ]
+    },
+    "ajax": {
+      "priv": [
+        "apollo_docs_"
+      ],
+      "nopriv": []
+    },
+    "cron": [],
+    "shortcodes": [],
+    "admin_menus": [
+      {
+        "page_title": "Documentos",
+        "menu_title": "Docs",
+        "capability": "edit_posts",
+        "menu_slug": "apollo-docs"
+      }
+    ],
+    "assets": {
+      "scripts": [
+        "apollo-docs",
+        "apollo-docs-js"
+      ],
+      "styles": [
+        "apollo-docs",
+        "apollo-docs-css"
+      ]
+    },
+    "options": [
+      "apollo_docs_db_version"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_DOCS_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_DOCS_DB_VERSION",
+        "value": "1"
+      },
+      {
+        "name": "APOLLO_DOCS_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_DOCS_DIR",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_DOCS_URL",
+        "value": "plugin_dir_url( __FILE__"
+      },
+      {
+        "name": "APOLLO_DOCS_BASENAME",
+        "value": "plugin_basename( __FILE__"
+      }
+    ],
+    "security": {
+      "php_files": 13,
+      "abspath_guard_files": 12,
+      "abspath_coverage_pct": 92,
+      "wpdb_prepare_calls": 3,
+      "wpdb_query_calls": 3,
+      "prepare_to_query_ratio": 1,
+      "nonce_checks": 5,
+      "current_user_can_calls": 5,
+      "raw_superglobal": {
+        "get": 0,
+        "post": 47,
+        "request": 0
+      },
+      "permission_callback_return_true": 0,
+      "escape_helpers": 14,
+      "echo_statements": 11,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 1,
+      "risk_score": 10,
+      "risk_band": "LOW",
+      "rest_permission_critical": 0,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 0,
+      "rest_open_critical": 0,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 0
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core"
+      ],
+      "signals": [
+        "apollo-core"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": "1.0.0",
+      "new_version": "1.0.1",
+      "version_changed": true,
+      "old_rest": 9,
+      "live_rest": 4,
+      "old_pages": 2,
+      "live_pages": 1,
+      "new_plugin": false
+    }
+  },
+  "security_remediation": {
+    "note": "P2: uninstall/schema DROP uses $wpdb->prepare %i",
+    "last_updated": "2026-07-20"
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 13,
+    "php_loc": 2709,
+    "rest_routes_found": 1,
+    "cpts_found": [
+      "doc"
+    ],
+    "tables_found": [
+      "apollo_doc_downloads",
+      "apollo_doc_versions"
+    ],
+    "shortcodes_found": []
+  }
+}

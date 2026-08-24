@@ -1,0 +1,116 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Apollo DJs — Main CSS
+   Layout, grid, single, carousel, responsive
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Reset ─────────────────────────────────────────────────────────── */
+
+.a-dj-card,
+.a-dj-grid,
+.a-dj-archive,
+.a-dj-single,
+.a-dj-carousel {
+	box-sizing: border-box;
+}
+
+.a-dj-card *,
+.a-dj-grid *,
+.a-dj-archive *,
+.a-dj-single *,
+.a-dj-carousel * {
+	box-sizing: border-box;
+}
+
+/* ─── Grid layout ───────────────────────────────────────────────────── */
+
+.a-dj-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: 24px;
+}
+
+/* ─── Archive ───────────────────────────────────────────────────────── */
+
+.a-dj-archive {
+	padding: 40px 24px;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+.a-dj-archive__header {
+	margin-bottom: 32px;
+}
+
+/* ─── Single layout ─────────────────────────────────────────────────── */
+
+.a-dj-single {
+	min-height: 100dvh;
+}
+
+.a-dj-single__content {
+	display: grid;
+	grid-template-columns: 1fr 300px;
+	gap: 40px;
+	max-width: 1000px;
+	margin: 0 auto;
+	padding: 0 24px 60px;
+}
+
+/* ─── Pagination ────────────────────────────────────────────────────── */
+
+.nav-links {
+	display: flex;
+	justify-content: center;
+	gap: 8px;
+	margin-top: 40px;
+}
+
+/* ─── Empty ─────────────────────────────────────────────────────────── */
+
+.a-dj-empty {
+	grid-column: 1 / -1;
+	text-align: center;
+	padding: 60px 20px;
+	font-size: 16px;
+	opacity: 0.7;
+}
+
+/* ─── Responsive ────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+	.a-dj-grid {
+		grid-template-columns: 1fr;
+		gap: 16px;
+	}
+
+	.a-dj-single__content {
+		grid-template-columns: 1fr;
+		gap: 24px;
+	}
+
+	.a-dj-archive {
+		padding: 20px 16px;
+	}
+}
+
+
+/* ── Scroll Snap Utilities (Apollo Mobile UX)
+   dvh + snap = zero classic mobile viewport bugs
+   ─────────────────────────────────────────────── */
+.scroll-container {
+  scroll-snap-type: y mandatory;
+  overflow-y: auto;
+}
+.scroll-container-soft {
+  scroll-snap-type: y proximity;
+  overflow-y: auto;
+}
+.section,.snap-item {
+  scroll-snap-align: start;
+}
+.snap-center {
+  scroll-snap-align: center;
+}
+/* DJs grid scroll snap */
+.djs-list { scroll-snap-type: y proximity; overflow-y: auto; }
+.dj-card { scroll-snap-align: start; }

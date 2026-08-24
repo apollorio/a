@@ -1,0 +1,60 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-runtime",
+    "owner": "apollo-runtime",
+    "wrap": "plugins.apollo-runtime",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-runtime",
+  "namespace": "Apollo\\Runtime",
+  "priority": 8,
+  "status": "PLANNED",
+  "description": "Runtime: Shared runtime services/bootstrap used across Apollo plugins. Scaffolded in FASE 4 (uninstall.php + composer.json created); module system not yet populated â€” marked PLANNED until first module ships.",
+  "dependencies": [
+    "apollo-core"
+  ],
+  "provides": [
+    "runtime-bootstrap",
+    "shared-runtime-services",
+    "interop-hooks"
+  ],
+  "CRITICAL_RULE": "NEVER register meta keys, CPTs, or taxonomies here. ALL registrations MUST go through apollo-core MASTER_REGISTRY. This plugin bootstraps runtime services only.",
+  "constants": {
+    "APOLLO_RUNTIME_VERSION": "1.0.0",
+    "APOLLO_RUNTIME_PATH": "plugin_dir_path(__FILE__)",
+    "APOLLO_RUNTIME_URL": "plugin_dir_url(__FILE__)",
+    "APOLLO_RUNTIME_FILE": "__FILE__",
+    "APOLLO_RUNTIME_CONFIG_PATH": "APOLLO_RUNTIME_PATH . 'config'"
+  },
+  "hooks": {
+    "listens": "apollo/core/initialized (priority 20) â€” waits for core before loading modules",
+    "fires": "apollo/runtime/initialized â€” payload: { runtime_version, core_info, module_count }"
+  },
+  "module_system": {
+    "description": "Loads modules/*/bootstrap.php files automatically after core init",
+    "modules_path": "modules/",
+    "current_modules": []
+  },
+  "config_files": {
+    "constants.php": "Runtime constant overrides â€” currently overrides APOLLO_CDN_URL and defines APOLLO_CDN_CORE_JS",
+    "cpts.php": "CPT overrides â€” currently empty (MUST stay empty per CRITICAL_RULE)",
+    "env.php": "Environment flags â€” returns { environment: wp_get_environment_type(), debug: WP_DEBUG }",
+    "meta.php": "Meta key overrides â€” currently empty",
+    "options.php": "WP option overrides â€” currently empty",
+    "roles.php": "Role overrides â€” currently empty"
+  },
+  "cdn_overrides": {
+    "APOLLO_CDN_URL": "https://cdn.apollo.rio.br/v1.0.0/",
+    "APOLLO_CDN_CORE_JS": "https://cdn.apollo.rio.br/v1.0.0/core.min.js"
+  },
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [],
+  "meta": {},
+  "rest": [],
+  "pages": [],
+  "shortcodes": [],
+  "$disk_status": "ABSENT",
+  "$disk_note": "No folder at plugins/apollo-runtime on 2026-07-28. Entry PRESERVED (not deleted) — either planned/not-yet-built or removed. Resolve before treating as live."
+}

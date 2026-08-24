@@ -1,0 +1,25 @@
+﻿/**
+ * Apollo Admin â€” Main Stylesheet (Aggregator)
+ *
+ * All component CSS is in base/, layout/, components/ subdirectories.
+ * This file imports them in the correct cascade order.
+ *
+ * @package Apollo\Admin
+ */
+
+/* â”€â”€â”€ Base â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+@import url('base/variables.css');
+
+/* â”€â”€â”€ Layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+@import url('layout/shell.css');
+@import url('layout/sidebar.css');
+@import url('layout/content.css');
+
+/* â”€â”€â”€ Components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+@import url('components/notices.css');
+@import url('components/forms.css');
+@import url('components/toggles.css');
+@import url('components/buttons.css');
+@import url('components/cards.css');
+@import url('components/panels.css');
+@import url('components/responsive.css');

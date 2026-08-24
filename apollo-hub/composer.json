@@ -1,0 +1,30 @@
+{
+    "name": "apollo/hub",
+    "description": "Apollo Hub — Linktree nativo para o ecossistema Apollo Rio.",
+    "type": "wordpress-plugin",
+    "license": "proprietary",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Apollo\\Hub\\": "src/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "extra": {
+        "apollo-ecosystem": {
+            "plugin": "apollo-hub",
+            "layer": "L6_frontend",
+            "depends": ["apollo-core", "apollo-users"],
+            "version": "1.0.0",
+            "registry-status": "IMPLEMENTED"
+        }
+    }
+}

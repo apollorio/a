@@ -1,0 +1,186 @@
+/**
+ * Apollo Admin — Plugin Grid & Layer Sections
+ */
+
+.apollo-layer-section {
+    margin-bottom: 32px;
+}
+
+.apollo-layer-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--apollo-text);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--apollo-border);
+}
+
+.apollo-layer-count {
+    margin-left: auto;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--apollo-text-secondary);
+    background: var(--apollo-bg);
+    padding: 4px 12px;
+    border-radius: 12px;
+}
+
+.apollo-plugins-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+}
+
+.apollo-plugin-card {
+    background: var(--apollo-card-bg);
+    border: 2px solid var(--apollo-border);
+    border-left: 4px solid var(--apollo-muted);
+    border-radius: var(--apollo-r);
+    padding: 16px;
+    transition: all 0.2s ease;
+}
+
+.apollo-plugin-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--apollo-shadow-lg);
+}
+
+.apollo-plugin-card.active {
+    border-left-color: var(--apollo-success);
+    background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+}
+
+.apollo-plugin-card.installed {
+    border-left-color: var(--apollo-primary);
+    background: linear-gradient(135deg, #ffffff 0%, var(--apollo-primary-light) 100%);
+}
+
+.apollo-plugin-card.missing {
+    border-left-color: var(--apollo-danger);
+    background: linear-gradient(135deg, #ffffff 0%, #fef2f2 100%);
+    opacity: 0.7;
+}
+
+.apollo-plugin-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.apollo-plugin-icon {
+    font-size: 24px;
+    color: var(--apollo-primary);
+    flex-shrink: 0;
+}
+
+.apollo-plugin-card.active .apollo-plugin-icon {
+    color: var(--apollo-success);
+}
+
+.apollo-plugin-card.missing .apollo-plugin-icon {
+    color: var(--apollo-muted);
+}
+
+.apollo-plugin-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.apollo-plugin-name {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 4px;
+}
+
+.apollo-plugin-name a {
+    color: var(--apollo-text);
+    text-decoration: none;
+}
+
+.apollo-plugin-name a:hover {
+    color: var(--apollo-primary);
+}
+
+.apollo-plugin-meta {
+    display: flex;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--apollo-text-secondary);
+}
+
+.apollo-plugin-slug {
+    font-family: monospace;
+}
+
+.apollo-plugin-version {
+    background: var(--apollo-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+}
+
+.apollo-plugin-status {
+    flex-shrink: 0;
+}
+
+.apollo-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 12px;
+}
+
+.apollo-status-badge.active {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.apollo-status-badge.installed {
+    background: var(--apollo-primary-light);
+    color: var(--apollo-primary);
+}
+
+.apollo-status-badge.missing {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.apollo-status-badge .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+}
+
+.apollo-plugin-description {
+    font-size: 12px;
+    color: var(--apollo-text-secondary);
+    margin: 0 0 8px;
+    line-height: 1.5;
+}
+
+.apollo-plugin-file {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--apollo-muted);
+}
+
+.apollo-plugin-file .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+}
+
+.apollo-plugin-file code {
+    font-size: 11px;
+    background: var(--apollo-bg);
+    padding: 1px 6px;
+    border-radius: 3px;
+}

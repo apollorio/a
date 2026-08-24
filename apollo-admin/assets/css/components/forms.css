@@ -1,0 +1,60 @@
+/**
+ * Apollo Admin — Form Fields & Settings Table
+ */
+
+.apollo-settings-table {
+    background: var(--apollo-card-bg);
+    border: 1px solid var(--apollo-border);
+    border-radius: var(--apollo-r);
+    box-shadow: var(--apollo-shadow);
+    overflow: hidden;
+}
+
+.apollo-settings-table th {
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--apollo-text);
+    width: 220px;
+    vertical-align: middle;
+}
+
+.apollo-settings-table td {
+    padding: 14px 20px;
+    vertical-align: middle;
+}
+
+.apollo-settings-table tr {
+    border-bottom: 1px solid var(--apollo-border);
+}
+
+.apollo-settings-table tr:last-child {
+    border-bottom: none;
+}
+
+.apollo-settings-table tr:hover {
+    background: var(--apollo-bg);
+}
+
+.apollo-field {
+    border: 1px solid var(--apollo-border) !important;
+    border-radius: 6px !important;
+    padding: 6px 12px !important;
+    font-size: 13px !important;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.apollo-field:focus {
+    border-color: var(--apollo-primary) !important;
+    box-shadow: 0 0 0 3px rgba(99,102,241,.15) !important;
+    outline: none !important;
+}
+
+.apollo-color-field {
+    width: 60px;
+    height: 36px;
+    padding: 2px !important;
+    border: 1px solid var(--apollo-border);
+    border-radius: 6px;
+    cursor: pointer;
+}

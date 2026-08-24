@@ -1,0 +1,37 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  Drop-in for  wp-content/plugins/.htaccess   (rename this file to  .htaccess )
+#
+#  There is currently NO .htaccess in that folder. The site-root one blocks
+#  `wp-content/debug.log` and a fixed filename list; it does not block .py,
+#  .txt, .md, .sh, .json, or a log named anything other than debug.log.
+#
+#  This denies everything that is tooling rather than plugin code, while
+#  leaving PHP, JS, CSS, fonts and images completely untouched.
+#
+#  Apache 2.4 syntax. If the host is still on 2.2, swap the Require lines for
+#  `Order allow,deny` / `Deny from all`.
+#
+#  Install it AFTER you have rotated the FTP/SSH credential and deleted the
+#  files — a deny rule hides the exposure, it does not undo it.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# 1 · Extensions that are never a legitimate plugin asset.
+<FilesMatch "\.(py|sh|bash|ps1|bak|bak[0-9]|sql|log|ini|env|yml|yaml|lock|ffs_db|md|dist)$">
+    Require all denied
+</FilesMatch>
+
+# 2 · Scratch and diagnostic naming conventions used in this workspace.
+<FilesMatch "^(_tmp_|_ae_|_run_|_debug|_p2-|debug-|test-|force-load-).*">
+    Require all denied
+</FilesMatch>
+
+# 3 · Composer / npm manifests that leak dependency versions.
+<FilesMatch "^(composer\.(json|lock)|package(-lock)?\.json|yarn\.lock|phpcs\.xml.*|phpunit\.xml.*)$">
+    Require all denied
+</FilesMatch>
+
+# 4 · Tooling directories that live beside plugin code.
+RedirectMatch 404 (?i)/wp-content/plugins/(_inventory|mcps|\.cursor|\.git|\.githooks)(/|$)
+
+# 5 · No directory listings, ever.
+Options -Indexes

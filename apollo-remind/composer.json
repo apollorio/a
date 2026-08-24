@@ -1,0 +1,23 @@
+{
+    "name": "apollo-rio/apollo-remind",
+    "description": "Multi-channel personal calendar reminders for Apollo::Rio — Telegram Bot, Web Push (VAPID), email, in-app notifications",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=8.1"
+    },
+    "require-dev": {
+        "minishlink/web-push": "^9.0"
+    },
+    "suggest": {
+        "minishlink/web-push": "Required for encrypted Web Push notifications (VAPID/RFC 8292). Without it, push runs in fallback mode."
+    },
+    "autoload": {
+        "psr-4": {
+            "Apollo\\Remind\\": "src/"
+        },
+        "files": [
+            "includes/functions.php"
+        ]
+    }
+}

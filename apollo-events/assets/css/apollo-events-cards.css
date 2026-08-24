@@ -1,0 +1,59 @@
+/**
+ * Apollo Events — Cards CSS
+ * Importado pelo base/style.css, estas são as regras de layout de cards/list/map
+ * que são compartilhadas entre todos os estilos.
+ *
+ * @package Apollo\Event
+ */
+
+/* ─── Cards Grid ────────────────────────────────────────────────────── */
+.a-eve-events--card {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: var(--a-eve-gap, 16px);
+}
+
+/* ─── List Layout ───────────────────────────────────────────────────── */
+.a-eve-events--list {
+	display: flex;
+	flex-direction: column;
+}
+
+/* ─── Map Layout ────────────────────────────────────────────────────── */
+.a-eve-events--map {
+	display: none;
+}
+
+/* ─── Empty State ───────────────────────────────────────────────────── */
+.a-eve-empty {
+	text-align: center;
+	padding: 48px 20px;
+	color: var(--a-eve-secondary, #666);
+	font-size: 1rem;
+	grid-column: 1 / -1;
+}
+
+/* ─── Integration Wrappers ──────────────────────────────────────────── */
+.a-eve-fav-wrap {
+	display: inline-flex;
+	align-items: center;
+	margin-right: 8px;
+}
+
+.a-eve-wow-wrap {
+	display: inline-flex;
+	align-items: center;
+}
+
+/* ─── Responsive ────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+	.a-eve-events--card {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (min-width: 1200px) {
+	.a-eve-events--card {
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	}
+}

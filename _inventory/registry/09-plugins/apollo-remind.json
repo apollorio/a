@@ -1,0 +1,1529 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-remind",
+    "owner": "apollo-remind",
+    "wrap": "plugins.apollo-remind",
+    "source": "plugins/_inventory/apollo-registry.json",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-remind",
+  "namespace": "Apollo\\Remind",
+  "priority": 20,
+  "status": "IMPLEMENTED",
+  "version": "1.0.1",
+  "description": "Multi-channel personal calendar reminders — Telegram Bot, Web Push (VAPID), in-app (apollo-notif), email (apollo-email). Per-user reminder calendar with WP-Cron queue processor.",
+  "dependencies": [
+    "apollo-core",
+    "apollo-email",
+    "apollo-notif",
+    "apollo-telegram"
+  ],
+  "provides": [
+    "reminders",
+    "telegram-reminders",
+    "push-reminders",
+    "email-reminders",
+    "notif-reminders",
+    "reminder-cron",
+    "reminder-calendar",
+    "telegram-bot-link",
+    "rsvp-auto-reminder"
+  ],
+  "constants": {
+    "APOLLO_REMIND_VERSION": "1.0.0",
+    "APOLLO_REMIND_DB_VERSION": 3,
+    "APOLLO_REMIND_FILE": "__FILE__",
+    "APOLLO_REMIND_PATH": "plugin_dir_path(__FILE__)",
+    "APOLLO_REMIND_URL": "plugin_dir_url(__FILE__)",
+    "APOLLO_REMIND_BASENAME": "plugin_basename(__FILE__)"
+  },
+  "telegram_bot": {
+    "constant": "APOLLO_TELEGRAM_BOT_TOKEN",
+    "defined_in": "wp-config.php",
+    "webhook_url": "/apollo/v1/remind/telegram/webhook",
+    "link_command": "/link {CODE}",
+    "link_code_transient": "apollo_tg_link_{CODE}",
+    "link_code_ttl": 600,
+    "bot_blocks_detection": "HTTP 403 â†’ mark active=0 in apollo_remind_telegram"
+  },
+  "channels": {
+    "notif": {
+      "class": "Apollo\\Remind\\Channels\\NotifChannel",
+      "description": "In-app notification via INSERT into apollo_notifications",
+      "NOTE": "Should call apollo_create_notification() â€” see divergences"
+    },
+    "email": {
+      "class": "Apollo\\Remind\\Channels\\EmailChannel",
+      "description": "Email dispatch via apollo_send_email() or wp_mail() fallback",
+      "NOTE": "Should check _apollo_email_prefs â€” see divergences"
+    },
+    "push": {
+      "class": "Apollo\\Remind\\Channels\\PushChannel",
+      "description": "Web Push via VAPID (minishlink/web-push or plain HTTP)",
+      "storage": "apollo_remind_push_subs"
+    },
+    "telegram": {
+      "class": "Apollo\\Remind\\Channels\\TelegramChannel",
+      "description": "Telegram Bot API POST to user's linked chat_id",
+      "storage": "apollo_remind_telegram"
+    }
+  },
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [
+    "apollo_remind_log",
+    "apollo_remind_push_subs",
+    "apollo_remind_telegram",
+    "apollo_reminders"
+  ],
+  "table_schemas": {
+    "apollo_reminders": {
+      "columns": [
+        "id",
+        "user_id",
+        "title",
+        "message",
+        "due_at_gmt",
+        "channels",
+        "status",
+        "context",
+        "ref_type",
+        "ref_id",
+        "recurrence",
+        "recurrence_end",
+        "attempts",
+        "last_error",
+        "sent_at_gmt",
+        "created_at_gmt",
+        "updated_at_gmt"
+      ],
+      "channels_values": "CSV of: notif, email, push, telegram",
+      "status_values": [
+        "pending",
+        "sent",
+        "failed",
+        "cancelled"
+      ],
+      "recurrence_values": [
+        "none",
+        "daily",
+        "weekly",
+        "monthly",
+        "yearly"
+      ],
+      "context_values": [
+        "manual",
+        "rsvp",
+        "event"
+      ]
+    },
+    "apollo_remind_telegram": {
+      "columns": [
+        "id",
+        "user_id",
+        "chat_id",
+        "username",
+        "linked_at",
+        "active"
+      ]
+    },
+    "apollo_remind_push_subs": {
+      "columns": [
+        "id",
+        "user_id",
+        "endpoint",
+        "p256dh",
+        "auth_key",
+        "user_agent",
+        "created_at"
+      ]
+    },
+    "apollo_remind_log": {
+      "columns": [
+        "id",
+        "reminder_id",
+        "channel",
+        "status",
+        "response",
+        "sent_at_gmt"
+      ]
+    }
+  },
+  "meta": {
+    "post": {
+      "_event_start_date": {
+        "_source": "deep_scan"
+      },
+      "_event_start_time": {
+        "_source": "deep_scan"
+      }
+    },
+    "user": {
+      "_apollo_push_subscriptions": {
+        "_source": "deep_scan"
+      }
+    },
+    "term": {}
+  },
+  "rest": [
+    {
+      "endpoint": "/remind/push/subscribe",
+      "methods": [
+        "POST"
+      ],
+      "description": "Subscribe device to Web Push for reminders",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "subscribe",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/PushController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/remind/push/unsubscribe",
+      "methods": [
+        "DELETE"
+      ],
+      "description": "Unsubscribe device from Web Push",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": null,
+      "permission_binding": "closure",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "unsubscribe",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/PushController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/remind/push/vapid-key",
+      "methods": [
+        "GET"
+      ],
+      "description": "Get VAPID public key for PushManager.subscribe()",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "HIGH",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "vapid_key",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/PushController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/remind",
+      "methods": [
+        "GET"
+      ],
+      "description": "List current user's reminders",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "auth",
+      "permission_binding": "RemindersController::auth",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "list_reminders",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/RemindersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/remind",
+      "methods": [
+        "POST"
+      ],
+      "description": "List current user's reminders",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "auth",
+      "permission_binding": "RemindersController::auth",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "create_reminder",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/RemindersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/remind/(?P<id>\\d+)",
+      "methods": [
+        "GET"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "auth",
+      "permission_binding": "RemindersController::auth",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "get_reminder",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/RemindersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/remind/(?P<id>\\d+)",
+      "methods": [
+        "PUT"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "auth",
+      "permission_binding": "RemindersController::auth",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "update_reminder",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/RemindersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/remind/(?P<id>\\d+)",
+      "methods": [
+        "DELETE"
+      ],
+      "description": "Live apollo/v1 (LOGGED_IN_ONLY)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "auth",
+      "permission_binding": "RemindersController::auth",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "delete_reminder",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/RemindersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/remind/calendar",
+      "methods": [
+        "GET"
+      ],
+      "description": "Reminders in date range (calendar view)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "auth",
+      "permission_binding": "RemindersController::auth",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "calendar_view",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/RemindersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/remind/telegram/link",
+      "methods": [
+        "POST"
+      ],
+      "description": "Link Telegram account via bot code",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "auth",
+      "permission_binding": "RemindersController::auth",
+      "permission_summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "link_telegram",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/RemindersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/remind/telegram/status",
+      "methods": [
+        "GET"
+      ],
+      "description": "Get Telegram link status (linked, chat_id)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "auth",
+      "permission_binding": "RemindersController::auth",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "telegram_status",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/RemindersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/remind/channels",
+      "methods": [
+        "GET"
+      ],
+      "description": "Available channels for current user (includes telegram linked status, push subscribed status)",
+      "auth": "LOGGED_IN_ONLY",
+      "permission_risk": "MEDIUM",
+      "permission_method": "auth",
+      "permission_binding": "RemindersController::auth",
+      "permission_summary": "Only checks is_user_logged_in()",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return is_user_logged_in();",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "available_channels",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/RemindersController.php",
+      "_source": "deep_live_scan_perm_body"
+    },
+    {
+      "endpoint": "/remind/telegram/webhook",
+      "methods": [
+        "POST"
+      ],
+      "description": "Telegram Bot webhook (no auth â€” validated via secret token header)",
+      "auth": "PUBLIC_UNAUTHENTICATED",
+      "permission_risk": "CRITICAL",
+      "permission_method": null,
+      "permission_binding": "__return_true",
+      "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "permission_body_preview": "return true;",
+      "permission_delegated_to": null,
+      "intentional_public": false,
+      "callback": "handle",
+      "rest_namespace": "apollo/v1",
+      "file": "src/API/TelegramWebhook.php",
+      "_source": "deep_live_scan_perm_body"
+    }
+  ],
+  "hooks": {
+    "fires": [
+      "apollo/remind/sent",
+      "apollo/remind/failed"
+    ],
+    "listens": [
+      "apollo/event/published",
+      "apollo/event/rsvp"
+    ]
+  },
+  "cron": [
+    "apollo_remind_daily_cleanup",
+    "apollo_remind_two_minutes"
+  ],
+  "pages": [],
+  "shortcodes": [],
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "hooks_fired": [
+    "apollo/remind/created",
+    "apollo/remind/failed",
+    "apollo/remind/sent"
+  ],
+  "hooks_listened": [
+    "apollo/event/published",
+    "apollo/event/rsvp",
+    "apollo_remind_daily_cleanup",
+    "apollo_remind_process_queue"
+  ],
+  "admin_menus": [],
+  "assets": {
+    "scripts": [
+      "apollo-remind-sw-register"
+    ],
+    "styles": []
+  },
+  "options": [
+    "apollo_remind_db_version",
+    "apollo_remind_delete_data_on_uninstall",
+    "apollo_remind_telegram_token",
+    "apollo_remind_version",
+    "apollo_vapid_private_key",
+    "apollo_vapid_public_key"
+  ],
+  "security": {
+    "risk_band": "MEDIUM",
+    "risk_score": 29,
+    "abspath_coverage_pct": 88,
+    "rest_open_routes": 2,
+    "rest_critical_write_public": 1,
+    "rest_open_non_intentional": 2,
+    "rest_intentional_public": 0,
+    "permission_methods_resolved": 13,
+    "permission_methods_unresolved": 0,
+    "prepare_ratio": 0.73
+  },
+  "database_schemas": [
+    {
+      "table": "apollo_remind_log",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_remind_process_queue",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "string_table_name",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_remind_push_subs",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_remind_telegram",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    },
+    {
+      "table": "apollo_reminders",
+      "column_count": 0,
+      "columns": [],
+      "indexes": [],
+      "source": "wpdb_concat",
+      "ref_only": true,
+      "defined": false,
+      "owner_plugin_in_schema": null
+    }
+  ],
+  "rewrite_rules": [],
+  "query_vars": [],
+  "php_surface": {
+    "files": 16,
+    "loc": 2092,
+    "classes": 11,
+    "functions": 7
+  },
+  "_deep_audit": {
+    "audited_at": "2026-07-20T22:37:50.980Z",
+    "audit_level": "DEEP_STATIC_PHP_TREE_PERM_BODY",
+    "duration_ms": 63,
+    "path": "D:\\dev\\_apollo.rio.br\\plugins\\apollo-remind",
+    "main_file": "apollo-remind.php",
+    "plugin_header": {
+      "plugin_name": "Apollo::Rio Reminders",
+      "plugin_uri": "https://apollo.rio.br",
+      "description": "Multi-channel personal calendar reminders — Telegram Bot, Web Push (VAPID), in-app (apollo-notif), email (apollo-email). Per-user reminder calendar with WP-Cron queue processor.",
+      "version": "1.0.1",
+      "author": "Apollo::Rio",
+      "author_uri": "https://apollo.rio.br",
+      "license": "GPL-2.0-or-later",
+      "text_domain": "apollo-remind",
+      "domain_path": "/languages",
+      "requires_at_least": null,
+      "requires_php": "8.1",
+      "requires_plugins": null,
+      "network": null
+    },
+    "composer": {
+      "name": "apollo-rio/apollo-remind",
+      "namespaces": [
+        "Apollo\\Remind"
+      ],
+      "require": {
+        "php": ">=8.1"
+      }
+    },
+    "inventory": {
+      "by_extension": {
+        ".php": 16,
+        ".js": 2,
+        ".json": 2,
+        ".md": 1
+      },
+      "by_top_directory": {
+        "(root)": 6,
+        "assets": 2,
+        "includes": 1,
+        "src": 11,
+        "templates": 1
+      },
+      "total_bytes": 100561
+    },
+    "php": {
+      "files": 16,
+      "loc": 2092,
+      "classes": 11,
+      "interfaces": 0,
+      "traits": 0,
+      "public_apollo_functions": 7
+    },
+    "architecture": {
+      "namespace": "Apollo\\Remind",
+      "classes": [
+        {
+          "kind": "class",
+          "name": "PushController",
+          "fqcn": "Apollo\\Remind\\API\\PushController",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/PushController.php"
+        },
+        {
+          "kind": "class",
+          "name": "RemindersController",
+          "fqcn": "Apollo\\Remind\\API\\RemindersController",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/RemindersController.php"
+        },
+        {
+          "kind": "class",
+          "name": "TelegramWebhook",
+          "fqcn": "Apollo\\Remind\\API\\TelegramWebhook",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/API/TelegramWebhook.php"
+        },
+        {
+          "kind": "class",
+          "name": "EmailChannel",
+          "fqcn": "Apollo\\Remind\\Channels\\EmailChannel",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Channels/EmailChannel.php"
+        },
+        {
+          "kind": "class",
+          "name": "NotifChannel",
+          "fqcn": "Apollo\\Remind\\Channels\\NotifChannel",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Channels/NotifChannel.php"
+        },
+        {
+          "kind": "class",
+          "name": "PushChannel",
+          "fqcn": "Apollo\\Remind\\Channels\\PushChannel",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Channels/PushChannel.php"
+        },
+        {
+          "kind": "class",
+          "name": "TelegramChannel",
+          "fqcn": "Apollo\\Remind\\Channels\\TelegramChannel",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Channels/TelegramChannel.php"
+        },
+        {
+          "kind": "class",
+          "name": "Activation",
+          "fqcn": "Apollo\\Remind\\Core\\Activation",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Core/Activation.php"
+        },
+        {
+          "kind": "class",
+          "name": "Plugin",
+          "fqcn": "Apollo\\Remind\\Core\\Plugin",
+          "extends": null,
+          "implements": [],
+          "modifiers": "final",
+          "file": "src/Core/Plugin.php"
+        },
+        {
+          "kind": "class",
+          "name": "Processor",
+          "fqcn": "Apollo\\Remind\\Cron\\Processor",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Cron/Processor.php"
+        },
+        {
+          "kind": "class",
+          "name": "Scheduler",
+          "fqcn": "Apollo\\Remind\\Cron\\Scheduler",
+          "extends": null,
+          "implements": [],
+          "modifiers": null,
+          "file": "src/Cron/Scheduler.php"
+        }
+      ],
+      "public_functions": [
+        {
+          "name": "apollo_remind_schedule",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_remind_cancel",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_remind_get_chat_id",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_remind_link_telegram",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_remind_get_vapid_public",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_remind_get_vapid_private",
+          "file": "includes/functions.php"
+        },
+        {
+          "name": "apollo_remind_get_bot_token",
+          "file": "includes/functions.php"
+        }
+      ]
+    },
+    "rest": {
+      "count": 13,
+      "routes": [
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/remind/push/subscribe",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "subscribe",
+          "file": "src/API/PushController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/remind/push/unsubscribe",
+          "methods": [
+            "DELETE"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": null,
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "closure"
+            }
+          },
+          "callback": "unsubscribe",
+          "file": "src/API/PushController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/remind/push/vapid-key",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "HIGH",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "HIGH",
+              "summary": "permission_callback is __return_true",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "vapid_key",
+          "file": "src/API/PushController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/remind",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "auth",
+            "target": "RemindersController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "RemindersController::auth",
+              "method_file": "src/API/RemindersController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "list_reminders",
+          "file": "src/API/RemindersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/remind",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "auth",
+            "target": "RemindersController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "RemindersController::auth",
+              "method_file": "src/API/RemindersController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "create_reminder",
+          "file": "src/API/RemindersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/remind/(?P<id>\\d+)",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "auth",
+            "target": "RemindersController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "RemindersController::auth",
+              "method_file": "src/API/RemindersController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "get_reminder",
+          "file": "src/API/RemindersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/remind/(?P<id>\\d+)",
+          "methods": [
+            "PUT"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "auth",
+            "target": "RemindersController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "RemindersController::auth",
+              "method_file": "src/API/RemindersController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "update_reminder",
+          "file": "src/API/RemindersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/remind/(?P<id>\\d+)",
+          "methods": [
+            "DELETE"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "auth",
+            "target": "RemindersController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "RemindersController::auth",
+              "method_file": "src/API/RemindersController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "delete_reminder",
+          "file": "src/API/RemindersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/remind/calendar",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "auth",
+            "target": "RemindersController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "RemindersController::auth",
+              "method_file": "src/API/RemindersController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "calendar_view",
+          "file": "src/API/RemindersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/remind/telegram/link",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "auth",
+            "target": "RemindersController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in() [WRITE allowed for any logged-in user]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "RemindersController::auth",
+              "method_file": "src/API/RemindersController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "link_telegram",
+          "file": "src/API/RemindersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/remind/telegram/status",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "auth",
+            "target": "RemindersController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "RemindersController::auth",
+              "method_file": "src/API/RemindersController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "telegram_status",
+          "file": "src/API/RemindersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/remind/channels",
+          "methods": [
+            "GET"
+          ],
+          "permission": {
+            "class": "LOGGED_IN_ONLY",
+            "risk": "MEDIUM",
+            "method": "auth",
+            "target": "RemindersController",
+            "analysis": {
+              "effective_class": "LOGGED_IN_ONLY",
+              "risk": "MEDIUM",
+              "summary": "Only checks is_user_logged_in()",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": true,
+                "return_true_only": false,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "is_user_logged_in()"
+                ]
+              },
+              "body_preview": "return is_user_logged_in();",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "RemindersController::auth",
+              "method_file": "src/API/RemindersController.php",
+              "method_signature": ""
+            }
+          },
+          "callback": "available_channels",
+          "file": "src/API/RemindersController.php"
+        },
+        {
+          "namespace": "apollo/v1",
+          "endpoint": "/remind/telegram/webhook",
+          "methods": [
+            "POST"
+          ],
+          "permission": {
+            "class": "PUBLIC_UNAUTHENTICATED",
+            "risk": "CRITICAL",
+            "method": null,
+            "analysis": {
+              "effective_class": "PUBLIC_UNAUTHENTICATED",
+              "risk": "CRITICAL",
+              "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+              "capabilities": [],
+              "signals": {
+                "is_user_logged_in": false,
+                "return_true_only": true,
+                "ownership_compare": false,
+                "nonce": false,
+                "delegates": [],
+                "returns": [
+                  "true"
+                ]
+              },
+              "body_preview": "return true;",
+              "resolved": true,
+              "intentional_public": false,
+              "binding": "__return_true"
+            }
+          },
+          "callback": "handle",
+          "file": "src/API/TelegramWebhook.php"
+        }
+      ],
+      "risk_breakdown": {
+        "CRITICAL": 1,
+        "HIGH": 1,
+        "MEDIUM": 11,
+        "LOW": 0,
+        "REVIEW": 0
+      },
+      "effective_class_counts": {
+        "LOGGED_IN_ONLY": 11,
+        "PUBLIC_UNAUTHENTICATED": 2
+      },
+      "permission_body_resolved": 13,
+      "permission_body_unresolved": 0,
+      "intentional_public_count": 0,
+      "write_critical_public": 1,
+      "open_routes": [
+        {
+          "endpoint": "/remind/push/vapid-key",
+          "methods": [
+            "GET"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "HIGH",
+          "method": null,
+          "summary": "permission_callback is __return_true",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/PushController.php"
+        },
+        {
+          "endpoint": "/remind/telegram/webhook",
+          "methods": [
+            "POST"
+          ],
+          "class": "PUBLIC_UNAUTHENTICATED",
+          "risk": "CRITICAL",
+          "method": null,
+          "summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+          "binding": "__return_true",
+          "body_preview": "return true;",
+          "capabilities": [],
+          "delegated_to": null,
+          "intentional_public": false,
+          "file": "src/API/TelegramWebhook.php"
+        }
+      ],
+      "admin_cap_routes": [],
+      "logged_in_routes": [
+        "/remind/push/subscribe",
+        "/remind/push/unsubscribe",
+        "/remind",
+        "/remind",
+        "/remind/(?P<id>\\d+)",
+        "/remind/(?P<id>\\d+)",
+        "/remind/(?P<id>\\d+)",
+        "/remind/calendar",
+        "/remind/telegram/link",
+        "/remind/telegram/status",
+        "/remind/channels"
+      ]
+    },
+    "database": {
+      "tables_owned_or_defined": [
+        "apollo_remind_log",
+        "apollo_remind_push_subs",
+        "apollo_remind_telegram",
+        "apollo_reminders"
+      ],
+      "tables_referenced": [
+        "apollo_remind_log",
+        "apollo_remind_process_queue",
+        "apollo_remind_push_subs",
+        "apollo_remind_telegram",
+        "apollo_reminders"
+      ],
+      "tables_for_registry": [
+        "apollo_remind_log",
+        "apollo_remind_push_subs",
+        "apollo_remind_telegram",
+        "apollo_reminders"
+      ],
+      "schemas_with_columns": 0,
+      "schemas": [
+        {
+          "table": "apollo_remind_log",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_remind_process_queue",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "string_table_name",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_remind_push_subs",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_remind_telegram",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        },
+        {
+          "table": "apollo_reminders",
+          "column_count": 0,
+          "columns": [],
+          "indexes": [],
+          "source": "wpdb_concat",
+          "ref_only": true,
+          "defined": false,
+          "owner_plugin_in_schema": null
+        }
+      ]
+    },
+    "meta": {
+      "post_count": 2,
+      "user_count": 1,
+      "term_count": 0,
+      "post_keys": [
+        "_event_start_date",
+        "_event_start_time"
+      ],
+      "user_keys": [
+        "_apollo_push_subscriptions"
+      ],
+      "term_keys": [],
+      "registered_calls": []
+    },
+    "routing": {
+      "rewrite_rules": [],
+      "query_vars": [],
+      "pages_derived": []
+    },
+    "cpts": [],
+    "taxonomies": [],
+    "hooks": {
+      "fired_count": 3,
+      "listened_count": 10,
+      "apollo_fired": [
+        "apollo/remind/created",
+        "apollo/remind/failed",
+        "apollo/remind/sent"
+      ],
+      "apollo_listened": [
+        "apollo/event/published",
+        "apollo/event/rsvp",
+        "apollo_remind_daily_cleanup",
+        "apollo_remind_process_queue"
+      ],
+      "critical_wp_listened": [
+        "admin_menu",
+        "plugins_loaded",
+        "rest_api_init",
+        "wp_enqueue_scripts"
+      ]
+    },
+    "ajax": {
+      "priv": [],
+      "nopriv": []
+    },
+    "cron": [
+      "apollo_remind_daily_cleanup",
+      "apollo_remind_two_minutes"
+    ],
+    "shortcodes": [],
+    "admin_menus": [],
+    "assets": {
+      "scripts": [
+        "apollo-remind-sw-register"
+      ],
+      "styles": []
+    },
+    "options": [
+      "apollo_remind_db_version",
+      "apollo_remind_delete_data_on_uninstall",
+      "apollo_remind_telegram_token",
+      "apollo_remind_version",
+      "apollo_vapid_private_key",
+      "apollo_vapid_public_key"
+    ],
+    "constants": [
+      {
+        "name": "APOLLO_REMIND_VERSION",
+        "value": "1.0.1"
+      },
+      {
+        "name": "APOLLO_REMIND_DB_VERSION",
+        "value": "3"
+      },
+      {
+        "name": "APOLLO_REMIND_FILE",
+        "value": "__FILE__"
+      },
+      {
+        "name": "APOLLO_REMIND_PATH",
+        "value": "plugin_dir_path( __FILE__"
+      },
+      {
+        "name": "APOLLO_REMIND_URL",
+        "value": "plugin_dir_url( __FILE__"
+      },
+      {
+        "name": "APOLLO_REMIND_BASENAME",
+        "value": "plugin_basename( __FILE__"
+      }
+    ],
+    "security": {
+      "php_files": 16,
+      "abspath_guard_files": 14,
+      "abspath_coverage_pct": 88,
+      "wpdb_prepare_calls": 19,
+      "wpdb_query_calls": 26,
+      "prepare_to_query_ratio": 0.73,
+      "nonce_checks": 3,
+      "current_user_can_calls": 1,
+      "raw_superglobal": {
+        "get": 0,
+        "post": 3,
+        "request": 0
+      },
+      "permission_callback_return_true": 2,
+      "escape_helpers": 16,
+      "echo_statements": 28,
+      "eval_calls": 0,
+      "unserialize_calls": 0,
+      "dynamic_file_get_contents": 0,
+      "risk_score": 29,
+      "risk_band": "MEDIUM",
+      "rest_permission_critical": 1,
+      "rest_permission_unresolved": 0,
+      "rest_open_high": 1,
+      "rest_open_critical": 1,
+      "rest_intentional_public": 0,
+      "rest_open_non_intentional": 2
+    },
+    "coupling": {
+      "depends_on": [
+        "apollo-core",
+        "apollo-email",
+        "apollo-notif",
+        "apollo-telegram"
+      ],
+      "signals": [
+        "apollo-core",
+        "apollo-email",
+        "apollo-notif",
+        "apollo-telegram"
+      ]
+    },
+    "lifecycle": {
+      "register_activation_hook": true,
+      "register_deactivation_hook": true,
+      "register_uninstall_hook": false,
+      "uninstall_php": true
+    },
+    "delta_vs_old": {
+      "was_in_registry": true,
+      "old_status": "IMPLEMENTED",
+      "old_version": "1.0.0",
+      "new_version": "1.0.1",
+      "version_changed": true,
+      "old_rest": 13,
+      "live_rest": 13,
+      "old_pages": 0,
+      "live_pages": 0,
+      "new_plugin": false
+    }
+  },
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-07-28",
+    "php_files": 16,
+    "php_loc": 2076,
+    "rest_routes_found": 10,
+    "cpts_found": [],
+    "tables_found": [
+      "apollo_remind_log",
+      "apollo_remind_push_subs",
+      "apollo_remind_telegram",
+      "apollo_reminders"
+    ],
+    "shortcodes_found": []
+  }
+}

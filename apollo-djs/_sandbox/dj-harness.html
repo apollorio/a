@@ -1,0 +1,1002 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>DJ single — harness</title>
+<script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
+<style id="apollo-dj-styles">
+/* ════════════════════════════════════════════════════════════════════════════
+   DJ BUSINESS CARD — ultra-luxury white · Apple-release cadence · Apollo DS
+   No aside. Uma única .dj-ev-top fixa (voltar · nome · compartilhar) como PRIMEIRO
+   nó do <body> — nunca aninhada na figura do hero. O scroll é a interface.
+   Depth = inset hairline only · squircle · accent = var(--accent) #d1860a:
+   the progress hairline, .dj-page one italic word, .dj-page the live dot. Nothing else.
+   core.js delivers real tokens/fonts/GSAP/Lenis — :root below is offline mirror
+   and every value maps 1:1 onto the core.js injected token system.
+   LAYOUT RULE: every section owns its own padding (.dj-sec / .dj-wrap). Body and
+   html carry ZERO padding/margin — so full-bleed media (hero photo, .dj-page footer
+   photo) sit as true DIRECT children of <header>/<footer> at width:100%,
+   .dj-page flush to the viewport's top/left/right/bottom with nothing escaping a
+   parent's padding via vw-hacks (that trick is scrollbar-unsafe; a direct,
+   .dj-page unpadded-ancestor child at width:100% is the bulletproof version).
+   ════════════════════════════════════════════════════════════════════════════ */
+@font-face{font-family:"Black Ridge";font-weight:400;font-display:swap;src:url("https://assets.apollo.rio.br/fonts/black-ridge/black-ridge.woff2") format("woff2");}
+@font-face{font-family:"Resolide Serif";font-weight:400;font-display:swap;src:url("https://assets.apollo.rio.br/fonts.h/resolide-serif/resolide-serif.otf") format("opentype");}
+@font-face{font-family:"Mileast";font-weight:400;font-style:italic;font-display:swap;src:url("https://assets.apollo.rio.br/fonts/mileast/mileast-italic.woff2") format("woff2");}
+
+:root{
+  /* PAGE-SCOPED ONLY — these do not exist in core.js.
+     The mockup mirrors the core token set so it can run offline; the
+     generator drops every mirrored token (--rgb-theme, --rgb-diff, --bg, --txt, --muted, --surface, --surface-2, --accent, --ff-display, --ff-serif, --ff-serif-i, --ff-main, --ff-mono, --r, --r-sm, --r-pill, --ease)
+     because core.js injects the identical values at runtime and a local
+     copy would fork the token system on the first theme change. */
+  --ink:rgba(var(--rgb-diff),.96);
+  --faint:rgba(var(--rgb-diff),.26);
+  --line:rgba(var(--rgb-diff),.08);
+  --ins:inset 0 1px 0 0 rgba(var(--rgb-theme),.5), inset 0 0 0 1px rgba(var(--rgb-diff),.05);
+  --pad:clamp(24px,6vw,96px);
+  --st:env(safe-area-inset-top,0px);
+  --sb:env(safe-area-inset-bottom,0px);
+  --evtop-h:62px;
+  --rl:1;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;corner-shape:squircle;}
+.dj-pill,[data-round]{corner-shape:round;}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:calc(var(--evtop-h) + var(--st) + 14px);}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);color:var(--txt);
+  font-family:var(--ff-main);font-size:15.5px;line-height:1.6;font-weight:400;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;
+  overflow-x:clip;overscroll-behavior:none;
+}
+html.dj-lenis,html.dj-lenis body{height:auto;}
+/* core.js frames every img/figure by default — this page's media is frameless */
+.dj-page img{display:block;max-width:100%;border:none!important;box-shadow:none!important;}
+.dj-page figure{border:none!important;box-shadow:none!important;}
+.dj-page ul{list-style:none;}
+.dj-page a{color:inherit;text-decoration:none;}
+.dj-page button{border:0;background:none;font:inherit;color:inherit;cursor:pointer;-webkit-user-select:none;user-select:none;}
+.dj-page i[class^="ri-"],.dj-page i[class*=" ri-"]{font-style:normal;line-height:1;vertical-align:-.125em;}
+::selection{background:rgba(209,134,10,.14);color:var(--ink);}
+
+/* type atoms */
+.dj-lbl{font-family:var(--ff-mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);}
+.dj-lbl .dj-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-right:8px;vertical-align:1px;}
+.dj-display{font-family:var(--ff-display);font-weight:400;color:var(--ink);line-height:.86;letter-spacing:-.005em;}
+.dj-serif{font-family:var(--ff-serif);font-weight:400;color:var(--ink);line-height:.98;letter-spacing:-.01em;}
+
+/* layout — Apple air · each section owns its padding, body/html never do */
+.dj-wrap{width:min(100%,1280px);margin-inline:auto;padding-inline:var(--pad);}
+.dj-sec{padding-block:clamp(96px,14vw,200px);}
+.dj-sec-tight{padding-block:clamp(72px,10vw,140px);}
+.dj-hairline{height:1px;background:var(--line);border:0;}
+/* faixa cinza-claríssima — a alternância branco/quase-branco que dá ritmo às
+   páginas de produto da Apple. Sem borda: só a mudança de plano. */
+.dj-band{background:var(--surface);}
+
+/* buttons — ink is the luxury primary */
+.dj-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-family:var(--ff-mono);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:17px 30px;border-radius:var(--r-pill);white-space:nowrap;min-height:44px;transition:transform .45s var(--ease),opacity .45s var(--ease),background .45s var(--ease),color .45s var(--ease);}
+.dj-btn:active{transform:scale(.97);}
+.dj-btn-ink{background:var(--ink);color:var(--bg)!important;}
+.dj-btn-ink:hover{opacity:.85;}
+.dj-btn-line{box-shadow:inset 0 0 0 1px rgba(var(--rgb-diff),.16);color:var(--ink);}
+.dj-btn-line:hover{background:var(--surface-2);}
+.dj-btn-ghost{color:var(--muted);padding:0;}
+.dj-btn-ghost:hover{color:var(--ink);}
+.dj-icon-btn{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;font-size:20px;background:var(--surface);color:var(--ink);box-shadow:var(--ins);transition:background .4s var(--ease);}
+.dj-icon-btn:hover{background:var(--surface-2);}
+
+/* progress hairline — the single running accent */
+.dj-pg{position:fixed;top:0;left:0;right:0;height:2px;z-index:120;background:var(--accent);transform-origin:0 50%;transform:scaleX(0);}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   EV-TOP — barra REAL no topo do documento: primeiro nó do <body>, .dj-page position
+   fixed, .dj-page top:0. NÃO vive mais dentro de .dj-hero-figure (onde ficava abaixo de
+   `.dj-hero div.dj-wrap`, .dj-page no meio da página). ZERO gradiente: no branco ultra-luxo a
+   profundidade vem de hairline + glass, .dj-page nunca de véu escuro. Estado is-solid
+   entra no scroll e revela o nome do artista — cadência Apple.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.dj-ev-top{
+  position:fixed;top:0;left:0;right:0;z-index:115;
+  height:calc(var(--evtop-h) + var(--st));
+  padding:var(--st) max(14px,calc(var(--pad) - 40px)) 0;
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  pointer-events:none;
+  transition:background .7s var(--ease),backdrop-filter .7s var(--ease);
+}
+.dj-ev-top > *{pointer-events:auto;}
+.dj-ev-top::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:1px;
+  background:var(--line);transform:scaleX(0);transform-origin:50% 50%;
+  transition:transform .9s var(--ease);
+}
+.dj-ev-top.dj-is-solid{
+  background:rgba(var(--rgb-theme),.72);
+  backdrop-filter:blur(36px) saturate(1.9);-webkit-backdrop-filter:blur(36px) saturate(1.9);
+}
+.dj-ev-top.dj-is-solid::after{transform:scaleX(1);}
+/* identidade central — só aparece quando o nome gigante do hero já saiu de cena */
+.dj-ev-top-id{
+  flex:1 1 auto;min-width:0;text-align:center;pointer-events:none!important;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  opacity:0;transform:translateY(10px);
+  transition:opacity .6s var(--ease),transform .6s var(--ease);
+}
+.dj-ev-top.dj-is-solid .dj-ev-top-id{opacity:1;transform:none;}
+.dj-ev-top-id b{
+  font-family:var(--ff-display);font-weight:400;font-size:17px;line-height:1;
+  color:var(--ink);letter-spacing:.01em;
+  max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.dj-ev-top-id span{font-family:var(--ff-mono);font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);}
+/* chips — ink sobre branco (nunca #fff sobre foto): glass + hairline interna */
+.dj-ev-chip{
+  width:44px;height:44px;flex:0 0 auto;border-radius:999px;
+  display:grid;place-items:center;color:var(--ink);cursor:pointer;
+  background:rgba(var(--rgb-theme),.6);box-shadow:var(--ins);
+  backdrop-filter:blur(22px) saturate(1.6);-webkit-backdrop-filter:blur(22px) saturate(1.6);
+  transition:transform .35s var(--ease),background .45s var(--ease),box-shadow .45s var(--ease);
+}
+.dj-ev-chip:hover{background:var(--surface-2);}
+.dj-ev-chip:active{transform:scale(.94);}
+/* com a barra sólida o glass é da barra — os chips ficam limpos */
+.dj-ev-top.dj-is-solid .dj-ev-chip{background:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;}
+.dj-ev-top.dj-is-solid .dj-ev-chip:hover{background:var(--surface-2);}
+
+/* ═══ HERO — text column padded via inner .dj-wrap; figure is a direct, .dj-page unpadded
+   child of <header> so it hits width:100% edge-to-edge with zero gap.
+   O padding-top agora reserva a altura da ev-top fixa. ═══ */
+.dj-hero{padding-top:calc(var(--evtop-h) + var(--st) + clamp(40px,9vw,120px));}
+.dj-hero-eyebrow{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:clamp(20px,3vw,36px);}
+.dj-hero-live{display:inline-flex;align-items:center;gap:8px;font-family:var(--ff-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+.dj-hero-live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 3s infinite;}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(209,134,10,.4)}70%{box-shadow:0 0 0 10px rgba(209,134,10,0)}100%{box-shadow:0 0 0 0 rgba(209,134,10,0)}}
+.dj-hero-name{font-size:clamp(52px,15vw,200px);overflow:visible;}
+.dj-hero-name .dj-hn-line{display:block;overflow:hidden;white-space:nowrap;}
+.dj-hero-name .dj-hn-line.dj-is-ac{color:var(--accent);}
+.dj-hero-name .dj-ch-w{display:inline-block;overflow:hidden;vertical-align:top;}
+.dj-hero-name .dj-ch{display:inline-block;will-change:transform;}
+.dj-hero-under{display:flex;flex-direction:column;gap:26px;margin-top:clamp(24px,4vw,44px);}
+.dj-hero-bio{font-size:clamp(15px,1.4vw,18px);line-height:1.7;color:var(--txt);max-width:44ch;}
+.dj-hero-bio strong{color:var(--ink);font-weight:600;}
+.dj-hero-ctas{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+/* full-bleed: direct child of <header class="hero"> (zero horizontal padding on
+   that ancestor). Nasce como card recuado e ABRE pra full-bleed no scrub —
+   o movimento-assinatura das páginas de produto da Apple. */
+.dj-hero-figure{position:relative;margin-top:clamp(40px,6vw,88px);width:100%;overflow:hidden;aspect-ratio:4/5;background:var(--surface);will-change:clip-path;}
+.dj-hero-figure img{width:100%;height:100%;object-fit:cover;object-position:center top;filter:saturate(.88) contrast(1.02);will-change:transform;}
+.dj-ev-chip i{font-size:20px;line-height:1;}
+.dj-hero-pills{position:absolute;left:max(14px,var(--pad));bottom:16px;right:max(14px,var(--pad));display:flex;gap:8px;flex-wrap:wrap;z-index:3;}
+.dj-gpill{backdrop-filter:blur(28px) saturate(1.8);-webkit-backdrop-filter:blur(28px) saturate(1.8);background:rgba(255,255,255,.1);border-radius:var(--r-pill);padding:12px 20px;display:inline-flex;align-items:baseline;gap:9px;box-shadow:var(--ins);}
+.dj-gpill strong{font-family:var(--ff-display);font-size:20px;color:rgba(10,10,10,.96);line-height:1;}
+.dj-gpill span{font-family:var(--ff-mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(10,10,10,.4);}
+.dj-hero-cue{
+  position:absolute;top:16px;right:max(16px,var(--pad));z-index:3;
+  font-family:var(--ff-mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;
+  color:#fff;opacity:.78;display:flex;align-items:center;gap:6px;
+  animation:cueY 2.2s ease-in-out infinite;text-shadow:0 1px 8px rgba(0,0,0,.35);
+}
+@keyframes cueY{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+@media(min-width:900px){
+  .dj-hero-under{flex-direction:row;justify-content:space-between;align-items:flex-end;}
+  .dj-hero-figure{aspect-ratio:21/10;}
+  .dj-hero-figure img{object-position:center top;}
+}
+
+/* ═══ STATEMENT — Apple word-fill on scrub ═══ */
+.dj-stmt{padding-block:clamp(120px,18vw,260px);}
+.dj-stmt-txt{font-family:var(--ff-serif);font-size:clamp(30px,5.6vw,68px);line-height:1.22;letter-spacing:-.01em;color:var(--ink);max-width:22ch;}
+.dj-stmt-txt .dj-wd{display:inline-block;margin-right:.24em;}
+.dj-stmt-txt em.dj-gold{font-family:var(--ff-serif-i);font-style:italic;color:var(--accent);}
+
+/* ═══ MARQUEE ═══ */
+.dj-mq{overflow:hidden;padding-block:clamp(20px,3vw,30px);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+.dj-mq-inner{display:flex;gap:44px;width:max-content;animation:mq 30s linear infinite;}
+.dj-mq span{font-family:var(--ff-mono);font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--faint);white-space:nowrap;}
+.dj-mq span.dj-on{color:var(--ink);}
+@keyframes mq{to{transform:translateX(-50%);}}
+
+/* ═══ SECTION HEADS ═══ */
+.dj-sh{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:clamp(40px,6vw,84px);}
+.dj-sh .dj-lbl{display:block;margin-bottom:16px;}
+.dj-sh-t{font-size:clamp(52px,9vw,124px);overflow:visible;}
+/* char reveal dos títulos de seção e do nome do rodapé — mesma mecânica do hero.
+   O padding/margin negativo compensa descendentes dentro do overflow:hidden. */
+.dj-sh-t .dj-ch-w,.dj-foot-name .dj-ch-w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.1em;margin-bottom:-.1em;}
+.dj-sh-t .dj-ch,.dj-foot-name .dj-ch{display:inline-block;will-change:transform;}
+.dj-sh-side{font-family:var(--ff-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);padding-bottom:10px;}
+
+/* ═══ TOCOU EM — pinned scrub carousel (desktop) · momentum rail (touch) ═══ */
+.dj-po{position:relative;}
+.dj-po-stage{position:relative;}
+.dj-po-track{display:flex;gap:14px;padding-inline:var(--pad);overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-padding-inline:var(--pad);}
+.dj-po-track::-webkit-scrollbar{display:none;}
+.dj-po-card{flex:0 0 auto;width:min(80vw,320px);scroll-snap-align:start;border-radius:var(--r);overflow:hidden;background:var(--surface);box-shadow:var(--ins);}
+.dj-po-cover{position:relative;aspect-ratio:4/3;overflow:hidden;}
+.dj-po-cover img{width:116%;max-width:116%;height:100%;object-fit:cover;filter:saturate(.92);will-change:transform;}
+.dj-po-date{position:absolute;top:14px;left:14px;background:rgba(255,255,255,.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:var(--r-pill);padding:7px 14px;font-family:var(--ff-mono);font-size:9.5px;letter-spacing:.08em;color:rgba(10,10,10,.96);}
+.dj-po-body{padding:20px 22px 24px;}
+.dj-po-title{font-family:var(--ff-serif);font-size:clamp(22px,2.4vw,30px);color:var(--ink);line-height:1;}
+.dj-po-meta{margin-top:10px;display:flex;flex-wrap:wrap;gap:4px 16px;font-size:12.5px;color:var(--muted);}
+.dj-po-meta span{display:inline-flex;align-items:center;gap:6px;}
+.dj-po-meta i{color:var(--faint);font-size:13px;}
+.dj-po-bar{margin:26px var(--pad) 0;height:1px;background:var(--line);position:relative;overflow:hidden;}
+.dj-po-bar i{position:absolute;inset:0;background:var(--ink);transform-origin:0 50%;transform:scaleX(0);display:block;}
+@media(min-width:900px){
+  .dj-po-stage{height:100svh;display:flex;flex-direction:column;justify-content:center;overflow:hidden;}
+  .dj-po-track{overflow:visible;scroll-snap-type:none;will-change:transform;}
+  .dj-po-card{width:440px;}
+}
+
+/* ═══ EM NÚMEROS — spec-sheet luxury ═══ */
+/* hairline "desenhada": o GSAP anima --rl (0→1) e o ::before lê a var.
+   Sem JS/reduced-motion --rl fica 1 e a régua aparece inteira. */
+.dj-rule-draw{position:relative;}
+.dj-rule-draw::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:var(--line);transform:scaleX(var(--rl));transform-origin:0 50%;}
+.dj-nums{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4vw,56px) clamp(20px,4vw,64px);}
+.dj-num{position:relative;padding-top:clamp(18px,2.6vw,30px);}
+.dj-num::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:var(--line);transform:scaleX(var(--rl));transform-origin:0 50%;}
+.dj-num-v{font-family:var(--ff-display);font-size:clamp(58px,9vw,128px);line-height:.9;color:var(--ink);letter-spacing:-.005em;display:flex;align-items:baseline;gap:4px;}
+.dj-num-v small{font-family:var(--ff-serif);font-size:.36em;color:var(--muted);}
+.dj-num-l{margin-top:12px;font-size:13px;color:var(--muted);max-width:24ch;line-height:1.55;}
+@media(min-width:900px){.dj-nums{grid-template-columns:repeat(4,1fr);}}
+
+/* ═══ DIVIDIU A CABINE — editorial roster ═══ */
+.dj-roster{position:relative;}
+.dj-roster::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:var(--line);transform:scaleX(var(--rl));transform-origin:0 50%;}
+.dj-ro{position:relative;display:grid;grid-template-columns:64px 1fr auto;gap:clamp(16px,3vw,32px);align-items:center;padding-block:clamp(18px,2.6vw,28px);transition:padding .5s var(--ease),background .5s var(--ease);}
+.dj-ro::after{content:"";position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--line);transform:scaleX(var(--rl));transform-origin:0 50%;}
+.dj-ro:hover{padding-left:14px;background:var(--surface);}
+.dj-ro-av{width:60px;height:60px;border-radius:50%;overflow:hidden;background:var(--surface);box-shadow:var(--ins);}
+.dj-ro-av img{width:100%;height:100%;object-fit:cover;object-position:center 20%;filter:grayscale(1);transition:filter .55s var(--ease),transform .55s var(--ease);}
+.dj-ro:hover .dj-ro-av img{filter:grayscale(0);transform:scale(1.06);}
+.dj-ro-name{font-family:var(--ff-serif);font-size:clamp(26px,4.4vw,46px);color:var(--ink);line-height:1;}
+.dj-ro-x{display:flex;align-items:center;gap:18px;}
+.dj-ro-role{font-family:var(--ff-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);white-space:nowrap;}
+.dj-ro-arrow{font-size:20px;color:var(--faint);transition:transform .45s var(--ease),color .45s var(--ease);}
+.dj-ro:hover .dj-ro-arrow{transform:translate(4px,-4px);color:var(--ink);}
+
+/* ═══ OUT NOW ═══ */
+.dj-trk{position:relative;display:grid;grid-template-columns:34px 1fr auto auto;gap:clamp(14px,2.6vw,28px);align-items:center;padding-block:clamp(18px,2.4vw,26px);cursor:pointer;transition:padding .5s var(--ease),background .5s var(--ease);}
+.dj-trk::after{content:"";position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--line);transform:scaleX(var(--rl));transform-origin:0 50%;}
+.dj-trk:hover{padding-left:14px;background:var(--surface);}
+.dj-trk-i{font-family:var(--ff-mono);font-size:11px;color:var(--faint);}
+.dj-trk-t{font-family:var(--ff-serif);font-size:clamp(22px,3.6vw,36px);color:var(--ink);line-height:1.05;}
+.dj-trk-m{font-family:var(--ff-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-top:6px;}
+.dj-trk-share{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:16px;color:var(--muted);transition:color .4s var(--ease),background .4s var(--ease);}
+.dj-trk-share:hover{color:var(--ink);background:var(--surface-2);}
+.dj-trk-play{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;font-size:18px;background:var(--surface);color:var(--ink);box-shadow:var(--ins);transition:background .4s var(--ease),color .4s var(--ease);}
+.dj-trk:hover .dj-trk-play,.dj-trk.dj-is-on .dj-trk-play{background:var(--ink);color:var(--bg);}
+.dj-sc-shelf{overflow:hidden;max-height:0;opacity:0;transition:max-height .8s var(--ease),opacity .6s var(--ease),margin .6s var(--ease);border-radius:var(--r-sm);box-shadow:var(--ins);}
+.dj-sc-shelf.dj-open{max-height:200px;opacity:1;margin-top:28px;}
+.dj-sc-shelf iframe{width:100%;height:166px;border:0;display:block;}
+
+/* ═══ KIT DE IMPRENSA — the single ink moment ═══ */
+.dj-kit{background:var(--ink);color:var(--bg);border-radius:var(--r);padding:clamp(36px,7vw,88px);position:relative;overflow:hidden;scroll-margin-top:calc(var(--evtop-h) + var(--st) + 24px);will-change:transform;}
+/* sheen — luz varrendo o único bloco ink da página (scrub no scroll) */
+.dj-kit::before{
+  content:"";position:absolute;inset:-40% -10%;pointer-events:none;z-index:1;
+  background:radial-gradient(42% 52% at var(--sx,20%) 12%,rgba(255,255,255,.10),transparent 70%);
+}
+/* empilhamento do bloco ink: marca d'água (0) → sheen (1) → conteúdo (2) */
+.dj-kit > *{position:relative;z-index:2;}
+.dj-kit-wm{position:absolute;right:-4%;bottom:-14%;z-index:0!important;font-family:var(--ff-display);font-size:clamp(140px,26vw,360px);line-height:.8;color:rgba(255,255,255,.045);pointer-events:none;white-space:nowrap;}
+.dj-kit .dj-lbl{color:rgba(255,255,255,.4);}
+.dj-kit .dj-lbl .dj-dot{background:var(--accent);}
+.dj-kit-t{font-family:var(--ff-serif);font-size:clamp(40px,7.4vw,84px);line-height:.98;color:#fff;margin:18px 0 16px;}
+.dj-kit-p{color:rgba(255,255,255,.52);max-width:46ch;line-height:1.75;font-size:14.5px;margin-bottom:34px;}
+.dj-kit-ctas{display:flex;gap:12px;flex-wrap:wrap;position:relative;z-index:2;}
+.dj-kit .dj-btn-white{background:#fff;color:rgba(10,10,10,.96);}
+.dj-kit .dj-btn-white:hover{opacity:.86;}
+.dj-kit .dj-btn-out{box-shadow:inset 0 0 0 1px rgba(255,255,255,.22);color:#fff;}
+.dj-kit .dj-btn-out:hover{background:rgba(255,255,255,.08);}
+.dj-kit-meta{display:flex;gap:26px;flex-wrap:wrap;margin-top:36px;position:relative;z-index:2;}
+.dj-kit-meta div{font-family:var(--ff-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.34);}
+.dj-kit-meta b{display:block;font-family:var(--ff-main);font-size:14px;letter-spacing:0;text-transform:none;color:#fff;margin-bottom:4px;font-weight:500;}
+
+/* ═══ SOBRE — vídeo tem prioridade sobre a foto: se o DJ tiver vídeo, .dj-page ele cobre
+   a mesma caixa 4/5 em loop mudo (parece uma foto viva); senão cai pra uma foto
+   DIFERENTE da imagem principal do hero (nunca repete o 1º img). ═══ */
+.dj-about{display:grid;grid-template-columns:1fr;gap:clamp(36px,6vw,88px);align-items:center;}
+.dj-about-img{border-radius:var(--r);overflow:hidden;aspect-ratio:4/5;box-shadow:var(--ins);will-change:clip-path;}
+.dj-about-img img{width:100%;height:100%;object-fit:cover;object-position:center top;filter:saturate(.9);will-change:transform;}
+.dj-about-img video{width:100%;height:100%;object-fit:cover;object-position:center center;display:block;}
+.dj-about-p{font-size:clamp(16px,1.6vw,20px);line-height:1.85;color:var(--txt);max-width:52ch;}
+.dj-about-p strong{color:var(--ink);font-weight:600;}
+.dj-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.dj-tag{background:var(--surface);box-shadow:var(--ins);border-radius:var(--r-pill);padding:9px 17px;font-family:var(--ff-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+@media(min-width:900px){.dj-about{grid-template-columns:5fr 7fr;}}
+
+/* ═══ FOOTER — name block padded via .dj-wrap; foot-img is a direct, .dj-page unpadded
+   child of <footer> so it hits width:100% flush to the document's bottom ═══ */
+.dj-foot{border-top:1px solid var(--line);padding-top:clamp(56px,8vw,110px);overflow:hidden;}
+.dj-foot-name{font-family:var(--ff-display);font-size:clamp(96px,24vw,360px);line-height:.82;text-transform:uppercase;color:var(--ink);white-space:nowrap;will-change:transform;}
+.dj-foot-grid{display:flex;flex-direction:column;gap:28px;padding-block:clamp(36px,5vw,64px);}
+.dj-socials{display:flex;gap:10px;flex-wrap:wrap;}
+.dj-soc{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;font-size:19px;background:var(--surface);color:var(--ink);box-shadow:var(--ins);transition:background .4s var(--ease);}
+.dj-soc:hover{background:var(--surface-2);}
+.dj-foot-copy{font-family:var(--ff-mono);font-size:10px;letter-spacing:.1em;color:var(--faint);}
+@media(min-width:900px){.dj-foot-grid{flex-direction:row;justify-content:space-between;align-items:center;}}
+/* footer image — direct child of <footer> (zero horizontal padding on that ancestor),
+   .dj-page width:100% guarantees flush left/right without any vw/scrollbar mismatch;
+   it is the LAST node in <footer> and body/html carry no padding-bottom,
+   .dj-page so this is the literal last pixel row of the document — true bottom:0. */
+.dj-foot-img{position:relative;width:100%;display:block;height:min(48vh,440px);overflow:hidden;background:var(--surface);margin:0!important;}
+.dj-foot-img img{width:100%;height:126%;object-fit:cover;filter:saturate(.85) contrast(1.02) brightness(.92);will-change:transform;}
+/* hardening — zero gap forçado no rodapé, .dj-page sem depender de cascade externa */
+.dj-foot,.dj-foot-img{margin-bottom:0!important;padding-bottom:0!important;}
+.dj-foot-img-ov{
+  position:absolute!important;inset:0!important;bottom:0!important;margin:0!important;
+  display:grid;place-content:center;text-align:center;
+  background:linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.42));
+}
+.dj-foot-img-ov small{font-family:var(--ff-mono);font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:rgba(255,255,255,.65);}
+
+/* ═══ DOCK — 100% icon-only (luxury grade, .dj-page igual à página de local) ═══ */
+.dj-dock{position:fixed;left:50%;bottom:calc(16px + var(--sb));transform:translate(-50%,180%);z-index:110;display:flex;gap:4px;padding:8px;border-radius:var(--r-pill);background:rgba(255,255,255,.7);backdrop-filter:blur(34px) saturate(1.8);-webkit-backdrop-filter:blur(34px) saturate(1.8);box-shadow:var(--ins),0 24px 60px -30px rgba(10,10,10,.25);transition:transform .6s var(--ease);max-width:calc(100vw - 24px);overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.dj-dock::-webkit-scrollbar{display:none;}
+.dj-dock.dj-show{transform:translate(-50%,0);}
+.dj-dock .dj-icon-btn{width:47px;height:47px;flex-shrink:0;background:transparent;box-shadow:none;}
+.dj-dock .dj-icon-btn.dj-is-active{color:var(--accent);}
+
+/* toast */
+.dj-toast{position:fixed;left:50%;bottom:calc(92px + var(--sb));transform:translateX(-50%) translateY(14px);z-index:130;background:var(--ink);color:var(--bg);font-family:var(--ff-mono);font-size:11.5px;letter-spacing:.04em;padding:12px 20px;border-radius:var(--r-pill);display:inline-flex;align-items:center;gap:9px;opacity:0;pointer-events:none;transition:opacity .4s var(--ease),transform .4s var(--ease);white-space:nowrap;}
+.dj-toast.dj-show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ═══ OUT NOW LIGHTBOX ═══ */
+.dj-outnow-lb{position:fixed;inset:0;z-index:9700;opacity:0;pointer-events:none;display:flex;align-items:flex-end;justify-content:center;background:rgba(5,5,5,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:opacity .35s ease;padding:max(16px,var(--st)) 16px calc(16px + var(--sb));}
+.dj-outnow-lb.dj-open{opacity:1;pointer-events:auto;}
+.dj-outnow-lb-panel{width:min(100%,640px);max-height:min(82vh,720px);overflow:auto;background:var(--bg);border-radius:var(--r);box-shadow:var(--ins);padding:clamp(20px,4vw,36px);transform:translateY(24px);transition:transform .4s var(--ease);}
+.dj-outnow-lb.dj-open .dj-outnow-lb-panel{transform:none;}
+.dj-outnow-lb-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;}
+.dj-outnow-lb-head h3{font-family:var(--ff-serif);font-size:clamp(28px,5vw,40px);color:var(--ink);line-height:1;}
+.dj-outnow-lb-x{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:20px;background:var(--surface);color:var(--ink);box-shadow:var(--ins);flex:0 0 auto;}
+.dj-trk-more .dj-trk-t{font-size:clamp(18px,3vw,28px);}
+.dj-trk-more .dj-trk-play{background:var(--ink);color:var(--bg);}
+
+/* reveal fallback */
+.dj-rv{opacity:0;transform:translateY(28px);transition:opacity 1s var(--ease),transform 1s var(--ease);}
+.dj-rv.dj-in{opacity:1;transform:none;}
+@media(prefers-reduced-motion:reduce){
+  .dj-rv{opacity:1;transform:none;transition:none;}
+  .dj-mq-inner{animation:none;}
+  .dj-hero-cue{animation:none;}
+}
+</style>
+
+</head><body>
+<div class="dj-pg" id="pg" aria-hidden="true"></div>
+
+<div class="dj-ev-top" id="evTop">
+  <button type="button" class="dj-ev-chip" aria-label="Voltar" onclick="history.back()"><i class="ri-arrow-left-s-line"></i></button>
+  <div class="dj-ev-top-id" aria-hidden="true"><b id="evTopName"></b><span>Cartão de artista</span></div>
+  <button type="button" class="dj-ev-chip" data-share="profile" aria-label="Compartilhar cartão"><i class="ri-share-forward-box-line"></i></button>
+</div>
+
+<header class="dj-hero" id="hero">
+  <div class="dj-wrap">
+    <div class="dj-hero-eyebrow">
+      <span class="dj-lbl"></span>
+      <span class="dj-hero-live"></span>
+    </div>
+
+    <h1 class="dj-display dj-hero-name" id="heroName" aria-label="">
+      
+      <span class="dj-hn-line" aria-hidden="true"></span>
+      
+    </h1>
+
+    <div class="dj-hero-under">
+      <p class="dj-hero-bio dj-rv"><strong>Leo Janeiro.</strong> Hard groove com raiz na Zona Norte do Rio — grooves pesados, breaks certeiros e um peak time que não perdoa. De warehouse em warehouse, o nome que os line-ups mais afiados do Rio chamam primeiro.</p>
+      <div class="dj-hero-ctas dj-rv">
+        <a class="dj-btn dj-btn-ink dj-pill" id="heroBooking" href="#"><i class="ri-mail-send-line"></i> Contato booking</a>
+        <a class="dj-btn dj-btn-line dj-pill" href="#sound"><i class="ri-soundcloud-fill"></i> Ouvir DJ set</a>
+      </div>
+    </div>
+  </div>
+
+  
+  <figure class="dj-hero-figure" id="heroFig">
+    <img id="heroImg" src="" alt="">
+    <div class="dj-hero-cue" aria-hidden="true">Deslize <i class="ri-arrow-down-s-line"></i></div>
+    <div class="dj-hero-pills">
+      
+      <span class="dj-gpill dj-pill"><strong></strong><span></span></span>
+      </div>
+  </figure>
+</header>
+
+<section class="dj-stmt dj-wrap" id="stmt">
+  <p class="dj-stmt-txt" id="stmtTxt">Ele não domestica o groove. Ele <em class="dj-gold">solta</em>.</p>
+</section>
+
+<div class="dj-mq" id="mq" aria-hidden="true"><div class="dj-mq-inner" id="mqInner"></div></div>
+
+<section class="dj-sec dj-po" id="playedOn">
+  <div class="dj-wrap dj-sh">
+    <div><span class="dj-lbl"><span class="dj-dot"></span>Histórico ao vivo</span><h2 class="dj-serif dj-sh-t">Tocou em</h2></div>
+    <span class="dj-sh-side">Fonte · eventos apollo.rio</span>
+  </div>
+  <div class="dj-po-stage" id="poStage">
+    <div class="dj-po-track" id="poTrack"></div>
+    <div class="dj-po-bar" aria-hidden="true"><i id="poBar"></i></div>
+  </div>
+</section>
+
+<section class="dj-sec-tight dj-band" id="numbers">
+  <div class="dj-wrap">
+    <div class="dj-sh"><div><span class="dj-lbl">Retrospecto</span><h2 class="dj-serif dj-sh-t">Em números</h2></div></div>
+    <div class="dj-nums">
+      
+      <div class="dj-num dj-rv"><div class="dj-num-v"><span data-count="">0</span></div><p class="dj-num-l"></p></div>
+      </div>
+  </div>
+</section>
+
+<section class="dj-sec" id="playedWith">
+  <div class="dj-wrap">
+    <div class="dj-sh">
+      <div><span class="dj-lbl"><span class="dj-dot"></span>Ao lado no line-up</span><h2 class="dj-serif dj-sh-t">Tocou com</h2></div>
+      <span class="dj-sh-side">Fonte · line-ups apollo</span>
+    </div>
+    <div class="dj-roster" id="roster"></div>
+  </div>
+</section>
+
+<section class="dj-sec-tight" id="sound">
+  <div class="dj-wrap">
+    <div class="dj-sh">
+      <div><span class="dj-lbl">Trabalho selecionado</span><h2 class="dj-serif dj-sh-t">Out now!</h2></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <a class="dj-btn dj-btn-line dj-pill" id="scFollow" href="#" target="_blank" rel="noopener"><i class="ri-soundcloud-line"></i> SoundCloud</a>
+        <a class="dj-btn dj-btn-line dj-pill" id="bcFollow" href="#" target="_blank" rel="noopener"><i class="ri-bandcamp-line"></i> Bandcamp</a>
+        <a class="dj-btn dj-btn-line dj-pill" id="spFollow" href="#" target="_blank" rel="noopener"><i class="ri-spotify-line"></i> Spotify</a>
+      </div>
+    </div>
+    <div id="trkList" class="dj-rule-draw"></div>
+    <div class="dj-sc-shelf" id="scShelf"><iframe id="scPlayer" title="Player SoundCloud" allow="autoplay" loading="lazy"></iframe></div>
+  </div>
+</section>
+
+<section class="dj-sec" id="kitSection">
+  <div class="dj-wrap">
+    <div class="dj-kit dj-rv" id="kit">
+      <div class="dj-kit-wm" aria-hidden="true">EPK</div>
+      <span class="dj-lbl"><span class="dj-dot"></span>Imprensa &amp; contratantes</span>
+      <h2 class="dj-kit-t">Kit de Imprensa 2026</h2>
+      <p class="dj-kit-p">Fotos em alta resolução, rider técnico, logos e promos inéditas — tudo em uma pasta só, pronta pra encaminhar. Compartilhamento global em um toque.</p>
+      <div class="dj-kit-ctas">
+        <a class="dj-btn dj-btn-white dj-pill" id="kitDl" href="#" target="_blank" rel="noopener"><i class="ri-folder-open-line"></i> Acessar Kit Promo</a>
+        <button class="dj-btn dj-btn-out dj-pill" data-share="kit"><i class="ri-share-forward-box-line"></i> Compartilhar kit</button>
+      </div>
+      <div class="dj-kit-meta">
+        <div><b>28 MB</b>Arquivo zip</div>
+        <div><b>12 fotos</b>300 dpi</div>
+        <div><b>Rider v3</b>PDF</div>
+        <div><b>4 promos</b>Inéditas</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dj-sec-tight">
+  <div class="dj-wrap dj-about">
+    
+    <figure class="dj-about-img dj-rv" id="aboutFig"></figure>
+    <div>
+      <span class="dj-lbl" style="display:block;margin-bottom:18px">Sobre</span>
+      <h2 class="dj-serif" style="font-size:clamp(44px,7vw,92px);margin-bottom:26px">O artista</h2>
+      <p class="dj-about-p dj-rv"><strong>.</strong></p>
+      <div class="dj-tags dj-rv"><span class="dj-tag"></span></div>
+    </div>
+  </div>
+</section>
+
+<footer class="dj-foot">
+  <div class="dj-wrap">
+    <div class="dj-foot-name" id="footName"></div>
+    <div class="dj-foot-grid">
+      <div class="dj-socials">
+        <a class="dj-soc dj-pill" id="footSc" href="#" target="_blank" rel="noopener" aria-label="SoundCloud"><i class="ri-soundcloud-line"></i></a>
+        <a class="dj-soc dj-pill" id="footBc" href="#" target="_blank" rel="noopener" aria-label="Bandcamp"><i class="ri-bandcamp-line"></i></a>
+        <a class="dj-soc dj-pill" id="footSp" href="#" target="_blank" rel="noopener" aria-label="Spotify"><i class="ri-spotify-line"></i></a>
+        <a class="dj-soc dj-pill" href="#" aria-label="Instagram"><i class="ri-instagram-line"></i></a>
+        <button class="dj-soc dj-pill" data-share="profile" aria-label="Compartilhar"><i class="ri-share-forward-box-line"></i></button>
+      </div>
+      <span class="dj-foot-copy">© 2026 apollo.rio.br — cartão de artista via Apollo</span>
+    </div>
+  </div>
+  
+  <figure class="dj-foot-img" id="footImgWrap">
+    <img id="footImg" src="" alt="Multidão da Apollo ao amanhecer">
+    <div class="dj-foot-img-ov"><small>O Rio não fecha</small></div>
+  </figure>
+</footer>
+
+<div class="dj-dock" id="dock">
+  <a class="dj-icon-btn dj-pill" id="dockBooking" href="#" aria-label="Contato booking" title="Contato booking"><i class="ri-mail-send-line"></i></a>
+  <a class="dj-icon-btn dj-pill" id="dockKit" href="#" target="_blank" rel="noopener" aria-label="Media kit" title="Media kit"><i class="ri-folder-image-line"></i></a>
+  <a class="dj-icon-btn dj-pill" id="dockSoundcloud" href="#" target="_blank" rel="noopener" aria-label="SoundCloud" title="SoundCloud"><i class="ri-soundcloud-line"></i></a>
+  <a class="dj-icon-btn dj-pill" id="dockBandcamp" href="#" target="_blank" rel="noopener" aria-label="Bandcamp" title="Bandcamp"><i class="ri-bandcamp-line"></i></a>
+  <a class="dj-icon-btn dj-pill" id="dockSpotify" href="#" target="_blank" rel="noopener" aria-label="Spotify" title="Spotify"><i class="ri-spotify-line"></i></a>
+  <button type="button" class="dj-icon-btn dj-pill" id="dockFollow" aria-label="Seguir" title="Seguir"><i class="ri-heart-3-line"></i></button>
+  <button type="button" class="dj-icon-btn dj-pill" data-share="profile" aria-label="Compartilhar" title="Compartilhar"><i class="ri-share-forward-box-line"></i></button>
+</div>
+
+<div class="dj-outnow-lb" id="outNowLb" role="dialog" aria-modal="true" aria-labelledby="outNowLbTitle" aria-hidden="true">
+  <div class="dj-outnow-lb-panel">
+    <div class="dj-outnow-lb-head">
+      <div>
+        <span class="dj-lbl">Trabalho selecionado</span>
+        <h3 id="outNowLbTitle">Out now!</h3>
+      </div>
+      <button type="button" class="dj-outnow-lb-x dj-pill" id="outNowLbClose" aria-label="Fechar"><i class="ri-close-line"></i></button>
+    </div>
+    <div id="outNowLbList" class="dj-rule-draw"></div>
+  </div>
+</div>
+
+<div class="dj-toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>window.APOLLO_DJ = {"name":"Leo Janeiro","soundcloud":"","bandcamp":"","spotify":"","bookingEmail":"","mediaKitUrl":"","videoUrl":"","aboutPhoto":"","genres":["Hard Groove","Peak Time"],"playedOn":[],"playedWith":[],"tracks":[]};</script>
+<script id="apollo-dj-runtime">
+/* ════════════════════════════════════════════════════════════════════════════
+   RUNTIME — progressive enhancement in two layers:
+   BASE  (always): render Apollo data, shares, SoundCloud shelf, IO reveals.
+   LUXE  (core.js): Lenis smooth scroll + GSAP ScrollTrigger — line-split hero,
+   word-fill statement, PINNED horizontal scrub carousel with per-card parallax
+   (containerAnimation), count-ups, drift marquee/footer, progress hairline,
+   hero + footer full-bleed image parallax.
+   Troque APOLLO_DJ pelo payload REST da Apollo — markup intocado.
+   ════════════════════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+  var q = function (s, c) { return (c || document).querySelector(s); };
+  var qq = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); };
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ═══ Dados Apollo — CPT dj (→ wp_localize_script / apollo_get_dj_context) ═══
+     Cada campo é um INPUT INDEPENDENTE (custom field próprio).
+       name          → title / meta._dj_name
+       soundcloud    → meta._dj_soundcloud
+       bandcamp      → meta._dj_bandcamp
+       spotify       → meta._dj_spotify
+       bookingEmail  → meta._dj_booking
+       mediaKitUrl   → meta._dj_media_kit_url (pasta Drive; CTA "Acessar Kit Promo")
+       videoUrl      → meta._dj_about_video
+       aboutPhoto    → meta._dj_about_photo (≠ hero)
+       genres[]      → taxonomy sound
+       playedOn[]    → WP_Query event WHERE _event_dj_ids CONTAINS dj_id (past)
+       playedWith[]  → co-DJs derivados dos mesmos eventos
+       tracks[]      → meta._dj_tracks (title, url, year, duration)
+                       display meta = "{year} · RIO DE JANEIRO · {duration}"
+     ═══ */
+  /* PAYLOAD COMES FROM PHP (data.php). The mockup hard-codes this object so
+     it can run as a standalone file; here it is published as window.APOLLO_DJ
+     from apollo_dj_single_context(). Same shape, same keys — the fallback
+     keeps the runtime from throwing if the data cell is ever omitted from a
+     partial render. */
+  var APOLLO_DJ = window.APOLLO_DJ || { genres: [], playedOn: [], playedWith: [], tracks: [] };
+
+  /* ═══ BASE LAYER ═══ */
+
+  /* marquee (dobrado para o loop) */
+  q('#mqInner').innerHTML = APOLLO_DJ.genres.concat(APOLLO_DJ.genres).map(function (g, i) {
+    return '<span class="' + (i % 3 === 0 ? 'dj-on' : '') + '">' + esc(g) + '</span><span>·</span>';
+  }).join('');
+
+  /* tocou em */
+  q('#poTrack').innerHTML = APOLLO_DJ.playedOn.map(function (e) {
+    return '<article class="dj-po-card"><div class="dj-po-cover"><img src="' + e.cover + '" alt="" loading="lazy"><span class="dj-po-date dj-pill">' + esc(e.date) + '</span></div>'
+      + '<div class="dj-po-body"><h3 class="dj-po-title">' + esc(e.title) + '</h3><div class="dj-po-meta"><span><i class="ri-map-pin-2-line"></i>' + esc(e.venue) + '</span><span><i class="ri-team-line"></i>+' + e.withCount + ' artistas</span></div></div></article>';
+  }).join('');
+
+  /* roster */
+  q('#roster').innerHTML = APOLLO_DJ.playedWith.map(function (d) {
+    return '<a class="dj-ro dj-rv" href="#"><span class="dj-ro-av dj-pill"><img src="' + d.avatar + '" alt="" loading="lazy"></span>'
+      + '<span class="dj-ro-name">' + esc(d.name) + '</span>'
+      + '<span class="dj-ro-x"><span class="dj-ro-role">' + esc(d.role) + '</span><i class="ri-arrow-right-up-line dj-ro-arrow"></i></span></a>';
+  }).join('');
+
+  /* plataformas — fonte única global (dock + Sons + footer), ver comentário nos dados */
+  q('#scFollow').href = APOLLO_DJ.soundcloud;
+  q('#bcFollow').href = APOLLO_DJ.bandcamp;
+  q('#spFollow').href = APOLLO_DJ.spotify;
+  q('#footSc').href = APOLLO_DJ.soundcloud;
+  q('#footBc').href = APOLLO_DJ.bandcamp;
+  q('#footSp').href = APOLLO_DJ.spotify;
+  q('#dockSoundcloud').href = APOLLO_DJ.soundcloud;
+  q('#dockBandcamp').href = APOLLO_DJ.bandcamp;
+  q('#dockSpotify').href = APOLLO_DJ.spotify;
+  q('#dockKit').href = APOLLO_DJ.mediaKitUrl;
+  var bookingHref = 'mailto:' + APOLLO_DJ.bookingEmail + '?subject=' + encodeURIComponent('Booking — ' + APOLLO_DJ.name);
+  q('#heroBooking').href = bookingHref;
+  q('#dockBooking').href = bookingHref;
+
+  /* nome do rodapé — sempre o nome do DJ, maiúsculo, nunca a marca da plataforma */
+  q('#footName').textContent = APOLLO_DJ.name.toUpperCase();
+  /* identidade da ev-top — revelada quando o nome gigante do hero sai de cena */
+  q('#evTopName').textContent = APOLLO_DJ.name;
+
+  /* Sobre — vídeo cobre a mesma caixa 4/5 em loop mudo; sem vídeo, cai pra uma
+     foto DIFERENTE da imagem principal do hero (nunca repete o 1º img). */
+  (function () {
+    var fig = q('#aboutFig');
+    if (APOLLO_DJ.videoUrl) {
+      fig.innerHTML = '<video id="aboutVideo" src="' + esc(APOLLO_DJ.videoUrl) + '" autoplay muted loop playsinline></video>';
+    } else {
+      fig.innerHTML = '<img id="aboutImg" src="' + esc(APOLLO_DJ.aboutPhoto) + '" alt="' + esc(APOLLO_DJ.name) + ' nos bastidores">';
+    }
+  })();
+
+  /* Out now! — max 5 + row 06 Ver todos → lightbox; meta = year · RIO DE JANEIRO · duration */
+  function trackMeta(t) {
+    if (t.meta) return t.meta;
+    var bits = [];
+    if (t.year) bits.push(t.year);
+    bits.push('RIO DE JANEIRO');
+    if (t.duration) bits.push(t.duration);
+    return bits.join(' · ');
+  }
+  function trackRowHtml(t, i) {
+    return '<div class="dj-trk dj-rv" data-url="' + esc(t.url || '') + '"><span class="dj-trk-i">0' + (i + 1) + '</span>'
+      + '<div><div class="dj-trk-t">' + esc(t.title) + '</div><div class="dj-trk-m">' + esc(trackMeta(t)) + '</div></div>'
+      + '<button class="dj-trk-share dj-pill" data-share-track="' + esc(t.url || '') + '" aria-label="Compartilhar faixa"><i class="ri-share-forward-box-line"></i></button>'
+      + '<span class="dj-trk-play dj-pill"><i class="ri-play-fill"></i></span></div>';
+  }
+  var allTracks = Array.isArray(APOLLO_DJ.tracks) ? APOLLO_DJ.tracks : [];
+  var trkList = q('#trkList');
+  if (trkList) {
+    var visible = allTracks.slice(0, 5);
+    var htmlTrk = visible.map(function (t, i) { return trackRowHtml(t, i); }).join('');
+    if (allTracks.length > 5) {
+      htmlTrk += '<button type="button" class="dj-trk dj-trk-more dj-rv" id="trkMore" aria-haspopup="dialog">'
+        + '<span class="dj-trk-i">06</span><div><div class="dj-trk-t">Ver todos</div>'
+        + '<div class="dj-trk-m">' + esc(String(allTracks.length)) + ' lançamentos</div></div>'
+        + '<span class="dj-trk-play dj-pill"><i class="ri-arrow-right-up-line"></i></span></button>';
+    }
+    trkList.innerHTML = htmlTrk;
+  }
+  var lbFull = q('#outNowLbList');
+  if (lbFull) {
+    lbFull.innerHTML = allTracks.map(function (t, i) { return trackRowHtml(t, i); }).join('');
+  }
+  function playTrack(row) {
+    var url = row.getAttribute('data-url');
+    if (!url) return;
+    qq('.dj-trk').forEach(function (r) { r.classList.toggle('dj-is-on', r === row); });
+    var shelf = q('#scShelf');
+    var player = q('#scPlayer');
+    if (player) {
+      player.src = 'https://w.soundcloud.com/player/?url=' + encodeURIComponent(url) + '&color=%23d1860a&auto_play=true&hide_related=true&show_comments=false&show_user=true';
+    }
+    if (shelf) shelf.classList.add('dj-open');
+  }
+  var outLb = q('#outNowLb');
+  var outLbLastFocus = null;
+  function openOutLb(el) {
+    if (!outLb) return;
+    outLbLastFocus = el || document.activeElement;
+    outLb.classList.add('dj-open');
+    outLb.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    var closer = q('#outNowLbClose');
+    if (closer) closer.focus();
+  }
+  function closeOutLb() {
+    if (!outLb) return;
+    outLb.classList.remove('dj-open');
+    outLb.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (outLbLastFocus && outLbLastFocus.focus) outLbLastFocus.focus();
+  }
+  var moreBtn = q('#trkMore');
+  if (moreBtn) moreBtn.addEventListener('click', function (e) { e.preventDefault(); openOutLb(moreBtn); });
+  var lbClose = q('#outNowLbClose');
+  if (lbClose) lbClose.addEventListener('click', closeOutLb);
+  if (outLb) outLb.addEventListener('click', function (e) { if (e.target === outLb) closeOutLb(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && outLb && outLb.classList.contains('dj-open')) closeOutLb();
+  });
+  function onTrkClick(ev) {
+    var sh = ev.target.closest('[data-share-track]');
+    if (sh) { ev.stopPropagation(); share('Faixa', sh.getAttribute('data-share-track')); return; }
+    if (ev.target.closest('.dj-trk-more')) return;
+    var row = ev.target.closest('.dj-trk'); if (!row || row.classList.contains('dj-trk-more')) return;
+    playTrack(row);
+  }
+  if (trkList) trkList.addEventListener('click', onTrkClick);
+  if (lbFull) lbFull.addEventListener('click', onTrkClick);
+
+  /* Kit Promo — #kitDl is an <a> to mediaKitUrl */
+  if (q('#kitDl') && APOLLO_DJ.mediaKitUrl) q('#kitDl').href = APOLLO_DJ.mediaKitUrl;
+
+  /* share + toast */
+  var toastT;
+  function toast(msg, icon) {
+    var t = q('#toast');
+    t.innerHTML = '<i class="' + (icon || 'ri-check-line') + '"></i>' + esc(msg);
+    t.classList.add('dj-show');
+    clearTimeout(toastT); toastT = setTimeout(function () { t.classList.remove('dj-show'); }, 2200);
+  }
+  function share(title, url) {
+    url = url || location.href;
+    if (navigator.share) navigator.share({ title: APOLLO_DJ.name + ' · ' + title, url: url }).catch(function () {});
+    else if (navigator.clipboard) { navigator.clipboard.writeText(url); toast('Link copiado'); }
+    if (navigator.vibrate) navigator.vibrate(8);
+  }
+  qq('[data-share]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      share(b.getAttribute('data-share') === 'kit' ? 'Kit de Imprensa' : 'Cartão de Artista',
+            b.getAttribute('data-share') === 'kit' ? location.href + '#kit' : location.href);
+    });
+  });
+
+  /* favoritar (dock 100% ícone) — troca o glifo/estado, sem rótulo de texto */
+  var followed = false;
+  q('#dockFollow').addEventListener('click', function () {
+    followed = !followed;
+    this.classList.toggle('dj-is-active', followed);
+    this.querySelector('i').className = followed ? 'ri-heart-3-fill' : 'ri-heart-3-line';
+    this.setAttribute('aria-label', followed ? 'Seguindo' : 'Seguir');
+    this.setAttribute('title', followed ? 'Seguindo' : 'Seguir');
+    toast(followed ? 'Você segue ' + APOLLO_DJ.name + ' ✓' : 'Deixou de seguir', 'ri-heart-3-line');
+    if (navigator.vibrate) navigator.vibrate(8);
+  });
+
+  /* IO reveals (com ou sem GSAP) */
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('dj-in'); io.unobserve(e.target); } });
+  }, { threshold: .1, rootMargin: '0px 0px -6% 0px' });
+  qq('.dj-rv').forEach(function (el) { io.observe(el); });
+
+  /* dock depois do hero */
+  new IntersectionObserver(function (es) { q('#dock').classList.toggle('dj-show', !es[0].isIntersecting); }, { threshold: 0 })
+    .observe(q('#hero'));
+
+  /* progresso do carrossel mobile (rail nativo) */
+  var poTrack = q('#poTrack'), poBar = q('#poBar');
+  poTrack.addEventListener('scroll', function () {
+    var max = poTrack.scrollWidth - poTrack.clientWidth;
+    if (max > 0) poBar.style.transform = 'scaleX(' + (poTrack.scrollLeft / max) + ')';
+  }, { passive: true });
+
+  /* ═══ LUXE LAYER — core.js GSAP + ScrollTrigger + Lenis ═══ */
+  function splitLines(containerSel) {
+    var lines = qq(containerSel + ' .hn-line');
+    var allChars = [];
+    lines.forEach(function (lineEl) {
+      var t = lineEl.textContent;
+      lineEl.textContent = '';
+      t.split('').forEach(function (ch) {
+        var w = document.createElement('span'); w.className = 'dj-ch-w';
+        var i = document.createElement('span'); i.className = 'dj-ch'; i.textContent = ch === ' ' ? ' ' : ch;
+        w.appendChild(i); lineEl.appendChild(w); allChars.push(i);
+      });
+    });
+    return allChars;
+  }
+  function splitWords(el) {
+    var out = [];
+    Array.prototype.slice.call(el.childNodes).forEach(function (n) {
+      if (n.nodeType === 3) {
+        n.textContent.split(/\s+/).filter(Boolean).forEach(function (wd) {
+          var s = document.createElement('span'); s.className = 'dj-wd'; s.textContent = wd;
+          el.insertBefore(s, n); out.push(s);
+        });
+        el.removeChild(n);
+      } else if (n.nodeType === 1) { n.classList.add('dj-wd'); out.push(n); }
+    });
+    return out;
+  }
+
+  /* corta um nó de texto em caracteres mascarados (.ch-w > .ch) — mesma
+     mecânica do hero, reutilizada por títulos de seção e nome do rodapé */
+  function splitChars(el) {
+    var t = el.textContent, out = [];
+    el.textContent = '';
+    t.split('').forEach(function (c) {
+      var w = document.createElement('span'); w.className = 'dj-ch-w';
+      var i = document.createElement('span'); i.className = 'dj-ch';
+      i.textContent = c === ' ' ? ' ' : c;
+      w.appendChild(i); el.appendChild(w); out.push(i);
+    });
+    return out;
+  }
+
+  function luxe() {
+    if (reduced || !window.gsap || !window.ScrollTrigger) return;
+    var g = window.gsap, ST = window.ScrollTrigger;
+    g.registerPlugin(ST);
+    if (typeof window.initLenisSync === 'function') window.initLenisSync();
+    var mm = g.matchMedia();
+
+    /* ═══ 00 · o GSAP assume TODOS os reveals — desarma a camada CSS/IO (.rv)
+       pra que nenhum `from()` leia opacity:0 como valor final ═══ */
+    qq('.dj-rv').forEach(function (el) { el.classList.add('dj-in'); el.style.transition = 'none'; });
+
+    /* ═══ 01 · fio de progresso ═══ */
+    g.to('#pg', { scaleX: 1, ease: 'none', scrollTrigger: { start: 0, end: 'max', scrub: .3 } });
+
+    /* ═══ 02 · EV-TOP — glass + nome do artista assim que o nome gigante sai ═══ */
+    var evTop = q('#evTop');
+    ST.create({
+      trigger: '#hero', start: 'top+=150 top', end: 'max',
+      onToggle: function (s) { evTop.classList.toggle('dj-is-solid', s.isActive); }
+    });
+
+    /* ═══ 03 · HERO — abertura em cascata ═══ */
+    var chars = splitLines('#heroName');
+    g.timeline({ defaults: { ease: 'expo.out' } })
+      .from('.hero-eyebrow', { y: 16, opacity: 0, duration: .9 }, 0)
+      .from(chars, { yPercent: 112, duration: 1.25, stagger: .045 }, .1)
+      .from('#heroImg', { scale: 1.18, duration: 2, ease: 'power3.out' }, .3)
+      .from('.hero-bio', { y: 26, opacity: 0, duration: 1 }, .62)
+      .from('.hero-ctas', { y: 26, opacity: 0, duration: 1 }, .72)
+      .from('.gpill', { y: 26, opacity: 0, duration: .85, stagger: .08 }, .95)
+      .from('.hero-cue', { opacity: 0, duration: .8 }, 1.2);
+
+    /* ═══ 04 · HERO FIGURE — card recuado ABRE em full-bleed (assinatura Apple) ═══ */
+    g.fromTo('#heroFig',
+      { clipPath: 'inset(0% 7% 0% 7% round 28px)' },
+      { clipPath: 'inset(0% 0% 0% 0% round 0px)', ease: 'none',
+        scrollTrigger: { trigger: '#heroFig', start: 'top 94%', end: 'top 24%', scrub: .6 } });
+
+    /* ═══ 05 · parallax da foto + saída do bloco de texto ═══ */
+    g.to('#heroImg', { yPercent: 7, ease: 'none', scrollTrigger: { trigger: '#heroFig', start: 'top bottom', end: 'bottom top', scrub: true } });
+    g.to('#heroName', { yPercent: -9, opacity: .16, ease: 'none', scrollTrigger: { trigger: '#hero', start: 'bottom 82%', end: 'bottom 16%', scrub: true } });
+    g.to('.hero-under', { y: -34, opacity: .2, ease: 'none', scrollTrigger: { trigger: '#hero', start: 'bottom 88%', end: 'bottom 28%', scrub: true } });
+    g.to('.hero-cue', { opacity: 0, ease: 'none', scrollTrigger: { trigger: '#heroFig', start: 'top 60%', end: 'top 20%', scrub: true } });
+
+    /* ═══ 06 · reveals globais — o GSAP assume o lugar do IntersectionObserver ═══ */
+    var rvEls = qq('.dj-rv').filter(function (el) {
+      return !el.closest('#hero') && !el.matches('.dj-ro, .dj-trk') && el.id !== 'kit' && el.id !== 'aboutFig';
+    });
+    ST.batch(rvEls, {
+      start: 'top 90%',
+      onEnter: function (els) { g.from(els, { y: 38, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: .09, overwrite: true }); }
+    });
+
+    /* ═══ 07 · STATEMENT — word-fill pinado ═══ */
+    var words = splitWords(q('#stmtTxt'));
+    g.set(words, { opacity: .1 });
+    g.to(words, { opacity: 1, stagger: .05, ease: 'none',
+      scrollTrigger: { trigger: '#stmt', start: 'top 24%', end: '+=120%', scrub: true, pin: true, pinSpacing: true } });
+
+    /* ═══ 08 · MARQUEE — velocidade reativa ao scroll (Lenis alimenta a leitura) ═══ */
+    var mqInner = q('#mqInner');
+    mqInner.style.animation = 'none';
+    var mqLoop = g.to(mqInner, { xPercent: -50, duration: 26, ease: 'none', repeat: -1 });
+    var mqDecay;
+    ST.create({ onUpdate: function (self) {
+      mqLoop.timeScale(1 + Math.min(Math.abs(self.getVelocity()) / 800, 4.5));
+      clearTimeout(mqDecay);
+      mqDecay = setTimeout(function () { g.to(mqLoop, { timeScale: 1, duration: 1.2, ease: 'power2.out' }); }, 110);
+    }});
+    g.fromTo('#mq', { xPercent: 2 }, { xPercent: -4, ease: 'none', scrollTrigger: { trigger: '#mq', start: 'top bottom', end: 'bottom top', scrub: true } });
+
+    /* ═══ 09 · TÍTULOS DE SEÇÃO — sobem caractere a caractere ═══ */
+    qq('.dj-sh-t').forEach(function (h) {
+      g.from(splitChars(h), { yPercent: 118, duration: 1.15, ease: 'expo.out', stagger: .028,
+        scrollTrigger: { trigger: h, start: 'top 88%', once: true } });
+    });
+    qq('.dj-sh .dj-lbl').forEach(function (l) {
+      g.from(l, { y: 14, opacity: 0, duration: .9, ease: 'expo.out',
+        scrollTrigger: { trigger: l, start: 'top 92%', once: true } });
+    });
+
+    /* ═══ 10 · EM NÚMEROS — hairline desenha + contador sobe ═══ */
+    qq('.dj-num').forEach(function (n) {
+      g.fromTo(n, { '--rl': 0 }, { '--rl': 1, duration: 1.15, ease: 'power2.out',
+        scrollTrigger: { trigger: n, start: 'top 90%', once: true } });
+    });
+    qq('[data-count]').forEach(function (el) {
+      var to = parseFloat(el.getAttribute('data-count')), dec = +(el.getAttribute('data-dec') || 0);
+      var o = { v: 0 };
+      g.to(o, { v: to, duration: 1.9, ease: 'power2.out',
+        onUpdate: function () { el.textContent = (dec ? o.v.toFixed(dec) : Math.round(o.v)).toString().replace('.', ','); },
+        scrollTrigger: { trigger: el, start: 'top 88%', once: true } });
+    });
+
+    /* ═══ 11 · LISTAS (roster + faixas) — cascata + hairline desenhada por linha ═══ */
+    ['#roster', '#trkList'].forEach(function (sel) {
+      var host = q(sel); if (!host) return;
+      g.fromTo(host, { '--rl': 0 }, { '--rl': 1, duration: 1.2, ease: 'power2.out',
+        scrollTrigger: { trigger: host, start: 'top 90%', once: true } });
+      var rows = qq('.dj-ro, .dj-trk', host);
+      g.from(rows, { y: 36, opacity: 0, duration: .95, ease: 'expo.out', stagger: .07,
+        scrollTrigger: { trigger: host, start: 'top 84%', once: true } });
+      rows.forEach(function (r) {
+        g.fromTo(r, { '--rl': 0 }, { '--rl': 1, duration: .85, ease: 'power2.out',
+          scrollTrigger: { trigger: r, start: 'top 94%', once: true } });
+      });
+    });
+
+    /* ═══ 12 · TOCOU EM — desktop: scrub horizontal pinado + parallax por card ═══ */
+    mm.add('(min-width: 900px)', function () {
+      var stage = q('#poStage'), track = q('#poTrack');
+      var dist = function () { return Math.max(0, track.scrollWidth - stage.clientWidth); };
+      var tween = g.to(track, {
+        x: function () { return -dist(); },
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#poStage', start: 'top top',
+          end: function () { return '+=' + (dist() + innerHeight * .25); },
+          pin: true, scrub: 1, invalidateOnRefresh: true,
+          onUpdate: function (self) { poBar.style.transform = 'scaleX(' + self.progress + ')'; }
+        }
+      });
+      qq('.dj-po-cover img', stage).forEach(function (im) {
+        g.fromTo(im, { xPercent: -7 }, { xPercent: 0, ease: 'none',
+          scrollTrigger: { trigger: im.closest('.dj-po-card'), containerAnimation: tween, start: 'left right', end: 'right left', scrub: true } });
+      });
+      return function () { tween.scrollTrigger && tween.scrollTrigger.kill(); tween.kill(); };
+    });
+    /* mobile: cards entram em cascata no rail nativo */
+    mm.add('(max-width: 899px)', function () {
+      var t = g.from(qq('.dj-po-card'), { y: 44, opacity: 0, duration: 1, ease: 'expo.out', stagger: .08,
+        scrollTrigger: { trigger: '#poStage', start: 'top 86%', once: true } });
+      return function () { t.scrollTrigger && t.scrollTrigger.kill(); t.kill(); };
+    });
+
+    /* ═══ 13 · elasticidade de scroll — as listas inclinam de leve com a velocidade ═══ */
+    mm.add('(min-width: 900px)', function () {
+      var setters = ['#roster', '#trkList'].filter(function (s) { return q(s); }).map(function (s) {
+        return g.quickTo(s, 'skewY', { duration: .55, ease: 'power3.out' });
+      });
+      var st = ST.create({ onUpdate: function (self) {
+        var s = g.utils.clamp(-2.6, 2.6, self.getVelocity() / -520);
+        setters.forEach(function (fn) { fn(s); });
+      }});
+      return function () { st.kill(); setters.forEach(function (fn) { fn(0); }); };
+    });
+
+    /* ═══ 14 · KIT DE IMPRENSA — o card ink cresce e a luz varre no scrub ═══ */
+    g.fromTo('#kit', { yPercent: 5, scale: .94, opacity: .5 },
+      { yPercent: 0, scale: 1, opacity: 1, ease: 'none',
+        scrollTrigger: { trigger: '#kitSection', start: 'top 90%', end: 'top 32%', scrub: .5 } });
+    g.fromTo('#kit', { '--sx': '2%' }, { '--sx': '98%', ease: 'none',
+      scrollTrigger: { trigger: '#kit', start: 'top bottom', end: 'bottom top', scrub: true } });
+    g.fromTo('.kit-wm', { xPercent: 12 }, { xPercent: -12, ease: 'none',
+      scrollTrigger: { trigger: '#kit', start: 'top bottom', end: 'bottom top', scrub: true } });
+    g.from(qq('.dj-kit-meta div'), { y: 20, opacity: 0, duration: .9, ease: 'expo.out', stagger: .07,
+      scrollTrigger: { trigger: '.kit-meta', start: 'top 92%', once: true } });
+
+    /* ═══ 15 · SOBRE — clip abre no scrub, mídia deriva, tags entram ═══ */
+    g.fromTo('#aboutFig', { clipPath: 'inset(14% 0% 14% 0% round 28px)' },
+      { clipPath: 'inset(0% 0% 0% 0% round 28px)', ease: 'none',
+        scrollTrigger: { trigger: '#aboutFig', start: 'top 92%', end: 'top 32%', scrub: .6 } });
+    g.to('#aboutImg', { yPercent: 6, ease: 'none', scrollTrigger: { trigger: '#aboutFig', start: 'top bottom', end: 'bottom top', scrub: true } });
+    g.from(qq('.dj-tag'), { y: 16, opacity: 0, duration: .7, ease: 'expo.out', stagger: .05,
+      scrollTrigger: { trigger: '.tags', start: 'top 92%', once: true } });
+
+    /* ═══ 16 · RODAPÉ — nome sobe por caractere, deriva no scroll, foto em parallax ═══ */
+    g.from(splitChars(q('#footName')), { yPercent: 118, duration: 1.3, ease: 'expo.out', stagger: .03,
+      scrollTrigger: { trigger: '.foot', start: 'top 84%', once: true } });
+    g.fromTo('#footName', { xPercent: 4 }, { xPercent: -8, ease: 'none',
+      scrollTrigger: { trigger: '.foot', start: 'top bottom', end: 'bottom top', scrub: true } });
+    g.fromTo('#footImg', { yPercent: -12 }, { yPercent: 4, ease: 'none',
+      scrollTrigger: { trigger: '#footImgWrap', start: 'top bottom', end: 'bottom bottom', scrub: true } });
+    g.from(qq('.dj-soc'), { y: 18, opacity: 0, duration: .7, ease: 'expo.out', stagger: .06,
+      scrollTrigger: { trigger: '.socials', start: 'top 94%', once: true } });
+
+    /* ═══ 17 · recalibra depois que as imagens pesam ═══ */
+    window.addEventListener('load', function () { ST.refresh(); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { ST.refresh(); });
+  }
+
+  /* boot LUXE após o core.js entregar o gsap (nunca em DOMContentLoaded — lei do DS) */
+  if (window.gsap && window.ScrollTrigger) luxe();
+  else {
+    var booted = false;
+    var go = function () { if (!booted) { booted = true; luxe(); } };
+    window.addEventListener('apollo:gsap-ready', go, { once: true });
+    document.addEventListener('apollo:gsap-ready', go, { once: true });
+    window.addEventListener('apollo:ready', function () { if (window.gsap) go(); }, { once: true });
+    setTimeout(function () { if (window.gsap && window.ScrollTrigger) go(); }, 4200);
+  }
+})();
+</script>
+
+</body></html>
