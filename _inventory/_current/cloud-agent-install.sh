@@ -10,6 +10,7 @@ echo "[apollo-install] root=$ROOT"
 
 # Pre-commit gate used by this monorepo (apollo-guard --staged).
 git config core.hooksPath .githooks
+chmod +x .githooks/pre-commit 2>/dev/null || true
 echo "[apollo-install] core.hooksPath=$(git config --get core.hooksPath)"
 
 # Toolchain pins expected by CLAUDE.md / harnesses.
