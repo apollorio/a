@@ -1,0 +1,1189 @@
+=== .htaccess (full) ===
+# BEGIN NFD EPC
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteBase /
+	RewriteRule ^wp-content/endurance-page-cache/ - [L]
+	RewriteCond %{REQUEST_METHOD} !POST
+	RewriteCond %{QUERY_STRING} !.*=.*
+	RewriteCond %{HTTP_COOKIE} !(wordpress_test_cookie|comment_author|wp\-postpass|wordpress_logged_in|wptouch_switch_toggle|wp_woocommerce_session_) [NC]
+	RewriteCond %{DOCUMENT_ROOT}/wp-content/endurance-page-cache/$1/_index.html -f
+	RewriteRule ^(.*)$ /wp-content/endurance-page-cache/$1/_index.html [L]
+</IfModule>
+
+<IfModule mod_expires.c>
+	ExpiresActive On
+	ExpiresByType image/jpg "access plus 24 hours"
+	ExpiresByType image/jpeg "access plus 24 hours"
+	ExpiresByType image/gif "access plus 24 hours"
+	ExpiresByType image/png "access plus 24 hours"
+	ExpiresByType text/css "access plus 24 hours"
+	ExpiresByType application/pdf "access plus 1 week"
+	ExpiresByType text/javascript "access plus 24 hours"
+	ExpiresByType text/html "access plus 2 hours"
+	ExpiresByType image/x-icon "access plus 1 year"
+	ExpiresDefault "access plus 24 hours"
+</IfModule>
+# END NFD EPC
+
+=== user.ini / php.ini hits ===
+ls: cannot access '/home1/rvall260/apollo.rio.br/.user.ini': No such file or directory
+ls: cannot access '/home1/rvall260/apollo.rio.br/php.ini': No such file or directory
+
+=== curl more paths ===
+406 /acesso/ <title>Not Acceptable!
+406 /registre/ <title>Not Acceptable!
+406 /reset/ <title>Not Acceptable!
+406 /verificar-email/ <title>Not Acceptable!
+406 /evento/dismantle-2/ <title>Not Acceptable!
+406 /feed/ <title>Not Acceptable!
+406 /wp-login.php <title>Not Acceptable!
+
+=== WP bootstrap template probe ===
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+<link rel="preconnect" href="https://assets.apollo.rio.br">
+<link rel="preconnect" href="https://cdn.apollo.rio.br">
+<meta name="apollo-csp-nonce" content="iZReP0FrS737gbdTMYD7AQ==">
+<!--
+Mandatory Apollo CORE.JS: global standard of theme and design to all apollo pages!
+Loaded on core.js are:
+> ICONS: 'Remixicon' + 'apolloIcons', comply with remixicons ´ri-{structure}-line´;
+> ANIMATIONS: entire bundle `GSAP v3.15.0` + `Lenis`
+> much more loaded injected by cdn.apollo.rio.br/v1.0.0/js/core.js
+-->
+<script id="apollo-core-js" nonce="iZReP0FrS737gbdTMYD7AQ==" src="https://cdn.apollo.rio.br/v1.0.0/core.js?prod=true" fetchpriority="high"></script>
+<style id="apollo-page-tokens">
+:root {
+/* ALL TOKENS VIA MAIN :root { must be from core.js injected, ONLY LOCAL WEBPAGE EXTRA :root IF  NEEDED then allowed to do only :root for extra element to the page!!! And same: respct is mandatory to injected stylesheets of:  html {} body {} and *{} !important */
+}
+</style>
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=overlays-content">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-title" content="apollo::rio">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#101010" media="(prefers-color-scheme: dark)">
+<title>Apollo::Rio - Terminal de Acesso</title>
+<script src="https://apollo.rio.br/wp-content/plugins/apollo-statistics/assets/js/tracker.js?v=2.0.6" defer></script>
+<link rel="stylesheet"
+    href="https://apollo.rio.br/wp-content/plugins/apollo-login/assets/css/apollo-auth-uni.css?v=2.2.1133221.0.34"></head>
+
+<body class="apollo-no-tooltips" data-apollo-page="acesso" data-apollo-auth="1" data-state="normal">
+
+    <div class="acesso-bg" aria-hidden="true">
+    <video
+        class="acesso-bg__video"
+        id="acessoBgVid"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+            >
+                                <source src="https://assets.apollo.rio.br/vid/v2.mp4" type="video/mp4">
+                                <source src="https://assets.apollo.rio.br/vid/v2.webm" type="video/webm">
+            </video>
+    <div class="acesso-bg__overlay"></div>
+</div>
+<div class="grid-overlay" aria-hidden="true"></div>
+<div class="noise-overlay" aria-hidden="true"></div>
+
+    <div class="auth-stage">
+        <div class="terminal-wrapper tl" id="auth-card">
+            <div class="notification-area"></div>
+
+            
+<header class="auth-hd" data-tooltip="Cabeçalho Apollo">
+    <div class="auth-lg" aria-hidden="true">
+        <i class="ri-record-circle-line"></i>
+    </div>
+    <div class="auth-hd-text">
+        <span class="auth-wm">apollo<b>::</b>rio</span>
+                    <span class="auth-sub">Terminal de Acesso</span>
+            </div>
+</header>
+
+            <div class="scroll-area">
+                <section id="login-section">
+                    
+<!-- Login Form -->
+<form id="login-form" method="post" autocomplete="on"
+    action="/acesso/"
+    data-tooltip="">
+
+    <input type="hidden" id="nonce" name="nonce" value="8df4d50827" /><input type="hidden" name="_wp_http_referer" value="/acesso/" />
+    <!-- Redirect field -->
+    <input type="hidden" name="redirect_to" value="https://apollo.rio.br">
+
+    <!-- Autofill targets the real fields below (#log / #pwd). No decoy trap:
+         mobile password managers must fill the visible inputs the handler reads. -->
+
+    <!-- Username/Email/CPF/Passport Field with Auto-Detection -->
+    <div class="input-group" data-tooltip="Campo de identificação">
+        <div class="input-icon-wrap" id="login-doc-wrap">
+            <span class="input-prefix" id="login-doc-prefix" aria-hidden="true">&gt;&nbsp;&nbsp;&nbsp;</span>
+            <input type="text" id="log" name="apollo_log" value="" placeholder="E-mail, usuário, CPF ou passaporte"
+                class="apollo-input" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false"
+                required maxlength="128"
+                data-tooltip="Digite seu e-mail, usuário, telefone, CPF ou passaporte">
+            <label class="apollo-label" for="log">Identificação</label>
+        </div>
+        <!--   <p class="small-note" id="login-doc-hint">
+                       </p> -->
+    </div>
+
+    <!-- Password Field -->
+    <div class="input-group" data-tooltip="Campo de senha">
+        <div class="input-icon-wrap input-icon-wrap--password">
+            <span class="input-prefix" aria-hidden="true">&gt;&nbsp;&nbsp;&nbsp;</span>
+            <input type="password" id="pwd" name="apollo_pwd" value="" placeholder=" " class="apollo-input"
+                autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" required
+                data-tooltip="Digite sua senha">
+            <label class="apollo-label" for="pwd">Chave de Acesso</label>
+            <button type="button" class="pwd-toggle-btn" id="pwd-toggle"
+                aria-label="Mostrar senha" aria-pressed="false"
+                data-tooltip="Mostrar ou ocultar senha">
+                <i class="ri-eye-line" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- BRUTAL inline override: kills the huge white ball (.toggle-track::after +
+         oversized .toggle-thumb) and rebuilds ONE small knob. Inline in <body> so it
+         beats every stacked auth stylesheet regardless of cache/enqueue order. -->
+    <style>
+        .custom-toggle.keep-toggle {
+            gap: 8px !important;
+        }
+
+        .custom-toggle.keep-toggle .toggle-track::before,
+        .custom-toggle.keep-toggle .toggle-track::after {
+            content: none !important;
+            display: none !important;
+            background: none !important;
+        }
+
+        .custom-toggle.keep-toggle .toggle-track {
+            position: relative !important;
+            width: 34px !important;
+            height: 18px !important;
+            background: #e6e6e9 !important;
+            border: 0 !important;
+            border-radius: 999px !important;
+            box-shadow: none !important;
+            flex: 0 0 auto !important;
+            padding: 0 !important;
+            transition: background .3s ease !important;
+        }
+
+        .custom-toggle.keep-toggle .toggle-thumb {
+            display: block !important;
+            position: absolute !important;
+            top: 50% !important;
+            left: 2px !important;
+            right: auto !important;
+            transform: translateY(-50%) !important;
+            width: 14px !important;
+            height: 14px !important;
+            min-width: 0 !important;
+            min-height: 0 !important;
+            max-width: 14px !important;
+            max-height: 14px !important;
+            margin: 0 !important;
+            border: 0 !important;
+            border-radius: 50% !important;
+            background: #bbb !important;
+            box-shadow: none !important;
+            transition: left .35s ease, background .35s ease !important;
+        }
+
+        .custom-toggle.keep-toggle.active .toggle-track {
+            background: #eee !important;
+        }
+
+        .custom-toggle.keep-toggle.active .toggle-thumb {
+            left: calc(100% - 16px) !important;
+            background: linear-gradient(40deg, #ff0080, #ff8c00 70%) !important;
+        }
+    </style>
+
+    <!-- Remember Session Toggle -->
+    <div class="form-group extra-xps" style="display: flex; justify-content: space-between; align-items: center;"
+        data-tooltip="Opções adicionais">
+        <div class="custom-toggle keep-toggle"
+            data-tooltip="Manter sessão ativa">
+            <div class="toggle-track">
+                <div class="toggle-thumb bttm-extra"></div>
+            </div>
+            <span>Continuar conectado</span>
+            <input type="hidden" name="rememberme" value="0">
+        </div>
+
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn-primary" data-tooltip="Acessar o sistema">
+        <span>ACESSAR TERMINAL</span>
+        <i class="ri-arrow-right-line"></i>
+    </button>
+
+</form>
+
+<!-- Register Link -->
+<div class="auth-register-cta">
+    <p>
+        <!-- < ?php esc_html_e('Não possui acesso?', 'apollo-social'); ?> -->
+        <a style="font-size:10.5px!important; " href="https://apollo.rio.br/registre/"
+            class="btn-text" id="switch-to-register">
+            Registrar-se        </a>
+        <span style="opacity:.5; margin: 0 3.5px;"> | </span>
+
+        <a type="button" class="btn-text bttm-extra" style="font-size:10.5px!important;" id="forgot-password"
+            data-tooltip="Recuperar acesso">
+            Recuperar acesso        </a>
+        <span style="opacity:.5; margin: 0 3.5px;"> | </span>
+        <a href="#" data-apollo-report-trigger style="font-size:10.5px!important; cursor: pointer;">
+            Suporte        </a>
+    </p>
+</div>                </section>
+            </div>
+
+            
+<footer class="auth-ft" data-tooltip="Rodapé Apollo">
+    <p class="auth-ft-copy" data-tooltip="Copyright">
+        <i class="ri-copyright-line"></i> 2026 apollo<b>::</b>rio •
+        Todos os direitos reservados    </p>
+</footer>            
+<div class="lockout-overlay" data-tooltip="Sistema bloqueado">
+
+    <div class="lockout-overlay__icon" data-tooltip="Ícone de alerta">
+        <i class="ri-alarm-warning-fill" aria-hidden="true"></i>
+    </div>
+
+    <h2 data-tooltip="Título do bloqueio">
+        Acesso bloqueado    </h2>
+
+    <p class="lockout-overlay__msg" data-tooltip="Mensagem de segurança">
+        Múltiplas tentativas de acesso detectadas.<br>
+        Sistema temporariamente bloqueado por segurança.    </p>
+
+    <div class="lockout-overlay__timer" data-tooltip="Tempo restante">
+        <span id="lockout-timer">1:00</span>
+    </div>
+
+    <p class="lockout-overlay__hint" data-tooltip="Instrução">
+        Aguarde o timer zerar para tentar novamente.    </p>
+
+</div>
+            
+<div class="aptitude-overlay" id="aptitude-overlay" data-tooltip="Teste de Aptidão">
+
+    <header class="quiz-hd" data-tooltip="Cabeçalho do quiz">
+        <span class="quiz-hd-label">Teste de admissão</span>
+        <span class="quiz-hd-progress" id="test-progress" data-tooltip="Progresso do teste">
+            ETAPA 1 DE 4        </span>
+    </header>
+
+    <div class="quiz-scroll">
+
+        <div id="test-content" data-tooltip="Conteúdo do teste atual">
+            <div class="test-loading">
+                <i class="ri-loader-4-line" aria-hidden="true"></i>
+                <p>Carregando teste...</p>
+            </div>
+        </div>
+
+        <div class="quiz-actions">
+            <button type="button" id="test-btn" class="btn-primary" disabled data-tooltip="Botão de confirmação">
+                <span id="test-btn-text">CONFIRMAR</span>
+                <i class="ri-arrow-right-line"></i>
+            </button>
+        </div>
+
+    </div>
+
+    <footer class="quiz-ft" data-tooltip="Rodapé do quiz">
+        <p>Três etapas rápidas — padrão, convivência e reflexo.</p>
+        <p>Responda com atenção. Erros reiniciam a pergunta atual.</p>
+    </footer>
+
+</div>
+        </div>
+    </div>
+
+    
+<!-- PASSWORD RECOVERY OVERLAY (Fullscreen Slide-in from Right) -->
+<!-- apollo-email: AJAX apollo_forgot_password → PasswordReset → apollo/login/password_reset_requested → apollo_send_email(password-reset) -->
+<div id="password-recovery-overlay" class="password-recovery-overlay" style="display: none;">
+    <div class="overlay-backdrop" data-close-overlay="true"></div>
+
+    <div class="overlay-panel">
+        <!-- Close Button -->
+        <button type="button" class="overlay-close" aria-label="Fechar" data-close-overlay="true">
+            <i class="ri-close-line"></i>
+        </button>
+
+        <!-- Panel Header -->
+        <header class="overlay-header">
+            <div class="logo-mark">
+                <svg width="48" height="48" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M75 135C59.087 135 45 130.217 45 124.5C45 118.783 59.087 114 75 114C90.913 114 105 118.783 105 124.5C105 130.217 90.913 135 75 135Z" fill="url(#paint0_linear_logo)" />
+                    <circle cx="75" cy="45" r="30" fill="url(#paint1_linear_logo)" />
+                    <path d="M75 75L105 120H45L75 75Z" fill="url(#paint2_linear_logo)" />
+                    <defs>
+                        <linearGradient id="paint0_linear_logo" x1="45" y1="124.5" x2="105" y2="124.5" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="FF9820" />
+                            <stop offset="1" stop-color="#FF8640" />
+                        </linearGradient>
+                        <linearGradient id="paint1_linear_logo" x1="45" y1="45" x2="105" y2="45" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#651FFF" />
+                            <stop offset="1" stop-color="#9C4DFF" />
+                        </linearGradient>
+                        <linearGradient id="paint2_linear_logo" x1="75" y1="75" x2="75" y2="120" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="FF9820" />
+                            <stop offset="1" stop-color="#651FFF" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <h1>Recuperar Senha</h1>
+            <p class="subtitle">Digite seu e-mail para receber o link de recuperação</p>
+        </header>
+
+        <!-- Form Content -->
+        <div class="overlay-content">
+            <form id="forgot-password-form" method="post" class="apollo-form">
+                <input type="hidden" id="apollo_forgot_password_nonce" name="apollo_forgot_password_nonce" value="5b389008d5" /><input type="hidden" name="_wp_http_referer" value="/acesso/" />
+                <div class="input-group">
+                    <input
+                        type="email"
+                        id="forgot_email"
+                        name="user_email"
+                        class="apollo-input form-input"
+                        placeholder=" "
+                        required
+                        autocomplete="email"
+                        autofocus />
+                    <label class="apollo-label" for="forgot_email">E-mail</label>
+                    <span class="field-hint">Usamos e-mail para autenticação por segurança</span>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-block" id="forgot-password-submit">
+                        <span>ENVIAR LINK DE RECUPERAÇÃO</span>
+                        <i class="ri-mail-send-line"></i>
+                    </button>
+
+                    <div id="forgot-password-success" class="auth-alert auth-alert-success" style="display: none;" role="status" aria-live="polite"></div>
+
+                    <button type="button" class="btn btn-ghost btn-block" data-close-overlay="true">
+                        <i class="ri-arrow-left-line"></i>
+                        <span>Voltar ao Login</span>
+                    </button>
+                </div>
+
+                <!-- Security Notice -->
+                <div class="security-notice">
+                    <i class="ri-shield-check-line"></i>
+                    <p>Por segurança, o link expira em 1 hora e só pode ser usado uma vez.</p>
+                </div>
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <footer class="overlay-footer">
+            <p class="help-text">
+                Problemas?                <a href="https://apollo.rio.br/contato/" class="link-orange">Entre em contato</a>
+            </p>
+        </footer>
+    </div>
+</div>
+
+<script>
+    window.openPasswordOverlay = window.openPasswordOverlay || function() {};
+    window.closePasswordOverlay = window.closePasswordOverlay || function() {};
+</script>
+
+<script>
+    (function() {
+        const overlay = document.getElementById('password-recovery-overlay');
+        const panel = overlay?.querySelector('.overlay-panel');
+
+        if (!overlay || !panel) {
+            return;
+        }
+
+        function bootPasswordOverlay() {
+        // Check URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        const showOverlay = urlParams.get('quero') === 'recuperar-chave' ||
+            urlParams.get('action') === 'lostpassword';
+
+        // Initialize GSAP
+        if (typeof gsap !== 'undefined') {
+            gsap.set(panel, {
+                x: '100%'
+            });
+        }
+
+        window.openPasswordOverlay = function() {
+            overlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+
+            const emailInput = document.getElementById('forgot_email');
+            const submitBtn = document.getElementById('forgot-password-submit');
+            const successBox = document.getElementById('forgot-password-success');
+            if (emailInput) {
+                emailInput.readOnly = false;
+            }
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('is-sent');
+                const span = submitBtn.querySelector('span');
+                if (span) {
+                    span.textContent = 'ENVIAR LINK DE RECUPERAÇÃO';
+                }
+            }
+            if (successBox) {
+                successBox.style.display = 'none';
+                successBox.textContent = '';
+            }
+
+            if (typeof gsap !== 'undefined') {
+                gsap.to(panel, {
+                    x: 0,
+                    duration: 0.6,
+                    ease: 'power3.out'
+                });
+            } else {
+                panel.style.transform = 'translateX(0)';
+            }
+
+            setTimeout(() => {
+                const emailInput = document.getElementById('forgot_email');
+                if (emailInput) {
+                    emailInput.focus();
+                }
+            }, 650);
+        };
+
+        window.closePasswordOverlay = function() {
+            if (typeof gsap !== 'undefined') {
+                gsap.to(panel, {
+                    x: '100%',
+                    duration: 0.5,
+                    ease: 'power3.in',
+                    onComplete: () => {
+                        overlay.style.display = 'none';
+                        document.body.style.overflow = '';
+                    }
+                });
+            } else {
+                panel.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    document.body.style.overflow = '';
+                }, 500);
+            }
+
+            const url = new URL(window.location.href);
+            url.searchParams.delete('quero');
+            url.searchParams.delete('action');
+            window.history.replaceState({}, '', url);
+        };
+
+        if (showOverlay) {
+            window.openPasswordOverlay();
+        }
+
+        // Close on backdrop/button click
+        overlay.addEventListener('click', function(e) {
+            if (e.target.dataset.closeOverlay || e.target.closest('[data-close-overlay]')) {
+                closePasswordOverlay();
+            }
+        });
+
+        // Close on ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && overlay.style.display === 'flex') {
+                closePasswordOverlay();
+            }
+        });
+
+        // Handle form submission
+        const form = document.getElementById('forgot-password-form');
+        if (form) {
+            function showAuthNotification(message, type) {
+                if (window.ApolloAuth?.showNotification) {
+                    window.ApolloAuth.showNotification(message, type);
+                    return;
+                }
+                if (window.showNotification) {
+                    window.showNotification(message, type);
+                }
+            }
+
+            function parseAjaxError(data) {
+                if (typeof data === 'string') {
+                    return data;
+                }
+                if (data && typeof data.message === 'string') {
+                    return data.message;
+                }
+                return 'Erro ao enviar e-mail. Verifique se o e-mail está correto.';
+            }
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const emailInput = document.getElementById('forgot_email');
+                const submitBtn = document.getElementById('forgot-password-submit');
+                const successBox = document.getElementById('forgot-password-success');
+                const originalHTML = submitBtn.innerHTML;
+
+                if (successBox) {
+                    successBox.style.display = 'none';
+                    successBox.textContent = '';
+                }
+
+                submitBtn.disabled = true;
+                submitBtn.classList.remove('is-sent');
+                submitBtn.innerHTML = '<span>ENVIANDO...</span><i class="ri-loader-4-line ri-spin"></i>';
+
+                try {
+                    const formData = new FormData(form);
+                    formData.append('action', 'apollo_forgot_password');
+
+                    const response = await fetch(window.apolloAuthConfig?.ajaxUrl || '/wp-admin/admin-ajax.php', {
+                        method: 'POST',
+                        body: formData,
+                        credentials: 'same-origin'
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        const message = result.data?.message || 'E-mail enviado. Verifique sua caixa de entrada (e o spam).';
+                        const devResetUrl = result.data?.dev_reset_url || '';
+                        const localHint = result.data?.local_mail_hint || '';
+                        const emailSent = result.data?.email_sent === true;
+                        const deliveryFailed = result.data?.delivery_failed === true;
+
+                        if (deliveryFailed) {
+                            const failMsg = 'Não foi possível enviar o e-mail agora. Tente novamente em instantes ou entre em contato.';
+                            submitBtn.disabled = false;
+                            submitBtn.classList.remove('is-sent');
+                            submitBtn.innerHTML = originalHTML;
+
+                            if (successBox) {
+                                successBox.innerHTML = failMsg;
+                                successBox.className = 'auth-alert auth-alert-error';
+                                successBox.style.display = 'block';
+                            }
+
+                            showAuthNotification(failMsg, 'error');
+                            return;
+                        }
+
+                        if (emailSent) {
+                            submitBtn.innerHTML = '<span>E-mail enviado</span><i class="ri-check-line"></i>';
+                            submitBtn.classList.add('is-sent');
+                            submitBtn.disabled = true;
+
+                            if (emailInput) {
+                                emailInput.readOnly = true;
+                            }
+                        } else {
+                            submitBtn.disabled = false;
+                            submitBtn.classList.remove('is-sent');
+                            submitBtn.innerHTML = originalHTML;
+                        }
+
+                        if (successBox) {
+                            let html = message;
+                            if (localHint) {
+                                html += '<br><small>' + localHint + '</small>';
+                            }
+                            if (devResetUrl) {
+                                html += '<br><a href="' + devResetUrl + '" class="link-orange" style="margin-top:8px;display:inline-block;">Abrir link de recuperação (local)</a>';
+                            }
+                            successBox.innerHTML = html;
+                            successBox.className = 'auth-alert auth-alert-success';
+                            successBox.style.display = 'block';
+                        }
+
+                        showAuthNotification(message, emailSent ? 'success' : 'info');
+                        if (localHint) {
+                            showAuthNotification(localHint, 'info');
+                        }
+                    } else {
+                        showAuthNotification(parseAjaxError(result.data), 'error');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalHTML;
+                    }
+                } catch (error) {
+                    console.error('Forgot password error:', error);
+                    showAuthNotification(
+                        'Erro de conexão. Tente novamente.',
+                        'error'
+                    );
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalHTML;
+                }
+            });
+        }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', bootPasswordOverlay, { once: true });
+        } else {
+            bootPasswordOverlay();
+        }
+    })();
+</script>
+    
+		<!-- ═══════════════════════════════════════════════════════════════════ -->
+		<!-- APOLLO REPORT MODAL — SHARED COMPONENT (STRICT COPY)               -->
+		<!-- ALL PROPERTIES FORCED WITH !important as requested                 -->
+		<!-- ═══════════════════════════════════════════════════════════════════ -->
+		<style>
+			:root {
+
+			/* Extras dyue injected ROOT stylesheet via CDN APOLLO */
+			--radius: 0px !important; /* Sharp corners for ultra-modern look */
+			--space-4: 24px !important;
+	   
+			/* Animation */
+			--ease-lux: cubic-bezier(0.16, 1, 0.3, 1) !important;
+			--z-modal: 9999 !important;
+		}
+
+  
+		/* ========================================= */
+		/* 3. THE LUXURY FORM MODAL                  */
+		/* ========================================= */
+	
+		/* Overlay Backdrop */
+		.form-overlay {
+			position: fixed !important;
+			top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important;
+			background: rgba(var(--rgb-d),0.4) !important;
+			backdrop-filter: blur(15px) !important; /* Heavy Luxury Blur */
+			-webkit-backdrop-filter: blur(15px) !important;
+			opacity: 0 !important;
+			visibility: hidden !important;
+			transition: all 0.6s var(--ease-lux) !important;
+			z-index: var(--z-modal) !important;
+		}
+
+		.apollo-open .form-overlay {
+			opacity: 1 !important;
+			visibility: visible !important;
+		}
+
+		/* The Modal Itself */
+		.apollo-modal {
+			position: fixed !important;
+			bottom: 0 !important;
+			right: 0 !important;
+			width: 100% !important;
+			max-width: 480px !important;
+			height: 100vh !important;
+			background: var(--white-1) !important;
+			border-left: 1px solid var(--border) !important;
+			padding: 60px 40px !important;
+			box-sizing: border-box !important;
+	   
+			transform: translateX(100%) !important;
+			transition: transform 0.6s var(--ease-lux) !important;
+			z-index: calc(var(--z-modal) + 1) !important;
+			display: flex !important;
+			flex-direction: column !important;
+		}
+
+		.apollo-open .apollo-modal {
+			transform: translateX(0) !important;
+		}
+
+		/* Close Button */
+		.modal-close {
+			position: absolute !important;
+			top: 30px !important;
+			right: 30px !important;
+			z-index: 5 !important;
+			background: none !important;
+			border: none !important;
+			color: var(--text-muted) !important;
+			font-size: 24px !important;
+			line-height: 1 !important;
+			cursor: pointer !important;
+			transition: color 0.3s !important;
+			padding: 8px !important;
+		}
+		.modal-close:hover { color: var(--primary) !important; }
+
+		.apollo-modal {
+			overflow-y: auto !important;
+		}
+
+		/* Header (scoped — no global leak) */
+		.apollo-modal .modal-header h2 {
+			font-family: var(--ff-mono) !important;
+			font-size: 12px !important;
+			color: var(--primary) !important;
+			letter-spacing: 0.2em !important;
+			text-transform: uppercase !important;
+			margin-bottom: 10px !important;
+		}
+		.apollo-modal .modal-header h1 {
+			font-size: 32px !important;
+			font-weight: 300 !important;
+			color: var(--black-1) !important;
+			margin: 0 0 40px 0 !important;
+			line-height: 1.1 !important;
+		}
+
+		/* Form fields — scoped to modal shell (auth pages override via apollo-auth-uni.css) */
+		.apollo-modal .input-group {
+			position: relative !important;
+			margin-bottom: 35px !important;
+		}
+		.apollo-modal .apollo-input {
+			width: 100% !important;
+			background: transparent !important;
+			border: none !important;
+			border-bottom: 1px solid var(--border) !important;
+			padding: 12px 0 !important;
+			font-family: var(--ff-main) !important;
+			font-size: 16px !important;
+			color: var(--black-1) !important;
+			border-radius: 0 !important;
+			outline: none !important;
+			transition: border-color 0.4s var(--ease-lux), box-shadow 0.4s var(--ease-lux) !important;
+		}
+		.apollo-modal .apollo-input:focus {
+			border-bottom-color: var(--primary) !important;
+			box-shadow: 0 0 0 1px rgba(244, 95, 0, 0.25), 0 0 20px rgba(244, 95, 0, 0.15) !important;
+		}
+		.apollo-modal .apollo-label {
+			position: absolute !important;
+			top: 12px !important;
+			left: 0 !important;
+			font-family: var(--ff-mono) !important;
+			font-size: 12px !important;
+			color: var(--text-muted) !important;
+			pointer-events: none !important;
+			transition: all 0.4s var(--ease-lux) !important;
+			text-transform: uppercase !important;
+		}
+		.apollo-modal .apollo-input:focus ~ .apollo-label,
+		.apollo-modal .apollo-input:not(:placeholder-shown) ~ .apollo-label {
+			top: -10px !important;
+			font-size: 10px !important;
+			color: var(--primary) !important;
+		}
+		.apollo-modal select.apollo-input {
+			appearance: none !important;
+			-webkit-appearance: none !important;
+			cursor: pointer !important;
+			border-radius: 0 !important;
+			color: var(--black-1) !important;
+		}
+		.apollo-modal select.apollo-input:invalid { color: transparent !important; }
+		.apollo-modal select.apollo-input:invalid ~ .apollo-label {
+			top: 12px !important;
+			font-size: 12px !important;
+			color: var(--text-muted) !important;
+		}
+		.apollo-modal select.apollo-input:valid ~ .apollo-label {
+			top: -10px !important;
+			font-size: 10px !important;
+			color: var(--primary) !important;
+		}
+		.apollo-modal select.apollo-input:valid { color: var(--black-1) !important; }
+		.apollo-modal select.apollo-input option {
+			background-color: var(--white-1) !important;
+			color: var(--black-1) !important;
+			font-family: var(--ff-main) !important;
+			font-size: 80% !important;
+			padding: 15px !important;
+		}
+		.apollo-modal .select-arrow {
+			position: absolute !important;
+			right: 0 !important;
+			bottom: 15px !important;
+			pointer-events: none !important;
+			color: var(--text-muted) !important;
+			font-size: 14px !important;
+		}
+		.apollo-modal .submit-btn {
+			margin-top: auto !important;
+			background: transparent !important;
+			border: 1px solid var(--border) !important;
+			color: var(--black-1) !important;
+			padding: 20px !important;
+			font-family: var(--ff-mono) !important;
+			font-size: 12px !important;
+			text-transform: uppercase !important;
+			letter-spacing: 0.1em !important;
+			cursor: pointer !important;
+			display: flex !important;
+			justify-content: space-between !important;
+			align-items: center !important;
+			transition: all 0.3s !important;
+		}
+		.apollo-modal .submit-btn:hover {
+			background: var(--black-1) !important;
+			color: var(--white-1) !important;
+			border-color: var(--black-1) !important;
+		}
+
+		/* Success state (scoped) */
+		.apollo-modal .success-view {
+			position: absolute !important;
+			top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important;
+			background: var(--white-1) !important;
+			display: flex !important;
+			flex-direction: column !important;
+			justify-content: center !important;
+			align-items: center !important;
+			text-align: center !important;
+			padding: 40px !important;
+			box-sizing: border-box !important;
+			opacity: 0 !important;
+			pointer-events: none !important;
+			transition: opacity 0.5s !important;
+		}
+
+		.apollo-modal.form-submitted .success-view {
+			opacity: 1 !important;
+			pointer-events: all !important;
+		}
+
+		.apollo-modal .success-icon {
+			font-size: 4rem !important;
+			color: var(--primary) !important;
+			margin-bottom: 20px !important;
+		}
+		.apollo-modal .success-view h3 {
+			font-size: 24px !important;
+			margin: 0 !important;
+			font-weight: 400 !important;
+		}
+		.apollo-modal .success-view p {
+			color: var(--text-muted) !important;
+			font-family: var(--ff-mono) !important;
+			font-size: 12px !important;
+			margin-top: 10px !important;
+		}
+
+	</style>
+
+	<!-- GUARANTEED TRIGGER: Invisible fallback if page doesn't provide one -->
+	<span id="apolloReportTrigger" style="display:none !important; visibility:hidden !important; position:absolute !important; pointer-events:none !important;"></span>
+
+	<div class="form-overlay" id="apolloOverlay"></div>
+	<div class="apollo-modal" id="apolloModal" role="dialog" aria-modal="true" aria-labelledby="apolloModalTitle" aria-hidden="true">
+		<button class="modal-close" id="apolloClose" type="button" data-apollo-report-close aria-label="Fechar"><i class="ri-close-fill" aria-hidden="true"></i></button>
+		<div class="modal-header">
+							<h2>Contato</h2>
+				<h1 id="apolloModalTitle">Como podemos<br>ajudar você?</h1>
+					</div>
+		<div class="success-view">
+			<i class="ri-check-line success-icon"></i>
+			<h3>Mensagem Enviada</h3>
+			<p>Nossa equipe entrará em contato em breve.</p>
+		</div>
+		<form id="apolloForm" autocomplete="off">
+			<div class="input-group">
+				<input type="text" class="apollo-input" name="name" placeholder=" " required>
+				<label class="apollo-label">Nome Completo</label>
+			</div>
+			<div class="input-group">
+				<input type="email" class="apollo-input" name="email" placeholder=" " required>
+				<label class="apollo-label">E-mail</label>
+			</div>
+			<div class="input-group">
+				<select class="apollo-input" name="subject" required>
+					<option value="" disabled selected></option>
+											<option value="1">Sobre Parceria</option>
+						<option value="2">Problema ou Denúncia</option>
+						<option value="3">Suporte Técnico</option>
+						<option value="4">Elogio ou Crítica</option>
+									</select>
+				<label class="apollo-label">Assunto</label>
+				<i class="ri-dropdown-list select-arrow"></i>
+			</div>
+			<div class="input-group">
+				<input type="text" class="apollo-input" name="message" placeholder=" " required>
+				<label class="apollo-label">Mensagem</label>
+			</div>
+			<div class="error-msg" id="apolloError"></div>
+			<button type="submit" class="submit-btn">
+				<span>Enviar Agora</span>
+				<i class="ri-mail-send-fill"></i>
+			</button>
+		</form>
+	</div>
+
+	<script>
+		// Vanilla JS — auth blank-canvas pages do not load jQuery; close/overlay must work without it.
+		(function() {
+			'use strict';
+
+			var GFORM_ACTION = "https:\/\/docs.google.com\/forms\/u\/0\/d\/e\/1FAIpQLSflexLf5HLHVdCUCUex1LXxKOhQROMGpfDPx7B85tLvohiczA\/formResponse";
+			var GF_NAME = "entry.294491473";
+			var GF_EMAIL = "entry.317870723";
+			var GF_SUBJECT = "entry.195576492";
+			var GF_MESSAGE = "entry.1724857942";
+			var REST_URL = "https:\/\/apollo.rio.br\/wp-json\/apollo\/v1\/report";
+			var REST_NONCE = "e46a1dbc84";
+			var EXTRA_DATA = {};
+
+			var subjectMap = {
+				'1': 'Sobre Parceria',
+				'2': 'Problema ou Denúncia',
+				'3': 'Suporte Técnico',
+				'4': 'Elogio ou Crítica',
+				'5': 'Conteúdo impróprio',
+				'6': 'Spam ou fraude',
+				'7': 'Perfil falso'
+			};
+
+			function getEl(id) {
+				return document.getElementById(id);
+			}
+
+			function openModal() {
+				document.body.classList.add('apollo-open');
+				var modal = getEl('apolloModal');
+				if (modal) {
+					modal.setAttribute('aria-hidden', 'false');
+				}
+			}
+
+			function closeModal() {
+				document.body.classList.remove('apollo-open');
+				var modal = getEl('apolloModal');
+				var form = getEl('apolloForm');
+				var errDiv = getEl('apolloError');
+				if (modal) {
+					modal.setAttribute('aria-hidden', 'true');
+				}
+				if (errDiv) {
+					errDiv.style.display = 'none';
+					errDiv.textContent = '';
+				}
+				setTimeout(function() {
+					if (modal) {
+						modal.classList.remove('form-submitted');
+					}
+					if (form) {
+						form.reset();
+					}
+				}, 600);
+			}
+
+			function bindModal() {
+				var overlay = getEl('apolloOverlay');
+				var closeBtn = getEl('apolloClose');
+				var form = getEl('apolloForm');
+				var modal = getEl('apolloModal');
+
+				if (closeBtn) {
+					closeBtn.addEventListener('click', function(e) {
+						e.preventDefault();
+						closeModal();
+					});
+				}
+
+				if (overlay) {
+					overlay.addEventListener('click', closeModal);
+				}
+
+				document.addEventListener('keydown', function(e) {
+					if (e.key === 'Escape' && document.body.classList.contains('apollo-open')) {
+						closeModal();
+					}
+				});
+
+				document.addEventListener('click', function(e) {
+					var trigger = e.target.closest('#apolloReportTrigger, [data-apollo-report-trigger]');
+					if (trigger) {
+						e.preventDefault();
+						openModal();
+					}
+					var closer = e.target.closest('[data-apollo-report-close], .modal-close');
+					if (closer) {
+						e.preventDefault();
+						closeModal();
+					}
+				});
+
+				if (!form || !modal) {
+					return;
+				}
+
+				form.addEventListener('submit', function(e) {
+					e.preventDefault();
+					var errDiv = getEl('apolloError');
+					if (errDiv) {
+						errDiv.style.display = 'none';
+						errDiv.textContent = '';
+					}
+
+					var nameEl = form.querySelector('[name="name"]');
+					var emailEl = form.querySelector('[name="email"]');
+					var subjectEl = form.querySelector('[name="subject"]');
+					var messageEl = form.querySelector('[name="message"]');
+					var name = nameEl ? nameEl.value : '';
+					var email = emailEl ? emailEl.value : '';
+					var subject = subjectEl ? subjectEl.value : '';
+					var message = messageEl ? messageEl.value : '';
+					var subjectLabel = subjectMap[subject] || subject;
+
+					var gfData = new FormData();
+					gfData.append(GF_NAME, name);
+					gfData.append(GF_EMAIL, email);
+					gfData.append(GF_SUBJECT, subjectLabel);
+					gfData.append(GF_MESSAGE, message + (EXTRA_DATA.post_id ? ' [Post #' + EXTRA_DATA.post_id + ']' : ''));
+
+					fetch(GFORM_ACTION, { method: 'POST', body: gfData, mode: 'no-cors' }).catch(function() {});
+
+					fetch(REST_URL, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							'X-WP-Nonce': REST_NONCE
+						},
+						body: JSON.stringify({
+							name: name,
+							email: email,
+							subject: subject,
+							message: message,
+							post_id: EXTRA_DATA.post_id || null
+						})
+					}).then(function() {
+						modal.classList.add('form-submitted');
+						setTimeout(closeModal, 2500);
+					}).catch(function() {
+						modal.classList.add('form-submitted');
+						setTimeout(closeModal, 2500);
+					});
+				});
+			}
+
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', bindModal);
+			} else {
+				bindModal();
+			}
+		})();
+	</script>
+	
+    <script>
+    window.apolloAuthConfig = {"ajaxUrl":"https:\/\/apollo.rio.br\/wp-admin\/admin-ajax.php","nonce":"8df4d50827","maxFailedAttempts":3,"lockoutDuration":60,"simonLevels":4,"reactionTargets":4,"redirectAfterLogin":"https:\/\/apollo.rio.br\/feed","restUrl":"https:\/\/apollo.rio.br\/wp-json\/apollo\/v1","authPage":"login","loginUrl":"https:\/\/apollo.rio.br\/acesso\/","registerUrl":"https:\/\/apollo.rio.br\/registre\/","passwordRecoveryUrl":"https:\/\/apollo.rio.br\/acesso\/?quero=recuperar-chave","quizTotalStages":4,"strings":{"loginSuccess":"Acesso autorizado. Redirecionando...","loginFailed":"Credenciais incorretas. Tente novamente.","warningState":"Aten\u00e7\u00e3o: \u00faltima tentativa antes do bloqueio.","lockedOut":"Sistema bloqueado por seguran\u00e7a.","quizComplete":"Teste de aptid\u00e3o conclu\u00eddo com sucesso!","quizFailed":"Resposta incorreta. Reiniciando pergunta...","patternCorrect":"seq-double-16","ethicsCorrect":"\u00c9 trabalho, renda, a sonoridade e arte favorita de alguem."}};
+</script>
+<script>
+    (function() {
+        'use strict';
+
+        var queue = ["https:\/\/apollo.rio.br\/wp-content\/plugins\/apollo-login\/assets\/js\/apollo-auth-genres.js?v=1.0.34","https:\/\/apollo.rio.br\/wp-content\/plugins\/apollo-login\/assets\/js\/apollo-progress.js?v=1.0.34","https:\/\/apollo.rio.br\/wp-content\/plugins\/apollo-login\/assets\/js\/apollo-auth-scripts.js?v=1.0.34","https:\/\/apollo.rio.br\/wp-content\/plugins\/apollo-login\/assets\/js\/apollo-auth-scroll.js?v=1.0.34"];
+
+        function appendScript(src, done) {
+            var s = document.createElement('script');
+            s.src = src;
+            s.crossOrigin = 'anonymous';
+            s.onload = function() {
+                if (typeof done === 'function') {
+                    done();
+                }
+            };
+            s.onerror = function() {
+                console.warn('[Apollo Auth] failed to load', src);
+                if (typeof done === 'function') {
+                    done();
+                }
+            };
+            document.body.appendChild(s);
+        }
+
+        function loadQueue() {
+            var i = 0;
+            (function next() {
+                if (i >= queue.length) {
+                    return;
+                }
+                appendScript(queue[i++], next);
+            })();
+        }
+
+        function bootAuthScripts() {
+            if (window.__APOLLO_AUTH_SCRIPTS_LOADED__) {
+                return;
+            }
+            window.__APOLLO_AUTH_SCRIPTS_LOADED__ = true;
+            loadQueue();
+        }
+
+        if (window.Apollo && (window.Apollo.loaded || window.Apollo.version)) {
+            bootAuthScripts();
+        } else {
+            document.addEventListener('apollo:ready', bootAuthScripts, {
+                once: true
+            });
+            document.addEventListener('apollo:gsap-ready', bootAuthScripts, {
+                once: true
+            });
+            window.setTimeout(bootAuthScripts, 6000);
+        }
+
+        function playAuthBgVideo() {
+            var video = document.getElementById('acessoBgVid');
+            if (!video) {
+                return;
+            }
+            video.muted = true;
+            video.setAttribute('playsinline', '');
+            // Slow background video to 85% speed (0.85). Re-applied on each call
+            // (visibilitychange, apollo:ready) since the browser can reset rate on reload.
+            video.playbackRate = 0.5;
+            var attempt = video.play();
+            if (attempt && typeof attempt.catch === 'function') {
+                attempt.catch(function() {});
+            }
+            if (window.Apollo && typeof window.Apollo.forcePlay === 'function') {
+                window.Apollo.forcePlay();
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', playAuthBgVideo, {
+                once: true
+            });
+        } else {
+            playAuthBgVideo();
+        }
+        window.addEventListener('apollo:ready', playAuthBgVideo, {
+            once: true
+        });
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                playAuthBgVideo();
+            }
+        });
+    })();
+</script>
+
+</body>
+
+</html>
+
+STDERR:
+Unsuccessful stat on filename containing newline at /var/cpanel/ea4/ea_php_cli.pm line 87.

@@ -20,6 +20,32 @@
     Require all denied
 </FilesMatch>
 
+# 1b · Extension-LESS log and backup names. Added 2026-08-24.
+#      Rule 1 is anchored on a DOT, so it never matched PHP's own drop-file,
+#      which is literally `error_log` with no extension. Two were live and
+#      world-readable:
+#        apollo-events/error_log
+#        apollo-core/includes/error_log
+#      Both print the absolute server path (/home1/rvall260/…) on every line,
+#      plus the names of scratch diagnostic files — exactly the reconnaissance
+#      rule 2 exists to deny. Anchored to whole names so no shipped asset can
+#      collide.
+<FilesMatch "^(error_log|php_errorlog|debug_log|access_log)$">
+    Require all denied
+</FilesMatch>
+
+# 1c · Neutralised/parked source kept on disk for rollback. These are NOT
+#      loaded (apollo-core.php requires card-contract.php by exact path, there
+#      is no glob loader), but they are still PHP-adjacent files sitting in a
+#      web root, and a future glob loader would redeclare apollo_card_register()
+#      and fatal the site. Denied over HTTP; see the note in card-contract.php.
+<FilesMatch "\.(BROKEN-[0-9]+|PARKED|ORIG|OLD)$">
+    Require all denied
+</FilesMatch>
+<FilesMatch "-(ok|copy|backup|old)\.php$">
+    Require all denied
+</FilesMatch>
+
 # 2 · Scratch and diagnostic naming conventions used in this workspace.
 #     Deliberately prefix-anchored: no shipped asset starts with these.
 <FilesMatch "^(_tmp_|_ae_|_run_|_debug|_p2-|debug-|_backup)">
@@ -35,3 +61,26 @@
 <FilesMatch "^\.">
     Require all denied
 </FilesMatch>
+
+# ── 5 · Path-anchored lockout for dot-directories and tooling ─────────────
+#
+#  WHY THIS EXISTS, added 2026-08-20 after an audit of this very file.
+#
+#  <FilesMatch> matches the resolved BASENAME, not the path. So the rule above
+#  that denies "^\." catches  /wp-content/plugins/.htaccess  but NOT
+#  /wp-content/plugins/.git/config  — basename "config" has no dot and no
+#  extension, so it matched nothing, and the root .htaccess's `RewriteRule
+#  ^\.git` is anchored at the SITE root and never sees this path either.
+#  Meanwhile the root front controller only routes files that do NOT exist
+#  (RewriteCond %{REQUEST_FILENAME} !-f), so a real file on disk is served
+#  straight out. Result: the entire git history of every plugin was readable.
+#
+#  RedirectMatch is mod_alias, not mod_rewrite. That matters here: switching
+#  RewriteEngine on inside this directory would drop the ROOT file's rewrite
+#  context for everything under /wp-content/plugins/ — the method firewall,
+#  the scanner-UA blocks and the injection firewall all stop applying. mod_alias
+#  has no such side effect, and it matches the full request path, which is
+#  exactly what <FilesMatch> cannot do.
+#
+#  404, not 403: a 403 confirms the path exists.
+RedirectMatch 404 (?i)/wp-content/plugins/(\.git|\.githooks|\.cursor|\.svn|\.hg|_to_delete|_inventory|mcps)(/|$)

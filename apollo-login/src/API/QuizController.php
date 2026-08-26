@@ -70,7 +70,7 @@ class QuizController extends WP_REST_Controller
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array($this, 'submit_quiz'),
-				'permission_callback' => '__return_true',
+				'permission_callback' => '__return_true', // Public by necessity — the quiz runs before an account exists. Rate-limited in submit_quiz() via check_quiz_rate_limit(), 30 req/min per IP.
 				'args'                => array(
 					'stage'   => array(
 						'required'          => true,
@@ -98,7 +98,7 @@ class QuizController extends WP_REST_Controller
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array($this, 'submit_simon'),
-				'permission_callback' => '__return_true',
+				'permission_callback' => '__return_true', // Public by necessity — the game runs before an account exists. Rate-limited in submit_simon() via check_quiz_rate_limit(), 30 req/min per IP.
 				'args'                => array(
 					'level'    => array(
 						'required'          => true,

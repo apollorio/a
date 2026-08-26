@@ -282,6 +282,41 @@ function apollo_adverts_safety_assets(): void
 add_action('wp_enqueue_scripts', 'apollo_adverts_safety_assets', 5);
 
 /**
+ * Canonical contact URL for one advert.
+ *
+ * Guests → /acesso. Hostel with booking URL → outbound. Gated peer listing
+ * that this member has not cleared → /seguranca/?anuncio={id}. Otherwise the
+ * advert's own permalink (single page handles chat once cleared).
+ *
+ * @param int $post_id Advert id.
+ */
+function apollo_adverts_contact_url(int $post_id): string
+{
+    $permalink = (string) get_permalink($post_id);
+
+    if (! is_user_logged_in()) {
+        return home_url('/acesso?redirect=' . rawurlencode($permalink));
+    }
+
+    if (apollo_adverts_is_hostel_listing($post_id)) {
+        $hostel_url = (string) get_post_meta($post_id, '_classified_hostel_url', true);
+        if ($hostel_url) {
+            return $hostel_url;
+        }
+    }
+
+    if (
+        function_exists('apollo_safety_applies') && apollo_safety_applies($post_id)
+        && ! apollo_adverts_safety_cleared($post_id)
+        && function_exists('apollo_safety_url')
+    ) {
+        return apollo_safety_url($post_id, $permalink . '#contato');
+    }
+
+    return $permalink . '#contato';
+}
+
+/**
  * Register the safety REST routes.
  */
 function apollo_adverts_safety_rest(): void

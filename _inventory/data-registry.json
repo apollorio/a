@@ -1284,6 +1284,180 @@
           "notes": "Added 2026-07-28 (apollo-events 1.5.0 -> next). Admin-only curation checkbox — apollo-events/src/Admin/Metabox.php render_config(), '1'/'' string-bool same convention as _event_is_gone above. Registered via Registry.php register_meta() filter. NOT exposed on the public /novo-evento submit form or EventsController's REST write meta_map by design (editorial curation flag, not self-service). Drives the .pev-hero highlighted-events slider on the Eventos screen(s) — see 09-plugins/apollo-events.json note for the slider prep."
         },
         {
+          "id": "event.int_rank",
+          "label": "Internal ranking (0-10)",
+          "cpt": "event",
+          "mockup": {
+            "file": null,
+            "payload": null,
+            "section": null,
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_int_rank",
+            "type": "int",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": null,
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": false,
+          "empty_behavior": "hide",
+          "notes": "Added 2026-08-24 (apollo-events 1.7.3 -> 1.7.5). INTERNAL USE ONLY — NEVER RENDERED ON ANY FRONTEND SURFACE. 0 (default/worst) .. 10 (outstanding). UI: apollo-events/src/Admin/RankMetabox.php, a 0-10 select physically placed right below the Publish/Update button in the wp-admin single-event editor, visible/writable only under manage_options. Registered in apollo-core/src/Core/MetaRegistry.php with show_in_rest => false (structurally unreachable via REST or the Gutenberg meta panel) and auth_callback => manage_options. Feeds apollo_event_get_top_ranked() / apollo_event_find_best_match() in apollo-events/includes/functions.php — the generic 'best event for the moment' engine any Apollo plugin (apollo-telegram first) can call. No bulk backfill: absent meta reads as 0 via apollo_event_get_int_rank()."
+        },
+        {
+          "id": "event.tag_underground",
+          "label": "Vibe tag: Underground",
+          "cpt": "event",
+          "mockup": {
+            "file": null,
+            "payload": null,
+            "section": null,
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_tag_underground",
+            "type": "bool",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": null,
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": false,
+          "empty_behavior": "hide",
+          "notes": "Added 2026-08-24 (apollo-events 1.7.3 -> 1.7.5). INTERNAL USE ONLY — NEVER RENDERED ON ANY FRONTEND SURFACE. One of five independent vibe-tag checkboxes (see event.tag_mainstream / event.tag_comercial / event.tag_lgbtqia / event.tag_sexparty), same admin spot as event.int_rank, same '1'/'' string-bool convention as _event_is_gone. Canonical slug=>meta_key map: apollo_event_internal_tags() in apollo-events/includes/functions.php — read via apollo_event_get_tags()/is_tag(), written via apollo_event_set_tag() (manage_options-gated). Consumed by apollo_event_find_best_match()'s tags/tags_mode filter."
+        },
+        {
+          "id": "event.tag_mainstream",
+          "label": "Vibe tag: Mainstream",
+          "cpt": "event",
+          "mockup": {
+            "file": null,
+            "payload": null,
+            "section": null,
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_tag_mainstream",
+            "type": "bool",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": null,
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": false,
+          "empty_behavior": "hide",
+          "notes": "Added 2026-08-24 (apollo-events 1.7.3 -> 1.7.5). INTERNAL USE ONLY — NEVER RENDERED ON ANY FRONTEND SURFACE. See event.tag_underground for the full shared convention note (canonical map, helpers, consumer)."
+        },
+        {
+          "id": "event.tag_comercial",
+          "label": "Vibe tag: Comercial",
+          "cpt": "event",
+          "mockup": {
+            "file": null,
+            "payload": null,
+            "section": null,
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_tag_comercial",
+            "type": "bool",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": null,
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": false,
+          "empty_behavior": "hide",
+          "notes": "Added 2026-08-24 (apollo-events 1.7.3 -> 1.7.5). INTERNAL USE ONLY — NEVER RENDERED ON ANY FRONTEND SURFACE. See event.tag_underground for the full shared convention note (canonical map, helpers, consumer)."
+        },
+        {
+          "id": "event.tag_lgbtqia",
+          "label": "Vibe tag: LGBTQIA+",
+          "cpt": "event",
+          "mockup": {
+            "file": null,
+            "payload": null,
+            "section": null,
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_tag_lgbtqia",
+            "type": "bool",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": null,
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": false,
+          "empty_behavior": "hide",
+          "notes": "Added 2026-08-24 (apollo-events 1.7.3 -> 1.7.5). INTERNAL USE ONLY — NEVER RENDERED ON ANY FRONTEND SURFACE. See event.tag_underground for the full shared convention note (canonical map, helpers, consumer)."
+        },
+        {
+          "id": "event.tag_sexparty",
+          "label": "Vibe tag: Sex Party",
+          "cpt": "event",
+          "mockup": {
+            "file": null,
+            "payload": null,
+            "section": null,
+            "ui": null,
+            "hardcoded_in_html": false,
+            "sample": null
+          },
+          "storage": {
+            "kind": "meta",
+            "key": "_event_tag_sexparty",
+            "type": "bool",
+            "owner_cpt": "event",
+            "mockup_key_legacy": null
+          },
+          "payload_key": null,
+          "input": {
+            "frontend": null,
+            "metabox": true,
+            "rest": null
+          },
+          "required_for_render": false,
+          "empty_behavior": "hide",
+          "notes": "Added 2026-08-24 (apollo-events 1.7.3 -> 1.7.5). INTERNAL USE ONLY — NEVER RENDERED ON ANY FRONTEND SURFACE. See event.tag_underground for the full shared convention note (canonical map, helpers, consumer)."
+        },
+        {
           "id": "event.bg_color",
           "label": "Background tint",
           "cpt": "event",

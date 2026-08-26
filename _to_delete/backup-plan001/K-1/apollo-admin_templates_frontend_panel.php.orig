@@ -1,0 +1,742 @@
+<?php
+
+/**
+ * Apollo Admin — Frontend Admin Panel (Full Settings)
+ *
+ * Canvas template with tabbed layout: each active plugin = one tab.
+ * All settings load from the single APOLLO_ADMIN_OPTION_KEY option.
+ * Admin-only access enforced by FrontendPanel::handle_template().
+ *
+ * @package Apollo\Admin
+ * @since   1.1.0
+ */
+
+if (! \defined('ABSPATH')) {
+    exit;
+}
+
+if (! current_user_can('manage_options')) {
+    wp_safe_redirect(home_url('/'));
+    exit;
+}
+
+$registry = \Apollo\Admin\Registry::get_instance();
+$manifest = \Apollo\Admin\Registry::get_registry_manifest();
+$settings = get_option(APOLLO_ADMIN_OPTION_KEY, array());
+if (! \is_array($settings)) {
+    $settings = array();
+}
+
+// Group plugins by layer
+$layers = array();
+foreach ($manifest as $slug => $meta) {
+    $layer = $meta['layer'];
+    if (! isset($layers[$layer])) {
+        $layers[$layer] = array(
+            'name'    => $meta['layer_name'],
+            'plugins' => array(),
+        );
+    }
+    $info                                 = $registry->get($slug);
+    $layers[$layer]['plugins'][$slug] = \array_merge($meta, $info);
+}
+\ksort($layers);
+
+// Current active tab
+$current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'overview';
+
+// Layer label mapping
+$layer_icons = array(
+    'L0' => 'ri-shield-star-fill',
+    'L1' => 'ri-lock-fill',
+    'L2' => 'ri-file-text-fill',
+    'L3' => 'ri-group-fill',
+    'L4' => 'ri-mail-fill',
+    'L5' => 'ri-folder-3-fill',
+    'L6' => 'ri-layout-fill',
+    'L7' => 'ri-compasses-2-line',
+    'L8' => 'ri-building-fill',
+    'L9' => 'ri-smartphone-fill',
+);
+
+?>
+<!DOCTYPE html>
+<html <?php language_attributes(); ?>>
+
+<head>
+    <meta charset="<?php bloginfo('charset'); ?>">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Panel — Apollo</title>
+    <?php wp_head(); ?>
+    <script
+        src="<?php echo esc_url(\defined('APOLLO_CDN_URL') ? apollo_cdn_core_js_url() : apollo_cdn_core_js_url()); ?>"
+        fetchpriority="high"></script>
+    <style>
+        :root {
+            --ap-font: "Space Grotesk", system-ui, -apple-system, sans-serif;
+            --ap-orange: FF9820;
+            --ap-orange-hover: #d65400;
+            --surface: #f4f4f5;
+            --card-bg: #fff;
+            --border: #e5e7eb;
+            --text: #111827;
+            --text2: #374151;
+            --muted: #9ca3af;
+            --sidebar-w: 260px;
+        }
+
+        [data-theme="dark"] {
+            --surface: #0a0a0c;
+            --card-bg: #18181b;
+            --border: #27272a;
+            --text: #e4e4e7;
+            --text2: #a1a1aa;
+            --muted: #71717a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--ap-font);
+            background: var(--card);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ══ LAYOUT ══ */
+        .fp-shell {
+            display: flex;
+            min-height: 100vh;
+            padding-top: var(--nav-height, 60px);
+        }
+
+        /* ══ SIDEBAR ══ */
+        .fp-sidebar {
+            width: var(--sidebar-w);
+            background: var(--card);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            position: sticky;
+            top: var(--nav-height, 60px);
+            height: calc(100vh - var(--nav-height, 60px));
+            flex-shrink: 0;
+            padding: 1rem 0;
+        }
+
+        .fp-sidebar-title {
+            font-size: .65rem;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: var(--muted);
+            font-weight: 700;
+            padding: .5rem 1.25rem .3rem;
+        }
+
+        .fp-nav-item {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .55rem 1.25rem;
+            color: var(--text2);
+            text-decoration: none;
+            font-size: .82rem;
+            font-weight: 500;
+            transition: all .15s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .fp-nav-item:hover {
+            background: rgba(244, 95, 0, .04);
+            color: var(--ap-orange);
+        }
+
+        .fp-nav-item.active {
+            background: rgba(244, 95, 0, .06);
+            color: var(--ap-orange);
+            border-left-color: var(--ap-orange);
+            font-weight: 600;
+        }
+
+        .fp-nav-item i {
+            font-size: .95rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .fp-nav-item .plugin-status {
+            margin-left: auto;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .fp-nav-item .plugin-status.s-active {
+            background: #22c55e;
+        }
+
+        .fp-nav-item .plugin-status.s-installed {
+            background: #f59e0b;
+        }
+
+        .fp-nav-item .plugin-status.s-missing {
+            background: #ef4444;
+        }
+
+        /* ══ MAIN ══ */
+        .fp-main {
+            flex: 1;
+            padding: 2rem 2.5rem;
+            max-width: 960px;
+        }
+
+        .fp-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .fp-header h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .fp-header .quick-links {
+            margin-left: auto;
+            display: flex;
+            gap: .5rem;
+        }
+
+        .quick-link {
+            padding: .35rem .7rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text2);
+            text-decoration: none;
+            font-size: .75rem;
+            font-weight: 500;
+            transition: all .15s;
+        }
+
+        .quick-link:hover {
+            border-color: var(--ap-orange);
+            color: var(--ap-orange);
+        }
+
+        /* ══ TAB CONTENT SECTIONS ══ */
+        .fp-section {
+            display: none;
+        }
+
+        .fp-section.active {
+            display: block;
+        }
+
+        /* ══ OVERVIEW CARDS ══ */
+        .fp-overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: .75rem;
+        }
+
+        .fp-plugin-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all .2s ease;
+        }
+
+        .fp-plugin-card:hover {
+            border-color: var(--ap-orange);
+            box-shadow: 0 4px 16px rgba(var(--rgb-d), .06);
+        }
+
+        .fp-plugin-card .pc-top {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            margin-bottom: .5rem;
+        }
+
+        .fp-plugin-card .pc-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(244, 95, 0, .08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .9rem;
+            color: var(--ap-orange);
+        }
+
+        .fp-plugin-card .pc-name {
+            font-weight: 600;
+            font-size: .82rem;
+        }
+
+        .fp-plugin-card .pc-layer {
+            font-size: .65rem;
+            color: var(--muted);
+        }
+
+        .fp-plugin-card .pc-status {
+            display: inline-flex;
+            align-items: center;
+            gap: .3rem;
+            font-size: .7rem;
+            font-weight: 600;
+            padding: .15rem .5rem;
+            border-radius: 6px;
+        }
+
+        .fp-plugin-card .pc-status.active {
+            background: rgba(34, 197, 94, .1);
+            color: #16a34a;
+        }
+
+        .fp-plugin-card .pc-status.installed {
+            background: rgba(245, 158, 11, .1);
+            color: #d97706;
+        }
+
+        .fp-plugin-card .pc-status.missing {
+            background: rgba(239, 68, 68, .1);
+            color: #dc2626;
+        }
+
+        /* ══ SETTINGS FORM ══ */
+        .fp-settings-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .fp-settings-card h2 {
+            font-size: 1.1rem;
+            margin-bottom: .25rem;
+        }
+
+        .fp-settings-card .desc {
+            font-size: .8rem;
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .fp-field-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .fp-field-group label {
+            display: block;
+            font-size: .78rem;
+            font-weight: 600;
+            margin-bottom: .35rem;
+            color: var(--text2);
+        }
+
+        .fp-input {
+            width: 100%;
+            padding: .55rem .8rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--card);
+            color: var(--text);
+            font-family: inherit;
+            font-size: .85rem;
+            transition: border-color .15s;
+        }
+
+        .fp-input:focus {
+            outline: none;
+            border-color: var(--ap-orange);
+        }
+
+        .fp-toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: .6rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .fp-toggle-row:last-child {
+            border-bottom: none;
+        }
+
+        .fp-toggle-label {
+            font-size: .82rem;
+            font-weight: 500;
+        }
+
+        .fp-toggle-desc {
+            font-size: .72rem;
+            color: var(--muted);
+        }
+
+        /* Toggle switch */
+        .fp-toggle {
+            position: relative;
+            width: 40px;
+            height: 22px;
+        }
+
+        .fp-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .fp-toggle .slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: var(--border);
+            border-radius: 22px;
+            transition: .2s;
+        }
+
+        .fp-toggle .slider::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            left: 3px;
+            bottom: 3px;
+            background: #fff;
+            border-radius: 50%;
+            transition: .2s;
+        }
+
+        .fp-toggle input:checked+.slider {
+            background: var(--ap-orange);
+        }
+
+        .fp-toggle input:checked+.slider::before {
+            transform: translateX(18px);
+        }
+
+        .fp-save-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            padding: .6rem 1.5rem;
+            background: var(--ap-orange);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: .85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .15s;
+            font-family: inherit;
+            margin-top: 1rem;
+        }
+
+        .fp-save-btn:hover {
+            background: var(--ap-orange-hover);
+        }
+
+        .fp-notice {
+            padding: .8rem 1rem;
+            border-radius: 8px;
+            font-size: .82rem;
+            margin-bottom: 1rem;
+        }
+
+        .fp-notice.success {
+            background: rgba(34, 197, 94, .1);
+            color: #16a34a;
+            border: 1px solid rgba(34, 197, 94, .2);
+        }
+
+        .fp-notice.info {
+            background: rgba(59, 130, 246, .08);
+            color: #2563eb;
+            border: 1px solid rgba(59, 130, 246, .15);
+        }
+
+        @media (max-width: 768px) {
+            .fp-sidebar {
+                display: none;
+            }
+
+            .fp-main {
+                padding: 1.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body <?php body_class(); ?>>
+    <?php wp_body_open(); ?>
+
+    <div class="fp-shell">
+        <!-- Sidebar -->
+        <aside class="fp-sidebar">
+            <div class="fp-sidebar-title">Visão Geral</div>
+            <a href="#" class="fp-nav-item <?php echo $current_tab === 'overview' ? 'active' : ''; ?>"
+                data-tab="overview">
+                <i class="ri-dashboard-fill"></i> Overview
+            </a>
+
+            <?php foreach ($layers as $layer_key => $layer_data) : ?>
+                <div class="fp-sidebar-title"><?php echo esc_html($layer_key . ' — ' . $layer_data['name']); ?></div>
+                <?php foreach ($layer_data['plugins'] as $slug => $plugin) :
+                    $status_class = ($plugin['active'] ?? false) ? 's-active' : (($plugin['installed'] ?? false) ? 's-installed' : 's-missing');
+                ?>
+                    <a href="#" class="fp-nav-item <?php echo $current_tab === $slug ? 'active' : ''; ?>"
+                        data-tab="<?php echo esc_attr($slug); ?>">
+                        <i class="<?php echo esc_attr($plugin['icon'] ?? 'ri-puzzle-fill'); ?>"></i>
+                        <?php echo esc_html($plugin['name']); ?>
+                        <span class="plugin-status <?php echo esc_attr($status_class); ?>"></span>
+                    </a>
+                <?php endforeach; ?>
+            <?php endforeach; ?>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="fp-main">
+            <div class="fp-header">
+                <i class="ri-compasses-2-line" style="font-size:1.6rem;color:var(--ap-orange)"></i>
+                <h1>Admin Panel</h1>
+                <div class="quick-links">
+                    <a href="<?php echo esc_url(home_url('/admin/pending')); ?>" class="quick-link">
+                        <i class="ri-draft-fill"></i> Pending
+                    </a>
+                    <a href="<?php echo esc_url(home_url('/admin/memberships')); ?>" class="quick-link">
+                        <i class="ri-vip-crown-fill"></i> Memberships
+                    </a>
+                    <a href="<?php echo esc_url(admin_url()); ?>" class="quick-link" target="_blank">
+                        <i class="ri-wordpress-fill"></i> WP-Admin
+                    </a>
+                </div>
+            </div>
+
+            <!-- Section: Overview -->
+            <div class="fp-section active" id="section-overview">
+                <div class="fp-notice info">
+                    <i class="ri-information-fill"></i>
+                    Selecione um plugin na sidebar para editar suas configurações. Todas as mudanças são salvas no banco
+                    via AJAX.
+                </div>
+
+                <div class="fp-overview-grid">
+                    <?php foreach ($layers as $layer_key => $layer_data) : ?>
+                        <?php foreach ($layer_data['plugins'] as $slug => $plugin) :
+                            $status = ($plugin['active'] ?? false) ? 'active' : (($plugin['installed'] ?? false) ? 'installed' : 'missing');
+                            $status_label = ($status === 'active') ? 'Ativo' : (($status === 'installed') ? 'Instalado' : 'Faltando');
+                        ?>
+                            <div class="fp-plugin-card" data-goto-tab="<?php echo esc_attr($slug); ?>">
+                                <div class="pc-top">
+                                    <div class="pc-icon"><i
+                                            class="<?php echo esc_attr($plugin['icon'] ?? 'ri-puzzle-fill'); ?>"></i></div>
+                                    <div>
+                                        <div class="pc-name"><?php echo esc_html($plugin['name']); ?></div>
+                                        <div class="pc-layer"><?php echo esc_html($layer_key); ?></div>
+                                    </div>
+                                </div>
+                                <span class="pc-status <?php echo esc_attr($status); ?>">
+                                    <?php echo esc_html($status_label); ?>
+                                </span>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <!-- Section: Per-Plugin Settings -->
+            <?php foreach ($layers as $layer_key => $layer_data) : ?>
+                <?php foreach ($layer_data['plugins'] as $slug => $plugin) : ?>
+                    <div class="fp-section" id="section-<?php echo esc_attr($slug); ?>">
+                        <div class="fp-settings-card">
+                            <h2>
+                                <i class="<?php echo esc_attr($plugin['icon'] ?? 'ri-puzzle-fill'); ?>"
+                                    style="color:var(--ap-orange)"></i>
+                                <?php echo esc_html($plugin['name']); ?>
+                            </h2>
+                            <div class="desc">
+                                <?php echo esc_html($plugin['description'] ?? ''); ?>
+                                <?php if (! empty($plugin['version']) && $plugin['version'] !== '—') : ?>
+                                    — v<?php echo esc_html($plugin['version']); ?>
+                                <?php endif; ?>
+                            </div>
+
+                            <?php
+                            $schema = \Apollo\Admin\Settings::get_schema($slug);
+                            if (empty($schema)) :
+                            ?>
+                                <div class="fp-notice info">
+                                    <i class="ri-information-fill"></i>
+                                    Configurações para este plugin serão adicionadas conforme for desenvolvido.
+                                    Use o WP-Admin CPanel para ver todas as opções disponíveis.
+                                </div>
+                            <?php else : ?>
+                                <form class="fp-ajax-form" data-plugin="<?php echo esc_attr($slug); ?>">
+                                    <?php foreach ($schema as $key => $field) :
+                                        $value    = $settings[$key] ?? $field['default'];
+                                        $field_id = 'fp_' . $slug . '_' . $key;
+                                    ?>
+                                        <?php if ($field['type'] === 'toggle') : ?>
+                                            <div class="fp-toggle-row">
+                                                <div>
+                                                    <div class="fp-toggle-label"><?php echo esc_html($field['label']); ?></div>
+                                                    <?php if (! empty($field['description'])) : ?>
+                                                        <div class="fp-toggle-desc"><?php echo esc_html($field['description']); ?></div>
+                                                    <?php endif; ?>
+                                                </div>
+                                                <label class="custom-checkbox" class="fp-toggle">
+                                                    <input type="hidden" name="apollo[<?php echo esc_attr($key); ?>]" value="0">
+                                                    <input type="checkbox" name="apollo[<?php echo esc_attr($key); ?>]" value="1"
+                                                        <?php checked(\filter_var($value, FILTER_VALIDATE_BOOLEAN)); ?>>
+                                                    <span class="slider"></span>
+                                                </label>
+                                            </div>
+                                        <?php elseif ($field['type'] === 'select') : ?>
+                                            <div class="fp-field-group">
+                                                <label
+                                                    for="<?php echo esc_attr($field_id); ?>"><?php echo esc_html($field['label']); ?></label>
+                                                <select id="<?php echo esc_attr($field_id); ?>" name="apollo[<?php echo esc_attr($key); ?>]"
+                                                    class="fp-input">
+                                                    <?php foreach (($field['options'] ?? array()) as $opt_val => $opt_label) : ?>
+                                                        <option value="<?php echo esc_attr($opt_val); ?>" <?php selected($value, $opt_val); ?>>
+                                                            <?php echo esc_html($opt_label); ?>
+                                                        </option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+                                        <?php elseif ($field['type'] === 'textarea') : ?>
+                                            <div class="fp-field-group">
+                                                <label
+                                                    for="<?php echo esc_attr($field_id); ?>"><?php echo esc_html($field['label']); ?></label>
+                                                <textarea id="<?php echo esc_attr($field_id); ?>" class="apollo-textarea"
+                                                    name="apollo[<?php echo esc_attr($key); ?>]" class="fp-input"
+                                                    rows="4"><?php echo esc_textarea((string) $value); ?></textarea>
+                                            </div>
+                                        <?php else : ?>
+                                            <div class="fp-field-group">
+                                                <label
+                                                    for="<?php echo esc_attr($field_id); ?>"><?php echo esc_html($field['label']); ?></label>
+                                                <input type="<?php echo esc_attr($field['type']); ?>"
+                                                    id="<?php echo esc_attr($field_id); ?>" name="apollo[<?php echo esc_attr($key); ?>]"
+                                                    value="<?php echo esc_attr((string) $value); ?>" class="fp-input">
+                                            </div>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                    <button type="submit" class="fp-save-btn">
+                                        <i class="ri-save-fill"></i> Salvar
+                                    </button>
+                                </form>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endforeach; ?>
+        </main>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            var d = document;
+            var ajaxUrl = '<?php echo esc_url(admin_url('admin-ajax.php')); ?>';
+            var saveNonce = '<?php echo esc_js(wp_create_nonce('apollo_cpanel_save')); ?>';
+
+            /* ── TAB SWITCHING ── */
+            function switchTab(tabId) {
+                d.querySelectorAll('.fp-section').forEach(function(s) {
+                    s.classList.remove('active');
+                });
+                d.querySelectorAll('.fp-nav-item').forEach(function(n) {
+                    n.classList.remove('active');
+                });
+
+                var section = d.getElementById('section-' + tabId);
+                var nav = d.querySelector('.fp-nav-item[data-tab="' + tabId + '"]');
+
+                if (section) section.classList.add('active');
+                if (nav) nav.classList.add('active');
+
+                // Update URL without reload
+                var url = new URL(window.location);
+                if (tabId === 'overview') {
+                    url.searchParams.delete('tab');
+                } else {
+                    url.searchParams.set('tab', tabId);
+                }
+                history.replaceState(null, '', url);
+            }
+
+            /* Sidebar nav click */
+            d.querySelectorAll('.fp-nav-item').forEach(function(item) {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    switchTab(item.dataset.tab);
+                });
+            });
+
+            /* Overview card click → go to plugin tab */
+            d.querySelectorAll('.fp-plugin-card[data-goto-tab]').forEach(function(card) {
+                card.addEventListener('click', function() {
+                    switchTab(card.dataset.gotoTab);
+                });
+            });
+
+            /* Init tab from URL */
+            var urlTab = new URLSearchParams(location.search).get('tab');
+            if (urlTab) {
+                switchTab(urlTab);
+            }
+
+            /* ── AJAX SAVE ── */
+            d.querySelectorAll('.fp-ajax-form').forEach(function(form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    var btn = form.querySelector('.fp-save-btn');
+                    var origText = btn.innerHTML;
+                    btn.innerHTML = '<i class="ri-loader-4-line"></i> Salvando...';
+                    btn.disabled = true;
+
+                    var fd = new FormData(form);
+                    fd.append('action', 'apollo_cpanel_save');
+                    fd.append('apollo_cpanel_nonce', saveNonce);
+
+                    fetch(ajaxUrl, {
+                            method: 'POST',
+                            body: fd,
+                            credentials: 'same-origin'
+                        })
+                        .then(function(r) {
+                            return r.json();
+                        })
+                        .then(function(data) {
+                            btn.innerHTML = data.success ? '<i class="ri-check-fill"></i> Salvo!' :
+                                '<i class="ri-error-warning-fill"></i> Erro';
+                            setTimeout(function() {
+                                btn.innerHTML = origText;
+                                btn.disabled = false;
+                            }, 2000);
+                        })
+                        .catch(function() {
+                            btn.innerHTML = origText;
+                            btn.disabled = false;
+                        });
+                });
+            });
+        })();
+    </script>
+
+    <?php wp_footer(); ?>
+</body>
+
+</html>

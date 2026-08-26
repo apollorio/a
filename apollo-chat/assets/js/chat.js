@@ -1,12 +1,17 @@
 /**
- * Apollo Chat v2.0 — Premium Instant Messaging Engine
+ * Apollo Chat v2.0 — Premium Instant Messaging Engine (TEXT ONLY)
+ *
+ * No file/image/audio/video/GIF/voice attachments anywhere — the GIF picker
+ * that used to live in this file was removed 2026-08-25 (server-side
+ * enforcement lives in src/Plugin.php: rest_send_message() always writes
+ * message_type='text' regardless of client input, and /chat/upload +
+ * /chat/gif-search both return 403). pendingGif/clearGifPreview() are kept
+ * as harmless no-ops only so sendMessage()'s ternaries don't need touching.
  *
  * Features:
  *  - Real-time AJAX polling (3s) with BroadcastChannel cross-tab sync
  *  - Typing indicators with 3s debounce
  *  - Read receipts (sent → delivered → read)
- *  - File/image/audio/video attachments (drag-drop + clipboard paste)
- *  - GIF search & send (Tenor API)
  *  - Emoji picker (native Unicode grid)
  *  - Message reactions (toggle emoji)
  *  - Message editing & soft-deletion
@@ -56,7 +61,7 @@
     const MY_NAME    = CFG.user_name || '';
     const MY_AVATAR  = CFG.user_avatar || '';
     const INITIAL_TID = parseInt(CFG.thread_id, 10) || 0;
-    const USERS_URL   = normalizeUrl(CFG.users_url, '/wp-json/wp/v2/users');
+    const USERS_URL   = normalizeUrl(CFG.users_url, '/wp-json/apollo/v1/users'); // §1.9 of the root .htaccess 403s wp/v2/users without a Bearer token
     const POLL_MS     = 3000;
     const TYPING_DEBOUNCE = 3000;
     const PRESENCE_MS = 60000;
@@ -88,7 +93,6 @@
     let notifPermission = 'default';
     let bc              = null;   // BroadcastChannel
     let _msgLoadingFX   = null;   // ApolloTextFX.loading() handle — message area
-    let _gifLoadingFX   = null;   // ApolloTextFX.loading() handle — GIF grid
 
     /* ═══════════════════════════════════════════════════════════════════
        HELPERS
@@ -1244,121 +1248,22 @@
     }
 
     /* ═══════════════════════════════════════════════════════════════════
-       GIF PICKER — Tenor API (server-proxied)
+       GIF PICKER — REMOVED (text-only policy, 2026-08-25)
+
+       This used to be a Tenor API v2 proxy (search grid, infinite scroll,
+       click-to-send). apollo-chat is text-only now — no GIFs, no images,
+       no files, no voice — enforced server-side in Plugin.php (rest_send_
+       message() ignores any 'type' the client sends; /chat/gif-search and
+       /chat/upload both return 403). initGifPicker()/clearGifPreview() are
+       kept as no-ops purely so their existing call sites elsewhere in this
+       file don't need touching. pendingGif always stays null — nothing
+       ever sets it again — so sendMessage()'s `pendingGif ? ... : text`
+       branches are permanently dead in the GIF direction.
        ═══════════════════════════════════════════════════════════════════ */
 
-    let gifPickerOpen = false;
-    let gifSearchTimer = null;
-    let gifNextPos = '';
+    function initGifPicker() { /* no-op — GIF picker removed */ }
 
-    function initGifPicker() {
-        const btn = $('.ac-gif-btn');
-        if (!btn) return;
-        btn.addEventListener('click', toggleGifPicker);
-
-        const closeBtn = $('.ac-gif-close');
-        if (closeBtn) closeBtn.addEventListener('click', () => toggleGifPicker(false));
-
-        const searchInput = $('.ac-gif-search');
-        if (searchInput) {
-            searchInput.addEventListener('input', () => {
-                clearTimeout(gifSearchTimer);
-                gifSearchTimer = setTimeout(() => {
-                    gifNextPos = '';
-                    searchGifs(searchInput.value.trim());
-                }, 350);
-            });
-        }
-
-        // Infinite scroll in GIF grid
-        const grid = $('.ac-gif-grid');
-        if (grid) {
-            grid.addEventListener('scroll', () => {
-                if (grid.scrollTop + grid.clientHeight >= grid.scrollHeight - 60 && gifNextPos) {
-                    const q = ($('.ac-gif-search') || {}).value || '';
-                    searchGifs(q.trim(), true);
-                }
-            });
-        }
-    }
-
-    function toggleGifPicker(forceState) {
-        const picker = $('.ac-gif-picker');
-        if (!picker) return;
-
-        gifPickerOpen = typeof forceState === 'boolean' ? forceState : !gifPickerOpen;
-        picker.classList.toggle('show', gifPickerOpen);
-
-        if (gifPickerOpen) {
-            const input = $('.ac-gif-search');
-            if (input) { input.value = ''; input.focus(); }
-            gifNextPos = '';
-            searchGifs(''); // load trending/featured
-        }
-    }
-
-    async function searchGifs(query, append) {
-        const grid = $('.ac-gif-grid');
-        if (!grid) return;
-
-        if (!append) {
-            if (_gifLoadingFX) { _gifLoadingFX.stop(); _gifLoadingFX = null; }
-            grid.innerHTML = '<div class="ac-gif-loading"><p class="ac-loading-txt" aria-live="polite">Buscando GIFs...</p></div>';
-            if (typeof ApolloTextFX !== 'undefined') {
-                _gifLoadingFX = ApolloTextFX.loading(
-                    grid.querySelector('.ac-loading-txt'),
-                    ['Buscando GIFs...', 'Carregando imagens...', 'Aguarde...']
-                );
-            }
-        }
-
-        const params = new URLSearchParams({ q: query, limit: '20' });
-        if (append && gifNextPos) params.set('pos', gifNextPos);
-
-        try {
-            const data = await api('/gif-search?' + params.toString());
-
-            if (!append) {
-                if (_gifLoadingFX) { _gifLoadingFX.stop(); _gifLoadingFX = null; }
-                grid.innerHTML = '';
-            }
-
-            if (!data.results || !data.results.length) {
-                if (!append) {
-                    grid.innerHTML = '<div class="ac-gif-empty"><i class="ri-emotion-sad-line"></i><p>Nenhum GIF encontrado</p></div>';
-                }
-                gifNextPos = '';
-                return;
-            }
-
-            gifNextPos = data.next || '';
-
-            data.results.forEach(gif => {
-                const item = document.createElement('div');
-                item.className = 'ac-gif-item';
-                item.innerHTML = `<img src="${esc(gif.preview)}" alt="${esc(gif.title)}" loading="lazy">`;
-                item.addEventListener('click', () => selectGif(gif));
-                grid.appendChild(item);
-            });
-        } catch (e) {
-            if (!append) {
-                grid.innerHTML = '<div class="ac-gif-empty"><i class="ri-error-warning-line"></i><p>Erro ao buscar GIFs</p></div>';
-            }
-        }
-    }
-
-    function selectGif(gif) {
-        // Set pending GIF and immediately send
-        pendingGif = { url: gif.url, preview: gif.preview, title: gif.title };
-        toggleGifPicker(false);
-        sendMessage();
-    }
-
-    function clearGifPreview() {
-        pendingGif = null;
-        const bar = $('.ac-attach-preview');
-        if (bar) { bar.classList.remove('show'); bar.innerHTML = ''; }
-    }
+    function clearGifPreview() { pendingGif = null; }
 
     /* ═══════════════════════════════════════════════════════════════════
        EMOJI PICKER
@@ -1934,13 +1839,25 @@
                         headers: headers(),
                         credentials: 'same-origin',
                     });
-                    const users = await res.json();
+                    /* apollo/v1/users answers { users:[…], total, pages } and each item
+                       is { id, username, display_name, social_name, avatar_url } — NOT
+                       wp/v2's { name, avatar_urls{48} }. Normalising here rather than at
+                       every use site; the `|| data` arm keeps a bare array working if the
+                       endpoint is ever swapped back. Same mapping apollo-groups uses. */
+                    const payload = await res.json();
+                    const users = (payload && payload.users ? payload.users : (Array.isArray(payload) ? payload : []))
+                        .map(u => ({
+                            id: parseInt(u.id, 10),
+                            name: u.display_name || u.social_name || u.username || ('#' + u.id),
+                            avatar: u.avatar_url || (u.avatar_urls ? (u.avatar_urls['48'] || u.avatar_urls['24'] || '') : ''),
+                        }))
+                        .filter(u => u.id);
                     if (results) {
                         results.innerHTML = users
                             .filter(u => u.id !== MY_ID)
                             .map(u => {
                                 const selected = selectedRecipients.find(r => r.id === u.id) ? ' selected' : '';
-                                const avatar = u.avatar_urls ? (u.avatar_urls['48'] || u.avatar_urls['24'] || '') : '';
+                                const avatar = u.avatar;
                                 return `<div class="ac-user-item${selected}" data-uid="${u.id}" data-uname="${esc(u.name)}">
                                     <img src="${esc(avatar)}" alt="">
                                     <span class="ac-user-name">${esc(u.name)}</span>
@@ -2184,7 +2101,6 @@
         document.addEventListener('keydown', (e) => {
             // Escape closes modals/pickers/search
             if (e.key === 'Escape') {
-                if (gifPickerOpen) { toggleGifPicker(false); return; }
                 if (emojiPickerOpen) { toggleEmojiPicker(); return; }
                 if (searchOpen) { toggleSearch(); return; }
                 const modal = $('.ac-modal-overlay.show');

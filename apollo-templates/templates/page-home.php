@@ -438,6 +438,37 @@ if (function_exists('apollo_render_document_open')) {
             cursor: pointer; background: none; border: 0; transition: background .4s var(--ease, ease);
         }
         .ax-burger:hover { background: var(--surface); }
+
+        /* ═══ APOLLO+ ASIDE — DRAWER-ONLY ON /casa (2026-08-25) ═══════════════
+           aside-styles.php pins .ax-aside at >=1000px and hides .ax-burger,
+           which is correct for every screen whose content well is .ax-main and
+           therefore absorbs the 225px offset. /casa's <main id="apollo-home">
+           is a deliberately full-bleed landing with no such offset, so a pinned
+           aside would cover the hero.
+
+           Scoped to body[data-apollo-page="landing"] so ONLY /casa is affected —
+           this does not touch the pinned behaviour anywhere else. Specificity
+           (body[attr] + class) beats aside-styles.php's bare .ax-aside inside
+           the same media query without needing !important on the transform.
+
+           OWNERSHIP: aside-styles.php remains the owner of .ax-aside/.ax-burger.
+           This is a declared, page-scoped override of two of its properties,
+           not a second declaration of the component. */
+        @media (min-width: 1000px) {
+            body[data-apollo-page="landing"] .ax-aside {
+                width: min(320px, 86vw);
+                transform: translateX(-100%);
+            }
+            body[data-apollo-page="landing"] .ax-aside.open { transform: translateX(0); }
+            /* Burger stays the menu affordance at every width here, because the
+               aside never pins to replace it. */
+            body[data-apollo-page="landing"] .ax-burger { display: flex; }
+            /* The overlay is the drawer's dismiss target, so it must stay live —
+               aside-styles.php switches it off at this breakpoint on the
+               assumption that a pinned aside needs no scrim. */
+            body[data-apollo-page="landing"] .ax-overlay { display: block; }
+        }
+
         /* Topbar nav icon glyphs — 22px em box (header only) */
         .ax-top .ax-burger,
         .ax-top .ax-top-r .ax-ic,
@@ -578,6 +609,42 @@ if (function_exists('apollo_render_document_open')) {
     if (function_exists('apollo_render_app_shell')) {
         apollo_render_app_shell();
     }
+
+    /* APOLLO+ ASIDE ON /casa (2026-08-25) — shell unification, drawer-only.
+       -----------------------------------------------------------------
+       /casa was the ONLY screen still on the legacy hand-rolled path: it calls
+       apollo_render_app_shell() directly instead of apollo_plus_open(), so it
+       rendered the topbar (including #burger) but never included the Apollo+
+       aside. 18-canvas-shell.json's $unification_2026_08_05 claims all three
+       shells were collapsed into one — /casa was missed, and the divergence
+       survived here.
+
+       The visible symptom: every other screen's burger opens the real nav
+       (Feed / Eventos / Marketplace / Comuna / Hub.rio / Redução de Danos /
+       Mapa + the auth-gated Gestor group), while /casa's opened a private
+       6-link sheet whose "Classificados" entry 404'd to /erro/404/.
+
+       Included here rather than converting /casa to apollo_plus_open(): that
+       function owns <head>/<body>/<main>, and /casa legitimately needs its own
+       landing topbar variant, theme handling and cell system. A BLOCK may be
+       included by anyone; only the SHELL is exclusive. Adding the aside part
+       gives /casa the same nav without a document rewrite.
+
+       DRAWER-ONLY: aside-styles.php pins .ax-aside at >=1000px and hides
+       .ax-burger, which assumes a .ax-main sibling to absorb the 225px offset.
+       /casa's <main id="apollo-home"> is a full-bleed landing with no such
+       offset, so a pinned aside would sit ON TOP of the hero. The scoped
+       override below (body[data-apollo-page="landing"]) keeps it a slide-in
+       drawer at every width and keeps the burger visible. Landing layout is
+       untouched; only the menu contents change.
+
+       Guarded exactly like apollo_render_app_shell() above: this is the site's
+       homepage on a live-sync deploy, and an unguarded call to a function whose
+       include order ever changes is a site-wide fatal, not a missing menu. */
+    if (function_exists('apollo_plus_part')) {
+        apollo_plus_part('apollo-plus/aside');
+    }
+
     require $parts . 'menu-fab.php';
 
     /* Motion layer first — a ScrollTrigger bound before the motion layer
@@ -638,16 +705,17 @@ if (function_exists('apollo_render_document_open')) {
                 sync();
             })();
 
-            /* Topbar burger reuses the existing FAB menu sheet (no new menu system). */
-            var _burger = document.getElementById('burger');
-            var _fab = document.getElementById('nhMenuFab');
-            if (_burger && _fab) {
-                _burger.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    _fab.click();
-                });
-            }
+            /* BURGER → APOLLO+ ASIDE (2026-08-25).
+               Was: burger proxied a click to #nhMenuFab, opening /casa's private
+               6-link sheet. Now that the real aside is included above, aside.php's
+               OWN inline script already binds #burger → .ax-aside.open, exactly as
+               on every other Apollo+ screen — so this proxy is deleted rather than
+               re-pointed. Leaving it would have opened BOTH menus on one click.
+
+               #nhMenuFab / #nhMenuSheet are intentionally still rendered: the FAB
+               is /casa's mobile quick-action affordance and carries entries the
+               aside does not (Plano creative studio, Documentos, Gestor). It is no
+               longer reachable from the burger, only from the FAB itself. */
 
             <?php if (! $is_logged) : ?>
                 /* ── Auth gate: restricted elements → hub.rio lightbox ──

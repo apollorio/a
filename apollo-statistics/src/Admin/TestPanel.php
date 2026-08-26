@@ -116,7 +116,34 @@ final class TestPanel {
 
     /* ──────────────────────── Admin menu ─────────────────── */
 
+    /**
+     * Is the test panel allowed to appear?
+     *
+     * It was registered unconditionally, so a 🧪 "Testes Stats" item sat in the
+     * live Apollo menu of a production site. The runner behind it is properly
+     * nonce- and capability-gated, so this is menu hygiene rather than a hole —
+     * but a test surface in a production menu is still a non-shippable artefact
+     * inside the deployed tree, which is exactly what D08 exists to catch.
+     *
+     * Set APOLLO_STATS_TESTS to true in wp-config.php to bring it back, or turn
+     * on WP_DEBUG. Nothing else changes: the ajax handlers stay registered, so a
+     * bookmarked run still works for whoever already has the capability.
+     *
+     * @since 2.0.7
+     */
+    private function tests_enabled(): bool {
+        if (defined('APOLLO_STATS_TESTS')) {
+            return (bool) APOLLO_STATS_TESTS;
+        }
+
+        return defined('WP_DEBUG') && WP_DEBUG;
+    }
+
     public function register_page(): void {
+        if (! $this->tests_enabled()) {
+            return;
+        }
+
         add_submenu_page(
             'apollo',
             __('Apollo Statistics — Testes', 'apollo-statistics'),

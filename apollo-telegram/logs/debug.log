@@ -1,0 +1,289 @@
+[2026-07-03T05:56:58.463883+00:00] telegram_bot.DEBUG: Request data:
+Array
+(
+    [offset] => 0
+    [limit] => 
+    [timeout] => 
+)
+ [] []
+[2026-07-03T05:56:58.465047+00:00] telegram_bot.DEBUG: Response data:
+{"ok":true,"result":[]} [] []
+[2026-07-03T05:56:58.465284+00:00] telegram_bot.DEBUG: Verbose HTTP Request output:
+* Host api.telegram.org:443 was resolved.
+* IPv6: 2001:67c:4e8:f004::9
+* IPv4: 149.154.166.110
+*   Trying [2001:67c:4e8:f004::9]:443...
+* Connected to api.telegram.org (2001:67c:4e8:f004::9) port 443
+* ALPN: curl offers http/1.1
+*  CAfile: C:\Users\User\Local Sites\fim\app\public\wp-includes\certificates\ca-bundle.crt
+*  CApath: none
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384 / X25519 / RSASSA-PSS
+* ALPN: server accepted http/1.1
+* Server certificate:
+*  subject: CN=api.telegram.org
+*  start date: Nov 11 15:14:09 2025 GMT
+*  expire date: Dec 13 15:14:09 2026 GMT
+*  subjectAltName: host "api.telegram.org" matched cert's "api.telegram.org"
+*  issuer: C=US; ST=Arizona; L=Scottsdale; O=GoDaddy.com, Inc.; OU=http://certs.godaddy.com/repository/; CN=Go Daddy Secure Certificate Authority - G2
+*  SSL certificate verify ok.
+*   Certificate level 0: Public key type RSA (2048/112 Bits/secBits), signed using sha256WithRSAEncryption
+*   Certificate level 1: Public key type RSA (2048/112 Bits/secBits), signed using sha256WithRSAEncryption
+*   Certificate level 2: Public key type RSA (2048/112 Bits/secBits), signed using sha256WithRSAEncryption
+* using HTTP/1.x
+> POST /botBOT_TOKEN_REMOVED/getUpdates HTTP/1.1
+Host: api.telegram.org
+User-Agent: GuzzleHttp/7
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 8
+
+* upload completely sent off: 8 bytes
+* old SSL session ID is stale, removing
+< HTTP/1.1 200 OK
+< Server: nginx/1.30.1
+< Date: Fri, 03 Jul 2026 05:56:58 GMT
+< Content-Type: application/json
+< Content-Length: 23
+< Connection: keep-alive
+< Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+< Access-Control-Allow-Origin: *
+< Access-Control-Allow-Methods: GET, POST, OPTIONS
+< Access-Control-Expose-Headers: Content-Length,Content-Type,Date,Server,Connection
+< 
+* Connection #0 to host api.telegram.org left intact
+
+ [] []
+[2026-07-03T06:08:26.091947+00:00] telegram_bot.DEBUG: Request data:
+Array
+(
+    [offset] => 0
+    [limit] => 
+    [timeout] => 
+    [allowed_updates] => Array
+        (
+        )
+
+)
+ [] []
+[2026-07-03T06:08:26.094395+00:00] telegram_bot.DEBUG: Response data:
+{"ok":true,"result":[]} [] []
+[2026-07-03T06:08:26.094760+00:00] telegram_bot.DEBUG: Verbose HTTP Request output:
+* Host api.telegram.org:443 was resolved.
+* IPv6: 2001:67c:4e8:f004::9
+* IPv4: 149.154.166.110
+*   Trying [2001:67c:4e8:f004::9]:443...
+* Connected to api.telegram.org (2001:67c:4e8:f004::9) port 443
+* ALPN: curl offers http/1.1
+*  CAfile: C:\Users\User\Local Sites\fim\app\public\wp-includes\certificates\ca-bundle.crt
+*  CApath: none
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384 / X25519 / RSASSA-PSS
+* ALPN: server accepted http/1.1
+* Server certificate:
+*  subject: CN=api.telegram.org
+*  start date: Nov 11 15:14:09 2025 GMT
+*  expire date: Dec 13 15:14:09 2026 GMT
+*  subjectAltName: host "api.telegram.org" matched cert's "api.telegram.org"
+*  issuer: C=US; ST=Arizona; L=Scottsdale; O=GoDaddy.com, Inc.; OU=http://certs.godaddy.com/repository/; CN=Go Daddy Secure Certificate Authority - G2
+*  SSL certificate verify ok.
+*   Certificate level 0: Public key type RSA (2048/112 Bits/secBits), signed using sha256WithRSAEncryption
+*   Certificate level 1: Public key type RSA (2048/112 Bits/secBits), signed using sha256WithRSAEncryption
+*   Certificate level 2: Public key type RSA (2048/112 Bits/secBits), signed using sha256WithRSAEncryption
+* using HTTP/1.x
+> POST /botBOT_TOKEN_REMOVED/getUpdates HTTP/1.1
+Host: api.telegram.org
+User-Agent: GuzzleHttp/7
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 31
+
+* upload completely sent off: 31 bytes
+* old SSL session ID is stale, removing
+< HTTP/1.1 200 OK
+< Server: nginx/1.30.1
+< Date: Fri, 03 Jul 2026 06:08:26 GMT
+< Content-Type: application/json
+< Content-Length: 23
+< Connection: keep-alive
+< Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+< Access-Control-Allow-Origin: *
+< Access-Control-Allow-Methods: GET, POST, OPTIONS
+< Access-Control-Expose-Headers: Content-Length,Content-Type,Date,Server,Connection
+< 
+* Connection #0 to host api.telegram.org left intact
+
+ [] []
+[2026-07-03T15:55:00.338169+00:00] telegram_bot.DEBUG: Request data:
+Array
+(
+    [offset] => 0
+    [limit] => 
+    [timeout] => 
+    [allowed_updates] => Array
+        (
+        )
+
+)
+ [] []
+[2026-07-03T15:55:00.343294+00:00] telegram_bot.DEBUG: Response data:
+{"ok":true,"result":[]} [] []
+[2026-07-03T15:55:00.343966+00:00] telegram_bot.DEBUG: Verbose HTTP Request output:
+* Host api.telegram.org:443 was resolved.
+* IPv6: 2001:67c:4e8:f004::9
+* IPv4: 149.154.166.110
+*   Trying [2001:67c:4e8:f004::9]:443...
+*   Trying 149.154.166.110:443...
+* Connected to api.telegram.org (2001:67c:4e8:f004::9) port 443
+* ALPN: curl offers http/1.1
+*  CAfile: C:\Users\User\Local Sites\fim\app\public\wp-includes\certificates\ca-bundle.crt
+*  CApath: none
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384 / X25519 / RSASSA-PSS
+* ALPN: server accepted http/1.1
+* Server certificate:
+*  subject: CN=api.telegram.org
+*  start date: Nov 11 15:14:09 2025 GMT
+*  expire date: Dec 13 15:14:09 2026 GMT
+*  subjectAltName: host "api.telegram.org" matched cert's "api.telegram.org"
+*  issuer: C=US; ST=Arizona; L=Scottsdale; O=GoDaddy.com, Inc.; OU=http://certs.godaddy.com/repository/; CN=Go Daddy Secure Certificate Authority - G2
+*  SSL certificate verify ok.
+*   Certificate level 0: Public key type RSA (2048/112 Bits/secBits), signed using sha256WithRSAEncryption
+*   Certificate level 1: Public key type RSA (2048/112 Bits/secBits), signed using sha256WithRSAEncryption
+*   Certificate level 2: Public key type RSA (2048/112 Bits/secBits), signed using sha256WithRSAEncryption
+* using HTTP/1.x
+> POST /botBOT_TOKEN_REMOVED/getUpdates HTTP/1.1
+Host: api.telegram.org
+User-Agent: GuzzleHttp/7
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 31
+
+* upload completely sent off: 31 bytes
+* old SSL session ID is stale, removing
+< HTTP/1.1 200 OK
+< Server: nginx/1.30.1
+< Date: Fri, 03 Jul 2026 15:55:01 GMT
+< Content-Type: application/json
+< Content-Length: 23
+< Connection: keep-alive
+< Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+< Access-Control-Allow-Origin: *
+< Access-Control-Allow-Methods: GET, POST, OPTIONS
+< Access-Control-Expose-Headers: Content-Length,Content-Type,Date,Server,Connection
+< 
+* Connection #0 to host api.telegram.org left intact
+
+ [] []
+[2026-07-03T15:55:18.279457+00:00] telegram_bot.DEBUG: Request data:
+Array
+(
+    [offset] => 0
+    [limit] => 
+    [timeout] => 
+    [allowed_updates] => Array
+        (
+        )
+
+)
+ [] []
+[2026-07-03T15:55:18.280068+00:00] telegram_bot.DEBUG: Response data:
+{"ok":true,"result":[]} [] []
+[2026-07-03T15:55:18.280275+00:00] telegram_bot.DEBUG: Verbose HTTP Request output:
+* Host api.telegram.org:443 was resolved.
+* IPv6: 2001:67c:4e8:f004::9
+* IPv4: 149.154.166.110
+*   Trying [2001:67c:4e8:f004::9]:443...
+*   Trying 149.154.166.110:443...
+* Connected to api.telegram.org (2001:67c:4e8:f004::9) port 443
+* ALPN: curl offers http/1.1
+*  CAfile: C:\Users\User\Local Sites\fim\app\public\wp-includes\certificates\ca-bundle.crt
+*  CApath: none
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384 / X25519 / RSASSA-PSS
+* ALPN: server accepted http/1.1
+* Server certificate:
+*  subject: CN=api.telegram.org
+*  start date: Nov 11 15:14:09 2025 GMT
+*  expire date: Dec 13 15:14:09 2026 GMT
+*  subjectAltName: host "api.telegram.org" matched cert's "api.telegram.org"
+*  issuer: C=US; ST=Arizona; L=Scottsdale; O=GoDaddy.com, Inc.; OU=http://certs.godaddy.com/repository/; CN=Go Daddy Secure Certificate Authority - G2
+*  SSL certificate verify ok.
+*   Certificate level 0: Public key type RSA (2048/112 Bits/secBits), signed using sha256WithRSAEncryption
+*   Certificate level 1: Public key type RSA (2048/112 Bits/secBits), signed using sha256WithRSAEncryption
+*   Certificate level 2: Public key type RSA (2048/112 Bits/secBits), signed using sha256WithRSAEncryption
+* using HTTP/1.x
+> POST /botBOT_TOKEN_REMOVED/getUpdates HTTP/1.1
+Host: api.telegram.org
+User-Agent: GuzzleHttp/7
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 31
+
+* upload completely sent off: 31 bytes
+* old SSL session ID is stale, removing
+< HTTP/1.1 200 OK
+< Server: nginx/1.30.1
+< Date: Fri, 03 Jul 2026 15:55:19 GMT
+< Content-Type: application/json
+< Content-Length: 23
+< Connection: keep-alive
+< Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+< Access-Control-Allow-Origin: *
+< Access-Control-Allow-Methods: GET, POST, OPTIONS
+< Access-Control-Expose-Headers: Content-Length,Content-Type,Date,Server,Connection
+< 
+* Connection #0 to host api.telegram.org left intact
+
+ [] []
+[2026-07-04T20:17:41.935790+00:00] telegram_bot.DEBUG: Request data:
+Array
+(
+    [offset] => 0
+    [limit] => 
+    [timeout] => 
+    [allowed_updates] => Array
+        (
+        )
+
+)
+ [] []
+[2026-07-04T20:17:41.941554+00:00] telegram_bot.DEBUG: Response data:
+{"ok":true,"result":[]} [] []
+[2026-07-04T20:17:41.942036+00:00] telegram_bot.DEBUG: Verbose HTTP Request output:
+* Host api.telegram.org:443 was resolved.
+* IPv6: 2001:67c:4e8:f004::9
+* IPv4: 149.154.166.110
+*   Trying [2001:67c:4e8:f004::9]:443...
+*   Trying 149.154.166.110:443...
+* Connected to api.telegram.org (149.154.166.110) port 443
+* ALPN: curl offers http/1.1
+*  CAfile: C:\Users\User\Local Sites\fim\app\public\wp-includes\certificates\ca-bundle.crt
+*  CApath: none
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384 / X25519 / RSASSA-PSS
+* ALPN: server accepted http/1.1
+* Server certificate:
+*  subject: CN=api.telegram.org
+*  start date: Nov 11 15:14:09 2025 GMT
+*  expire date: Dec 13 15:14:09 2026 GMT
+*  subjectAltName: host "api.telegram.org" matched cert's "api.telegram.org"
+*  issuer: C=US; ST=Arizona; L=Scottsdale; O=GoDaddy.com, Inc.; OU=http://certs.godaddy.com/repository/; CN=Go Daddy Secure Certificate Authority - G2
+*  SSL certificate verify ok.
+*   Certificate level 0: Public key type RSA (2048/112 Bits/secBits), signed using sha256WithRSAEncryption
+*   Certificate level 1: Public key type RSA (2048/112 Bits/secBits), signed using sha256WithRSAEncryption
+*   Certificate level 2: Public key type RSA (2048/112 Bits/secBits), signed using sha256WithRSAEncryption
+* using HTTP/1.x
+> POST /botBOT_TOKEN_REMOVED/getUpdates HTTP/1.1
+Host: api.telegram.org
+User-Agent: GuzzleHttp/7
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 31
+
+* upload completely sent off: 31 bytes
+* old SSL session ID is stale, removing
+< HTTP/1.1 200 OK
+< Server: nginx/1.30.1
+< Date: Sat, 04 Jul 2026 20:17:41 GMT
+< Content-Type: application/json
+< Content-Length: 23
+< Connection: keep-alive
+< Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+< Access-Control-Allow-Origin: *
+< Access-Control-Allow-Methods: GET, POST, OPTIONS
+< Access-Control-Expose-Headers: Content-Length,Content-Type,Date,Server,Connection
+< 
+* Connection #0 to host api.telegram.org left intact
+
+ [] []

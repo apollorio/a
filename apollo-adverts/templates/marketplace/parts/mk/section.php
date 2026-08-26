@@ -73,7 +73,7 @@ if ( 'other' === $mk_type && ! $mk_q->have_posts() ) {
 <?php if ( ! $mk_q->have_posts() ) : ?>
     <p class="mk-empty"><?php esc_html_e( 'Nenhum anúncio publicado ainda.', 'apollo-adverts' ); ?></p>
 <?php else : ?>
-    <div class="mk-grid">
+    <div class="mk-grid mk-grid--<?php echo esc_attr( 'ticket' === $mk_type ? 'tickets' : ( 'accommodation' === $mk_type ? 'accom' : 'other' ) ); ?>">
         <?php
         $mk_card_file = dirname( __DIR__ ) . '/' . $mk_card;
         while ( $mk_q->have_posts() ) {

@@ -567,6 +567,10 @@ final class Plugin
         if (is_admin()) {
             new Admin\Dashboard();
             new Admin\Metabox();
+            // Internal ranking (0-10, NEVER frontend) for apollo-telegram's
+            // event-selection logic. Own file, own concern — see
+            // src/Admin/RankMetabox.php header.
+            new Admin\RankMetabox();
         }
 
         // CENA-RIO (migrated from apollo-shortcodes)

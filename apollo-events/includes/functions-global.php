@@ -143,3 +143,81 @@ if ( ! function_exists( 'apollo_event_flush_cache' ) ) {
 		\Apollo\Event\apollo_event_flush_cache( $post_id );
 	}
 }
+
+// ── INTERNAL RANKING (_event_int_rank) — for apollo-telegram, see functions.php ──
+
+if ( ! function_exists( 'apollo_event_get_int_rank' ) ) {
+	function apollo_event_get_int_rank( int $post_id ): int {
+		return \Apollo\Event\apollo_event_get_int_rank( $post_id );
+	}
+}
+
+if ( ! function_exists( 'apollo_event_set_int_rank' ) ) {
+	function apollo_event_set_int_rank( int $post_id, int $rank ): bool {
+		return \Apollo\Event\apollo_event_set_int_rank( $post_id, $rank );
+	}
+}
+
+if ( ! function_exists( 'apollo_event_get_top_ranked' ) ) {
+	function apollo_event_get_top_ranked( array $args = array() ): array {
+		return \Apollo\Event\apollo_event_get_top_ranked( $args );
+	}
+}
+
+// ── VIBE TAGS (_event_tag_*) + best-match engine — for any Apollo plugin ──
+
+if ( ! function_exists( 'apollo_event_internal_tags' ) ) {
+	function apollo_event_internal_tags(): array {
+		return \Apollo\Event\apollo_event_internal_tags();
+	}
+}
+
+if ( ! function_exists( 'apollo_event_internal_tag_labels' ) ) {
+	function apollo_event_internal_tag_labels(): array {
+		return \Apollo\Event\apollo_event_internal_tag_labels();
+	}
+}
+
+if ( ! function_exists( 'apollo_event_get_tags' ) ) {
+	function apollo_event_get_tags( int $post_id ): array {
+		return \Apollo\Event\apollo_event_get_tags( $post_id );
+	}
+}
+
+if ( ! function_exists( 'apollo_event_is_tag' ) ) {
+	function apollo_event_is_tag( int $post_id, string $tag ): bool {
+		return \Apollo\Event\apollo_event_is_tag( $post_id, $tag );
+	}
+}
+
+if ( ! function_exists( 'apollo_event_set_tag' ) ) {
+	function apollo_event_set_tag( int $post_id, string $tag, bool $value ): bool {
+		return \Apollo\Event\apollo_event_set_tag( $post_id, $tag, $value );
+	}
+}
+
+if ( ! function_exists( 'apollo_event_find_best_match' ) ) {
+	function apollo_event_find_best_match( array $criteria = array() ): array {
+		return \Apollo\Event\apollo_event_find_best_match( $criteria );
+	}
+}
+
+// ── Vibe quiz (a/b/c/d) — consumed by apollo-telegram, see functions.php ──
+
+if ( ! function_exists( 'apollo_event_vibe_quiz_definition' ) ) {
+	function apollo_event_vibe_quiz_definition( string $lang = 'pt' ): array {
+		return \Apollo\Event\apollo_event_vibe_quiz_definition( $lang );
+	}
+}
+
+if ( ! function_exists( 'apollo_event_classify_vibe_quiz' ) ) {
+	function apollo_event_classify_vibe_quiz( int $post_id ): array {
+		return \Apollo\Event\apollo_event_classify_vibe_quiz( $post_id );
+	}
+}
+
+if ( ! function_exists( 'apollo_event_matches_vibe_quiz' ) ) {
+	function apollo_event_matches_vibe_quiz( int $post_id, string $answer ): bool {
+		return \Apollo\Event\apollo_event_matches_vibe_quiz( $post_id, $answer );
+	}
+}

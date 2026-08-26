@@ -29,8 +29,13 @@ $thread_id    = (int) get_query_var('apollo_thread_id', 0);
 $rest_url  = wp_parse_url(rest_url('apollo/v1/chat'), PHP_URL_PATH);
 $ajax_url  = wp_parse_url(admin_url('admin-ajax.php'), PHP_URL_PATH);
 $nonce         = wp_create_nonce('wp_rest');
-$upload_nonce  = wp_create_nonce('apollo_chat_upload');
-$users_url = wp_parse_url(rest_url('wp/v2/users'), PHP_URL_PATH);
+/* apollo/v1/users, NOT wp/v2/users. The production root .htaccess (v3.1.0 §1.9)
+ * refuses every request to /wp-json/wp/v2/users that has no
+ * `Authorization: Bearer …` header — and this screen authenticates the normal
+ * WordPress way, with a cookie plus X-WP-Nonce. The result was a hard 403 on
+ * every user search in chat. apollo-groups already calls apollo/v1/users the
+ * same way and works; this aligns chat with it. Fixed 2026-08-20, plan-003. */
+$users_url = wp_parse_url(rest_url('apollo/v1/users'), PHP_URL_PATH);
 $avatar    = '';
 
 if (function_exists('apollo_get_user_avatar_url')) {
@@ -55,7 +60,6 @@ ob_start();
                     'rest_url'    => $rest_url,
                     'ajax_url'    => $ajax_url,
                     'nonce'        => $nonce,
-                    'upload_nonce' => $upload_nonce,
                     'user_id'     => $user_id,
                     'user_name'   => $current_user->display_name,
                     'user_avatar' => $avatar,
@@ -208,16 +212,8 @@ if (function_exists('apollo_render_document_open')) {
                         <span class="ac-reply-bar-close" title="Cancelar"><i class="ri-close-line"></i></span>
                     </div>
 
-                    <!-- Attachment preview -->
-                    <div class="ac-attach-preview"></div>
-
-                    <!-- Compose form -->
+                    <!-- Compose form (text-only — no attachment/GIF button, see src/Plugin.php docblock) -->
                     <div class="ac-compose-form">
-                        <div class="ac-compose-left">
-                            <button class="ac-icon-btn ac-gif-btn" title="Enviar GIF" type="button">
-                                <span class="ac-gif-label">GIF</span>
-                            </button>
-                        </div>
                         <div class="ac-compose-center">
                             <textarea class="apollo-textarea ac-compose-input" placeholder="Digite sua mensagem..." rows="1"
                                 autocomplete="off"></textarea>
@@ -234,20 +230,6 @@ if (function_exists('apollo_render_document_open')) {
                         <button class="ac-send-btn" title="Enviar" type="button">
                             <i class="ri-send-plane-2-fill"></i>
                         </button>
-                    </div>
-                </div>
-
-                <!-- GIF Picker Overlay -->
-                <div class="ac-gif-picker">
-                    <div class="ac-gif-header">
-                        <i class="ri-search-line"></i>
-                        <input type="text" class="apollo-input ac-gif-search" placeholder="Buscar GIFs..." autocomplete="off">
-                        <button class="ac-icon-btn ac-gif-close" type="button"><i class="ri-close-line"></i></button>
-                    </div>
-                    <div class="ac-gif-grid"></div>
-                    <div class="ac-gif-footer">
-                        <img src="https://www.gstatic.com/tenor/web/attribution/PB_tenor_logo_blue_horizontal.svg"
-                            alt="Tenor" height="16">
                     </div>
                 </div>
 

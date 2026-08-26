@@ -135,7 +135,8 @@ class ShortcodeRegistry
 
         // Admin.
         add_action('admin_notices', array($this, 'display_conflict_notices'));
-        add_action('admin_menu', array($this, 'add_admin_page'));
+        // Priority 20: apollo-admin registers the root menu at the default 10.
+        add_action('admin_menu', array($this, 'add_admin_page'), 20);
         add_action('admin_footer', array($this, 'render_shortcode_finder_modal'));
     }
 
@@ -551,10 +552,11 @@ class ShortcodeRegistry
 
     public function add_admin_page(): void
     {
+        // Moved off Tools 2026-08-25 — see apollo_admin_parent_slug().
         add_submenu_page(
-            'tools.php',
+            function_exists('apollo_admin_parent_slug') ? apollo_admin_parent_slug() : 'tools.php',
             __('Apollo Shortcodes', 'apollo-core'),
-            __('Apollo Shortcodes', 'apollo-core'),
+            __('Shortcodes', 'apollo-core'),
             'manage_options',
             'apollo-shortcodes',
             array($this, 'render_admin_page')

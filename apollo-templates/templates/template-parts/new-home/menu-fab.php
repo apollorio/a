@@ -49,8 +49,14 @@ $is_logged_in = is_user_logged_in();
     <a href="<?php echo esc_url(home_url('/mapa')); ?>" class="nh-sheet-item" role="menuitem">
         <i class="ri-map-pin-line"></i><?php esc_html_e('Mapa', 'apollo-templates'); ?>
     </a>
-    <a href="<?php echo esc_url(home_url('/classificados')); ?>" class="nh-sheet-item" role="menuitem">
-        <i class="ri-exchange-box-line"></i><?php esc_html_e('Classificados', 'apollo-templates'); ?>
+    <?php /* /classificados was DEAD — it 404'd to /erro/404/index.html (verified live
+             2026-08-25). apollo-adverts' canonical Marketplace route is /anuncios,
+             with /marketplace kept only as a back-compat alias
+             (09-plugins/apollo-adverts.json → pages). /classificados was never
+             registered anywhere; the plugin itself was renamed apollo-classifieds →
+             apollo-adverts and this link was left behind pointing at the old name. */ ?>
+    <a href="<?php echo esc_url(home_url('/anuncios')); ?>" class="nh-sheet-item" role="menuitem">
+        <i class="ri-exchange-box-line"></i><?php esc_html_e('Marketplace', 'apollo-templates'); ?>
     </a>
     <a href="https://plano.apollo.rio.br/" class="nh-sheet-item" role="menuitem" target="_blank" rel="noopener noreferrer">
         <i class="ri-home-heart-line"></i>Plano, creative studio

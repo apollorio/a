@@ -1,0 +1,2 @@
+{"sessionId":"959e0d","location":"view.event-dash.js:auditCharts","message":"charts fix audit","data":{"seasonSvg":true,"seasonBars":5,"genreBars":5,"tlDots":6,"tlRowBg":6,"tlDividers":8},"timestamp":1785236689130,"hypothesisId":"H-bars-tl","runId":"charts-fix-v3"}
+{"sessionId":"959e0d","location":"view.event-dash.js:auditCharts","message":"charts fix audit","data":{"seasonSvg":true,"seasonBars":5,"genreBars":5,"tlDots":6,"tlRowBg":6,"tlDividers":8},"timestamp":1785236911344,"hypothesisId":"H-bars-tl","runId":"charts-fix-v3"}

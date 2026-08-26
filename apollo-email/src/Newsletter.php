@@ -774,7 +774,7 @@ class Native_Newsletter
             array(
                 'methods'             => 'POST',
                 'callback'            => array(__CLASS__, 'rest_subscribe'),
-                'permission_callback' => '__return_true',
+                'permission_callback' => '__return_true', // Public by necessity — visitors subscribe while logged out. Verified in rest_subscribe(): wp_verify_nonce('wp_rest') + wp_verify_nonce('apollo_newsletter_subscribe'), plus transient throttles 5/10min per IP and 1/min per email.
             )
         );
 

@@ -240,6 +240,101 @@ final class MetaRegistry {
 					'show_in_rest' => true,
 					'sanitize'     => 'esc_url_raw',
 				),
+
+				// ═══════════════════════════════════════════════════════════════
+				// INTERNAL RANKING — 2026-08-24
+				// NEVER RENDER FRONTEND. 0 (worst/default) .. 10 (outstanding).
+				// Editorial signal set ONLY by an admin (manage_options) on the
+				// wp-admin single-event edit screen, right below the
+				// Publish/Update button — see apollo-events/src/Admin/RankMetabox.php.
+				// Consumed by apollo-telegram's event-selection logic (which event
+				// to surface/recommend) via apollo_event_get_int_rank() /
+				// apollo_event_get_top_ranked() — see apollo-events/includes/functions.php.
+				// show_in_rest is FALSE on purpose, same pattern as _mod_notes /
+				// _doc_cpf: unregistered from REST means it can never leak into
+				// any public template that reads events over REST, and it is
+				// invisible to the Gutenberg meta panel (which only lists
+				// show_in_rest=true fields). The classic metabox form below is the
+				// only write path, and it is capability-gated a second time.
+				// ═══════════════════════════════════════════════════════════════
+				'_event_int_rank'     => array(
+					'type'              => 'integer',
+					'description'       => 'INTERNAL USE ONLY — editorial ranking 0-10 used by apollo-telegram to decide which event to surface. 0 = baseline (default, worst), 10 = outstanding. Never rendered on any public/frontend surface.',
+					'single'            => true,
+					'show_in_rest'      => false,
+					'default'           => 0,
+					'auth_callback'     => function () {
+						return current_user_can( 'manage_options' );
+					},
+					'sanitize_callback' => function ( $value ) {
+						$value = is_numeric( $value ) ? (int) $value : 0;
+						return max( 0, min( 10, $value ) );
+					},
+				),
+
+				// ═══════════════════════════════════════════════════════════════
+				// INTERNAL VIBE TAGS — 2026-08-24
+				// NEVER RENDER FRONTEND. Five independent checkboxes, same admin
+				// spot as _event_int_rank (wp-admin single-event edit screen,
+				// below the Publish/Update button) — see
+				// apollo-events/src/Admin/RankMetabox.php. String-bool '1'/'',
+				// same convention as _event_is_gone / _event_highlighted.
+				// One canonical map (slug => meta key) lives in
+				// apollo_event_internal_tags() in apollo-events/includes/functions.php
+				// — that function is the single source of truth for the UI loop,
+				// the save handler, and every read helper below; this registry
+				// block must stay in sync with it if a tag is ever renamed/added.
+				// ═══════════════════════════════════════════════════════════════
+				'_event_tag_underground' => array(
+					'type'          => 'boolean',
+					'description'   => 'INTERNAL — vibe tag: Underground. Never rendered on any public/frontend surface.',
+					'single'        => true,
+					'show_in_rest'  => false,
+					'default'       => false,
+					'auth_callback' => function () {
+						return current_user_can( 'manage_options' );
+					},
+				),
+				'_event_tag_mainstream'  => array(
+					'type'          => 'boolean',
+					'description'   => 'INTERNAL — vibe tag: Mainstream. Never rendered on any public/frontend surface.',
+					'single'        => true,
+					'show_in_rest'  => false,
+					'default'       => false,
+					'auth_callback' => function () {
+						return current_user_can( 'manage_options' );
+					},
+				),
+				'_event_tag_comercial'   => array(
+					'type'          => 'boolean',
+					'description'   => 'INTERNAL — vibe tag: Comercial. Never rendered on any public/frontend surface.',
+					'single'        => true,
+					'show_in_rest'  => false,
+					'default'       => false,
+					'auth_callback' => function () {
+						return current_user_can( 'manage_options' );
+					},
+				),
+				'_event_tag_lgbtqia'     => array(
+					'type'          => 'boolean',
+					'description'   => 'INTERNAL — vibe tag: LGBTQIA+. Never rendered on any public/frontend surface.',
+					'single'        => true,
+					'show_in_rest'  => false,
+					'default'       => false,
+					'auth_callback' => function () {
+						return current_user_can( 'manage_options' );
+					},
+				),
+				'_event_tag_sexparty'    => array(
+					'type'          => 'boolean',
+					'description'   => 'INTERNAL — vibe tag: Sex Party. Never rendered on any public/frontend surface.',
+					'single'        => true,
+					'show_in_rest'  => false,
+					'default'       => false,
+					'auth_callback' => function () {
+						return current_user_can( 'manage_options' );
+					},
+				),
 			),
 
 			// ─────────────────────────────────────────────────────────────

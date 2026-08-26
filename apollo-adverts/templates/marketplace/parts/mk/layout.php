@@ -48,12 +48,9 @@ $mk = __DIR__ . '/';
 <script>
     (function () {
         'use strict';
-        /* Filter pills — client-side, operating on already-rendered cards.
-           Cards carry their domain terms server-side, so filtering never
-           requires a round trip and never re-reveals anything the server
-           chose to withhold. */
+
+        /* Filter pills — client-side, operating on already-rendered cards. */
         var pills = document.querySelectorAll('[data-mk-filter]');
-        if (!pills.length) return;
         pills.forEach(function (p) {
             p.addEventListener('click', function () {
                 pills.forEach(function (x) { x.classList.remove('is-active'); });
@@ -64,6 +61,27 @@ $mk = __DIR__ . '/';
                     card.style.display = (f === 'all' || d.indexOf(f) !== -1) ? '' : 'none';
                 });
             });
+        });
+
+        /* Each advert opens its own URL (/anuncio/{slug}/) — not a popup. */
+        function goPermalink(el) {
+            var url = el && el.getAttribute('data-mk-permalink');
+            if (url) { window.location.href = url; }
+        }
+
+        document.addEventListener('click', function (e) {
+            if (e.target.closest('a, button, [data-mk-ticket-close]')) return;
+            var card = e.target.closest('[data-mk-permalink]');
+            if (!card) return;
+            e.preventDefault();
+            goPermalink(card);
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key !== 'Enter' && e.key !== ' ') return;
+            if (!e.target.matches || !e.target.matches('[data-mk-permalink]')) return;
+            e.preventDefault();
+            goPermalink(e.target);
         });
     })();
 </script>

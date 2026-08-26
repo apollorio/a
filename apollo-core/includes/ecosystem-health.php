@@ -182,21 +182,23 @@ if ( ! function_exists( 'apollo_health_report' ) ) {
 
 if ( ! function_exists( 'apollo_health_menu' ) ) {
 	/**
-	 * Tools → Apollo Health.
+	 * Apollo → Health. Moved off Tools 2026-08-25 — see apollo_admin_parent_slug().
 	 *
 	 * @return void
 	 */
 	function apollo_health_menu(): void {
-		add_management_page(
+		add_submenu_page(
+			function_exists( 'apollo_admin_parent_slug' ) ? apollo_admin_parent_slug() : 'tools.php',
 			__( 'Apollo Health', 'apollo-core' ),
-			__( 'Apollo Health', 'apollo-core' ),
+			__( 'Health', 'apollo-core' ),
 			'manage_options',
 			'apollo-health',
 			'apollo_health_render'
 		);
 	}
 }
-add_action( 'admin_menu', 'apollo_health_menu' );
+// Priority 20: apollo-admin registers the root menu at the default 10.
+add_action( 'admin_menu', 'apollo_health_menu', 20 );
 
 if ( ! function_exists( 'apollo_health_render' ) ) {
 	/**

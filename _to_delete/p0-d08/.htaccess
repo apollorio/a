@@ -1,0 +1,37 @@
+# ═══════════════════════════════════════════════════════════════════════════
+#  wp-content/plugins/.htaccess — apollo::rio
+#
+#  Installed 2026-08-20 (plan-001 · P0-2 containment).
+#
+#  Host is LiteSpeed (Apache 2.4 semantics). Written to that host's proven
+#  constraints, taken from the root .htaccess header:
+#    · NO <IfModule> — a container broke LiteSpeed's line parser → 500 site-wide
+#    · NO Options    — outside this host's AllowOverride scope, proven 500
+#    · NO mod_rewrite here — turning RewriteEngine on in a subdirectory would
+#      drop the root's rewrite context for every request under plugins/
+#  Only <FilesMatch> + Require, which the root file already proves works.
+#
+#  This is containment, not a fix. It hides what is exposed; it does not
+#  un-expose it. Rotate the credential (plan-001 P0-1) regardless.
+# ═══════════════════════════════════════════════════════════════════════════
+
+# 1 · Extensions that are never a legitimate plugin asset.
+<FilesMatch "\.(py|sh|bash|ps1|bak|sql|log|ini|env|yml|yaml|lock|ffs_db|md|dist|sqlite|db)$">
+    Require all denied
+</FilesMatch>
+
+# 2 · Scratch and diagnostic naming conventions used in this workspace.
+#     Deliberately prefix-anchored: no shipped asset starts with these.
+<FilesMatch "^(_tmp_|_ae_|_run_|_debug|_p2-|debug-|_backup)">
+    Require all denied
+</FilesMatch>
+
+# 3 · Dependency manifests — they leak versions and paths.
+<FilesMatch "^(composer\.(json|lock)|package(-lock)?\.json|yarn\.lock|phpcs\.xml.*|phpunit\.xml.*|\.eslintrc.*|\.editorconfig)$">
+    Require all denied
+</FilesMatch>
+
+# 4 · Dotfiles.
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>

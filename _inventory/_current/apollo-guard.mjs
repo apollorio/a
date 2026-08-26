@@ -28,7 +28,14 @@
  *   · every rule cites its source chapter, so a finding is arguable
  *   · a rule that cannot be mechanised honestly is MEDIUM, not CRITICAL
  *
-  * @version 1.4.0
+ * @version 1.5.0
+ *
+ * 1.5.0  D03 split by evidence. A `human_time_diff()` sitting in the fallback branch of a
+ *        `function_exists('apollo_time_ago*')` ternary is correct defensive code, not a
+ *        defect — rewriting it calls the function the guard just tested for and fatals when
+ *        apollo-core is late or off. Those drop to LOW with a do-not-sweep message; a direct
+ *        render stays HIGH. Also enforces the half of the ban that was never checked: a
+ *        literal "atrás"/"ago" appended to apollo_time_ago(), which is suffix-free by design.
  */
 
 import fs from 'node:fs';
@@ -339,13 +346,54 @@ rule({
     const out = [];
     lines.forEach((l, i) => {
       if (cmt[i]) return;
-      if (!/human_time_diff/.test(l)) return;
-      const guarded = /function_exists\s*\(\s*['"]apollo_time_ago/.test(l);
-      out.push({
-        rel, line: i + 1,
-        msg: guarded ? 'human_time_diff() as a fallback branch' : 'human_time_diff() rendered directly',
-        evidence: l.trim().slice(0, 140),
-      });
+
+      // ── the guarded fallback is CORRECT CODE, and the rule used to say otherwise.
+      //
+      //    function_exists('apollo_time_ago_html')
+      //        ? apollo_time_ago_html( get_the_date('Y-m-d H:i:s') )   // primary — already right
+      //        : human_time_diff( get_the_time('U'), time() )          // fallback — fires here
+      //
+      //    Fourteen of the twenty-two findings this rule produced on 2026-08-20 were that
+      //    fallback branch. An adversarial review on 2026-08-25 proved that "fixing" them
+      //    mechanically writes  function_exists('apollo_time_ago') ? … : apollo_time_ago(…)
+      //    — calling the very function whose absence the guard just tested for, which is a
+      //    fatal the moment apollo-core is deactivated or loads late. The branch exists to
+      //    survive exactly that.
+      //
+      //    So: report it, because it is still a second time format living in the tree, but
+      //    at LOW, and say plainly that it must not be swept. A rule that cannot be
+      //    mechanised honestly is not HIGH.
+      //
+      //    The ternary is often written across three lines, so look back two lines, not one.
+      if (/human_time_diff/.test(l)) {
+        const window = [lines[i - 2], lines[i - 1], l].filter(Boolean).join('\n');
+        const guarded = /function_exists\s*\(\s*['"]apollo_time_ago/.test(window);
+        out.push({
+          rel, line: i + 1,
+          sev: guarded ? 'LOW' : 'HIGH',
+          msg: guarded
+            ? 'guarded fallback branch — correct defensive code, do NOT rewrite mechanically'
+            : 'human_time_diff() rendered directly',
+          evidence: l.trim().slice(0, 140),
+        });
+        return;
+      }
+
+      // ── the suffix half of the ban, which this rule never enforced.
+      //    DOCTRINE bans human_time_diff() *and* the literals " atrás" / " ago"; only the
+      //    first was ever checked, so the two disagreed and the doctrine says the guard is
+      //    then the bug. Anchored to a line that also calls the canonical helper, because a
+      //    bare scan for " atrás" floods on Portuguese prose and teaches people to ignore it.
+      //    apollo_time_ago() returns "2h" with no suffix by design; appending one forks the
+      //    rendered form across the site.
+      if (/apollo_time_ago(_html)?\s*\(/.test(l) && /['"]\s*(atrás|atras|ago)\s*['"]/.test(l)) {
+        out.push({
+          rel, line: i + 1,
+          sev: 'MEDIUM',
+          msg: 'suffix appended to apollo_time_ago(), which is suffix-free by design',
+          evidence: l.trim().slice(0, 140),
+        });
+      }
     });
     return out;
   },

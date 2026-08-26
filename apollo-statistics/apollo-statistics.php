@@ -4,7 +4,7 @@
  * Plugin Name: Apollo Statistics
  * Plugin URI:  https://apollo.rio.br
  * Description: Ultra Modular Pro Analytics Engine — 15 MetricGroup classes, 68 plug-and-play metric instances, PostHog-inspired tracker, amCharts 5 visualizations, gamification bridge. Covers ALL 27 Apollo plugins.
- * Version:     2.0.6
+ * Version:     2.0.7
  * Author:      Apollo RIO
  * Author URI:  https://apollo.rio.br
  * Text Domain: apollo-statistics
@@ -34,7 +34,7 @@ if (! defined('ABSPATH')) {
 // ─────────────────────────────────────────────────────────────
 // Constantes do plugin
 // ─────────────────────────────────────────────────────────────
-define('APOLLO_STATS_VERSION', '2.0.6');
+define('APOLLO_STATS_VERSION', '2.0.7');
 define('APOLLO_STATS_PATH', plugin_dir_path(__FILE__));
 define('APOLLO_STATS_URL', plugin_dir_url(__FILE__));
 define('APOLLO_STATS_FILE', __FILE__);

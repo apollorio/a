@@ -4,7 +4,7 @@
  * Plugin Name: Apollo Login
  * Plugin URI: https://apollo.rio.br/plugins/apollo-login
  * Description: Auth: Login, Register, Password Reset, MANDATORY Aptitude Quiz (Pattern, Simon, Ethics, Reaction), URL Protection (Hide My WP native), Rate Limiting
- * Version: 1.0.42
+ * Version: 1.0.43
  * Author: Apollo::Rio
  * Author URI: https://apollo.rio.br
  * License: Proprietary
@@ -27,7 +27,7 @@ if (! defined('ABSPATH')) {
 }
 
 // Plugin constants.
-define('APOLLO_LOGIN_VERSION', '1.0.42');
+define('APOLLO_LOGIN_VERSION', '1.0.43');
 define('APOLLO_LOGIN_FILE', __FILE__);
 define('APOLLO_LOGIN_DIR', plugin_dir_path(__FILE__));
 define('APOLLO_LOGIN_URL', plugin_dir_url(__FILE__));

@@ -3,8 +3,12 @@
 /**
  * Template Part: Ticket Card (Repasse)
  *
- * Carousel-ready ticket card with header block, rip perforation, and chat modal trigger.
- * Meta keys: registry-compliant _classified_* prefix.
+ * Carousel-ready ticket card. Primary open = this advert's own permalink
+ * (/anuncio/{slug}/). Chat control goes through the safety contact URL
+ * (users-in-common gate) — never mints a thread from the grid.
+ *
+ * When $mk_single_mode is true (embedded on the single), the card is display-
+ * only: no permalink navigation, no popup attrs.
  *
  * @package Apollo\Adverts
  */
@@ -14,6 +18,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $post_id         = get_the_ID();
+$permalink       = (string) get_permalink( $post_id );
+$mk_single_mode  = ! empty( $mk_single_mode );
 // Seller identity is member-only — never built/printed for guests.
 $is_logged_in_viewer = is_user_logged_in();
 $author_id       = $is_logged_in_viewer ? get_the_author_meta( 'ID' ) : 0;
@@ -31,14 +37,26 @@ $ticket_image   = get_the_post_thumbnail_url( $post_id, 'medium' ) ?: 'https://i
 $intent_terms = wp_get_post_terms( $post_id, 'classified_intent', array( 'fields' => 'names' ) );
 $intent_label = ! is_wp_error( $intent_terms ) && ! empty( $intent_terms ) ? $intent_terms[0] : 'REPASSE';
 
-// Domain terms drive the marketplace filter pills. Rendered as a data
-// attribute so filtering is client-side over already-rendered cards and can
-// never re-reveal anything the server chose to withhold.
 $mk_domains = function_exists( 'get_the_terms' ) ? get_the_terms( $post_id, defined( 'APOLLO_TAX_CLASSIFIED_DOMAIN' ) ? APOLLO_TAX_CLASSIFIED_DOMAIN : 'classified_domain' ) : array();
 $mk_domains = is_wp_error( $mk_domains ) || empty( $mk_domains ) ? '' : implode( ' ', wp_list_pluck( $mk_domains, 'slug' ) );
+
+$contact_url = function_exists( 'apollo_adverts_contact_url' )
+	? apollo_adverts_contact_url( (int) $post_id )
+	: $permalink;
 ?>
 
-<article type="ticket" class="carousel-item reveal-up" data-mk-domains="<?php echo esc_attr( $mk_domains ); ?>" data-classified-id="<?php echo esc_attr( $post_id ); ?>">
+<article
+	type="ticket"
+	class="carousel-item reveal-up"
+	data-mk-domains="<?php echo esc_attr( $mk_domains ); ?>"
+	data-classified-id="<?php echo esc_attr( (string) $post_id ); ?>"
+	<?php if ( ! $mk_single_mode ) : ?>
+		data-mk-permalink="<?php echo esc_url( $permalink ); ?>"
+		tabindex="0"
+		role="link"
+		aria-label="<?php echo esc_attr( sprintf( __( 'Abrir anúncio: %s', 'apollo-adverts' ), $event_title ) ); ?>"
+	<?php endif; ?>
+>
 	<div class="ticket-header-block">
 		<?php echo esc_html( mb_strtoupper( $intent_label ) ); ?> &#9642; RE-SELL &#9642; REVENTA
 	</div>
@@ -72,8 +90,6 @@ $mk_domains = is_wp_error( $mk_domains ) || empty( $mk_domains ) ? '' : implode(
 				<?php endif; ?>
 			</div>
 			<?php if ( $ticket_qty > 1 ) : ?>
-				<?php /* Quantity was collected by the sell form from day one but
-				         never stored, so it never reached this card. */ ?>
 				<div class="ticket-qty">
 					<?php
 					printf(
@@ -96,23 +112,24 @@ $mk_domains = is_wp_error( $mk_domains ) || empty( $mk_domains ) ? '' : implode(
 
 	<div class="bottom">
 		<div class="barcode"></div>
-		<?php if ( $is_logged_in_viewer ) : ?>
-			<button
-				class="btn-chat-ticket btn-open-modal"
-				data-a-user="<?php echo esc_attr( (string) $author_id ); ?>"
-				data-classified-id="<?php echo esc_attr( $post_id ); ?>"
-				data-username="<?php echo esc_attr( $author_username ); ?>"
-			>
-				<i class="ri-message-3-line"></i>
-			</button>
-		<?php else : ?>
-			<a
-				href="<?php echo esc_url( home_url( '/acesso?redirect=' . rawurlencode( get_permalink( $post_id ) ) ) ); ?>"
-				class="btn-chat-ticket is-locked"
-				aria-label="<?php esc_attr_e( 'Entre para conversar', 'apollo-adverts' ); ?>"
-			>
-				<i class="ri-lock-2-line"></i>
-			</a>
+		<?php if ( ! $mk_single_mode ) : ?>
+			<?php if ( $is_logged_in_viewer ) : ?>
+				<a
+					href="<?php echo esc_url( $contact_url ); ?>"
+					class="btn-chat-ticket"
+					aria-label="<?php esc_attr_e( 'Falar com o vendedor', 'apollo-adverts' ); ?>"
+				>
+					<i class="ri-message-3-line"></i>
+				</a>
+			<?php else : ?>
+				<a
+					href="<?php echo esc_url( $contact_url ); ?>"
+					class="btn-chat-ticket is-locked"
+					aria-label="<?php esc_attr_e( 'Entre para conversar', 'apollo-adverts' ); ?>"
+				>
+					<i class="ri-lock-2-line"></i>
+				</a>
+			<?php endif; ?>
 		<?php endif; ?>
 	</div>
 </article>

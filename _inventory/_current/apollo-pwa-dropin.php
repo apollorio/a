@@ -153,7 +153,12 @@ if ( ! function_exists( 'apollo_pwa_serve' ) ) {
 
 		if ( 'manifest' === $what ) {
 			header( 'Content-Type: application/manifest+json; charset=utf-8' );
+			/* application/manifest+json has no ExpiresByType entry in the root
+			 * .htaccess, so it would fall to ExpiresDefault "access plus 7 days"
+			 * — an icon or name change would take a week to reach anyone. An
+			 * explicit Expires makes mod_expires stand down. One hour is enough. */
 			header( 'Cache-Control: public, max-age=3600' );
+			header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + 3600 ) . ' GMT' );
 			echo wp_json_encode( apollo_pwa_manifest(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 			exit;
 		}
@@ -162,8 +167,29 @@ if ( ! function_exists( 'apollo_pwa_serve' ) ) {
 			header( 'Content-Type: application/javascript; charset=utf-8' );
 			// Without this the worker's scope is whatever directory served it.
 			header( 'Service-Worker-Allowed: /' );
-			// Never cache the worker itself: a stale worker is unfixable remotely.
-			header( 'Cache-Control: no-cache, no-store, must-revalidate' );
+
+			/* THE WORKER MUST NEVER BE CACHED, AND THIS SITE FIGHTS THAT.
+			 *
+			 * The production root .htaccess (v3.1.0) does two things that would
+			 * freeze this file permanently:
+			 *   §5  mod_expires  ExpiresByType application/javascript "access plus 1 year"
+			 *   §3.12 Header set Cache-Control "public, max-age=31536000, immutable"
+			 *         on \.(js|mjs|css|…)$
+			 * A stale service worker is the one bug that cannot be fixed by
+			 * deploying — the fix itself is behind the stale worker.
+			 *
+			 * Three defences, because one is not enough here:
+			 *   1. Cache-Control: no-store        — our intent, stated
+			 *   2. Expires: 0                     — mod_expires SKIPS a response
+			 *      that already carries an Expires header. This is the line that
+			 *      actually beats §5; without it mod_expires wins.
+			 *   3. updateViaCache: 'none' at the registration call site (below),
+			 *      which tells the browser to bypass the HTTP cache for the
+			 *      worker script regardless of what any header says.
+			 */
+			header( 'Cache-Control: no-cache, no-store, must-revalidate, max-age=0' );
+			header( 'Expires: 0' );
+			header( 'Pragma: no-cache' );
 			apollo_pwa_print_sw();
 			exit;
 		}
@@ -215,7 +241,11 @@ if ( ! function_exists( 'apollo_pwa_register_sw_client' ) ) {
 				$nonce_attr = ' nonce="' . esc_attr( $n ) . '"';
 			}
 		}
-		echo '<script' . $nonce_attr . '>if("serviceWorker" in navigator){addEventListener("load",function(){navigator.serviceWorker.register("/sw.js",{scope:"/"}).catch(function(){})})}</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		/* updateViaCache:'none' — the browser bypasses its HTTP cache for the
+		 * worker script itself on every update check. Belt to the Expires
+		 * braces above: even if a CDN or a future .htaccess edit re-imposes a
+		 * long TTL, the worker still updates. */
+		echo '<script' . $nonce_attr . '>if("serviceWorker" in navigator){addEventListener("load",function(){navigator.serviceWorker.register("/sw.js",{scope:"/",updateViaCache:"none"}).catch(function(){})})}</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 	add_action( 'wp_footer', 'apollo_pwa_register_sw_client', 99 );
 	add_action( 'apollo/canvas/footer', 'apollo_pwa_register_sw_client', 99 );

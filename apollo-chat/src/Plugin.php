@@ -3,14 +3,11 @@
 /**
  * Apollo Chat — Main Plugin Class v2.0
  *
- * Premium instant messaging:
+ * Premium instant messaging — TEXT ONLY:
  * - Real-time AJAX polling (3s) with BroadcastChannel cross-tab sync
  * - Typing indicators (3s debounce)
  * - Read receipts (sent → delivered → read)
- * - File/image/audio/video attachments with drag-drop + paste
- * - Voice messages (MediaRecorder)
  * - Emoji picker (native Unicode)
- * - GIF search & send (Tenor API proxy)
  * - Message reactions
  * - Message editing & deletion
  * - Reply-to (quote) threading
@@ -19,6 +16,24 @@
  * - Sound + browser notifications
  * - Group conversations
  * - User blocking
+ *
+ * NO ATTACHMENTS OF ANY KIND (policy set 2026-08-25): no files, no images,
+ * no audio/video, no GIFs, no voice messages. This plugin's docblocks and
+ * plugin header used to advertise file/voice/GIF attachments — that was
+ * true of an earlier iteration and is no longer the product. Enforcement is
+ * server-side, not just UI-hiding:
+ *   - rest_send_message() ignores any client-supplied 'type' param and
+ *     always writes message_type = 'text' — a raw POST straight to
+ *     /chat/send bypassing the UI still cannot create a non-text message.
+ *   - rest_upload() (POST /chat/upload) always returns 403. The old body of
+ *     this method fed multipart uploads straight into the WP media library
+ *     via media_handle_upload() — removed, not just gated.
+ *   - rest_gif_search() (GET /chat/gif-search, the old Tenor API proxy)
+ *     always returns 403.
+ * The attachment_id column/apollo_chat_attachments table and the
+ * message-bubble render branch for m.attachment still exist purely to
+ * display any attachment-bearing rows already in the database from before
+ * this policy — that is read-only backward compat, not a way back in.
  *
  * REST namespace: apollo/v1
  * Pages: /mensagens, /mensagens/{id}
@@ -504,7 +519,14 @@ final class Plugin
         $message    = sanitize_textarea_field($req->get_param('message') ?? '');
         $subject    = sanitize_text_field($req->get_param('subject') ?? '');
         $reply_to   = $req->get_param('reply_to_id') ? (int) $req->get_param('reply_to_id') : 0;
-        $msg_type   = sanitize_text_field($req->get_param('type') ?? 'text');
+        // TEXT-ONLY POLICY (2026-08-25): message type is never taken from the
+        // client. Whatever the request claims (`type=gif`, an attachment_id,
+        // etc.) is ignored — every message this endpoint creates is plain
+        // 'text'. This is the actual enforcement point: the GIF picker and
+        // /chat/upload are also disabled below, but even a raw POST straight
+        // to this route (bypassing the UI entirely) cannot create a non-text
+        // message. See class docblock for the full policy.
+        $msg_type   = 'text';
         $is_group   = (bool) $req->get_param('is_group');
         $group_name = sanitize_text_field($req->get_param('group_name') ?? '');
 
@@ -947,94 +969,19 @@ final class Plugin
         );
     }
 
-	// ─── GIF Search — Tenor API Proxy ──────────────────────────────
+	// ─── GIF Search — DISABLED (text-only policy, 2026-08-25) ──────
     /**
-     * Server-side proxy for Tenor GIF API v2.
-     * Keeps the API key hidden from the client.
-     *
-     * GET /chat/gif-search?q=funny&pos=&limit=20
-     *
-     * Configure key: WP Admin → Settings → General →
-     *   define('APOLLO_TENOR_API_KEY', 'YOUR_KEY') in wp-config.php
-     *   or update_option('apollo_tenor_api_key', 'YOUR_KEY')
+     * GET /chat/gif-search — DISABLED. A GIF is media, not text, so this
+     * route (formerly a Tenor API v2 proxy) is intentionally inert. Kept
+     * registered so an old client gets a clear 403 instead of a 404.
+     * See class docblock for the full text-only policy.
      */
     public function rest_gif_search(\WP_REST_Request $req): \WP_REST_Response
     {
-        $q     = $req->get_param('q');
-        $pos   = $req->get_param('pos');
-        $limit = min((int) $req->get_param('limit'), 50) ?: 20;
-
-        $api_key = defined('APOLLO_TENOR_API_KEY')
-            ? APOLLO_TENOR_API_KEY
-            : get_option('apollo_tenor_api_key', '');
-
-        if (empty($api_key)) {
-            return new \WP_REST_Response(array('error' => 'Tenor API key not configured'), 500);
-        }
-
-        // Build Tenor v2 URL
-        $endpoint = empty($q) ? 'featured' : 'search';
-        $params   = array(
-            'key'           => $api_key,
-            'client_key'    => 'apollo_chat',
-            'q'             => $q,
-            'limit'         => $limit,
-            'media_filter'  => 'tinygif,gif',
-            'contentfilter' => 'medium',
-            'locale'        => 'pt_BR',
+        return new \WP_REST_Response(
+            array('error' => 'Envio de GIFs não é permitido. O chat é somente texto.'),
+            403
         );
-        if ($pos) {
-            $params['pos'] = $pos;
-        }
-
-        $url = 'https://tenor.googleapis.com/v2/' . $endpoint . '?' . http_build_query($params);
-
-        // Cache for 10 minutes to reduce API calls
-        $cache_key = 'apollo_gif_' . md5($url);
-        $cached    = get_transient($cache_key);
-        if ($cached !== false) {
-            return new \WP_REST_Response($cached, 200);
-        }
-
-        $response = wp_remote_get(
-            $url,
-            array(
-                'timeout'   => 8,
-                'sslverify' => true,
-            )
-        );
-
-        if (is_wp_error($response)) {
-            return new \WP_REST_Response(array('error' => 'Erro ao buscar GIFs'), 502);
-        }
-
-        $body = json_decode(wp_remote_retrieve_body($response), true);
-        if (empty($body) || isset($body['error'])) {
-            return new \WP_REST_Response(array('error' => 'Tenor API error'), 502);
-        }
-
-        // Transform to minimal payload (only what the client needs)
-        $gifs = array();
-        foreach (($body['results'] ?? array()) as $item) {
-            $gif_media  = $item['media_formats']['gif'] ?? array();
-            $tiny_media = $item['media_formats']['tinygif'] ?? array();
-            $gifs[]     = array(
-                'id'      => $item['id'] ?? '',
-                'title'   => sanitize_text_field($item['content_description'] ?? ''),
-                'url'     => esc_url($gif_media['url'] ?? ''),
-                'preview' => esc_url($tiny_media['url'] ?? $gif_media['url'] ?? ''),
-                'dims'    => $tiny_media['dims'] ?? $gif_media['dims'] ?? array(200, 200),
-            );
-        }
-
-        $result = array(
-            'results' => $gifs,
-            'next'    => $body['next'] ?? '',
-        );
-
-        set_transient($cache_key, $result, 10 * MINUTE_IN_SECONDS);
-
-        return new \WP_REST_Response($result, 200);
     }
 
 	// ─── Spam Report Handlers ─────────────────────────────────────────
@@ -1101,84 +1048,23 @@ final class Plugin
     }
 
     /**
-     * POST /chat/upload — File/image/audio/video upload handler.
+     * POST /chat/upload — DISABLED (text-only policy, 2026-08-25).
      *
-     * Accepts multipart/form-data with a 'file' field.
-     * Stores via WordPress media library and records in apollo_chat_attachments.
-     * Replaces the legacy wp_ajax_apollo_chat_upload AJAX action.
+     * apollo-chat is text-only: no file, image, audio or video attachments,
+     * no GIFs, no voice messages. This route is kept registered (rather than
+     * removed) so a client that still POSTs here gets a clear, explicit
+     * rejection instead of a generic 404 — the old implementation, which
+     * uploaded straight into the WordPress media library via
+     * media_handle_upload(), is intentionally gone. See class docblock.
      *
-     * @param \WP_REST_Request $req Incoming REST request.
-     * @return \WP_REST_Response    Attachment URL + metadata, or error.
+     * @param \WP_REST_Request $req Incoming REST request (ignored).
+     * @return \WP_REST_Response    403 — attachments are not allowed.
      */
     public function rest_upload(\WP_REST_Request $req): \WP_REST_Response
     {
-        if (empty($_FILES['file'])) {
-            return new \WP_REST_Response(array('error' => 'Nenhum arquivo enviado.'), 400);
-        }
-
-        if (! function_exists('media_handle_upload')) {
-            require_once ABSPATH . 'wp-admin/includes/image.php';
-            require_once ABSPATH . 'wp-admin/includes/file.php';
-            require_once ABSPATH . 'wp-admin/includes/media.php';
-        }
-
-        $att_id = media_handle_upload('file', 0);
-
-        if (is_wp_error($att_id)) {
-            return new \WP_REST_Response(array('error' => $att_id->get_error_message()), 500);
-        }
-
-        $mime = get_post_mime_type($att_id);
-        if (str_starts_with($mime, 'image/')) {
-            $file_type = 'image';
-        } elseif (str_starts_with($mime, 'video/')) {
-            $file_type = 'video';
-        } elseif (str_starts_with($mime, 'audio/')) {
-            $file_type = 'audio';
-        } else {
-            $file_type = 'file';
-        }
-
-        $file_url  = wp_get_attachment_url($att_id);
-        $file_path = get_attached_file($att_id);
-        $file_size = $file_path ? filesize($file_path) : 0;
-        $thumb_url = 'image' === $file_type
-            ? (wp_get_attachment_image_url($att_id, 'medium') ?: $file_url)
-            : '';
-
-        // Record in apollo_chat_attachments
-        global $wpdb;
-        $wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-            $wpdb->prefix . 'apollo_chat_attachments',
-            array(
-                'message_id'       => 0, // linked later when message is sent
-                'user_id'          => get_current_user_id(),
-                'wp_attachment_id' => $att_id,
-                'file_url'         => $file_url,
-                'file_name'        => get_the_title($att_id),
-                'file_type'        => $file_type,
-                'mime_type'        => $mime,
-                'file_size'        => (int) $file_size,
-                'thumb_url'        => $thumb_url,
-                'created_at'       => current_time('mysql'),
-            ),
-            array('%d', '%d', '%d', '%s', '%s', '%s', '%s', '%d', '%s', '%s')
-        );
-
-        $attachment_record_id = (int) $wpdb->insert_id;
-
         return new \WP_REST_Response(
-            array(
-                'id'        => $attachment_record_id,
-                'att_id'    => $att_id,
-                'url'       => $file_url,
-                'thumb'     => $thumb_url,
-                'type'      => $file_type,
-                'mime'      => $mime,
-                'size'      => $file_size,
-                'name'      => get_the_title($att_id),
-            ),
-            201
+            array('error' => 'Anexos não são permitidos. O chat é somente texto.'),
+            403
         );
     }
 

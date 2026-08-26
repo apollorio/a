@@ -1,0 +1,737 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Apollo Operations Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap">
+
+<style>
+/* ─────────────────────────────────────────────────────────────
+   Apollo Operations Console
+   Tokens are the project's own DS: Syne / Space Grotesk / Space Mono,
+   #FF9820. Light is the base; dark redefines the same names. No colour
+   is declared anywhere except in these three blocks.
+   ───────────────────────────────────────────────────────────── */
+:root{
+  --ground:#FAF9F7; --surface:#FFFFFF; --raised:#F3F1ED; --sunk:#EEEBE5;
+  --line:#E4E0D9; --line-soft:#EDEAE4;
+  --ink:#17171A; --ink-2:#3D3D44; --muted:#77747D; --faint:#A5A2AA;
+  --brand:#E07600; --brand-ink:#B45E00; --brand-wash:#FDF1E2;
+  --alarm:#C8283C; --alarm-wash:#FBE9EB;
+  --warn:#9A6700; --warn-wash:#FCF3DC;
+  --ok:#1E7A4E; --ok-wash:#E7F3EC;
+  --ff-d:"Syne","Space Grotesk",system-ui,sans-serif;
+  --ff-b:"Space Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --ff-m:"Space Mono",ui-monospace,Menlo,Consolas,monospace;
+  --on-brand:#FFFFFF; --r:13px; --r-sm:8px; --r-xs:5px; --r-pill:999px;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --shadow:0 1px 2px rgba(23,23,26,.04), 0 10px 30px -22px rgba(23,23,26,.4);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0D0D0F; --surface:#151518; --raised:#1C1C20; --sunk:#222227;
+    --line:#2A2A30; --line-soft:#212126;
+    --ink:#F2F0EC; --ink-2:#C8C5C0; --muted:#8E8B93; --faint:#615E67;
+    --brand:#FF9820; --brand-ink:#FFB257; --brand-wash:#241A0C;
+    --alarm:#FF5F72; --alarm-wash:#2A1418;
+    --warn:#E0A63A; --warn-wash:#241D0E;
+    --ok:#54C48A; --ok-wash:#0F1E17;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 12px 34px -24px #000;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0D0D0F; --surface:#151518; --raised:#1C1C20; --sunk:#222227;
+  --line:#2A2A30; --line-soft:#212126;
+  --ink:#F2F0EC; --ink-2:#C8C5C0; --muted:#8E8B93; --faint:#615E67;
+  --brand:#FF9820; --brand-ink:#FFB257; --brand-wash:#241A0C;
+  --alarm:#FF5F72; --alarm-wash:#2A1418;
+  --warn:#E0A63A; --warn-wash:#241D0E;
+  --ok:#54C48A; --ok-wash:#0F1E17;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 12px 34px -24px #000;
+}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--ff-b);
+  font-size:14.5px;line-height:1.58;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+@media(max-width:700px){.wrap{padding:0 14px}}
+h1,h2,h3{font-family:var(--ff-d);margin:0;text-wrap:balance}
+h1{font-size:clamp(24px,3.4vw,36px);font-weight:800;letter-spacing:-.035em;line-height:1.05}
+h2{font-size:17px;font-weight:700;letter-spacing:-.02em}
+h3{font-size:14.5px;font-weight:700;letter-spacing:-.01em;line-height:1.35}
+code,.mono{font-family:var(--ff-m)}
+code{font-size:.85em;background:var(--raised);padding:.1em .34em;border-radius:var(--r-xs);
+  border:1px solid var(--line-soft);color:var(--ink-2);word-break:break-word}
+a{color:var(--brand-ink)}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:var(--r-xs)}
+.eyebrow{font-family:var(--ff-m);font-size:9.5px;font-weight:700;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--muted);margin:0}
+
+/* ── masthead ── */
+header{background:var(--surface);border-bottom:1px solid var(--line)}
+.mast{display:flex;gap:20px;align-items:flex-end;flex-wrap:wrap;padding:26px 0 20px}
+.mast .id{flex:1;min-width:230px}
+.mast .id .eyebrow{margin-bottom:9px;color:var(--brand)}
+.mast .id p{margin:8px 0 0;color:var(--ink-2);max-width:56ch;font-size:14px}
+
+/* ── KPI strip ── */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));
+  border-top:1px solid var(--line-soft)}
+.kpi{padding:14px 16px;border-right:1px solid var(--line-soft);cursor:pointer;
+  transition:background .15s ease;background:none;border-top:0;border-bottom:0;border-left:0;
+  text-align:left;font-family:inherit}
+.kpi:last-child{border-right:0}
+.kpi:hover{background:var(--raised)}
+.kpi .n{font-family:var(--ff-d);font-size:27px;font-weight:800;letter-spacing:-.03em;
+  line-height:1;font-variant-numeric:tabular-nums;display:block;margin-bottom:5px;color:var(--ink)}
+.kpi .l{font-family:var(--ff-m);font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
+.kpi.c .n{color:var(--alarm)} .kpi.h .n{color:var(--brand)} .kpi.g .n{color:var(--ok)}
+
+
+/* ── command bar ── */
+.cmd{position:sticky;top:0;z-index:40;background:var(--ground);
+  border-bottom:1px solid var(--line);padding:10px 0}
+.cmdrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tabs{display:flex;gap:4px;background:var(--raised);padding:3px;border-radius:var(--r-pill);
+  border:1px solid var(--line-soft)}
+.tab{font-family:var(--ff-m);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  padding:7px 13px;border-radius:var(--r-pill);cursor:pointer;background:transparent;
+  color:var(--muted);border:0;transition:all .16s ease;white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{background:var(--surface);color:var(--brand);box-shadow:var(--shadow)}
+.search{flex:1;min-width:160px;display:flex;align-items:center;gap:8px;background:var(--surface);
+  border:1px solid var(--line);border-radius:var(--r-pill);padding:0 14px;height:36px}
+.search input{flex:1;border:0;background:none;outline:none;font-family:var(--ff-b);
+  font-size:13.5px;color:var(--ink);min-width:0}
+.search input::placeholder{color:var(--faint)}
+.search .k{font-family:var(--ff-m);font-size:10px;color:var(--faint);border:1px solid var(--line);
+  border-radius:4px;padding:1px 5px}
+.btn{font-family:var(--ff-m);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  padding:8px 12px;border-radius:var(--r-pill);cursor:pointer;background:var(--surface);
+  color:var(--ink-2);border:1px solid var(--line);transition:all .16s ease;white-space:nowrap}
+.btn:hover{border-color:var(--brand);color:var(--brand)}
+.btn[aria-pressed="true"]{background:var(--brand);color:var(--surface);border-color:var(--brand)}
+
+/* ── panels ── */
+main{padding:22px 0 70px}
+.view{display:none} .view.on{display:block}
+.panel{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);
+  margin-bottom:14px;overflow:hidden}
+.phead{display:flex;gap:12px;align-items:center;padding:13px 17px;background:var(--raised);
+  border-bottom:1px solid var(--line-soft);flex-wrap:wrap}
+.phead h2{flex:1;min-width:130px}
+.phead .cnt{font-family:var(--ff-m);font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.pbody{padding:16px 17px}
+.pbody.flush{padding:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:860px){.grid2{grid-template-columns:1fr}}
+
+/* ── severity stripes & pills ── */
+.stripe{width:4px;flex:none;border-radius:2px;align-self:stretch}
+.sv-CRITICAL{background:var(--alarm)} .sv-HIGH{background:var(--brand)}
+.sv-MEDIUM{background:var(--muted)} .sv-LOW{background:var(--faint)}
+.pill{font-family:var(--ff-m);font-size:8.5px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;padding:3px 7px;border-radius:var(--r-pill);
+  border:1px solid currentColor;white-space:nowrap;display:inline-block}
+.pv-CRITICAL{color:var(--alarm);background:var(--alarm-wash)}
+.pv-HIGH{color:var(--brand-ink);background:var(--brand-wash)}
+.pv-MEDIUM{color:var(--muted);background:var(--raised)}
+.pv-LOW{color:var(--faint);background:var(--raised)}
+.p-ok{color:var(--ok);background:var(--ok-wash)}
+.p-warn{color:var(--warn);background:var(--warn-wash)}
+
+/* ── rule rows ── */
+.rule{display:flex;gap:12px;padding:13px 17px;border-bottom:1px solid var(--line-soft);
+  cursor:pointer;transition:background .15s ease}
+.rule:last-child{border-bottom:0}
+.rule:hover{background:var(--raised)}
+.rule .body{flex:1;min-width:0}
+.rule .r1{display:flex;gap:9px;align-items:baseline;flex-wrap:wrap;margin-bottom:3px}
+.rule .rid{font-family:var(--ff-m);font-size:11px;font-weight:700;color:var(--brand)}
+.rule h3{flex:1;min-width:150px}
+.rule .n{font-family:var(--ff-m);font-size:12px;font-variant-numeric:tabular-nums;
+  color:var(--ink);font-weight:700}
+.rule .src{font-family:var(--ff-m);font-size:10.5px;color:var(--muted);line-height:1.6;
+  overflow-wrap:anywhere}
+.rule .detail{display:none;margin-top:11px;padding-top:11px;border-top:1px dashed var(--line)}
+.rule.open .detail{display:block}
+.rule .fix{font-size:13px;color:var(--ink-2);margin:0 0 10px}
+.sites{font-family:var(--ff-m);font-size:11.5px;line-height:1.85;color:var(--muted);
+  background:var(--sunk);border:1px solid var(--line-soft);border-radius:var(--r-sm);
+  padding:9px 12px;overflow-x:auto}
+.sites b{color:var(--ink);font-weight:400}
+.more{font-family:var(--ff-m);font-size:10.5px;color:var(--faint);margin-top:7px;display:block}
+
+/* ── plugin grid ── */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:9px;padding:16px 17px}
+.pcard{border:1px solid var(--line);border-radius:var(--r-sm);padding:11px 12px;background:var(--surface);
+  transition:border-color .15s ease}
+.pcard:hover{border-color:var(--brand)}
+.pcard .t{display:flex;gap:7px;align-items:baseline;margin-bottom:7px}
+.pcard .s{font-family:var(--ff-m);font-size:12px;font-weight:700;color:var(--ink);
+  flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pcard .v{font-family:var(--ff-m);font-size:10px;color:var(--faint);font-variant-numeric:tabular-nums}
+.meter{display:flex;height:5px;border-radius:3px;overflow:hidden;background:var(--sunk);margin-bottom:7px}
+.meter i{display:block;height:100%}
+.meter .c{background:var(--alarm)} .meter .h{background:var(--brand)} .meter .m{background:var(--muted)}
+.pcard .f{font-family:var(--ff-m);font-size:10px;color:var(--muted);display:flex;gap:9px;
+  font-variant-numeric:tabular-nums}
+.pcard .f b{font-weight:700}
+.pcard .f .c{color:var(--alarm)} .pcard .f .h{color:var(--brand-ink)}
+.rb{font-family:var(--ff-m);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;
+  padding:2px 5px;border-radius:3px}
+.rb.high{color:var(--alarm);background:var(--alarm-wash)}
+.rb.med{color:var(--warn);background:var(--warn-wash)}
+.rb.low{color:var(--faint);background:var(--raised)}
+.pcard.clean{opacity:.55}
+
+/* ── harness rows ── */
+.hrow{display:flex;gap:11px;align-items:center;padding:11px 17px;border-bottom:1px solid var(--line-soft)}
+.hrow:last-child{border-bottom:0}
+.dot{width:9px;height:9px;border-radius:50%;flex:none}
+.dot.green{background:var(--ok);box-shadow:0 0 0 3px var(--ok-wash)}
+.dot.red{background:var(--alarm);box-shadow:0 0 0 3px var(--alarm-wash)}
+.hrow .nm{font-family:var(--ff-m);font-size:11.5px;flex:1;min-width:0;color:var(--ink-2);
+  overflow-wrap:anywhere}
+.hrow .sc{font-family:var(--ff-m);font-size:11px;font-variant-numeric:tabular-nums;color:var(--muted)}
+
+/* ── task rows (board) ── */
+.task{display:grid;grid-template-columns:22px 1fr;gap:12px;padding:13px 17px;
+  border-bottom:1px solid var(--line-soft);cursor:pointer;transition:opacity .28s ease,background .15s ease}
+.task:last-child{border-bottom:0}
+.task:hover{background:var(--raised)}
+.box{width:17px;height:17px;margin-top:3px;border-radius:var(--r-xs);border:1.5px solid var(--line);
+  background:var(--surface);position:relative;flex:none;transition:all .18s ease}
+.task:hover .box{border-color:var(--brand)}
+.task.done .box{background:var(--ok);border-color:var(--ok)}
+.task.done .box::after{content:"";position:absolute;left:5px;top:1px;width:4px;height:9px;
+  border:solid var(--on-brand);border-width:0 2px 2px 0;transform:rotate(42deg)}
+.task .r1{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;margin-bottom:4px}
+.task .tid{font-family:var(--ff-m);font-size:10.5px;font-weight:700;color:var(--brand)}
+.task h3{flex:1;min-width:160px}
+.task.done h3{text-decoration:line-through}
+.task.done{opacity:.36}
+.task.done:hover{opacity:.66}
+.task .why{font-size:13px;color:var(--ink-2);margin:0 0 6px}
+.task .files{font-family:var(--ff-m);font-size:11px;color:var(--muted);line-height:1.7;overflow-wrap:anywhere}
+.task .gate{font-family:var(--ff-m);font-size:10.5px;color:var(--ink-2);background:var(--sunk);
+  border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:6px 10px;margin-top:8px;
+  display:inline-block;overflow-wrap:anywhere}
+body.hide-done .task.done{display:none}
+
+/* ── admin map ── */
+.amrow{display:grid;grid-template-columns:150px 1fr;gap:14px;padding:11px 17px;
+  border-bottom:1px solid var(--line-soft);align-items:baseline}
+.amrow:last-child{border-bottom:0}
+.amrow .where{font-family:var(--ff-m);font-size:11px;color:var(--brand);font-weight:700}
+.amrow .what{font-size:13.5px;color:var(--ink-2)}
+.amrow .what b{color:var(--ink)}
+@media(max-width:640px){.amrow{grid-template-columns:1fr;gap:3px}}
+
+.note{border-left:3px solid var(--brand);background:var(--brand-wash);padding:12px 15px;
+  border-radius:0 var(--r-sm) var(--r-sm) 0;margin:0 0 14px;font-size:13.5px;color:var(--ink-2)}
+.note.bad{border-left-color:var(--alarm);background:var(--alarm-wash)}
+.note b{color:var(--ink)}
+.empty{padding:34px 17px;text-align:center;color:var(--faint);font-family:var(--ff-m);font-size:12px}
+footer{border-top:1px solid var(--line-soft);padding:26px 0 50px;color:var(--muted);font-size:12.5px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ── mobile last, so it actually wins the cascade ── */
+@media(max-width:700px){
+  .mast{padding:15px 0 12px;gap:12px}
+  .mast .id .eyebrow{margin-bottom:6px;font-size:9px}
+  .mast .id p{font-size:13px;line-height:1.5;margin-top:6px}
+  .kpis{display:flex;overflow-x:auto;scroll-snap-type:x proximity;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .kpis::-webkit-scrollbar{display:none}
+  .kpi{flex:0 0 auto;min-width:104px;padding:11px 15px;scroll-snap-align:start}
+  .kpi .n{font-size:22px;margin-bottom:3px}
+  .kpi .l{font-size:8.5px;letter-spacing:.1em}
+
+  /* the console enforces C-4, so it obeys C-4: nothing tappable under 44px */
+  .cmdrow{gap:7px}
+  .tabs{overflow-x:auto;scrollbar-width:none;max-width:100%}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{min-height:44px;display:inline-flex;align-items:center;padding:0 15px;font-size:10.5px}
+  .btn{min-height:44px;display:inline-flex;align-items:center;padding:0 14px}
+  .search{height:44px}
+  .task{padding:15px 16px}
+}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="mast">
+      <div class="id">
+        <p class="eyebrow">apollo::rio · operations console</p>
+        <h1>41 plugins, one gate,<br>one running order.</h1>
+        <p>Every number below was re-derived from source, not read from the registry.
+           Click a rule to see the real sites. Press <code>/</code> to search anything.</p>
+      </div>
+    </div>
+    <div class="kpis" id="kpis"></div>
+  </div>
+</header>
+
+<div class="cmd">
+  <div class="wrap cmdrow">
+    <div class="tabs" role="tablist" id="tabs"></div>
+    <label class="search">
+      <span class="eyebrow" style="letter-spacing:.1em">find</span>
+      <input id="q" type="search" placeholder="rule, plugin, file, task…" autocomplete="off" aria-label="Search">
+      <span class="k">/</span>
+    </label>
+    <button class="btn" id="tHide" aria-pressed="false">Hide done</button>
+    <button class="btn" id="tExport">Export</button>
+  </div>
+</div>
+
+<main class="wrap">
+  <section class="view on" id="v-now"></section>
+  <section class="view" id="v-rules"></section>
+  <section class="view" id="v-plugins"></section>
+  <section class="view" id="v-board"></section>
+  <section class="view" id="v-admin"></section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p style="max-width:78ch;margin:0">
+      Data: <code>_current/console-data.json</code>, generated by
+      <code>node _inventory/_current/apollo-guard.mjs</code> from the real root.
+      Plans: <code>_current/_plans/plan-003_260820.md</code> is the running order.
+      Board state lives in this browser only — <b>Export</b> hands it over.
+      Keys: <code>/</code> search · <code>1–5</code> views · <code>Esc</code> clear.
+    </p>
+  </div>
+</footer>
+
+<script>
+const DATA = {"scanned":1775,"total":586,"rules":[{"id":"D01","sev":"CRITICAL","title":"CPT / taxonomy / meta registered outside apollo-core","fix":"Declare it in apollo-core/config/cpts.php · taxonomies.php · src/Core/MetaRegistry.php. Nothing else registers.","src":"02-header.CRITICAL_apollo_core_centralization · $GLOBAL_ARCHITECTURE","n":38,"sites":[{"p":"apollo-adverts/includes/cpt.php:42","m":"register_post_type() outside apollo-core"},{"p":"apollo-adverts/includes/cpt.php:75","m":"register_taxonomy() outside apollo-core"},{"p":"apollo-adverts/includes/cpt.php:102","m":"register_taxonomy() outside apollo-core"},{"p":"apollo-coauthor/src/Activation.php:41","m":"register_taxonomy() outside apollo-core"},{"p":"apollo-coauthor/src/Components/Taxonomy.php:91","m":"register_taxonomy() outside apollo-core"},{"p":"apollo-djs/src/Registry.php:56","m":"register_post_type() outside apollo-core"},{"p":"apollo-djs/src/Registry.php:122","m":"register_post_type() outside apollo-core"}]},{"id":"D02","sev":"CRITICAL","title":"Forbidden social concept (PARTY_MODEL breach)","fix":"Remove it. There is no follow, no follower count, no like. Reactions are WOW; saving is fav.","src":"01-philosophy: NO_SELECTIVE_FOLLOW · NO_EGO_COUNTERS · WOW_NOT_LIKE","n":7,"sites":[{"p":"apollo-core/config/routes.php:366","m":"a /followers route"},{"p":"apollo-core/src/Config/ApolloRoute.php:63","m":"a /followers route"},{"p":"apollo-djs/styles/base/template-parts/single/dock.php:30","m":"a follow control"},{"p":"apollo-djs/templates/parts/dj-card/dock.php:32","m":"a follow control"},{"p":"apollo-statistics/includes/class-analytics.php:145","m":"a follower counter"},{"p":"apollo-statistics/includes/class-user-stats-widget.php:164","m":"a follower counter"},{"p":"apollo-statistics/includes/class-user-stats-widget.php:166","m":"a follower counter"}]},{"id":"D08","sev":"CRITICAL","title":"Non-shippable artefact inside the deployed tree","fix":"Move it out of the mirrored folder. This directory is served at https://apollo.rio.br/wp-content/plugins/.","src":"CLAUDE.md — \"a saved file is a deployed file\"","n":2,"sites":[{"p":"debug-e031aa.log:1","m":"publicly served, not part of any plugin"},{"p":"sync.ffs_db:1","m":"publicly served, not part of any plugin"}]},{"id":"G02","sev":"CRITICAL","title":"Nonce or token in a data-* attribute","fix":"Move it to a wp_json_encode() JS config block, guarded by is_user_logged_in().","src":"$apollo_rule.audit_verificator #2 · $apollo_rule.data_flow.data_attributes","n":18,"sites":[{"p":"apollo-adverts/includes/integrations.php:340","m":"nonce/token rendered into the DOM"},{"p":"apollo-events/styles/base/archive-event.php:242","m":"nonce/token rendered into the DOM"},{"p":"apollo-fav/includes/functions.php:440","m":"nonce/token rendered into the DOM"},{"p":"apollo-hub/templates/edit-hub.php:76","m":"nonce/token rendered into the DOM"},{"p":"apollo-membership/templates/admin/tools.php:32","m":"nonce/token rendered into the DOM"},{"p":"apollo-membership/templates/admin/tools.php:46","m":"nonce/token rendered into the DOM"},{"p":"apollo-membership/templates/admin/tools.php:60","m":"nonce/token rendered into the DOM"}]},{"id":"G03","sev":"CRITICAL","title":"Raw SQL with untrusted interpolation","fix":"Build every variable fragment through $wpdb->prepare() and concatenate the prepared pieces.","src":"$apollo_rule.audit_verificator #3","n":10,"sites":[{"p":"apollo-chat/includes/functions.php:1327","m":"interpolates {$ids} without prepare()"},{"p":"apollo-email/src/Newsletter.php:281","m":"interpolates $where_sql, $order_sql, $limit_sql without prepare()"},{"p":"apollo-membership/includes/achievement-functions.php:96","m":"interpolates {$where}, {$order_str}, {$paginate} without prepare()"},{"p":"apollo-telegram/src/Services/TelegramService.php:324","m":"interpolates {$verifTable} without prepare()"},{"p":"apollo-telegram/src/Services/TelegramService.php:342","m":"interpolates {$chatTable} without prepare()"},{"p":"apollo-events/src/API/EventsController.php:1214","m":"concatenates prepared fragments ($where) — verify every branch prepares"},{"p":"apollo-login/tests/run-all-tests.php:138","m":"interpolates {$full} without prepare()"}]},{"id":"G08","sev":"CRITICAL","title":"REST write route with no real permission_callback","fix":"Replace __return_true with a capability check. A public write endpoint must at minimum be nonce-verified AND rate-limited, and say so in a comment on the line.","src":"$apollo_rule.audit_verificator #8","n":12,"sites":[{"p":"apollo-email/src/Newsletter.php:775","m":"unauthenticated write route"},{"p":"apollo-login/src/API/AuthController.php:63","m":"unauthenticated write route"},{"p":"apollo-login/src/API/AuthController.php:91","m":"unauthenticated write route"},{"p":"apollo-login/src/API/AuthController.php:228","m":"unauthenticated write route"},{"p":"apollo-login/src/API/AuthController.php:282","m":"unauthenticated write route"},{"p":"apollo-login/src/API/AuthController.php:305","m":"unauthenticated write route"},{"p":"apollo-login/src/API/QuizController.php:71","m":"unauthenticated write route"}]},{"id":"M01","sev":"CRITICAL","title":"No web app manifest — the app cannot be installed","fix":"Ship a manifest and link it from the ONE head builder. Without it Android offers no install prompt, no icon and no standalone launch; iOS half-works off apple-mobile-web-app-capable, which is why this went unnoticed.","src":"the head already carries every PWA meta except this one","n":1,"sites":[{"p":"(ecosystem):0","m":"no <link rel=\"manifest\"> anywhere in 1,900 files"}]},{"id":"D03","sev":"HIGH","title":"Forbidden relative-time format","fix":"apollo_time_ago() / apollo_time_ago_html() / tempoHTML(). Never human_time_diff, never \"atrás\", never \"ago\".","src":"15-conventions.timeDisplay.FORBIDDEN · $apollo_rule.development_guidelines.time","n":22,"sites":[{"p":"apollo-admin/templates/frontend/pending.php:393","m":"human_time_diff() rendered directly"},{"p":"apollo-adverts/templates/parts/depoimentos.php:81","m":"human_time_diff() rendered directly"},{"p":"apollo-events/styles/base/template-parts/single/depoimentos.php:59","m":"human_time_diff() rendered directly"},{"p":"apollo-gestor/includes/modules/proj-board/backend/Proj_Board.php:67","m":"human_time_diff() rendered directly"},{"p":"apollo-journal/src/API/PostsController.php:124","m":"human_time_diff() rendered directly"},{"p":"apollo-journal/src/API/PostsController.php:240","m":"human_time_diff() rendered directly"},{"p":"apollo-journal/src/API/PostsController.php:309","m":"human_time_diff() rendered directly"}]},{"id":"D04","sev":"HIGH","title":"Design token declared outside the token owner","fix":"Scope it to the component (.pev { --pev-band: … }) or add it to the one canonical token sheet. A second :root forks the system.","src":"CLAUDE.md non-negotiable rule #1 — \":root belongs to core\"","n":115,"sites":[{"p":"apollo-admin/assets/css/base/variables.css:7","m":":root block in apollo-admin"},{"p":"apollo-admin/assets/modera/css/modera.css:6","m":":root block in apollo-admin"},{"p":"apollo-admin/templates/frontend/memberships.php:50","m":":root block in apollo-admin"},{"p":"apollo-admin/templates/frontend/panel.php:75","m":":root block in apollo-admin"},{"p":"apollo-admin/templates/frontend/pending.php:76","m":":root block in apollo-admin"},{"p":"apollo-admin/templates/modera/parts/head.php:8","m":":root block in apollo-admin"},{"p":"apollo-admin/templates/partials/styles.php:19","m":":root block in apollo-admin"}]},{"id":"D06","sev":"HIGH","title":"Legacy canvas shell path","fix":"apollo_plus_open() / apollo_plus_close() is the only shell entry point. Paths A and C are retained for rollback only.","src":"18-canvas-shell.$unification_2026_08_05 · PLUGIN-DEPLOY-MAP §6","n":9,"sites":[{"p":"apollo-calendar/src/Frontend/CalendarPage.php:62","m":"render_blank_canvas_plus() — legacy shell"},{"p":"apollo-calendar/templates/agenda.php:134","m":"apollo_render_blank_canvas_body() — legacy shell"},{"p":"apollo-dashboard/includes/class-plugin.php:207","m":"render_blank_canvas_plus() — legacy shell"},{"p":"apollo-events/src/Plugin.php:476","m":"render_blank_canvas_plus() — legacy shell"},{"p":"apollo-events/src/Plugin.php:495","m":"render_blank_canvas_plus() — legacy shell"},{"p":"apollo-events/src/Plugin.php:501","m":"render_blank_canvas_plus() — legacy shell"},{"p":"apollo-events/src/Plugin.php:509","m":"render_blank_canvas_plus() — legacy shell"}]},{"id":"G04","sev":"HIGH","title":"Debug output reachable in production","fix":"Delete the console.* call; wrap error_log() in if (defined(\"WP_DEBUG\") && WP_DEBUG).","src":"$apollo_rule.data_flow.production · TBD-019","n":89,"sites":[{"p":"apollo-core/includes/functions.php:753","m":"error_log() with no WP_DEBUG gate"},{"p":"apollo-core/src/Core/FrontendProtection.php:70","m":"console.* in shipped code"},{"p":"apollo-core/src/Core/PaneModeAdapter.php:75","m":"error_log() with no WP_DEBUG gate"},{"p":"apollo-core/src/Core/UninstallHandler.php:56","m":"error_log() with no WP_DEBUG gate"},{"p":"apollo-core/src/Core/UninstallHandler.php:187","m":"error_log() with no WP_DEBUG gate"},{"p":"apollo-elementor/assets/js/apollo-elementor.js:23","m":"console.* in shipped code"},{"p":"apollo-elementor/assets/js/modules/flip-bento.js:12","m":"console.* in shipped code"}]},{"id":"M02","sev":"HIGH","title":"Service worker registered from a scope it cannot escape","fix":"Serve the worker from the site root (or send Service-Worker-Allowed: /). A worker under /wp-content/plugins/x/assets/ can receive push, but can never cache the app shell or serve an offline page.","src":"SW scope is its own directory unless the response sends Service-Worker-Allowed","n":1,"sites":[{"p":"apollo-remind/assets/js/push-register.js:16","m":"worker scoped to a plugin assets directory"}]},{"id":"M03","sev":"HIGH","title":"Pinch-zoom disabled","fix":"Drop user-scalable=no and maximum-scale. Stop double-tap zoom with touch-action: manipulation on the elements that need it — that is the targeted fix; this is the blanket one.","src":"WCAG 2.1 SC 1.4.4 Resize Text","n":7,"sites":[{"p":"apollo-adverts/templates/marketplace/classifieds-page.php:22","m":"viewport sets maximum-scale=1"},{"p":"apollo-calendar/templates/agenda.php:23","m":"viewport sets maximum-scale=1"},{"p":"apollo-core/includes/blank-canvas-templates.php:105","m":"viewport sets maximum-scale=1"},{"p":"apollo-core/includes/document-head.php:141","m":"viewport sets maximum-scale=1"},{"p":"apollo-events/styles/base/single-event.php:93","m":"viewport sets maximum-scale=1"},{"p":"apollo-login/templates/parts/email-verification-success.php:17","m":"viewport sets maximum-scale=1"},{"p":"apollo-telegram/views/telegram-phone-support.php:31","m":"viewport sets maximum-scale=1"}]},{"id":"D07","sev":"MEDIUM","title":"Forbidden vocabulary in an identifier","fix":"loc · fav · wow · depoimento · cena · doc · /id/. Portuguese prose is exempt; identifiers are not. Reported once per file — rename the file, not the line.","src":"15-conventions.namingRules.FORBIDDEN_TERMS","n":34,"sites":[{"p":"apollo-admin/assets/modera/js/views.js:82","m":"venue → loc (2× in this file)"},{"p":"apollo-adverts/templates/single.php:230","m":"interesse/bookmark → fav (1× in this file)"},{"p":"apollo-core/config/hooks.php:308","m":"/user/ → /id/ (1× in this file)"},{"p":"apollo-core/src/Config/ApolloHook.php:130","m":"/user/ → /id/ (1× in this file)"},{"p":"apollo-djs/assets/js/dj-card-single.js:371","m":"venue → loc (1× in this file)"},{"p":"apollo-djs/includes/functions.php:560","m":"venue → loc (5× in this file)"},{"p":"apollo-djs/includes/render-single.php:200","m":"venue → loc (1× in this file)"}]},{"id":"D10","sev":"MEDIUM","title":"Design token declared by two plugins with different values","fix":"One owner per token. Everything else consumes var(). Component-scoped custom properties are fine.","src":"CLAUDE.md cardinal sin, at ecosystem scale — whichever sheet loads last wins","n":111,"sites":[{"p":"(ecosystem):0","m":"--z-modal — 2 different values across 2 plugins"},{"p":"(ecosystem):0","m":"--white-9 — 2 different values across 2 plugins"},{"p":"(ecosystem):0","m":"--white-8 — 3 different values across 3 plugins"},{"p":"(ecosystem):0","m":"--white-7 — 2 different values across 2 plugins"},{"p":"(ecosystem):0","m":"--white-6 — 3 different values across 3 plugins"},{"p":"(ecosystem):0","m":"--white-5 — 3 different values across 3 plugins"},{"p":"(ecosystem):0","m":"--white-4 — 5 different values across 5 plugins"}]},{"id":"D11","sev":"MEDIUM","title":"Debug beacon phoning a local address from shipped code","fix":"Delete it. A beacon posts editor-side data to whatever is listening on that port on the user's own machine, and .catch(){} hides that it happened.","src":"portal harness assertion E27 — written because this regressed once already","n":2,"sites":[{"p":"apollo-events/_sandbox/build-portal-harness.mjs:1314","m":"client-side beacon to a local address"},{"p":"apollo-events/_sandbox/build-portal-harness.mjs:1315","m":"client-side beacon to a local address"}]},{"id":"G07","sev":"MEDIUM","title":"PHP file with no ABSPATH guard","fix":"Add: if ( ! defined( 'ABSPATH' ) ) { exit; }","src":"$apollo_rule.audit_verificator #7","n":2,"sites":[{"p":"apollo-login/tests/run-all-tests.php:1","m":"directly reachable over HTTP"},{"p":"apollo-statistics/bin/local-smoke.php:1","m":"directly reachable over HTTP"}]},{"id":"G11","sev":"MEDIUM","title":"Superglobal used without sanitisation on the same statement","fix":"sanitize_text_field() / absint() / sanitize_key() / sanitize_email() at the boundary.","src":"$apollo_rule.audit_verificator #10, #11","n":45,"sites":[{"p":"apollo-admin/src/Admin/DraftHandler.php:110","m":"unsanitised superglobal"},{"p":"apollo-admin/src/Admin/SaveHandler.php:46","m":"unsanitised superglobal"},{"p":"apollo-adverts/templates/admin/settings.php:23","m":"unsanitised superglobal"},{"p":"apollo-coauthor/src/Components/GuestAuthors.php:402","m":"unsanitised superglobal"},{"p":"apollo-coauthor/src/Components/GuestAuthors.php:770","m":"unsanitised superglobal"},{"p":"apollo-djs/src/Admin/Dashboard.php:93","m":"unsanitised superglobal"},{"p":"apollo-djs/src/Admin/Dashboard.php:94","m":"unsanitised superglobal"}]},{"id":"M04","sev":"MEDIUM","title":"100vh where the phone means 100dvh","fix":"100dvh for full-height panels, 100svh where the layout must never jump. The ecosystem already uses dvh in 37 files — these are the ones left behind.","src":"mobile browser chrome resizes the viewport; 100vh is the LARGE viewport, so content sits under the toolbar","n":1,"sites":[{"p":"apollo-events/assets/css/apollo-single-event.css:116","m":"100vh with no dvh fallback after it"}]},{"id":"M05","sev":"MEDIUM","title":"No responsive images anywhere","fix":"srcset + sizes on every content image, or hand it to the CDN with a width parameter.","src":"a phone on 4G downloads the desktop asset","n":1,"sites":[{"p":"(ecosystem):0","m":"287 <img> tags, 0 with srcset"}]},{"id":"M06","sev":"MEDIUM","title":"Breakpoint outside the declared ladder","fix":"Use 480 · 768 · 1000 · 1400. max-width:767px and max-width:768px both existing is not a style choice — at 768px both a max- and a min- rule apply.","src":"one ladder, or every screen invents its own idea of \"small\"","n":54,"sites":[{"p":"(ecosystem):0","m":"max-width:640px — 33 declarations"},{"p":"(ecosystem):0","m":"min-width:1024px — 24 declarations"},{"p":"(ecosystem):0","m":"min-width:720px — 18 declarations"},{"p":"(ecosystem):0","m":"max-width:767px — 15 declarations"},{"p":"(ecosystem):0","m":"min-width:900px — 15 declarations"},{"p":"(ecosystem):0","m":"min-width:600px — 10 declarations"},{"p":"(ecosystem):0","m":"max-width:600px — 9 declarations"}]},{"id":"D12","sev":"LOW","title":"Verification harness present but failing","fix":"Run it, read the assertion, fix the cell. Do not add a new cell while its harness is red.","src":"CLAUDE.md — \"A green run is the gate, not a formality\"","n":5,"sites":[{"p":"apollo-core/_sandbox/build-cpt-surface-harness.mjs:1","m":"harness — run it before you call the change done"},{"p":"apollo-djs/_sandbox/build-dj-harness.mjs:1","m":"harness — run it before you call the change done"},{"p":"apollo-email/_sandbox/build-email-harness.mjs:1","m":"harness — run it before you call the change done"},{"p":"apollo-events/_sandbox/build-portal-harness.mjs:1","m":"harness — run it before you call the change done"},{"p":"apollo-templates/_sandbox/build-casa-harness.mjs:1","m":"harness — run it before you call the change done"}]}],"plugins":[{"s":"apollo-admin","v":"1.1.0","r":"low","c":0,"h":8,"m":3},{"s":"apollo-adverts","v":"1.1.3","r":"med","c":4,"h":7,"m":2},{"s":"apollo-calendar","v":"1.1.0","r":"low","c":0,"h":4,"m":0},{"s":"apollo-chat","v":"2.0.2","r":"med","c":1,"h":2,"m":0},{"s":"apollo-coauthor","v":"1.0.2","r":"low","c":2,"h":0,"m":2},{"s":"apollo-comment","v":"1.0.1","r":"low","c":0,"h":0,"m":0},{"s":"apollo-core","v":"6.4.3","r":"med","c":2,"h":7,"m":12},{"s":"apollo-dashboard","v":"1.1.0","r":"low","c":0,"h":2,"m":0},{"s":"apollo-dj-sync","v":"1.0.1","r":"low","c":0,"h":0,"m":0},{"s":"apollo-djs","v":"1.0.8","r":"med","c":5,"h":9,"m":13},{"s":"apollo-docs","v":"1.0.1","r":"low","c":3,"h":1,"m":1},{"s":"apollo-elementor","v":"1.0.1","r":"low","c":0,"h":7,"m":9},{"s":"apollo-elementor-pro","v":"1.0.1","r":"low","c":0,"h":0,"m":1},{"s":"apollo-email","v":"1.0.1","r":"med","c":3,"h":6,"m":12},{"s":"apollo-events","v":"1.7.7","r":"high","c":7,"h":32,"m":24},{"s":"apollo-fav","v":"1.0.1","r":"low","c":1,"h":1,"m":0},{"s":"apollo-gestor","v":"1.0.1","r":"low","c":0,"h":2,"m":0},{"s":"apollo-groups","v":"1.2.0","r":"low","c":0,"h":6,"m":0},{"s":"apollo-hub","v":"1.0.2","r":"med","c":11,"h":8,"m":4},{"s":"apollo-journal","v":"1.0.1","r":"low","c":5,"h":14,"m":0},{"s":"apollo-loc","v":"1.0.4","r":"med","c":3,"h":3,"m":0},{"s":"apollo-login","v":"1.0.42","r":"high","c":10,"h":12,"m":9},{"s":"apollo-lux-panels","v":"1.2.0","r":"low","c":0,"h":0,"m":4},{"s":"apollo-maps","v":"1.0.1","r":"low","c":0,"h":1,"m":0},{"s":"apollo-membership","v":"1.0.3","r":"high","c":6,"h":1,"m":4},{"s":"apollo-mod","v":"1.0.1","r":"med","c":0,"h":0,"m":0},{"s":"apollo-notif","v":"1.0.1","r":"low","c":0,"h":1,"m":0},{"s":"apollo-pane-engine","v":"2.0.1","r":"low","c":1,"h":3,"m":0},{"s":"apollo-radio","v":"1.0.1","r":"med","c":0,"h":2,"m":0},{"s":"apollo-remind","v":"1.0.1","r":"med","c":0,"h":2,"m":1},{"s":"apollo-scheduler","v":"1.0.1","r":"low","c":1,"h":2,"m":0},{"s":"apollo-seo","v":"1.0.3","r":"low","c":0,"h":1,"m":2},{"s":"apollo-sheets","v":"1.0.1","r":"med","c":2,"h":3,"m":7},{"s":"apollo-sign","v":"1.2.1","r":"low","c":0,"h":3,"m":4},{"s":"apollo-social","v":"1.0.1","r":"low","c":0,"h":3,"m":0},{"s":"apollo-soundcloud","v":"1.0.0","r":"low","c":0,"h":1,"m":0},{"s":"apollo-statistics","v":"2.0.6","r":"low","c":5,"h":5,"m":1},{"s":"apollo-telegram","v":"1.1.5","r":"low","c":2,"h":4,"m":1},{"s":"apollo-templates","v":"1.5.3","r":"low","c":4,"h":25,"m":21},{"s":"apollo-users","v":"1.1.0","r":"med","c":1,"h":7,"m":0},{"s":"apollo-wow","v":"1.0.1","r":"low","c":1,"h":0,"m":0}],"sev":{"CRITICAL":83,"HIGH":195,"MEDIUM":303,"LOW":5}};
+const LANES = [
+  { id:'P0', name:'Preconditions', note:'Nothing starts until these are true.', tasks:[
+    { id:'P0-1', sev:'crit', plan:true, t:'Rotate the FTP/SSH credential',
+      why:'~20 <code>_tmp_*.py</code> files in the mirrored plugins root carry a plaintext FTP host, user and password. The root .htaccess blocks neither .py nor .txt, and there is no .htaccess inside plugins/. Live exposure could not be confirmed from the audit sandbox (robots.txt disallows fetching) — treat it as confirmed.',
+      files:'_tmp_deploy_casa.py · _tmp_ae_check.py · _tmp_fix_htaccess.py · _tmp_cdn_verify.py · _tmp_ssh_acesso2_out.txt (47 KB of SSH output)',
+      gate:'the old credential no longer authenticates' },
+    { id:'P0-2', sev:'crit', plan:false, pre:'partial', t:'Clear the mirrored root, close the diagnostics',
+      why:'<b>CONTAINED 2026-08-20, not yet deleted.</b> 32 <code>_tmp_*</code> files, the 638 KB log and six diagnostics moved to <code>_to_delete/</code>; a LiteSpeed-safe <code>.htaccess</code> installed at <code>plugins/</code>, <code>_inventory/</code>, <code>_to_delete/</code> and <code>mcps/</code> — no <code>Options</code>, no <code>&lt;IfModule&gt;</code>, no rewrite, the three things the root .htaccess header records as proven 500 triggers on this host. D08 40 → 2. <b>You still have to delete <code>_to_delete/</code> yourself</b> — this bridge cannot remove files. The two remaining D08 are deliberate: <code>_run_test_email.php</code> (the email harness documents it as the manual SMTP test) and <code>sync.ffs_db</code> (RealTimeSync’s own database); both are denied by the new .htaccess.',
+      files:'apollo-events/_ae_diag_e031aa.php · apollo-email/_run_{test_email,live_dual_test,aprio_verification_test}.php · apollo-templates/_debug_test.php · test-timezone.php · apollo-login/deactivate-templates.php · 32 _tmp_* · debug-e031aa.log (638 KB)',
+      gate:'node apollo-guard.mjs --rule D08' },
+    { id:'P0-3', sev:'crit', plan:false, t:'Bootstrap the repository',
+      why:'<b>Blocked here — must be run by you, from Windows.</b> Attempted from this session: the device bridge forbids <code>unlink</code>, and <code>git add</code> needs it. The index stayed empty and 1,359 orphaned <code>tmp_obj_*</code> files were left in <code>.git/objects</code>. <b>Delete <code>plugins\\.git</code> first</b>, then run the bootstrap from Git Bash or WSL where deletes work. <code>.gitignore</code> is already written and already excludes <code>_tmp_*</code>, <code>*.log</code> and <code>_to_delete/</code>, so the first commit cannot carry a credential.',
+      files:'rmdir /s /q .git   →   bash _inventory/_current/apollo-worktree-bootstrap.sh',
+      gate:'git config core.hooksPath → .githooks' },
+  ]},
+
+  { id:'A · mobile', name:'Lane A · one head, one shell', note:'plan-002 · the precondition for everything the phone needs.', tasks:[
+    { id:'A-1', sev:'crit', plan:true, t:'Collapse the two head builders',
+      why:'There are two, and they are not equivalent. <code>apollo_render_document_head()</code> fires <code>apollo/seo/head</code> and <code>apollo/canvas/head</code>; <code>apollo_render_blank_canvas_open()</code> fires <b>nothing</b> — so pages on that path get no SEO head and no canvas head, which is where apollo-statistics hooks its tracker at priority 99. <b>Those pages are not being measured</b>, and nobody reported it because nothing errors. The viewport meta, the PWA metas and the theme-color pair are duplicated verbatim between the two files and kept in sync by hand — the cardinal sin, inside apollo-core.',
+      files:'apollo-core/includes/document-head.php · apollo-core/includes/blank-canvas-templates.php · apollo-statistics/src/Plugin.php:287',
+      gate:'both shells fire apollo/canvas/head; tracker on every canvas page; --rule M03 7 → 5' },
+  ]},
+
+  { id:'B · mobile', name:'Lane B · installable', note:'plan-002 · three files between here and an app icon.', tasks:[
+    { id:'B-1', sev:'crit', plan:true, t:'Ship the manifest and the root worker',
+      why:'<b>Zero <code>&lt;link rel="manifest"&gt;</code> in 1,900 files</b>, so Android offers no install prompt at all. iOS half-works off <code>apple-mobile-web-app-capable</code>, which is exactly why nobody noticed. Everything else is already there: <code>viewport-fit=cover</code>, <code>interactive-widget=overlays-content</code>, the theme-color pair, safe-area insets in 9 plugins. Code is written and reviewed in <code>_current/apollo-pwa-dropin.php</code> — <b>deliberately not wired</b>, land it after the repo exists.',
+      files:'→ apollo-core/includes/pwa.php · serves /manifest.webmanifest and /sw.js from the ROOT with Service-Worker-Allowed: / · still to produce: icon-192, icon-512, icon-maskable-512 (~20% padding), apple-touch-icon-180, and an /offline screen',
+      gate:'Lighthouse Installable ✓ on Android · airplane mode on /casa renders the shell' },
+    { id:'B-2', sev:'high', plan:false, t:'Retire the scope-locked worker',
+      why:'The only service worker in the ecosystem sits in <code>apollo-remind/assets/js/</code>. A worker’s scope is the directory it was served from, so it can receive push and can never cache the app shell or serve an offline page. The drop-in carries the same push and notificationclick contract at root scope.',
+      files:'apollo-remind/assets/js/push-sw.js · push-register.js:16 (apolloRemind.swUrl → /sw.js)',
+      gate:'a push arrives with the app closed and opens the right URL' },
+  ]},
+
+  { id:'C · mobile', name:'Lane C · the phone’s layout contract', note:'plan-002 · 54 breakpoints, 30 boxes under the toolbar.', tasks:[
+    { id:'C-1', sev:'high', plan:false, t:'One breakpoint ladder',
+      why:'<b>54 distinct breakpoints outside a four-step ladder.</b> <code>max-width:767px</code> and <code>max-width:768px</code> both exist — at exactly 768px a max- rule and a min- rule both apply. That is a coin flip, not a style choice. Ladder: <b>480 · 768 · 1000 · 1400</b>; 1000 is not negotiable, it is where the Apollo+ aside pins.',
+      files:'max-640 (33) · min-1024 (24) · min-720 (18) · max-767 (15) · min-900 (15) · min-600 (10) · max-900 (9) · max-782 (7) · min-980 (7) · max-960 (6) …',
+      gate:'node apollo-guard.mjs --rule M06 — strictly decreasing' },
+    { id:'C-2', sev:'high', plan:false, pre:'done', t:'100vh → 100dvh',
+      why:'<b>APPLIED 2026-08-20.</b> 29 boxes across 22 files got a <code>100dvh</code> declaration <i>after</i> the <code>100vh</code>, not instead of it — a browser without <code>dvh</code> drops the second and keeps the first, so the change cannot regress. <b>M04 30 → 1.</b> The one left is correct: <code>apollo-single-event.css:116</code> pairs <code>height:100vh</code> with <code>width:177.78vh</code>, a 16:9 cover ratio. The rule was recalibrated to accept the fallback pair rather than cry wolf about its own fix.',
+      files:'admin ×7 · adverts · chat · core · dashboard · docs ×2 · gestor · groups ×2 · login ×2 · sheets · sign · statistics · templates ×6 · users — originals in _to_delete/backup-plan003/P6-2/',
+      gate:'node apollo-guard.mjs --rule M04' },
+    { id:'C-3', sev:'high', plan:true, t:'Give pinch-zoom back — your decision',
+      why:'Seven viewport tags carry <code>user-scalable=no, maximum-scale=1</code>, including <b>both</b> apollo-core head builders. The comment says “lock zoom”, so it was deliberate — but it is a WCAG 2.1 SC 1.4.4 failure, iOS has ignored it since iOS 10, and Android honours it, so the only people it affects are the ones who need it. The targeted fix for double-tap zoom is <code>touch-action: manipulation</code>, already used in 8 plugins.',
+      files:'core/document-head.php:141 · core/blank-canvas-templates.php:105 · adverts · calendar · events/single-event.php:93 · login/email-verification-success.php:17 · telegram',
+      gate:'a decision recorded in plan-002, either way' },
+    { id:'C-4', sev:'high', plan:false, t:'Tap targets and the drawer',
+      why:'Audit every control the phone layout exposes against 44×44 CSS px — the topbar is 56px, but verify the buttons inside it, not the bar. Then the drawer: swipe-to-close, focus trap while open, <code>inert</code> on the page behind, and the overlay not scrolling the body underneath — the one iOS bug every drawer has.',
+      files:'#burger · #ax-aside · #ax-overlay — the shell contract ids in CLAUDE.md',
+      gate:'a manual pass on a real phone, recorded in plan-002 §C-4' },
+  ]},
+
+  { id:'W · mobile', name:'Lane W · weight', note:'plan-002 · ~3 MB of CSS and JS, none of it bundled.', tasks:[
+    { id:'W-1', sev:'high', plan:false, t:'Stop shipping the desktop payload to phones',
+      why:'<b>289 <code>&lt;img&gt;</code> tags, zero <code>srcset</code>.</b> Every phone downloads the full-size file. The images are on cdn.apollo.rio.br; if it takes a width parameter this is a helper and a find-replace, not a redesign. Add <code>decoding="async"</code> alongside the <code>loading="lazy"</code> that 97 files already have.',
+      files:'ecosystem-wide · 289 img tags',
+      gate:'node apollo-guard.mjs --rule M05' },
+    { id:'W-2', sev:'high', plan:true, t:'The auth screen',
+      why:'apollo-login ships <b>145 KB of CSS in two files</b> (<code>apollo-auth-uni.css</code> 88 KB + <code>apollo-auth-complete.css</code> 57 KB) and <b>111 KB of JS</b> for the first screen a new user ever sees — and it is a HIGH-security plugin, so this is careful work. Both CSS files also declare <code>:root</code>, so <b>do this in the same pass as K-3</b>: same files, one edit.',
+      files:'apollo-login/assets/css/apollo-auth-{uni,complete}.css · assets/js/apollo-auth-scripts.js',
+      gate:'first-screen CSS under 40 KB · login interactive under 2.5s on throttled 4G' },
+    { id:'W-3', sev:'med', plan:true, t:'Lenis on touch — your decision',
+      why:'Lenis smooth-scroll is initialised in 29 files across 7 plugins. On a phone it replaces the platform’s momentum scrolling with a JS rAF loop: battery cost, it fights pull-to-refresh, and long lists feel heavier not lighter. The usual answer is pointer-fine only — <code>matchMedia("(pointer: coarse)")</code> is already used in 4 plugins. Measure on a mid-range Android before defending it.',
+      files:'29 files · 7 plugins',
+      gate:'a measurement, then a decision' },
+  ]},
+
+  { id:'E · mobile', name:'Lane E · what the app actually is', note:'plan-002 · the surface exists; it points at the desktop.', tasks:[
+    { id:'E-1', sev:'high', plan:true, t:'Decide: PWA, wrapped PWA, or native',
+      why:'<code>AppAuthController</code> already serves <code>/app/auth</code>, <code>/app/verify</code>, <code>/app/revoke</code>, <code>GET /dj/config</code> and <code>/dj/permissions</code> with JWT — but <b>02-header.json says that surface was built for the apolloDJ <i>desktop</i> product</b>. There is no Capacitor, Cordova or React Native anywhere in 1,900 files. PWA = days and no store; Capacitor wrapper = weeks and a store listing; native client = months and a second product. <b>Lane B is the first step of all three.</b> Recommendation: ship B, live on it two weeks, then decide.',
+      files:'apollo-login/src/API/AppAuthController.php · src/Security/JWTAuth.php · apollo-dj-sync/src/API/DJPermissionsController.php',
+      gate:'a decision recorded in plan-002 §E-1, after two weeks on the PWA' },
+  ]},
+
+  { id:'truth', name:'Lane · truth (plan-001)', note:'Make the registry mean something again.', tasks:[
+    { id:'T-1', sev:'med', plan:false, t:'Close the nine stale backlog items',
+      why:'TBD-002/003/004/006/007/014/015/016/017 are all fixed in live source, each with the fix and an explanatory comment sitting in the file. TBD-008 is stale by relocation — the three apollo-djs templates it names no longer exist.',
+      files:'_inventory/registry/17-backlog.json',
+      gate:'every remaining status:"pending" reproduces in a guard run' },
+    { id:'T-2', sev:'high', plan:false, pre:'partial', t:'Close the ten version drifts',
+      why:'core 6.4.1 vs 6.3.0 · events 1.7.3 · djs 1.0.8 · login 1.0.42 · templates 1.5.3 · loc 1.0.4 · hub 1.0.2 · adverts 1.1.3 · coauthor 1.0.2 · lux-panels 1.2.0. And apollo-lux-panels has the docblock/constant split the last SSOT audit said it had eliminated — WordPress reads one, cache-busting reads the other.',
+      files:'DONE — apollo-lux-panels APOLLO_LUX_VERSION 1.1.0 → 1.2.0, D09 clean. PENDING — the ten registry chapters in _inventory/registry/09-plugins/ still carry stale versions.',
+      gate:'--rule D09 clean (done) + registry chapters match disk for all 41' },
+    { id:'T-3', sev:'med', plan:true, t:'Retire apollo-core/config/meta.php',
+      why:'Its own header says it: a lookup table that registers nothing, out of sync with the real registrar (11 dj / 13 local keys against MetaRegistry’s 38 / 27), and ApolloMeta:: has zero call sites. A second declaration of the meta schema inside apollo-core itself.',
+      files:'apollo-core/config/meta.php · apollo-core/src/Config/ApolloMeta.php',
+      gate:'grep -rn "ApolloMeta::" returns only ApolloMeta.php' },
+  ]},
+
+  { id:'registry', name:'Lane · registry (plan-001)', note:'One registrar. 38 sites, three different jobs.', tasks:[
+    { id:'R-1', sev:'crit', plan:true, t:'Delete the 25 redundant registrations',
+      why:'38 sites, three different jobs: <b>25 redundant</b> (core already declares it — delete a losing second declaration), <b>3 sole</b> (all apollo-journal — a real migration, see R-3), <b>10 register_post_meta</b> (see R-2). apollo-core already declares all 15 CPTs and 18 taxonomies involved here. Do the six <b>unguarded</b> ones first — those can produce a divergent registration depending on hook order.',
+      files:'UNGUARDED: adverts/includes/cpt.php:42 (classified) · djs/src/Registry.php:56 (dj), :122 (track) · events/src/Registry.php:69 (event) · hub/src/Registry.php:58 (hub) · coauthor/src/Components/Taxonomy.php:91 (coauthor) — plus 19 guarded sites, four of which resolve to core slugs through a constant (adverts:75,102 · coauthor/Activation:41 · scheduler/Registry:70)',
+      gate:'--rule D01 drops by 25; every CPT still in /wp-json/wp/v2/types' },
+    { id:'R-2', sev:'crit', plan:false, t:'Register _hub_blocks, delete apollo-hub’s eight meta calls',
+      why:'Seven of the eight keys are already in MetaRegistry. Only <code>_hub_blocks</code> is missing — and TBD-013 is exactly "hub JSON blocks stored without schema validation". One fix closes both. Note all eight use auth_callback __return_true.',
+      files:'apollo-hub/src/Registry.php:87,101,112,123,134,149,160,171 → apollo-core/src/Core/MetaRegistry.php',
+      gate:'--rule D01 drops by 8; a malformed block payload is rejected' },
+    { id:'R-3', sev:'crit', plan:true, t:'Migrate apollo-journal into core',
+      why:'The only genuine migration in this plan — the others are deletions. journal_news and journal_nota are in <b>no</b> core config, and their 8 meta keys are in <b>no</b> MetaRegistry. Add to core first, verify posts resolve, delete second. Never the other way round.',
+      files:'apollo-journal/src/Plugin.php:117,155,168,205,310 · keys _nrep_code _nrep_year _nrep_seq _apollo_headline _apollo_subtitle _apollo_featured _apollo_note_type _apollo_source',
+      gate:'--rule D01 clean; existing journal posts still load; meta in REST' },
+  ]},
+
+  { id:'tokens', name:'Lane · tokens (plan-001)', note:'29 plugins declare :root. 697 tokens. 107 conflict.', tasks:[
+    { id:'K-1', sev:'high', plan:false, pre:'done', t:'The missing #',
+      why:'<b>APPLIED 2026-08-20.</b> 25 malformed tokens across 24 files and 17 plugins — three more than the first snapshot reported, because that snapshot had 25 zero-byte files from a failed copy. <code>FF9820</code> is not a colour; the property resolves, the declaration consuming it becomes invalid at computed-value time and falls back silently. <code>var(--primary)</code> is used 521 times. Originals in <code>_to_delete/backup-plan001/K-1/</code>.',
+      files:'admin/templates/partials/styles.php:36 · adverts/create-classified.php:40 · dashboard/styles.php:22 · djs/archive-dj/styles.php:26 · events/archive/styles.php:25 · groups/{single-group,groups-directory}.css:16 · loc ×2 · notif:39 · sign:49 · templates/mural.css:20 · users/single-profile.php:155',
+      gate:'node apollo-guard.mjs --rule D05' },
+    { id:'K-2', sev:'high', plan:true, t:'Publish a repo-local token source',
+      why:'This is <b>why</b> the fork exists: the canonical tokens live in cdn.apollo.rio.br/v1.0.0/core.js, outside the repository. No plugin author can read the contract, so every plugin guesses. functions.php:494 even names a local mirror folder that does not exist here.',
+      files:'apollo-core/includes/document-head.php:83 · blank-canvas-templates.php:80 · BlankCanvasTrait.php:151 → new apollo-core/assets/tokens.reference.css',
+      gate:'the file lists every token name --rule D10 reports' },
+    { id:'K-3', sev:'high', plan:false, t:'Collapse the forks, one plugin per merge',
+      why:'The working pattern is already in the repo: apollo-djs’ harness passes assertion <i>"no core.js token is redeclared in :root — 9 page-scoped tokens, zero core tokens."</i> Copy it. Order by size: templates (150) → login (126) → admin (121) → hub (85) → events (62) → loc (43) → rest.',
+      files:'112 :root blocks across 30 plugins · 107 conflicting token names · skip apollo-users/templates/user-radar.php (owned by lane shell)',
+      gate:'--rule D10 strictly decreasing per merge; the plugin’s own harness still green' },
+  ]},
+
+  { id:'rest', name:'Lane · rest (plan-001)', note:'378 routes. 100 public GETs are fine. 12 writes are not.', tasks:[
+    { id:'S-6', sev:'crit', plan:false, pre:'done', t:'Seal the VCS and tooling directories from HTTP',
+      why:'<b>CLOSED 2026-08-25.</b> <code>plugins/.git</code> was live — a 247 KB index and commits from the day before, readable over HTTP. The existing <code>&lt;FilesMatch "^\\."&gt;</code> could never have caught it: <code>&lt;FilesMatch&gt;</code> tests the <i>basename</i>, and <code>config</code>, <code>HEAD</code> and <code>index</code> carry no dot. Closed three ways so no single mechanism is load-bearing: <code>RedirectMatch 404</code> on the path (mod_alias — chosen over mod_rewrite so the root file’s rewrite context is never touched), <code>Require all denied</code> inside each directory, and an <code>index.php</code> in each. Verified: no <code>Options</code> and no <code>&lt;IfModule&gt;</code>-inside-<code>&lt;Files&gt;</code> anywhere — the two constructs this host answers with a site-wide 500.',
+      files:'plugins/.htaccess §5 · .git · .githooks · .cursor · _to_delete · mcps',
+      gate:'GET /wp-content/plugins/.git/config returns 404; the site still returns 200' },
+    { id:'S-7', sev:'high', plan:false, pre:'done', t:'apollo-chat was calling a route it is not allowed to call',
+      why:'<b>CLOSED 2026-08-25.</b> The user picker asked <code>wp/v2/users</code>, which WordPress refuses with 403 for subscribers — so on a party site the picker was empty for almost everyone. Repointed to <code>apollo/v1/users</code>. The obvious one-line swap would still have shipped an empty list: that route answers <code>{users:[…]}</code> with <code>display_name</code> and <code>avatar_url</code>, not a bare array with <code>name</code> and <code>avatar_urls</code>. Shape verified against apollo-groups’ working call before the edit, and the response is now unwrapped defensively so either shape renders.',
+      files:'apollo-chat/templates/chat.php:32 · apollo-chat/assets/js/chat.js',
+      gate:'node --check passes; a subscriber account sees names in the picker' },
+    { id:'S-1', sev:'crit', plan:true, t:'Annotate or close the 12 public writes',
+      why:'Ten are apollo-login auth endpoints that cannot require a login. Each needs a comment on the line naming the nonce check and the rate limit — AuthController.php:330 already does exactly that; make the other nine match. apollo-users’ profile-view write needs two decisions: how to protect it, and whether a view counter should exist at all next to NO_EGO_COUNTERS.',
+      files:'login/AuthController.php:63,91,228,282,305 · QuizController:71,99 · JWTAuth:122,140 · SecurityHeaders:245 · email/Newsletter.php:775 · users/UsersController.php:337',
+      gate:'--rule G08 returns only annotated lines' },
+    { id:'S-2', sev:'crit', plan:false, t:'Move 18 nonces out of the DOM',
+      why:'$apollo_rule.data_flow: data attributes are interaction hooks, never hidden truth. TBD-005 has been open long enough to grow from 10 to 18. One mechanical transform, nine plugins — the first skill worth writing.',
+      files:'membership/admin/tools.php:32,46,60,74,88 · statistics/profile-stats.php:131,183 · templates/edit-post.php:131,167 + FrontendFields.php:410 + page-test.php:2149 · wow:170 · fav:440 · hub:76 · sheets:27 · events/archive-event.php:242 · adverts/integrations.php:340 · pane-engine/fragment-helper.php:73',
+      gate:'node apollo-guard.mjs --rule G02' },
+    { id:'S-3', sev:'crit', plan:false, t:'Prove the four unprepared SQL statements',
+      why:'Most $wpdb hits here interpolate table identifiers, which cannot be bound and are not injectable. These four interpolate a $where or $ids the scanner cannot follow to a prepare(). The correct pattern is already in this codebase — apollo-membership/includes/achievement-functions.php:55-96 builds $where entirely from prepared fragments.',
+      files:'email/Newsletter.php:281 · events/EventsController.php:1214 · remind/RemindersController.php:111 · chat/includes/functions.php:1327',
+      gate:'--rule G03 shows no CRITICAL' },
+    { id:'S-5', sev:'high', plan:false, pre:'done', t:'Guard the seven HTTP-reachable PHP files',
+      why:'<b>APPLIED 2026-08-20.</b> Seven shipping PHP files had no <code>ABSPATH</code> guard and answered directly over HTTP. Three apollo-login form partials and <code>profile.php</code> got a silent <code>&lt;?php … ?&gt;</code> prefix — PHP eats the newline after <code>?&gt;</code>, so nothing is emitted and no header can be sent early. The two CLI helpers got <code>PHP_SAPI !== "cli" &amp;&amp; ! defined(ABSPATH)</code> so the command line still works. <code>apollo-users.php</code> got the standard guard after its plugin header. G07 7 → 0.',
+      files:'login/templates/parts/{login-form,quiz-overlay,register-form}.php · login/templates/profile.php · remind/setup.php · telegram/dev-poll.php · users/apollo-users.php — originals in _to_delete/backup-plan001/G07/',
+      gate:'node apollo-guard.mjs --rule G07' },
+    { id:'S-4', sev:'high', plan:false, t:'apollo-fav’s unauthenticated favourite write',
+      why:'A fav is a per-user fact; an anonymous writer has no user. TBD-012, still open.',
+      files:'apollo-fav/includes/class-cbx-bridge.php:47 — wp_ajax_nopriv_apollo_fav_toggle',
+      gate:'an anonymous POST to the action returns 403' },
+  ]},
+
+  { id:'doctrine', name:'Lane · doctrine (plan-001)', note:'The product decisions, restored.', tasks:[
+    { id:'D-1', sev:'crit', plan:false, t:'Delete the follow surface',
+      why:'01-philosophy bans it outright; the mockup contract flagged it on 8 Aug. Two of the seven sites are in <b>apollo-core’s own canonical route table</b>. The dock button exists twice with two handlers — which is why the August fix did not stick, someone fixed one copy. Leave scFollow/bcFollow/spFollow alone: those are outbound links to SoundCloud, Bandcamp, Spotify.',
+      files:'core/src/Config/ApolloRoute.php:63 · core/config/routes.php:366 · djs/…/single/dock.php:31 · djs/templates/parts/dj-card/dock.php:32 · djs/…/single/scripts.php:220 · djs/assets/js/dj-card-single.js:206 · statistics/class-user-stats-widget.php:164,166 · statistics/class-analytics.php:145 · social/assets/css/feed.css:1205',
+      gate:'node apollo-guard.mjs --rule D02' },
+    { id:'D-2', sev:'crit', plan:false, pre:'done', t:'Kill the debug beacon',
+      why:'<b>APPLIED 2026-08-20.</b> Worse than the harness said: the block POSTed to <code>127.0.0.1:7514</code> <i>and</i> to <code>apollo/v1/_agent_debug</code> carrying the editor’s <code>X-WP-Nonce</code>, both in <code>.catch(){}</code>. Three <code>#region agent log</code> blocks removed, removal note left in place. apollo-events cleaned the same beacons on 17 Aug and removed the route; this copy was missed. <b>Still open:</b> the <code>apollo_agent_debug_c3f157</code> option row may survive in the live DB — apollo-events’ own comment says so.',
+      files:'apollo-djs/src/Admin/Metabox.php:175',
+      gate:'--rule D11 clean; portal harness E27 passes' },
+    { id:'D-3', sev:'high', plan:false, t:'Replace 22 forbidden time formats',
+      why:'apollo-social/SidebarRenderer.php:54 renders <code>human_time_diff() . ’ atrás’</code> — the exact banned string. apollo-scheduler ships the English variant. apollo-journal’s REST controller returns human_time_diff() three times, so every API consumer inherits it.',
+      files:'social:54 · scheduler/functions.php:140 · admin/pending.php:392 · events/depoimentos.php:59 · adverts/depoimentos.php:81 · gestor/Proj_Board.php:67 · templates/feed-data.php:85 · journal/PostsController.php:124,240,309',
+      gate:'node apollo-guard.mjs --rule D03' },
+    { id:'D-4', sev:'med', plan:false, t:'Vocabulary sweep',
+      why:'35 files. The bulk is <code>venue</code> in apollo-admin’s modera fixtures (179 occurrences in one file) and its renderers. Not release-blocking — a burn-down.',
+      files:'apollo-admin/assets/modera/js/data.defaults.js and renderers · 9 interesse/bookmark · 4 /user/',
+      gate:'--rule D07 decreasing' },
+  ]},
+
+  { id:'shell', name:'Lane · shell (plan-001)', note:'One canvas. Nine call sites left — five in apollo-events. Blocks A-1.', tasks:[
+    { id:'H-1', sev:'high', plan:true, t:'Retire the nine legacy shell call sites',
+      why:'<b>Corrected 2026-08-20: nine sites, not four.</b> The first snapshot held a zero-byte copy of <code>apollo-events/src/Plugin.php</code> and missed five live calls there — <code>/novo-evento</code>, url-import and dashboard-event all still on path A, in the most-edited HIGH-security plugin. apollo-calendar uses <b>both</b> retired paths and the deploy map records neither. A shell mistake produces a double &lt;head&gt;/&lt;body&gt; — the documented 2026-08-05 failure mode. user-radar.php also holds a :root block; this lane owns that file, lane tokens skips it.',
+      files:'events/src/Plugin.php:476,495,501,509,527 (path A) · users/templates/user-radar.php:348 (path C) · calendar/templates/agenda.php:134 (path C) · calendar/src/Frontend/CalendarPage.php:62 (path A) · dashboard/includes/class-plugin.php:207 (path A)',
+      gate:'--rule D06 clean (9 → 0); one &lt;head&gt;, one topbar, one .ax-main per page — and A-1 unblocked' },
+  ]},
+
+  { id:'harness', name:'Lane · harness (plan-001)', note:'Apollo’s own gate. Three of five green — was two.', tasks:[
+    { id:'V-1', sev:'high', plan:false, pre:'done', t:'Portal harness green — 51/51, 2 skipped',
+      why:'<b>GREEN 2026-08-20 — 49/53 → 51/51 passed, 2 skipped, exit 0.</b> E27 closed with D-2. E24 closed: the comment at <code>styles-ds.php:725</code> never closed and swallowed everything to line 734. Then the harness got a third state: <code>php not runnable: ENOENT</code> is an <i>environment</i> gap, not a defect, and reporting it FAIL is exactly how a suite drifts to 49/53 — two false alarms teach people to ignore the two real ones. H2/H3 now SKIP when php is absent and <b>only</b> then; a php that runs and fails still FAILs. Also added the eleventh cell to the audit: <code>styles-lightbox.php</code>’s 450 lines had never been checked, and they audit <b>clean</b>.',
+      files:'apollo-events/_sandbox/build-portal-harness.mjs — Skip class, three-state report, CELLS +lightbox · backup in _to_delete/backup-plan003/P5-5/',
+      gate:'node apollo-events/_sandbox/build-portal-harness.mjs exits 0 ✓' },
+    { id:'V-2', sev:'high', plan:true, t:'Casa harness — 31 assertions',
+      why:'new-home.css and the inline page-home.php block both declare body.ax-body, #apollo-home, .nh-nav-btn, .ax-top, .ax-top-blur, .ax-top-l/-r, .ax-login, .ax-top-brand — several DS-owned. The cardinal sin verbatim, on /casa, in a plugin with ~24 dependents. Sequence after K-2 and with K-3’s apollo-templates step: same files.',
+      files:'apollo-templates/_sandbox/build-casa-harness.mjs · new-home.css · templates/page-home.php',
+      gate:'node apollo-templates/_sandbox/build-casa-harness.mjs exits 0' },
+    { id:'V-3', sev:'high', plan:true, t:'CPT-surface harness — local at 0%',
+      why:'local.form 0%, local.rest 0%, local.metabox 79% — 24 declared local fields no surface can edit. The harness names the fix itself: drive it from apollo_form_schema(’local’) instead of hand-listing keys. It also says <i>"Phase 3 does not start until this is green"</i> — STRATEGY-integration’s panel→FrontendEditor derivation has been silently blocked on this.',
+      files:'apollo-core/_sandbox/build-cpt-surface-harness.mjs · the 24 _local_* keys',
+      gate:'node apollo-core/_sandbox/build-cpt-surface-harness.mjs exits 0' },
+    { id:'V-4', sev:'med', plan:false, t:'Wire the harnesses into the gate',
+      why:'<code>--harness</code> runs all five and prints one green/red table. Run it before every merge into plugins/. Do <b>not</b> put it in the pre-commit hook — five harnesses take longer than the edit, and a slow hook gets bypassed.',
+      files:'node _inventory/_current/apollo-guard.mjs --harness',
+      gate:'5 green / 0 red' },
+  ]},
+];
+
+const HARNESS = [
+  { n:'apollo-djs/_sandbox/build-dj-harness.mjs',            ok:true,  s:'16/16' },
+  { n:'apollo-email/_sandbox/build-email-harness.mjs',       ok:true,  s:'26/26' },
+  { n:'apollo-events/_sandbox/build-portal-harness.mjs',     ok:true,  s:'51/51 · 2 skipped (no php)' },
+  { n:'apollo-core/_sandbox/build-cpt-surface-harness.mjs',  ok:false, s:'G2 — 5 surfaces below 100%' },
+  { n:'apollo-templates/_sandbox/build-casa-harness.mjs',    ok:false, s:'31 assertions' },
+];
+
+const ADMIN = [
+  ['Apollo (pos. 3)',    '<b>apollo-admin</b> — the root menu. One topbar drives <b>~40 tabs</b> across 6 areas (Admin, Identity, Email, Events, Social, System) from a single file: <code>templates/partials/topbar.php</code>. 39 section templates, 4,639 lines.'],
+  ['Apollo › Sistema',   '<b>apollo-core</b> — system settings. <code>SettingsPage.php:48</code>'],
+  ['Apollo › Registry',  '<b>apollo-core</b> — registry inspection. <code>SettingsPage.php:57</code>'],
+  ['Apollo › Database',  '<b>apollo-core</b> — database administration. <code>SettingsPage.php:66</code>'],
+  ['Apollo › Moderação', '<b>apollo-mod</b> — moderation queue. <code>Plugin.php:239</code>'],
+  ['Apollo › Testes 🧪',  '<b>apollo-statistics</b> — a test panel registered in production. <code>TestPanel.php:120</code>'],
+  ['Tools › Apollo Health','<b>apollo-core</b> — <code>ecosystem-health.php:190</code>. Reads the four contracts and reports meta with no input, fields with no meta key, dormant surfaces, cards with no consumer. <b>Read-only by design</b> — it audits, never repairs. This is the screen the plans keep asking for, and it already exists.'],
+  ['Tools › Shortcodes', '<b>apollo-core</b> — <code>ShortcodeRegistry.php:554</code>. Under Tools, not under Apollo.'],
+  ['post edit screens',  '<b>apollo-lux-panels</b> — the panel surface for <code>event</code>, <code>dj</code>, <code>local</code>. 1,726 lines, <code>Panel.php</code> alone is 922.'],
+];
+
+/* ── state ─────────────────────────────────────────────────────────── */
+const KEY = 'apollo.console.v1';
+const VIEWS = [['now','Now'],['rules','Rules'],['plugins','Plugins'],['board','Board'],['admin','Admin map']];
+let state = { done:{}, view:'now', q:'', hide:false };
+
+function load(){
+  let raw=null; try{ raw=localStorage.getItem(KEY); }catch(e){}
+  if(raw){ try{ Object.assign(state, JSON.parse(raw)); }catch(e){} }
+  else { LANES.flatMap(l=>l.tasks).forEach(t=>{ if(t.pre==='done') state.done[t.id]=true; }); }
+  const h=(location.hash||'').replace('#','');
+  if(h && VIEWS.some(v=>v[0]===h)) state.view=h;
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const hit = (needle, ...hay) => !needle || hay.join(' ').toLowerCase().includes(needle);
+
+/* ── KPI strip ─────────────────────────────────────────────────────── */
+function kpis(){
+  const s = DATA.sev||{};
+  const tasks = LANES.flatMap(l=>l.tasks);
+  const done = tasks.filter(t=>state.done[t.id]).length;
+  const green = HARNESS.filter(h=>h.ok).length;
+  const rows = [
+    ['c', s.CRITICAL||0, 'critical', 'rules'],
+    ['h', s.HIGH||0, 'high', 'rules'],
+    ['',  s.MEDIUM||0, 'medium', 'rules'],
+    ['g', green+'/'+HARNESS.length, 'harnesses green', 'now'],
+    ['',  done+'/'+tasks.length, 'tasks closed', 'board'],
+    ['',  DATA.scanned||0, 'files gated', 'plugins'],
+  ];
+  document.getElementById('kpis').innerHTML = rows.map(([cls,n,l,go]) =>
+    `<button class="kpi ${cls}" data-go="${go}"><span class="n">${esc(n)}</span><span class="l">${esc(l)}</span></button>`).join('');
+}
+
+/* ── views ─────────────────────────────────────────────────────────── */
+function vNow(){
+  const q = state.q;
+  const crit = (DATA.rules||[]).filter(r=>r.sev==='CRITICAL');
+  const blockers = LANES.flatMap(l=>l.tasks).filter(t=>(t.sev==='crit')&&!state.done[t.id]);
+  return `
+  <div class="note bad"><b>Still open, and only you can do it:</b> rotate the FTP/SSH credential.
+    ~20 <code>_tmp_*.py</code> files carried it in plaintext in a folder that mirrors to the public web.
+    They are quarantined and denied now — but a deny rule hides exposure, it does not undo it.</div>
+  <div class="note"><b>Sealed 2026-08-25:</b> <code>plugins/.git</code> was readable over HTTP.
+    <code>&lt;FilesMatch&gt;</code> matches the <i>basename</i>, so the <code>^\\.</code> rule never caught
+    <code>.git/config</code> — a dot-free name inside a dot-prefixed directory. Closed three ways:
+    <code>RedirectMatch 404</code> on the path (mod_alias, so the root file's rewrite context survives),
+    plus <code>Require all denied</code> and an <code>index.php</code> inside each directory.</div>
+
+  <div class="panel"><div class="phead"><h2>Verification harnesses</h2>
+    <span class="cnt">${HARNESS.filter(h=>h.ok).length} green · ${HARNESS.filter(h=>!h.ok).length} red</span></div>
+    <div class="pbody flush">${HARNESS.filter(h=>hit(q,h.n,h.s)).map(h=>
+      `<div class="hrow"><span class="dot ${h.ok?'green':'red'}"></span>
+       <span class="nm">${esc(h.n)}</span><span class="sc">${esc(h.s)}</span></div>`).join('')||'<div class="empty">no match</div>'}</div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel"><div class="phead"><h2>Critical rules</h2><span class="cnt">${crit.length}</span></div>
+      <div class="pbody flush">${crit.filter(r=>hit(q,r.id,r.title)).map(r=>
+        `<div class="rule" data-go="rules"><span class="stripe sv-${r.sev}"></span><div class="body">
+          <div class="r1"><span class="rid">${esc(r.id)}</span><h3>${esc(r.title)}</h3><span class="n">${r.n}</span></div>
+        </div></div>`).join('')||'<div class="empty">none</div>'}</div>
+    </div>
+    <div class="panel"><div class="phead"><h2>Release blockers left</h2><span class="cnt">${blockers.length}</span></div>
+      <div class="pbody flush">${blockers.filter(t=>hit(q,t.id,t.t)).map(t=>
+        `<div class="rule" data-go="board"><span class="stripe sv-CRITICAL"></span><div class="body">
+          <div class="r1"><span class="rid">${esc(t.id)}</span><h3>${esc(t.t)}</h3></div>
+        </div></div>`).join('')||'<div class="empty">none</div>'}</div>
+    </div>
+  </div>`;
+}
+
+function vRules(){
+  const q=state.q;
+  const rs=(DATA.rules||[]).filter(r=>hit(q,r.id,r.title,r.src,r.fix,(r.sites||[]).map(s=>s.p+' '+s.m).join(' ')));
+  if(!rs.length) return '<div class="panel"><div class="empty">no rule matches “'+esc(q)+'”</div></div>';
+  return `<div class="panel"><div class="phead"><h2>Gate rules</h2>
+    <span class="cnt">${rs.length} of ${(DATA.rules||[]).length} · ${DATA.total} findings</span></div>
+    <div class="pbody flush">${rs.map(r=>`
+      <div class="rule" data-rule="${esc(r.id)}"><span class="stripe sv-${r.sev}"></span><div class="body">
+        <div class="r1"><span class="rid">${esc(r.id)}</span><h3>${esc(r.title)}</h3>
+          <span class="pill pv-${r.sev}">${esc(r.sev)}</span><span class="n">${r.n}</span></div>
+        <div class="src">${esc(r.src)}</div>
+        <div class="detail">
+          ${r.fix?`<p class="fix"><b>Fix.</b> ${esc(r.fix)}</p>`:''}
+          <div class="sites">${(r.sites||[]).map(s=>`<b>${esc(s.p)}</b> — ${esc(s.m)}`).join('<br>')||'—'}</div>
+          ${r.n>(r.sites||[]).length?`<span class="more">+ ${r.n-(r.sites||[]).length} more · <code>node _inventory/_current/apollo-guard.mjs --rule ${esc(r.id)} --verbose</code></span>`:''}
+        </div>
+      </div></div>`).join('')}</div></div>`;
+}
+
+function vPlugins(){
+  const q=state.q;
+  const ps=(DATA.plugins||[]).filter(p=>hit(q,p.s,p.v,p.r));
+  const dirty=ps.filter(p=>p.c||p.h||p.m), clean=ps.filter(p=>!(p.c||p.h||p.m));
+  const card = p => {
+    const tot=Math.max(1,p.c+p.h+p.m);
+    return `<div class="pcard ${p.c||p.h||p.m?'':'clean'}">
+      <div class="t"><span class="s">${esc(p.s)}</span><span class="v">${esc(p.v)}</span></div>
+      <div class="meter"><i class="c" style="width:${p.c/tot*100}%"></i><i class="h" style="width:${p.h/tot*100}%"></i><i class="m" style="width:${p.m/tot*100}%"></i></div>
+      <div class="f"><span class="rb ${p.r}">${p.r}</span>
+        <span class="c"><b>${p.c}</b> crit</span><span class="h"><b>${p.h}</b> high</span><span><b>${p.m}</b> med</span></div>
+    </div>`;
+  };
+  return `<div class="panel"><div class="phead"><h2>Plugins with findings</h2><span class="cnt">${dirty.length}</span></div>
+      <div class="pgrid">${dirty.map(card).join('')||'<div class="empty">none</div>'}</div></div>
+    <div class="panel"><div class="phead"><h2>Clean</h2><span class="cnt">${clean.length}</span></div>
+      <div class="pgrid">${clean.map(card).join('')||'<div class="empty">none</div>'}</div></div>`;
+}
+
+function vBoard(){
+  const q=state.q;
+  return LANES.map(l=>{
+    const ts=l.tasks.filter(t=>hit(q,t.id,t.t,t.why,t.files,t.gate));
+    if(!ts.length) return '';
+    const done=l.tasks.filter(t=>state.done[t.id]).length;
+    return `<div class="panel"><div class="phead"><h2>${esc(l.name)}</h2>
+      <span class="cnt">${done}/${l.tasks.length}</span></div>
+      <div class="pbody flush">${ts.map(t=>`
+        <article class="task ${state.done[t.id]?'done':''}" data-id="${esc(t.id)}" role="button" tabindex="0">
+          <span class="box" aria-hidden="true"></span>
+          <div><div class="r1"><span class="tid">${esc(t.id)}</span><h3>${esc(t.t)}</h3>
+            <span class="pill pv-${t.sev==='crit'?'CRITICAL':t.sev==='high'?'HIGH':'MEDIUM'}">${t.sev==='crit'?'critical':t.sev==='high'?'high':'medium'}</span>
+            ${t.plan?'<span class="pill pv-LOW">⊕ plan</span>':''}
+            ${t.pre==='partial'?'<span class="pill p-ok">partial</span>':''}</div>
+            <p class="why">${t.why}</p>
+            <p class="files">${t.files}</p>
+            <span class="gate">gate · ${t.gate}</span>
+          </div></article>`).join('')}</div></div>`;
+  }).join('') || '<div class="panel"><div class="empty">no task matches</div></div>';
+}
+
+function vAdmin(){
+  const q=state.q;
+  const rows=ADMIN.filter(r=>hit(q,r[0],r[1].replace(/<[^>]+>/g,'')));
+  return `<div class="note"><b>Admin lives under two roots, not one.</b> Most screens hang off the
+    <code>Apollo</code> menu, but Health and Shortcodes are under <code>Tools</code> — so the two screens
+    an operator needs most are the two hardest to find. That split, and the ~40 tabs driven from a single
+    topbar file, is what "administrating Apollo" costs today.</div>
+    <div class="panel"><div class="phead"><h2>Where every admin screen actually lives</h2>
+      <span class="cnt">${rows.length}</span></div>
+      <div class="pbody flush">${rows.map(r=>`<div class="amrow"><div class="where">${esc(r[0])}</div><div class="what">${r[1]}</div></div>`).join('')||'<div class="empty">no match</div>'}</div></div>`;
+}
+
+/* ── render ────────────────────────────────────────────────────────── */
+function render(){
+  document.getElementById('tabs').innerHTML = VIEWS.map(([id,label])=>
+    `<button class="tab" role="tab" data-view="${id}" aria-selected="${state.view===id}">${label}</button>`).join('');
+  VIEWS.forEach(([id])=>{
+    const el=document.getElementById('v-'+id);
+    el.classList.toggle('on', state.view===id);
+  });
+  const R={now:vNow,rules:vRules,plugins:vPlugins,board:vBoard,admin:vAdmin}[state.view];
+  document.getElementById('v-'+state.view).innerHTML = R();
+  document.body.classList.toggle('hide-done', state.hide);
+  kpis();
+  history.replaceState(null,'','#'+state.view);
+}
+
+/* ── events ────────────────────────────────────────────────────────── */
+document.addEventListener('click', e=>{
+  const tab=e.target.closest('[data-view]');
+  if(tab){ state.view=tab.dataset.view; save(); render(); return; }
+  const go=e.target.closest('[data-go]');
+  if(go){ state.view=go.dataset.go; save(); render(); window.scrollTo({top:0,behavior:'smooth'}); return; }
+  const rule=e.target.closest('[data-rule]');
+  if(rule){ rule.classList.toggle('open'); return; }
+  const task=e.target.closest('.task');
+  if(task){ const id=task.dataset.id; state.done[id]=!state.done[id];
+    if(!state.done[id]) delete state.done[id]; save(); render(); }
+});
+document.addEventListener('keydown', e=>{
+  if(e.key==='/' && document.activeElement.id!=='q'){ e.preventDefault(); document.getElementById('q').focus(); return; }
+  if(e.key==='Escape'){ const q=document.getElementById('q'); q.value=''; state.q=''; q.blur(); save(); render(); return; }
+  if(document.activeElement.id==='q') return;
+  const n=parseInt(e.key,10);
+  if(n>=1&&n<=VIEWS.length){ state.view=VIEWS[n-1][0]; save(); render(); return; }
+  if((e.key==='Enter'||e.key===' ') && e.target.closest && e.target.closest('.task')){
+    e.preventDefault(); e.target.closest('.task').click(); }
+});
+let deb;
+document.getElementById('q').addEventListener('input', e=>{
+  clearTimeout(deb);
+  deb=setTimeout(()=>{ state.q=e.target.value.trim().toLowerCase(); render();
+    if(state.q) document.getElementById('q').focus(); }, 130);
+});
+document.getElementById('tHide').addEventListener('click', e=>{
+  state.hide=!state.hide; e.currentTarget.setAttribute('aria-pressed', state.hide);
+  e.currentTarget.textContent = state.hide?'Show all':'Hide done'; save(); render();
+});
+document.getElementById('tExport').addEventListener('click', ()=>{
+  const p=JSON.stringify({board:'plan-003',done:Object.keys(state.done)},null,2);
+  if(navigator.clipboard) navigator.clipboard.writeText(p).then(
+    ()=>{ const b=document.getElementById('tExport'); b.textContent='Copied'; setTimeout(()=>b.textContent='Export',1600); },
+    ()=>window.prompt('Copy:',p));
+  else window.prompt('Copy:',p);
+});
+
+load(); render();
+</script>
+
+</body>
+</html>

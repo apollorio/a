@@ -121,7 +121,7 @@ class JWTAuth
         register_rest_route($namespace, '/auth/token', array(
             'methods'             => 'POST',
             'callback'            => array($this, 'handle_token_request'),
-            'permission_callback' => '__return_true',
+            'permission_callback' => '__return_true', // Public by necessity — this route mints the credential. IP lockout enforced in handle_token_request(), sharing login()'s bucket. Added 2026-08-25.
             'args'                => array(
                 'email'    => array(
                     'required'          => true,
@@ -139,7 +139,7 @@ class JWTAuth
         register_rest_route($namespace, '/auth/token/refresh', array(
             'methods'             => 'POST',
             'callback'            => array($this, 'handle_refresh_request'),
-            'permission_callback' => '__return_true',
+            'permission_callback' => '__return_true', // UNPROTECTED — no nonce, no rate limit. The refresh token is 256-bit random so it is not guessable; the exposure is unthrottled DB load, and unlimited re-minting if a token ever leaks. plan-003 S-1.
             'args'                => array(
                 'refresh_token' => array(
                     'required'          => true,
@@ -179,13 +179,56 @@ class JWTAuth
             return new \WP_Error('jwt_not_configured', 'JWT authentication is not configured.', array('status' => 500));
         }
 
+        // ── Lockout. Added 2026-08-25.
+        //
+        //    This route is the same operation as POST /auth/login — one bare
+        //    wp_authenticate() against a caller-supplied email and password — but it
+        //    shipped without any of login()'s protection, and a correct guess here mints
+        //    a 1-hour JWT *and* a 30-day refresh token. That is a portable credential,
+        //    not a session cookie, so this endpoint was the cheaper of the two to attack.
+        //
+        //    It shares login()'s bucket on purpose. A separate counter would just hand an
+        //    attacker a second budget: exhaust /auth/login, switch to /auth/token, start
+        //    again from zero. One concept, one declaration — the counter is the concept.
+        //    Mirrors AuthController::login() (AuthController.php:355-381).
+        //
+        //    Every RateLimiter call is guarded by class_exists(). If the class is ever
+        //    unavailable the route behaves exactly as it did before this comment existed:
+        //    the failure mode is the old behaviour, never a locked-out site.
+        //    Firewall is the one owner of "which IP is hitting us" — RateLimiter itself
+        //    reads it from there (RateLimiter.php:88, :133). It is guarded here too, so a
+        //    missing class degrades to "no lockout", never to a fatal inside an auth route.
+        $limiter      = __NAMESPACE__ . '\\RateLimiter';
+        $firewall     = __NAMESPACE__ . '\\Firewall';
+        $client_ip    = class_exists($firewall) ? Firewall::get_client_ip() : '0.0.0.0';
+        $rate_bucket  = 'apollo_login_attempts_' . md5($client_ip);
+        $max_attempts = (int) (defined('APOLLO_LOGIN_MAX_ATTEMPTS') ? APOLLO_LOGIN_MAX_ATTEMPTS : 3);
+        $lockout      = (int) (defined('APOLLO_LOGIN_LOCKOUT_DURATION') ? APOLLO_LOGIN_LOCKOUT_DURATION : 900);
+        $has_limiter  = class_exists($limiter);
+
+        if ($has_limiter && RateLimiter::get_counter($rate_bucket) >= $max_attempts) {
+            return new \WP_Error(
+                'rate_limited',
+                __('Muitas tentativas. Aguarde antes de tentar novamente.', 'apollo-login'),
+                array('status' => 429)
+            );
+        }
+
         $email    = $request->get_param('email');
         $password = $request->get_param('password');
 
         // Authenticate user
         $user = wp_authenticate($email, $password);
         if (is_wp_error($user)) {
+            if ($has_limiter) {
+                RateLimiter::increment_counter($rate_bucket, $lockout);
+            }
+
             return new \WP_Error('invalid_credentials', 'E-mail ou senha inválidos.', array('status' => 401));
+        }
+
+        if ($has_limiter) {
+            RateLimiter::clear_counter($rate_bucket);
         }
 
         return $this->issue_tokens($user);

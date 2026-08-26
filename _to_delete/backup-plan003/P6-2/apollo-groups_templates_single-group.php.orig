@@ -1,0 +1,306 @@
+<?php
+
+/**
+ * Single Group Page — /comuna/{slug}
+ *
+ * Blank Canvas + Apollo CDN + Design System.
+ * Hero-style layout: giant title, pills, info grid, bio, rules, mods, feed, members sidebar.
+ *
+ * @package Apollo\Groups
+ * @since   2.0.0
+ */
+
+defined('ABSPATH') || exit;
+
+// ═══════════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════════
+
+$slug      = sanitize_text_field(get_query_var('apollo_group_slug', ''));
+$group     = function_exists('apollo_get_group') ? apollo_get_group($slug) : null;
+$is_logged = is_user_logged_in();
+$user_id   = get_current_user_id();
+$rest_url  = rest_url('apollo/v1/groups');
+$nonce     = wp_create_nonce('wp_rest');
+
+// ── Fallback: try DB directly ──
+if (! $group && ! empty($slug)) {
+    global $wpdb;
+    $tbl = $wpdb->prefix . 'apollo_groups';
+    if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $tbl)) === $tbl) {
+        $group = $wpdb->get_row(
+            $wpdb->prepare(
+                "SELECT * FROM {$tbl} WHERE slug = %s OR id = %s LIMIT 1",
+                $slug,
+                $slug
+            ),
+            ARRAY_A
+        );
+    }
+}
+
+// ── 404 ──
+if (! $group) {
+    status_header(404);
+?>
+    <!DOCTYPE html>
+    <html>
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Apollo · 404</title>
+        <script src="<?php echo esc_url( function_exists('apollo_cdn_core_js_url') ? apollo_cdn_core_js_url() : 'https://cdn.apollo.rio.br/v1.0.0/core.js?v=t0x1x&versao=bb' ); ?>" fetchpriority="high" crossorigin="anonymous"></script>
+    </head>
+
+    <body style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Space Grotesk',sans-serif;">
+        <div style="text-align:center">
+            <h1 style="font-size:3rem;font-weight:800;">404</h1>
+            <p style="color:#94a3b8;">Comuna ou núcleo não encontrado.</p>
+            <a href="<?php echo esc_url(home_url('/grupos')); ?>" style="color:FF9820;font-weight:600;">← Voltar para grupos</a>
+        </div>
+    </body>
+
+    </html>
+<?php
+    exit;
+}
+
+// ── Privacy Gate — private/secret groups require membership ──
+$group_privacy = $group['privacy'] ?? 'public';
+if (
+    'public' !== $group_privacy
+    && ! current_user_can('manage_options')
+    && ( ! $is_logged || ! function_exists('apollo_is_group_member') || ! apollo_is_group_member((int) ($group['id'] ?? 0), $user_id) )
+) {
+    status_header(403);
+?>
+    <!DOCTYPE html>
+    <html>
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Apollo · Acesso Restrito</title>
+        <script src="<?php echo esc_url( function_exists('apollo_cdn_core_js_url') ? apollo_cdn_core_js_url() : 'https://cdn.apollo.rio.br/v1.0.0/core.js?v=t0x1x&versao=bb' ); ?>" fetchpriority="high" crossorigin="anonymous"></script>
+    </head>
+
+    <body style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Space Grotesk',sans-serif;">
+        <div style="text-align:center">
+            <i class="ri-lock-fill" style="font-size:3rem;color:FF9820;"></i>
+            <h1 style="font-size:1.75rem;font-weight:800;margin-top:12px;">Acesso Restrito</h1>
+            <p style="color:#94a3b8;max-width:340px;margin:8px auto 20px;">Este grupo é privado. Apenas membros podem visualizar o conteúdo.</p>
+            <a href="<?php echo esc_url(home_url('/grupos')); ?>" style="color:FF9820;font-weight:600;">← Voltar para grupos</a>
+        </div>
+    </body>
+
+    </html>
+<?php
+    exit;
+}
+
+// ── Group data ──
+$group_id     = (int) ($group['id'] ?? 0);
+$group_name   = $group['name'] ?? 'Comuna';
+$group_desc   = $group['description'] ?? '';
+$group_type   = $group['type'] ?? 'comuna';
+$group_rules  = $group['rules'] ?? '';
+$group_avatar = $group['avatar_url'] ?? '';
+$group_cover  = $group['cover_url'] ?? '';
+$created_at   = $group['created_at'] ?? '';
+
+// ── Members ──
+$members       = array();
+$member_count  = 0;
+$is_member     = false;
+$is_admin_user = false;
+
+global $wpdb;
+$members_table = $wpdb->prefix . 'apollo_group_members';
+$has_members   = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $members_table)) === $members_table;
+
+if ($has_members) {
+    $member_count = (int) $wpdb->get_var(
+        $wpdb->prepare(
+            "SELECT COUNT(*) FROM {$members_table} WHERE group_id = %d",
+            $group_id
+        )
+    );
+
+    $members = $wpdb->get_results(
+        $wpdb->prepare(
+            "SELECT gm.user_id, gm.role, u.display_name, u.user_login,
+                (SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id = gm.user_id AND meta_key = '_apollo_avatar_url' LIMIT 1) as avatar_url
+         FROM {$members_table} gm
+         LEFT JOIN {$wpdb->users} u ON u.ID = gm.user_id
+         WHERE gm.group_id = %d
+         ORDER BY gm.role DESC, gm.created_at ASC
+         LIMIT 30",
+            $group_id
+        ),
+        ARRAY_A
+    );
+
+    if ($is_logged) {
+        $is_member     = (bool) $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT COUNT(*) FROM {$members_table} WHERE group_id = %d AND user_id = %d",
+                $group_id,
+                $user_id
+            )
+        );
+        $user_role     = $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT role FROM {$members_table} WHERE group_id = %d AND user_id = %d",
+                $group_id,
+                $user_id
+            )
+        );
+        $is_admin_user = $is_member && ($user_role === 'admin' || $user_role === 'mod');
+    }
+}
+
+// Creator is admin
+if ($is_logged && isset($group['creator_id']) && (int) $group['creator_id'] === $user_id) {
+    $is_admin_user = true;
+}
+if (current_user_can('manage_options')) {
+    $is_admin_user = true;
+}
+
+// ── Mods ──
+$mods = array_filter(
+    $members,
+    function ($m) {
+        return in_array($m['role'], array('admin', 'mod'), true);
+    }
+);
+
+// ── Activity (group posts) ──
+$group_posts  = array();
+$social_table = $wpdb->prefix . 'apollo_social_posts';
+$has_social   = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $social_table)) === $social_table;
+if ($has_social) {
+    $group_posts = $wpdb->get_results(
+        $wpdb->prepare(
+            "SELECT p.*, u.display_name, u.user_login,
+                (SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id = p.user_id AND meta_key = '_apollo_avatar_url' LIMIT 1) as author_avatar,
+                (SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id = p.user_id AND meta_key = '_apollo_social_name' LIMIT 1) as social_name
+         FROM {$social_table} p
+         LEFT JOIN {$wpdb->users} u ON u.ID = p.user_id
+         WHERE p.group_id = %d
+         ORDER BY p.created_at DESC
+         LIMIT 15",
+            $group_id
+        ),
+        ARRAY_A
+    );
+}
+
+// ── Pills ──
+$pills = array();
+if ($group_type) {
+    $pills[] = ucfirst($group_type);
+}
+if ($member_count > 0) {
+    $pills[] = $member_count . ' membros';
+}
+if ($created_at) {
+    $pills[] = 'Desde ' . date_i18n('M Y', strtotime($created_at));
+}
+
+// ── Time ago helper (fallback — apollo-core provides the real one) ──
+if (! function_exists('apollo_time_ago')) {
+    function apollo_time_ago(string $datetime): string
+    {
+        $diff = max(0, current_time('timestamp') - (int) strtotime($datetime));
+        if ($diff < 60) {
+            return $diff . 's';
+        }
+        if ($diff < 3600) {
+            return floor($diff / 60) . 'min';
+        }
+        if ($diff < 86400) {
+            return floor($diff / 3600) . 'h';
+        }
+        if ($diff < 604800) {
+            return floor($diff / 86400) . 'd';
+        }
+        if ($diff < 31536000) {
+            return floor($diff / 604800) . 'w';
+        }
+        return floor($diff / 31536000) . 'y';
+    }
+}
+if (! function_exists('apollo_time_ago_html')) {
+    function apollo_time_ago_html(string $datetime): string
+    {
+        $str = apollo_time_ago($datetime);
+        if ('' === $str) {
+            return '';
+        }
+        preg_match('/^(\d+)(\w+)$/', $str, $m);
+        return '<i class="tempo-v"></i>&nbsp;<span class="time-ago">' . esc_html($m[1] ?? $str) . '</span><span class="when-ago">' . esc_html($m[2] ?? '') . '</span>';
+    }
+}
+
+// Cover fallback
+if (empty($group_cover)) {
+    $group_cover = 'https://images.unsplash.com/photo-1545128485-c400e7702796?w=1200&q=75';
+}
+
+// Additional data for sidebar
+$group_tags = $group['tags'] ?? '';
+$active_now = 0;
+
+// ═══════════════════════════════════════════════════════════════
+// TEMPLATE ORCHESTRATOR
+// ═══════════════════════════════════════════════════════════════
+
+$parts = __DIR__ . '/parts/single/';
+
+require $parts . 'head.php';
+require $parts . 'loader.php';
+require $parts . 'drawer.php';
+
+?>
+<div class="page-layout">
+
+    <!-- ═══ SIDEBAR (desktop) ═══ -->
+    <aside class="sidebar">
+        <?php
+        require $parts . 'sidebar-cover.php';
+        require $parts . 'sidebar-stats.php';
+        require $parts . 'sidebar-about.php';
+        require $parts . 'sidebar-tags.php';
+        require $parts . 'sidebar-rules.php';
+        require $parts . 'sidebar-members.php';
+        require $parts . 'sidebar-join.php';
+        ?>
+    </aside>
+
+    <!-- ═══ MAIN ═══ -->
+    <div class="main">
+        <?php require $parts . 'header.php'; ?>
+
+        <div class="main-inner">
+            <?php
+            require $parts . 'channels.php';
+            require $parts . 'pinned.php';
+            require $parts . 'composer.php';
+            require $parts . 'feed.php';
+            ?>
+
+            <?php if (empty($group_posts)) : ?>
+                <div style="text-align:center;padding:60px 20px;color:var(--ghost);">
+                    <i class="ri-chat-smile-3-line" style="font-size:40px;display:block;margin-bottom:12px;opacity:.3;"></i>
+                    <p>Nenhuma atividade ainda. Seja o primeiro a postar!</p>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+</div>
+
+<?php
+require $parts . 'scripts.php';

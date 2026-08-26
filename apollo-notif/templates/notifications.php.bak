@@ -1,0 +1,745 @@
+<?php
+
+/**
+ * Notifications Page � /notificacoes
+ * Blank Canvas Template - No Theme Interference
+ *
+ * Features: severity colors, icon per notif, CTA action buttons,
+ * delete (dismiss), snooze per type, filter by type/status, polling.
+ *
+ * @package Apollo\Notif
+ */
+
+defined('ABSPATH') || exit;
+
+if (! is_user_logged_in()) {
+    wp_redirect(home_url('/acesso'));
+    exit;
+}
+
+$user_id    = get_current_user_id();
+$rest_url   = rest_url('apollo/v1/notifications');
+$snooze_url = rest_url('apollo/v1/notifications/preferences/snooze');
+$nonce      = wp_create_nonce('wp_rest');
+
+?>
+<!DOCTYPE html>
+<html <?php language_attributes(); ?>>
+
+<head>
+    <meta charset="<?php bloginfo('charset'); ?>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title><?php esc_html_e('Notifica��es - Apollo::Rio', 'apollo-notif'); ?></title>
+
+    <!-- Apollo CDN - Mandatory for all pages -->
+    <script src="https://cdn.apollo.rio.br/v1.0.0/core.js?v=Random.x.1" fetchpriority="high"></script>
+    <!-- Apollo Forms — minimalist underline design system -->
+    <script src="https://cdn.apollo.rio.br/v1.0.0/js/forms.js" defer></script>
+
+    <!-- Navbar CSS -->
+    <?php if (defined('APOLLO_TEMPLATES_URL') && defined('APOLLO_TEMPLATES_VERSION')) : ?>
+        <link rel="stylesheet" href="<?php echo esc_url(APOLLO_TEMPLATES_URL . 'assets/css/navbar.css'); ?>?v=<?php echo esc_attr(APOLLO_TEMPLATES_VERSION); ?>">
+    <?php endif; ?>
+
+    <!-- Direct styles - no wp_head() interference -->
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--ap-bg, #fff);
+            color: var(--ap-text, #0f172a);
+            font-family: var(--ff-main, 'Space Grotesk', system-ui, sans-serif);
+            line-height: 1.5;
+        }
+
+        body {
+            min-height: 100vh;
+        }
+
+        /* -- Layout -- */
+        .apollo-page-wrap {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 2rem 1rem 4rem;
+        }
+
+        /* -- Toolbar -- */
+        .notif-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            gap: .75rem;
+            flex-wrap: wrap;
+        }
+
+        .notif-toolbar h1 {
+            margin: 0;
+            font-size: 1.4rem;
+        }
+
+        .notif-actions {
+            display: flex;
+            gap: .5rem;
+            flex-wrap: wrap;
+        }
+
+        /* -- Buttons -- */
+        .apollo-btn {
+            background: #0f172a;
+            color: #fff;
+            border: none;
+            padding: 7px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: .82rem;
+            font-weight: 600;
+            transition: opacity .2s;
+        }
+
+        .apollo-btn:hover {
+            opacity: .8;
+        }
+
+        .apollo-btn-ghost {
+            background: transparent;
+            color: #64748b;
+            border: none;
+            border-bottom: 1px solid rgba(var(--rgb-d), 0.15);
+            border-radius: 0;
+            padding: 6px 0;
+            cursor: pointer;
+            font-size: .8rem;
+            transition: all .2s;
+        }
+
+        .apollo-btn-ghost:hover {
+            color: #0f172a;
+            border-bottom-color: #0f172a;
+        }
+
+        /* -- Filters -- */
+        .notif-filters-row {
+            display: flex;
+            gap: .5rem;
+            margin-bottom: 1.1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .notif-pill {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid transparent;
+            border-radius: 0;
+            padding: 5px 0;
+            cursor: pointer;
+            font-size: .8rem;
+            color: #64748b;
+            transition: all .2s;
+        }
+
+        .notif-pill:hover {
+            border-bottom-color: #94a3b8;
+            color: #475569;
+        }
+
+        .notif-pill.active {
+            background: transparent;
+            color: #0f172a;
+            border-bottom-color: #0f172a;
+            font-weight: 600;
+        }
+
+        .notif-type-filter {
+            border: none;
+            border-bottom: 1px solid rgba(var(--rgb-d), 0.15);
+            border-radius: 0;
+            padding: 5px 0;
+            font-size: .8rem;
+            color: #64748b;
+            background: transparent;
+            cursor: pointer;
+            outline: none;
+            transition: border-color .2s;
+        }
+
+        .notif-type-filter:focus {
+            border-bottom-color: var(--primary, FF9820);
+        }
+
+        /* -- Notification item -- */
+        .notif-item {
+            display: flex;
+            gap: 12px;
+            padding: .9rem 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            position: relative;
+            transition: background .15s;
+        }
+
+        .notif-item:last-child {
+            border-bottom: none;
+        }
+
+        .notif-item:hover {
+            background: #f8fafc;
+        }
+
+        .notif-item.unread {
+            background: #f0f9ff;
+        }
+
+        /* Severity left border */
+        .notif-item[data-sev="info"] {
+            border-left: 3px solid #3b82f6;
+        }
+
+        .notif-item[data-sev="success"] {
+            border-left: 3px solid #22c55e;
+        }
+
+        .notif-item[data-sev="warning"] {
+            border-left: 3px solid #f59e0b;
+        }
+
+        .notif-item[data-sev="alert"] {
+            border-left: 3px solid #ef4444;
+        }
+
+        /* Icon circle */
+        .notif-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.1rem;
+        }
+
+        .notif-icon[data-sev="info"] {
+            background: #eff6ff;
+            color: #3b82f6;
+        }
+
+        .notif-icon[data-sev="success"] {
+            background: #f0fdf4;
+            color: #22c55e;
+        }
+
+        .notif-icon[data-sev="warning"] {
+            background: #fffbeb;
+            color: #f59e0b;
+        }
+
+        .notif-icon[data-sev="alert"] {
+            background: #fef2f2;
+            color: #ef4444;
+        }
+
+        /* Unread dot */
+        .notif-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #3b82f6;
+            flex-shrink: 0;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .notif-item.unread .notif-dot {
+            display: block;
+        }
+
+        /* Body */
+        .notif-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notif-title {
+            font-weight: 600;
+            font-size: .88rem;
+            margin-bottom: 2px;
+        }
+
+        .notif-desc {
+            font-size: .78rem;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+
+        .notif-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: .7rem;
+            color: #94a3b8;
+        }
+
+        .notif-type-badge {
+            background: #f1f5f9;
+            color: #64748b;
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-size: .65rem;
+        }
+
+        /* CTA */
+        .notif-cta {
+            display: inline-block;
+            margin-top: 6px;
+            background: #0f172a;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: .75rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: opacity .2s;
+        }
+
+        .notif-cta:hover {
+            opacity: .8;
+            color: #fff;
+        }
+
+        /* Item controls */
+        .notif-controls {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+            align-items: flex-start;
+            padding-top: 4px;
+            opacity: 0;
+            transition: opacity .2s;
+        }
+
+        .notif-item:hover .notif-controls {
+            opacity: 1;
+        }
+
+        .notif-ctrl-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #94a3b8;
+            padding: 2px;
+            font-size: .9rem;
+            border-radius: 4px;
+            transition: color .2s;
+        }
+
+        .notif-ctrl-btn:hover {
+            color: #64748b;
+        }
+
+        /* Loading / Empty */
+        .notif-loading {
+            text-align: center;
+            padding: 3rem;
+            color: #94a3b8;
+        }
+
+        .notif-loading i {
+            font-size: 1.5rem;
+            animation: spin 1s linear infinite;
+            display: block;
+            margin: 0 auto .5rem;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .notif-empty {
+            text-align: center;
+            padding: 4rem 1rem;
+            color: #94a3b8;
+        }
+
+        .notif-empty i {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: .75rem;
+        }
+
+        /* Snooze dropdown */
+        .snooze-menu {
+            position: absolute;
+            right: 1rem;
+            top: 100%;
+            background: #fff;
+            border: none;
+            border-radius: 0;
+            padding: .5rem 0;
+            z-index: 100;
+            box-shadow: 0 8px 32px rgba(var(--rgb-d), 0.10);
+            min-width: 180px;
+        }
+
+        .snooze-menu button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: .82rem;
+            color: #0f172a;
+            transition: background .15s;
+        }
+
+        .snooze-menu button:hover {
+            background: #f8fafc;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="apollo-page-wrap">
+
+        <!-- Toolbar -->
+        <div class="notif-toolbar">
+            <h1><?php esc_html_e('Notifica��es', 'apollo-notif'); ?></h1>
+            <div class="notif-actions">
+                <button id="mark-all-read" class="apollo-btn-ghost">
+                    <i class="ri-check-double-line"></i> Todas lidas
+                </button>
+                <button id="delete-read-btn" class="apollo-btn-ghost" title="Remover lidas">
+                    <i class="ri-delete-bin-6-line"></i> Limpar lidas
+                </button>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="notif-filters-row">
+            <button class="notif-pill active" data-filter="all">Todas</button>
+            <button class="notif-pill" data-filter="unread">N�o lidas</button>
+            <button class="notif-pill" data-filter="read">Lidas</button>
+            <select id="type-filter" class="notif-type-filter">
+                <option value="">Todos os tipos</option>
+                <option value="chat">?? Chat</option>
+                <option value="follow">?? Follow</option>
+                <option value="wow">?? Wow</option>
+                <option value="group_join">?? Comuna</option>
+                <option value="mention">@ Men��o</option>
+                <option value="new_event">?? Evento</option>
+                <option value="fav_saved">?? Fav</option>
+                <option value="depoimento">?? Depoimento</option>
+                <option value="membership_upgrade">?? Membership</option>
+                <option value="coauthor_invite">?? Coautoria</option>
+                <option value="profile_visit">??? Visita</option>
+                <option value="new_user">?? Novo usu�rio</option>
+            </select>
+        </div>
+
+        <!-- Notification list -->
+        <div id="notif-container"></div>
+
+        <!-- Load more -->
+        <div id="notif-load-more" style="text-align:center;padding:1.25rem;display:none;">
+            <button class="apollo-btn-ghost" onclick="loadMore()">
+                <i class="ri-arrow-down-s-line"></i> Carregar mais
+            </button>
+        </div>
+    </div>
+
+    <!-- Apollo Navbar -->
+    <?php
+    $navbar_path = __DIR__ . '/../../apollo-templates/templates/template-parts/navbar.php';
+    if (file_exists($navbar_path)) {
+        include $navbar_path;
+    }
+    ?>
+
+    <!-- JavaScript -->
+    <script>
+        (function() {
+            const REST = <?php echo wp_json_encode(esc_url_raw($rest_url)); ?>;
+            const SNOOZE_URL = <?php echo wp_json_encode(esc_url_raw($snooze_url)); ?>;
+            const NONCE = <?php echo wp_json_encode($nonce); ?>;
+            const container = document.getElementById('notif-container');
+            const loadMoreEl = document.getElementById('notif-load-more');
+
+            let currentPage = 1;
+            let currentFilter = 'all';
+            let currentType = '';
+
+            function hdrs() {
+                return {
+                    'X-WP-Nonce': NONCE,
+                    'Content-Type': 'application/json'
+                };
+            }
+
+            function escHtml(s) {
+                if (!s) return '';
+                const d = document.createElement('div');
+                d.textContent = String(s);
+                return d.innerHTML;
+            }
+
+            /** Apollo standard time-ago HTML block. Input: '53min' ? icon+spans. */
+            function tempoHTML(str) {
+                if (!str) return '';
+                var m = String(str).match(/^(\d+)([a-z]+)$/i);
+                var num = m ? m[1] : str;
+                var unit = m ? m[2] : '';
+                return '<i class="tempo-v"></i>\u00a0<span class="time-ago">' + num + '</span><span class="when-ago">' + unit + '</span>';
+            }
+
+            function closeAllSnoozeMenus() {
+                document.querySelectorAll('.snooze-menu').forEach(m => m.remove());
+            }
+            document.addEventListener('click', closeAllSnoozeMenus);
+
+            const TYPE_ICONS = {
+                chat: 'ri-chat-1-line',
+                follow: 'ri-user-follow-line',
+                wow: 'ri-emotion-happy-line',
+                group_join: 'ri-team-line',
+                mention: 'ri-at-line',
+                new_event: 'ri-calendar-event-line',
+                fav_saved: 'ri-fire-line',
+                depoimento: 'ri-quill-pen-line',
+                membership_upgrade: 'ri-vip-crown-line',
+                coauthor_invite: 'ri-user-shared-line',
+                profile_visit: 'ri-eye-line',
+                new_user: 'ri-user-add-line',
+                user_login: 'ri-login-circle-line',
+            };
+
+            function renderNotif(n) {
+                const el = document.createElement('div');
+                const sev = n.severity || 'info';
+                const cls = n.is_read ? 'read' : 'unread';
+                const icn = n.icon || TYPE_ICONS[n.type] || 'ri-notification-3-line';
+
+                el.className = `notif-item ${cls}`;
+                el.dataset.id = n.id;
+                el.dataset.sev = sev;
+                el.dataset.type = n.type || '';
+
+                const ctaHtml = (n.action_label && n.action_link) ?
+                    `<a class="notif-cta" href="${escHtml(n.action_link)}">${escHtml(n.action_label)}</a>` :
+                    '';
+
+                const deleteBtn = n.is_dismissible !== false ?
+                    `<button class="notif-ctrl-btn" title="Remover" onclick="deleteNotif(${n.id},this)"><i class="ri-close-line"></i></button>` :
+                    '';
+
+                el.innerHTML = `
+				<div class="notif-dot"></div>
+				<div class="notif-icon" data-sev="${sev}"><i class="${icn}"></i></div>
+				<div class="notif-body">
+					<div class="notif-title">${escHtml(n.title)}</div>
+					${n.message ? `<div class="notif-desc">${escHtml(n.message)}</div>` : ''}
+					${ctaHtml}
+					<div class="notif-meta">
+							<span>${tempoHTML(n.time_ago || n.created_at)}</span>
+						<span class="notif-type-badge">${escHtml(n.type)}</span>
+					</div>
+				</div>
+				<div class="notif-controls">
+					${deleteBtn}
+					<button class="notif-ctrl-btn" title="Silenciar tipo"
+						onclick="openSnoozeMenu(event,'${escHtml(n.type)}')">
+						<i class="ri-notification-off-line"></i>
+					</button>
+				</div>`;
+
+                el.addEventListener('click', (e) => {
+                    if (e.target.closest('.notif-controls') || e.target.closest('.notif-cta')) return;
+                    markRead(n.id, n.link, el);
+                });
+                return el;
+            }
+
+            async function loadNotifs(page, append) {
+                if (!append) container.innerHTML = '<div class="notif-loading"><i class="ri-loader-4-line"></i><p>Carregando...</p></div>';
+
+                let url = REST + '?page=' + page + '&per_page=15';
+                if (currentFilter === 'unread') url += '&unread_only=1';
+                if (currentFilter === 'read') url += '&unread_only=0';
+                if (currentType) url += '&type=' + encodeURIComponent(currentType);
+
+                try {
+                    const res = await fetch(url, {
+                        headers: hdrs(),
+                        credentials: 'same-origin'
+                    });
+                    const data = await res.json();
+                    if (!append) container.innerHTML = '';
+
+                    if (!data.length && page === 1) {
+                        container.innerHTML = '<div class="notif-empty"><i class="ri-notification-off-line"></i>Sem notifica��es</div>';
+                        loadMoreEl.style.display = 'none';
+                        return;
+                    }
+                    data.forEach(n => container.appendChild(renderNotif(n)));
+                    loadMoreEl.style.display = data.length >= 15 ? '' : 'none';
+                } catch (e) {
+                    console.error('apollo-notif', e);
+                }
+            }
+
+            async function markRead(id, link, el) {
+                el.classList.replace('unread', 'read');
+                fetch(REST + '/' + id + '/read', {
+                    method: 'POST',
+                    headers: hdrs(),
+                    credentials: 'same-origin'
+                });
+                if (link) window.location.href = link;
+            }
+
+            window.deleteNotif = async function(id, btn) {
+                const item = btn.closest('.notif-item');
+                const res = await fetch(REST + '/' + id, {
+                    method: 'DELETE',
+                    headers: hdrs(),
+                    credentials: 'same-origin'
+                });
+                if (res.ok) {
+                    item.style.transition = 'opacity .3s';
+                    item.style.opacity = '0';
+                    setTimeout(() => item.remove(), 300);
+                }
+            };
+
+            window.openSnoozeMenu = function(e, type) {
+                e.stopPropagation();
+                closeAllSnoozeMenus();
+                const item = e.currentTarget.closest('.notif-item');
+                const menu = document.createElement('div');
+                menu.className = 'snooze-menu';
+                [{
+                        label: 'Silenciar por 1 hora',
+                        hours: 1
+                    },
+                    {
+                        label: 'Silenciar por 24 horas',
+                        hours: 24
+                    },
+                    {
+                        label: 'Silenciar por 7 dias',
+                        hours: 168
+                    },
+                    {
+                        label: 'Silenciar para sempre',
+                        hours: 0
+                    },
+                ].forEach(o => {
+                    const b = document.createElement('button');
+                    b.textContent = o.label;
+                    b.onclick = (ev) => {
+                        ev.stopPropagation();
+                        snoozeType(type, o.hours);
+                        closeAllSnoozeMenus();
+                    };
+                    menu.appendChild(b);
+                });
+                item.style.position = 'relative';
+                item.appendChild(menu);
+            };
+
+            async function snoozeType(type, hours) {
+                await fetch(SNOOZE_URL, {
+                    method: 'POST',
+                    headers: hdrs(),
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        type,
+                        hours
+                    })
+                });
+                document.querySelectorAll(`.notif-item[data-type="${type}"]`).forEach(el => {
+                    el.style.transition = 'opacity .3s';
+                    el.style.opacity = '0';
+                    setTimeout(() => el.remove(), 300);
+                });
+            }
+
+            document.getElementById('mark-all-read').onclick = async () => {
+                await fetch(REST + '/read-all', {
+                    method: 'POST',
+                    headers: hdrs(),
+                    credentials: 'same-origin'
+                });
+                document.querySelectorAll('.notif-item.unread').forEach(el => el.classList.replace('unread', 'read'));
+            };
+
+            document.getElementById('delete-read-btn').onclick = async () => {
+                if (!confirm('Remover todas as notifica��es lidas?')) return;
+                await fetch(REST + '/read', {
+                    method: 'DELETE',
+                    headers: hdrs(),
+                    credentials: 'same-origin'
+                });
+                document.querySelectorAll('.notif-item.read').forEach(el => el.remove());
+                if (!container.querySelector('.notif-item'))
+                    container.innerHTML = '<div class="notif-empty"><i class="ri-notification-off-line"></i>Sem notifica��es</div>';
+            };
+
+            document.querySelectorAll('.notif-pill').forEach(btn => {
+                btn.onclick = function() {
+                    document.querySelectorAll('.notif-pill').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.filter;
+                    currentPage = 1;
+                    loadNotifs(1, false);
+                };
+            });
+
+            document.getElementById('type-filter').onchange = function() {
+                currentType = this.value;
+                currentPage = 1;
+                loadNotifs(1, false);
+            };
+
+            window.loadMore = () => {
+                currentPage++;
+                loadNotifs(currentPage, true);
+            };
+
+            // Polling � every 60s fetch notifs created since last poll
+            let lastPoll = new Date().toISOString().replace('T', ' ').slice(0, 19);
+            setInterval(async () => {
+                try {
+                    const res = await fetch(REST + '?since=' + encodeURIComponent(lastPoll) + '&per_page=5', {
+                        headers: hdrs(),
+                        credentials: 'same-origin'
+                    });
+                    const data = await res.json();
+                    if (Array.isArray(data) && data.length) {
+                        data.reverse().forEach(n => {
+                            if (!document.querySelector(`.notif-item[data-id="${n.id}"]`))
+                                container.prepend(renderNotif(n));
+                        });
+                        lastPoll = new Date().toISOString().replace('T', ' ').slice(0, 19);
+                    }
+                } catch (_) {}
+            }, 60000);
+
+            loadNotifs(1, false);
+        })();
+    </script>
+
+</body>
+
+</html>

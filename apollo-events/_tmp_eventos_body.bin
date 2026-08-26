@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Viewport meta tag is essential for responsive design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discover Events - Apollo::rio</title>
+
+    <!-- External Assets -->
+    <link rel="icon" href="https://assets.apollo.rio.br/img/neon-green.webp" type="image/webp">
+    
+ <link href="https://assets.apollo.rio.br/base.css" rel="stylesheet"> 
+    
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.7.0/fonts/remixicon.css" rel="stylesheet">
+
+   <style>
+        /* ==========================================================================
+           1. ROOT VARIABLES & THEME SETUP
+           ========================================================================== */
+        :root {
+            --font-primary: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+            --radius-main: 14px;
+            --radius-sec: 20px;
+            --transition-main: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            
+            /* Light Mode Palette */
+            --bg-main: #fff;
+            --bg-main-translucent: rgba(255, 255, 255, .68);
+            --header-blur-bg: linear-gradient(to bottom, rgb(253 253 253 / .35) 0%, rgb(253 253 253 / .1) 50%, #fff0 100%);
+            --text-main: rgba(19, 21, 23, .7);
+            --text-primary: rgba(19, 21, 23, .85);
+            --text-secondary: rgba(19, 21, 23, .7);
+            --border-color: #e0e2e4;
+            --border-color-2: #e0e2e454;
+            --card-border-light: rgba(0, 0, 0, 0.13);
+            --card-shadow-light: rgba(0, 0, 0, 0.05);
+            /* --date-box-bg: rgba(255, 255, 255, 0.2); */ /* No longer needed for cutout */
+            /* --date-box-border: rgba(255, 255, 255, 0.3); */ /* No longer needed for cutout */
+            /* --date-box-text: #fff; */ /* No longer needed for cutout */
+            --accent-color: #FFA17F;
+            --vermelho: #fe786d;
+            --laranja: #FFA17F;
+        }
+
+        /* Dark Mode Palette */
+        body.dark-mode {
+            --bg-main: #131517;
+            --bg-main-translucent: rgba(19, 21, 23, 0.68);
+            --header-blur-bg: linear-gradient(to bottom, rgb(19 21 23 / .35) 0%, rgb(19 21 23 / .1) 50%, #13151700 100%);
+            --text-main: #ffffff91;
+            --text-primary: #fdfdfdfa;
+            --text-secondary: #ffffff91;
+            --border-color: #333537;
+            --border-color-2: #e0e2e40a;
+            --card-border-light: rgba(255, 255, 255, 0.1);
+            --card-shadow-light: rgba(0, 0, 0, 0.2);
+            /* --date-box-bg: rgba(0, 0, 0, 0.2); */
+            /* --date-box-border: rgba(255, 255, 255, 0.1); */
+            /* --date-box-text: #fff; */
+        }
+
+        /* ==========================================================================
+           2. BASE & RESET STYLES
+           ========================================================================== */
+        *, :before, :after {
+            box-sizing: border-box; corner-shape:squircle;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        html, body {
+            color: var(--text-secondary);
+            font-family: var(--font-primary);
+            font-size: 15px;
+            font-weight: 400;
+            line-height: 1.2rem;
+            letter-spacing: 0.1px;
+            background-color: var(--bg-main);
+            transition: background-color 0.4s ease, color 0.4s ease;
+            overflow-x: hidden !important;
+            scroll-behavior: smooth; 
+           -webkit-user-select: none;  -ms-user-select: none;   user-select: none; 
+        }
+        
+        a {
+            text-decoration: none;
+            color: var(--text-main);  
+        }
+        
+        a:hover {  
+            color: var(--text-primary); 
+        }
+        
+        .off:hover {  
+            color: var(--text-main);
+            cursor: default!important;
+        }
+        
+        p {
+            color: var(--text-main);
+            line-height: 1.5; /* Added for better readability */
+        }
+        
+        .mb04rem {
+            margin-bottom: 0.5rem; 
+        }
+
+        /* Added a class for visually hidden elements, useful for accessibility */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* ==========================================================================
+           3. HEADER STYLES
+           ========================================================================== */
+        .site-header {
+            position: relative;
+            z-index: 999;
+        }
+        .menu-h-apollo-blur {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 75px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            background: var(--header-blur-bg); /* Use CSS variable */
+            mask: linear-gradient(to bottom, rgb(0 0 0) 0%, rgb(0 0 0 / .8) 40%, rgb(0 0 0 / .3) 70%, #fff0 100%);
+            -webkit-mask: linear-gradient(to bottom, rgb(0 0 0) 0%, rgb(0 0 0 / .8) 40%, rgb(0 0 0 / .3) 70%, #fff0 100%);
+            z-index: 998; /* Below nav items */
+            pointer-events: none;
+            transition: var(--transition-main);
+        }
+        
+        .main-nav {
+            display: flex;
+            position: fixed;
+            height: 22px;
+            top: 18px;
+            right: 19px;
+            align-items: center;
+            z-index: 999;
+        }
+        .menu-apollo-logo {
+            position: fixed;
+            height: 23px;
+            top: 14px;
+            left: 19px;
+            opacity: .8;
+            z-index: 999;
+            transition: var(--transition-main);
+        }
+        .menu-apollo-logo:hover {
+            opacity: 1;
+        }
+
+        .main-nav a, .main-nav .menu-h-apollo-button {
+            display: inline-block;
+            margin: 0 16px;
+            color: var(--text-secondary);
+            font-size: .95rem;
+            transition: var(--transition-main);
+        }
+        .ario-eve:hover {
+            color: var(--text-secondary);
+        }
+        .menu-h-apollo-button {
+            margin: 0px 10px 0px 13px !important;
+            border: 1px solid var(--border-color);
+            border-radius: calc(var(--radius-main)/1.2);
+            padding: 4px 12px;
+            font-size: .84rem !important;
+            cursor: pointer;
+            background: none; /* Ensure button bg is transparent */
+            font-family: var(--font-primary); /* Inherit font */
+        }
+        .menu-h-apollo-button:hover {
+            background: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        /* User Menu Dropdown */
+        div.menu-h-lista {
+            position: relative;
+        }
+        div.menu-h-lista > div.list {
+            position: absolute;
+            top: 40px;
+            right: 5px;
+            color: var(--text-secondary);
+            border-radius: var(--radius-main);
+            padding: 0.8rem 1rem !important;
+            display: none;
+            width: 160px;
+            background: var(--bg-main-translucent); /* Use variable */
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid var(--border-color-2); /* Use variable */
+            box-shadow: 0 10px 30px var(--card-shadow-light);
+        }
+        div.menu-h-lista.open > div.list {
+            display: block;
+        }
+        div.menu-h-lista > div.list > .item {
+            font-size: .85rem !important;
+            margin: 0;
+            text-align: left;
+            width: 100%;
+            padding: 0.5rem 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer; /* Make items clickable */
+            transition: var(--transition-main);
+        }
+        .menu-h-lista .item:hover {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        .menu-h-lista hr {
+            height: 1px;
+            background-color: var(--border-color-2); /* Use variable */
+            border: none;
+            width: 100%;
+            margin: 6px 0;
+        }
+        .ri-arrow-right-up-line {
+            margin: 4px 0 -3px 1px !important;
+        }
+    
+        /* ==========================================================================
+           4. MAIN LAYOUT & HERO SECTION
+           ========================================================================== */
+        .main-container {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 100px 40px 50px 40px;
+        }
+        .hero-section {
+            text-align: center;
+            padding: 80px 0;
+            margin-bottom: 50px;
+        }
+        .title-page {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1.1;
+        }
+        .subtitle-page {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 20px auto 0 auto;
+            color: var(--text-secondary);
+        }
+
+     mark{
+  background-color: #fd5c021a;
+  font-weight:500;
+       color:#fd5c02;
+}
+     
+        /* ==========================================================================
+           5. FILTERS & SEARCH (REFACTORED)
+           ========================================================================== */
+        .filters-and-search {
+            display: flex;
+            flex-direction: column; /* Tags on top, search/date below */
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .menutags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center; /* Center the tags */
+        }
+        .menutag {
+            height: 48px;
+            font-size: 0.85:rem;
+            font-family: var(--font-primary);
+            font-weight: 600;
+            padding: 15px 20px;
+          background:transparent;
+            border-radius: var(--radius-main);            
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition-main);
+          position: relative;
+  isolation: isolate;z-index: 1;
+        }
+     .menutag::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-main);
+  /* Start with a transparent background */
+  background: transparent; 
+  
+  /* Apply the blend mode ONLY to this pseudo-element */
+  mix-blend-mode: multiply; 
+  
+  /* Position it behind the text */
+  z-index: -1; 
+  
+  /* Optional: for a smoother transition */
+  transition: background 0.3s ease; 
+}
+     
+        .menutag:hover,
+.menutag.active {
+  /* These properties stay on the main element */
+  color: var(--bg-main);
+  border-color: var(--text-primary);
+  box-shadow: 0 10px 40px var(--card-border-light);
+}
+
+.menutag:hover::before,
+.menutag.active::before {
+  /* This is where the background color now goes */
+  background: var(--text-primary); 
+}
+        
+        /* New container for search + date */
+        .search-date-controls {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 500px; /* Constrain the row */
+            justify-content: center;
+        }
+
+        .box-search {
+            height: 48px;
+            border-radius: var(--radius-main);
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 10px 0 20px;
+            gap: 10px;
+            transition: var(--transition-main);
+            width: auto; /* Let it be flexible */
+            flex-grow: 1; /* Take up remaining space */
+            min-width: 180px; /* Don't get too small */
+        }
+        .box-search:focus-within {
+             border-color: var(--text-primary);
+             box-shadow: 0 0 0 2px var(--border-color-2);
+        }
+        .box-search input {
+            background: none;
+            border: none;
+            height: 100%;
+            color: var(--text-primary);
+            font-size: 1rem;
+            width: 100%;
+            outline: none;
+        }
+        .box-search i {
+            font-size: 1.2rem;
+            opacity: 0.5;
+			margin-right:10px;
+        }
+        
+   #eventSearchInput::placeholder {
+  font-size: 0.85rem;opacity:.65;letter-spacing:1px;font-family: var(--font-primary);
+}
+
+        
+        /* New Box Rio styles */
+        .box-rio {
+            height: 48px;
+            border-radius: var(--radius-main);
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+            width: fit-content;
+            gap: 10px;
+            font-family: var(--font-primary);
+            font-weight: 600;
+            color: var(--text-primary);
+            flex-shrink: 0; /* Don't shrink */
+        }
+        .date-arrow {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0 5px;
+            transition: var(--transition-main);
+            line-height: 1;
+        }
+        .date-arrow:hover, .date-display {
+            color: var(--text-primary); box-shadow: 0 10px 40px var(--card-border-light);
+        }
+        .date-display {
+            font-size: 0.75rem;font-weight:700;
+            margin:1px 0 -1px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+           color: var(--text-secondary);
+            }
+
+
+        /* ==========================================================================
+           6. EVENT LISTING & CARD STYLES
+           ========================================================================== */
+        .event_listings {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 50px;
+        }
+        .event_listing {
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.4s ease;
+            /* Added for filtering animation */
+            display: block; 
+            animation: fadeIn 0.5s ease;
+            /* Hide events by default, JS will show them */
+            /* display: none; */ 
+
+            /* MOVED variables here so both .picture and .box-date-event can use them */
+            --r: var(--radius-main);
+            --s: var(--radius-main);
+            --x: 48px;
+            --y: 42px;
+        }
+
+        /* Class to hide filtered-out events */
+        .event_listing.hidden {
+            display: none;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .event_listing:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* --- Card Picture (MODIFIED FOR CUTOUT) --- */
+        .event_listing .picture {
+          
+          /* These variables define the mask shape */
+          /* MOVED to .event_listing */
+          
+          
+            height: 400px;
+            position: relative;
+            border-radius: var(--radius-main);
+            overflow: hidden; /* This is CRITICAL for the mask to respect the radius */
+            box-shadow: 0 10px 30px var(--card-shadow-light);
+            border: 1px solid var(--card-border-light);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            
+            /* Add background to show through the "hole" in the image */
+            /* background: var(--bg-main); */ /* No longer needed, as parent <a> is bg */
+          
+          border-radius: var(--r);
+          --_m:/calc(2*var(--r)) calc(2*var(--r)) radial-gradient(#000 70%,#0000 72%);
+          --_g:conic-gradient(at var(--r) var(--r),#000 75%,#0000 0);
+          --_d:(var(--s) + var(--r));
+          mask:
+            calc(var(--_d) + var(--x)) 0 var(--_m),
+            0 calc(var(--_d) + var(--y)) var(--_m),
+            radial-gradient(var(--s) at 0 0,#0000 99%,#000 calc(100% + 1px)) 
+             calc(var(--r) + var(--x)) calc(var(--r) + var(--y)),
+            var(--_g) calc(var(--_d) + var(--x)) 0,
+            var(--_g) 0 calc(var(--_d) + var(--y));
+          mask-repeat: no-repeat;
+        }
+        .event_listing:hover .picture {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px var(--card-shadow-light);
+        }
+        
+        /* --- Card Image (MODIFIED FOR CUTOUT) --- */
+        .event_listing .picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+            
+            /* REMOVED clip-path as requested. The space is now created
+              by the 'mask' on the parent '.picture' element.
+            */
+            /* clip-path: path(evenodd, 'M 0 0 H 100% V 100% H 0 V 0 Z M 12 24 A 12 12 0 0 1 24 12 H 60 A 12 12 0 0 1 72 24 V 60 A 12 12 0 0 1 60 72 H 24 A 12 12 0 0 1 12 60 V 24 Z'); */
+        }
+        
+        /* --- Card Date (MODIFIED FOR CUTOUT) --- */
+        .box-date-event {
+            position: absolute;
+            top: 5px;;   /* CORRECTED: Was 5px */
+            left: 8px;  /* CORRECTED: Was 7px */
+            width: calc(var(--r) + var(--x));  /* CORRECTED: Use variables (60px) */
+            height: calc(var(--r) + var(--y)); /* CORRECTED: Use variables (54px) */
+            
+            /* REMOVED for cutout effect */
+            /* background: var(--date-box-bg); */
+            /* backdrop-filter: blur(5px); */
+            /* -webkit-backdrop-filter: blur(5px); */
+            /* border: 1px solid var(--date-box-border); */
+            /* text-shadow: 0 1px 3px rgba(0,0,0,0.2); */
+
+            /* Keep layout styles */
+            /* border-radius: var(--radius-main); */ /* Removed as mask defines shape */
+            text-align: center;
+            color: var(--date-box-text);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            line-height: 1.1;
+            transition: var(--transition-main);
+            mix-mode-blend:overlay;
+          
+            /* Positioned in the cutout space */
+            z-index: 2; 
+        }
+        
+        /* --- Date Text (MODIFIED FOR CUTOUT) --- */
+        .date-day {
+            font-size: 1.8em; /* Adjusted for new 54px height */
+            font-weight: 700;
+            color: var(--text-primary); /* Use theme text color */
+            opacity: 1;
+            display: block;
+            text-shadow: none;
+            -webkit-text-stroke: 0;
+        }
+        .date-month {  
+            font-size: .9em; /* Adjusted for new 54px height */
+            font-weight: 760;
+            text-transform: uppercase;
+            color: var(--text-secondary); /* Use theme text color */
+            opacity: 0.9;
+            margin-left: 0;
+            text-shadow: none;
+            -webkit-text-stroke: 0;
+        }
+             
+        /* --- Card Tags --- */
+        .event-card-tags {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            gap: 10px;
+            pointer-events: none;
+            z-index: 3; /* Ensure tags are above the (masked) image */
+        }
+        .event-card-tags span {
+            padding: 1px 7px 0px; /* Slightly larger padding */
+            border-radius: calc(var(--radius-main)/1.2);
+            border: 1px solid #ffffff2a;
+            background: linear-gradient(30deg, rgba(255, 255, 255, 0.1) -49%, rgba(255, 255, 255, 0.35) 160%);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            font-size: 0.485rem; /* Increased from 0.55rem for readability */
+            color: rgba(255, 255, 255, .8); /* Increased opacity */
+            font-weight: 600;
+            letter-spacing:1.2px;
+            text-transform: uppercase;
+          mix-blend-mode:overlay;
+        }
+
+        /* --- Card Content --- */
+        .event-line {
+            padding: 1.25em 0.5rem;
+            width: 100%;
+            transition: 0.3s ease;
+            word-break: break-word;  
+        }
+        .event-li-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        .event-li-detail {
+            color: var(--text-secondary); 
+            font-size: 0.84rem;
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            /* width: 80%; */ /* Removed fixed width */
+        }
+        
+        .event-li-detail > i {
+            font-size: .9rem;
+            flex-shrink: 0; /* Prevents icon from shrinking */
+        }
+        .of-dj, .of-location {
+            font-size: 0.82rem;
+            font-weight: 400;   
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        
+        /* ==========================================================================
+           7. UPCOMING HIGHLIGHT BANNER
+           ========================================================================== */
+        .banner-ario-1-wrapper {
+            margin: 20px 0;
+            padding: 50px;
+            border-radius: var(--radius-sec);
+            border: 1px solid var(--border-color);
+            background: var(--border-color-2);
+            backdrop-filter: blur(8px);
+            display: flex;
+            gap: 50px;
+            align-items: center;
+            overflow: hidden; /* Added to contain img */
+        }
+        .ban-ario-1-img {
+            width: auto;justify-content: center;margin:0 auto;
+            max-width:500px;
+           aspect-ratio: 5 / 4.5;
+            height:auto;
+            border-radius: var(--radius-main);
+            object-fit: cover;
+            align-self: stretch;
+            transition: var(--transition-main);
+        }
+       
+        .ban-ario-1-content {
+            position: relative;
+            flex: 1;
+        }
+        .ban-ario-1-subtit {
+            font-size: 1rem;       
+            color: var(--accent-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing:1.4px;
+        }
+        .ban-ario-1-titl {
+            font-size: 2.85rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 15px 0 38px 0;
+            opacity: 1;
+          line-height: 1.1;
+            mix-blend-mode:overlay;
+        }
+        .ban-ario-1-txt {
+            font-size: 1.1rem;
+            line-height: 1.4; /* Adjusted for readability */
+            margin-bottom: 40px;
+            /* text-align: justify; */ /* Justify can look rough */
+            hyphens: auto; 
+            -webkit-hyphens: auto;
+            mix-blend-mode:overlay;
+        }
+        .ban-ario-1-btn {
+            background: linear-gradient(135deg, var(--vermelho), var(--laranja));
+            color: #fff;
+            padding: 15px 30px;
+            border-radius: var(--radius-main);
+            font-weight: 500;
+            transition: var(--transition-main);
+            border: 1px solid var(--card-border-light);
+            box-shadow: 0 8px 24px rgba(249, 115, 22, 0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .ban-ario-1-btn:hover,.menu-apollo-logo:hover {
+            box-shadow: 0 12px 30px rgba(249, 115, 22, 0.3);
+            transform: scale(1.03) translateY(-2px);
+            filter: brightness(1.25);
+            color: #fff; /* Ensure hover color persists */
+        }
+
+        /* ==========================================================================
+           8. DARK MODE TOGGLE
+           ========================================================================== */
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: var(--transition-main);
+        }
+        .dark-mode-toggle:hover {
+             transform: scale(1.1);
+             box-shadow: 0 5px 15px var(--card-shadow-light);
+        }
+        .dark-mode-toggle i {
+            font-size: 1.1rem; /* Slightly larger icon */
+            color: var(--text-secondary);
+            transition: var(--transition-main);
+        }
+        /* Hide one icon based on theme */
+        .dark-mode-toggle .ri-sun-line { display: none; }
+        .dark-mode-toggle .ri-moon-line { display: block; }
+        body.dark-mode .dark-mode-toggle .ri-sun-line { display: block; }
+        body.dark-mode .dark-mode-toggle .ri-moon-line { display: none; }
+
+
+        /* ==========================================================================
+           9. RESPONSIVE DESIGN
+           ========================================================================== */
+        @media (max-width: 1024px) {
+            .banner-ario-1-wrapper {
+                flex-direction: column;
+                text-align: center;
+                gap: 30px;
+            }
+            .ban-ario-1-img {
+                width: 100%;
+                max-width: 500px;
+                height: 300px; /* Fixed height is ok for a banner */
+            }
+        }
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 80px 20px 30px 20px;
+            }
+            .hero-section {
+                padding: 40px 0;
+            }
+            .title-page {
+                font-size: 3rem;
+            }
+            
+            /* --- Filters/Search Responsive --- */
+            .search-date-controls {
+                flex-direction: column;
+                width: 100%;
+                max-width: none;
+                gap: 15px;
+            }
+            .box-search {
+                width: 100%;
+            }
+            .box-rio {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            /* --- Card Picture (FIXED) --- */
+            .event_listing .picture {
+                /* REVERTED: Back to fixed height */
+                height: 300px; 
+            }
+        
+            .banner-ario-1-wrapper {
+                padding: 30px;
+            }
+            .ban-ario-1-subtit {
+                font-size: .982rem;
+                font-weight: 600;
+            }
+            .ban-ario-1-titl {
+                font-size: 2rem;
+            }
+            .event_listings {
+                grid-template-columns: repeat(2, 1fr); 
+                gap: 20px;  
+            }
+            
+            /* MOVED variables here for responsive override */
+            .event_listing {
+                 /* This media query needs to override the mask vars */
+                --x: 38px; /* 50px width - 12px radius */
+                --y: 30px; /* 42px height - 12px radius */
+            }
+
+            /* --- Card Date --- */
+            .box-date-event {
+                /* Values are now calculated automatically via calc() and new variables */
+                /* width: 50px; */ 
+                /* height: 42px; */
+            }
+            /* Adjust mask for smaller date box */
+            .event_listing .picture img {
+                /* These variables are on .picture, not img. */
+                /* --s: 50px; */
+                /* --x: 10px; */
+                /* --y: 10px; */
+            }
+            
+            /* This media query needs to override the mask vars on .picture */
+            .event_listing .picture {
+                /* Variables moved to .event_listing */
+            }
+            /* .box-date-event { */
+                 /* Already fixed above with calc() */
+            /* } */
+
+
+            .date-day {
+                font-size: 1.2em; /* Adjusted for 42px height */
+              
+            }
+            .date-month {  
+                font-size: 0.8em; /* Adjusted for 42px height */
+            }
+            
+            /* --- Card Tags --- */
+            .event-card-tags span {
+                font-size: 0.6rem; /* Adjusted for readability */
+                padding: 2px 6px;
+            }
+
+            /* --- Card Content --- */
+            .event-li-title {
+                font-size: 1.5rem;
+            }
+
+            /* --- Header --- */
+            .main-nav a.ario-eve {
+                display: none;
+            }
+            .main-nav {
+                right: 10px;
+            }
+            .menu-apollo-logo {
+                left: 10px;
+            }
+            .main-nav a, .main-nav .menu-h-apollo-button {
+                margin: 0 8px;
+            }
+            .menu-h-apollo-button {
+                margin: 0 0 0 8px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .event_listings {
+                grid-template-columns: 1fr; /* Single column on small screens */
+                gap: 30px;
+            }
+            .title-page {
+                font-size: 2.5rem;
+            }
+            .menutags {
+                gap: 8px;
+            }
+            .menutag {
+                padding: 8px 16px;
+                font-size: 0.85rem;
+            }
+            .hero-section {
+                padding: 20px 0;
+                margin-bottom: 30px;
+            }
+            .dark-mode-toggle {
+                bottom: 15px;
+                right: 15px;
+            }
+            .event_listing .picture {
+                height: 350px; /* Taller for single column */
+                /* Reset mask variables for single column */
+                --r: 12px;
+                --s: 12px;
+                --x: 48px;
+                --y: 42px;
+            }
+            .event_listing {
+                /* Reset mask variables for single column */
+                --r: 12px;
+                --s: 12px;
+                --x: 48px;
+                --y: 42px;
+            }
+            .box-date-event {
+                /* Reset dimensions for single column - now automatic */
+                /* width: 60px; */
+                /* height: 54px; */
+            }
+            .date-day {
+                font-size: 1.6em; /* Reset font size */
+            }
+            .date-month {  
+                font-size: 0.9em; /* Reset font size */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ======================= HEADER ======================= -->
+    <header class="site-header">
+        <div class="menu-h-apollo-blur"></div>
+        <a href="https://apollo.rio.br/" alt="Logo Apollo::rio" title="Apollo::rio">
+            <img src="https://vertente.apollo.rio.br/i.png" class="menu-apollo-logo">
+        </a>
+        <nav class="main-nav">
+            <a class="a-hover off"><span id="agoraH">--:--</span> RJ</a>
+            <a href="#" class="ario-eve" title="Portal de Eventos">Eventos<i class="ri-arrow-right-up-line"></i></a>
+            
+            <!-- User Menu Dropdown -->
+            <div class="menu-h-lista">
+                <button class="menu-h-apollo-button caption" id="userMenuTrigger">Login</button>
+                <div class="list">
+                    <div class="item ok"><i class="ri-global-line"></i> Explorer</div>
+                    <hr>
+                    <div class="item ok"><i class="ri-fingerprint-2-fill"></i> My Apollo</div>
+                    <div class="item ok"><i class="ri-logout-box-r-line"></i> Logout</div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!-- ===================== END HEADER ===================== -->
+
+    <main class="main-container">
+        <!-- SHORTCODE [discover-events-now] OUTPUT START -->
+        <div class="event-manager-shortcode-wrapper discover-events-now-shortcode">
+
+            <section class="hero-section">
+                <h1 class="title-page">Experience Tomorrow's Events</h1>
+                <p class="subtitle-page">Um novo <mark>&nbsp;hub digital que conecta cultura,&nbsp;</mark> tecnologia e experiências em tempo real... <mark>&nbsp;O futuro da cultura carioca começa aqui!&nbsp;</mark></p>
+            </section>
+
+            <!-- ======================= FILTERS & SEARCH (REFACTORED) ======================= -->
+            <div class="filters-and-search">
+                <div class="menutags event_types">
+                    <button class="menutag event-category active" data-slug="all">All</button>
+                    <button class="menutag event-category" data-slug="music">Underground</button>
+                    <button class="menutag event-category" data-slug="art-culture">Art & Cultur<font style="position:absolute;transform:rotate(210deg);margin-left:0px">a</font></button>
+                    <button class="menutag event-category" data-slug="mainstream">Mainstream</button>
+                    <button class="menutag event-category" data-slug="workshops">D-Edge club</button>
+                </div>
+                
+                    <!-- New container for search + date -->
+                  <!-- New container for search + date -->
+              
+                <!-- New container for search + date -->
+                
+              
+            <div class="search-date-controls">
+  <form class="box-search" role="search" id="eventSearchForm">
+    <label for="eventSearchInput" class="visually-hidden">Procurar</label>
+    <i class="ri-search-line"></i>
+    <input type="text" name="search_keywords" id="eventSearchInput" placeholder="">
+    <input type="hidden" name="post_type" value="event_listing">
+  </form>
+</div>
+					<!-- EFFECT: Typewriter do BUSCAR -->
+					
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const words = [
+    "Qual a boa do FDS?!",
+    "The best Party near me in Rio",
+    "Tem algo hoje aqui no Rildy?!",
+    "All day, all night.. La gente es muy loca!!"
+  ];
+
+  const input = document.getElementById("eventSearchInput");
+
+  let wordIndex = 0;
+  let charIndex = 0;
+  let typing = true;
+  let textSoFar = "";
+
+  // 🧓 Grandpa typing style
+  const baseTypeSpeed = 195;      // Slow typing (ms)
+  const typeVariation = 120;      // Randomness in typing
+  const eraseSpeed = 160;         // Faster erasing
+  const pauseTime = 3000;         // Pause before erase
+  const cursorBlinkSpeed = 500;   // Cursor blink rate
+
+  let cursorVisible = true;
+  let blinkInterval;
+
+  function startCursorBlink() {
+    if (blinkInterval) clearInterval(blinkInterval);
+    blinkInterval = setInterval(() => {
+      cursorVisible = !cursorVisible;
+      input.placeholder = textSoFar + (cursorVisible ? "|" : " ");
+    }, cursorBlinkSpeed);
+  }
+
+  function randomTypeSpeed() {
+    return baseTypeSpeed + Math.random() * typeVariation;
+  }
+
+  function type() {
+    const currentWord = words[wordIndex];
+
+    if (typing) {
+      if (charIndex < currentWord.length) {
+        charIndex++;
+        textSoFar = currentWord.substring(0, charIndex);
+        input.placeholder = textSoFar + "|"; // update once per character
+        setTimeout(type, randomTypeSpeed());
+      } else {
+        typing = false;
+        setTimeout(type, pauseTime);
+      }
+    } else {
+      if (charIndex > 0) {
+        charIndex--;
+        textSoFar = currentWord.substring(0, charIndex);
+        input.placeholder = textSoFar + "|";
+        setTimeout(type, eraseSpeed);
+      } else {
+        typing = true;
+        wordIndex = (wordIndex + 1) % words.length;
+        setTimeout(type, randomTypeSpeed());
+      }
+    }
+  }
+
+  // Start typing and blinking
+  startCursorBlink();
+  type();
+});
+</script>
+	              
+	<!-- END EFFECT: Typewriter do BUSCAR -->
+                 
+                    <div class="box-rio" id="eventDatePicker">
+                        <button type="button" class="date-arrow" id="datePrev" aria-label="Previous month">‹</button>
+                        <span class="date-display" id="dateDisplay"></span>
+                        <button type="button" class="date-arrow" id="dateNext" aria-label="Next month">›</button>
+                    </div>
+                </div>
+            </div>
+      
+      
+      
+                  <div class="wpem-col wpem-col-12 wpem-col-sm-6 wpem-col-md-6 wpem-col-lg-4">
+    <div class="wpem-event-layout-action-wrapper">
+        <div class="wpem-event-layout-action">
+            <div class="wpem-event-layout-icon wpem-event-list-layout wpem-active-layout" title="Events List View" id="wpem-event-toggle-layout" onclick="toggleLayout(this)">
+                <i class="wpem-icon-menu"></i>
+            </div>
+        </div>
+    </div>
+</div>
+     
+      <script>
+function toggleLayout(element) {
+    if (element.classList.contains('wpem-event-list-layout')) {
+        // Switch to box view
+        element.classList.remove('wpem-event-list-layout');
+        element.classList.add('wpem-event-box-layout');
+        element.title = 'Events Box View';
+        element.innerHTML = '<i class="wpem-icon-stop2"></i>';
+        // Add your code here to actually switch the display to boxes
+    } else {
+        // Switch to list view
+        element.classList.remove('wpem-event-box-layout');
+        element.classList.add('wpem-event-list-layout');
+        element.title = 'Events List View';
+        element.innerHTML = '<i class="wpem-icon-menu"></i>';
+        // Add your code here to actually switch the display to list
+    }
+    // Toggle active class if needed
+    element.classList.toggle('wpem-active-layout');
+}
+</script>
+      
+      <!-- ===================== END FILTERS & SEARCH ===================== -->
+
+
+            <!-- ======================= EVENT LISTING GRID ======================= -->
+            <div class="event_listings">
+                
+                <!-- 
+                  PHP EVENT LOOP START - The following 'event_listing' block would be inside a PHP loop.
+                  I've added `data-category` and `data-month-str` attributes to make the filters work.
+                -->
+                
+                <!-- Card 1 -->
+                <a href="#" class="event_listing" data-event-id="1" data-category="music" data-month-str="out">
+                    <!-- Date box is now outside .picture -->
+                    <div class="box-date-event">
+                        <span class="date-day">25</span>
+                        <span class="date-month">out</span>
+                    </div>
+                    
+                    <div class="picture">
+                        <img src="https://galeria.dismantle.com.br/foto/bonyinc/_MG_0338.jpg" alt="Event Image: Holographic Symphony" loading="lazy">
+                        
+                        <!-- Date box removed from here -->
+                        
+                        <div class="event-card-tags">
+                            <span>House</span>
+                            <span>Disco</span>
+                                                      <span>Techno</span>
+
+                        </div>
+                    </div>
+                    <div class="event-line">
+                        <div class="box-info-event">
+                            <h2 class="event-li-title mb04rem">Festa Dismantle #1</h2>
+                            <p class="event-li-detail of-dj mb04rem">
+                                <i class="ri-sound-module-fill"></i>
+                                <span>Marta Supernova, Brunossa, Marilds, Magri, Bida Sarô,  Mau Lopes</span>
+                            </p>
+                            <p class="event-li-detail of-location mb04rem">
+                                <i class="ri-map-pin-2-line"></i>
+                              <span>Cais Imperatriz</span>
+                            </p>
+                        </div>
+                    </div>
+                </a>
+                
+                <!-- Card 2 (NOVEMBER) -->
+                <a href="#" class="event_listing" data-event-id="2" data-category="art-culture" data-month-str="nov">
+                    <!-- Date box is now outside .picture -->
+                    <div class="box-date-event">
+                        <span class="date-day">15</span>
+                        <span class="date-month">nov</span>
+                    </div>
+                    
+                    <div class="picture">
+                        <img src="https://images.unsplash.com/photo-1517423568366-8b83523034fd?q=80&w=1935&auto=format&fit=crop" alt="Art Gallery Opening" loading="lazy">
+                        
+                        <!-- Date box removed from here -->
+                        
+                        <div class="event-card-tags">
+                            <span>Art</span>
+                        </div>
+                    </div>
+                    <div class="event-line">
+                        <div class="box-info-event">
+                            <h2 class="event-li-title mb04rem">Galeria "Luzes da Cidade"</h2>
+                            <p class="event-li-detail of-dj mb04rem">
+                                
+                                <i class="ri-sound-module-fill"></i>
+                                <span>Ana Clara, Coletivo Urbano</span>
+                            </p>
+                            <p class="event-li-detail of-location mb04rem">
+                                <i class="ri-map-pin-2-line"></i>
+                                <span>Museu do Amanhã</span>
+                            </p>
+                        </div>
+                    </div>
+                </a>
+                
+                <!-- Card 3 (NOVEMBER) -->
+                <a href="#" class="event_listing" data-event-id="3" data-category="mainstream" data-month-str="nov">
+                    <!-- Date box is now outside .picture -->
+                    <div class="box-date-event">
+                        <span class="date-day">12</span>
+                        <span class="date-month">abr</span>
+                    </div>
+                    
+                    <div class="picture">
+                        <img src="https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?q=80&w=2070&auto=format&fit=crop" alt="Mainstream Show" loading="lazy">
+                        
+                        <!-- Date box removed from here -->
+                        
+                        <div class="event-card-tags">
+                            <span>Show</span>
+                            <span>Pop</span>
+                        </div>
+                    </div>
+                    <div class="event-line">
+                        <div class="box-info-event">
+                            <h2 class="event-li-title mb04rem">Verão Pop Festival</h2>
+                            <p class="event-li-detail of-dj mb04rem">
+                                
+                                <i class="ri-sound-module-fill"></i>
+                                Vários artistas
+                            </p>
+                            <p class="event-li-detail of-location mb04rem">
+                                <i class="ri-map-pin-2-line"></i>
+                                <span>Praia de Copacabana</span>
+                            </p>
+                        </div>
+                    </div>
+                </a>
+                
+                <!-- Card 4 (DECEMBER) -->
+                <a href="#" class="event_listing" data-event-id="4" data-category="music" data-month-str="dez">
+                    <!-- Date box is now outside .picture -->
+                    <div class="box-date-event">
+                        <span class="date-day">05</span>
+                        <span class="date-month">dez</span>
+                    </div>
+                    
+                    <div class="picture">
+                        <img src="https://galeria.dismantle.com.br/foto/bonyinc/_MG_1118.jpg" alt="Techno Event" loading="lazy">
+                        
+                        <!-- Date box removed from here -->
+                        
+                        <div class="event-card-tags">
+                            <span>Techno</span>
+                            <span>Underground</span>
+                        </div>
+                    </div>
+                    <div class="event-line">
+                        <div class="box-info-event">
+                            <h2 class="event-li-title mb04rem">D-Edge Showcase</h2>
+                            <p class="event-li-detail of-dj mb04rem">
+                                
+                                <i class="ri-sound-module-fill"></i>
+                                <span>Renato Ratier, BLANCAh</span>
+                            </p>
+                            <p class="event-li-detail of-location mb04rem">
+                                <i class="ri-map-pin-2-line"></i>
+                                <span>D-Edge club Rio</span>
+                            </p>
+                        </div>
+                    </div>
+                </a>
+                
+                <!-- PHP EVENT LOOP END -->
+
+            </div>
+            <!-- ===================== END EVENT LISTING GRID ===================== -->
+            
+            <!-- ======================= HIGHLIGHT BANNER ======================= -->
+            <section class="banner-ario-1-wrapper" style="margin-top: 80px;">
+                <img src="https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=2070&auto=format&fit=crop" class="ban-ario-1-img" alt="Upcoming Festival">
+                <div class="ban-ario-1-content">
+                    <h3 class="ban-ario-1-subtit">Extra! Extra!</h3>
+                    <h2 class="ban-ario-1-titl">Retrospectiva Clubbe::rio 2026</h2>
+                    <p class="ban-ario-1-txt">
+                        A Retrospectiva Clubber 2026 está chegando! E em breve vamos liberar as primeiras novidades... Fique ligado, porque essa publicação promete celebrar tudo o que fez o coração da pista bater mais forte! Spoilers?
+                    </p>
+                    <a href="#" class="ban-ario-1-btn">
+                        Saiba Mais <i class="ri-arrow-right-line"></i>
+                    </a>
+                </div>
+            </section>
+            <!-- ===================== END HIGHLIGHT BANNER ===================== -->
+
+        </div>
+        <!-- SHORTCODE [discover-events-now] OUTPUT END -->
+    </main>
+
+    <!-- ======================= DARK MODE TOGGLE ======================= -->
+    <div class="dark-mode-toggle" id="darkModeToggle" role="button" aria-label="Toggle dark mode">
+        <i class="ri-sun-line"></i>
+        <i class="ri-moon-line"></i>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // --- Dark Mode Toggle ---
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+        
+        // Check for saved preference
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+        }
+
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            // Save preference
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // --- User Menu Dropdown ---
+        const userMenuTrigger = document.getElementById('userMenuTrigger');
+        const userMenu = userMenuTrigger.parentElement;
+        userMenuTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userMenu.classList.toggle('open');
+        });
+        // Close on click outside
+        document.addEventListener('click', (e) => {
+            if (!userMenu.contains(e.target)) {
+                userMenu.classList.remove('open');
+            }
+        });
+
+        // --- Header Clock ---
+       
+function updateTime() {
+ const now = new Date();
+ const timeString = now.toLocaleTimeString(); // HH:MM:SS
+      document.getElementById('agoraH').textContent = timeString;
+ }
+
+// Atualiza todo segundo
+  setInterval(updateTime, 1000);
+  updateTime();
+
+        // --- Event Filtering Logic ---
+        
+        // --- State Variables ---
+        let activeCategory = 'all';
+        let searchQuery = '';
+        let displayDate = new Date(); // This will be our reference month
+        
+        // --- Selectors ---
+        const categoryButtons = document.querySelectorAll('.event-category');
+        const searchInput = document.getElementById('eventSearchInput');
+        const searchForm = document.getElementById('eventSearchForm');
+        const allEvents = document.querySelectorAll('.event_listing');
+        const dateDisplay = document.getElementById('dateDisplay');
+        const datePrev = document.getElementById('datePrev');
+        const dateNext = document.getElementById('dateNext');
+
+        // --- Month Maps ---
+        const monthShortNames = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+        const monthMap = {
+            'jan': 0, 'fev': 1, 'mar': 2, 'abr': 3, 'mai': 4, 'jun': 5,
+            'jul': 6, 'ago': 7, 'set': 8, 'out': 9, 'nov': 10, 'dez': 11
+        };
+
+        // --- Main Filter Function ---
+        function filterEvents() {
+            const displayMonth = displayDate.getMonth(); // 0-11
+            const displayYear = displayDate.getFullYear();
+
+            allEvents.forEach(event => {
+                const category = event.dataset.category;
+                const monthStr = event.dataset.monthStr;
+                const eventMonth = monthMap[monthStr];
+                
+                // TODO: Add Year check if data-year is provided
+                // For this demo, we assume all events are in the current display year
+                // const eventYear = parseInt(event.dataset.year, 10);
+                // const showByDate = eventMonth === displayMonth && eventYear === displayYear;
+                
+                // This implements your request: "if month is november display only november events"
+                // It's now dynamic for *any* selected month.
+                const showByDate = eventMonth === displayMonth;
+                
+                const showByCategory = activeCategory === 'all' || category === activeCategory;
+                
+                const textContent = event.textContent.toLowerCase();
+                const showBySearch = searchQuery === '' || textContent.includes(searchQuery);
+
+                if (showByDate && showByCategory && showBySearch) {
+                    event.classList.remove('hidden');
+                    event.style.display = 'block'; // Ensure it's visible
+                } else {
+                    event.classList.add('hidden');
+                    event.style.display = 'none'; // Hide it
+                }
+            });
+        }
+
+        // --- Datepicker Logic ---
+        function updateDatepicker() {
+            const monthName = monthShortNames[displayDate.getMonth()];
+            // const year = displayDate.getFullYear();
+            // dateDisplay.textContent = `${monthName} ${year}`;
+            
+            // FIX 1: Update date format to 'OUT 25'
+            const year = displayDate.getFullYear().toString().slice(-2); // Gets '25
+            dateDisplay.textContent = `${monthName} '${year}`; // Format: out '25
+            
+            filterEvents(); // Re-filter whenever the date changes
+        }
+
+        datePrev.addEventListener('click', () => {
+            displayDate.setMonth(displayDate.getMonth() - 1);
+            updateDatepicker();
+        });
+
+        dateNext.addEventListener('click', () => {
+            displayDate.setMonth(displayDate.getMonth() + 1);
+            updateDatepicker();
+        });
+
+        // --- Category Filter Logic ---
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Update active button
+                categoryButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Update state and filter
+                activeCategory = button.dataset.slug;
+                filterEvents();
+            });
+        });
+
+        // --- Search Filter Logic ---
+        searchForm.addEventListener('submit', (e) => e.preventDefault()); // Stop form submission
+        
+        searchInput.addEventListener('input', () => {
+            searchQuery = searchInput.value.toLowerCase();
+            filterEvents();
+        });
+
+        // --- Initial Load ---
+        
+        // FIX 2: Set initial date to the first event's month to ensure cards load
+        const firstEvent = document.querySelector('.event_listing');
+        if (firstEvent) {
+            const firstEventMonthStr = firstEvent.dataset.monthStr; // e.g., "out"
+            const firstEventMonthIndex = monthMap[firstEventMonthStr]; // e.g., 9
+            
+            if (firstEventMonthIndex !== undefined) {
+                // Set the date object to the month of the first event
+                // We assume the events are for the current or next logical year.
+                
+                // Get current date parts
+                const now = new Date();
+                const currentMonth = now.getMonth();
+                const currentYear = now.getFullYear();
+
+                // Logic to determine the year
+                let eventYear = currentYear;
+                // If the first event's month is *before* the current month, 
+                // assume it's for *next* year.
+                // e.g., Current is Nov (10), first event is Jan (0). Assume next year.
+                if (firstEventMonthIndex < currentMonth) {
+                    eventYear = currentYear + 1;
+                }
+
+                // Since your demo events are for Oct, Nov, Dec 2025,
+                // we'll set the year to 2025 to match the data.
+                // In a real app, this year would come from the event data.
+                if (firstEventMonthStr === 'out' || firstEventMonthStr === 'nov' || firstEventMonthStr === 'dez') {
+                    eventYear = 2025; 
+                }
+
+                displayDate.setFullYear(eventYear);
+                displayDate.setMonth(firstEventMonthIndex);
+            }
+        }
+        
+        updateDatepicker(); // Set initial date display and filter events
+        
+    });
+</script>
+  <!--
+<script>
+  // This script blocks the right-click menu
+  document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // This script blocks common copy/paste shortcuts
+  document.addEventListener('keydown', function(e) {
+    // Check for Ctrl+C, Ctrl+X, Ctrl+V
+    if (e.ctrlKey && (e.key === 'c' || e.key === 'v' || e.key === 'x')) {
+      e.preventDefault();
+      alert('Copiar e colar no apollo::rio? Hoje não Faro!');
+    }
+  });
+</script> -->
+</body>
+</html>

@@ -1,0 +1,338 @@
+<?php
+
+/**
+ * New Home — Navbar v2 (Persistent UI)
+ *
+ * Luxury pill navbar with full WP integration:
+ * - Auth state management (guest/logged)
+ * - User avatar initials
+ * - Chat & notification badge counts
+ * - Apps grid dropdown (NavbarSettings)
+ * - Profile menu (logged) / Login form (guest)
+ * - Panel routing via data-to + data-dir (page-layout.js)
+ * - AJAX login support + REST nonce
+ *
+ * @package Apollo\Templates
+ * @since   6.0.0
+ */
+
+if (! defined('ABSPATH')) {
+    exit;
+}
+
+/* ─── Auth State ─── */
+$is_logged_in = is_user_logged_in();
+$auth_state   = $is_logged_in ? 'logged' : 'guest';
+$current_user = $is_logged_in ? wp_get_current_user() : null;
+$user_id      = $is_logged_in ? get_current_user_id() : 0;
+
+/* ─── User Initials (2-letter) ─── */
+$user_initial = 'G';
+if ($current_user && ! empty($current_user->display_name)) {
+    $display_name = sanitize_text_field($current_user->display_name);
+    $name_parts   = preg_split('/\s+/', trim($display_name));
+    if (count($name_parts) >= 2) {
+        $user_initial = strtoupper(substr($name_parts[0], 0, 1) . substr(end($name_parts), 0, 1));
+    } else {
+        $user_initial = strtoupper(substr($display_name, 0, 2));
+    }
+}
+
+/* ─── Profile / Auth URLs ─── */
+$profile_url = $is_logged_in && $current_user ? home_url('/id/' . $current_user->user_login) : home_url('/acesso');
+$logout_url  = $is_logged_in ? wp_logout_url(home_url()) : '';
+
+/* ─── Notification & Chat Counts ─── */
+$notif_count = function_exists('apollo_get_unread_notif_count') ? apollo_get_unread_notif_count($user_id) : 0;
+$chat_count  = function_exists('apollo_get_unread_message_count') ? apollo_get_unread_message_count($user_id) : 0;
+
+/* ─── Notifications List (via filter) ─── */
+$notifications = apply_filters('apollo_navbar_notifications', array());
+
+/* ─── Apps List (NavbarSettings or fallback) ─── */
+if (class_exists('Apollo\\Templates\\NavbarSettings')) {
+    $apps_list = \Apollo\Templates\NavbarSettings::get_apps();
+} else {
+    $apps_list = array(
+        array(
+            'label'    => 'Eventos',
+            'url'      => home_url('/eventos'),
+            'icon'     => 'i-apollo-ticket-s',
+            'bg_color' => 'FF9820',
+        ),
+        array(
+            'label'    => 'Classificados',
+            'url'      => home_url('/classificados'),
+            'icon'     => 'ri-p2p-fill',
+            'bg_color' => '#3b82f6',
+        ),
+        array(
+            'label'    => 'DJs',
+            'url'      => home_url('/djs'),
+            'icon'     => 'ri-contacts-fill',
+            'bg_color' => '#a855f7',
+        ),
+        array(
+            'label'    => 'Locais',
+            'url'      => home_url('/gps'),
+            'icon'     => 'ri-map-pin-user-fill',
+            'bg_color' => '#22c55e',
+        ),
+        array(
+            'label'    => 'Radar',
+            'url'      => home_url('/radar'),
+            'icon'     => 'ri-body-scan-fill',
+            'bg_color' => '#ec4899',
+        ),
+        array(
+            'label'    => 'Feed',
+            'url'      => home_url('/feed'),
+            'icon'     => 'ri-newspaper-fill',
+            'bg_color' => '#06b6d4',
+        ),
+        array(
+            'label'    => 'Comunas',
+            'url'      => home_url('/comunas'),
+            'icon'     => 'ri-team-fill',
+            'bg_color' => '#eab308',
+        ),
+        array(
+            'label'    => 'Perfil',
+            'url'      => $profile_url,
+            'icon'     => 'ri-user-smile-fill',
+            'bg_color' => '#64748b',
+        ),
+        array(
+            'label'    => 'Documentos',
+            'url'      => home_url('/docs'),
+            'icon'     => 'ri-file-text-fill',
+            'bg_color' => '#334155',
+        ),
+    );
+}
+?>
+
+<!-- ═══════════════════════════════════════════════════════════════
+	NAVBAR v2 — pill, glass, panel-engine integrated
+	═══════════════════════════════════════════════════════════════ -->
+<nav class="nh-navbar" id="nhNav" data-auth="<?php echo esc_attr($auth_state); ?>"
+    role="navigation" aria-label="<?php esc_attr_e('Navegação principal', 'apollo-templates'); ?>">
+
+    <!-- LOGO -->
+    <div class="nh-nav-logo">
+        <i class="apollo" aria-label="Apollo Rio"></i>
+    </div>
+
+    <?php if ($is_logged_in) : ?>
+        <div class="nh-nav-actions">
+
+            <!-- ─── APPS — dropdown toggle (logged only) ─── -->
+            <button class="nh-nav-btn" id="nhAppsBtn"
+                aria-label="<?php esc_attr_e('Apps', 'apollo-templates'); ?>"
+                aria-expanded="false" aria-haspopup="true"
+                title="<?php esc_attr_e('Apps', 'apollo-templates'); ?>">
+                <i class="ri-apps-fill" aria-hidden="true"></i>
+            </button>
+
+            <!-- ─── CHAT — panel slides LEFT ─── -->
+            <button class="nh-nav-btn" id="nhChatBtn"
+                data-to="chat-list" data-dir="left"
+                aria-label="<?php esc_attr_e('Abrir chat', 'apollo-templates'); ?>"
+                title="Chat">
+                <i class="ri-message-3-fill" aria-hidden="true"></i>
+                <span class="nh-notif-dot" id="nhChatBadge" data-notif="<?php echo $chat_count > 0 ? 'true' : 'false'; ?>" aria-hidden="true"></span>
+            </button>
+
+            <!-- ─── NOTIFICATIONS — panel slides UP (mural) ─── -->
+            <button class="nh-nav-btn nh-nav-btn--notif" id="nhNotifBtn"
+                data-to="mural" data-dir="up"
+                aria-label="<?php esc_attr_e('Notificações', 'apollo-templates'); ?>"
+                title="<?php esc_attr_e('Notificações', 'apollo-templates'); ?>">
+                <svg class="nh-nav-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M6.11629 20.0868C3.62137 18.2684 2 15.3236 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 15.3236 20.3786 18.2684 17.8837 20.0868L16.8692 18.348C18.7729 16.8856 20 14.5861 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 14.5861 5.2271 16.8856 7.1308 18.348L6.11629 20.0868ZM8.14965 16.6018C6.83562 15.5012 6 13.8482 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 13.8482 17.1644 15.5012 15.8503 16.6018L14.8203 14.8365C15.549 14.112 16 13.1087 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 13.1087 8.45105 14.112 9.17965 14.8365L8.14965 16.6018ZM11 13H13L14 22H10L11 13Z" />
+                </svg>
+                <span class="nh-notif-dot" id="nhNotifBadge" data-notif="<?php echo $notif_count > 0 ? 'true' : 'false'; ?>" aria-hidden="true"></span>
+            </button>
+
+            <!-- ─── PROFILE — dropdown toggle ─── -->
+            <button class="nh-nav-btn nh-nav-btn--avatar" id="nhProfileBtn"
+                aria-label="<?php esc_attr_e('Meu perfil', 'apollo-templates'); ?>"
+                aria-expanded="false" aria-haspopup="true"
+                title="<?php esc_attr_e('Perfil', 'apollo-templates'); ?>">
+                <span class="nh-avatar-initials" aria-hidden="true"><?php echo esc_html($user_initial); ?></span>
+            </button>
+
+        </div>
+    <?php endif; // logged in — guest sees logo only 
+    ?>
+</nav>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+	APPS DROPDOWN — Glass grid, outside navbar for z-index freedom
+	═══════════════════════════════════════════════════════════════ -->
+<div class="nh-dropdown nh-dropdown--apps" id="nhAppsDropdown" role="menu"
+    aria-label="<?php esc_attr_e('Menu de apps', 'apollo-templates'); ?>">
+
+    <div class="nh-dropdown__header">
+        <span class="nh-dropdown__title"><?php esc_html_e('Apps', 'apollo-templates'); ?></span>
+    </div>
+
+    <div class="nh-apps-grid">
+        <?php
+        foreach ($apps_list as $app) :
+            $icon_class = isset($app['icon']) ? sanitize_text_field($app['icon']) : 'ri-apps-fill';
+            $bg_color   = isset($app['bg_color']) ? sanitize_hex_color($app['bg_color']) : '#64748b';
+            $bg_image   = ! empty($app['bg_image']) ? esc_url($app['bg_image']) : '';
+            $style      = $bg_image
+                ? sprintf('background: url(%s) center/cover; color: %s;', $bg_image, esc_attr($app['icon_color'] ?? '#fff'))
+                : sprintf('background: %s; color: %s;', esc_attr($bg_color), esc_attr($app['icon_color'] ?? '#fff'));
+        ?>
+            <a href="<?php echo esc_url($app['url']); ?>" class="nh-app-item" role="menuitem">
+                <span class="nh-app-icon" style="<?php echo esc_attr($style); ?>">
+                    <i class="<?php echo esc_attr($icon_class); ?>"></i>
+                </span>
+                <span class="nh-app-label"><?php echo esc_html($app['label']); ?></span>
+            </a>
+        <?php endforeach; ?>
+    </div>
+
+    <?php if (! $is_logged_in) : ?>
+        <!-- Guest login CTA -->
+        <div class="nh-dropdown__footer">
+            <div class="nh-sheet-divider" aria-hidden="true"></div>
+            <a href="<?php echo esc_url(home_url('/acesso')); ?>" class="nh-sheet-item nh-sheet-item--cta">
+                <i class="ri-login-circle-line"></i>
+                <?php esc_html_e('Entrar na sua conta', 'apollo-templates'); ?>
+            </a>
+        </div>
+    <?php endif; ?>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+	PROFILE DROPDOWN — outside navbar
+	═══════════════════════════════════════════════════════════════ -->
+<div class="nh-dropdown nh-dropdown--profile" id="nhProfileDropdown" role="menu"
+    aria-label="<?php esc_attr_e('Menu de perfil', 'apollo-templates'); ?>">
+
+    <?php if ($is_logged_in) : ?>
+
+        <!-- User header -->
+        <div class="nh-profile-header">
+            <span class="nh-avatar-initials nh-avatar-initials--lg"><?php echo esc_html($user_initial); ?></span>
+            <div class="nh-profile-info">
+                <span class="nh-profile-name"><?php echo esc_html($current_user->display_name); ?></span>
+                <span class="nh-profile-handle">@<?php echo esc_html($current_user->user_login); ?></span>
+            </div>
+        </div>
+
+        <div class="nh-sheet-divider" aria-hidden="true"></div>
+
+        <a href="<?php echo esc_url($profile_url); ?>" class="nh-sheet-item" role="menuitem">
+            <i class="ri-user-line"></i> <?php esc_html_e('Meu Perfil', 'apollo-templates'); ?>
+        </a>
+        <a href="<?php echo esc_url(home_url('/id/' . ($current_user ? $current_user->user_login : '') . '/edit')); ?>" class="nh-sheet-item" role="menuitem">
+            <i class="ri-settings-3-line"></i> <?php esc_html_e('Editar Perfil', 'apollo-templates'); ?>
+        </a>
+        <a href="<?php echo esc_url(home_url('/mensagens')); ?>" class="nh-sheet-item" role="menuitem">
+            <i class="ri-message-3-line"></i> <?php esc_html_e('Mensagens', 'apollo-templates'); ?>
+            <?php if ($chat_count > 0) : ?>
+                <span class="nh-menu-badge"><?php echo esc_html($chat_count); ?></span>
+            <?php endif; ?>
+        </a>
+        <a href="<?php echo esc_url(home_url('/notificacoes')); ?>" class="nh-sheet-item" role="menuitem">
+            <i class="ri-notification-3-line"></i> <?php esc_html_e('Notificações', 'apollo-templates'); ?>
+            <?php if ($notif_count > 0) : ?>
+                <span class="nh-menu-badge"><?php echo esc_html($notif_count); ?></span>
+            <?php endif; ?>
+        </a>
+
+        <div class="nh-sheet-divider" aria-hidden="true"></div>
+
+        <a href="<?php echo esc_url(home_url('/feed')); ?>" class="nh-sheet-item" role="menuitem">
+            <i class="ri-newspaper-line"></i> Feed
+        </a>
+        <a href="<?php echo esc_url(home_url('/comunas')); ?>" class="nh-sheet-item" role="menuitem">
+            <i class="ri-team-line"></i> <?php esc_html_e('Comunas', 'apollo-templates'); ?>
+        </a>
+        <a href="<?php echo esc_url(home_url('/painel')); ?>" class="nh-sheet-item" role="menuitem">
+            <i class="ri-dashboard-line"></i> Dashboard
+        </a>
+
+        <div class="nh-sheet-divider" aria-hidden="true"></div>
+
+        <a href="#" class="nh-sheet-item" data-apollo-report-trigger role="menuitem">
+            <i class="ri-customer-service-2-line"></i> <?php esc_html_e('Suporte', 'apollo-templates'); ?>
+        </a>
+        <a href="<?php echo esc_url($logout_url); ?>" class="nh-sheet-item nh-sheet-item--danger" role="menuitem">
+            <i class="ri-logout-box-r-line"></i> <?php esc_html_e('Sair', 'apollo-templates'); ?>
+        </a>
+
+    <?php else : ?>
+
+        <!-- Guest — Login form -->
+        <div class="nh-login-section" id="nhLoginSection">
+            <div class="nh-login-header">
+                <span class="nh-login-title"><?php esc_html_e('Bem-vindo', 'apollo-templates'); ?></span>
+                <span class="nh-login-subtitle"><?php esc_html_e('Entre na sua conta Apollo', 'apollo-templates'); ?></span>
+            </div>
+
+            <form id="nhLoginForm" method="post" autocomplete="on">
+                <?php wp_nonce_field('apollo_navbar_login_nonce', 'navbar_login_nonce'); ?>
+
+                <div class="nh-input-group">
+                    <label for="nh-login-user" class="nh-input-label"><?php esc_html_e('Usuário ou e-mail', 'apollo-templates'); ?></label>
+                    <input type="text" id="nh-login-user" name="log"
+                        class="apollo-input nh-input-field" autocomplete="username"
+                        placeholder="<?php esc_attr_e('seu@email.com', 'apollo-templates'); ?>" required>
+                </div>
+
+                <div class="nh-input-group">
+                    <label for="nh-login-pass" class="nh-input-label"><?php esc_html_e('Senha', 'apollo-templates'); ?></label>
+                    <input type="password" id="nh-login-pass" name="pwd"
+                        class="apollo-input nh-input-field" autocomplete="current-password"
+                        placeholder="••••••••" required>
+                </div>
+
+                <label class="custom-checkbox" class="nh-checkbox-group">
+                    <input type="checkbox" name="rememberme" value="forever" class="nh-checkbox-input">
+                    <span class="nh-checkbox-custom">
+                        <svg viewBox="0 0 12 12" fill="none">
+                            <polyline points="2 6 5 9 10 3" />
+                        </svg>
+                    </span>
+                    <span class="nh-checkbox-label"><?php esc_html_e('Lembrar de mim', 'apollo-templates'); ?></span>
+                </label>
+
+                <button type="submit" id="nhLoginSubmit" class="nh-login-btn">
+                    <span class="nh-btn-text"><?php esc_html_e('Entrar', 'apollo-templates'); ?></span>
+                    <span class="nh-spinner" aria-hidden="true"></span>
+                </button>
+            </form>
+
+            <div class="nh-login-links">
+                <a href="<?php echo esc_url(wp_lostpassword_url()); ?>" class="nh-login-link">
+                    <?php esc_html_e('Esqueci minha senha', 'apollo-templates'); ?>
+                </a>
+                <a href="<?php echo esc_url(home_url('/registre')); ?>" class="nh-login-link nh-login-link--register">
+                    <?php esc_html_e('Criar conta', 'apollo-templates'); ?>
+                </a>
+            </div>
+        </div>
+
+    <?php endif; ?>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+	JS GLOBALS — AJAX/REST config for navbar interactions
+	═══════════════════════════════════════════════════════════════ -->
+<script>
+    window.apolloNavbar = {
+        ajaxUrl: <?php echo wp_json_encode(admin_url('admin-ajax.php')); ?>,
+        restUrl: <?php echo wp_json_encode(esc_url_raw(rest_url('apollo/v1/'))); ?>,
+        nonce: <?php echo wp_json_encode(wp_create_nonce('wp_rest')); ?>,
+        authState: <?php echo wp_json_encode($auth_state); ?>
+    };
+</script>

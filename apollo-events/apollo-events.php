@@ -3,7 +3,7 @@
  * Plugin Name: Apollo Events
  * Plugin URI: https://apollo.rio.br/plugins/apollo-events
  * Description: Events CPT: Backend, listings, single event, multi-view calendar, card/list/map views, 4 style packs (base, apollo-v1, ui-thim, ui-lis), expiration system 30min. Adapted from WP Event Manager + Apollo Events Manager.
- * Version: 1.7.3
+ * Version: 1.7.7
  * Author: Apollo::Rio
  * Author URI: https://apollo.rio.br
  * License: Proprietary
@@ -31,8 +31,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 /* 1.7.1 — /eventos trocou a `.pev-masthead` (montada em JS por portal/app.php)
    pelo bloco reutilizável apollo_listing_header() de apollo-templates: o
    "Header 02 · Kinetic Mask · Apple" aprovado. Ver
-   styles/base/template-parts/archive/portal/{header,header-bridge}.php. */
-define( 'APOLLO_EVENT_VERSION', '1.7.3' );
+   styles/base/template-parts/archive/portal/{header,header-bridge}.php.
+   1.7.4 — _event_int_rank (0-10, INTERNAL, never frontend): src/Admin/RankMetabox.php
+   renders the select right below Publish/Update; apollo_event_get_int_rank() /
+   apollo_event_set_int_rank() / apollo_event_get_top_ranked() in includes/functions.php
+   feed apollo-telegram's event-selection logic. Registered in apollo-core's
+   MetaRegistry with show_in_rest=false.
+   1.7.5 — 5 internal vibe-tag checkboxes (_event_tag_underground/_mainstream/
+   _comercial/_lgbtqia/_sexparty), same admin spot below the int-rank select.
+   apollo_event_internal_tags() is the canonical slug=>key map. New generic
+   entry point apollo_event_find_best_match() — rank + tags + date proximity
+   folded into one query, built for ANY Apollo plugin to consume, not just
+   apollo-telegram.
+   1.7.6 — apollo_event_vibe_quiz_definition()/classify_vibe_quiz()/
+   matches_vibe_quiz(): the a/b/c/d "what party suits you" quiz table (single
+   source for both the question text and the tag-match rule), consumed by
+   apollo-telegram's EventsBotService + new VibeQuizCallback to gate event
+   suggestions behind the quiz and filter results by answer.
+   1.7.7 — apollo_event_vibe_quiz_definition() takes an optional $lang
+   ('pt' default | 'en'); label/question now resolve per language while
+   require/exclude (the actual match rule) stay the one language-independent
+   copy. Backward compatible — no-arg callers keep getting pt. Consumed by
+   apollo-telegram's new bilingual Lang service. */
+define( 'APOLLO_EVENT_VERSION', '1.7.7' );
 define( 'APOLLO_EVENT_FILE', __FILE__ );
 define( 'APOLLO_EVENT_DIR', plugin_dir_path( __FILE__ ) );
 define( 'APOLLO_EVENT_URL', plugin_dir_url( __FILE__ ) );

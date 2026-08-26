@@ -1,0 +1,28 @@
+/* ===========================================
+   MARKETPLACE — Layout Utilities
+   =========================================== */
+
+.apl-marketplace-page {
+    padding: 0 20px;
+    min-height: 100vh;
+    height: auto;
+    overflow-y: auto;
+    overflow-x: hidden !important;
+}
+
+.grid-layout {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 80px;
+}
+
+@media (min-width: 768px) {
+    .grid-layout { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 1024px) {
+    .grid-layout { grid-template-columns: repeat(4, 1fr); }
+}
+@media (min-width: 1400px) {
+    .grid-layout { grid-template-columns: repeat(5, 1fr); }
+}

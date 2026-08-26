@@ -753,3 +753,35 @@ if (! function_exists('apollo_debug_log')) {
         error_log($log_message);
     }
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ADMIN MENU PARENT — one declaration, so every Apollo screen lands in one place
+// ═══════════════════════════════════════════════════════════════════════════
+
+if (! function_exists('apollo_admin_parent_slug')) {
+    /**
+     * The slug every Apollo admin screen should hang off.
+     *
+     * Before 2026-08-25 there was no answer to this question, so each plugin
+     * guessed. Three screens guessed `tools.php` — Apollo Health, Apollo
+     * Shortcodes and Apollo Modelo — which is how an operator ended up hunting
+     * for the ecosystem's own health report under WordPress's Tools menu while
+     * every other Apollo screen sat under Apollo. Health is the screen the plans
+     * keep asking for and it was the hardest one to find.
+     *
+     * Returns `apollo` once apollo-admin has registered the root menu, and falls
+     * back to `tools.php` when it has not — a deactivated apollo-admin should
+     * hide a screen from its usual place, never delete it from the admin.
+     *
+     * CALLERS MUST HOOK admin_menu AT PRIORITY 20 OR LATER. apollo-admin registers
+     * the root at the default 10; asking this question at 10 races it and the
+     * answer is then wrong in a way nothing reports.
+     *
+     * @since 6.4.4
+     * @return string 'apollo' or 'tools.php'
+     */
+    function apollo_admin_parent_slug(): string
+    {
+        return isset($GLOBALS['admin_page_hooks']['apollo']) ? 'apollo' : 'tools.php';
+    }
+}

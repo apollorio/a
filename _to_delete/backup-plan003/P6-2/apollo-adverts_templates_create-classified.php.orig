@@ -1,0 +1,801 @@
+<?php
+
+/**
+ * Template: Create Classified — Blank Canvas
+ *
+ * Blank Canvas (sem theme — padrão apollo-login).
+ * Rota virtual: /classifieds/criar/ ou /marketplace/criar/
+ * Requer login. Redireciona deslogados para /login/.
+ *
+ * @package Apollo\Adverts
+ */
+
+if (! defined('ABSPATH')) {
+    exit;
+}
+
+// Segurança: redireciona usuário não autenticado
+if (! is_user_logged_in()) {
+    wp_safe_redirect(home_url('/login/?redirect_to=' . rawurlencode((string) $_SERVER['REQUEST_URI'])));
+    exit;
+}
+
+wp_enqueue_style('apollo-adverts-marketplace');
+wp_enqueue_script('apollo-adverts-marketplace');
+
+$current_user = wp_get_current_user();
+$rest_url     = esc_url(rest_url('apollo/v1/classifieds'));
+$nonce        = wp_create_nonce('wp_rest');
+$step         = isset($_GET['step']) ? absint($_GET['step']) : 1;
+
+$adverts_v    = defined('APOLLO_ADVERTS_VERSION') ? APOLLO_ADVERTS_VERSION : '1.0.1';
+$adverts_base = defined('APOLLO_ADVERTS_URL') ? APOLLO_ADVERTS_URL : plugin_dir_url(__DIR__);
+
+ob_start();
+?>
+<link rel="stylesheet" href="<?php echo esc_url($adverts_base . 'assets/css/marketplace.css?v=' . $adverts_v); ?>">
+<script src="<?php echo esc_url($adverts_base . 'assets/js/marketplace.js?v=' . $adverts_v); ?>" defer></script>
+    <style>
+        :root {
+            --primary: #FF9820;
+            --bg: #0a0a0a;
+            --surface: #111;
+            --border: #222;
+            --text: #eee;
+            --muted: #888
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Space Grotesk', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px
+        }
+
+        .cc-wrap {
+            width: 100%;
+            max-width: 580px
+        }
+
+        .cc-logo {
+            text-align: center;
+            margin-bottom: 32px
+        }
+
+        .cc-logo span {
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            color: #fff
+        }
+
+        .cc-logo span em {
+            color: var(--primary);
+            font-style: normal
+        }
+
+        .cc-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px
+        }
+
+        .cc-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 6px
+        }
+
+        .cc-subtitle {
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 24px
+        }
+
+        .cc-steps {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 28px
+        }
+
+        .cc-step {
+            flex: 1;
+            height: 4px;
+            border-radius: 2px;
+            background: var(--border);
+            transition: background .3s
+        }
+
+        .cc-step.active,
+        .cc-step.done {
+            background: var(--primary)
+        }
+
+        .cc-field {
+            margin-bottom: 16px
+        }
+
+        .cc-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            color: var(--muted);
+            margin-bottom: 6px
+        }
+
+        .cc-input {
+            width: 100%;
+            padding: 12px 14px;
+            background: #0c0c0c;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 15px;
+            font-family: inherit;
+            resize: vertical
+        }
+
+        .cc-input:focus {
+            outline: none;
+            border-color: var(--primary)
+        }
+
+        .cc-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px
+        }
+
+        @media(max-width:480px) {
+            .cc-row {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .cc-type-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px
+        }
+
+        .cc-type-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 10px;
+            background: #0c0c0c;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            transition: border-color .2s, color .2s
+        }
+
+        .cc-type-btn i {
+            font-size: 24px
+        }
+
+        .cc-type-btn.selected,
+        .cc-type-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary)
+        }
+
+        .cc-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 24px
+        }
+
+        .cc-btn {
+            flex: 1;
+            padding: 13px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            transition: opacity .2s
+        }
+
+        .cc-btn.primary {
+            background: var(--primary);
+            color: #fff
+        }
+
+        .cc-btn.secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted)
+        }
+
+        .cc-btn:disabled {
+            opacity: .4;
+            cursor: not-allowed
+        }
+
+        .cc-msg {
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-top: 14px
+        }
+
+        .cc-msg.ok {
+            background: rgba(34, 197, 94, .12);
+            color: #22c55e
+        }
+
+        .cc-msg.err {
+            background: rgba(239, 68, 68, .12);
+            color: #ef4444
+        }
+
+        .cc-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 10px 0;
+            font-size: 14px;
+            color: var(--muted)
+        }
+
+        .cc-check input {
+            accent-color: var(--primary)
+        }
+
+        /* ── Regras da estadia — only rendered for the Hospedagem type.
+           Same host-facing model as the [apollo_classifieds_rent_space]
+           shortcode (presets + steppers + a plain-language summary), scoped to
+           this wizard's cc- prefix. The HOSTEL switch is intentionally NOT
+           here: it is staff-verified in wp-admin only. */
+        .cc-stay {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px 14px 12px;
+            margin: 4px 0 10px
+        }
+
+        .cc-stay-legend {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--txt-heading);
+            margin-bottom: 10px
+        }
+
+        .cc-stay-legend i {
+            color: var(--muted)
+        }
+
+        .cc-stay-block {
+            margin-bottom: 12px
+        }
+
+        .cc-stay-label {
+            display: block;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--txt-heading);
+            margin-bottom: 6px
+        }
+
+        .cc-presets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 8px
+        }
+
+        .cc-preset {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: transparent;
+            color: var(--muted);
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer
+        }
+
+        .cc-preset.is-on {
+            background: var(--txt-heading);
+            border-color: var(--txt-heading);
+            color: var(--bg)
+        }
+
+        .cc-stepper {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .cc-step-btn {
+            width: 36px;
+            height: 36px;
+            flex: 0 0 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            background: transparent;
+            color: var(--txt-heading);
+            font-size: 16px;
+            cursor: pointer
+        }
+
+        .cc-step-input {
+            width: 70px;
+            height: 36px;
+            text-align: center;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg);
+            color: var(--txt-heading);
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 700
+        }
+
+        .cc-step-unit {
+            font-size: 12px;
+            color: var(--muted)
+        }
+
+        .cc-stay-summary {
+            margin: 10px 0 0;
+            padding: 9px 11px;
+            border-radius: 10px;
+            background: var(--surface);
+            font-size: 12px;
+            line-height: 1.45;
+            color: var(--muted)
+        }
+
+        .cc-stay-summary.has-error {
+            background: rgba(239, 68, 68, .12);
+            color: #ef4444;
+            font-weight: 600
+        }
+    </style>
+<?php
+$extra_head = ob_get_clean();
+
+if (function_exists('apollo_render_document_open')) {
+    apollo_render_document_open(
+        array(
+            'title'      => __('Criar Anúncio', 'apollo-adverts') . ' — ' . get_bloginfo('name'),
+            'extra_head' => $extra_head,
+        )
+    );
+} else {
+    ?>
+<!DOCTYPE html>
+<html <?php language_attributes(); ?>>
+<head>
+    <?php
+    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+    echo $extra_head;
+}
+?>
+</head>
+
+<body>
+    <div class="cc-wrap">
+
+        <div class="cc-logo">
+            <a href="<?php echo esc_url(home_url('/classifieds/')); ?>">
+                <span>Apollo <em>Market</em></span>
+            </a>
+        </div>
+
+        <div class="cc-card">
+
+            <div class="cc-steps" id="ccSteps">
+                <div class="cc-step active" id="ccS1"></div>
+                <div class="cc-step" id="ccS2"></div>
+                <div class="cc-step" id="ccS3"></div>
+            </div>
+
+            <!-- STEP 1: Tipo -->
+            <div id="ccStep1">
+                <h1 class="cc-title"><?php esc_html_e('O que você quer anunciar?', 'apollo-adverts'); ?></h1>
+                <p class="cc-subtitle"><?php esc_html_e('Selecione o tipo do seu anúncio para começar.', 'apollo-adverts'); ?></p>
+
+                <div class="cc-type-grid">
+                    <button class="cc-type-btn" data-type="ticket_sell">
+                        <i class="ri-ticket-2-line"></i>
+                        <?php esc_html_e('Ingresso', 'apollo-adverts'); ?>
+                    </button>
+                    <button class="cc-type-btn" data-type="rent_space">
+                        <i class="ri-home-heart-line"></i>
+                        <?php esc_html_e('Hospedagem', 'apollo-adverts'); ?>
+                    </button>
+                    <button class="cc-type-btn" data-type="general">
+                        <i class="ri-exchange-box-line"></i>
+                        <?php esc_html_e('Outro', 'apollo-adverts'); ?>
+                    </button>
+                </div>
+
+                <button class="cc-btn primary" id="ccNext1" disabled>
+                    <?php esc_html_e('Próximo', 'apollo-adverts'); ?> <i class="ri-arrow-right-line"></i>
+                </button>
+            </div>
+
+            <!-- STEP 2: Detalhes -->
+            <div id="ccStep2" style="display:none;">
+                <h2 class="cc-title" id="ccStep2Title"><?php esc_html_e('Detalhes do anúncio', 'apollo-adverts'); ?></h2>
+                <p class="cc-subtitle"><?php esc_html_e('Preencha as informações do anúncio.', 'apollo-adverts'); ?></p>
+
+                <div class="cc-field">
+                    <label class="cc-label" for="cc_title"><?php esc_html_e('Título *', 'apollo-adverts'); ?></label>
+                    <input type="text" id="cc_title" class="apollo-input cc-input" maxlength="120" placeholder="<?php esc_attr_e('Ex: 2 ingressos VIP Rock in Rio...', 'apollo-adverts'); ?>">
+                </div>
+
+                <div class="cc-field">
+                    <label class="cc-label" for="cc_desc"><?php esc_html_e('Descrição', 'apollo-adverts'); ?></label>
+                    <textarea id="cc_desc" class="apollo-textarea cc-input" rows="4" placeholder="<?php esc_attr_e('Descreva seu anúncio com detalhes...', 'apollo-adverts'); ?>"></textarea>
+                </div>
+
+                <div class="cc-row">
+                    <div class="cc-field">
+                        <label class="cc-label" for="cc_price"><?php esc_html_e('Preço (R$)', 'apollo-adverts'); ?></label>
+                        <input type="number" id="cc_price" class="apollo-input cc-input" min="0" step="0.01" placeholder="0,00">
+                    </div>
+                    <div class="cc-field">
+                        <label class="cc-label" for="cc_loc"><?php esc_html_e('Localização', 'apollo-adverts'); ?></label>
+                        <input type="text" id="cc_loc" class="apollo-input cc-input" placeholder="<?php esc_attr_e('Bairro / Cidade', 'apollo-adverts'); ?>">
+                    </div>
+                </div>
+
+                <div class="cc-check">
+                    <input type="checkbox" id="cc_neg"><label for="cc_neg"><?php esc_html_e('Preço negociável', 'apollo-adverts'); ?></label>
+                </div>
+
+                <!-- Regras da estadia — revealed only for the Hospedagem type
+                     (see ccStayWrap toggle in the type handler below). -->
+                <fieldset class="cc-stay" id="ccStayWrap" style="display:none;">
+                    <legend class="cc-stay-legend">
+                        <i class="ri-calendar-check-line" aria-hidden="true"></i>
+                        <?php esc_html_e('Regras da estadia', 'apollo-adverts'); ?>
+                    </legend>
+
+                    <div class="cc-stay-block">
+                        <label class="cc-stay-label" for="cc_min_nights"><?php esc_html_e('Mínimo de noites', 'apollo-adverts'); ?></label>
+                        <div class="cc-presets">
+                            <button type="button" class="cc-preset" data-target="cc_min_nights" data-value="1"><?php esc_html_e('1 noite', 'apollo-adverts'); ?></button>
+                            <button type="button" class="cc-preset" data-target="cc_min_nights" data-value="2">2</button>
+                            <button type="button" class="cc-preset" data-target="cc_min_nights" data-value="3">3</button>
+                            <button type="button" class="cc-preset" data-target="cc_min_nights" data-value="7"><?php esc_html_e('1 semana', 'apollo-adverts'); ?></button>
+                        </div>
+                        <div class="cc-stepper">
+                            <button type="button" class="cc-step-btn" data-step="-1" data-target="cc_min_nights" aria-label="<?php esc_attr_e('Diminuir', 'apollo-adverts'); ?>"><i class="ri-subtract-line"></i></button>
+                            <input type="number" id="cc_min_nights" class="cc-step-input" min="0" max="365" step="1" value="0" inputmode="numeric">
+                            <button type="button" class="cc-step-btn" data-step="1" data-target="cc_min_nights" aria-label="<?php esc_attr_e('Aumentar', 'apollo-adverts'); ?>"><i class="ri-add-line"></i></button>
+                            <span class="cc-step-unit"><?php esc_html_e('noites', 'apollo-adverts'); ?></span>
+                        </div>
+                    </div>
+
+                    <div class="cc-stay-block">
+                        <label class="cc-stay-label" for="cc_max_days"><?php esc_html_e('Máximo de dias por hóspede', 'apollo-adverts'); ?></label>
+                        <div class="cc-presets">
+                            <button type="button" class="cc-preset" data-target="cc_max_days" data-value="7">7</button>
+                            <button type="button" class="cc-preset" data-target="cc_max_days" data-value="14">14</button>
+                            <button type="button" class="cc-preset" data-target="cc_max_days" data-value="30"><?php esc_html_e('1 mês', 'apollo-adverts'); ?></button>
+                            <button type="button" class="cc-preset" data-target="cc_max_days" data-value="0"><?php esc_html_e('Sem limite', 'apollo-adverts'); ?></button>
+                        </div>
+                        <div class="cc-stepper">
+                            <button type="button" class="cc-step-btn" data-step="-1" data-target="cc_max_days" aria-label="<?php esc_attr_e('Diminuir', 'apollo-adverts'); ?>"><i class="ri-subtract-line"></i></button>
+                            <input type="number" id="cc_max_days" class="cc-step-input" min="0" max="3650" step="1" value="0" inputmode="numeric">
+                            <button type="button" class="cc-step-btn" data-step="1" data-target="cc_max_days" aria-label="<?php esc_attr_e('Aumentar', 'apollo-adverts'); ?>"><i class="ri-add-line"></i></button>
+                            <span class="cc-step-unit"><?php esc_html_e('dias', 'apollo-adverts'); ?></span>
+                        </div>
+                    </div>
+
+                    <div class="cc-stay-block">
+                        <label class="cc-stay-label"><?php esc_html_e('Janela de disponibilidade (opcional)', 'apollo-adverts'); ?></label>
+                        <div class="cc-row">
+                            <div class="cc-field">
+                                <label class="cc-label" for="cc_avail_start"><?php esc_html_e('A partir de', 'apollo-adverts'); ?></label>
+                                <input type="date" id="cc_avail_start" class="apollo-input cc-input">
+                            </div>
+                            <div class="cc-field">
+                                <label class="cc-label" for="cc_avail_end"><?php esc_html_e('Até', 'apollo-adverts'); ?></label>
+                                <input type="date" id="cc_avail_end" class="apollo-input cc-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="cc-stay-summary" id="ccStaySummary" aria-live="polite"></p>
+                </fieldset>
+
+                <div class="cc-actions">
+                    <button class="cc-btn secondary" id="ccBack2">
+                        <i class="ri-arrow-left-line"></i> <?php esc_html_e('Voltar', 'apollo-adverts'); ?>
+                    </button>
+                    <button class="cc-btn primary" id="ccNext2">
+                        <?php esc_html_e('Próximo', 'apollo-adverts'); ?> <i class="ri-arrow-right-line"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 3: Contato e Publicar -->
+            <div id="ccStep3" style="display:none;">
+                <h2 class="cc-title"><?php esc_html_e('Contato e publicação', 'apollo-adverts'); ?></h2>
+                <p class="cc-subtitle"><?php esc_html_e('Como compradores podem te encontrar?', 'apollo-adverts'); ?></p>
+
+                <div class="cc-row">
+                    <div class="cc-field">
+                        <label class="cc-label" for="cc_phone"><?php esc_html_e('Telefone', 'apollo-adverts'); ?></label>
+                        <input type="tel" id="cc_phone" class="apollo-input cc-input" placeholder="(21) 9...">
+                    </div>
+                    <div class="cc-field">
+                        <label class="cc-label" for="cc_wa">WhatsApp</label>
+                        <input type="tel" id="cc_wa" class="apollo-input cc-input" placeholder="(21) 9...">
+                    </div>
+                </div>
+
+                <div class="cc-check">
+                    <input type="checkbox" id="cc_terms" required>
+                    <label for="cc_terms">
+                        <?php esc_html_e('Declaro que as informações são verdadeiras e respeito os', 'apollo-adverts'); ?>
+                        <a href="<?php echo esc_url(home_url('/termos/')); ?>" target="_blank" rel="noopener"><?php esc_html_e('termos de uso', 'apollo-adverts'); ?></a>.
+                    </label>
+                </div>
+
+                <div class="cc-actions">
+                    <button class="cc-btn secondary" id="ccBack3">
+                        <i class="ri-arrow-left-line"></i> <?php esc_html_e('Voltar', 'apollo-adverts'); ?>
+                    </button>
+                    <button class="cc-btn primary" id="ccPublish" disabled>
+                        <i class="ri-check-double-line"></i> <?php esc_html_e('Publicar', 'apollo-adverts'); ?>
+                    </button>
+                </div>
+
+                <div class="cc-msg" id="ccMsg" style="display:none;"></div>
+            </div>
+
+        </div><!-- .cc-card -->
+
+    </div><!-- .cc-wrap -->
+
+    <script>
+        (function() {
+            'use strict';
+            var REST = '<?php echo esc_js($rest_url); ?>';
+            var NONCE = '<?php echo esc_js($nonce); ?>';
+            var selectedType = '';
+            var $ = function(id) {
+                return document.getElementById(id);
+            };
+            var steps = [$('ccStep1'), $('ccStep2'), $('ccStep3')];
+            var stepDots = [$('ccS1'), $('ccS2'), $('ccS3')];
+            var current = 0;
+
+            function showStep(n) {
+                steps.forEach(function(s) {
+                    s.style.display = 'none';
+                });
+                steps[n].style.display = '';
+                stepDots.forEach(function(d, i) {
+                    d.className = 'cc-step' + (i < n ? ' done' : '') + (i === n ? ' active' : '');
+                });
+                current = n;
+            }
+            // STEP 1
+            var typeBtns = document.querySelectorAll('.cc-type-btn');
+            typeBtns.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    typeBtns.forEach(function(b) {
+                        b.classList.remove('selected');
+                    });
+                    btn.classList.add('selected');
+                    selectedType = btn.dataset.type;
+                    $('ccNext1').disabled = false;
+                    var titleMap = {
+                        ticket_sell: 'Detalhes do Ingresso',
+                        rent_space: 'Detalhes da Hospedagem',
+                        general: 'Detalhes do Anúncio'
+                    };
+                    $('ccStep2Title').textContent = titleMap[selectedType] || 'Detalhes do anúncio';
+                    /* Stay rules only make sense for a stay. */
+                    $('ccStayWrap').style.display = selectedType === 'rent_space' ? '' : 'none';
+                });
+            });
+
+            /* ── Regras da estadia ────────────────────────────────────────
+               Mirrors the [apollo_classifieds_rent_space] shortcode: presets
+               for the common answers, steppers for the rest, and a summary
+               that reads the rules back as a sentence. */
+            var stayMin = $('cc_min_nights'),
+                stayMax = $('cc_max_days'),
+                stayFrom = $('cc_avail_start'),
+                stayTo = $('cc_avail_end'),
+                staySum = $('ccStaySummary');
+
+            function stayNum(el) { return Math.max(0, parseInt(el && el.value, 10) || 0); }
+
+            function stayFmt(iso) {
+                var p = String(iso || '').split('-');
+                return p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : '';
+            }
+
+            function stayConflict() {
+                return stayNum(stayMax) > 0 && stayNum(stayMin) > 0 && stayNum(stayMax) < stayNum(stayMin);
+            }
+
+            function stayBadRange() {
+                return !!(stayFrom.value && stayTo.value && stayTo.value < stayFrom.value);
+            }
+
+            function stayRender() {
+                document.querySelectorAll('.cc-preset').forEach(function(b) {
+                    var t = $(b.dataset.target);
+                    b.classList.toggle('is-on', !!t && String(stayNum(t)) === b.dataset.value);
+                });
+                if (stayFrom.value) stayTo.setAttribute('min', stayFrom.value);
+
+                if (stayConflict()) {
+                    staySum.textContent = 'O máximo de dias não pode ser menor que o mínimo de noites.';
+                    staySum.classList.add('has-error');
+                    return;
+                }
+                if (stayBadRange()) {
+                    staySum.textContent = 'A data final não pode ser anterior à data inicial.';
+                    staySum.classList.add('has-error');
+                    return;
+                }
+                staySum.classList.remove('has-error');
+
+                var mn = stayNum(stayMin),
+                    md = stayNum(stayMax),
+                    parts = [];
+                parts.push(mn > 0 ? ('Mínimo ' + mn + (mn === 1 ? ' noite' : ' noites')) : 'Sem mínimo de noites');
+                parts.push(md > 0 ? ('até ' + md + (md === 1 ? ' dia' : ' dias')) : 'sem limite de dias');
+                parts.push(stayFrom.value || stayTo.value ?
+                    ('de ' + (stayFmt(stayFrom.value) || '…') + ' a ' + (stayFmt(stayTo.value) || '…')) :
+                    'disponível sem data definida');
+                staySum.textContent = parts.join(' · ');
+            }
+
+            document.querySelectorAll('.cc-preset').forEach(function(b) {
+                b.addEventListener('click', function() {
+                    var t = $(b.dataset.target);
+                    if (!t) return;
+                    t.value = b.dataset.value;
+                    stayRender();
+                });
+            });
+            document.querySelectorAll('.cc-step-btn').forEach(function(b) {
+                b.addEventListener('click', function() {
+                    var t = $(b.dataset.target);
+                    if (!t) return;
+                    t.value = Math.max(0, stayNum(t) + parseInt(b.dataset.step, 10));
+                    stayRender();
+                });
+            });
+            [stayMin, stayMax, stayFrom, stayTo].forEach(function(el) {
+                if (el) el.addEventListener('input', stayRender);
+            });
+            stayRender();
+            $('ccNext1').addEventListener('click', function() {
+                showStep(1);
+            });
+            // STEP 2
+            $('ccBack2').addEventListener('click', function() {
+                showStep(0);
+            });
+            $('ccNext2').addEventListener('click', function() {
+                if (!$('cc_title').value.trim()) {
+                    $('cc_title').focus();
+                    return;
+                }
+                showStep(2);
+            });
+            // STEP 3
+            $('ccBack3').addEventListener('click', function() {
+                showStep(1);
+            });
+            $('cc_terms').addEventListener('change', function() {
+                $('ccPublish').disabled = !this.checked;
+            });
+            $('ccPublish').addEventListener('click', async function() {
+                var btn = this;
+                btn.disabled = true;
+                btn.innerHTML = 'Publicando...';
+                var msg = $('ccMsg');
+                msg.style.display = 'none';
+                try {
+                    var d = {
+                        classified_type: selectedType,
+                        title: $('cc_title').value.trim(),
+                        description: $('cc_desc').value.trim(),
+                        currency: 'BRL',
+                        negotiable: $('cc_neg').checked ? '1' : '',
+                    };
+                    var pr = $('cc_price').value;
+                    if (pr) d.price = parseFloat(pr);
+                    var lc = $('cc_loc').value.trim();
+                    if (lc) d.location = lc;
+                    var ph = $('cc_phone').value.trim();
+                    if (ph) d.contact_phone = ph;
+                    var wa = $('cc_wa').value.trim();
+                    if (wa) d.contact_whatsapp = wa;
+                    if (!d.title) throw new Error('Título obrigatório.');
+
+                    /* Stay rules ride along only for accommodation adverts —
+                       they are meaningless on a ticket or a general ad, and
+                       posting zeros would overwrite nothing useful anyway.
+                       The hostel switch is NOT sent from any frontend form:
+                       it is staff-verified in wp-admin (see
+                       APOLLO_ADVERTS_ADMIN_ONLY_META). */
+                    if (selectedType === 'rent_space') {
+                        if (stayConflict()) throw new Error('O máximo de dias não pode ser menor que o mínimo de noites.');
+                        if (stayBadRange()) throw new Error('A data final da disponibilidade não pode ser anterior à inicial.');
+                        d.min_nights = stayNum(stayMin);
+                        d.max_days = stayNum(stayMax);
+                        if (stayFrom.value) d.avail_start = stayFrom.value;
+                        if (stayTo.value) d.avail_end = stayTo.value;
+                    }
+                    var r = await fetch(REST, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-WP-Nonce': NONCE
+                        },
+                        credentials: 'same-origin',
+                        body: JSON.stringify(d)
+                    });
+                    var res = await r.json();
+                    if (!r.ok) throw new Error(res.message || 'Erro ao publicar.');
+                    msg.className = 'cc-msg ok';
+                    msg.textContent = '✓ Anúncio publicado com sucesso!';
+                    msg.style.display = '';
+                    if (res.permalink) setTimeout(function() {
+                        window.location.href = res.permalink;
+                    }, 1500);
+                } catch (e) {
+                    msg.className = 'cc-msg err';
+                    msg.textContent = e.message;
+                    msg.style.display = '';
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="ri-check-double-line"></i> Publicar';
+                }
+            });
+        })();
+    </script>
+<?php
+if (function_exists('apollo_render_document_close')) {
+    apollo_render_document_close();
+} else {
+    ?>
+</body>
+
+</html>
+    <?php
+}

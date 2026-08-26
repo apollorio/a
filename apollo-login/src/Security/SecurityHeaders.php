@@ -244,7 +244,7 @@ class SecurityHeaders
         register_rest_route($namespace, '/csp-report', array(
             'methods'             => 'POST',
             'callback'            => array($this, 'handle_csp_report'),
-            'permission_callback' => '__return_true',
+            'permission_callback' => '__return_true', // Public by design and a nonce is IMPOSSIBLE here — browsers generate CSP reports themselves and cannot attach X-WP-Nonce. Not rate-limited; writes no row, error_log() only under WP_DEBUG.
         ));
     }
 

@@ -11,7 +11,7 @@
  * Plugin Name: Apollo Adverts
  * Plugin URI: https://apollo.rio.br/plugins/apollo-adverts
  * Description: Classificados/Marketplace: CPT classified, formulários frontend, galeria, busca, gerenciamento. Integrado com BuddyPress, Fav, WOW, Notif.
- * Version: 1.1.3
+ * Version: 1.1.4
  * Author: Apollo::Rio
  * Author URI: https://apollo.rio.br
  * License: Proprietary
@@ -33,7 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // CONSTANTS
 // ═══════════════════════════════════════════════════════════════════════════
 
-define( 'APOLLO_ADVERTS_VERSION', '1.1.3' ); /* 1.1.3 — Hostel admin panel via apollo_panel_register(); 5 meta keys gained inputs. */
+define( 'APOLLO_ADVERTS_VERSION', '1.1.4' ); /* 1.1.4 — Singular /anuncio/{slug}/ + inline pre-contact gate. */
 define( 'APOLLO_ADVERTS_FILE', __FILE__ );
 define( 'APOLLO_ADVERTS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'APOLLO_ADVERTS_URL', plugin_dir_url( __FILE__ ) );

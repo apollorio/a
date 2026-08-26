@@ -1,0 +1,50 @@
+/* Apollo data-tooltip.css — v1.0.2
+ * Pseudo :after/:before tooltips REMOVED — Popper #global-tooltip (data-tooltip.v1.0.1.js)
+ * is the single renderer. Keeping attrs for cursor hint only.
+ */
+[data-tooltip] {
+  position: relative;
+  cursor: help;
+}
+
+.tooltip-popper {
+  background: rgba(15, 15, 15, 0.95);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  white-space: nowrap;
+  z-index: 9999;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.25s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.tooltip-force-show .tooltip-popper,
+#global-tooltip.tooltip-popper.is-visible {
+  opacity: 1;
+}
+=====
+/**
+ * Apollo Data Tooltip v1.0.2 — data-tooltip="Official Global Tooltip"
+ * Desktop hover + Mobile long-press + Accessibility + Zero flicker
+ *
+ * FIX v1.0.2:
+ *  - CSS data-tooltip.css paints content:attr(data-tooltip) on :after
+ *    WHILE this file also creates a Popper #global-tooltip → text shows TWICE.
+ *    Force-disable CSS pseudo tooltips; Popper is the single renderer.
+ *  - Singleton guard (core.js / double-load was creating 2× #global-tooltip).
+ *  - Skip empty data-tooltip="" and prefer the hovered leaf over ancestors
+ *    when nested [data-tooltip] wrappers wrap inputs (login form case).
+ */
+(function (w, d) {
+  "use strict";
+
+  if (w.__apolloDataTooltipReady) return;
+  w.__apolloDataTooltipReady = true;
+
+  const CSS_URL = "https://cdn.apollo.rio.br/v1.0.0/css/data-tooltip.css";
+  if (!d.querySelector('link[href*="data-tooltip.css"]')) {

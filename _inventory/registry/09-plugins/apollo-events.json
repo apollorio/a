@@ -283,6 +283,30 @@
       "_event_highlighted": {
         "_source": "highlighted_meta_field_2026_07_28",
         "expected_single": true
+      },
+      "_event_int_rank": {
+        "_source": "int_rank_and_vibe_tags_2026_08_24",
+        "expected_single": true
+      },
+      "_event_tag_underground": {
+        "_source": "int_rank_and_vibe_tags_2026_08_24",
+        "expected_single": true
+      },
+      "_event_tag_mainstream": {
+        "_source": "int_rank_and_vibe_tags_2026_08_24",
+        "expected_single": true
+      },
+      "_event_tag_comercial": {
+        "_source": "int_rank_and_vibe_tags_2026_08_24",
+        "expected_single": true
+      },
+      "_event_tag_lgbtqia": {
+        "_source": "int_rank_and_vibe_tags_2026_08_24",
+        "expected_single": true
+      },
+      "_event_tag_sexparty": {
+        "_source": "int_rank_and_vibe_tags_2026_08_24",
+        "expected_single": true
       }
     },
     "user": {
@@ -1027,7 +1051,7 @@
       "description": "RSVP widget + vibe popup + warm-up mural with composer, GSAP animations, skeleton loading, optimistic UI"
     }
   ],
-  "version": "1.7.2",
+  "version": "1.7.5",
   "ajax": {
     "priv": [
       "apollo_event_save_settings"
@@ -3441,6 +3465,26 @@
       "apollo_event",
       "apollo_event_form",
       "apollo_events"
+    ]
+  },
+  "$int_rank_and_vibe_tags_2026_08_24": {
+    "date": "2026-08-24",
+    "reason": "User requested an internal-only editorial ranking (0-10) plus five internal vibe-tag checkboxes (Underground, Mainstream, Comercial, LGBTQIA+, Sex Party) on the event CPT, to let apollo-telegram (and, deliberately, any other Apollo plugin) query for 'the best/most precise event right now' without hand-rolling that logic per-consumer. Explicit requirement: NEVER rendered on any public/frontend surface.",
+    "fix": "Six new meta keys registered in apollo-core/src/Core/MetaRegistry.php under the `event` post type, all show_in_rest => false and auth_callback => manage_options: _event_int_rank (integer 0-10, sanitize_callback clamps range, default 0) and _event_tag_underground / _event_tag_mainstream / _event_tag_comercial / _event_tag_lgbtqia / _event_tag_sexparty (boolean, string '1'/'' storage, same convention as _event_is_gone / _event_highlighted). New file apollo-events/src/Admin/RankMetabox.php (own file, own concern, separate from Metabox.php) renders a 0-10 select plus the five checkboxes inside the Publish box on the wp-admin single-event editor, physically moved via inline JS to sit right below the Publish/Update button as requested. Visible and writable only under current_user_can('manage_options'), checked at render() AND save() AND a third time inside each setter helper (apollo_event_set_int_rank / apollo_event_set_tag) — defense in depth so a future programmatic caller can't bypass the gate by skipping the form.",
+    "helpers": "apollo-events/includes/functions.php gained: apollo_event_internal_tags() (the single canonical slug=>meta_key map — UI loop, save handler and every read helper all consume this one function so a new tag is added in exactly one place), apollo_event_internal_tag_labels(), apollo_event_get_int_rank()/set_int_rank(), apollo_event_get_tags()/is_tag()/set_tag(), apollo_event_get_top_ranked() (upcoming, non-expired events ordered by rank desc / soonest-first tiebreak), and apollo_event_find_best_match() — the generic plug-and-play entry point: takes optional tags[]/tags_mode/min_rank/loc_id/from/limit criteria and returns ready-to-use event payloads (id, title, permalink, rank, tags, start_date/time, loc, djs), folding rank + tags + date proximity + expiration exclusion into one call so ANY Apollo plugin can ask 'what event fits right now' without re-deriving the rule. All global-aliased in includes/functions-global.php so callers outside the Apollo\\Event namespace (apollo-telegram included) can call them unprefixed.",
+    "scope_decision": "Same reasoning as _event_highlighted: these are editorial/internal signals an admin sets deliberately, not organizer-submitted data — absent from EventsController's REST meta_map and from the /novo-evento public form by design, and additionally unregistered from REST entirely (show_in_rest => false) so they cannot leak through the generic post-meta REST endpoint or the Gutenberg meta panel even in principle.",
+    "data_registry": "Added six full field-shape entries (event.int_rank, event.tag_underground, event.tag_mainstream, event.tag_comercial, event.tag_lgbtqia, event.tag_sexparty) to _inventory/data-registry.json, positioned right after the existing event.highlighted entry.",
+    "not_yet_done": "No bulk backfill of existing events — apollo_event_get_int_rank()/get_tags() default absent meta to 0/false, so every already-published event reads as baseline/worst-rank with no tags until an admin opens it and sets values, matching the 'if not number gave that 0' requirement without a write storm across the table. apollo-telegram itself has not yet been wired to CALL apollo_event_find_best_match() — that consumer-side wiring is separate follow-up work; this note covers the meta field + helper plumbing only.",
+    "files": [
+      "apollo-core/apollo-core.php (version bump 6.4.1 -> 6.4.3)",
+      "apollo-core/src/Core/MetaRegistry.php",
+      "apollo-events/apollo-events.php (version bump 1.7.3 -> 1.7.5)",
+      "apollo-events/src/Plugin.php",
+      "apollo-events/src/Admin/RankMetabox.php (new file)",
+      "apollo-events/includes/functions.php",
+      "apollo-events/includes/functions-global.php",
+      "../../_inventory/data-registry.json",
+      "../../_inventory/registry/09-plugins/apollo-events.json (version bump 1.7.2 -> 1.7.5)"
     ]
   },
   "$highlighted_meta_field_2026_07_28": {

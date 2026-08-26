@@ -487,17 +487,20 @@ add_action('init', function (): void {
 }, 30);
 
 /**
- * Tools → Apollo Modelo — re-seed and read the coverage report.
+ * Apollo → Modelo — re-seed and read the coverage report.
+ * Moved off Tools 2026-08-25 — see apollo_admin_parent_slug().
+ * Priority 20: apollo-admin registers the root menu at the default 10.
  */
 add_action('admin_menu', function (): void {
-    add_management_page(
+    add_submenu_page(
+        function_exists('apollo_admin_parent_slug') ? apollo_admin_parent_slug() : 'tools.php',
         'Apollo Modelo',
-        'Apollo Modelo',
+        'Modelo',
         'manage_options',
         'apollo-modelo',
         'apollo_modelo_admin_page'
     );
-});
+}, 20);
 
 /**
  * Render the admin screen.

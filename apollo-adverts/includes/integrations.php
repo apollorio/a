@@ -266,16 +266,12 @@ function apollo_adverts_chat_button(int $post_id): string
         return sprintf(
             '<a href="%s" class="button apollo-adverts-chat-btn apollo-adverts-chat-login">' .
                 '<i class="ri-chat-3-line"></i> %s</a>',
-            esc_url(home_url('/acesso?redirect=' . rawurlencode(get_permalink($post_id)))),
+            esc_url(home_url('/acesso?redirect=' . rawurlencode((string) get_permalink($post_id)))),
             esc_html__('Faça login para contatar', 'apollo-adverts')
         );
     }
 
     // ── HOSTEL: the CTA was never a chat ────────────────────────────────────
-    // An official hostel advert links out to that hostel's own booking page,
-    // so there is no stranger to warn about. This is the ONLY exemption from
-    // the safety gate, and it is a fact about the listing (an admin-only
-    // relation), never a seller preference. See includes/safety-gate.php.
     if (function_exists('apollo_adverts_is_hostel_listing') && apollo_adverts_is_hostel_listing($post_id)) {
         $hostel_url = (string) get_post_meta($post_id, '_classified_hostel_url', true);
 
@@ -291,19 +287,18 @@ function apollo_adverts_chat_button(int $post_id): string
     }
 
     // ── EVERY OTHER ADVERT: the gate, and it is a real page ─────────────────
-    // The old disclaimer was a modal with a checkbox. A modal cannot be
-    // enforced — a fetch to the thread endpoint never saw it, and neither did
-    // a thread link forwarded by the person being warned about. The button now
-    // points at /seguranca/, and apollo-adverts guards the thread endpoint so
-    // skipping the page cannot mint a thread.
     if (
         function_exists('apollo_safety_applies') && apollo_safety_applies($post_id)
         && function_exists('apollo_adverts_safety_cleared') && ! apollo_adverts_safety_cleared($post_id)
     ) {
+        $gate = function_exists('apollo_adverts_contact_url')
+            ? apollo_adverts_contact_url($post_id)
+            : apollo_safety_url($post_id, (string) get_permalink($post_id) . '#contato');
+
         return sprintf(
             '<a href="%s" class="button apollo-adverts-chat-btn apollo-adverts-safety-btn">' .
                 '<i class="ri-shield-check-line"></i> <span>%s</span></a>',
-            esc_url(apollo_safety_url($post_id, (string) get_permalink($post_id))),
+            esc_url($gate),
             esc_html__('Falar com o vendedor', 'apollo-adverts')
         );
     }
@@ -313,11 +308,9 @@ function apollo_adverts_chat_button(int $post_id): string
         $author      = get_userdata($post->post_author);
         $author_name = $author ? $author->display_name : __('Anunciante', 'apollo-adverts');
 
-        // Enqueue marketplace assets (disclaimer modal CSS/JS)
         wp_enqueue_style('apollo-adverts-marketplace');
         wp_enqueue_script('apollo-adverts-marketplace');
 
-        // Render disclaimer modal (once per page)
         add_action(
             'wp_footer',
             function () use ($post_id) {
@@ -360,6 +353,26 @@ function apollo_adverts_chat_button(int $post_id): string
         esc_html__('Chat indisponível', 'apollo-adverts')
     );
 }
+
+/**
+ * Shortcode wrapper — [apollo_adverts_chat_button classified_id="123"]
+ *
+ * @param array $atts Shortcode attributes.
+ */
+function apollo_adverts_chat_button_shortcode($atts = array()): string
+{
+    $atts = shortcode_atts(
+        array(
+            'classified_id' => 0,
+            'id'            => 0,
+        ),
+        $atts,
+        'apollo_adverts_chat_button'
+    );
+    $id = absint($atts['classified_id'] ?: $atts['id']);
+    return $id ? apollo_adverts_chat_button($id) : '';
+}
+add_shortcode('apollo_adverts_chat_button', 'apollo_adverts_chat_button_shortcode');
 
 /*
 ========================================================================

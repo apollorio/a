@@ -1,0 +1,489 @@
+<?php
+
+/**
+ * Metabox — Admin metaboxes para o CPT "dj"
+ *
+ * Cobre TODOS os 11 meta keys do apollo-registry.json
+ *
+ * @package Apollo\DJs\Admin
+ */
+
+namespace Apollo\DJs\Admin;
+
+if ( ! \defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+final class Metabox {
+
+	private const POST_TYPE = 'dj';
+	private const NONCE     = 'apollo_dj_metabox_nonce';
+	private const ACTION    = 'apollo_dj_save_meta';
+
+	public function __construct() {
+		add_action( 'add_meta_boxes', array( $this, 'register' ) );
+		add_action( 'save_post_' . self::POST_TYPE, array( $this, 'save' ), 10, 2 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+	}
+
+	public function register(): void {
+		add_meta_box(
+			'apollo-dj-info',
+			__( '🎧 Informações do DJ', 'apollo-djs' ),
+			array( $this, 'render_info' ),
+			self::POST_TYPE,
+			'normal',
+			'high'
+		);
+		add_meta_box(
+			'apollo-dj-links',
+			__( '🔗 Links & Redes Sociais', 'apollo-djs' ),
+			array( $this, 'render_links' ),
+			self::POST_TYPE,
+			'normal',
+			'default'
+		);
+		add_meta_box(
+			'apollo-dj-tracks',
+			__( '🎵 Out now! (lançamentos)', 'apollo-djs' ),
+			array( $this, 'render_tracks' ),
+			self::POST_TYPE,
+			'normal',
+			'default'
+		);
+		add_meta_box(
+			'apollo-dj-gallery',
+			__( '🖼 Galeria', 'apollo-djs' ),
+			array( $this, 'render_gallery' ),
+			self::POST_TYPE,
+			'normal',
+			'default'
+		);
+		add_meta_box(
+			'apollo-dj-booking',
+			__( '📩 Booking & EPK', 'apollo-djs' ),
+			array( $this, 'render_booking' ),
+			self::POST_TYPE,
+			'side',
+			'default'
+		);
+		add_meta_box(
+			'apollo-dj-config',
+			__( '⚙ Configurações', 'apollo-djs' ),
+			array( $this, 'render_config' ),
+			self::POST_TYPE,
+			'side',
+			'default'
+		);
+	}
+
+	public function enqueue_assets( string $hook ): void {
+		$screen = get_current_screen();
+		if ( ! $screen || $screen->post_type !== self::POST_TYPE ) {
+			return;
+		}
+		wp_enqueue_media();
+	}
+
+	public function render_info( \WP_Post $post ): void {
+		wp_nonce_field( self::ACTION, self::NONCE );
+		$dj_name     = get_post_meta( $post->ID, '_dj_name', true );
+		$bio_short   = get_post_meta( $post->ID, '_dj_bio_short', true );
+		$bio_long    = get_post_meta( $post->ID, '_dj_bio', true );
+		$statement   = get_post_meta( $post->ID, '_dj_statement', true );
+		$image_id    = (int) get_post_meta( $post->ID, '_dj_image', true );
+		$banner_id   = (int) get_post_meta( $post->ID, '_dj_banner', true );
+		$about_photo = (int) get_post_meta( $post->ID, '_dj_about_photo', true );
+		$about_video = get_post_meta( $post->ID, '_dj_about_video', true );
+		$proj1       = get_post_meta( $post->ID, '_dj_original_project_1', true );
+		$proj2       = get_post_meta( $post->ID, '_dj_original_project_2', true );
+		$proj3       = get_post_meta( $post->ID, '_dj_original_project_3', true );
+		?>
+		<p>
+			<label><?php esc_html_e( 'Nome artístico', 'apollo-djs' ); ?></label>
+			<input type="text" name="_dj_name" value="<?php echo esc_attr( (string) $dj_name ); ?>" class="widefat" placeholder="<?php esc_attr_e( 'Se vazio, usa o título do post', 'apollo-djs' ); ?>">
+			<span class="description"><?php esc_html_e( 'Exibido no cartão (hero, ev-top, rodapé). Meta: _dj_name', 'apollo-djs' ); ?></span>
+		</p>
+		<p>
+			<label><?php esc_html_e( 'Biografia Curta (máx. 280 caracteres)', 'apollo-djs' ); ?></label>
+			<textarea name="_dj_bio_short" rows="3" maxlength="280" class="widefat"><?php echo esc_textarea( (string) $bio_short ); ?></textarea>
+		</p>
+		<p>
+			<label><?php esc_html_e( 'Statement (seção word-fill)', 'apollo-djs' ); ?></label>
+			<textarea name="_dj_statement" rows="3" class="widefat" placeholder="<?php esc_attr_e( 'Frase editorial pinada no scroll…', 'apollo-djs' ); ?>"><?php echo esc_textarea( (string) $statement ); ?></textarea>
+		</p>
+		<p>
+			<label><?php esc_html_e( 'Biografia Completa (seção "Sobre")', 'apollo-djs' ); ?></label>
+			<textarea name="_dj_bio" rows="6" class="widefat"><?php echo esc_textarea( (string) $bio_long ); ?></textarea>
+		</p>
+		<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+			<p>
+				<label><?php esc_html_e( 'Projeto original 1', 'apollo-djs' ); ?></label>
+				<input type="text" name="_dj_original_project_1" value="<?php echo esc_attr( (string) $proj1 ); ?>" class="widefat">
+			</p>
+			<p>
+				<label><?php esc_html_e( 'Projeto original 2', 'apollo-djs' ); ?></label>
+				<input type="text" name="_dj_original_project_2" value="<?php echo esc_attr( (string) $proj2 ); ?>" class="widefat">
+			</p>
+			<p>
+				<label><?php esc_html_e( 'Projeto original 3', 'apollo-djs' ); ?></label>
+				<input type="text" name="_dj_original_project_3" value="<?php echo esc_attr( (string) $proj3 ); ?>" class="widefat">
+			</p>
+		</div>
+		<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+			<p>
+				<label><?php esc_html_e( 'Foto de Perfil / Hero (ID)', 'apollo-djs' ); ?></label><br>
+				<?php if ( $image_id ) : ?>
+					<img class="apl-dj-media-prev" src="<?php echo esc_url( (string) wp_get_attachment_image_url( $image_id, 'thumbnail' ) ); ?>" style="max-width:80px;margin-bottom:4px;display:block;object-fit:cover;object-position:center top;">
+				<?php endif; ?>
+				<input type="number" name="_dj_image" id="apl-dj-image-id" value="<?php echo esc_attr( (string) $image_id ); ?>" class="widefat" min="0">
+				<button type="button" class="button button-small apl-dj-media-pick" data-target="apl-dj-image-id"><?php esc_html_e( 'Escolher', 'apollo-djs' ); ?></button>
+			</p>
+			<p>
+				<label><?php esc_html_e( 'Banner / rodapé (ID)', 'apollo-djs' ); ?></label><br>
+				<?php if ( $banner_id ) : ?>
+					<img class="apl-dj-media-prev" src="<?php echo esc_url( (string) wp_get_attachment_image_url( $banner_id, 'thumbnail' ) ); ?>" style="max-width:80px;margin-bottom:4px;display:block;object-fit:cover;object-position:center top;">
+				<?php endif; ?>
+				<input type="number" name="_dj_banner" id="apl-dj-banner-id" value="<?php echo esc_attr( (string) $banner_id ); ?>" class="widefat" min="0">
+				<button type="button" class="button button-small apl-dj-media-pick" data-target="apl-dj-banner-id"><?php esc_html_e( 'Escolher', 'apollo-djs' ); ?></button>
+			</p>
+		</div>
+		<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+			<p>
+				<label><?php esc_html_e( 'Foto "Sobre" (ID — diferente do hero)', 'apollo-djs' ); ?></label><br>
+				<?php if ( $about_photo ) : ?>
+					<img class="apl-dj-media-prev" src="<?php echo esc_url( (string) wp_get_attachment_image_url( $about_photo, 'thumbnail' ) ); ?>" style="max-width:80px;margin-bottom:4px;display:block;object-fit:cover;object-position:center top;">
+				<?php endif; ?>
+				<input type="number" name="_dj_about_photo" id="apl-dj-about-photo-id" value="<?php echo esc_attr( (string) $about_photo ); ?>" class="widefat" min="0">
+				<button type="button" class="button button-small apl-dj-media-pick" data-target="apl-dj-about-photo-id"><?php esc_html_e( 'Escolher', 'apollo-djs' ); ?></button>
+			</p>
+			<p>
+				<label><?php esc_html_e( 'Vídeo "Sobre" (URL, opcional)', 'apollo-djs' ); ?></label>
+				<input type="url" name="_dj_about_video" value="<?php echo esc_attr( (string) $about_video ); ?>" class="widefat" placeholder="https://... (mp4/webm)">
+			</p>
+		</div>
+		<script>
+		(function($){
+			// #region agent log
+			if (!window.__apolloAgentDbg) {
+				window.__apolloAgentDbg = function(payload) {
+					try {
+						payload = payload || {};
+						payload.sessionId = 'c3f157';
+						payload.timestamp = Date.now();
+						var body = JSON.stringify(payload);
+						fetch('http://127.0.0.1:7514/ingest/36bc2225-b935-4e1f-a7ea-27736f4f0de0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c3f157'},body:body}).catch(function(){});
+						var root = (window.wpApiSettings && window.wpApiSettings.root) || '/wp-json/';
+						var nonce = (window.wpApiSettings && window.wpApiSettings.nonce)
+							|| (window.APOLLO_EVENT_FORM && window.APOLLO_EVENT_FORM.nonce)
+							|| (window.apolloEditor && window.apolloEditor.restNonce)
+							|| (window.apolloEvents && window.apolloEvents.nonce) || '';
+						fetch(root.replace(/\/?$/, '/') + 'apollo/v1/_agent_debug', {
+							method:'POST', credentials:'same-origin',
+							headers:{'Content-Type':'application/json','X-WP-Nonce':nonce},
+							body:body
+						}).catch(function(){});
+					} catch (e) {}
+				};
+			}
+			window.__apolloAgentDbg({runId:'pre-fix',hypothesisId:'A',location:'Metabox.php:dj-ready',message:'dj metabox script ready',data:{hasWpMedia:!!(window.wp&&wp.media),screen:'dj'}});
+			// #endregion
+			function openImageFrame(targetId, previewImg) {
+				if (typeof wp === 'undefined' || !wp.media) {
+					window.alert('Biblioteca de mídia indisponível. Recarregue a página.');
+					return;
+				}
+				var frame = wp.media({ title: 'Selecionar imagem', multiple: false, library: { type: 'image' } });
+				frame.on('select', function(){
+					var att = frame.state().get('selection').first().toJSON();
+					var $input = $('#' + targetId);
+					$input.val(att.id);
+					// #region agent log
+					window.__apolloAgentDbg({runId:'pre-fix',hypothesisId:'C',location:'Metabox.php:dj-media-select',message:'DJ image selected',data:{id:att.id,inputVal:$input.val(),hasUrl:!!att.url,target:targetId}});
+					// #endregion
+					var url = (att.sizes && att.sizes.thumbnail && att.sizes.thumbnail.url) || att.url;
+					var $prev = $input.siblings('img.apl-dj-media-prev');
+					if (!$prev.length && previewImg) { $prev = $(previewImg); }
+					if ($prev.length) {
+						$prev.attr('src', url).show();
+					} else if (url) {
+						$input.before('<img class="apl-dj-media-prev" src="' + url + '" style="max-width:80px;margin-bottom:4px;display:block;object-fit:cover;object-position:center top;">');
+					}
+				});
+				frame.open();
+			}
+			$(document).on('click', '.apl-dj-media-pick', function(e){
+				e.preventDefault();
+				// #region agent log
+				window.__apolloAgentDbg({runId:'pre-fix',hypothesisId:'A',location:'Metabox.php:dj-media-pick',message:'Escolher DJ click',data:{hasWp:typeof wp!=='undefined',hasMedia:!!(typeof wp!=='undefined'&&wp.media),target:$(this).data('target')||null}});
+				// #endregion
+				openImageFrame($(this).data('target'));
+			});
+		})(jQuery);
+		</script>
+		<?php
+	}
+
+	public function render_links( \WP_Post $post ): void {
+		$fields = array(
+			'_dj_website'          => array( '🌐', __( 'Website', 'apollo-djs' ), 'https://...' ),
+			'_dj_instagram'        => array( '📷', __( 'Instagram (@handle)', 'apollo-djs' ), '@djname' ),
+			'_dj_soundcloud'       => array( '☁', __( 'SoundCloud (URL)', 'apollo-djs' ), 'https://soundcloud.com/...' ),
+			'_dj_spotify'          => array( '🎧', __( 'Spotify (URL)', 'apollo-djs' ), 'https://open.spotify.com/...' ),
+			'_dj_bandcamp'         => array( '🎵', __( 'Bandcamp (URL)', 'apollo-djs' ), 'https://artista.bandcamp.com' ),
+			'_dj_beatport'         => array( '💿', __( 'Beatport (URL)', 'apollo-djs' ), 'https://beatport.com/artist/...' ),
+			'_dj_youtube'          => array( '▶', __( 'YouTube (URL)', 'apollo-djs' ), 'https://youtube.com/...' ),
+			'_dj_mixcloud'         => array( '🔀', __( 'Mixcloud (URL)', 'apollo-djs' ), 'https://mixcloud.com/...' ),
+			'_dj_resident_advisor' => array( '📅', __( 'Resident Advisor (URL)', 'apollo-djs' ), 'https://ra.co/dj/...' ),
+			'_dj_facebook'         => array( '👍', __( 'Facebook (URL)', 'apollo-djs' ), 'https://facebook.com/...' ),
+			'_dj_twitter'          => array( '𝕏', __( 'X / Twitter (URL)', 'apollo-djs' ), 'https://x.com/...' ),
+			'_dj_tiktok'           => array( '🎬', __( 'TikTok (URL)', 'apollo-djs' ), 'https://tiktok.com/@...' ),
+			'_dj_set_url'          => array( '🎚', __( 'DJ Set em destaque (URL)', 'apollo-djs' ), 'https://soundcloud.com/...' ),
+			'_dj_mix_url'          => array( '🎶', __( 'Mix em destaque (URL)', 'apollo-djs' ), 'https://mixcloud.com/...' ),
+		);
+		echo '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">';
+		foreach ( $fields as $key => $meta ) {
+			$val  = get_post_meta( $post->ID, $key, true );
+			$type = '_dj_instagram' === $key ? 'text' : 'url';
+			printf(
+				'<p><label>%1$s %2$s</label><input type="%3$s" name="%4$s" value="%5$s" class="widefat" placeholder="%6$s"></p>',
+				esc_html( $meta[0] ),
+				esc_html( $meta[1] ),
+				esc_attr( $type ),
+				esc_attr( $key ),
+				esc_attr( (string) $val ),
+				esc_attr( $meta[2] )
+			);
+		}
+		echo '</div>';
+	}
+
+	public function render_tracks( \WP_Post $post ): void {
+		$tracks = get_post_meta( $post->ID, '_dj_tracks', true );
+		if ( ! \is_array( $tracks ) ) {
+			$tracks = array();
+		}
+		?>
+		<p class="description"><?php esc_html_e( 'Lançamentos da seção Out now!. Título, URL, duração e ano de postagem. O front exibe: "{ano} · RIO DE JANEIRO · {duração}".', 'apollo-djs' ); ?></p>
+		<div id="apl-dj-tracks" data-empty="<?php esc_attr_e( 'Nenhuma faixa ainda.', 'apollo-djs' ); ?>">
+			<?php
+			$rows = ! empty( $tracks ) ? $tracks : array( array( 'title' => '', 'url' => '', 'duration' => '', 'year' => '' ) );
+			foreach ( $rows as $t ) :
+				// Legacy freeform meta → seed year/duration when missing
+				$year     = (string) ( $t['year'] ?? '' );
+				$duration = (string) ( $t['duration'] ?? '' );
+				if ( ( '' === $year || '' === $duration ) && ! empty( $t['meta'] ) ) {
+					$parts = \array_map( 'trim', \explode( '·', (string) $t['meta'] ) );
+					if ( '' === $year && isset( $parts[0] ) && \preg_match( '/^\d{4}$/', $parts[0] ) ) {
+						$year = $parts[0];
+					}
+					if ( '' === $duration && ! empty( $parts ) ) {
+						$last = \end( $parts );
+						if ( \is_string( $last ) && \preg_match( '/^\d+:\d{2}$/', $last ) ) {
+							$duration = $last;
+						}
+					}
+				}
+				?>
+				<div class="apl-dj-track-row" style="display:grid;grid-template-columns:1.4fr 1.6fr 0.7fr 0.55fr auto;gap:8px;margin-bottom:8px;align-items:center;">
+					<input type="text" name="_dj_tracks_title[]" value="<?php echo esc_attr( (string) ( $t['title'] ?? '' ) ); ?>" placeholder="<?php esc_attr_e( 'Título', 'apollo-djs' ); ?>" class="widefat">
+					<input type="url" name="_dj_tracks_url[]" value="<?php echo esc_attr( (string) ( $t['url'] ?? '' ) ); ?>" placeholder="<?php esc_attr_e( 'URL da faixa', 'apollo-djs' ); ?>" class="widefat">
+					<input type="text" name="_dj_tracks_duration[]" value="<?php echo esc_attr( $duration ); ?>" placeholder="<?php esc_attr_e( 'Duração (6:12)', 'apollo-djs' ); ?>" class="widefat">
+					<input type="text" name="_dj_tracks_year[]" value="<?php echo esc_attr( $year ); ?>" placeholder="<?php esc_attr_e( 'Ano', 'apollo-djs' ); ?>" class="widefat" maxlength="4" inputmode="numeric">
+					<button type="button" class="button button-small apl-dj-track-remove" aria-label="<?php esc_attr_e( 'Remover', 'apollo-djs' ); ?>">✕</button>
+				</div>
+			<?php endforeach; ?>
+		</div>
+		<button type="button" class="button" id="apl-dj-track-add">+ <?php esc_html_e( 'Adicionar faixa', 'apollo-djs' ); ?></button>
+		<script>
+		(function(){
+			var wrap = document.getElementById('apl-dj-tracks');
+			var add  = document.getElementById('apl-dj-track-add');
+			if (!wrap || !add) return;
+			add.addEventListener('click', function(){
+				var row = wrap.querySelector('.apl-dj-track-row');
+				var clone = row.cloneNode(true);
+				clone.querySelectorAll('input').forEach(function(i){ i.value=''; });
+				wrap.appendChild(clone);
+			});
+			wrap.addEventListener('click', function(e){
+				if (!e.target.classList.contains('apl-dj-track-remove')) return;
+				var rows = wrap.querySelectorAll('.apl-dj-track-row');
+				if (rows.length > 1) e.target.closest('.apl-dj-track-row').remove();
+				else e.target.closest('.apl-dj-track-row').querySelectorAll('input').forEach(function(i){ i.value=''; });
+			});
+		})();
+		</script>
+		<?php
+	}
+
+	public function render_gallery( \WP_Post $post ): void {
+		$gallery = (array) get_post_meta( $post->ID, '_dj_gallery', true );
+		$gallery = \array_filter( \array_map( 'intval', $gallery ) );
+		$value   = \implode( ',', $gallery );
+		?>
+		<p>
+			<label><?php esc_html_e( 'Galeria (IDs de imagens separados por vírgula)', 'apollo-djs' ); ?></label>
+			<input type="text" name="_dj_gallery" id="apl-dj-gallery-ids" value="<?php echo esc_attr( $value ); ?>" class="widefat" placeholder="100,101,102">
+			<button type="button" class="button button-small apl-dj-gallery-pick"><?php esc_html_e( 'Adicionar imagens', 'apollo-djs' ); ?></button>
+		</p>
+		<script>
+		(function($){
+			$(document).on('click', '.apl-dj-gallery-pick', function(e){
+				e.preventDefault();
+				if (typeof wp === 'undefined' || !wp.media) {
+					window.alert('Biblioteca de mídia indisponível. Recarregue a página.');
+					return;
+				}
+				var frame = wp.media({ title: 'Selecionar imagens', multiple: true, library: { type: 'image' } });
+				frame.on('select', function(){
+					var ids = frame.state().get('selection').map(function(a){ return a.id; });
+					var input = document.getElementById('apl-dj-gallery-ids');
+					var cur = input.value.trim();
+					input.value = (cur ? cur + ',' : '') + ids.join(',');
+				});
+				frame.open();
+			});
+		})(jQuery);
+		</script>
+		<?php
+	}
+
+	public function render_booking( \WP_Post $post ): void {
+		$booking = get_post_meta( $post->ID, '_dj_booking', true );
+		$kit_url = get_post_meta( $post->ID, '_dj_media_kit_url', true );
+		$rider   = get_post_meta( $post->ID, '_dj_rider_url', true );
+		?>
+		<p>
+			<label>📩 <?php esc_html_e( 'E-mail de Booking', 'apollo-djs' ); ?></label>
+			<input type="email" name="_dj_booking" value="<?php echo esc_attr( (string) $booking ); ?>" class="widefat" placeholder="booking@...">
+			<span class="description"><?php esc_html_e( 'CTA "Contato booking" no cartão (mailto).', 'apollo-djs' ); ?></span>
+		</p>
+		<p>
+			<label>📁 <?php esc_html_e( 'Kit Promo — URL Drive', 'apollo-djs' ); ?></label>
+			<input type="url" name="_dj_media_kit_url" value="<?php echo esc_attr( (string) $kit_url ); ?>" class="widefat" placeholder="https://drive.google.com/...">
+			<span class="description"><?php esc_html_e( 'Botão "Acessar Kit Promo" abre esta pasta.', 'apollo-djs' ); ?></span>
+		</p>
+		<p>
+			<label>📄 <?php esc_html_e( 'Rider Técnico (URL)', 'apollo-djs' ); ?></label>
+			<input type="url" name="_dj_rider_url" value="<?php echo esc_attr( (string) $rider ); ?>" class="widefat" placeholder="https://...">
+		</p>
+		<?php
+	}
+
+	public function render_config( \WP_Post $post ): void {
+		$user_id  = (int) get_post_meta( $post->ID, '_dj_user_id', true );
+		$verified = get_post_meta( $post->ID, '_dj_verified', true );
+		?>
+		<p>
+			<label><?php esc_html_e( 'User ID vinculado', 'apollo-djs' ); ?></label>
+			<input type="number" name="_dj_user_id" value="<?php echo esc_attr( (string) $user_id ); ?>" class="widefat" min="0">
+			<span class="description"><?php esc_html_e( 'ID da conta WordPress do DJ', 'apollo-djs' ); ?></span>
+		</p>
+		<p>
+			<label>
+				<input type="checkbox" name="_dj_verified" value="1" <?php checked( $verified, '1' ); ?>>
+				<?php esc_html_e( 'DJ Verificado', 'apollo-djs' ); ?>
+			</label>
+		</p>
+		<?php
+	}
+
+	public function save( int $post_id, \WP_Post $post ): void {
+		if ( ! isset( $_POST[ self::NONCE ] ) || ! wp_verify_nonce( sanitize_key( $_POST[ self::NONCE ] ), self::ACTION ) ) {
+			return;
+		}
+		if ( \defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return;
+		}
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return;
+		}
+		if ( $post->post_type !== self::POST_TYPE ) {
+			return;
+		}
+
+		// Textareas
+		if ( isset( $_POST['_dj_bio_short'] ) ) {
+			update_post_meta( $post_id, '_dj_bio_short', sanitize_textarea_field( wp_unslash( $_POST['_dj_bio_short'] ) ) );
+		}
+		if ( isset( $_POST['_dj_bio'] ) ) {
+			update_post_meta( $post_id, '_dj_bio', sanitize_textarea_field( wp_unslash( $_POST['_dj_bio'] ) ) );
+		}
+		if ( isset( $_POST['_dj_statement'] ) ) {
+			update_post_meta( $post_id, '_dj_statement', sanitize_textarea_field( wp_unslash( $_POST['_dj_statement'] ) ) );
+		}
+
+		// Plain strings
+		$text_keys = array( '_dj_name', '_dj_instagram', '_dj_original_project_1', '_dj_original_project_2', '_dj_original_project_3' );
+		foreach ( $text_keys as $key ) {
+			if ( isset( $_POST[ $key ] ) ) {
+				update_post_meta( $post_id, $key, sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) );
+			}
+		}
+
+		// Email
+		if ( isset( $_POST['_dj_booking'] ) ) {
+			update_post_meta( $post_id, '_dj_booking', sanitize_email( wp_unslash( $_POST['_dj_booking'] ) ) );
+		}
+
+		// URLs
+		$url_keys = array(
+			'_dj_website', '_dj_soundcloud', '_dj_spotify', '_dj_youtube', '_dj_mixcloud',
+			'_dj_bandcamp', '_dj_beatport', '_dj_resident_advisor', '_dj_facebook',
+			'_dj_twitter', '_dj_tiktok', '_dj_set_url', '_dj_mix_url',
+			'_dj_media_kit_url', '_dj_rider_url', '_dj_about_video',
+		);
+		foreach ( $url_keys as $key ) {
+			if ( isset( $_POST[ $key ] ) ) {
+				update_post_meta( $post_id, $key, esc_url_raw( wp_unslash( (string) $_POST[ $key ] ) ) );
+			}
+		}
+
+		// Ints
+		$int_keys = array( '_dj_image', '_dj_banner', '_dj_user_id', '_dj_about_photo' );
+		foreach ( $int_keys as $key ) {
+			if ( isset( $_POST[ $key ] ) ) {
+				update_post_meta( $post_id, $key, absint( $_POST[ $key ] ) );
+			}
+		}
+
+		// Gallery (CSV → array ints)
+		if ( isset( $_POST['_dj_gallery'] ) ) {
+			$gallery_raw = sanitize_text_field( wp_unslash( $_POST['_dj_gallery'] ) );
+			$gallery     = \array_values( \array_filter( \array_map( 'absint', \explode( ',', $gallery_raw ) ) ) );
+			update_post_meta( $post_id, '_dj_gallery', $gallery );
+		}
+
+		// Tracks repeater (parallel arrays → list of {title, url, duration, year})
+		if ( isset( $_POST['_dj_tracks_title'] ) && \is_array( $_POST['_dj_tracks_title'] ) ) {
+			$titles    = \array_map( 'sanitize_text_field', \array_map( 'wp_unslash', (array) $_POST['_dj_tracks_title'] ) );
+			$urls      = isset( $_POST['_dj_tracks_url'] ) ? \array_map( 'esc_url_raw', \array_map( 'wp_unslash', (array) $_POST['_dj_tracks_url'] ) ) : array();
+			$durations = isset( $_POST['_dj_tracks_duration'] ) ? \array_map( 'sanitize_text_field', \array_map( 'wp_unslash', (array) $_POST['_dj_tracks_duration'] ) ) : array();
+			$years     = isset( $_POST['_dj_tracks_year'] ) ? \array_map( 'sanitize_text_field', \array_map( 'wp_unslash', (array) $_POST['_dj_tracks_year'] ) ) : array();
+			$tracks    = array();
+			foreach ( $titles as $i => $t ) {
+				$t = (string) $t;
+				$u = (string) ( $urls[ $i ] ?? '' );
+				if ( '' === $t && '' === $u ) {
+					continue; // skip empty rows
+				}
+				$year = \preg_replace( '/\D/', '', (string) ( $years[ $i ] ?? '' ) );
+				if ( \strlen( $year ) > 4 ) {
+					$year = \substr( $year, 0, 4 );
+				}
+				$tracks[] = array(
+					'title'    => $t,
+					'url'      => $u,
+					'duration' => (string) ( $durations[ $i ] ?? '' ),
+					'year'     => $year,
+				);
+			}
+			update_post_meta( $post_id, '_dj_tracks', $tracks );
+		}
+
+		// Bool
+		$verified = isset( $_POST['_dj_verified'] ) ? '1' : '';
+		update_post_meta( $post_id, '_dj_verified', $verified );
+	}
+}

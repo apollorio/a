@@ -1,0 +1,19 @@
+WROTE_HTACCESS bytes=1364 bak=.htaccess.bak-acesso-20260715-165101
+HAS_WP=1
+HAS_EPC=1
+
+Fatal error: Uncaught Error: Call to a member function add_query_var() on string in /home1/rvall260/apollo.rio.br/wp-includes/class-wp-taxonomy.php:503
+Stack trace:
+#0 /home1/rvall260/apollo.rio.br/wp-includes/taxonomy.php(533): WP_Taxonomy->add_rewrite_rules()
+#1 /home1/rvall260/apollo.rio.br/wp-includes/taxonomy.php(63): register_taxonomy('category', 'post', Array)
+#2 /home1/rvall260/apollo.rio.br/wp-settings.php(557): create_initial_taxonomies()
+#3 /home1/rvall260/apollo.rio.br/wp-config.php(216): require_once('/home1/rvall260...')
+#4 /home1/rvall260/apollo.rio.br/wp-load.php(50): require_once('/home1/rvall260...')
+#5 /home1/rvall260/apollo.rio.br/wp-content/_tmp_fix_htaccess_acesso.php(45): require('/home1/rvall260...')
+#6 {main}
+  thrown in /home1/rvall260/apollo.rio.br/wp-includes/class-wp-taxonomy.php on line 503
+---CURL---
+200
+<title>Apollo::Rio - Terminal de Acesso
+406
+<title>Not Acceptable!

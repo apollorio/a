@@ -1,0 +1,301 @@
+/**
+ * Apollo Login - Main Styles
+ *
+ * @package Apollo\Login
+ */
+
+/* === LOGIN PAGE === */
+.apollo-login-page {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.apollo-login-container {
+	width: 100%;
+	max-width: 400px;
+	padding: 20px;
+}
+
+.apollo-login-wrapper {
+	background: rgba(var(--rgb-t), 0.95);
+	border-radius: 12px;
+	padding: 40px;
+	box-shadow: 0 20px 60px rgba(var(--rgb-d), 0.3);
+}
+
+.apollo-logo {
+	text-align: center;
+	margin-bottom: 30px;
+}
+
+.apollo-logo h1 {
+	font-size: 32px;
+	font-weight: 700;
+	color: #667eea;
+	margin: 0;
+}
+
+/* === FORM FIELDS === */
+.apollo-form-field {
+	margin-bottom: 20px;
+}
+
+.apollo-form-field label {
+	display: block;
+	margin-bottom: 8px;
+	font-weight: 600;
+	color: #333;
+	font-size: 14px;
+}
+
+.apollo-form-field input[type="text"],
+.apollo-form-field input[type="email"],
+.apollo-form-field input[type="password"] {
+	width: 100%;
+	padding: 12px 16px;
+	border: 2px solid #e0e0e0;
+	border-radius: 8px;
+	font-size: 16px;
+	transition: all 0.3s ease;
+	box-sizing: border-box;
+}
+
+.apollo-form-field input:focus {
+	outline: none;
+	border-color: #667eea;
+	box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.apollo-field-hint {
+	display: block;
+	margin-top: 6px;
+	font-size: 12px;
+	color: #666;
+}
+
+/* === BUTTONS === */
+.apollo-btn {
+	display: inline-block;
+	padding: 12px 24px;
+	border: none;
+	border-radius: 8px;
+	font-size: 16px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	text-decoration: none;
+	text-align: center;
+}
+
+.apollo-btn-primary {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: white;
+	width: 100%;
+}
+
+.apollo-btn-primary:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+.apollo-btn-primary:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+	transform: none;
+}
+
+/* === NOTICES === */
+.apollo-notice {
+	padding: 12px 16px;
+	border-radius: 8px;
+	margin-bottom: 20px;
+}
+
+.apollo-notice.success {
+	background: #d4edda;
+	border: 1px solid #c3e6cb;
+	color: #155724;
+}
+
+.apollo-notice.error {
+	background: #f8d7da;
+	border: 1px solid #f5c6cb;
+	color: #721c24;
+}
+
+/* === FOOTER === */
+.apollo-login-footer {
+	margin-top: 30px;
+	text-align: center;
+	font-size: 14px;
+	color: #666;
+}
+
+.apollo-login-footer a {
+	color: #667eea;
+	text-decoration: none;
+	font-weight: 600;
+}
+
+.apollo-login-footer a:hover {
+	text-decoration: underline;
+}
+
+/* === MESSAGES === */
+.apollo-form-message {
+	padding: 12px 16px;
+	border-radius: 8px;
+	margin-top: 20px;
+	font-size: 14px;
+}
+
+.apollo-form-message.success {
+	background: #d4edda;
+	border: 1px solid #c3e6cb;
+	color: #155724;
+}
+
+.apollo-form-message.error {
+	background: #f8d7da;
+	border: 1px solid #f5c6cb;
+	color: #721c24;
+}
+
+/* === SOUND SELECTION - GLOBAL BRIDGE TAXONOMY === */
+.apollo-sound-selection {
+	margin-top: 24px;
+	padding-top: 24px;
+	border-top: 1px solid #e0e0e0;
+}
+
+.apollo-field-description {
+	font-size: 13px;
+	color: #666;
+	margin: 4px 0 12px 0;
+}
+
+.apollo-sound-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 12px;
+}
+
+.apollo-sound-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 14px;
+	background: #f5f5f5;
+	border: 2px solid #e0e0e0;
+	border-radius: 20px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.apollo-sound-chip:hover {
+	border-color: #667eea;
+	background: #f0f0ff;
+}
+
+.apollo-sound-chip.selected {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	border-color: #667eea;
+	color: white;
+}
+
+.apollo-sound-chip.disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.apollo-sound-chip.disabled:hover {
+	border-color: #e0e0e0;
+	background: #f5f5f5;
+}
+
+.apollo-sound-checkbox {
+	display: none;
+}
+
+.apollo-sound-icon {
+	font-size: 16px;
+}
+
+.apollo-sound-name {
+	font-size: 13px;
+	font-weight: 500;
+}
+
+.apollo-sound-counter {
+	display: block;
+	font-size: 12px;
+	color: #666;
+	text-align: right;
+}
+
+.apollo-sound-counter span {
+	font-weight: 600;
+	color: #667eea;
+}
+
+.apollo-no-sounds {
+	font-size: 13px;
+	color: #999;
+	font-style: italic;
+}
+
+/* === MULTI-STEP DIALOGUE FORM === */
+.apollo-dialogue {
+	display: block;
+	font-size: 16px;
+	color: #333;
+	line-height: 1.5;
+	margin-bottom: 8px;
+}
+
+.apollo-dialogue strong {
+	color: #667eea;
+	font-weight: 700;
+}
+
+.apollo-step-navigation {
+	display: flex;
+	gap: 12px;
+	margin-top: 20px;
+}
+
+.apollo-btn-secondary {
+	background: #e0e0e0;
+	color: #333;
+}
+
+.apollo-btn-secondary:hover {
+	background: #d0d0d0;
+	transform: translateY(-2px);
+}
+
+.apollo-btn-link {
+	background: none;
+	border: none;
+	color: #667eea;
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+	padding: 8px 0;
+	margin-top: 8px;
+	transition: all 0.2s ease;
+}
+
+.apollo-btn-link:hover {
+	color: #764ba2;
+	text-decoration: underline;
+}

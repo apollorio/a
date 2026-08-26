@@ -123,6 +123,472 @@ function apollo_event_is_gone(int $post_id): bool
 	return false;
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// INTERNAL RANKING (_event_int_rank) + VIBE TAGS (_event_tag_*) — 2026-08-24
+//
+// INTERNAL USE ONLY. NEVER RENDER ON ANY FRONTEND SURFACE. Every meta key in
+// this block is registered with show_in_rest => false in
+// apollo-core/src/Core/MetaRegistry.php (same pattern as _mod_notes / _doc_cpf),
+// so it is structurally invisible to REST and to the Gutenberg meta panel —
+// the classic metabox in apollo-events/src/Admin/RankMetabox.php is the only
+// write path, and it is gated to manage_options a second time on top of that.
+//
+// Built to be reused by ANY Apollo plugin (not just apollo-telegram) that
+// needs to answer "which event is the best/most precise match right now" —
+// a WhatsApp bot, a push-notification job, an admin dashboard widget, etc.
+// apollo_event_find_best_match() is the single plug-and-play entry point: it
+// already excludes gone/expired events and folds rank + tags + date proximity
+// into one ordered result, so a caller never has to re-derive that logic.
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * INTERNAL ONLY — mapa canônico das vibe tags do evento (slug => meta key).
+ *
+ * Única fonte de verdade: usada pelo loop de checkboxes em RankMetabox.php,
+ * pelo save() do mesmo arquivo, e por todos os helpers de leitura abaixo. Um
+ * checkbox novo nasce e morre aqui — nunca hardcoded em três lugares
+ * diferentes que podem desalinhar.
+ *
+ * @return array<string,string> slug => meta_key
+ */
+function apollo_event_internal_tags(): array
+{
+	return array(
+		'underground' => '_event_tag_underground',
+		'mainstream'  => '_event_tag_mainstream',
+		'comercial'   => '_event_tag_comercial',
+		'lgbtqia'     => '_event_tag_lgbtqia',
+		'sexparty'    => '_event_tag_sexparty',
+	);
+}
+
+/**
+ * INTERNAL ONLY — labels PT-BR para a UI do wp-admin.
+ *
+ * Separado de apollo_event_internal_tags() de propósito: o slug é o contrato
+ * de dados que apollo-telegram (ou qualquer outro plugin) já pode estar
+ * usando; o label é só apresentação. Trocar o texto do checkbox nunca deve
+ * quebrar quem já lê/grava pelo slug.
+ *
+ * @return array<string,string> slug => label
+ */
+function apollo_event_internal_tag_labels(): array
+{
+	return array(
+		'underground' => __('Underground', 'apollo-events'),
+		'mainstream'  => __('Mainstream', 'apollo-events'),
+		'comercial'   => __('Comercial', 'apollo-events'),
+		'lgbtqia'     => __('LGBTQIA+', 'apollo-events'),
+		'sexparty'    => __('Sex Party', 'apollo-events'),
+	);
+}
+
+/**
+ * INTERNAL ONLY — todas as vibe tags de um evento (marcada ou não).
+ *
+ * @param int $post_id ID do evento.
+ * @return array<string,bool> slug => true|false
+ */
+function apollo_event_get_tags(int $post_id): array
+{
+	$out = array();
+	foreach (apollo_event_internal_tags() as $slug => $meta_key) {
+		$out[$slug] = '1' === (string) get_post_meta($post_id, $meta_key, true);
+	}
+	return $out;
+}
+
+/**
+ * INTERNAL ONLY — checa uma única vibe tag.
+ *
+ * @param int    $post_id ID do evento.
+ * @param string $tag     Slug — ver apollo_event_internal_tags().
+ * @return bool
+ */
+function apollo_event_is_tag(int $post_id, string $tag): bool
+{
+	$tags = apollo_event_internal_tags();
+	if (! isset($tags[$tag])) {
+		return false;
+	}
+	return '1' === (string) get_post_meta($post_id, $tags[$tag], true);
+}
+
+/**
+ * INTERNAL ONLY — define uma vibe tag.
+ *
+ * ADMIN-ONLY, ENFORCED AT THE WRITE BOUNDARY — mesma regra de
+ * apollo_event_set_int_rank(): um chamador programático não contorna a
+ * checagem de capacidade só por não passar pelo formulário wp-admin.
+ *
+ * @param int    $post_id ID do evento.
+ * @param string $tag     Slug — ver apollo_event_internal_tags().
+ * @param bool   $value   true = marcado, false = desmarcado.
+ * @return bool
+ */
+function apollo_event_set_tag(int $post_id, string $tag, bool $value): bool
+{
+	if (! current_user_can('manage_options')) {
+		return false;
+	}
+	if (get_post_type($post_id) !== APOLLO_EVENT_CPT) {
+		return false;
+	}
+	$tags = apollo_event_internal_tags();
+	if (! isset($tags[$tag])) {
+		return false;
+	}
+	return (bool) update_post_meta($post_id, $tags[$tag], $value ? '1' : '');
+}
+
+/**
+ * INTERNAL ONLY — o quiz de "que tipo de festa combina com você" (2026-08-25).
+ *
+ * Fonte única de verdade: as PERGUNTAS que o bot do Telegram mostra ao
+ * usuário E a REGRA que classifica um evento em cada letra vêm exatamente
+ * daqui — nem o texto da pergunta nem a regra de match vivem duplicados em
+ * apollo-telegram. Tabela literal pedida pelo usuário:
+ *
+ *   a) Underground puro          → underground=true,  comercial=false
+ *   b) Underground + comercial   → underground=true,  comercial=true
+ *   c) Mainstream + comercial    → mainstream=true,   comercial=true
+ *   d) Mainstream puro           → mainstream=true,   comercial=false
+ *
+ * A letra 'b' menciona "giro LGBTQIA+" no texto de apresentação, mas a REGRA
+ * de match usa só underground+comercial, como especificado — a tag lgbtqia
+ * não entra como requisito. Se o pedido era "b exige lgbtqia=true também",
+ * ajuste o array 'require' da letra 'b' aqui (e só aqui).
+ *
+ * Bilingual since 2026-08-25 (apollo-telegram now replies in pt or en) — the
+ * MATCH RULE (require/exclude) has exactly one language-independent copy;
+ * only 'label'/'question' vary by $lang. Default stays 'pt' so any existing
+ * caller passing no argument (e.g. wp-admin tooling) is unaffected.
+ *
+ * @param string $lang 'pt' (default) or 'en'.
+ * @return array<string, array{label:string, question:string, require:string[], exclude:string[]}>
+ */
+function apollo_event_vibe_quiz_definition(string $lang = 'pt'): array
+{
+	$lang = in_array($lang, array('pt', 'en'), true) ? $lang : 'pt';
+
+	$raw = array(
+		'a' => array(
+			'label'    => array(
+				'pt' => __('Underground raiz', 'apollo-events'),
+				'en' => __('Straight-up underground', 'apollo-events'),
+			),
+			'question' => array(
+				'pt' => __('Underground, festa estranha com gente esquisita!', 'apollo-events'),
+				'en' => __('Underground, a weird party with weird people!', 'apollo-events'),
+			),
+			'require'  => array('underground'),
+			'exclude'  => array('comercial'),
+		),
+		'b' => array(
+			'label'    => array(
+				'pt' => __('Underground comercial / giro LGBTQIA+', 'apollo-events'),
+				'en' => __('Commercial underground / LGBTQIA+ scene', 'apollo-events'),
+			),
+			'question' => array(
+				'pt' => __('Underground mais comercialzinho, um giro LGBTQIA+ etc..', 'apollo-events'),
+				'en' => __('A bit more commercial underground, an LGBTQIA+ scene etc..', 'apollo-events'),
+			),
+			'require'  => array('underground', 'comercial'),
+			'exclude'  => array(),
+		),
+		'c' => array(
+			'label'    => array(
+				'pt' => __('Mainstream comercial', 'apollo-events'),
+				'en' => __('Commercial mainstream', 'apollo-events'),
+			),
+			'question' => array(
+				'pt' => __('Mainstream da farofada comercial até o que toca na alma!', 'apollo-events'),
+				'en' => __('Mainstream, from full-on commercial hits to the stuff that touches your soul!', 'apollo-events'),
+			),
+			'require'  => array('mainstream', 'comercial'),
+			'exclude'  => array(),
+		),
+		'd' => array(
+			'label'    => array(
+				'pt' => __('Mainstream conceito', 'apollo-events'),
+				'en' => __('Conceptual mainstream', 'apollo-events'),
+			),
+			'question' => array(
+				'pt' => __('Mainstream mais conceito..', 'apollo-events'),
+				'en' => __('Mainstream, but more conceptual..', 'apollo-events'),
+			),
+			'require'  => array('mainstream'),
+			'exclude'  => array('comercial'),
+		),
+	);
+
+	$out = array();
+	foreach ($raw as $letter => $rule) {
+		$out[$letter] = array(
+			'label'    => $rule['label'][$lang] ?? $rule['label']['pt'],
+			'question' => $rule['question'][$lang] ?? $rule['question']['pt'],
+			'require'  => $rule['require'],
+			'exclude'  => $rule['exclude'],
+		);
+	}
+
+	return $out;
+}
+
+/**
+ * INTERNAL ONLY — quais letras do quiz (a/b/c/d) este evento atende.
+ *
+ * Normalmente 0 ou 1 letra. Pode retornar 2 no caso de borda em que um admin
+ * marcou Underground E Mainstream no mesmo evento (dado de entrada
+ * inconsistente, não uma regra do quiz) — o evento então serve os dois
+ * grupos em vez de sumir da recomendação por causa de uma marcação dupla.
+ *
+ * @param int $post_id ID do evento.
+ * @return string[] Letras (subconjunto de a/b/c/d), pode ser vazio.
+ */
+function apollo_event_classify_vibe_quiz(int $post_id): array
+{
+	$tags    = apollo_event_get_tags($post_id);
+	$matches = array();
+
+	foreach (apollo_event_vibe_quiz_definition() as $letter => $rule) {
+		$ok = true;
+		foreach ($rule['require'] as $needed) {
+			if (empty($tags[$needed])) {
+				$ok = false;
+				break;
+			}
+		}
+		if ($ok) {
+			foreach ($rule['exclude'] as $unwanted) {
+				if (! empty($tags[$unwanted])) {
+					$ok = false;
+					break;
+				}
+			}
+		}
+		if ($ok) {
+			$matches[] = $letter;
+		}
+	}
+
+	return $matches;
+}
+
+/**
+ * INTERNAL ONLY — este evento atende a letra X do quiz?
+ *
+ * @param int    $post_id ID do evento.
+ * @param string $answer  'a'|'b'|'c'|'d'.
+ * @return bool
+ */
+function apollo_event_matches_vibe_quiz(int $post_id, string $answer): bool
+{
+	return in_array($answer, apollo_event_classify_vibe_quiz($post_id), true);
+}
+
+/**
+ * INTERNAL ONLY — ranking editorial (0-10) de um evento.
+ *
+ * Sem valor definido = 0 (padrão, pior ranking). O clamp aqui é a segunda
+ * camada de defesa: a mesma regra 0-10 já vive no sanitize_callback do
+ * MetaRegistry e no save() do RankMetabox — nenhuma das três camadas confia
+ * sozinha no dado gravado.
+ *
+ * @param int $post_id ID do evento.
+ * @return int 0-10.
+ */
+function apollo_event_get_int_rank(int $post_id): int
+{
+	$raw  = get_post_meta($post_id, '_event_int_rank', true);
+	$rank = is_numeric($raw) ? (int) $raw : 0;
+
+	return max(0, min(10, $rank));
+}
+
+/**
+ * INTERNAL ONLY — define o ranking editorial (0-10) de um evento.
+ *
+ * ADMIN-ONLY, ENFORCED AT THE WRITE BOUNDARY — mesmo padrão de
+ * _classified_hostel_id: um chamador programático (ex.: um futuro comando do
+ * bot do Telegram) não contorna a checagem de capacidade só por não passar
+ * pelo formulário wp-admin.
+ *
+ * @param int $post_id ID do evento.
+ * @param int $rank    0-10 (fora do intervalo é sujado para o extremo mais próximo).
+ * @return bool
+ */
+function apollo_event_set_int_rank(int $post_id, int $rank): bool
+{
+	if (! current_user_can('manage_options')) {
+		return false;
+	}
+	if (get_post_type($post_id) !== APOLLO_EVENT_CPT) {
+		return false;
+	}
+
+	return (bool) update_post_meta($post_id, '_event_int_rank', max(0, min(10, $rank)));
+}
+
+/**
+ * INTERNAL ONLY — eventos futuros/ativos ordenados por ranking editorial.
+ *
+ * O helper "plug-and-play" para o apollo-telegram decidir qual evento indicar
+ * agora. Ordena por rank DESC; empate é resolvido pela data de início mais
+ * próxima. Eventos expirados (_event_is_gone) nunca entram — um rank alto em
+ * um evento que já acabou não deve ser recomendado a ninguém.
+ *
+ * @param array $args {
+ *     Opcional.
+ *     @type int    $limit    Máximo de eventos retornados. Default 5.
+ *     @type int    $min_rank Rank mínimo aceito (0-10). Default 1 — eventos
+ *                            sem ranking definido (0) ficam de fora por
+ *                            padrão; passe 0 explicitamente para incluí-los.
+ *     @type string $from     Data Y-m-d mínima de início. Default hoje.
+ * }
+ * @return array<int, array{id:int, title:string, rank:int, start_date:string, permalink:string}>
+ */
+function apollo_event_get_top_ranked(array $args = array()): array
+{
+	$defaults = array(
+		'limit'    => 5,
+		'min_rank' => 1,
+		'from'     => current_time('Y-m-d'),
+	);
+	$args = wp_parse_args($args, $defaults);
+
+	// posts_per_page é limitado (não -1): o rank vive fora do meta_query
+	// (sanitize_callback custom não é confiável para range em SQL), então o
+	// filtro final acontece em PHP sobre um lote já ordenado por data.
+	$query = apollo_event_query(array(
+		'posts_per_page' => 200,
+		'meta_key'       => '_event_start_date',
+		'orderby'        => 'meta_value',
+		'order'          => 'ASC',
+		'meta_query'     => array(
+			array(
+				'key'     => '_event_start_date',
+				'value'   => sanitize_text_field((string) $args['from']),
+				'compare' => '>=',
+				'type'    => 'DATE',
+			),
+		),
+	));
+
+	$ranked = array();
+	foreach ($query->posts as $post) {
+		if (apollo_event_is_gone($post->ID)) {
+			continue;
+		}
+		$rank = apollo_event_get_int_rank($post->ID);
+		if ($rank < (int) $args['min_rank']) {
+			continue;
+		}
+		$ranked[] = array(
+			'id'         => $post->ID,
+			'title'      => $post->post_title,
+			'rank'       => $rank,
+			'start_date' => (string) get_post_meta($post->ID, '_event_start_date', true),
+			'permalink'  => (string) get_permalink($post->ID),
+		);
+	}
+
+	usort($ranked, function ($a, $b) {
+		if ($a['rank'] === $b['rank']) {
+			return strcmp($a['start_date'], $b['start_date']);
+		}
+		return $b['rank'] <=> $a['rank'];
+	});
+
+	return array_slice($ranked, 0, max(1, (int) $args['limit']));
+}
+
+/**
+ * INTERNAL ONLY — motor genérico de "qual evento é o mais preciso agora".
+ *
+ * O ENTRY POINT plug-and-play. Combina _event_int_rank + as vibe tags
+ * (_event_tag_*) + proximidade de data num único critério de busca
+ * reaproveitável por QUALQUER plugin Apollo — não só apollo-telegram. Um
+ * consumidor não precisa conhecer a forma interna do meta: passa o que já
+ * sabe sobre o pedido ("algo underground pra hoje à noite", "um evento
+ * LGBTQIA+ neste local") e recebe de volta uma lista pronta pra
+ * exibir/recomendar, melhor primeiro.
+ *
+ * @param array $criteria {
+ *     Opcional.
+ *     @type string[] $tags      Slugs de apollo_event_internal_tags() desejados
+ *                                (underground, mainstream, comercial, lgbtqia,
+ *                                sexparty). Vazio (padrão) = ignora tags.
+ *     @type string   $tags_mode 'any' (padrão) — bate pelo menos uma tag pedida —
+ *                                ou 'all' — precisa bater todas.
+ *     @type int      $min_rank  Rank mínimo aceito. Default 1 (mesma regra de
+ *                                apollo_event_get_top_ranked — eventos sem
+ *                                ranking definido ficam de fora por padrão).
+ *     @type int      $loc_id    Filtra por local (loc CPT) específico. 0 = ignora.
+ *     @type string   $from      Data Y-m-d mínima de início. Default hoje.
+ *     @type int      $limit     Quantos retornar. Default 1 — "o melhor".
+ * }
+ * @return array<int, array<string, mixed>> Lista ordenada (melhor primeiro).
+ *         Cada item: id, title, permalink, rank, start_date, start_time,
+ *         tags (assoc slug=>bool), loc (array|null), djs (array).
+ */
+function apollo_event_find_best_match(array $criteria = array()): array
+{
+	$defaults = array(
+		'tags'      => array(),
+		'tags_mode' => 'any',
+		'min_rank'  => 1,
+		'loc_id'    => 0,
+		'from'      => current_time('Y-m-d'),
+		'limit'     => 1,
+	);
+	$criteria = wp_parse_args($criteria, $defaults);
+
+	// Lote amplo mas limitado — rank e expiração já filtrados aqui pelo
+	// apollo_event_get_top_ranked(); tags/local são um filtro fino em PHP
+	// sobre um lote já pequeno e ordenado, não uma segunda query.
+	$pool = apollo_event_get_top_ranked(array(
+		'limit'    => 200,
+		'min_rank' => (int) $criteria['min_rank'],
+		'from'     => (string) $criteria['from'],
+	));
+
+	$wanted_tags = array_values(array_filter(array_map('sanitize_key', (array) $criteria['tags'])));
+	$tags_mode   = 'all' === $criteria['tags_mode'] ? 'all' : 'any';
+	$loc_filter  = absint($criteria['loc_id']);
+
+	$matches = array();
+	foreach ($pool as $row) {
+		$tags = apollo_event_get_tags($row['id']);
+
+		if (! empty($wanted_tags)) {
+			$hits = array_intersect($wanted_tags, array_keys(array_filter($tags)));
+			if ('all' === $tags_mode && count($hits) < count($wanted_tags)) {
+				continue;
+			}
+			if ('any' === $tags_mode && empty($hits)) {
+				continue;
+			}
+		}
+
+		if ($loc_filter > 0 && (int) get_post_meta($row['id'], '_event_loc_id', true) !== $loc_filter) {
+			continue;
+		}
+
+		$matches[] = array_merge(
+			$row,
+			array(
+				'start_time' => (string) get_post_meta($row['id'], '_event_start_time', true),
+				'tags'       => $tags,
+				'loc'        => apollo_event_get_loc($row['id']),
+				'djs'        => apollo_event_get_djs($row['id']),
+			)
+		);
+	}
+
+	return array_slice($matches, 0, max(1, (int) $criteria['limit']));
+}
+
 /**
  * Obtém lineup de DJs de um evento
  *

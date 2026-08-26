@@ -15,7 +15,7 @@
  * Plugin Name: Apollo Core
  * Plugin URI: https://apollo.rio.br
  * Description: Core fundacional do ecossistema Apollo - MASTER REGISTRY de CPTs, Taxonomias e Meta Keys. Sistema de fallback para plugins inativos. Foundation com hooks, CDN e REST API.
- * Version: 6.4.1
+ * Version: 6.4.4
  * Author: Apollo Team
  * Author URI: https://apollo.rio.br
  * License: GPL-2.0-or-later
@@ -44,8 +44,21 @@ if (! defined('ABSPATH')) {
    6.2.8 — includes/modelo/ — the "Hello world!" of the Apollo CPTs. One fully
           populated demo record per CPT at slug `modelo`, seeded from the schema
           so it reports its own coverage and cannot silently fall behind it.
+   6.4.2 — _event_int_rank registered on `event` (0-10, INTERNAL ONLY, show_in_rest
+          false, auth_callback manage_options). Feeds apollo-telegram event-selection.
+          UI lives in apollo-events/src/Admin/RankMetabox.php, below Publish/Update.
+   6.4.3 — 5 internal vibe-tag checkboxes on `event` (_event_tag_underground,
+          _mainstream, _comercial, _lgbtqia, _sexparty — all INTERNAL, never
+          frontend, same admin spot as _event_int_rank). Canonical slug=>key
+          map: apollo_event_internal_tags() in apollo-events/includes/functions.php.
+   6.4.4 — apollo_admin_parent_slug() in includes/functions.php: one answer to
+          "where do Apollo admin screens hang?". Health, Shortcodes and Modelo
+          were each guessing tools.php on their own, which is how the ecosystem's
+          own health report ended up filed under WordPress Tools while every
+          other Apollo screen sat under Apollo. All three now ask the helper and
+          hook admin_menu at priority 20, after apollo-admin registers the root.
    See _inventory/CPT-REGISTRATION-MAP-2026-08-11.md */
-define('APOLLO_CORE_VERSION', '6.4.1');
+define('APOLLO_CORE_VERSION', '6.4.4');
 define('APOLLO_CORE_PATH', plugin_dir_path(__FILE__));
 define('APOLLO_CORE_URL', plugin_dir_url(__FILE__));
 define('APOLLO_CORE_FILE', __FILE__);

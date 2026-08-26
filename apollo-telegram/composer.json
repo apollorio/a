@@ -1,0 +1,15 @@
+{
+	"autoload": {
+		"psr-4": {
+			"Apollo\\Telegram\\": "src/"
+		}
+	},
+	"require": {
+		"longman/telegram-bot": "*",
+		"monolog/monolog": "2.x-dev"
+	},
+	"minimum-stability": "dev",
+	"config": {
+		"disable-tls": true
+	}
+}

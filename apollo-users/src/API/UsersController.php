@@ -336,7 +336,7 @@ class UsersController {
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'record_profile_view' ),
-				'permission_callback' => '__return_true',
+				'permission_callback' => '__return_true', // UNPROTECTED — no nonce, no rate limit, no dedup: every call INSERTs a row into apollo_profile_views and fires apollo/users/profile_visited. Needs a product decision first — a view counter sits badly beside NO_EGO_COUNTERS. plan-003 S-1.
 				'args'                => array(
 					'username' => array(
 						'required'          => true,

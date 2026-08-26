@@ -1,0 +1,30 @@
+# ================ #
+# Logs and backups #
+# ================ #
+/logs/
+*.log
+
+# ==================== #
+# Packages and vendors #
+# ==================== #
+node_modules/
+vendor/
+
+# === #
+# IDE #
+# === #
+.idea/
+.vs/
+/*.tmp
+
+# ============ #
+# OS generated #
+# ============ #
+.DS_Store*
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+[Tt]humbs.db
+[Dd]esktop.ini

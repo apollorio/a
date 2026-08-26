@@ -1,0 +1,323 @@
+<div class="apollo-register-form-wrapper">
+	<form id="apollo-register-form" method="post">
+
+		<!-- STEP 1: SOCIAL NAME (FIRST!) -->
+		<div class="input-group apollo-step" data-step="1">
+			<label for="reg-social-name"><?php esc_html_e( 'Como você gosta de ser chamade?', 'apollo-login' ); ?> *</label>
+			<input
+				type="text"
+				id="reg-social-name"
+				name="social_name"
+				required
+				autocomplete="name"
+				placeholder="<?php esc_attr_e( 'Seu nome social', 'apollo-login' ); ?>" class="apollo-input"
+			/>
+			<span class="apollo-field-hint"><?php esc_html_e( 'O nome que você quer que as pessoas usem', 'apollo-login' ); ?></span>
+		</div>
+
+		<!-- STEP 2: INSTAGRAM USERNAME -->
+		<div class="input-group apollo-step" data-step="2" style="display:none;">
+			<label for="reg-instagram">
+				<span class="apollo-dialogue"><?php esc_html_e( 'Prazer,', 'apollo-login' ); ?> <strong class="user-social-name"></strong>! <?php esc_html_e( 'Qual seu Instagram?', 'apollo-login' ); ?></span>
+			</label>
+			<input
+				type="text"
+				id="reg-instagram"
+				name="instagram_username"
+				required
+				autocomplete="off"
+				placeholder="<?php esc_attr_e( 'seu_instagram', 'apollo-login' ); ?>" class="apollo-input"
+			/>
+			<span class="apollo-field-hint"><?php esc_html_e( 'Sem @ - esse será seu username no Apollo também', 'apollo-login' ); ?></span>
+		</div>
+
+		<!-- HIDDEN: Apollo username = Instagram username (MANDATORY) -->
+		<input type="hidden" id="reg-username" name="username" value="" />
+
+		<!-- STEP 3: EMAIL -->
+		<div class="input-group apollo-step" data-step="3" style="display:none;">
+			<label for="reg-email">
+				<span class="apollo-dialogue"><?php esc_html_e( 'Beleza! Qual seu email melhor,', 'apollo-login' ); ?> <strong class="user-social-name"></strong>?</span>
+			</label>
+			<input
+				type="email"
+				id="reg-email"
+				name="email"
+				required
+				autocomplete="email"
+				placeholder="<?php esc_attr_e( 'seu@email.com', 'apollo-login' ); ?>" class="apollo-input"
+			/>
+		</div>
+
+		<!-- STEP 4: PASSWORD -->
+		<div class="input-group apollo-step" data-step="4" style="display:none;">
+			<label for="reg-password">
+				<span class="apollo-dialogue"><?php esc_html_e( 'Agora cria uma senha forte pra proteger seu perfil', 'apollo-login' ); ?></span>
+			</label>
+			<input
+				type="password"
+				id="reg-password"
+				name="password"
+				required
+				autocomplete="new-password"
+				placeholder="<?php esc_attr_e( 'Mínimo 8 caracteres', 'apollo-login' ); ?>" class="apollo-input"
+			/>
+		</div>
+
+		<!-- STEP 5: PASSWORD CONFIRM -->
+		<div class="input-group apollo-step" data-step="5" style="display:none;">
+			<label for="reg-password-confirm">
+				<span class="apollo-dialogue"><?php esc_html_e( 'Confirma a senha aí', 'apollo-login' ); ?></span>
+			</label>
+			<input
+				type="password"
+				id="reg-password-confirm"
+				name="password_confirm"
+				required
+				autocomplete="new-password"
+				placeholder="<?php esc_attr_e( 'Mesma senha de novo', 'apollo-login' ); ?>" class="apollo-input"
+			/>
+		</div>
+
+		<!-- STEP 6: SOUND SELECTION - GLOBAL BRIDGE TAXONOMY -->
+		<div class="input-group apollo-sound-selection apollo-step" data-step="6" style="display:none;">
+			<label>
+				<span class="apollo-dialogue"><?php esc_html_e( 'Agora me conta,', 'apollo-login' ); ?> <strong class="user-social-name"></strong>, <?php esc_html_e( 'quais sons definem sua vibe?', 'apollo-login' ); ?></span>
+			</label>
+			<p class="apollo-field-description"><?php esc_html_e( 'Escolhe de 1 até 5 sons que combinam com você', 'apollo-login' ); ?></p>
+			<div class="apollo-sound-grid" id="apollo-sound-grid">
+				<?php
+				// Get sounds from GLOBAL taxonomy
+				$sounds = get_terms(
+					array(
+						'taxonomy'   => 'sound',
+						'hide_empty' => false,
+						'orderby'    => 'name',
+						'order'      => 'ASC',
+					)
+				);
+
+				if ( ! empty( $sounds ) && ! is_wp_error( $sounds ) ) :
+					foreach ( $sounds as $sound ) :
+						$sound_icon = get_term_meta( $sound->term_id, '_apollo_icon', true ) ?: '🎵';
+						?>
+						<label class="custom-checkbox" class="apollo-sound-chip" data-sound-id="<?php echo esc_attr( $sound->term_id ); ?>">
+							<input
+								type="checkbox"
+								name="sounds[]"
+								value="<?php echo esc_attr( $sound->term_id ); ?>"
+								class="apollo-sound-checkbox"
+							/>
+							<span class="apollo-sound-icon"><?php echo esc_html( $sound_icon ); ?></span>
+							<span class="apollo-sound-name"><?php echo esc_html( $sound->name ); ?></span>
+						</label>
+						<?php
+					endforeach;
+				else :
+					?>
+					<p class="apollo-no-sounds"><?php esc_html_e( 'Sound preferences will be available soon.', 'apollo-login' ); ?></p>
+				<?php endif; ?>
+			</div>
+			<span class="apollo-sound-counter">
+				<span id="selected-sounds-count">0</span>/5 <?php esc_html_e( 'selected', 'apollo-login' ); ?>
+			</span>
+		</div>
+
+		<input type="hidden" id="apollo-quiz-token" name="apollo_quiz_token" value="" />
+		<input type="hidden" id="apollo-social-name-hidden" name="social_name_hidden" value="" />
+		<input type="hidden" id="apollo-instagram-hidden" name="instagram_hidden" value="" />
+
+		<!-- NAVIGATION BUTTONS -->
+		<div class="apollo-step-navigation">
+			<button type="button" id="apollo-next-step" class="apollo-btn apollo-btn-primary">
+				<?php esc_html_e( 'Próximo', 'apollo-login' ); ?> →
+			</button>
+			<button type="button" id="apollo-prev-step" class="apollo-btn apollo-btn-secondary" style="display:none;">
+				← <?php esc_html_e( 'Voltar', 'apollo-login' ); ?>
+			</button>
+		</div>
+
+		<!-- QUIZ NOTICE (STEP 7) -->
+		<div class="apollo-quiz-required-notice apollo-step" data-step="7" style="display:none;">
+			<p class="apollo-dialogue">
+				<?php esc_html_e( 'Beleza,', 'apollo-login' ); ?> <strong class="user-social-name"></strong>! <?php esc_html_e( 'Última etapa:', 'apollo-login' ); ?>
+			</p>
+			<p>
+				⚡ <?php esc_html_e( 'Quiz de aptidão em 4 etapas: Padrões, Jogo Simon, Ética e Reflexos', 'apollo-login' ); ?>
+			</p>
+			<button type="button" id="apollo-start-quiz" class="apollo-btn apollo-btn-quiz">
+				<?php esc_html_e( 'Começar Quiz', 'apollo-login' ); ?>
+			</button>
+		</div>
+
+		<div class="apollo-form-actions" style="display:none;">
+			<button type="submit" class="apollo-btn apollo-btn-primary" disabled>
+				<?php esc_html_e( 'Criar Conta', 'apollo-login' ); ?>
+			</button>
+		</div>
+
+		<div class="apollo-form-message" style="display:none;"></div>
+
+	</form>
+</div>
+
+<script>
+jQuery(document).ready(function($) {
+	let currentStep = 1;
+	const totalSteps = 7;
+	let userData = {
+		socialName: '',
+		instagram: ''
+	};
+
+	// Update dialogue placeholders with user's social name
+	function updateDialogue() {
+		$('.user-social-name').text(userData.socialName);
+		$('.user-instagram').text(userData.instagram);
+	}
+
+	// Show specific step
+	function showStep(step) {
+		$('.apollo-step').hide();
+		$(`.apollo-step[data-step="${step}"]`).fadeIn();
+		currentStep = step;
+
+		// Show/hide navigation
+		$('#apollo-prev-step').toggle(step > 1);
+		$('#apollo-next-step').toggle(step < 7);
+		$('.apollo-step-navigation').toggle(step < 7);
+	}
+
+	// Validate current step
+	function validateStep(step) {
+		let isValid = true;
+
+		if (step === 1) {
+			userData.socialName = $('#reg-social-name').val().trim();
+			isValid = userData.socialName.length >= 2;
+		} else if (step === 2) {
+			// MANDATORY: Instagram = Apollo username (preserve user's case)
+			userData.instagram = $('#reg-instagram').val().trim().replace('@', '');
+			isValid = userData.instagram.length >= 3;
+			$('#reg-instagram').val(userData.instagram);
+			// Set hidden username field to SAME as Instagram (exact case)
+			$('#reg-username').val(userData.instagram);
+		} else if (step === 3) {
+			isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($('#reg-email').val());
+		} else if (step === 4) {
+			isValid = $('#reg-password').val().length >= 8;
+		} else if (step === 5) {
+			isValid = $('#reg-password').val() === $('#reg-password-confirm').val();
+			if (!isValid) alert('<?php esc_html_e( 'As senhas não coincidem!', 'apollo-login' ); ?>');
+		} else if (step === 6) {
+			const selectedSounds = $('.apollo-sound-checkbox:checked').length;
+			isValid = selectedSounds >= 1 && selectedSounds <= 5;
+			if (!isValid) alert('<?php esc_html_e( 'Escolhe de 1 a 5 sons!', 'apollo-login' ); ?>');
+		}
+
+		return isValid;
+	}
+
+	// Next step button
+	$('#apollo-next-step').on('click', function() {
+		if (validateStep(currentStep)) {
+			updateDialogue();
+			showStep(currentStep + 1);
+		}
+	});
+
+	// Previous step button
+	$('#apollo-prev-step').on('click', function() {
+		showStep(currentStep - 1);
+	});
+
+	// Sound selection handler
+	const $soundCheckboxes = $('.apollo-sound-checkbox');
+	const $soundCounter = $('#selected-sounds-count');
+	const maxSounds = 5;
+
+	$soundCheckboxes.on('change', function() {
+		const checkedCount = $soundCheckboxes.filter(':checked').length;
+		$soundCounter.text(checkedCount);
+
+		if (checkedCount >= maxSounds) {
+			$soundCheckboxes.not(':checked').prop('disabled', true);
+			$soundCheckboxes.not(':checked').closest('.apollo-sound-chip').addClass('disabled');
+		} else {
+			$soundCheckboxes.prop('disabled', false);
+			$('.apollo-sound-chip').removeClass('disabled');
+		}
+
+		$(this).closest('.apollo-sound-chip').toggleClass('selected', $(this).is(':checked'));
+	});
+
+	// Start quiz button
+	$('#apollo-start-quiz').on('click', function() {
+		$('#apollo-quiz-overlay').fadeIn();
+	});
+
+	// Form submission
+	$('#apollo-register-form').on('submit', function(e) {
+		e.preventDefault();
+
+		const $form = $(this);
+		const $message = $form.find('.apollo-form-message');
+		const $button = $form.find('button[type="submit"]');
+
+		// Check quiz token
+		if (!$('#apollo-quiz-token').val()) {
+			$message.removeClass('success').addClass('error')
+				.text('<?php esc_html_e( 'Precisa completar o quiz primeiro!', 'apollo-login' ); ?>')
+				.show();
+			return;
+		}
+
+		// Check sound selection
+		const selectedSounds = $soundCheckboxes.filter(':checked').map(function() {
+			return $(this).val();
+		}).get();
+
+		if (selectedSounds.length < 1) {
+			$message.removeClass('success').addClass('error')
+				.text('<?php esc_html_e( 'Escolhe pelo menos 1 som!', 'apollo-login' ); ?>')
+				.show();
+			return;
+		}
+
+		$button.prop('disabled', true).text('<?php esc_html_e( 'Criando conta...', 'apollo-login' ); ?>');
+		$message.hide();
+
+		$.ajax({
+			url: '<?php echo esc_url( rest_url( APOLLO_LOGIN_REST_NAMESPACE . '/auth/register' ) ); ?>',
+			method: 'POST',
+			data: {
+				social_name: userData.socialName,
+				instagram_username: userData.instagram,
+				username: userData.instagram, // MANDATORY: SAME as Instagram
+				email: $('#reg-email').val(),
+				password: $('#reg-password').val(),
+				apollo_quiz_token: $('#apollo-quiz-token').val(),
+				sounds: selectedSounds
+			},
+			success: function(response) {
+				if (response.success) {
+					$message.removeClass('error').addClass('success')
+						.html('<?php esc_html_e( '🎉 Conta criada, ', 'apollo-login' ); ?>' + userData.socialName + '! <?php esc_html_e( 'Verifica seu email!', 'apollo-login' ); ?>')
+						.show();
+					setTimeout(function() {
+						window.location.href = '<?php echo esc_url( \Apollo\Login\apollo_login_canonical_login_url() ); ?>';
+					}, 2000);
+				}
+			},
+			error: function(xhr) {
+				const error = xhr.responseJSON?.message || '<?php esc_html_e( 'Erro no registro. Tenta de novo!', 'apollo-login' ); ?>';
+				$message.removeClass('success').addClass('error').text(error).show();
+				$button.prop('disabled', false).text('<?php esc_html_e( 'Criar Conta', 'apollo-login' ); ?>');
+			}
+		});
+	});
+
+	// Initialize first step
+	showStep(1);
+});
+</script>

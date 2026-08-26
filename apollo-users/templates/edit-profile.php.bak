@@ -1,0 +1,375 @@
+<?php
+/**
+ * Edit Profile Template
+ *
+ * Template for /editar-perfil page
+ *
+ * @package Apollo\Users
+ */
+
+// Prevent direct access.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+// Require login
+if ( ! is_user_logged_in() ) {
+	wp_redirect( home_url( '/acesso?redirect=' . urlencode( home_url( '/editar-perfil' ) ) ) );
+	exit;
+}
+
+$user = wp_get_current_user();
+$user_id = $user->ID;
+
+// Get current data
+$social_name     = get_user_meta( $user_id, '_apollo_social_name', true );
+$bio             = get_user_meta( $user_id, '_apollo_bio', true );
+$phone           = get_user_meta( $user_id, '_apollo_phone', true );
+$location        = get_user_meta( $user_id, 'user_location', true );
+$instagram       = get_user_meta( $user_id, 'instagram', true );
+$website         = get_user_meta( $user_id, '_apollo_website', true );
+$privacy_profile = get_user_meta( $user_id, '_apollo_privacy_profile', true ) ?: 'public';
+$privacy_email   = get_user_meta( $user_id, '_apollo_privacy_email', true );
+$avatar_url      = apollo_get_user_avatar_url( $user_id, 'medium' );
+$cover_url       = apollo_get_user_cover_url( $user_id );
+
+// Minimal header to avoid theme issues
+?><!DOCTYPE html>
+<html <?php language_attributes(); ?>>
+<head>
+	<meta charset="<?php bloginfo( 'charset' ); ?>">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title><?php echo 'Editar Perfil - ' . get_bloginfo( 'name' ); ?></title>
+
+	<!-- Apollo CDN - Canvas Mode (NO wp_head to prevent theme interference) -->
+	<script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js" fetchpriority="high"></script>
+
+	<!-- Navbar CSS/JS -->
+	<?php if ( defined( 'APOLLO_TEMPLATES_URL' ) && defined( 'APOLLO_TEMPLATES_VERSION' ) ) : ?>
+	<link rel="stylesheet" href="<?php echo esc_url( APOLLO_TEMPLATES_URL . 'assets/css/navbar.css' ); ?>?v=<?php echo esc_attr( APOLLO_TEMPLATES_VERSION ); ?>">
+	<script src="<?php echo esc_url( APOLLO_TEMPLATES_URL . 'assets/js/navbar.js' ); ?>?v=<?php echo esc_attr( APOLLO_TEMPLATES_VERSION ); ?>" defer></script>
+	<?php endif; ?>
+</head>
+<body <?php body_class(); ?>>
+
+<?php
+// Global Apollo Navbar (from apollo-templates plugin)
+if ( defined( 'APOLLO_TEMPLATES_DIR' ) && file_exists( APOLLO_TEMPLATES_DIR . 'templates/template-parts/navbar.php' ) ) {
+	include APOLLO_TEMPLATES_DIR . 'templates/template-parts/navbar.php';
+}
+?>
+
+<div id="page" class="site">
+
+	<div id="content" class="site-content">
+		<div class="container">
+
+<div class="apollo-edit-profile-page">
+
+	<div class="apollo-page-header">
+		<h1><?php esc_html_e( 'Editar Perfil' ); ?></h1>
+		<p>
+			<a href="<?php echo esc_url( apollo_get_profile_url( $user ) ); ?>">
+				<?php esc_html_e( '← Ver meu perfil' ); ?>
+			</a>
+		</p>
+	</div>
+
+	<div class="apollo-edit-profile-container">
+
+		<form id="apollo-edit-profile-form" class="apollo-form">
+			<?php wp_nonce_field( 'apollo_profile_nonce', 'nonce' ); ?>
+
+			<!-- Avatar & Cover Section -->
+			<div class="apollo-form-section">
+				<h2><?php esc_html_e( 'Fotos' ); ?></h2>
+
+				<div class="apollo-media-uploads">
+					<!-- Avatar -->
+					<div class="apollo-media-item">
+						<label><?php esc_html_e( 'Avatar' ); ?></label>
+						<div class="apollo-avatar-preview">
+							<img src="<?php echo esc_url( $avatar_url ); ?>" alt="" id="avatar-preview" />
+							<div class="apollo-avatar-actions">
+								<button type="button" class="apollo-btn apollo-btn-small" id="change-avatar">
+									<?php esc_html_e( 'Alterar' ); ?>
+								</button>
+								<?php if ( get_user_meta( $user_id, 'custom_avatar', true ) ) : ?>
+									<button type="button" class="apollo-btn apollo-btn-small apollo-btn-danger" id="remove-avatar">
+										<?php esc_html_e( 'Remover' ); ?>
+									</button>
+								<?php endif; ?>
+							</div>
+						</div>
+						<input type="file" id="avatar-input" accept="image/*" style="display:none" />
+					</div>
+
+					<!-- Cover -->
+					<div class="apollo-media-item apollo-media-cover">
+						<label><?php esc_html_e( 'Capa' ); ?></label>
+						<div class="apollo-cover-preview" style="<?php echo $cover_url ? 'background-image: url(' . esc_url( $cover_url ) . ')' : ''; ?>">
+							<div class="apollo-cover-actions">
+								<button type="button" class="apollo-btn apollo-btn-small" id="change-cover">
+									<?php esc_html_e( 'Alterar' ); ?>
+								</button>
+								<?php if ( get_user_meta( $user_id, 'cover_image', true ) ) : ?>
+									<button type="button" class="apollo-btn apollo-btn-small apollo-btn-danger" id="remove-cover">
+										<?php esc_html_e( 'Remover' ); ?>
+									</button>
+								<?php endif; ?>
+							</div>
+						</div>
+						<input type="file" id="cover-input" accept="image/*" style="display:none" />
+					</div>
+				</div>
+			</div>
+
+			<!-- Basic Info Section -->
+			<div class="apollo-form-section">
+				<h2><?php esc_html_e( 'Informações Básicas' ); ?></h2>
+
+				<div class="apollo-form-row">
+					<label for="social_name"><?php esc_html_e( 'Nome Social' ); ?></label>
+					<input type="text" id="social_name" name="social_name"
+					       value="<?php echo esc_attr( $social_name ); ?>"
+					       placeholder="<?php esc_attr_e( 'Como você quer ser chamado' ); ?>" />
+					<small><?php esc_html_e( 'Este nome será exibido no seu perfil.' ); ?></small>
+				</div>
+
+				<div class="apollo-form-row">
+					<label for="bio"><?php esc_html_e( 'Bio' ); ?></label>
+					<textarea id="bio" name="bio" rows="4" maxlength="500"
+					          placeholder="<?php esc_attr_e( 'Conte um pouco sobre você...' ); ?>"><?php echo esc_textarea( $bio ); ?></textarea>
+					<small><span id="bio-count"><?php echo strlen( $bio ); ?></span>/500</small>
+				</div>
+
+				<div class="apollo-form-row">
+					<label for="location"><?php esc_html_e( 'Cidade' ); ?></label>
+					<input type="text" id="location" name="location"
+					       value="<?php echo esc_attr( $location ); ?>"
+					       placeholder="<?php esc_attr_e( 'São Paulo, SP' ); ?>" />
+				</div>
+			</div>
+
+			<!-- Contact Section -->
+			<div class="apollo-form-section">
+				<h2><?php esc_html_e( 'Contato' ); ?></h2>
+
+				<div class="apollo-form-row">
+					<label for="phone"><?php esc_html_e( 'Telefone/WhatsApp' ); ?></label>
+					<input type="tel" id="phone" name="phone"
+					       value="<?php echo esc_attr( $phone ); ?>"
+					       placeholder="<?php esc_attr_e( '(11) 99999-9999' ); ?>" />
+					<small><?php esc_html_e( 'Não será exibido publicamente.' ); ?></small>
+				</div>
+
+				<div class="apollo-form-row">
+					<label for="instagram"><?php esc_html_e( 'Instagram' ); ?> <small>(<?php esc_html_e( 'bloqueado' ); ?>)</small></label>
+					<input type="text" id="instagram" name="instagram"
+					       value="<?php echo esc_attr( $user->user_login ); ?>"
+					       placeholder="<?php esc_attr_e( '@seuusuario' ); ?>"
+					       readonly disabled style="background-color: #f5f5f5; cursor: not-allowed;" />
+					<small class="apollo-field-help"><?php esc_html_e( 'O Instagram é automaticamente definido como seu nome de usuário.' ); ?></small>
+				</div>
+
+				<div class="apollo-form-row">
+					<label for="website"><?php esc_html_e( 'Site' ); ?></label>
+					<input type="url" id="website" name="website"
+					       value="<?php echo esc_attr( $website ); ?>"
+					       placeholder="<?php esc_attr_e( 'https://seusite.com' ); ?>" />
+				</div>
+			</div>
+
+			<!-- Privacy Section -->
+			<div class="apollo-form-section">
+				<h2><?php esc_html_e( 'Privacidade' ); ?></h2>
+
+				<div class="apollo-form-row">
+					<label for="privacy_profile"><?php esc_html_e( 'Quem pode ver meu perfil' ); ?></label>
+					<select id="privacy_profile" name="privacy_profile">
+						<option value="public" <?php selected( $privacy_profile, 'public' ); ?>>
+							<?php esc_html_e( 'Público - Qualquer pessoa' ); ?>
+						</option>
+						<option value="members" <?php selected( $privacy_profile, 'members' ); ?>>
+							<?php esc_html_e( 'Membros - Apenas usuários logados' ); ?>
+						</option>
+						<option value="private" <?php selected( $privacy_profile, 'private' ); ?>>
+							<?php esc_html_e( 'Privado - Apenas eu' ); ?>
+						</option>
+					</select>
+				</div>
+
+				<div class="apollo-form-row apollo-form-checkbox">
+					<label>
+						<input type="checkbox" name="privacy_email" value="1" <?php checked( $privacy_email ); ?> />
+						<?php esc_html_e( 'Ocultar meu e-mail no perfil' ); ?>
+					</label>
+				</div>
+			</div>
+
+			<!-- Submit -->
+			<div class="apollo-form-actions">
+				<button type="submit" class="apollo-btn apollo-btn-primary apollo-btn-large">
+					<?php esc_html_e( 'Salvar Alterações' ); ?>
+				</button>
+			</div>
+
+			<div id="form-message" class="apollo-message" style="display: none;"></div>
+
+		</form>
+
+	</div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+	const form = document.getElementById('apollo-edit-profile-form');
+	const message = document.getElementById('form-message');
+	const bioInput = document.getElementById('bio');
+	const bioCount = document.getElementById('bio-count');
+
+	// Bio character counter
+	bioInput.addEventListener('input', function() {
+		bioCount.textContent = this.value.length;
+	});
+
+	// Form submit
+	form.addEventListener('submit', function(e) {
+		e.preventDefault();
+
+		const formData = new FormData(form);
+		formData.append('action', 'apollo_update_profile');
+
+		fetch('<?php echo admin_url( 'admin-ajax.php' ); ?>', {
+			method: 'POST',
+			body: formData
+		})
+		.then(res => res.json())
+		.then(data => {
+			message.style.display = 'block';
+			if (data.success) {
+				message.className = 'apollo-message apollo-message-success';
+				message.textContent = data.data.message || '<?php esc_html_e( 'Perfil atualizado!' ); ?>';
+			} else {
+				message.className = 'apollo-message apollo-message-error';
+				message.textContent = data.data.message || '<?php esc_html_e( 'Erro ao atualizar perfil.' ); ?>';
+			}
+
+			// Scroll to message
+			message.scrollIntoView({ behavior: 'smooth' });
+		})
+		.catch(err => {
+			message.style.display = 'block';
+			message.className = 'apollo-message apollo-message-error';
+			message.textContent = '<?php esc_html_e( 'Erro ao atualizar perfil.' ); ?>';
+		});
+	});
+
+	// Avatar upload
+	const avatarBtn = document.getElementById('change-avatar');
+	const avatarInput = document.getElementById('avatar-input');
+	const avatarPreview = document.getElementById('avatar-preview');
+	const removeAvatarBtn = document.getElementById('remove-avatar');
+
+	avatarBtn.addEventListener('click', () => avatarInput.click());
+
+	avatarInput.addEventListener('change', function() {
+		if (this.files[0]) {
+			uploadMedia('avatar', this.files[0]);
+		}
+	});
+
+	if (removeAvatarBtn) {
+		removeAvatarBtn.addEventListener('click', function() {
+			deleteMedia('avatar');
+		});
+	}
+
+	// Cover upload
+	const coverBtn = document.getElementById('change-cover');
+	const coverInput = document.getElementById('cover-input');
+	const coverPreview = document.querySelector('.apollo-cover-preview');
+	const removeCoverBtn = document.getElementById('remove-cover');
+
+	coverBtn.addEventListener('click', () => coverInput.click());
+
+	coverInput.addEventListener('change', function() {
+		if (this.files[0]) {
+			uploadMedia('cover', this.files[0]);
+		}
+	});
+
+	if (removeCoverBtn) {
+		removeCoverBtn.addEventListener('click', function() {
+			deleteMedia('cover');
+		});
+	}
+
+	function uploadMedia(type, file) {
+		const formData = new FormData();
+		formData.append('file', file);
+
+		fetch('<?php echo esc_url( rest_url( 'apollo/v1/profile/' ) ); ?>' + type, {
+			method: 'POST',
+			headers: {
+				'X-WP-Nonce': '<?php echo wp_create_nonce( 'wp_rest' ); ?>'
+			},
+			body: formData
+		})
+		.then(res => res.json())
+		.then(data => {
+			if (data.success || data.avatar_url || data.cover_url) {
+				if (type === 'avatar' && data.avatar_url) {
+					avatarPreview.src = data.avatar_url;
+				} else if (type === 'cover' && data.cover_url) {
+					coverPreview.style.backgroundImage = `url(${data.cover_url})`;
+				}
+				showMessage('success', data.message || '<?php esc_html_e( 'Atualizado!' ); ?>');
+			} else {
+				showMessage('error', data.message || '<?php esc_html_e( 'Erro ao fazer upload.' ); ?>');
+			}
+		})
+		.catch(err => {
+			showMessage('error', '<?php esc_html_e( 'Erro ao fazer upload.' ); ?>');
+		});
+	}
+
+	function deleteMedia(type) {
+		if (!confirm('<?php esc_html_e( 'Tem certeza que deseja remover?' ); ?>')) {
+			return;
+		}
+
+		fetch('<?php echo esc_url( rest_url( 'apollo/v1/profile/' ) ); ?>' + type, {
+			method: 'DELETE',
+			headers: {
+				'X-WP-Nonce': '<?php echo wp_create_nonce( 'wp_rest' ); ?>'
+			}
+		})
+		.then(res => res.json())
+		.then(data => {
+			if (data.success) {
+				window.location.reload();
+			} else {
+				showMessage('error', data.message || '<?php esc_html_e( 'Erro ao remover.' ); ?>');
+			}
+		})
+		.catch(err => {
+			showMessage('error', '<?php esc_html_e( 'Erro ao remover.' ); ?>');
+		});
+	}
+
+	function showMessage(type, text) {
+		message.style.display = 'block';
+		message.className = 'apollo-message apollo-message-' + type;
+		message.textContent = text;
+	}
+});
+</script>
+
+	</div><!-- #content -->
+</div><!-- #page -->
+
+<?php /* Canvas Mode - NO wp_footer() to prevent theme interference */ ?>
+</body>
+</html>

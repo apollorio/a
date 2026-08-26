@@ -1,0 +1,154 @@
+/**
+ * Apollo Sheets — Frontend Table Styles (Light, Mobile-first)
+ * Matches the approved mobile spreadsheet layout with sticky header/ID and ghost focus.
+ *
+ * @package Apollo\Sheets
+ */
+
+:root {
+    --bg-body: #ffffff;
+    --bg-sheet: #ffffff;
+    --ink-solid: #121214;
+    --ink-smoke: #666666;
+    --ink-ghost: #999999;
+    --ink-mist: #bbbbbb;
+    --primary: FF9820;
+    --border: rgba(var(--rgb-d), 0.08);
+    --hover-bg: #fafafa;
+    --radius-card: 12px;
+    --r-pill: 100px;
+    --radius-squircle: 8px;
+    --ff-main: 'Space Grotesk', sans-serif;
+    --ff-mono: 'Space Mono', monospace;
+}
+
+.apollo-sheet-wrap {
+    position: relative;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 1.5rem 0;
+    border-radius: var(--radius-card);
+    border: 1px solid var(--border);
+    background: var(--bg-sheet);
+    box-shadow: 0 12px 30px rgba(var(--rgb-d),0.04);
+}
+
+.apollo-sheet {
+    width: auto;
+    min-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-family: var(--ff-main);
+    font-size: 0.9rem;
+    color: var(--ink-solid);
+    table-layout: auto;
+}
+
+.apollo-sheet thead {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--bg-sheet);
+}
+.apollo-sheet thead::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--border); }
+
+.apollo-sheet th {
+    text-align: left;
+    font-family: var(--ff-mono);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--ink-mist);
+    padding: 12px 16px;
+    white-space: nowrap;
+    background: var(--bg-sheet);
+    user-select: none;
+    border-bottom: 1px solid var(--border);
+}
+
+.apollo-sheet th:first-child,
+.apollo-sheet td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 25;
+    background: var(--bg-sheet);
+    border-right: 1px solid var(--border);
+    width: 56px;
+    min-width: 56px;
+    text-align: center;
+    padding: 0 10px;
+}
+.apollo-sheet th:first-child { z-index: 30; }
+
+.apollo-sheet td {
+    border-bottom: 1px solid var(--border);
+    padding: 0 12px;
+    height: 44px;
+    vertical-align: middle;
+    background: var(--bg-sheet);
+    color: var(--ink-solid);
+    white-space: nowrap;
+}
+
+.apollo-sheet tr { transition: 0.2s ease; }
+
+.apollo-sheet input {
+    width: 100%;
+    min-width: 120px;
+    border: none;
+    background: transparent;
+    font-family: var(--ff-main);
+    font-size: 13px;
+    color: var(--ink-solid);
+    padding: 4px 0;
+}
+
+.apollo-sheet:hover tbody tr,
+.apollo-sheet:focus-within tbody tr {
+    filter: blur(2px);
+    opacity: 0.5;
+    transition: 0.3s ease;
+}
+
+.apollo-sheet tbody tr:hover,
+.apollo-sheet tbody tr:focus-within {
+    filter: none !important;
+    opacity: 1 !important;
+    background: #fff;
+    box-shadow: 0 4px 20px rgba(var(--rgb-d),0.06);
+    position: relative;
+    z-index: 10;
+}
+
+.apollo-sheet tbody tr:hover td:first-child,
+.apollo-sheet tbody tr:focus-within td:first-child {
+    background: #fff;
+    color: var(--ink-solid);
+    font-weight: 700;
+}
+
+.apollo-sheet input:focus { color: var(--primary); }
+
+.apollo-sheet-caption { padding: 0.75rem 0; }
+.apollo-sheet-caption.above { margin-bottom: 0; }
+.apollo-sheet-caption.below { margin-top: 0; }
+
+.apollo-sheet-name { margin: 0 0 0.25rem; font-family: var(--ff-main); font-size: 1.125rem; font-weight: 700; color: var(--ink-solid); }
+.apollo-sheet-description { margin: 0; font-size: 0.8125rem; color: var(--ink-smoke); }
+
+.apollo-sheet tbody td[colspan] { text-align: center; color: var(--ink-smoke); font-style: italic; padding: 2rem; }
+
+.apollo-sheet a { color: var(--primary); text-decoration: none; transition: color 0.15s; }
+.apollo-sheet a:hover { color: #ff7722; text-decoration: underline; }
+
+.apollo-sheet img { max-width: 100%; height: auto; border-radius: 4px; }
+
+/* DataTables layout still uses the same table; keep alternating if provided */
+.apollo-sheet.row-striped tbody tr.row-even { background: var(--hover-bg); }
+.apollo-sheet.row-striped tbody tr.row-odd { background: var(--bg-sheet); }
+
+@media (max-width: 768px) {
+    .apollo-sheet th,
+    .apollo-sheet td { padding: 10px 12px; font-size: 0.875rem; }
+    .apollo-sheet-wrap { margin: 1rem -8px; border-radius: 0; border-left: none; border-right: none; }
+}

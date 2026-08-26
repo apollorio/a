@@ -1,0 +1,54 @@
+<?php
+/**
+ * LocalWP DEV: fetch Telegram updates once via plugin polling endpoint (no webhook/tunnel).
+ *
+ * Note: standalone php.exe may lack mysqli; use LocalWP Site Shell or browser.
+ *
+ * Usage:
+ *   php dev-poll.php
+ *
+ * Prefer LocalWP Site Shell (PHP with mysqli) or open in browser:
+ *   Browser (logged in as admin):
+ *   http://aprio.local/wp-json/APOLLO_TELEGRAM/v1/get-message-polling
+ */
+
+$wp_load = dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'wp-load.php';
+if (! is_file($wp_load)) {
+	fwrite(STDERR, "wp-load.php not found: {$wp_load}\n");
+	exit(1);
+}
+
+define('WP_USE_THEMES', false);
+require $wp_load;
+
+if (! function_exists('apollo_telegram_uses_local_polling') || ! apollo_telegram_uses_local_polling()) {
+	fwrite(STDERR, "Local polling disabled. Set APOLLO_TELEGRAM_DEV_LOCAL or WP_ENVIRONMENT_TYPE=local.\n");
+	exit(1);
+}
+
+$admin_ids = get_users(
+	array(
+		'role'   => 'administrator',
+		'number' => 1,
+		'fields' => 'ID',
+	)
+);
+$admin_id = ! empty($admin_ids[0]) ? (int) $admin_ids[0] : 1;
+wp_set_current_user($admin_id);
+
+$request  = new WP_REST_Request('GET', '/APOLLO_TELEGRAM/v1/get-message-polling');
+$request->set_param('_wpnonce', wp_create_nonce('wp_rest'));
+$response = rest_do_request($request);
+$status   = (int) $response->get_status();
+
+echo "HTTP {$status}\n";
+
+if ($status >= 400) {
+	$data = $response->get_data();
+	echo is_array($data) ? wp_json_encode($data) : (string) $data;
+	echo "\n";
+	exit(1);
+}
+
+echo "OK - Telegram getUpdates handled.\n";
+exit(0);

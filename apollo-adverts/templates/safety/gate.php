@@ -26,7 +26,7 @@ if (! defined('ABSPATH')) {
 $apollo_gate_post = Gate::advert_id();
 
 if (! $apollo_gate_post || ! get_post($apollo_gate_post)) {
-    wp_safe_redirect(home_url('/classificados/'));
+    wp_safe_redirect(home_url('/anuncios/'));
     exit;
 }
 

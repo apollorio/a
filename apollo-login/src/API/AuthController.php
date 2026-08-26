@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Apollo\Login\API;
 
 use Apollo\Login\Security\RateLimiter;
+use Apollo\Login\Security\Firewall;
 use WP_REST_Controller;
 use WP_REST_Server;
 use WP_REST_Request;
@@ -62,7 +63,7 @@ class AuthController extends WP_REST_Controller
             array(
                 'methods'             => WP_REST_Server::CREATABLE,
                 'callback'            => array($this, 'login'),
-                'permission_callback' => '__return_true',
+                'permission_callback' => '__return_true', // Public by necessity — nobody can hold a cap to log in. IP lockout enforced in login(): RateLimiter::get_counter/increment_counter, APOLLO_LOGIN_MAX_ATTEMPTS over APOLLO_LOGIN_LOCKOUT_DURATION.
                 'args'                => array(
                     'username' => array(
                         'required'          => true,
@@ -90,7 +91,7 @@ class AuthController extends WP_REST_Controller
             array(
                 'methods'             => WP_REST_Server::CREATABLE,
                 'callback'            => array($this, 'register'),
-                'permission_callback' => '__return_true',
+                'permission_callback' => '__return_true', // UNPROTECTED — no nonce, no rate limit. The only gate is a prior quiz_token, which is never consumed and is farmable at 30/min. Creates a real user per call. plan-003 S-1.
                 'args'                => array(
                     'social_name'        => array(
                         'required'          => true,
@@ -227,7 +228,7 @@ class AuthController extends WP_REST_Controller
             array(
                 'methods'             => WP_REST_Server::CREATABLE,
                 'callback'            => array($this, 'reset_request'),
-                'permission_callback' => '__return_true',
+                'permission_callback' => '__return_true', // UNPROTECTED — no nonce, no rate limit. Sends a real password-reset email on every call for any existing account. Sibling resend_verification() has a 3/hour throttle; this does not. plan-003 S-1.
                 'args'                => array(
                     'email' => array(
                         'required'          => true,
@@ -281,7 +282,7 @@ class AuthController extends WP_REST_Controller
             array(
                 'methods'             => WP_REST_Server::CREATABLE,
                 'callback'            => array($this, 'reset_confirm'),
-                'permission_callback' => '__return_true',
+                'permission_callback' => '__return_true', // Public by necessity — the reset link is the credential. Gate is a hash_equals() 32-byte token with a 1h TTL, but there is NO cap on guesses per user_id. plan-003 S-1.
                 'args'                => array(
                     'token'    => array(
                         'required'          => true,
@@ -304,7 +305,7 @@ class AuthController extends WP_REST_Controller
             array(
                 'methods'             => WP_REST_Server::CREATABLE,
                 'callback'            => array($this, 'verify_email'),
-                'permission_callback' => '__return_true',
+                'permission_callback' => '__return_true', // Public by necessity — the verify link is the credential. Gate is a hash_equals() token with a 24h TTL in apollo_verify_email_token(), with NO cap on guesses. Success unlocks login(). plan-003 S-1.
                 'args'                => array(
                     'user_id' => array(
                         'required'          => true,
@@ -884,6 +885,27 @@ class AuthController extends WP_REST_Controller
      */
     private function get_client_ip(): string
     {
+        // ── Delegates to the one owner. Changed 2026-08-25.
+        //
+        //    This method used to carry its own copy of the header walk, and the copy had
+        //    drifted: it returned the first comma-part of whatever the client sent WITHOUT
+        //    filter_var(..., FILTER_VALIDATE_IP). login() keys its lockout bucket on the
+        //    result — 'apollo_login_attempts_' . md5($ip) — so any caller could send
+        //    X-Forwarded-For: <random string> and land in a brand-new bucket on every
+        //    request. The rate limit was real code protecting nothing.
+        //
+        //    Firewall::get_client_ip() (Firewall.php:464) validates, and is already what
+        //    RateLimiter reads (RateLimiter.php:88, :133), so this also makes the two ends
+        //    of the same counter agree on what an IP is.
+        //
+        //    There are six copies of this method in apollo-login. This is one; the other
+        //    four (ActivityLogController, AppAuthController, EmailVerification,
+        //    LoginHandler) log or display rather than gate, and are tracked as plan-003 S-8.
+        if (class_exists(Firewall::class)) {
+            return Firewall::get_client_ip();
+        }
+
+        // Fallback only if the security layer is unavailable: unvalidated but non-fatal.
         $headers = array(
             'HTTP_CF_CONNECTING_IP',
             'HTTP_X_FORWARDED_FOR',

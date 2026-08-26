@@ -115,6 +115,9 @@ final class Plugin
         // archive WordPress resolves on its own. Same mechanism apollo-events
         // uses for the events archive.
         add_filter('template_include', array($this, 'marketplace_archive_template'), 99);
+        // Each advert owns /anuncio/{slug}/ — without this the active theme
+        // renders singular classifieds and the Apollo+ single never loads.
+        add_filter('template_include', array($this, 'singular_classified_template'), 99);
     }
 
     /**
@@ -171,6 +174,25 @@ final class Plugin
             return $template;
         }
         $custom = $this->directory_path . 'templates/archive-classified.php';
+        return is_readable($custom) ? $custom : $template;
+    }
+
+    /**
+     * Serve the Apollo+ single for one classified advert.
+     *
+     * Permalink contract (core CPT rewrite): /anuncio/{post_name}/.
+     * Body: listing card infos + pre-contact gate (users in common) when
+     * the safety contract applies — see templates/single-classified.php.
+     *
+     * @param string $template Template WordPress resolved.
+     * @return string
+     */
+    public function singular_classified_template(string $template): string
+    {
+        if (! is_singular(APOLLO_CPT_CLASSIFIED)) {
+            return $template;
+        }
+        $custom = $this->directory_path . 'templates/single-classified.php';
         return is_readable($custom) ? $custom : $template;
     }
 
