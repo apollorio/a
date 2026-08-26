@@ -164,3 +164,47 @@ formality — it has already caught a three-way owner conflict on `.pev-recent`.
   by the network allowlist).
 - Claude in Chrome was not connected during the 2026-08-01 session — live
   visual verification had to be handed to the user.
+
+## Cursor Cloud specific instructions
+
+This GitHub repo (`apollorio/a`) **is** the live plugins tree. On the Windows
+dev machine it lives at `D:\dev\_apollo.rio.br\plugins` and is mirrored by
+**RealTimeSync / FreeFileSync** (~30 s) into
+`https://apollo.rio.br/wp-content/plugins/`. Treat Cloud Agent edits the same
+way: a committed/pushed change that lands on the mirrored path is production.
+
+| Layer | Path / URL |
+|---|---|
+| GitHub SSOT | `github.com/apollorio/a` (this workspace root = `/workspace`) |
+| Local Windows mirror | `D:\dev\_apollo.rio.br\plugins` |
+| Live WP plugins | `https://apollo.rio.br/wp-content/plugins/` |
+| Live site (Blank Canvas) | `https://apollo.rio.br/casa`, `/eventos`, `/portal`, … |
+| Chaptered registry | `_inventory/registry/` (build with `node build.js`) |
+
+**Bootstrap (Cloud Agent):**
+
+```bash
+bash _inventory/_current/cloud-agent-install.sh
+```
+
+Installs nothing from npm (no root `package.json`). Ensures Node ≥20, Python ≥3.10,
+PHP CLI (for portal H2/H3), and `git config core.hooksPath .githooks`.
+
+**Prove the environment:**
+
+```bash
+cd _inventory/registry && node build.js && python3 verify.py
+node apollo-events/_sandbox/build-portal-harness.mjs
+node _inventory/_current/apollo-guard.mjs --harness
+node _inventory/_current/apollo-guard.mjs --baseline .apollo-guard-baseline.json
+```
+
+There is **no local WordPress** in this repo. Live smoke against
+`https://apollo.rio.br` is read-only unless the task explicitly deploys. Harness
+HTML artefacts under each plugin's `_sandbox/` can be served with
+`python3 -m http.server` for structural UI checks.
+
+As of Cloud Agent setup (2026-08-26), expected harness table is roughly
+**2 green / 3 red** (product debt, not env failure): dj + email green; portal
+E29 / casa duplicate selectors / CPT surface G2 still red. Do not "fix" those
+as part of env bootstrap.

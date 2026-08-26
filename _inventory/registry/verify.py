@@ -36,6 +36,10 @@ INTENTIONAL_CHANGED = {
     # after this file's 2026-07-28 delta list and never declared, so verify.py
     # has been failing on it since. Declaring it restores the gate.
     "$canvas_shell": "chapter 18 — + $unification_2026_08_05 (three Apollo+ shells collapsed into apollo_plus_open, 2026-08-05)",
+    # quick_lookup tracks plugin index / layer stamps that move with the same
+    # SSOT corrections as summary/architecture/plugins. Declared 2026-08-26 so
+    # the Cloud Agent registry gate matches the intentional chapter deltas.
+    "quick_lookup": "index stamps aligned with SSOT audit corrections (layers, versions, lux-panels)",
 }
 
 
