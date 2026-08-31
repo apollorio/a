@@ -364,6 +364,13 @@ return array(
         'archive'     => false,
         'rest_base'   => 'sheets',
         'public'      => false,
+        /* Mirrors apollo-sheets/src/Plugin.php::register_post_type(). Sheets are
+           reached through apollo-sheets' own SheetsController on apollo/v1, never
+           the stock wp/v2 posts controller. Without these three keys core's
+           init:5 fallback published apollo_sheet at /wp-json/wp/v2/sheets. */
+        'show_in_rest' => false,
+        'show_ui'      => false,
+        'map_meta_cap' => true,
         'has_archive' => false,
         'supports'    => array('title', 'editor', 'excerpt', 'revisions', 'author'),
         'labels'      => array(

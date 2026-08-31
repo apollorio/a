@@ -139,13 +139,26 @@ final class CPTRegistry {
 
 	/**
 	 * Register a single CPT
+	 *
+	 * `show_ui`, `show_in_rest` and `map_meta_cap` are read from the definition
+	 * when present. Their defaults are the values this method used to hardcode,
+	 * so any CPT that does not declare them behaves exactly as before.
+	 *
+	 * This exists because core wins the init:5 race against every owner plugin
+	 * (see register_fallback_cpts()), so a hardcoded value here silently
+	 * overrode the owner's intent — that is how apollo_sheet, declared
+	 * `public => false` with its own REST controller, ended up served publicly
+	 * at /wp-json/wp/v2/sheets.
+	 *
+	 * Note: WordPress forces `show_in_menu` to follow `show_ui` when the latter
+	 * is false, so the hardcoded `show_in_menu` below stays correct.
 	 */
 	private function register_cpt( string $slug, array $def ): void {
 		$args = array(
 			'labels'                => $def['labels'],
 			'public'                => $def['public'],
 			'publicly_queryable'    => $def['public'],
-			'show_ui'               => true,
+			'show_ui'               => $def['show_ui'] ?? true,
 			'show_in_menu'          => true,
 			'query_var'             => true,
 			'rewrite'               => $def['rewrite'] ? array(
@@ -153,12 +166,13 @@ final class CPTRegistry {
 				'with_front' => false,
 			) : false,
 			'capability_type'       => 'post',
+			'map_meta_cap'          => $def['map_meta_cap'] ?? false,
 			'has_archive'           => $def['has_archive'] ? $def['archive'] : false,
 			'hierarchical'          => false,
 			'menu_position'         => null,
 			'menu_icon'             => $def['menu_icon'] ?? 'dashicons-admin-post',
 			'supports'              => $def['supports'],
-			'show_in_rest'          => true,
+			'show_in_rest'          => $def['show_in_rest'] ?? true,
 			'rest_base'             => $def['rest_base'],
 			'rest_controller_class' => 'WP_REST_Posts_Controller',
 		);
