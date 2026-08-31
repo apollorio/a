@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-24T19:33:42.861Z",
+  "generated": "2026-08-31T11:41:53.431Z",
   "accepted": [
     "C03|apollo-events/styles/base/template-parts/archive/portal/styles-btn-force.php|DS selector .ax-main re-declared outside the design system",
     "C03|apollo-events/styles/base/template-parts/shared/shell-styles.php|DS selector .ax-body re-declared outside the design system",
@@ -1508,6 +1508,7 @@
     "D12|apollo-djs/_sandbox/build-dj-harness.mjs|harness — run it before you call the change done",
     "D12|apollo-email/_sandbox/build-email-harness.mjs|harness — run it before you call the change done",
     "D12|apollo-events/_sandbox/build-portal-harness.mjs|harness — run it before you call the change done",
-    "D12|apollo-templates/_sandbox/build-casa-harness.mjs|harness — run it before you call the change done"
+    "D12|apollo-templates/_sandbox/build-casa-harness.mjs|harness — run it before you call the change done",
+    "D08|sync.ffs_db|publicly served, not part of any plugin"
   ]
 }
