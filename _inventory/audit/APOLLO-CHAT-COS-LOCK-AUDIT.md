@@ -6,6 +6,8 @@
 **Constraint:** report-only. `source_files_changed` for product PHP/JS/CSS = 0.  
 **Disk convention:** `_inventory/audit/` is the existing CPT-style non-product verify home (`AUDIT-REPORT-CPT-ALIGNMENT.md`, `APOLLO-AUDIT.md`). No `_cos/` directory exists in this repo.
 
+**Follow-up (same day):** live `/mensagens` `SyntaxError` (`<br />\n<b>` instead of JSON) and missing styled composer — `_inventory/audit/APOLLO-CHAT-SEND-HTML-ERROR.md`. Most likely PHP fault: `apollo_chat_maybe_notify_by_email` → `apollo_queue_email(array)` TypeError at `includes/functions.php:1671` after persist.
+
 ---
 
 ## 1. Inventory
