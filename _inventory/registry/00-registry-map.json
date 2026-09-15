@@ -97,7 +97,7 @@
       "pattern": "{slug}.json",
       "wrap": "plugins.{slug}",
       "owner": "each-plugin",
-      "count": 48,
+      "count": 50,
       "files": [
         "apollo-admin",
         "apollo-adverts",
@@ -145,10 +145,12 @@
         "apollo-suppliers",
         "apollo-telegram",
         "apollo-templates",
+        "apollo-ui",
         "apollo-users",
+        "apollo-waha",
         "apollo-wow"
       ],
-      "on_disk": 42,
+      "on_disk": 44,
       "absent_from_disk": [
         "apollo-cena",
         "apollo-classifieds",

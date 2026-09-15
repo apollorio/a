@@ -1,0 +1,112 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-waha",
+    "owner": "apollo-waha",
+    "wrap": "plugins.apollo-waha",
+    "source": "disk scan 2026-09-15",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-waha",
+  "namespace": null,
+  "priority": 50,
+  "status": "IMPLEMENTED",
+  "version": "0.1.0",
+  "layer": "L4_communication",
+  "description": "WAHA bridge — outbound queue, admin pane, keyword DM, and a fail-closed HMAC webhook at POST /apollo/v1/wa/webhook. Boots on plugins_loaded:20 after apollo-core. Join queue is human-processed; the webhook never approves queue entries.",
+  "dependencies": [
+    "apollo-core"
+  ],
+  "provides": [
+    "whatsapp",
+    "waha-bridge",
+    "wa-webhook",
+    "join-queue",
+    "keyword-dm"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [],
+  "meta": {},
+  "rest": [
+    {
+      "endpoint": "/wa/webhook",
+      "methods": [
+        "POST"
+      ],
+      "description": "WAHA inbound webhook — HMAC-SHA512 verified in permission_callback (fail closed)",
+      "auth": "CUSTOM_LOGIC",
+      "permission_risk": "REVIEW",
+      "permission_method": "verify",
+      "permission_binding": "Apollo_Waha_Webhook::verify",
+      "permission_summary": "Transport, HMAC, timestamp window, session match, dedupe, and body-size checks before callback",
+      "permission_capabilities": [],
+      "permission_resolved": true,
+      "intentional_public": false,
+      "callback": "Apollo_Waha_Webhook::handle",
+      "rest_namespace": "apollo/v1",
+      "file": "inc/Webhook/class-webhook.php",
+      "_source": "disk scan 2026-09-15"
+    }
+  ],
+  "pages": [],
+  "shortcodes": [
+    "apollo_wa_join"
+  ],
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [
+    "apollo/whatsapp/session_status",
+    "apollo/whatsapp/message_in"
+  ],
+  "hooks_listened": [
+    "apollo/login/phone_verified"
+  ],
+  "admin_menus": [
+    "apollo-waha"
+  ],
+  "assets": {
+    "scripts": [],
+    "styles": []
+  },
+  "options": [
+    "apollo_wa_base_url",
+    "apollo_wa_session",
+    "apollo_wa_group_id",
+    "apollo_wa_engine",
+    "apollo_wa_mirror_group",
+    "apollo_wa_bot_dm",
+    "apollo_wa_group_anchor",
+    "apollo_wa_send_gap_seconds",
+    "apollo_wa_sends_paused",
+    "apollo_wa_last_ping",
+    "apollo_wa_last_payload"
+  ],
+  "$secret_options": [
+    "apollo_wa_api_key",
+    "apollo_wa_hmac_key"
+  ],
+  "$secret_policy": "Secret option names are listed only. Values are never stored in the registry; apollo_wa_api_key and apollo_wa_hmac_key use autoload=false and admin UI shows mask() only.",
+  "security": {
+    "risk_band": "MEDIUM",
+    "risk_score": null,
+    "rest_open_routes": 0,
+    "note": "Webhook is intentionally unauthenticated at the WP-user layer but gated by HMAC, timestamp, session, and dedupe checks. No secrets in registry."
+  },
+  "$product_surface": true,
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-09-15",
+    "php_files": 19,
+    "rest_routes_found": 1,
+    "cpts_found": [],
+    "tables_found": [],
+    "shortcodes_found": [
+      "apollo_wa_join"
+    ]
+  },
+  "$registry_gap_closed": "On disk since branch cursor/registry-all-plugins-incl-waha; previously skipped in coordinator scans. Entry created 2026-09-15.",
+  "$version_note": "Docblock and APOLLO_WAHA_VER constant read 0.1.0-pre; registry uses 0.1.0 to match doctor.js docblock regex."
+}

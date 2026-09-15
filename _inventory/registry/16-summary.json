@@ -11,7 +11,7 @@
     "merge": "deep_merge_last_wins"
   },
   "summary": {
-    "total_plugins": 48,
+    "total_plugins": 50,
     "total_cpts_unique": 17,
     "total_taxonomies_unique": 12,
     "total_tables_unique": 78,
@@ -51,7 +51,9 @@
     "plugins_new_vs_old_registry": [
       "apollo-calendar",
       "apollo-elementor-pro",
-      "apollo-telegram"
+      "apollo-telegram",
+      "apollo-ui",
+      "apollo-waha"
     ],
     "plugins_version_changed": [
       {
@@ -119,7 +121,7 @@
     "note": "Deep PHP tree scan is SSOT for audited plugins. pages/meta/rest enriched from live code; narrative-only fields may remain from prior registry clone.",
     "remediation_pass": "P1+P2+P3",
     "registry_canonical": "plugins/_inventory/apollo-registry.json",
-    "total_plugins_on_disk": 40,
+    "total_plugins_on_disk": 44,
     "last_ssot_audit": "2026-07-28",
     "ssot_audit_ref": "audit/registry-ssot-audit.json"
   },

@@ -11,7 +11,7 @@
   "architecture": {
     "principle": "Each plugin = ONE focused responsibility. Connected via apollo-core hooks.",
     "master_registry": "apollo-core owns ALL CPT/Taxonomy/Meta/Table definitions - GLOBAL BRIDGE",
-    "total_plugins": 48,
+    "total_plugins": 50,
     "layers": {
       "L0_foundation": [
         "apollo-core",
@@ -46,7 +46,8 @@
         "apollo-email",
         "apollo-notif",
         "apollo-remind",
-        "apollo-telegram"
+        "apollo-telegram",
+        "apollo-waha"
       ],
       "L5_documents": [
         "apollo-docs",
@@ -60,7 +61,8 @@
         "apollo-hub",
         "apollo-radio",
         "apollo-soundcloud",
-        "apollo-pane-engine"
+        "apollo-pane-engine",
+        "apollo-ui"
       ],
       "L7_admin": [
         "apollo-admin",
@@ -92,7 +94,7 @@
         "apollo-seed-runner"
       ]
     },
-    "total_plugins_on_disk": 42,
+    "total_plugins_on_disk": 44,
     "total_plugins_absent": 6,
     "$layers_absent_from_disk": [
       "apollo-cena",

@@ -149,7 +149,7 @@
   "architecture": {
     "principle": "Each plugin = ONE focused responsibility. Connected via apollo-core hooks.",
     "master_registry": "apollo-core owns ALL CPT/Taxonomy/Meta/Table definitions - GLOBAL BRIDGE",
-    "total_plugins": 48,
+    "total_plugins": 50,
     "layers": {
       "L0_foundation": [
         "apollo-core",
@@ -184,7 +184,8 @@
         "apollo-email",
         "apollo-notif",
         "apollo-remind",
-        "apollo-telegram"
+        "apollo-telegram",
+        "apollo-waha"
       ],
       "L5_documents": [
         "apollo-docs",
@@ -198,7 +199,8 @@
         "apollo-hub",
         "apollo-radio",
         "apollo-soundcloud",
-        "apollo-pane-engine"
+        "apollo-pane-engine",
+        "apollo-ui"
       ],
       "L7_admin": [
         "apollo-admin",
@@ -230,7 +232,7 @@
         "apollo-seed-runner"
       ]
     },
-    "total_plugins_on_disk": 42,
+    "total_plugins_on_disk": 44,
     "total_plugins_absent": 6,
     "$layers_absent_from_disk": [
       "apollo-cena",
@@ -61292,6 +61294,83 @@
         "source": "disk docblock via doctor.js"
       }
     },
+    "apollo-ui": {
+      "slug": "apollo-ui",
+      "namespace": "Apollo\\UI",
+      "priority": 20,
+      "status": "IMPLEMENTED",
+      "version": "1.0.0",
+      "layer": "L6_frontend",
+      "description": "Card type system (type-1 … type-6) registered into apollo-core's card contract, plus global shortcodes and lightbox binding via window.APOLLO_SURFACES. Presentation-only — no CPT, taxonomy, meta, or table registration.",
+      "dependencies": [
+        "apollo-core",
+        "apollo-events"
+      ],
+      "provides": [
+        "card-styles",
+        "card-shortcodes",
+        "lightbox-binding",
+        "ui-surfaces"
+      ],
+      "cpts": [],
+      "taxonomies": [],
+      "tables": [],
+      "meta": {},
+      "rest": [],
+      "pages": [],
+      "shortcodes": [
+        "apollo_card",
+        "apollo_cards"
+      ],
+      "ajax": {
+        "priv": [],
+        "nopriv": []
+      },
+      "cron": [],
+      "hooks_fired": [
+        "apollo/ui/emit"
+      ],
+      "hooks_listened": [
+        "init",
+        "wp_enqueue_scripts",
+        "apollo/canvas/head",
+        "apollo/canvas/before_close",
+        "apollo/plus/before_close"
+      ],
+      "admin_menus": [
+        "apollo-ui"
+      ],
+      "assets": {
+        "scripts": [
+          "apollo-ui"
+        ],
+        "styles": [
+          "apollo-ui"
+        ]
+      },
+      "options": [
+        "apollo_ui_settings"
+      ],
+      "security": {
+        "risk_band": "LOW",
+        "risk_score": null,
+        "rest_open_routes": 0
+      },
+      "$product_surface": true,
+      "$disk_status": "PRESENT",
+      "$disk_facts": {
+        "scanned": "2026-09-15",
+        "php_files": 7,
+        "rest_routes_found": 0,
+        "cpts_found": [],
+        "tables_found": [],
+        "shortcodes_found": [
+          "apollo_card",
+          "apollo_cards"
+        ]
+      },
+      "$registry_gap_closed": "On disk since 2026-09-05; doctrine-audit superseded the prior 'apollo-ui does not exist' rule. Entry created 2026-09-15."
+    },
     "apollo-users": {
       "slug": "apollo-users",
       "namespace": "Apollo\\Users",
@@ -64768,6 +64847,110 @@
           "apollo_user_card"
         ]
       }
+    },
+    "apollo-waha": {
+      "slug": "apollo-waha",
+      "namespace": null,
+      "priority": 50,
+      "status": "IMPLEMENTED",
+      "version": "0.1.0",
+      "layer": "L4_communication",
+      "description": "WAHA bridge — outbound queue, admin pane, keyword DM, and a fail-closed HMAC webhook at POST /apollo/v1/wa/webhook. Boots on plugins_loaded:20 after apollo-core. Join queue is human-processed; the webhook never approves queue entries.",
+      "dependencies": [
+        "apollo-core"
+      ],
+      "provides": [
+        "whatsapp",
+        "waha-bridge",
+        "wa-webhook",
+        "join-queue",
+        "keyword-dm"
+      ],
+      "cpts": [],
+      "taxonomies": [],
+      "tables": [],
+      "meta": {},
+      "rest": [
+        {
+          "endpoint": "/wa/webhook",
+          "methods": [
+            "POST"
+          ],
+          "description": "WAHA inbound webhook — HMAC-SHA512 verified in permission_callback (fail closed)",
+          "auth": "CUSTOM_LOGIC",
+          "permission_risk": "REVIEW",
+          "permission_method": "verify",
+          "permission_binding": "Apollo_Waha_Webhook::verify",
+          "permission_summary": "Transport, HMAC, timestamp window, session match, dedupe, and body-size checks before callback",
+          "permission_capabilities": [],
+          "permission_resolved": true,
+          "intentional_public": false,
+          "callback": "Apollo_Waha_Webhook::handle",
+          "rest_namespace": "apollo/v1",
+          "file": "inc/Webhook/class-webhook.php",
+          "_source": "disk scan 2026-09-15"
+        }
+      ],
+      "pages": [],
+      "shortcodes": [
+        "apollo_wa_join"
+      ],
+      "ajax": {
+        "priv": [],
+        "nopriv": []
+      },
+      "cron": [],
+      "hooks_fired": [
+        "apollo/whatsapp/session_status",
+        "apollo/whatsapp/message_in"
+      ],
+      "hooks_listened": [
+        "apollo/login/phone_verified"
+      ],
+      "admin_menus": [
+        "apollo-waha"
+      ],
+      "assets": {
+        "scripts": [],
+        "styles": []
+      },
+      "options": [
+        "apollo_wa_base_url",
+        "apollo_wa_session",
+        "apollo_wa_group_id",
+        "apollo_wa_engine",
+        "apollo_wa_mirror_group",
+        "apollo_wa_bot_dm",
+        "apollo_wa_group_anchor",
+        "apollo_wa_send_gap_seconds",
+        "apollo_wa_sends_paused",
+        "apollo_wa_last_ping",
+        "apollo_wa_last_payload"
+      ],
+      "$secret_options": [
+        "apollo_wa_api_key",
+        "apollo_wa_hmac_key"
+      ],
+      "$secret_policy": "Secret option names are listed only. Values are never stored in the registry; apollo_wa_api_key and apollo_wa_hmac_key use autoload=false and admin UI shows mask() only.",
+      "security": {
+        "risk_band": "MEDIUM",
+        "risk_score": null,
+        "rest_open_routes": 0,
+        "note": "Webhook is intentionally unauthenticated at the WP-user layer but gated by HMAC, timestamp, session, and dedupe checks. No secrets in registry."
+      },
+      "$product_surface": true,
+      "$disk_status": "PRESENT",
+      "$disk_facts": {
+        "scanned": "2026-09-15",
+        "php_files": 19,
+        "rest_routes_found": 1,
+        "cpts_found": [],
+        "tables_found": [],
+        "shortcodes_found": [
+          "apollo_wa_join"
+        ]
+      },
+      "$registry_gap_closed": "On disk since branch cursor/registry-all-plugins-incl-waha; previously skipped in coordinator scans. Entry created 2026-09-15."
     },
     "apollo-wow": {
       "slug": "apollo-wow",
@@ -69025,7 +69208,7 @@
     "APOLLO_CDN_URL": "https://cdn.apollo.rio.br/v1.0.0/"
   },
   "summary": {
-    "total_plugins": 48,
+    "total_plugins": 50,
     "total_cpts_unique": 17,
     "total_taxonomies_unique": 12,
     "total_tables_unique": 78,
@@ -69065,7 +69248,9 @@
     "plugins_new_vs_old_registry": [
       "apollo-calendar",
       "apollo-elementor-pro",
-      "apollo-telegram"
+      "apollo-telegram",
+      "apollo-ui",
+      "apollo-waha"
     ],
     "plugins_version_changed": [
       {
@@ -69133,7 +69318,7 @@
     "note": "Deep PHP tree scan is SSOT for audited plugins. pages/meta/rest enriched from live code; narrative-only fields may remain from prior registry clone.",
     "remediation_pass": "P1+P2+P3",
     "registry_canonical": "plugins/_inventory/apollo-registry.json",
-    "total_plugins_on_disk": 40,
+    "total_plugins_on_disk": 44,
     "last_ssot_audit": "2026-07-28",
     "ssot_audit_ref": "audit/registry-ssot-audit.json"
   },
