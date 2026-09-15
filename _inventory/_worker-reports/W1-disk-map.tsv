@@ -1,0 +1,60 @@
+slug	on_disk	in_registry	layer	status
+.cursor	Y	N		SKIP
+.git	Y	N		SKIP
+.githooks	Y	N		SKIP
+RecycleBin~e278.ffs_tmp	Y	N		SKIP
+_to_delete	Y	N		SKIP
+apollo-admin	Y	Y	L7_admin	MATCH
+apollo-adverts	Y	Y	L2_content	MATCH
+apollo-calendar	Y	Y	L2_content	MATCH
+apollo-cena	N	Y	L8_industry	MISSING_ON_DISK
+apollo-chat	Y	Y	L4_communication	MATCH
+apollo-classifieds	N	Y	—	MISSING_ON_DISK
+apollo-coauthor	Y	Y	L7_admin	MATCH
+apollo-comment	Y	Y	L3_social	MATCH
+apollo-core	Y	Y	L0_foundation	MATCH
+apollo-dashboard	Y	Y	L6_frontend	MATCH
+apollo-dj-sync	Y	Y	L2_content	MATCH
+apollo-djs	Y	Y	L2_content	MATCH
+apollo-docs	Y	Y	L5_documents	MATCH
+apollo-elementor	Y	Y	L13_pagebuilder	MATCH
+apollo-elementor-pro	Y	Y	L13_pagebuilder	MATCH
+apollo-email	Y	Y	L4_communication	MATCH
+apollo-events	Y	Y	L2_content	MATCH
+apollo-fav	Y	Y	L3_social	MATCH
+apollo-gestor	Y	Y	L5_documents	MATCH
+apollo-groups	Y	Y	L3_social	MATCH
+apollo-hub	Y	Y	L6_frontend	MATCH
+apollo-journal	Y	Y	L5_documents	MATCH
+apollo-loc	Y	Y	L2_content	MATCH
+apollo-login	Y	Y	L1_auth	MATCH
+apollo-lux-panels	Y	Y	L7_admin	MATCH
+apollo-maps	Y	Y	L2_content	MATCH
+apollo-membership	Y	Y	L1_auth	MATCH
+apollo-mod	Y	Y	L7_admin	MATCH
+apollo-notif	Y	Y	L4_communication	MATCH
+apollo-pane-engine	Y	Y	L6_frontend	MATCH
+apollo-pwa	N	Y	L9_pwa	MISSING_ON_DISK
+apollo-radio	Y	Y	L6_frontend	MATCH
+apollo-remind	Y	Y	L4_communication	MATCH
+apollo-runtime	N	Y	L12_runtime	MISSING_ON_DISK
+apollo-scheduler	Y	Y	L2_content	MATCH
+apollo-seo	Y	Y	L10_seo	MATCH
+apollo-sheets	Y	Y	L11_data	MATCH
+apollo-shortcodes	N	Y	—	MISSING_ON_DISK
+apollo-sign	Y	Y	L5_documents	MATCH
+apollo-social	Y	Y	L3_social	MATCH
+apollo-soundcloud	Y	Y	L6_frontend	MATCH
+apollo-statistics	Y	Y	L7_admin	MATCH
+apollo-suppliers	N	Y	L2_content	MISSING_ON_DISK
+apollo-telegram	Y	Y	L4_communication	MATCH
+apollo-templates	Y	Y	L6_frontend	MATCH
+apollo-users	Y	Y	L1_auth	MATCH
+apollo-wow	Y	Y	L3_social	MATCH
+elementor	Y	N		SKIP
+loginizer	Y	N		SKIP
+loginizer-security	Y	N		SKIP
+mcps	Y	N		SKIP
+query-monitor	Y	N		SKIP
+really-simple-ssl	Y	N		SKIP
+wp-debugging	Y	N		SKIP
