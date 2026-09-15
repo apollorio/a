@@ -1,0 +1,790 @@
+# W5 STRICT — FORBIDDEN / NAMING
+
+Coordinator: Grok · Worker: Composer 2.5 · Branch: `cursor/registry-all-plugins-incl-waha`
+Scope: `apollo-*` (excl. `apollo-core/config/**`), **includes apollo-waha**. No PHP edits.
+
+## Registry excerpts (chapters 01 / 03 / 15)
+
+### FORBIDDEN_CONCEPTS (`01-philosophy.json`)
+
+- follow button
+- unfollow button
+- followers count
+- following count
+- like button
+- friend request
+- friend count
+
+Philosophy keys: PARTY_MODEL, NO_SELECTIVE_FOLLOW, NO_FRIENDS_HIERARCHY, NO_EGO_COUNTERS, WOW_NOT_LIKE, SHARE_YES, FORBIDDEN_CONCEPTS.
+
+### namingRules.FORBIDDEN_TERMS (`15-conventions.json`)
+
+| term | use instead |
+| --- | --- |
+| `venue` | USE 'loc' INSTEAD |
+| `local` | USE 'loc' INSTEAD (except in Portuguese text) |
+| `location` | USE 'loc' INSTEAD |
+| `interesse` | USE 'fav' INSTEAD |
+| `interessado` | USE 'fav' INSTEAD |
+| `interest` | USE 'fav' INSTEAD |
+| `bookmark` | USE 'fav' INSTEAD |
+| `like` | USE 'wow' INSTEAD |
+| `heart` | USE 'wow' INSTEAD |
+| `reaction` | USE 'wow' INSTEAD |
+| `comment` | USE 'depoimento' INSTEAD |
+| `review` | USE 'depoimento' INSTEAD |
+| `cult` | USE 'cena' INSTEAD |
+| `document` | USE 'doc' INSTEAD |
+| `/user/` | USE '/id/' INSTEAD |
+
+### timeDisplay.FORBIDDEN (`15-conventions.json`)
+
+- human_time_diff() + ' atrás'
+- human_time_diff() + ' ago'
+- Xd atrás
+- 2 days ago
+
+Mandate: `apollo_time_ago()` / `apollo_time_ago_html()` — never `human_time_diff()`.
+
+### $apollo_rule highlights (`03-apollo-rule.json`)
+
+- **data_flow**: PHP array is source of truth; no debug in production.
+- **development_guidelines.naming**: See `namingRules.FORBIDDEN_TERMS`.
+- **development_guidelines.time**: MANDATORY `apollo_time_ago()` — never `human_time_diff() + 'atrás'`.
+- **CPT/meta (ecosystem)**: Registration exclusively via apollo-core (`MetaRegistry` / `CPTRegistry`); direct `register_post_type` / `register_post_meta` elsewhere = G1 violation.
+
+## Grep patterns
+
+`follow`, `unfollow`, `like button`, `friend request`, `human_time_diff`, `register_post_type`, `register_post_meta`
+
+## Summary
+
+| Verdict | Count |
+| --- | ---: |
+| TRUE_VIOLATION | 134 |
+| FALSE_POSITIVE | 225 |
+| **Total hits** | **359** |
+
+## TRUE_VIOLATION (134)
+
+- `apollo-templates/includes/feed-data.php:85` — human_time_diff(get_post_time('U', true, $p), time())
+  - *human_time_diff() used — timeDisplay mandates apollo_time_ago()*
+- `apollo-events/styles/base/template-parts/single/depoimentos.php:59` — <span class="a-eve-depo__time"><?php echo esc_html( human_time_diff( strtotime( $depo->comment_date ), current_time( …
+  - *human_time_diff() used — timeDisplay mandates apollo_time_ago()*
+- `apollo-docs/src/Core/Registrar.php:31` — register_post_type(
+  - *direct register_post_type() outside apollo-core (G1)*
+- `apollo-waha/admin/views/settings.php:51` — esc_html( human_time_diff( $apollo_wa_last_ping ) )
+  - *human_time_diff() used — timeDisplay mandates apollo_time_ago()*
+- `apollo-statistics/src/Collectors/HookCollector.php:54` — add_action('apollo/social/follow', array($this, 'on_user_action'), 10, 2);
+  - *follow UI / hook / metric (FORBIDDEN_CONCEPTS)*
+- `apollo-scheduler/includes/functions.php:140` — return human_time_diff( $ts, time() ) . ' ' . __( 'ago', 'apollo-scheduler' );
+  - *human_time_diff() used — timeDisplay mandates apollo_time_ago()*
+- `apollo-events/src/Registry.php:69` — register_post_type(
+  - *direct register_post_type() outside apollo-core (G1)*
+- `apollo-admin/templates/partials/sections/email/settings.php:37` — <div class="toggle-text"><span class="toggle-title"><?php esc_html_e('Weekly Social Digest', 'apollo-admin'); ?></spa…
+  - *follow system feature or follower count copy*
+- `apollo-admin/templates/partials/sections/social/activity.php:26` — <div class="toggle-row"><label class="custom-checkbox" class="switch"><input type="checkbox" name="apollo[soc_follow]…
+  - *follow button / follow-system UI or setting (FORBIDDEN_CONCEPTS)*
+- `apollo-admin/templates/partials/sections/social/activity.php:27` — <div class="toggle-text"><span class="toggle-title"><?php esc_html_e( 'Enable Follow System', 'apollo-admin' ); ?></s…
+  - *follow system feature or follower count copy*
+- `apollo-scheduler/src/Registry.php:70` — register_post_type(
+  - *direct register_post_type() outside apollo-core (G1)*
+- `apollo-admin/templates/frontend/pending.php:393` — <span><?php echo esc_html(human_time_diff(\strtotime($p->post_date), current_time('timestamp'))); ?> atrás</span>
+  - *human_time_diff() used — timeDisplay mandates apollo_time_ago()*
+- `apollo-admin/base-design-and-reference.html:2269` — <div class="toggle-text"><span class="toggle-title">Weekly Social Digest</span><span class="toggle-desc">Summary of s…
+  - *follow system feature or follower count copy*
+- `apollo-admin/base-design-and-reference.html:2892` — <div class="toggle-row"><label class="custom-checkbox" class="switch"><input type="checkbox" checked><span class="swi…
+  - *follow system feature or follower count copy*
+- `apollo-notif/src/Plugin.php:879` — foreach ($followers as $follower_id) {
+  - *follow graph / followed DJs / followers hierarchy (philosophy)*
+- `apollo-notif/src/Plugin.php:881` — (int) $follower_id,
+  - *follow graph / followed DJs / followers hierarchy (philosophy)*
+- `apollo-loc/src/CPT/CPTRegistrar.php:29` — register_post_type(
+  - *direct register_post_type() outside apollo-core (G1)*
+- `apollo-admin/src/Settings/Schema/apollo-social.php:18` — 'enable_follow'    => array(
+  - *follow button / follow-system UI or setting (FORBIDDEN_CONCEPTS)*
+- `apollo-djs/templates/parts/dj-card/dock.php:32` — <button type="button" class="icon-btn pill" id="dockFollow" aria-label="<?php esc_attr_e( 'Seguir', 'apollo-djs' ); ?…
+  - *follow button / follow-system UI or setting (FORBIDDEN_CONCEPTS)*
+- `apollo-core/src/API/ShortcodesController.php:53` — 'apollo_follow_button',
+  - *core still exposes follow infrastructure (philosophy NO_SELECTIVE_FOLLOW)*
+- `apollo-djs/templates/parts/dj-card/toast.php:4` — * Status toast for share / follow feedback.
+  - *follow feedback toast*
+- `apollo-admin/src/Settings.php:265` — 'enable_follow'    => array(
+  - *follow button / follow-system UI or setting (FORBIDDEN_CONCEPTS)*
+- `apollo-core/src/Core/ActivationHandler.php:255` — $subscriber->add_cap( 'apollo_follow_users' );
+  - *core still exposes follow infrastructure (philosophy NO_SELECTIVE_FOLLOW)*
+- `apollo-core/src/Core/ShortcodeRegistry.php:310` — $this->register('apollo_follow_button', array(
+  - *core still exposes follow infrastructure (philosophy NO_SELECTIVE_FOLLOW)*
+- `apollo-core/src/Core/ShortcodeRegistry.php:318` — 'examples' => array('[apollo_follow_button user_id="5"]'),
+  - *core still exposes follow infrastructure (philosophy NO_SELECTIVE_FOLLOW)*
+- `apollo-core/src/Core/DatabaseBuilder.php:267` — 'follows'             => array(
+  - *core still exposes follow infrastructure (philosophy NO_SELECTIVE_FOLLOW)*
+- `apollo-core/src/Core/DatabaseBuilder.php:269` — 'table'  => $this->prefix . 'follows',
+  - *core still exposes follow infrastructure (philosophy NO_SELECTIVE_FOLLOW)*
+- `apollo-core/src/Core/DatabaseBuilder.php:270` — 'sql'    => "CREATE TABLE {$this->prefix}follows (
+  - *core still exposes follow infrastructure (philosophy NO_SELECTIVE_FOLLOW)*
+- `apollo-core/src/Core/DatabaseBuilder.php:272` — follower_id BIGINT UNSIGNED NOT NULL,
+  - *core still exposes follow infrastructure (philosophy NO_SELECTIVE_FOLLOW)*
+- `apollo-core/src/Core/DatabaseBuilder.php:273` — following_id BIGINT UNSIGNED NOT NULL,
+  - *core still exposes follow infrastructure (philosophy NO_SELECTIVE_FOLLOW)*
+- `apollo-core/src/Core/DatabaseBuilder.php:276` — UNIQUE KEY follow_pair (follower_id, following_id),
+  - *core still exposes follow infrastructure (philosophy NO_SELECTIVE_FOLLOW)*
+- `apollo-core/src/Core/DatabaseBuilder.php:277` — KEY follower_id (follower_id),
+  - *core still exposes follow infrastructure (philosophy NO_SELECTIVE_FOLLOW)*
+- `apollo-core/src/Core/DatabaseBuilder.php:278` — KEY following_id (following_id)
+  - *core still exposes follow infrastructure (philosophy NO_SELECTIVE_FOLLOW)*
+- `apollo-core/src/Config/ApolloTable.php:78` — public const FOLLOWS       = 'apollo_follows';
+  - *core still exposes follow infrastructure (philosophy NO_SELECTIVE_FOLLOW)*
+- `apollo-core/src/Config/ApolloTable.php:194` — self::FOLLOWS,
+  - *core still exposes follow infrastructure (philosophy NO_SELECTIVE_FOLLOW)*
+- `apollo-djs/_sandbox/dj-harness.html:522` — <button type="button" class="dj-icon-btn dj-pill" id="dockFollow" aria-label="Seguir" title="Seguir"><i class="ri-hea…
+  - *follow button / follow-system UI or setting (FORBIDDEN_CONCEPTS)*
+- `apollo-djs/_sandbox/dj-harness.html:737` — var followed = false;
+  - *client-side follow toggle state*
+- `apollo-djs/_sandbox/dj-harness.html:738` — q('#dockFollow').addEventListener('click', function () {
+  - *follow button / follow-system UI or setting (FORBIDDEN_CONCEPTS)*
+- `apollo-djs/_sandbox/dj-harness.html:739` — followed = !followed;
+  - *client-side follow toggle state*
+- `apollo-djs/_sandbox/dj-harness.html:742` — this.setAttribute('aria-label', followed ? 'Seguindo' : 'Seguir');
+  - *user follow UI copy*
+- `apollo-djs/_sandbox/dj-harness.html:743` — this.setAttribute('title', followed ? 'Seguindo' : 'Seguir');
+  - *user follow UI copy*
+- `apollo-djs/_sandbox/dj-harness.html:744` — toast(followed ? 'Você segue ' + APOLLO_DJ.name + ' ✓' : 'Deixou de seguir', 'ri-heart-3-line');
+  - *user follow UI copy*
+- `apollo-core/src/Config/ApolloRoute.php:63` — public const FOLLOWERS   = '/followers';
+  - *core still exposes follow infrastructure (philosophy NO_SELECTIVE_FOLLOW)*
+- `apollo-core/src/Config/ApolloRoute.php:64` — public const FOLLOWING   = '/following';
+  - *core still exposes follow infrastructure (philosophy NO_SELECTIVE_FOLLOW)*
+- `apollo-djs/_sandbox/dj-single-page.mockup.html:598` — <button type="button" class="icon-btn pill" id="dockFollow" aria-label="Seguir" title="Seguir"><i class="ri-heart-3-l…
+  - *follow button / follow-system UI or setting (FORBIDDEN_CONCEPTS)*
+- `apollo-djs/_sandbox/dj-single-page.mockup.html:842` — var followed = false;
+  - *client-side follow toggle state*
+- `apollo-djs/_sandbox/dj-single-page.mockup.html:843` — q('#dockFollow').addEventListener('click', function () {
+  - *follow button / follow-system UI or setting (FORBIDDEN_CONCEPTS)*
+- `apollo-djs/_sandbox/dj-single-page.mockup.html:844` — followed = !followed;
+  - *client-side follow toggle state*
+- `apollo-djs/_sandbox/dj-single-page.mockup.html:847` — this.setAttribute('aria-label', followed ? 'Seguindo' : 'Seguir');
+  - *user follow UI copy*
+- `apollo-djs/_sandbox/dj-single-page.mockup.html:848` — this.setAttribute('title', followed ? 'Seguindo' : 'Seguir');
+  - *user follow UI copy*
+- `apollo-djs/_sandbox/dj-single-page.mockup.html:849` — toast(followed ? 'VocÃª segue ' + APOLLO_DJ.name + ' âœ“' : 'Deixou de seguir', 'ri-heart-3-line');
+  - *user follow UI copy*
+- `apollo-djs/_sandbox/dj-mockup.html:598` — <button type="button" class="icon-btn pill" id="dockFollow" aria-label="Seguir" title="Seguir"><i class="ri-heart-3-l…
+  - *follow button / follow-system UI or setting (FORBIDDEN_CONCEPTS)*
+- `apollo-djs/_sandbox/dj-mockup.html:842` — var followed = false;
+  - *client-side follow toggle state*
+- `apollo-djs/_sandbox/dj-mockup.html:843` — q('#dockFollow').addEventListener('click', function () {
+  - *follow button / follow-system UI or setting (FORBIDDEN_CONCEPTS)*
+- `apollo-djs/_sandbox/dj-mockup.html:844` — followed = !followed;
+  - *client-side follow toggle state*
+- `apollo-djs/_sandbox/dj-mockup.html:847` — this.setAttribute('aria-label', followed ? 'Seguindo' : 'Seguir');
+  - *user follow UI copy*
+- `apollo-djs/_sandbox/dj-mockup.html:848` — this.setAttribute('title', followed ? 'Seguindo' : 'Seguir');
+  - *user follow UI copy*
+- `apollo-djs/_sandbox/dj-mockup.html:849` — toast(followed ? 'Você segue ' + APOLLO_DJ.name + ' ✓' : 'Deixou de seguir', 'ri-heart-3-line');
+  - *user follow UI copy*
+- `apollo-djs/assets/js/dj-card-single.js:205` — var followed = false;
+  - *client-side follow toggle state*
+- `apollo-djs/assets/js/dj-card-single.js:206` — var dockFollow = q('#dockFollow');
+  - *follow button / follow-system UI or setting (FORBIDDEN_CONCEPTS)*
+- `apollo-djs/assets/js/dj-card-single.js:207` — if (dockFollow) dockFollow.addEventListener('click', function () {
+  - *follow button / follow-system UI or setting (FORBIDDEN_CONCEPTS)*
+- `apollo-djs/assets/js/dj-card-single.js:208` — followed = !followed;
+  - *client-side follow toggle state*
+- `apollo-djs/assets/js/dj-card-single.js:211` — this.setAttribute('aria-label', followed ? 'Seguindo' : 'Seguir');
+  - *user follow UI copy*
+- `apollo-djs/assets/js/dj-card-single.js:212` — this.setAttribute('title', followed ? 'Seguindo' : 'Seguir');
+  - *user follow UI copy*
+- `apollo-djs/assets/js/dj-card-single.js:213` — toast(followed ? 'Você segue ' + APOLLO_DJ.name + ' ✓' : 'Deixou de seguir', 'ri-heart-3-line');
+  - *user follow UI copy*
+- `apollo-djs/styles/base/template-parts/single/scripts.php:219` — var followed = false;
+  - *client-side follow toggle state*
+- `apollo-djs/styles/base/template-parts/single/scripts.php:220` — q('#dockFollow').addEventListener('click', function () {
+  - *follow button / follow-system UI or setting (FORBIDDEN_CONCEPTS)*
+- `apollo-djs/styles/base/template-parts/single/scripts.php:221` — followed = !followed;
+  - *client-side follow toggle state*
+- `apollo-djs/styles/base/template-parts/single/scripts.php:224` — this.setAttribute('aria-label', followed ? 'Seguindo' : 'Seguir');
+  - *user follow UI copy*
+- `apollo-djs/styles/base/template-parts/single/scripts.php:225` — this.setAttribute('title', followed ? 'Seguindo' : 'Seguir');
+  - *user follow UI copy*
+- `apollo-djs/styles/base/template-parts/single/scripts.php:226` — toast(followed ? 'Você segue ' + APOLLO_DJ.name + ' ✓' : 'Deixou de seguir', 'ri-heart-3-line');
+  - *user follow UI copy*
+- `apollo-djs/styles/base/template-parts/single/dock.php:30` — <button type="button" class="dj-icon-btn dj-pill" id="dockFollow" aria-label="Seguir" title="Seguir"><i class="ri-hea…
+  - *follow button / follow-system UI or setting (FORBIDDEN_CONCEPTS)*
+- `apollo-email/src/Core/CPT.php:32` — register_post_type(
+  - *direct register_post_type() outside apollo-core (G1)*
+- `apollo-djs/src/Registry.php:56` — register_post_type(
+  - *direct register_post_type() outside apollo-core (G1)*
+- `apollo-djs/src/Registry.php:122` — register_post_type(
+  - *direct register_post_type() outside apollo-core (G1)*
+- `apollo-social/includes/functions.php:166` — $wpdb->query( "INSERT IGNORE INTO {$table} (follower_id, following_id, created_at) VALUES " . implode( ',', $chunk ) );
+  - *follow graph / followed DJs / followers hierarchy (philosophy)*
+- `apollo-journal/templates/parts/news-grid.php:77` — <span class="aj-ng-item__time"><?php echo wp_kses_post( function_exists( 'apollo_time_ago_html' ) ? apollo_time_ago_h…
+  - *fallback still calls human_time_diff() — timeDisplay FORBIDDEN*
+- `apollo-social/assets/css/feed.css:1164` — /* Who to follow */
+  - *follow UI / hook / metric (FORBIDDEN_CONCEPTS)*
+- `apollo-social/assets/css/feed.css:1165` — .sidebar-follow-item {
+  - *follow UI / hook / metric (FORBIDDEN_CONCEPTS)*
+- `apollo-social/assets/css/feed.css:1172` — .sidebar-follow-item img {
+  - *follow UI / hook / metric (FORBIDDEN_CONCEPTS)*
+- `apollo-social/assets/css/feed.css:1181` — .sidebar-follow-item:hover img {
+  - *follow UI / hook / metric (FORBIDDEN_CONCEPTS)*
+- `apollo-social/assets/css/feed.css:1185` — .sidebar-follow-info {
+  - *follow UI / hook / metric (FORBIDDEN_CONCEPTS)*
+- `apollo-social/assets/css/feed.css:1190` — .sidebar-follow-name {
+  - *follow UI / hook / metric (FORBIDDEN_CONCEPTS)*
+- `apollo-social/assets/css/feed.css:1199` — .sidebar-follow-handle {
+  - *follow UI / hook / metric (FORBIDDEN_CONCEPTS)*
+- `apollo-social/assets/css/feed.css:1205` — .sidebar-follow-btn {
+  - *follow UI / hook / metric (FORBIDDEN_CONCEPTS)*
+- `apollo-social/assets/css/feed.css:1220` — .sidebar-follow-btn::before {
+  - *follow UI / hook / metric (FORBIDDEN_CONCEPTS)*
+- `apollo-social/assets/css/feed.css:1231` — .sidebar-follow-btn:hover::before {
+  - *follow UI / hook / metric (FORBIDDEN_CONCEPTS)*
+- `apollo-social/assets/css/feed.css:1235` — .sidebar-follow-btn span {
+  - *follow UI / hook / metric (FORBIDDEN_CONCEPTS)*
+- `apollo-journal/templates/single-journal_nota.php:367` — <?php echo wp_kses_post( function_exists( 'apollo_time_ago_html' ) ? apollo_time_ago_html( get_the_date( 'Y-m-d H:i:s…
+  - *fallback still calls human_time_diff() — timeDisplay FORBIDDEN*
+- `apollo-journal/templates/page-jornal.php:466` — <span><?php echo wp_kses_post( function_exists( 'apollo_time_ago_html' ) ? apollo_time_ago_html( get_the_date( 'Y-m-d…
+  - *fallback still calls human_time_diff() — timeDisplay FORBIDDEN*
+- `apollo-journal/templates/page-jornal.php:493` — <span><?php echo wp_kses_post( function_exists( 'apollo_time_ago_html' ) ? apollo_time_ago_html( get_the_date( 'Y-m-d…
+  - *fallback still calls human_time_diff() — timeDisplay FORBIDDEN*
+- `apollo-journal/templates/page-jornal.php:546` — <span><?php echo wp_kses_post( function_exists( 'apollo_time_ago_html' ) ? apollo_time_ago_html( get_the_date( 'Y-m-d…
+  - *fallback still calls human_time_diff() — timeDisplay FORBIDDEN*
+- `apollo-journal/templates/archive-journal.php:324` — <span><?php echo wp_kses_post( function_exists( 'apollo_time_ago_html' ) ? apollo_time_ago_html( get_the_date( 'Y-m-d…
+  - *fallback still calls human_time_diff() — timeDisplay FORBIDDEN*
+- `apollo-journal/templates/archive-journal.php:352` — <span><?php echo wp_kses_post( function_exists( 'apollo_time_ago_html' ) ? apollo_time_ago_html( get_the_date( 'Y-m-d…
+  - *fallback still calls human_time_diff() — timeDisplay FORBIDDEN*
+- `apollo-journal/templates/single-journal_news.php:465` — <?php echo wp_kses_post( function_exists( 'apollo_time_ago_html' ) ? apollo_time_ago_html( get_the_date( 'Y-m-d H:i:s…
+  - *fallback still calls human_time_diff() — timeDisplay FORBIDDEN*
+- `apollo-social/src/Plugin.php:12` — *   Shortcodes: [apollo_feed], [apollo_follow_btn]
+  - *follow button / follow-system UI or setting (FORBIDDEN_CONCEPTS)*
+- `apollo-social/src/Plugin.php:584` — add_shortcode('apollo_follow_btn', array($this, 'shortcode_follow_btn'));
+  - *follow button / follow-system UI or setting (FORBIDDEN_CONCEPTS)*
+- `apollo-social/src/Activation.php:87` — $wpdb->query( "INSERT IGNORE INTO {$prefix}follows (follower_id, following_id, created_at) VALUES " . implode( ',', $…
+  - *follow graph / followed DJs / followers hierarchy (philosophy)*
+- `apollo-social/src/Activation.php:92` — $wpdb->query( "INSERT IGNORE INTO {$prefix}follows (follower_id, following_id, created_at) VALUES " . implode( ',', $…
+  - *follow graph / followed DJs / followers hierarchy (philosophy)*
+- `apollo-social/src/Components/SidebarRenderer.php:54` — <div class="news-time"><?php echo esc_html(human_time_diff(strtotime($post->post_date), current_time('timestamp')) . …
+  - *human_time_diff() used — timeDisplay mandates apollo_time_ago()*
+- `apollo-journal/src/Shortcodes.php:340` — <span class="aj-ng-item__time"><?php echo wp_kses_post( function_exists( 'apollo_time_ago_html' ) ? apollo_time_ago_h…
+  - *fallback still calls human_time_diff() — timeDisplay FORBIDDEN*
+- `apollo-journal/src/Shortcodes.php:381` — <span><?php echo wp_kses_post( function_exists( 'apollo_time_ago_html' ) ? apollo_time_ago_html( $time_ago_dt ) : esc…
+  - *fallback still calls human_time_diff() — timeDisplay FORBIDDEN*
+- `apollo-journal/src/API/PostsController.php:124` — : human_time_diff( get_post_time( 'U', false, $post ), time() );
+  - *human_time_diff() used — timeDisplay mandates apollo_time_ago()*
+- `apollo-journal/src/API/PostsController.php:240` — : human_time_diff( get_post_time( 'U', false, $post ), time() );
+  - *human_time_diff() used — timeDisplay mandates apollo_time_ago()*
+- `apollo-journal/src/API/PostsController.php:309` — : human_time_diff( get_post_time( 'U', false, $post ), time() );
+  - *human_time_diff() used — timeDisplay mandates apollo_time_ago()*
+- `apollo-journal/src/Plugin.php:117` — register_post_type('journal_news', array(
+  - *direct register_post_type() outside apollo-core (G1)*
+- `apollo-journal/src/Plugin.php:155` — register_post_meta('journal_news', $key, array(
+  - *direct register_post_meta() outside apollo-core (G1)*
+- `apollo-journal/src/Plugin.php:168` — register_post_type('journal_nota', array(
+  - *direct register_post_type() outside apollo-core (G1)*
+- `apollo-journal/src/Plugin.php:205` — register_post_meta('journal_nota', $key, array(
+  - *direct register_post_meta() outside apollo-core (G1)*
+- `apollo-sheets/src/Plugin.php:106` — public function register_post_type(): void
+  - *direct register_post_type() outside apollo-core (G1)*
+- `apollo-sheets/src/Plugin.php:113` — register_post_type(
+  - *direct register_post_type() outside apollo-core (G1)*
+- `apollo-hub/src/Activation.php:45` — register_post_type(
+  - *direct register_post_type() outside apollo-core (G1)*
+- `apollo-hub/src/Registry.php:58` — register_post_type(
+  - *direct register_post_type() outside apollo-core (G1)*
+- `apollo-hub/src/Registry.php:87` — register_post_meta(
+  - *direct register_post_meta() outside apollo-core (G1)*
+- `apollo-hub/src/Registry.php:101` — register_post_meta(
+  - *direct register_post_meta() outside apollo-core (G1)*
+- `apollo-hub/src/Registry.php:112` — register_post_meta(
+  - *direct register_post_meta() outside apollo-core (G1)*
+- `apollo-hub/src/Registry.php:123` — register_post_meta(
+  - *direct register_post_meta() outside apollo-core (G1)*
+- `apollo-hub/src/Registry.php:134` — register_post_meta(
+  - *direct register_post_meta() outside apollo-core (G1)*
+- `apollo-hub/src/Registry.php:149` — register_post_meta(
+  - *direct register_post_meta() outside apollo-core (G1)*
+- `apollo-hub/src/Registry.php:160` — register_post_meta(
+  - *direct register_post_meta() outside apollo-core (G1)*
+- `apollo-hub/src/Registry.php:171` — register_post_meta(
+  - *direct register_post_meta() outside apollo-core (G1)*
+- `apollo-remind/src/Core/Plugin.php:111` — // Could auto-remind followers — hook reserved for future use
+  - *follow system feature or follower count copy*
+- `apollo-gestor/includes/modules/proj-board/backend/Proj_Board.php:67` — $post['time_ago'] = human_time_diff( strtotime( $post['created_at'] ), current_time( 'timestamp' ) );
+  - *human_time_diff() used — timeDisplay mandates apollo_time_ago()*
+- `apollo-dashboard/templates/template-parts/dashboard/panel-events.php:25` — $followed_djs = array();
+  - *follow graph / followed DJs / followers hierarchy (philosophy)*
+- `apollo-dashboard/templates/template-parts/dashboard/panel-events.php:85` — $follows_table = $wpdb->prefix . 'apollo_connections';
+  - *follow graph / followed DJs / followers hierarchy (philosophy)*
+- `apollo-dashboard/templates/template-parts/dashboard/panel-events.php:89` — $followed_djs = $wpdb->get_results(
+  - *follow graph / followed DJs / followers hierarchy (philosophy)*
+- `apollo-dashboard/templates/template-parts/dashboard/panel-events.php:94` — FROM {$follows_table} f
+  - *follow graph / followed DJs / followers hierarchy (philosophy)*
+- `apollo-dashboard/templates/template-parts/dashboard/panel-events.php:95` — INNER JOIN {$wpdb->users} u ON u.ID = f.followed_id
+  - *follow graph / followed DJs / followers hierarchy (philosophy)*
+- `apollo-dashboard/templates/template-parts/dashboard/panel-events.php:96` — WHERE f.follower_id = %d
+  - *follow graph / followed DJs / followers hierarchy (philosophy)*
+- `apollo-dashboard/templates/template-parts/dashboard/panel-events.php:121` — <div class="stat-item"><span class="stat-val"><?php echo esc_html( count( $followed_djs ) ); ?></span><span class="st…
+  - *follow graph / followed DJs / followers hierarchy (philosophy)*
+- `apollo-dashboard/templates/template-parts/dashboard/panel-events.php:201` — <?php if ( ! empty( $followed_djs ) ) : ?>
+  - *follow graph / followed DJs / followers hierarchy (philosophy)*
+- `apollo-dashboard/templates/template-parts/dashboard/panel-events.php:203` — foreach ( $followed_djs as $dj ) :
+  - *follow graph / followed DJs / followers hierarchy (philosophy)*
+- `apollo-adverts/templates/parts/depoimentos.php:81` — human_time_diff( strtotime( $depo->comment_date ), current_time( 'timestamp' ) )
+  - *human_time_diff() used — timeDisplay mandates apollo_time_ago()*
+- `apollo-adverts/includes/cpt.php:42` — register_post_type(
+  - *direct register_post_type() outside apollo-core (G1)*
+
+## FALSE_POSITIVE (225)
+
+- `apollo-events/_tmp_eventos_body.bin:1106` — PHP EVENT LOOP START - The following 'event_listing' block would be inside a PHP loop.
+  - *incidental English "follow" — not social mechanism*
+- `apollo-templates/templates/template-parts/new-home/cells/_manifest.php:42` — *   · apollo_time_ago(), never human_time_diff().  → registry 15-conventions
+  - *registry/doc reference to forbidden pattern*
+- `apollo-templates/templates/template-parts/new-home/cells/_manifest.php:43` — *   · No like / follow / friend vocabulary.        → registry 01-philosophy
+  - *incidental English "follow" — not social mechanism*
+- `apollo-events/_sandbox/build-portal-harness.mjs:94` — colour. Values follow apollo-hub/assets/css/home/tokens.css where it and the
+  - *English prose (follow-up / follows pattern), not social follow*
+- `apollo-events/_sandbox/build-portal-harness.mjs:915` — if (!/register_post_type|register_post_meta|register_taxonomy/.test(php) === false) {
+  - *no strict rule match — incidental*
+- `apollo-events/_sandbox/build-portal-harness.mjs:1190` — generation, and following the documented workflow today would replace 17
+  - *incidental English "follow" — not social mechanism*
+- `apollo-events/_sandbox/build-portal-harness.mjs:1266` — if (/register_post_type|register_post_meta|register_taxonomy/.test(php)) {
+  - *no strict rule match — incidental*
+- `apollo-events/_sandbox/build-portal-harness.mjs:1483` — reopening `<?php` and drop the block that follows into HTML mode. Brace
+  - *incidental English "follow" — not social mechanism*
+- `apollo-events/_sandbox/build-portal-harness.mjs:1489` — <script src="…apollo-single-event.js"> that followed. ApolloEventSingle never
+  - *incidental English "follow" — not social mechanism*
+- `apollo-events/_sandbox/AUDIT-CREATE-FORM.md:34` — ### Bugs fixed 2026-08-06 (loc follow-up)
+  - *English prose (follow-up / follows pattern), not social follow*
+- `apollo-events/_sandbox/SPEC-lightbox-integration.md:48` — became private — the runtime stops intercepting and lets the browser follow
+  - *English prose (follow-up / follows pattern), not social follow*
+- `apollo-events/_sandbox/SPEC-rail-masthead.md:46` — Follows the existing portal convention: one file, one concern, one owner.
+  - *incidental English "follow" — not social mechanism*
+- `apollo-events/_sandbox/portal-harness.html:2392` — out-specify it, not merely follow it. */
+  - *English prose (follow-up / follows pattern), not social follow*
+- `apollo-events/assets/js/apollo-single-event.js:1109` — /* Late-loading images grow scrollWidth — the pin end must follow. */
+  - *English prose (follow-up / follows pattern), not social follow*
+- `apollo-events/assets/js/apollo-events-create-wire.js:448` — * commas that are followed by another ref boundary.
+  - *incidental English "follow" — not social mechanism*
+- `apollo-events/assets/js/apollo-events-create-wire.js:815` — Follows .modal-backdrop / .modal from the Design System showcase. */
+  - *incidental English "follow" — not social mechanism*
+- `apollo-events/assets/js/apollo-event-lightbox.js:217` — *  3. REDIRECTS — `redirect: 'follow'` is the default, and a redirect to a
+  - *English prose (follow-up / follows pattern), not social follow*
+- `apollo-events/assets/js/apollo-event-lightbox.js:250` — redirect: 'follow',
+  - *English prose (follow-up / follows pattern), not social follow*
+- `apollo-events/styles/base/archive-event.php:211` — . '<meta name="robots" content="index, follow">' . "\n"
+  - *SEO robots directive*
+- `apollo-templates/includes/listing-header-api.php:12` — * Ownership follows registry chapter 18-canvas-shell.json: apollo-templates is
+  - *incidental English "follow" — not social mechanism*
+- `apollo-chat/_sandbox/chat-surfaces-harness.html:2073` — * to an edge detail. Follows the DS glass/etched-bevel language
+  - *incidental English "follow" — not social mechanism*
+- `apollo-templates/_checkpoints/casa-pre-luxury-st/assets/js/new-home.js:402` — // Portal link follows href naturally
+  - *incidental English "follow" — not social mechanism*
+- `apollo-chat/assets/js/chat.js:1828` — items.push({ label: 'Bloquear usuário', icon: 'ri-user-unfollow-line', action: 'block', danger: true });
+  - *email unsubscribe icon/copy, not social unfollow*
+- `apollo-chat/assets/js/chat.js:2062` — <button class="ac-btn" data-act="block-user" style="font-size:.8rem;color:var(--ac-danger);"><i class="ri-user-unfoll…
+  - *email unsubscribe icon/copy, not social unfollow*
+- `apollo-chat/assets/css/chat-shell.css:31` — * to an edge detail. Follows the DS glass/etched-bevel language
+  - *incidental English "follow" — not social mechanism*
+- `apollo-waha/waha-registry.json:9` — { "run": "RUN 2", "what": "Webhook HMAC pipeline", "status": "NOT IMPLEMENTED — ZERO CODE WRITTEN", "why": "A design …
+  - *apollo-waha doc filename / SSOT prose*
+- `apollo-waha/waha-registry.json:1072` — "FOLLOW-UP.txt",
+  - *apollo-waha doc filename / SSOT prose*
+- `apollo-waha/waha-registry.json:1111` — "note": "Correction history: v1.1.0 listed 30 entries and omitted _plan/ entirely. v1.1.1 said 34. v1.2.0 said 35 / p…
+  - *apollo-waha doc filename / SSOT prose*
+- `apollo-waha/waha-registry.json:1114` — "follow_up_doc": {
+  - *apollo-waha doc filename / SSOT prose*
+- `apollo-waha/waha-registry.json:1115` — "file": "FOLLOW-UP.txt",
+  - *apollo-waha doc filename / SSOT prose*
+- `apollo-waha/waha-registry.json:1124` — "never[] compliance: 0 register_post_type, 0 wp_cache_*, 0 active_plugins mutation, 0 mu/force-load require",
+  - *compliance audit note*
+- `apollo-statistics/includes/class-analytics.php:51` — case 'followers':
+  - *incidental English "follow" — not social mechanism*
+- `apollo-statistics/includes/class-analytics.php:53` — if (function_exists('apollo_is_following')) {
+  - *no strict rule match — incidental*
+- `apollo-statistics/includes/class-analytics.php:54` — return (bool) apollo_is_following($viewer_id, $user_id);
+  - *no strict rule match — incidental*
+- `apollo-statistics/includes/class-analytics.php:94` — $allowed = array('self', 'followers', 'public');
+  - *incidental English "follow" — not social mechanism*
+- `apollo-statistics/includes/class-analytics.php:145` — 'followers_gained' => 0,
+  - *incidental English "follow" — not social mechanism*
+- `apollo-statistics/includes/class-user-stats-widget.php:164` — <div class="stat-item" data-a-user="<?php echo esc_attr($user_id); ?>" data-field="followers_gained">
+  - *incidental English "follow" — not social mechanism*
+- `apollo-statistics/includes/class-user-stats-widget.php:166` — <div class="stat-value"><?php echo esc_html(number_format_i18n($stats['followers_gained'] ?? 0)); ?></div>
+  - *incidental English "follow" — not social mechanism*
+- `apollo-statistics/includes/class-user-stats-widget.php:167` — <div class="stat-label"><?php esc_html_e('New Followers', 'apollo-statistics'); ?></div>
+  - *incidental English "follow" — not social mechanism*
+- `apollo-statistics/includes/class-user-stats-widget.php:214` — <option value="followers" <?php selected($visibility['show_to'], 'followers'); ?>><?php esc_html_e('My followers', 'a…
+  - *incidental English "follow" — not social mechanism*
+- `apollo-fav/includes/class-statistics-merge.php:110` — 'get_follow_growth',
+  - *no strict rule match — incidental*
+- `apollo-events/styles/base/template-parts/archive/portal/styles-lightbox.php:194` — out-specify it, not merely follow it. */
+  - *English prose (follow-up / follows pattern), not social follow*
+- `apollo-statistics/README.md:115` — | PUT | `/profile-stats/visibility` | Atualiza `public|followers|private` |
+  - *incidental English "follow" — not social mechanism*
+- `apollo-events/styles/base/template-parts/archive/portal/bootstrap.php:132` — (.ev-lb-scroll, overflow-y:auto). Two things follow, and neither
+  - *incidental English "follow" — not social mechanism*
+- `apollo-statistics/src/API/ProfileController.php:54` — 'enum'     => array('public', 'followers', 'private'),
+  - *incidental English "follow" — not social mechanism*
+- `apollo-statistics/src/API/ProfileController.php:104` — if ($visibility === 'followers' && $current_id > 0) {
+  - *incidental English "follow" — not social mechanism*
+- `apollo-statistics/src/API/ProfileController.php:105` — if (apply_filters('apollo/social/is_following', false, $current_id, $target_id)) {
+  - *no strict rule match — incidental*
+- `apollo-statistics/src/API/StatsController.php:233` — // Followers-only: check if current user follows target.
+  - *incidental English "follow" — not social mechanism*
+- `apollo-statistics/src/API/StatsController.php:234` — if ($visibility === 'followers' && $current_id > 0) {
+  - *incidental English "follow" — not social mechanism*
+- `apollo-statistics/src/API/StatsController.php:235` — $is_following = apply_filters('apollo/social/is_following', false, $current_id, $target_id);
+  - *no strict rule match — incidental*
+- `apollo-statistics/src/API/StatsController.php:236` — if ($is_following) {
+  - *no strict rule match — incidental*
+- `apollo-waha/FOLLOW-UP.txt:2` — APOLLO-WAHA — FOLLOW-UP
+  - *apollo-waha doc filename / SSOT prose*
+- `apollo-waha/FOLLOW-UP.txt:95` — - never[] compliance: 0 register_post_type, 0 wp_cache_*, 0 active_plugins
+  - *compliance audit note*
+- `apollo-waha/FOLLOW-UP.txt:222` — R4 body-max-256kb at step 9 (after the HMAC) is FINE — follow SSOT order. The
+  - *English prose (follow-up / follows pattern), not social follow*
+- `apollo-lux-panels/includes/Panel.php:447` — * access followed by count() two lines down. Two shipped fields declared
+  - *incidental English "follow" — not social mechanism*
+- `apollo-statistics/src/Core/MetricBootstrap.php:193` — (new Leaderboard())->with_config('dj_popularity', 'DJ Popularity', 'apollo_stats_users', 'follow_received')
+  - *incidental English "follow" — not social mechanism*
+- `apollo-statistics/src/Core/MetricBootstrap.php:353` — (new Growth())->with_config('connection_network', 'Connection Growth', 'apollo_stats_users', 'recorded_date', "metric…
+  - *incidental English "follow" — not social mechanism*
+- `apollo-statistics/src/Collectors/HookCollector.php:42` — add_action('apollo/dj/followed', array($this, 'on_user_action'), 10, 2);
+  - *incidental English "follow" — not social mechanism*
+- `apollo-statistics/src/Collectors/HookCollector.php:183` — * User-centric action (follow, etc.).
+  - *incidental English "follow" — not social mechanism*
+- `apollo-statistics/src/Collectors/HookCollector.php:187` — $action = str_contains($hook, 'follow') ? 'follow' : sanitize_key(basename($hook));
+  - *incidental English "follow" — not social mechanism*
+- `apollo-sign/templates/parts/sig-head.php:20` — <meta name="robots" content="noindex,nofollow">
+  - *no strict rule match — incidental*
+- `apollo-admin/templates/modera/parts/scripts.php:9` — *                            section-by-section for REST in follow-ups)
+  - *English prose (follow-up / follows pattern), not social follow*
+- `apollo-admin/templates/modera/parts/head.php:11` — * forces robots=index,follow — wrong for an authenticated admin panel).
+  - *SEO robots directive*
+- `apollo-admin/templates/modera/parts/head.php:43` — 'robots'         => 'noindex, nofollow', // private, authenticated panel — never indexed.
+  - *no strict rule match — incidental*
+- `apollo-admin/templates/partials/topbar.php:39` — <button class="tab-btn" data-tab="email-unsub"><i class="ri-user-unfollow-line"></i><span class="tooltip"><?php esc_h…
+  - *email unsubscribe icon/copy, not social unfollow*
+- `apollo-events/src/API/EventsController.php:2103` — /* Gallery entries follow the same int-or-URL rule as the banner. */
+  - *incidental English "follow" — not social mechanism*
+- `apollo-events/src/Plugin.php:406` — * in a follow-up — the point of this pass was to stop the I/O, not to churn
+  - *English prose (follow-up / follows pattern), not social follow*
+- `apollo-admin/templates/partials/sections/email/subscribers.php:19` — <div class="stat-card red"><div class="stat-icon red"><i class="ri-user-unfollow-line"></i></div><span class="stat-la…
+  - *email unsubscribe icon/copy, not social unfollow*
+- `apollo-admin/templates/partials/sections/email/unsub.php:16` — <div class="panel-header"><i class="ri-user-unfollow-line"></i> <?php esc_html_e( 'Unsubscribe Report', 'apollo-admin…
+  - *email unsubscribe icon/copy, not social unfollow*
+- `apollo-ui/includes/enqueue.php:25` — * This file follows it.
+  - *incidental English "follow" — not social mechanism*
+- `apollo-ui/includes/render.php:48` — 'lightbox' => null,   // null = follow settings
+  - *English prose (follow-up / follows pattern), not social follow*
+- `apollo-loc/includes/surface.php:19` — *   3. nothing else — the endpoint, card contract and lightbox follow.
+  - *incidental English "follow" — not social mechanism*
+- `apollo-ui/README.md:203` — `includes/enqueue.php` follows it, and additionally checks
+  - *English prose (follow-up / follows pattern), not social follow*
+- `apollo-admin/base-design-and-reference.html:1451` — <button class="tab-btn" data-tab="email-unsub"><i class="ri-user-unfollow-line"></i><span class="tooltip">Unsubscribe…
+  - *email unsubscribe icon/copy, not social unfollow*
+- `apollo-admin/base-design-and-reference.html:2325` — <div class="stat-card red"><div class="stat-icon red"><i class="ri-user-unfollow-line"></i></div><span class="stat-la…
+  - *email unsubscribe icon/copy, not social unfollow*
+- `apollo-admin/base-design-and-reference.html:2456` — <div class="panel-header"><i class="ri-user-unfollow-line"></i> Unsubscribe Report</div>
+  - *email unsubscribe icon/copy, not social unfollow*
+- `apollo-notif/src/Plugin.php:68` — // Auto-connection notification (fires on user_register auto-connect, NOT selective follow)
+  - *plugin description affirming no-follow policy*
+- `apollo-notif/src/Plugin.php:790` — * No selective follow/unfollow. No ego counters.
+  - *comment affirming no-follow policy*
+- `apollo-notif/src/Plugin.php:877` — // Notify followers of the author — hook into fav/social layer
+  - *incidental English "follow" — not social mechanism*
+- `apollo-notif/src/Plugin.php:878` — $followers = apply_filters('apollo/social/get_followers', array(), $author_id);
+  - *incidental English "follow" — not social mechanism*
+- `apollo-notif/src/Plugin.php:1432` — if (str_contains($type, 'wow') || str_contains($type, 'depoimento') || str_contains($type, 'follow') || str_contains(…
+  - *incidental English "follow" — not social mechanism*
+- `apollo-admin/assets/modera/js/views.js:190` — return '<div class="adm-row"><span class="adm-ico"><i class="ri-user-line"></i></span><div class="adm-row-main"><div …
+  - *email unsubscribe icon/copy, not social unfollow*
+- `apollo-loc/src/Registry.php:9` — *   · register_post_type( 'local' )      — duplicate of src/CPT/CPTRegistrar.php
+  - *comment/doc about registration policy*
+- `apollo-loc/src/CPT/MetaRegistrar.php:48` — * This class used to call register_post_meta() directly on init:10, for 21
+  - *comment/doc or migrated to filter hook*
+- `apollo-loc/src/CPT/MetaRegistrar.php:57` — * before `apollo_core_register_post_meta`. apollo-djs still hooks the
+  - *filter hook contribution, not direct WP call*
+- `apollo-loc/src/CPT/MetaRegistrar.php:60` — * is not broken. Prefer `apollo_core_register_post_meta` for new code —
+  - *filter hook contribution, not direct WP call*
+- `apollo-loc/src/CPT/MetaRegistrar.php:66` — add_filter( 'apollo_core_register_post_meta', array( $this, 'register_core_meta' ) );
+  - *filter hook contribution, not direct WP call*
+- `apollo-loc/src/CPT/MetaRegistrar.php:77` — 'apollo-loc no longer registers meta directly. It contributes through the apollo_core_register_post_meta filter.',
+  - *filter hook contribution, not direct WP call*
+- `apollo-loc/src/CPT/MetaRegistrar.php:84` — * register_post_meta() calls that G1 forbids anywhere outside apollo-core, and
+  - *comment/doc or migrated to filter hook*
+- `apollo-core/includes/blank-canvas-templates.php:26` — * virtual-route branch forces `robots: index, follow` (wrong for private,
+  - *SEO robots directive or WP API comment*
+- `apollo-core/includes/blank-canvas-templates.php:57` — *     @type string $robots          Default 'index, follow'. Private panels MUST pass 'noindex, nofollow'.
+  - *SEO robots directive or WP API comment*
+- `apollo-core/includes/blank-canvas-templates.php:71` — 'robots'         => 'index, follow',
+  - *SEO robots directive or WP API comment*
+- `apollo-core/_sandbox/build-cpt-surface-harness.mjs:50` — /* apollo-loc contributes through the apollo_core_register_post_meta filter */
+  - *filter hook contribution, not direct WP call*
+- `apollo-admin/src/Frontend/ModeraData.php:7` — * section is wired to REST in follow-up passes.
+  - *English prose (follow-up / follows pattern), not social follow*
+- `apollo-admin/src/Frontend/ModeraData.php:74` — * Labels follow the canonical frontend relabel (apollo / MOD).
+  - *incidental English "follow" — not social mechanism*
+- `apollo-djs/templates/parts/dj-card/out-now.php:33` — <a class="btn btn-line pill" id="scFollow" href="<?php echo esc_url( $sc ); ?>" target="_blank" rel="noopener"><i cla…
+  - *no strict rule match — incidental*
+- `apollo-djs/templates/parts/dj-card/out-now.php:36` — <a class="btn btn-line pill" id="bcFollow" href="<?php echo esc_url( $bc ); ?>" target="_blank" rel="noopener"><i cla…
+  - *no strict rule match — incidental*
+- `apollo-djs/templates/parts/dj-card/out-now.php:39` — <a class="btn btn-line pill" id="spFollow" href="<?php echo esc_url( $sp ); ?>" target="_blank" rel="noopener"><i cla…
+  - *no strict rule match — incidental*
+- `apollo-core/src/Core/MetaRegistry.php:2280` — * - apollo_core_register_post_meta
+  - *filter hook contribution, not direct WP call*
+- `apollo-core/src/Core/MetaRegistry.php:2290` — $post_meta = apply_filters( 'apollo_core_register_post_meta', $this->post_meta );
+  - *filter hook contribution, not direct WP call*
+- `apollo-core/src/Core/MetaRegistry.php:2313` — $this->register_post_meta( $post_type, $key, $args );
+  - *apollo-core owns CPT/meta registration*
+- `apollo-core/src/Core/MetaRegistry.php:2343` — private function register_post_meta( string $post_type, string $key, array $args ): void {
+  - *apollo-core owns CPT/meta registration*
+- `apollo-core/src/Core/MetaRegistry.php:2370` — register_post_meta( $post_type, $key, $args );
+  - *apollo-core owns CPT/meta registration*
+- `apollo-core/src/Core/CPTRegistry.php:153` — * Note: WordPress forces `show_in_menu` to follow `show_ui` when the latter
+  - *SEO robots directive or WP API comment*
+- `apollo-core/src/Core/CPTRegistry.php:180` — register_post_type( $slug, $args );
+  - *apollo-core owns CPT/meta registration*
+- `apollo-djs/includes/functions.php:360` — * "known_gap" for the tracked follow-up.
+  - *English prose (follow-up / follows pattern), not social follow*
+- `apollo-djs/_sandbox/dj-harness.html:451` — <a class="dj-btn dj-btn-line dj-pill" id="scFollow" href="#" target="_blank" rel="noopener"><i class="ri-soundcloud-l…
+  - *no strict rule match — incidental*
+- `apollo-djs/_sandbox/dj-harness.html:452` — <a class="dj-btn dj-btn-line dj-pill" id="bcFollow" href="#" target="_blank" rel="noopener"><i class="ri-bandcamp-lin…
+  - *no strict rule match — incidental*
+- `apollo-djs/_sandbox/dj-harness.html:453` — <a class="dj-btn dj-btn-line dj-pill" id="spFollow" href="#" target="_blank" rel="noopener"><i class="ri-spotify-line…
+  - *no strict rule match — incidental*
+- `apollo-djs/_sandbox/dj-harness.html:603` — q('#scFollow').href = APOLLO_DJ.soundcloud;
+  - *no strict rule match — incidental*
+- `apollo-djs/_sandbox/dj-harness.html:604` — q('#bcFollow').href = APOLLO_DJ.bandcamp;
+  - *no strict rule match — incidental*
+- `apollo-djs/_sandbox/dj-harness.html:605` — q('#spFollow').href = APOLLO_DJ.spotify;
+  - *no strict rule match — incidental*
+- `apollo-djs/_sandbox/dj-harness.html:740` — this.classList.toggle('dj-is-active', followed);
+  - *incidental English "follow" — not social mechanism*
+- `apollo-djs/_sandbox/dj-harness.html:741` — this.querySelector('i').className = followed ? 'ri-heart-3-fill' : 'ri-heart-3-line';
+  - *incidental English "follow" — not social mechanism*
+- `apollo-djs/_sandbox/build-dj-cells.py:528` — # stop following a dark-mode swap or a brand change.
+  - *incidental English "follow" — not social mechanism*
+- `apollo-djs/_sandbox/dj-single-page.mockup.html:523` — <a class="btn btn-line pill" id="scFollow" href="#" target="_blank" rel="noopener"><i class="ri-soundcloud-line"></i>…
+  - *no strict rule match — incidental*
+- `apollo-djs/_sandbox/dj-single-page.mockup.html:524` — <a class="btn btn-line pill" id="bcFollow" href="#" target="_blank" rel="noopener"><i class="ri-bandcamp-line"></i> B…
+  - *no strict rule match — incidental*
+- `apollo-djs/_sandbox/dj-single-page.mockup.html:525` — <a class="btn btn-line pill" id="spFollow" href="#" target="_blank" rel="noopener"><i class="ri-spotify-line"></i> Sp…
+  - *no strict rule match — incidental*
+- `apollo-djs/_sandbox/dj-single-page.mockup.html:708` — q('#scFollow').href = APOLLO_DJ.soundcloud;
+  - *no strict rule match — incidental*
+- `apollo-djs/_sandbox/dj-single-page.mockup.html:709` — q('#bcFollow').href = APOLLO_DJ.bandcamp;
+  - *no strict rule match — incidental*
+- `apollo-djs/_sandbox/dj-single-page.mockup.html:710` — q('#spFollow').href = APOLLO_DJ.spotify;
+  - *no strict rule match — incidental*
+- `apollo-djs/_sandbox/dj-single-page.mockup.html:845` — this.classList.toggle('is-active', followed);
+  - *incidental English "follow" — not social mechanism*
+- `apollo-djs/_sandbox/dj-single-page.mockup.html:846` — this.querySelector('i').className = followed ? 'ri-heart-3-fill' : 'ri-heart-3-line';
+  - *incidental English "follow" — not social mechanism*
+- `apollo-djs/_sandbox/dj-mockup.html:523` — <a class="btn btn-line pill" id="scFollow" href="#" target="_blank" rel="noopener"><i class="ri-soundcloud-line"></i>…
+  - *no strict rule match — incidental*
+- `apollo-djs/_sandbox/dj-mockup.html:524` — <a class="btn btn-line pill" id="bcFollow" href="#" target="_blank" rel="noopener"><i class="ri-bandcamp-line"></i> B…
+  - *no strict rule match — incidental*
+- `apollo-djs/_sandbox/dj-mockup.html:525` — <a class="btn btn-line pill" id="spFollow" href="#" target="_blank" rel="noopener"><i class="ri-spotify-line"></i> Sp…
+  - *no strict rule match — incidental*
+- `apollo-djs/_sandbox/dj-mockup.html:708` — q('#scFollow').href = APOLLO_DJ.soundcloud;
+  - *no strict rule match — incidental*
+- `apollo-djs/_sandbox/dj-mockup.html:709` — q('#bcFollow').href = APOLLO_DJ.bandcamp;
+  - *no strict rule match — incidental*
+- `apollo-djs/_sandbox/dj-mockup.html:710` — q('#spFollow').href = APOLLO_DJ.spotify;
+  - *no strict rule match — incidental*
+- `apollo-djs/_sandbox/dj-mockup.html:845` — this.classList.toggle('is-active', followed);
+  - *incidental English "follow" — not social mechanism*
+- `apollo-djs/_sandbox/dj-mockup.html:846` — this.querySelector('i').className = followed ? 'ri-heart-3-fill' : 'ri-heart-3-line';
+  - *incidental English "follow" — not social mechanism*
+- `apollo-login/templates/register.php:92` — 'extra_head' => '<meta name="robots" content="noindex,nofollow">',
+  - *no strict rule match — incidental*
+- `apollo-login/templates/verify-email.php:37` — 'extra_head' => '<meta name="robots" content="noindex,nofollow">',
+  - *no strict rule match — incidental*
+- `apollo-login/templates/reset.php:50` — 'extra_head' => '<meta name="robots" content="noindex,nofollow">',
+  - *no strict rule match — incidental*
+- `apollo-djs/assets/js/dj-card-single.js:51` — setHref('#scFollow', APOLLO_DJ.soundcloud);
+  - *no strict rule match — incidental*
+- `apollo-djs/assets/js/dj-card-single.js:52` — setHref('#bcFollow', APOLLO_DJ.bandcamp);
+  - *no strict rule match — incidental*
+- `apollo-djs/assets/js/dj-card-single.js:53` — setHref('#spFollow', APOLLO_DJ.spotify);
+  - *no strict rule match — incidental*
+- `apollo-djs/assets/js/dj-card-single.js:209` — this.classList.toggle('is-active', followed);
+  - *incidental English "follow" — not social mechanism*
+- `apollo-djs/assets/js/dj-card-single.js:210` — this.querySelector('i').className = followed ? 'ri-heart-3-fill' : 'ri-heart-3-line';
+  - *incidental English "follow" — not social mechanism*
+- `apollo-login/templates/profile.php:56` — <meta name="robots" content="index,follow">
+  - *SEO robots directive*
+- `apollo-djs/styles/base/template-parts/single/sound.php:29` — <a class="dj-btn dj-btn-line dj-pill" id="scFollow" href="#" target="_blank" rel="noopener"><i class="ri-soundcloud-l…
+  - *no strict rule match — incidental*
+- `apollo-djs/styles/base/template-parts/single/sound.php:30` — <a class="dj-btn dj-btn-line dj-pill" id="bcFollow" href="#" target="_blank" rel="noopener"><i class="ri-bandcamp-lin…
+  - *no strict rule match — incidental*
+- `apollo-djs/styles/base/template-parts/single/sound.php:31` — <a class="dj-btn dj-btn-line dj-pill" id="spFollow" href="#" target="_blank" rel="noopener"><i class="ri-spotify-line…
+  - *no strict rule match — incidental*
+- `apollo-djs/styles/base/template-parts/single/scripts.php:85` — q('#scFollow').href = APOLLO_DJ.soundcloud;
+  - *no strict rule match — incidental*
+- `apollo-djs/styles/base/template-parts/single/scripts.php:86` — q('#bcFollow').href = APOLLO_DJ.bandcamp;
+  - *no strict rule match — incidental*
+- `apollo-djs/styles/base/template-parts/single/scripts.php:87` — q('#spFollow').href = APOLLO_DJ.spotify;
+  - *no strict rule match — incidental*
+- `apollo-djs/styles/base/template-parts/single/scripts.php:222` — this.classList.toggle('dj-is-active', followed);
+  - *incidental English "follow" — not social mechanism*
+- `apollo-djs/styles/base/template-parts/single/scripts.php:223` — this.querySelector('i').className = followed ? 'ri-heart-3-fill' : 'ri-heart-3-line';
+  - *incidental English "follow" — not social mechanism*
+- `apollo-login/assets/css/apollo-auth-uni.css:119` — /* Dark mode — flip the two base triplets; every derived token follows (engine parity) */
+  - *incidental English "follow" — not social mechanism*
+- `apollo-login/src/API/ActivityLogController.php:326` — * Follows the same lazy-creation pattern as JWTAuth::maybe_create_table().
+  - *incidental English "follow" — not social mechanism*
+- `apollo-login/src/Security/URLRewriter.php:158` — <meta name="robots" content="noindex,nofollow">
+  - *no strict rule match — incidental*
+- `apollo-login/src/Security/Firewall.php:453` — echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Forbidden</title><meta name="robots" content="noindex,n…
+  - *no strict rule match — incidental*
+- `apollo-social/includes/functions.php:143` — $table = $wpdb->prefix . 'apollo_follows';
+  - *no strict rule match — incidental*
+- `apollo-social/apollo-social.php:6` — * Description: Activity streams, social feed, auto-connections — adapted from BuddyPress activity patterns. No likes,…
+  - *plugin description affirming no-follow policy*
+- `apollo-membership/src/API/TriggersController.php:68` — 'apollo_dj_followed'           => 'Seguir DJ',
+  - *no strict rule match — incidental*
+- `apollo-social/src/Plugin.php:7` — * Party Model: auto-connections on registration. No likes. No followers hierarchy. No ego counters.
+  - *plugin description affirming no-follow policy*
+- `apollo-social/src/Plugin.php:13` — *   Tables: apollo_follows (core), apollo_blocks (core), apollo_activity (plugin)
+  - *no strict rule match — incidental*
+- `apollo-social/src/Plugin.php:55` — // Auto-connect new users — critical: no friends/followers system
+  - *incidental English "follow" — not social mechanism*
+- `apollo-social/src/Plugin.php:66` — // Provide is_following filter for cross-plugin queries (apollo-statistics, etc.).
+  - *no strict rule match — incidental*
+- `apollo-social/src/Plugin.php:67` — add_filter('apollo/social/is_following', array($this, 'filter_is_following'), 10, 3);
+  - *no strict rule match — incidental*
+- `apollo-social/src/Plugin.php:539` — * Filter: apollo/social/is_following
+  - *no strict rule match — incidental*
+- `apollo-social/src/Plugin.php:542` — * No selective follow/unfollow. No friends hierarchy. No ego counters.
+  - *comment affirming no-follow policy*
+- `apollo-social/src/Plugin.php:547` — * @param bool $is_following Default value (false).
+  - *no strict rule match — incidental*
+- `apollo-social/src/Plugin.php:552` — public function filter_is_following( bool $is_following, int $viewer_id, int $target_id ): bool {
+  - *no strict rule match — incidental*
+- `apollo-social/src/Plugin.php:634` — public function shortcode_follow_btn(array $atts): string
+  - *no strict rule match — incidental*
+- `apollo-social/src/Plugin.php:636` — // No follow buttons — all users are auto-connected
+  - *plugin description affirming no-follow policy*
+- `apollo-social/src/Activation.php:63` — * Auto-connect all existing users (no friends/followers — everyone is connected)
+  - *incidental English "follow" — not social mechanism*
+- `apollo-social/src/Activation.php:74` — // Insert mutual follows for all pairs (batch)
+  - *incidental English "follow" — not social mechanism*
+- `apollo-sheets/src/Plugin.php:48` — add_action('init', array($this, 'register_post_type'));
+  - *no strict rule match — incidental*
+- `apollo-hub/templates/hub-app.html:191` — .analytics-followers { padding: 24px 0; text-align: center; }
+  - *incidental English "follow" — not social mechanism*
+- `apollo-hub/templates/hub-app.html:192` — .analytics-followers h2 { margin-bottom: 4px; color: snow; font-size: 36px; font-weight: bold; text-shadow: 1px 1px 5…
+  - *incidental English "follow" — not social mechanism*
+- `apollo-hub/templates/hub-app.html:193` — .analytics-followers small { display: block; color: #549a76; font-size: 14px; letter-spacing: 2px; text-transform: up…
+  - *incidental English "follow" — not social mechanism*
+- `apollo-hub/templates/hub-app.html:231` — <div class="analytics-followers">
+  - *incidental English "follow" — not social mechanism*
+- `apollo-sheets/src/Bulk/Manager.php:129` — $this->columns->register_post_type_columns($post_type);
+  - *sheets column helper, not WP register_post_type*
+- `apollo-hub/templates/edit-hub.php:43` — <meta name="robots" content="noindex, nofollow">
+  - *no strict rule match — incidental*
+- `apollo-sheets/src/Bulk/ColumnRegistry.php:73` — public function register_post_type_columns( string $post_type ): void {
+  - *sheets column helper, not WP register_post_type*
+- `apollo-pane-engine/templates/page-casa.php:65` — <meta name="robots" content="noindex, nofollow">
+  - *no strict rule match — incidental*
+- `apollo-telegram/LICENSE:10` — furnished to do so, subject to the following conditions:
+  - *incidental English "follow" — not social mechanism*
+- `apollo-pane-engine/pane-engine-casa.json:183` — "/followers/*":       "apollo-social",
+  - *incidental English "follow" — not social mechanism*
+- `apollo-pane-engine/pane-engine-casa.json:184` — "/following/*":       "apollo-social",
+  - *incidental English "follow" — not social mechanism*
+- `apollo-telegram/current.md:12` — - Philosophy: Follow the provided ROADMAP COMPLETO. All users get open chats. Easy broadcast for admin notifications …
+  - *incidental English "follow" — not social mechanism*
+- `apollo-telegram/current.md:19` — [Full roadmap text from user query - summarized here for brevity in this log, but all steps followed]
+  - *incidental English "follow" — not social mechanism*
+- `apollo-telegram/current.md:178` — - Followed user roadmap exactly.
+  - *incidental English "follow" — not social mechanism*
+- `apollo-telegram/current.md:184` — - Follows Apollo naming after customization.
+  - *incidental English "follow" — not social mechanism*
+- `apollo-gestor/assets/js/gestor.kanban.js:62` — /* Ghost clone follows finger */
+  - *incidental English "follow" — not social mechanism*
+- `apollo-telegram/src/Telegram/ExtendedClasses/Request.php:269` — * This allows the following:
+  - *incidental English "follow" — not social mechanism*
+- `apollo-soundcloud/includes/resolve.php:88` — * Short link. We deliberately do NOT follow it server-side: that
+  - *English prose (follow-up / follows pattern), not social follow*
+- `apollo-users/src/Components/MatchmakingEngine.php:430` — * Follows the apollo-email Queue.php lock/batch/log pattern.
+  - *incidental English "follow" — not social mechanism*
+- `apollo-dashboard/templates/template-parts/dashboard/panel-events.php:84` — // ── Followed DJs ──
+  - *incidental English "follow" — not social mechanism*
+- `apollo-dashboard/templates/template-parts/dashboard/panel-events.php:86` — $has_follows   = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $follows_table ) ) === $follows_table;
+  - *SQL LIKE clause, not social/SEO follow*
+- `apollo-dashboard/templates/template-parts/dashboard/panel-events.php:88` — if ( $has_follows ) {
+  - *no strict rule match — incidental*
+- `apollo-seo/src/Metabox.php:81` — 'nofollow'       => '',
+  - *no strict rule match — incidental*
+- `apollo-seo/src/Metabox.php:157` — <input type="checkbox" name="<?php echo APOLLO_SEO_POST_META; ?>[nofollow]" value="1"
+  - *no strict rule match — incidental*
+- `apollo-seo/src/Metabox.php:158` — <?php checked( $meta['nofollow'] ); ?>>
+  - *no strict rule match — incidental*
+- `apollo-seo/src/Metabox.php:159` — <strong>nofollow</strong> — Não seguir links desta página
+  - *no strict rule match — incidental*
+- `apollo-seo/src/Metabox.php:255` — 'nofollow'       => ! empty( $raw['nofollow'] ) ? '1' : '',
+  - *no strict rule match — incidental*
+- `apollo-seo/src/Meta.php:270` — * touching meta directly, so it follows the same loc resolution the cards
+  - *English prose (follow-up / follows pattern), not social follow*
+- `apollo-seo/src/Meta.php:515` — 'robots'           => 'index, follow',
+  - *SEO robots directive*
+- `apollo-seo/src/Meta.php:932` — $directives = array( 'index', 'follow' );
+  - *incidental English "follow" — not social mechanism*
+- `apollo-seo/src/Meta.php:940` — if ( $id && Settings::get_post_meta( $id, 'nofollow' ) ) {
+  - *no strict rule match — incidental*
+- `apollo-seo/src/Meta.php:941` — $directives[1] = 'nofollow';
+  - *no strict rule match — incidental*
+- `apollo-seo/src/Meta.php:1055` — : 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1';
+  - *SEO robots directive*
+- `apollo-seo/src/Plugin.php:201` — header( 'X-Robots-Tag: noindex, follow', true );
+  - *SEO robots directive*
+- `apollo-seo/src/Plugin.php:514` — 'nofollow'       => ! empty( $meta['nofollow'] ),
+  - *no strict rule match — incidental*
+- `apollo-seo/src/Sitemap.php:112` — header( 'X-Robots-Tag: noindex, follow' );
+  - *SEO robots directive*
+- `apollo-seo/src/Sitemap.php:173` — header( 'X-Robots-Tag: noindex, follow' );
+  - *SEO robots directive*
+- `apollo-seo/src/Sitemap.php:234` — header( 'X-Robots-Tag: noindex, follow' );
+  - *SEO robots directive*
+- `apollo-seo/src/Sitemap.php:249` — header( 'X-Robots-Tag: noindex, follow' );
+  - *SEO robots directive*
+- `apollo-seo/src/Sitemap.php:292` — header( 'X-Robots-Tag: noindex, follow' );
+  - *SEO robots directive*
+- `apollo-adverts/templates/parts/safety/checks.php:37` — API returns a follower list and every integration that claims to is a
+  - *safety-gate doc about external Instagram followers*
+- `apollo-adverts/templates/parts/safety/check.php:9` — * follower fetches) and blocking the page on them would mean a member stares
+  - *safety-gate doc about external Instagram followers*
+- `apollo-adverts/templates/parts/safety/rule.php:8` — * a scammer follows back whoever follows him and the overlap fills itself.
+  - *incidental English "follow" — not social mechanism*
+- `apollo-adverts/_sandbox/safety-gate-harness.html:17` — WHY THIS PAGE DOES NOT FOLLOW THE USER'S THEME
+  - *English prose (follow-up / follows pattern), not social follow*
+- `apollo-adverts/includes/safety-gate.php:339` — * There is no Instagram endpoint that returns a follower list, so every
+  - *safety-gate doc about external Instagram followers*
+- `apollo-adverts/includes/cpt.php:19` — * Adapted from WPAdverts adverts_register_post_type
+  - *no strict rule match — incidental*
+- `apollo-adverts/includes/cpt.php:163` — * This plugin must not call register_post_meta() directly.
+  - *comment/doc or migrated to filter hook*
+- `apollo-adverts/includes/integrations.php:281` — ' target="_blank" rel="noopener noreferrer nofollow">' .
+  - *no strict rule match — incidental*
+- `apollo-adverts/assets/css/safety-gate.css:8` — WHY THIS PAGE DOES NOT FOLLOW THE USER'S THEME
+  - *English prose (follow-up / follows pattern), not social follow*
+- `apollo-adverts/src/Safety/NativeGraph.php:10` — * follower list, so every "mutual friends" integration is a session scraper:
+  - *safety-gate doc about external Instagram followers*
+- `apollo-adverts/src/Safety/NativeGraph.php:16` — * WHY apollo_activity AND THE SOCIAL FOLLOW TABLE ARE NOT USED
+  - *incidental English "follow" — not social mechanism*
+- `apollo-adverts/src/Safety/NativeGraph.php:18` — * "no friends/followers, everyone is connected". Intersecting that graph would
+  - *incidental English "follow" — not social mechanism*
+- `apollo-adverts/src/Safety/NativeGraph.php:27` — * way followers can. Two people who both have that edge with the same third
+  - *incidental English "follow" — not social mechanism*
+- `apollo-adverts/src/API/SafetyController.php:8` — * cannot: the overlap needs two paginated follower calls against a private
+  - *safety-gate doc about external Instagram followers*
+- `apollo-adverts/src/Plugin.php:267` — 'robots'      => 'noindex, nofollow',
+  - *no strict rule match — incidental*
+- `apollo-adverts/src/Plugin.php:276` — 'robots'      => 'noindex, nofollow',
+  - *no strict rule match — incidental*
