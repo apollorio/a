@@ -1,0 +1,253 @@
+# cross-plugin coupling
+#
+# Apollo DEV registry — GENERATED, do not hand-edit.
+# Source of truth is the code; regenerate with
+#   node D:/dev/_cos/verify/gen-dev-registry.js
+#
+# unguarded = no function_exists() earlier in the same file.
+providers:
+  apollo-core: 142
+  apollo-adverts: 133
+  apollo-membership: 110
+  apollo-events: 71
+  apollo-templates: 59
+  apollo-chat: 50
+  apollo-djs: 47
+  apollo-groups: 45
+  apollo-ui: 34
+  apollo-pane-engine: 25
+  mu-plugin: 19
+  apollo-loc: 16
+  apollo-telegram: 16
+  apollo-fav: 14
+  apollo-notif: 13
+  apollo-hub: 10
+  apollo-coauthor: 9
+  apollo-email: 9
+  apollo-wow: 8
+  apollo-remind: 7
+  apollo-soundcloud: 7
+  apollo-social: 6
+  apollo-statistics: 6
+  apollo-mod: 5
+  apollo-sheets: 4
+  apollo-dashboard: 3
+  apollo-elementor: 3
+  apollo-lux-panels: 3
+  apollo-admin: 2
+unguarded_calls:
+  - caller: apollo-admin
+    owner: apollo-core
+    fn: apollo_cdn_core_js_url
+    file: plugins/apollo-admin/templates/frontend/memberships.php
+    line: 48
+  - caller: apollo-admin
+    owner: apollo-core
+    fn: apollo_cdn_core_js_url
+    file: plugins/apollo-admin/templates/frontend/memberships.php
+    line: 48
+  - caller: apollo-admin
+    owner: apollo-core
+    fn: apollo_cdn_core_js_url
+    file: plugins/apollo-admin/templates/frontend/panel.php
+    line: 72
+  - caller: apollo-admin
+    owner: apollo-core
+    fn: apollo_cdn_core_js_url
+    file: plugins/apollo-admin/templates/frontend/panel.php
+    line: 72
+  - caller: apollo-admin
+    owner: apollo-core
+    fn: apollo_cdn_core_js_url
+    file: plugins/apollo-admin/templates/frontend/pending.php
+    line: 74
+  - caller: apollo-admin
+    owner: apollo-core
+    fn: apollo_cdn_core_js_url
+    file: plugins/apollo-admin/templates/frontend/pending.php
+    line: 74
+  - caller: apollo-admin
+    owner: apollo-core
+    fn: apollo_render_blank_canvas_open
+    file: plugins/apollo-admin/templates/modera/parts/head.php
+    line: 37
+  - caller: apollo-admin
+    owner: apollo-core
+    fn: apollo_render_document_close
+    file: plugins/apollo-admin/templates/modera/parts/scripts.php
+    line: 43
+  - caller: apollo-adverts
+    owner: apollo-core
+    fn: apollo_safety_url
+    file: plugins/apollo-adverts/includes/integrations.php
+    line: 296
+  - caller: apollo-adverts
+    owner: apollo-core
+    fn: apollo_safety_url
+    file: plugins/apollo-adverts/includes/safety-gate.php
+    line: 217
+  - caller: apollo-adverts
+    owner: apollo-templates
+    fn: apollo_plus_close
+    file: plugins/apollo-adverts/src/Plugin.php
+    line: 349
+  - caller: apollo-adverts
+    owner: apollo-templates
+    fn: apollo_plus_close
+    file: plugins/apollo-adverts/templates/archive-classified.php
+    line: 79
+  - caller: apollo-adverts
+    owner: apollo-templates
+    fn: apollo_render_navbar
+    file: plugins/apollo-adverts/templates/marketplace/classifieds-page.php
+    line: 157
+  - caller: apollo-adverts
+    owner: apollo-templates
+    fn: apollo_plus_close
+    file: plugins/apollo-adverts/templates/my-listings.php
+    line: 50
+  - caller: apollo-adverts
+    owner: apollo-core
+    fn: apollo_safety_render
+    file: plugins/apollo-adverts/templates/safety/gate.php
+    line: 76
+  - caller: apollo-chat
+    owner: apollo-membership
+    fn: apollo_get_membership_badge_html
+    file: plugins/apollo-chat/includes/functions.php
+    line: 1720
+  - caller: apollo-djs
+    owner: apollo-templates
+    fn: apollo_render_navbar
+    file: plugins/apollo-djs/styles/base/_legacy/single-dj.monolith.php
+    line: 158
+  - caller: apollo-docs
+    owner: apollo-templates
+    fn: apollo_render_navbar
+    file: plugins/apollo-docs/templates/frontend-documents.php
+    line: 74
+  - caller: apollo-events
+    owner: apollo-templates
+    fn: apollo_render_navbar
+    file: plugins/apollo-events/styles/apollo-v2/single-dj.php
+    line: 403
+  - caller: apollo-events
+    owner: apollo-templates
+    fn: apollo_render_navbar
+    file: plugins/apollo-events/styles/apollo-v2/single-loc.php
+    line: 477
+  - caller: apollo-events
+    owner: apollo-templates
+    fn: apollo_plus_close
+    file: plugins/apollo-events/styles/base/archive-event.php
+    line: 336
+  - caller: apollo-events
+    owner: apollo-templates
+    fn: apollo_plus_open
+    file: plugins/apollo-events/styles/base/create-event.php
+    line: 360
+  - caller: apollo-events
+    owner: apollo-templates
+    fn: apollo_plus_close
+    file: plugins/apollo-events/styles/base/create-event.php
+    line: 398
+  - caller: apollo-events
+    owner: apollo-templates
+    fn: apollo_plus_open
+    file: plugins/apollo-events/styles/base/dashboard-event.php
+    line: 105
+  - caller: apollo-events
+    owner: apollo-templates
+    fn: apollo_plus_close
+    file: plugins/apollo-events/styles/base/dashboard-event.php
+    line: 143
+  - caller: apollo-events
+    owner: apollo-templates
+    fn: apollo_plus_close
+    file: plugins/apollo-events/styles/base/dashboard-meus.php
+    line: 55
+  - caller: apollo-events
+    owner: apollo-templates
+    fn: apollo_listing_header_months
+    file: plugins/apollo-events/styles/base/template-parts/archive/portal/header.php
+    line: 83
+  - caller: apollo-events
+    owner: apollo-templates
+    fn: apollo_plus_close
+    file: plugins/apollo-events/styles/base/url-import.php
+    line: 96
+  - caller: apollo-groups
+    owner: apollo-templates
+    fn: apollo_plus_close
+    file: plugins/apollo-groups/templates/comunas-gestao.php
+    line: 58
+  - caller: apollo-groups
+    owner: apollo-templates
+    fn: apollo_plus_close
+    file: plugins/apollo-groups/templates/comunas.php
+    line: 37
+  - caller: apollo-groups
+    owner: apollo-templates
+    fn: apollo_plus_close
+    file: plugins/apollo-groups/templates/create-group.php
+    line: 36
+  - caller: apollo-groups
+    owner: apollo-templates
+    fn: apollo_plus_close
+    file: plugins/apollo-groups/templates/nucleos-meus.php
+    line: 69
+  - caller: apollo-hub
+    owner: apollo-templates
+    fn: apollo_plus_close
+    file: plugins/apollo-hub/templates/directory.php
+    line: 72
+  - caller: apollo-login
+    owner: apollo-core
+    fn: apollo_membership_assign
+    file: plugins/apollo-login/src/Auth/RegisterHandler.php
+    line: 496
+  - caller: apollo-login
+    owner: apollo-core
+    fn: apollo_membership_assign
+    file: plugins/apollo-login/src/Auth/RegisterHandler.php
+    line: 928
+  - caller: apollo-maps
+    owner: apollo-core
+    fn: apollo_cdn_core_js_url
+    file: plugins/apollo-maps/src/Plugin.php
+    line: 79
+  - caller: apollo-membership
+    owner: apollo-core
+    fn: apollo_cdn_core_js_url
+    file: plugins/apollo-membership/src/Plugin.php
+    line: 197
+  - caller: apollo-notif
+    owner: apollo-templates
+    fn: apollo_render_navbar
+    file: plugins/apollo-notif/templates/notifications.php
+    line: 483
+  - caller: apollo-users
+    owner: apollo-core
+    fn: apollo_get_membership_badge
+    file: plugins/apollo-users/includes/functions.php
+    line: 174
+  - caller: apollo-users
+    owner: apollo-core
+    fn: apollo_get_client_ip
+    file: plugins/apollo-users/src/API/UsersController.php
+    line: 710
+  - caller: apollo-users
+    owner: apollo-membership
+    fn: apollo_membership_get_badge_info
+    file: plugins/apollo-users/src/Components/DepoimentoHandler.php
+    line: 96
+  - caller: apollo-users
+    owner: apollo-templates
+    fn: apollo_render_navbar
+    file: plugins/apollo-users/templates/edit-profile.php
+    line: 1207
+  - caller: apollo-users
+    owner: apollo-templates
+    fn: apollo_render_navbar
+    file: plugins/apollo-users/templates/single-profile.php
+    line: 2726

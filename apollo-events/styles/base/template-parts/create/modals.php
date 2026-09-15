@@ -105,7 +105,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
                     <input type="url" id="djNewKit" class="apollo-input" placeholder="https://drive.google.com/…">
                 </div>
 
-                <fieldset class="dj-track-seed" style="margin:8px 0 0;padding:14px 0 0;border:0;border-top:1px solid rgba(var(--rgb-diff),.08);">
+                <fieldset class="dj-track-seed" style="margin:8px 0 0;padding:14px 0 0;border:0;">
                     <legend class="field-label" style="padding:0;margin-bottom:10px;">Out now!, 1ª faixa (opcional)</legend>
                     <div class="field">
                         <label class="field-label">Nome da faixa</label>

@@ -29,21 +29,50 @@
 }
 
 /* DS components size via calc(N * var(--fsx)); core.js injects --fs-u/--fs-r but not --fsx */
-body.ax-body,
-#apollo-home {
-  --fsx: var(--fs-u, var(--fs-r, 1));
+#apollo-home img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  border: none;
+  box-shadow: none;
+}
+#apollo-home .a-eve-media img,
+#apollo-home .nh-track-artwork img,
+#apollo-home .nh-crash-img,
+#apollo-home .nh-mq-image,
+#apollo-home .nh-mq-blur,
+#apollo-home .nh-track-blur {
+  width: 100%;
 }
 
 /* ─── BASE (respect core.js html/body/* — additive only) ─────────── */
+html, body.ax-body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
 #apollo-home {
+  --fsx: var(--fs-u, var(--fs-r, 1));
   background: var(--surface, #fff);
   color: var(--txt-body, var(--black-1));
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+  display: block;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 
 /* ─── LAYOUT ─────────────────────────────────────────────────────── */
 .container { max-width: 1200px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 48px); }
 .section { padding: var(--nh-section-pad) 0; }
+/* Editorial breath — not identical padding on every block */
+#tracks.section { padding-top: clamp(56px, 8vw, 96px); }
+#events.section { padding-top: clamp(64px, 9vw, 108px); }
+#resell.section { padding-top: clamp(56px, 8vw, 100px); }
+#crash.section { padding-top: clamp(48px, 7vw, 88px); }
+#map.section { padding-top: clamp(56px, 8vw, 96px); padding-bottom: clamp(48px, 7vw, 88px); }
 .return-back {
   font-family: var(--ff-mono);
   font-size: 0.72rem;
@@ -820,9 +849,37 @@ a.nh-marquee-item:focus-visible {
 .nh-section-head .grouped-left { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
 .nh-section-head a, .nh-section-head .link-all {
   font-family: var(--ff-mono); font-size: 0.7rem;
-  color: var(--muted); transition: color .25s; letter-spacing: 0.02em;
+  color: var(--muted); transition: color .2s var(--nh-ease-out, ease); letter-spacing: 0.02em;
 }
-@media (hover: hover) { .nh-section-head a:hover { color: var(--primary); } }
+@media (hover: hover) { .nh-section-head a:hover { color: var(--txt-heading, var(--black-1)); } }
+
+/* Discreet Linear-style tools row: title left, controls right */
+.nh-section-head--toolbar {
+  align-items: center;
+  gap: 16px;
+}
+.nh-section-tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: auto;
+  flex-shrink: 0;
+  transform: translateY(1px); /* optical align with H2 baseline */
+}
+.nh-section-more {
+  font-family: var(--ff-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color .18s ease, opacity .18s ease;
+  opacity: .72;
+}
+@media (hover: hover) {
+  .nh-section-more:hover { color: var(--txt-heading, var(--black-1)); opacity: 1; }
+}
 
 .nh-month-dropdown {
   display: flex;
@@ -833,36 +890,38 @@ a.nh-marquee-item:focus-visible {
 .nh-month-trigger {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  height: fit-content;
+  gap: 6px;
+  height: 32px;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  padding: 4px 12px;
+  padding: 0 2px;
   cursor: pointer;
-  font-family: var(--ff-main);
-  font-size: clamp(1.6rem, 4.5vw, 3rem);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  color: var(--white-3);
-  -webkit-text-stroke: 1px var(--white-15);
-  transition: all .3s;
+  font-family: var(--ff-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  -webkit-text-stroke: 0;
+  transition: color .18s ease, opacity .18s ease;
+  opacity: .85;
 }
 @media (hover: hover) {
   .nh-month-trigger:hover {
-    color: var(--text);
-    -webkit-text-stroke-color: var(--text);
+    color: var(--txt-heading, var(--black-1));
+    opacity: 1;
   }
   .nh-month-trigger:hover i,
-  .nh-month-trigger:hover svg { color: var(--text); }
+  .nh-month-trigger:hover svg { color: var(--txt-heading, var(--black-1)); }
 }
 .nh-month-trigger i,
 .nh-month-trigger svg {
-  font-size: calc(var(--fs-u, 1) * 12px);
-  color: var(--white-15);
+  font-size: calc(var(--fs-r, 1) * 12px);
+  color: var(--muted);
   width: 12px; height: 12px;
   flex-shrink: 0;
-  transition: color .3s;
+  transition: color .18s ease;
 }
 /* ── MONTH ROW: Mobile-first = absolute drop-UP, glass morphism ── */
 .nh-month-row {
@@ -881,24 +940,25 @@ a.nh-marquee-item:focus-visible {
   margin: 0;
   min-width: 170px;
   height: fit-content;
-  /* glass morphism — matches .nh-navbar.scrolled */
-  background: rgba(var(--rgb-t), 0.04) !important;
+  /* glass — hairline surface, no heavy frost */
+  background: rgba(var(--rgb-theme), 0.92) !important;
   isolation: isolate;
   /* F-03: `transform: translateZ(0)` used to sit here and was silently killed by
      the `transform: translateY(6px)` further down this same rule — last
      declaration wins. will-change already does the compositor promotion. */
-  will-change: transform, opacity, backdrop-filter;
+  will-change: transform, opacity;
   
-  -webkit-backdrop-filter: blur(20px) saturate(200%) !important;
-  backdrop-filter: blur(20px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
+  backdrop-filter: blur(12px) saturate(140%) !important;
   
-    border: 1px solid rgba(var(--rgb-t), 0.10) !important;
+  border: 1px solid rgba(var(--rgb-diff), 0.08) !important;
+  box-shadow: 0 8px 28px rgba(var(--rgb-diff), 0.08);
   border-radius: var(--r-sm);
   /* animate: hidden state */
   opacity: 0;
   pointer-events: none;
   transform: translateY(6px);   /* mobile: slight down entry → slides up to position */
-  transition: opacity .35s var(--ease-out), transform .35s var(--ease-out);
+  transition: opacity .2s var(--ease-out), transform .2s var(--ease-out);
   /* F-03: `margin-top: 10px` was here, fighting the `bottom: calc(100% + 10px)`
      anchor above it. The anchor owns the offset; the margin was double-counting
      it in the opposite direction. */
@@ -908,44 +968,29 @@ a.nh-marquee-item:focus-visible {
   pointer-events: auto;
   transform: translateY(0);
 }
-/* Desktop 600px+: switch to inline horizontal row */
-@media (min-width: 600px) {
-  .nh-month-row {
-    position: static;
-    flex-direction: row;
-    align-items: center;
-    gap: 15px;
-    padding: 0;
-    min-width: auto;
-    height: fit-content;
-    max-height: 25px;
-    background: transparent;
-    backdrop-filter: blur(20px) saturate(200%) !important;
-    -webkit-backdrop-filter: blur(20px) saturate(200%) !important;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-    transform: translateX(10px);  /* side-slide on desktop */
-  }
-  .nh-month-row.is-visible { transform: translateX(0); }
-}
-.nh-month-row li a.nh-portal-link::before { display: none; }
-@media (min-width: 600px) {
-  .nh-month-row li a.nh-portal-link::before { display: block; }
-}
+/* Keep month menu as a compact drop-up at every width — toolbar stays discreet */
+/* Month menu — quiet list at every width (toolbar owns the trigger) */
 .nh-month-row li a {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
   color: var(--muted);
-  font-family: var(--ff-main);
-  font-size: 1.313rem;
+  font-family: var(--ff-mono);
+  font-size: 0.78rem;
   font-weight: 500;
+  letter-spacing: .02em;
   text-decoration: none;
-  text-transform: uppercase;
-  transition: color .25s;
+  text-transform: none;
+  transition: color .18s ease;
   cursor: pointer;
   white-space: nowrap;
+}
+.nh-month-row li a.active {
+  color: var(--txt-heading, var(--black-1));
+  font-weight: 600;
+}
+@media (hover: hover) {
+  .nh-month-row li a:hover { color: var(--txt-heading, var(--black-1)); }
 }
 /* Month dropdown: divider between month items and portal CTA links */
 .nh-month-row li:has(a.nh-portal-link) {
@@ -961,42 +1006,28 @@ a.nh-marquee-item:focus-visible {
   height: 1px;
   background: linear-gradient(to right, transparent, rgba(var(--rgb-t),0.18) 25%, rgba(var(--rgb-t),0.18) 75%, transparent);
 }
-/* Desktop: inline row — hide the divider (already has ::before separator) */
-@media (min-width: 600px) {
-  .nh-month-row li:has(a.nh-portal-link)::before { display: none; }
-  .nh-month-row li:has(a.nh-portal-link) { margin-top: 0; padding-top: 0; width: auto; }
-}
-.nh-month-row li a.active { color: var(--primary); }
-.nh-month-row li a:hover { color: var(--text); }
 
-/* 2. Base styles for the portal links */
+/* Portal CTAs inside the month menu — same quiet mono as months */
 .nh-month-row li a.nh-portal-link {
-  color: rgba(var(--rgb-diff),.8) !important;
-  font-size: 0.9rem;
-  font-family: var(--ff-main) !important;
+  color: var(--muted) !important;
+  font-size: 0.72rem;
+  font-family: var(--ff-mono) !important;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 6px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
 }
-
-/* 3. Fixed Hover State (Standard CSS, not nested) */
-.nh-month-row li a.nh-portal-link:hover {
-  color: rgba(168, 43, 3, .8) !important;
+@media (hover: hover) {
+  .nh-month-row li a.nh-portal-link:hover {
+    color: var(--txt-heading, var(--black-1)) !important;
+  }
 }
-
-/* 4. Fixed Icon Margin (What your &:first-child was trying to do) */
 .nh-month-row li a.nh-portal-link i:first-child {
-  margin-right: 9px !important;
+  margin-right: 0;
+  font-size: calc(var(--fs-r, 1) * 12px);
 }
-
-/* 5. Your existing ::before styling */
-.nh-month-row li a.nh-portal-link::before {
-  content: '';
-  width: 1px;
-  height: 14px;
-  background: var(--border);
-  margin-right: 10px;
-}
+.nh-month-row li a.nh-portal-link::before { display: none; }
 
 /* ═══════════════ BADGES ═══════════════ */
 .nh-badge {
@@ -1052,9 +1083,9 @@ a.nh-marquee-item:focus-visible {
 
 .nh-track-card {
   display: block;
-  flex: 0 0 110px;
-  width: 110px;
-  height: 175px;
+  flex: 0 0 120px;
+  width: 120px;
+  height: auto;
   scroll-snap-align: start;
   background: var(--card);
   border: 1px solid var(--border-ultra);
@@ -1065,10 +1096,18 @@ a.nh-marquee-item:focus-visible {
   transition: transform .4s var(--ease-out), box-shadow .4s var(--ease-out);
 }
 /* Explore card in track grid — sizing only; color from shared .nh-explore-card block */
-.nh-tracks-grid .nh-explore-card {
-  flex: 0 0 110px; width: 110px;
-  height: 175px;
+.nh-tracks-grid .nh-explore-card,
+.nh-tracks-rail .nh-explore-card {
+  flex: 0 0 120px; width: 120px;
+  height: auto;
   border-radius: var(--r-sm) !important;
+}
+/* /casa rail — keep Out Now tiles precise (override apollo-card-track 196px) */
+#tracks .nh-tracks-rail > .nh-track-card,
+#tracks .nh-tracks-rail > .nh-explore-card {
+  flex: 0 0 120px;
+  width: 120px;
+  height: auto;
 }
 @media (hover: hover) { .nh-track-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); } }
 
@@ -1137,24 +1176,63 @@ a.nh-marquee-item:focus-visible {
   position: absolute; inset: 0; z-index: 4;
   background: rgba(var(--rgb-diff),0.46);
   display: flex; align-items: center; justify-content: center;
-  opacity: 0; transition: opacity .3s var(--ease-out); backdrop-filter: blur(3px);
+  opacity: 0; transition: opacity .3s var(--ease-out);
+  /* backdrop-filter moved to the visible states below (2026-09-08).
+     Measured on the live page: 9 of these are rendered at opacity:0 on a
+     first paint of /casa. A backdrop-filter still creates a compositing
+     layer and still re-samples its backdrop at opacity 0 — the browser has
+     no way to know the result is invisible. Nine full re-samples per frame
+     were being paid for nothing. The blur now appears with the overlay. */
+}
+.nh-track-card:hover .nh-track-play-overlay,
+.nh-track-card.is-guest .nh-track-play-overlay,
+.nh-track-card.is-unlocked .nh-track-play-overlay {
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
 }
 @media (hover: hover) { .nh-track-card:hover .nh-track-play-overlay { opacity: 1; } }
-.nh-track-card.is-guest .nh-track-play-overlay { opacity: .55; }
-@media (hover: hover) { .nh-track-card.is-guest:hover .nh-track-play-overlay { opacity: 1; } }
+.nh-track-card.is-guest .nh-track-play-overlay,
+.nh-track-card.is-unlocked .nh-track-play-overlay { opacity: .55; }
+@media (hover: hover) {
+  .nh-track-card.is-guest:hover .nh-track-play-overlay,
+  .nh-track-card.is-unlocked:hover .nh-track-play-overlay { opacity: 1; }
+}
 
 .nh-track-play-btn {
-  width: 40px; height: 40px; border-radius: 50%; background: #fff; color: var(--text);
+  width: 34px; height: 34px; border-radius: 50%; background: #fff; color: var(--text);
   display: flex; align-items: center; justify-content: center; padding: 0;
-  transform: scale(0.75); transition: transform .3s var(--ease-spring); font-size: calc(var(--fs-u, 1) * 17px);
+  transform: scale(0.75); transition: transform .3s var(--ease-spring); font-size: calc(var(--fs-u, 1) * 15px);
 }
 @media (hover: hover) { .nh-track-card:hover .nh-track-play-btn { transform: scale(1); } }
-.nh-track-card.is-guest .nh-track-play-btn { transform: scale(0.9); cursor: pointer; }
+.nh-track-card.is-guest .nh-track-play-btn,
+.nh-track-card.is-unlocked .nh-track-play-btn { transform: scale(0.9); cursor: pointer; }
 
-.nh-track-info { padding: 8px 10px 10px; min-width: 0; overflow: hidden; }
-.nh-track-info h4 { font-size: 0.9rem; margin: 0 0 2px; margin-block: 0 2px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: none; line-height: 1.3; }
-.nh-track-artist { font-size: 0.76rem; color: var(--muted); font-family: var(--ff-mono); margin: 0 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
-.nh-track-meta { display: flex; gap: 8px; font-size: 0.68rem; color: var(--muted-light); font-family: var(--ff-mono); white-space: nowrap; overflow: hidden; }
+.nh-track-loader{
+  position: absolute; width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.22); border-top-color: #fff;
+  opacity: 0; pointer-events: none; z-index: 6;
+}
+.nh-track-card.is-loading .nh-track-play-overlay { opacity: 1; }
+.nh-track-card.is-loading .nh-track-play-btn { opacity: 0; transform: scale(.6); }
+.nh-track-card.is-loading .nh-track-loader { opacity: 1; animation: nh-track-spin .7s linear infinite; }
+.nh-track-card.is-playing .nh-track-play-overlay { opacity: 1; }
+@keyframes nh-track-spin { to { transform: rotate(360deg); } }
+
+#tracks .nh-track-sc-transport,
+#tracks .nh-track-sc-transport.is-fallback,
+#tracks .apsc.is-fallback .apsc-transport,
+#tracks .apsc-transport {
+  position: absolute !important; width: 1px !important; height: 1px !important;
+  overflow: hidden !important; clip: rect(0,0,0,0) !important;
+  opacity: 0 !important; pointer-events: none !important;
+  display: block !important; margin: 0 !important;
+}
+
+.nh-track-info { padding: 6px 8px 8px; min-width: 0; overflow: hidden; }
+.nh-track-card.is-expanded .nh-track-info { overflow: visible; }
+.nh-track-info h4 { font-size: 0.78rem; margin: 0 0 2px; margin-block: 0 2px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: none; line-height: 1.25; }
+.nh-track-artist { font-size: 0.66rem; color: var(--muted); font-family: var(--ff-mono); margin: 0 0 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.25; }
+.nh-track-meta { display: flex; gap: 6px; font-size: 0.58rem; color: var(--muted-light); font-family: var(--ff-mono); white-space: nowrap; overflow: hidden; }
 .nh-track-meta span { display: inline-flex; align-items: center; gap: 3px; flex-shrink: 0; }
 .nh-track-meta i { font-size: calc(var(--fs-u, 1) * 10px); }
 .nh-track-card.is-guest { cursor: pointer; }
@@ -1164,6 +1242,20 @@ a.nh-marquee-item:focus-visible {
   letter-spacing: .12em;
   font-weight: 600;
   user-select: none;
+}
+/* Guest labels stay readable (content-first); play stays locked */
+.nh-track-guest-lbl,
+.nh-mq-guest-lbl {
+  color: var(--muted) !important;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  opacity: .78;
+  user-select: none;
+}
+.nh-track-info h4.nh-track-guest-lbl {
+  color: var(--txt-heading, var(--black-1)) !important;
+  opacity: .55;
+  font-weight: 600;
 }
 
 @media (max-width: 500px) {
@@ -1184,10 +1276,15 @@ a.nh-marquee-item:focus-visible {
 /* ── TYPOGRAPHY SCALE: Desktop 1024px+ ── */
 @media (min-width: 1024px) {
   .nh-track-card,
-  .nh-tracks-grid .nh-explore-card { flex: 0 0 130px; width: 130px; height: 200px; }
-  .nh-track-info h4   { font-size: 1.08rem; }
-  .nh-track-artist    { font-size: 0.88rem; }
-  .nh-track-meta      { font-size: 0.76rem; }
+  .nh-tracks-grid .nh-explore-card,
+  .nh-tracks-rail .nh-explore-card,
+  #tracks .nh-tracks-rail > .nh-track-card,
+  #tracks .nh-tracks-rail > .nh-explore-card {
+    flex: 0 0 128px; width: 128px; height: auto;
+  }
+  .nh-track-info h4   { font-size: 0.82rem; }
+  .nh-track-artist    { font-size: 0.7rem; }
+  .nh-track-meta      { font-size: 0.62rem; }
   .a-eve-date-day     { font-size: 2.6rem; }
   .a-eve-date-month   { font-size: 1.5rem; }
   .a-eve-date         { width: 78px; height: 70px; }
@@ -1203,10 +1300,15 @@ a.nh-marquee-item:focus-visible {
 /* ── TYPOGRAPHY SCALE: Large Desktop 1400px+ ── */
 @media (min-width: 1400px) {
   .nh-track-card,
-  .nh-tracks-grid .nh-explore-card { flex: 0 0 148px; width: 148px; height: 224px; }
-  .nh-track-info h4   { font-size: 1.12rem; }
-  .nh-track-artist    { font-size: 0.92rem; }
-  .nh-track-meta      { font-size: 0.78rem; }
+  .nh-tracks-grid .nh-explore-card,
+  .nh-tracks-rail .nh-explore-card,
+  #tracks .nh-tracks-rail > .nh-track-card,
+  #tracks .nh-tracks-rail > .nh-explore-card {
+    flex: 0 0 132px; width: 132px; height: auto;
+  }
+  .nh-track-info h4   { font-size: 0.84rem; }
+  .nh-track-artist    { font-size: 0.7rem; }
+  .nh-track-meta      { font-size: 0.62rem; }
   .a-eve-date-day     { font-size: 3rem; }
   .a-eve-date-month   { font-size: 1.7rem; }
   .a-eve-date         { width: 88px; height: 78px; }
@@ -1498,7 +1600,7 @@ a.nh-marquee-item:focus-visible {
 
 
 /* ═══════════════ CLASSIFIEDS ═══════════════ */
-.nh-resale-intro { font-family: var(--ff-mono); font-size: 0.95rem; color: var(--muted); margin-bottom: 28px; line-height: 1.7; }
+.nh-resale-intro { font-family: var(--ff-mono); font-size: 0.78rem; color: var(--muted); margin-bottom: 22px; line-height: 1.55; max-width: 42rem; }
 .nh-resale-list { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
 .nh-resale-row {
   display: grid; grid-template-columns: 60px 1fr auto;
@@ -1520,9 +1622,9 @@ a.nh-marquee-item:focus-visible {
 .nh-resale-seller-hidden .nh-seller-text { display: none; }
 .nh-resale-price-wrap { display: flex; gap: 9px; align-items: center; }
 .nh-resale-price { font-family: var(--ff-mono); font-size: 1.4rem !important; font-weight: 900 !important; white-space: nowrap; letter-spacing: -0.02em; }
-/* Disclaimer — luxury side-accent card */
+/* Disclaimer — quiet one-liner (diamond cut: no essay card) */
 .nh-disclaimer {
-  margin-top: 36px;
+  margin-top: 28px;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--r);
@@ -1546,7 +1648,7 @@ a.nh-marquee-item:focus-visible {
   color: var(--primary);
   opacity: 0.75;
   line-height: 1;
-  align-self: center;              /* vertically center next to h4 */
+  align-self: center;
 }
 .nh-disclaimer h4 {
   font-size: clamp(1.2rem, 3dvw, 1.6rem); font-weight: 700;
@@ -1554,11 +1656,47 @@ a.nh-marquee-item:focus-visible {
   color: var(--text);
   margin: 0 !important; margin-block: 0 !important;
   padding-block: 0 !important;
-  align-self: center;              /* vertically center with icon */
+  align-self: center;
 }
 .nh-disclaimer p {
   font-family: var(--ff-mono); font-size: 0.8rem; font-weight: 300;
   color: var(--muted); line-height: 1.75; margin-block: 0;
+}
+.nh-disclaimer--quiet {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 22px;
+  padding: 12px 14px;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid color-mix(in srgb, var(--border, rgba(10,10,10,.08)) 80%, transparent);
+  border-radius: 0;
+  overflow: visible;
+}
+.nh-disclaimer--quiet i {
+  font-size: calc(var(--fs-r, 1) * 16px);
+  color: var(--muted);
+  opacity: .7;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.nh-disclaimer--quiet p {
+  font-size: 0.72rem;
+  line-height: 1.55;
+  color: var(--muted);
+  margin: 0;
+}
+.nh-empty-state--quiet {
+  padding: 28px 16px !important;
+  min-height: 0;
+}
+.nh-empty-state--quiet i { display: none; }
+.nh-empty-state--quiet p {
+  font-size: 0.85rem;
+  font-weight: 500;
+  opacity: .55;
+  margin: 0;
 }
 @media (max-width: 500px) {
   .nh-resale-row { grid-template-columns: 1fr auto; padding: 13px 16px; }
@@ -1826,7 +1964,10 @@ section #map { padding-bottom: 0 !important; }
 /* ═══════════════ TEXT FOOTER ═══════════════ */
 .nh-footer {
   position: relative;    /* stacking context for .aprio-ft-v2 absolute */
-  height: 400px;         /* matches SVG height; clips overflow cleanly */
+  /* Soft height: content-driven, not a fixed 400px empty band. SVG still
+     fills via .aprio-ft-v2 { inset: 0 } and peeks with its own bottom offset. */
+  min-height: 280px;
+  height: auto;
   overflow: hidden;
   background: transparent;
   margin: 0 !important;  /* footer must touch bottom = 0px, no trailing gap */
@@ -1836,7 +1977,8 @@ section #map { padding-bottom: 0 !important; }
   position: relative;
   z-index: 1;
   padding-top: 52px;
-  padding-bottom: 24px;
+  /* Room for absolute .nh-footer-bottom so copy never collides with links */
+  padding-bottom: 56px;
 }
 /* APOLLO::RIO wordmark — visual handled by .aprio-ft-v2 SVG; text is small accessible label */
 .nh-footer-wordmark {
@@ -1870,11 +2012,7 @@ section #map { padding-bottom: 0 !important; }
 
 
 /* ═══════════════ MAIN CONTENT ═══════════════ */
-#apollo-home {
-  display: block;
-  margin-bottom: 0 !important;
-  padding-bottom: 0 !important;
-}
+/* #apollo-home base lives with --fsx / overflow-x near the top of this file. */
 
 /* ═══════════════ GSAP ai UTILITY ═══════════════ */
 /*
@@ -1897,6 +2035,15 @@ section #map { padding-bottom: 0 !important; }
   opacity: 1;
   transform: none;
 }
+/* Hero copy is the first paint. Never hide it waiting for GSAP / Lenis /
+   SplitText — that is the FOUC/collapse visitors saw while core.js held
+   the rest of the cascade. Enhance in place; don't gate on JS. */
+#apollo-home .nh-hero .ai,
+#apollo-home .nh-hero .nh-reveal {
+  opacity: 1;
+  transform: none;
+  animation: none;
+}
 /* GSAP ScrollTrigger owns these — never let .ai / .reveal-up transitions fight scrub */
 #apollo-home .nh-st-drive {
   transition: none !important;
@@ -1905,6 +2052,11 @@ section #map { padding-bottom: 0 !important; }
 #apollo-home .nh-st-drive.is-visible {
   opacity: 1;
   transform: none;
+}
+/* ST-driven nodes must never get the 3s CSS backstop (it fights reverse) */
+#apollo-home .nh-st-drive.ai:not(.is-visible),
+#apollo-home .ai.nh-st-drive:not(.is-visible) {
+  animation: none !important;
 }
 /* CSS animation fallback if JS is slow */
 @keyframes nh-ai-reveal {
@@ -1918,9 +2070,11 @@ section #map { padding-bottom: 0 !important; }
   animation: nh-ai-reveal 0.6s var(--nh-ease-out) forwards;
   animation-delay: 3s;
 }
-/* Hero text must NEVER stay hidden — reveal fast regardless. */
-.nh-hero .ai {
-  animation-delay: 0.4s;
+#apollo-home .nh-hero .ai,
+#apollo-home .nh-hero .nh-reveal {
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
 }
 
 
@@ -2027,25 +2181,91 @@ section #map { padding-bottom: 0 !important; }
 .nh-mq { position: relative; overflow: hidden; margin-top: 18px;
   -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
           mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%); }
-.nh-mq-track { display: flex; gap: 14px; width: max-content; animation: nh-mq-scroll 46s linear infinite; }
+/* Classificados — hard edge-to-edge rail (no fade mask). Break out of the
+   centered .container to the viewport; slight overshoot so overflow-x:clip
+   on #apollo-home doesn't nibble the card edges. */
+#resell .nh-mq {
+  -webkit-mask-image: none;
+  mask-image: none;
+  /* +16px total overshoot so clip doesn't eat card edges */
+  width: calc(100vw + 16px);
+  max-width: none;
+  margin-left: calc(50% - 50vw - 8px);
+  margin-right: calc(50% - 50vw - 8px);
+  overflow-x: hidden;
+}
+@media (max-width: 767px) {
+  #resell .nh-mq {
+    width: calc(100vw + 20px);
+    margin-left: calc(50% - 50vw - 10px);
+    margin-right: calc(50% - 50vw - 10px);
+  }
+}
+.nh-mq-track { display: flex; gap: 10px; width: max-content; animation: nh-mq-scroll 46s linear infinite; }
 .nh-mq:hover .nh-mq-track { animation-play-state: paused; }
 @keyframes nh-mq-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-.nh-mq-card { position: relative; flex: 0 0 auto; width: 260px; border-radius: 16px; overflow: hidden;
-  background: var(--surface); box-shadow: inset 0 0 0 1px var(--border); aspect-ratio: 4/5; cursor: default; }
-.nh-mq-card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; user-select: none; }
+/* Precise marquee tiles — sharp regular size, not billboard */
+.nh-mq-card { position: relative; flex: 0 0 auto; width: 120px; height: 160px; border-radius: 12px; overflow: hidden;
+  background: var(--surface); box-shadow: inset 0 0 0 1px var(--border); aspect-ratio: unset; cursor: default; }
+.nh-mq-card img,
+.nh-mq-card .nh-mq-image,
+.nh-mq-card .nh-mq-blur { width: 100%; height: 100%; object-fit: cover; pointer-events: none; user-select: none; }
 .nh-mq-veil { position: absolute; inset: 0; pointer-events: none;
   background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.72) 100%); }
-.nh-mq-body { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px; display: flex;
-  align-items: flex-end; justify-content: space-between; gap: 10px; }
+.nh-mq-body { position: absolute; left: 0; right: 0; bottom: 0; padding: 10px; display: flex;
+  align-items: flex-end; justify-content: space-between; gap: 8px; z-index: 2; }
 .nh-mq-meta { min-width: 0; color: #fff; }
-.nh-mq-title { font: 700 14px/1.15 var(--ff-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.nh-mq-sub { font: 500 11px/1.2 var(--ff-mono); color: rgba(255,255,255,.62); margin-top: 3px; }
-.nh-mq-chat { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 13px;
-  border-radius: var(--r-pill, 999px); border: 0; font: 600 12px/1 var(--ff-main); cursor: pointer;
+.nh-mq-title { font: 600 12px/1.15 var(--ff-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.nh-mq-seller { font: 500 10px/1.2 var(--ff-mono); color: rgba(255,255,255,.72); margin-top: 2px; display: block;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nh-mq-sub { font: 500 10px/1.2 var(--ff-mono); color: rgba(255,255,255,.62); margin-top: 2px; display: block; }
+.nh-mq-chat { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 5px; height: 28px; padding: 0 10px;
+  border-radius: var(--r-pill, 999px); border: 0; font: 600 11px/1 var(--ff-main); cursor: pointer;
   background: rgba(255,255,255,.16); color: #fff; backdrop-filter: blur(6px); text-decoration: none; white-space: nowrap; }
-.nh-mq-chat i { font-size: calc(var(--fs-u, 1) * 15px); }
+.nh-mq-chat i { font-size: calc(var(--fs-u, 1) * 13px); }
 .nh-mq-chat[disabled], .nh-mq-chat.is-locked {
-  background: rgba(255,255,255,.14); color: rgba(255,255,255,.72); cursor: not-allowed; backdrop-filter: blur(4px); }
+  background: rgba(255,255,255,.14); color: rgba(255,255,255,.72); cursor: pointer; backdrop-filter: blur(4px); }
+
+/* Guest ticket lock — same contract as .nh-track-card.is-guest */
+.nh-mq-card.is-guest { cursor: pointer; }
+.nh-mq-card.is-guest .nh-mq-blur {
+  position: absolute; inset: 0; z-index: 0;
+  filter: blur(14px) saturate(.7) brightness(.55);
+  transform: scale(1.12);
+}
+.nh-mq-card.is-guest .nh-mq-image {
+  position: absolute; inset: 0; z-index: 1;
+  opacity: .42; filter: grayscale(.35) brightness(.7);
+}
+.nh-mq-lock-av {
+  position: absolute; top: 50%; left: 50%; z-index: 3;
+  width: 36px; height: 36px; margin: -18px 0 0 -18px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.18); color: #fff;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.28);
+  font-size: calc(var(--fs-u, 1) * 20px); pointer-events: none;
+}
+.nh-mq-card.is-guest .nh-mq-title.nh-track-locked-lbl,
+.nh-mq-card.is-guest .nh-mq-seller.nh-track-locked-lbl,
+.nh-mq-card.is-guest .nh-mq-sub.nh-track-locked-lbl {
+  color: rgba(255,255,255,.55) !important;
+}
+
+.nh-mq-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.nh-resale-intro a {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 
 /* ═══════════════════════════════════════════════════════════════════
    MOBILE-APP-FIRST POLISH (≤767px) — native rhythm, safe areas, taps.
@@ -2059,15 +2279,17 @@ section #map { padding-bottom: 0 !important; }
   /* edge-to-edge app gutters */
   .container { padding: 0 18px; }
 
-  /* topbar clears the notch; symmetric inset (no asymmetric right offset) */
-  .ax-top {
+  /* topbar clears the notch; landing-scoped — DS owns bare .ax-top */
+  body[data-apollo-page="landing"] .ax-top {
     top: calc(8px + env(safe-area-inset-top, 0px));
     left: 0;
     right: 0;
     padding-left: max(12px, env(safe-area-inset-left, 0px));
     padding-right: max(16px, env(safe-area-inset-right, 0px));
   }
-  .ax-top-blur { height: calc(58px + env(safe-area-inset-top, 0px)); }
+  body[data-apollo-page="landing"] .ax-top-blur {
+    height: calc(58px + env(safe-area-inset-top, 0px));
+  }
 
   /* hero: full-bleed, text clears the home indicator, punchier scale */
   .nh-hero-content { left: 20px; right: 18px; bottom: calc(30px + env(safe-area-inset-bottom, 0px)); width: auto; }
@@ -2081,14 +2303,15 @@ section #map { padding-bottom: 0 !important; }
   .nh-section-head a { display: inline-flex; align-items: center; min-height: 40px; font-size: .8rem; white-space: nowrap; }
 
   /* ≥44px touch targets on all interactive chrome */
-  .ax-burger { min-width: 46px; min-height: 46px; }
+  body[data-apollo-page="landing"] .ax-burger { min-width: 46px; min-height: 46px; }
   .nh-menu-fab { width: 54px !important; height: 54px !important; }
-  .nh-mq-chat, .ax-login { min-height: 40px; }
+  .nh-mq-chat,
+  body[data-apollo-page="landing"] .ax-login { min-height: 40px; }
 
   /* image marquees: phone-sized cards, momentum untouched (auto-scroll) */
   .nh-mq { margin-top: 14px; }
-  .nh-mq-card { width: min(260px, 66vw); }
-  .nh-mq-body { padding: 12px; }
+  .nh-mq-card { width: 120px; height: 160px; flex: 0 0 120px; }
+  .nh-mq-body { padding: 8px; }
 
   /* tracks + any horizontal rail: snap for that native carousel feel */
   .nh-tracks-grid { scroll-snap-type: x proximity; }
@@ -2103,6 +2326,11 @@ section #map { padding-bottom: 0 !important; }
   #apollo-home, .section, .container, .nh-hero, .nh-marquee-wrap, .nh-mq {
     max-width: 100%;
     overflow-x: clip;
+  }
+  /* Classificados must bleed past the container — don't clamp it to 100% */
+  #resell .nh-mq {
+    max-width: none;
+    overflow-x: hidden;
   }
   /* Tracks rail: negative bleed overflows 320px viewports */
   .nh-tracks-grid {
@@ -2140,6 +2368,11 @@ section #map { padding-bottom: 0 !important; }
   .nh-map-wrap, .nh-map-canvas, #nhMap { max-width: 100%; }
 }
 
+@media (min-width: 768px) {
+  .nh-mq-card { width: 168px; height: 224px; flex: 0 0 168px; }
+  .nh-mq-body { padding: 10px; }
+}
+
 /* Larger tap comfort on coarse pointers regardless of width */
 @media (pointer: coarse) {
   .nh-section-head a, .ax-login, .nh-mq-chat { touch-action: manipulation; }
@@ -2154,18 +2387,17 @@ section #map { padding-bottom: 0 !important; }
 .nh-map-open-chip { display: inline-flex; align-items: center; gap: 7px; height: 38px; padding: 0 15px;
   border-radius: var(--r-pill, 999px); background: rgba(10,10,10,.72); color: #fff;
   -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); font: 600 12.5px/1 var(--ff-main);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); transition: background .3s ease; }
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); transition: background .18s ease; }
 .nh-map-open-chip i { font-size: calc(var(--fs-u, 1) * 16px); }
 .nh-map-open:hover .nh-map-open-chip { background: rgba(10,10,10,.92); }
 
 /* ═══════════════════════════════════════════════════════════════════
-   FOOTER — MOBILE-APP-FIRST (≤767px). Kill the fixed 400px clip + the
-   absolute bottom bar that overlapped; flow it as a clean app footer.
-   translateY(18%) tucks it partially below the fold — mobile-app style
-   "peeking" footer, shifted down/inside toward the bottom edge.
+   FOOTER — MOBILE-APP-FIRST (≤767px). Flow as a clean flush footer.
+   No translateY peek — that left an empty band above the copy and
+   pushed paint past the document end (non-premium / "lifted" look).
    ═══════════════════════════════════════════════════════════════════ */
 @media (max-width: 767px) {
-  .nh-footer { height: auto !important; min-height: 0; overflow: visible !important; transform: translateY(32%); }
+  .nh-footer { height: auto !important; min-height: 0; overflow: visible !important; transform: none; }
   .nh-footer > .container { padding-top: 38px; padding-bottom: calc(26px + env(safe-area-inset-bottom, 0px)); }
   .nh-footer-grid { grid-template-columns: 1fr; gap: 22px; margin-bottom: 0; }
   .nh-footer-wordmark { font-size: .6rem; margin-bottom: 8px; opacity: .5; }
@@ -2175,4 +2407,167 @@ section #map { padding-bottom: 0 !important; }
   .nh-footer-bottom { position: static !important; flex-direction: row; justify-content: space-between;
     flex-wrap: wrap; gap: 4px 14px; margin-top: 24px; font-size: .68rem; }
   .aprio-ft-v2 svg { bottom: -14%; height: 260px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SWISS PRECISION GRID — declared LAST-WORD cell for /casa rhythm, type
+   scale and grid. Added 2026-09-06.
+
+   OWNERSHIP
+   This block is the last word on: vertical rhythm, the modular type scale,
+   grid gutters, measure, and minimum touch target. It is placed last on
+   purpose, the same way styles-masthead.php is the declared last-word cell
+   for portal spacing. Anything above that sets these properties for
+   #apollo-home is superseded here — change values HERE, not upstream, or the
+   two will disagree and whichever loads last wins silently.
+
+   WHY IT IS SCOPED TO #apollo-home AND NOT :root
+   :root belongs to core.js. This file already breaks that rule twice
+   (lines 26 and ~2265) and those are pre-existing; this block does not add a
+   third. Every token below is component-scoped, which the design system
+   explicitly allows.
+
+   MOBILE FIRST
+   The base declarations ARE the mobile design. Desktop is the enhancement,
+   layered in min-width queries. That order is deliberate: measured on the
+   live page, mobile body text was already correct at 15.2/22.8 (ratio 1.5)
+   while DESKTOP was set solid at 19.2/19.2 (ratio 1.0). Writing desktop-first
+   would have carried that defect down instead of fixing it up.
+
+   WHAT IS DELIBERATELY NOT TOUCHED
+   · .ax-* — the Apollo+ shell contract. Topbar stays top:2px/height:56px,
+     bottom edge 58px, aside pins at >=1000px. Renaming or resizing those
+     breaks core.js bindings.
+   · The hero. Measured at 56.25px/-0.045em on mobile, it is already the
+     memorable element; a "precision grid" pass that flattened it would be a
+     downgrade, not a redesign.
+   · Card internals. Cards own their own look; this sets the FIELD they sit
+     in — gutter, column, rhythm — and nothing inside them.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+#apollo-home {
+  /* One base unit. Every space below is a multiple — that is the whole idea
+     of a Swiss grid, and it is what the previous 52px/120px/9.375px values
+     were not. */
+  --sw-u: 4px;
+
+  --sw-2:  calc(var(--sw-u) * 2);   /*  8 */
+  --sw-3:  calc(var(--sw-u) * 3);   /* 12 */
+  --sw-4:  calc(var(--sw-u) * 4);   /* 16 */
+  --sw-6:  calc(var(--sw-u) * 6);   /* 24 */
+  --sw-8:  calc(var(--sw-u) * 8);   /* 32 */
+  --sw-12: calc(var(--sw-u) * 12);  /* 48 */
+  --sw-16: calc(var(--sw-u) * 16);  /* 64 */
+  --sw-24: calc(var(--sw-u) * 24);  /* 96 */
+
+  /* Gutter and section rhythm. Mobile values; scaled at breakpoints below. */
+  --sw-gutter: var(--sw-4);         /* was 9.375px — an arbitrary number */
+  --sw-rhythm: var(--sw-16);        /* was 52px */
+
+  /* Measure. Unbounded line length is the most common failure of a "clean"
+     layout; 66ch is the classic readable maximum. */
+  --sw-measure: 66ch;
+
+  /* One tracking family across the whole scale. h3 previously said `normal`
+     while h1/h2 carried negative tracking, so the scale visually broke at the
+     third step. */
+  --sw-track-display: -0.045em;
+  --sw-track-heading: -0.035em;
+}
+
+/* ─── vertical rhythm ─────────────────────────────────────────────────── */
+
+#apollo-home > section.section {
+  padding-top: var(--sw-rhythm);
+  padding-bottom: var(--sw-rhythm);
+}
+
+/* ─── type scale ──────────────────────────────────────────────────────── */
+
+#apollo-home h2 { letter-spacing: var(--sw-track-heading); }
+
+#apollo-home h3 {
+  /* Was letter-spacing:normal — the one step in the scale that did not
+     participate in the tracking system. */
+  letter-spacing: var(--sw-track-heading);
+  line-height: 1.15;
+}
+
+#apollo-home p {
+  /* Mobile was already 1.5 and stays 1.5. The desktop override below is the
+     actual repair. */
+  line-height: 1.5;
+}
+
+/* Constrain measure on flowing copy only. Cards, grids and UI text set their
+   own width and must not inherit a 66ch cap. */
+#apollo-home .nh-section-head p,
+#apollo-home .nh-footer-brand p {
+  max-width: var(--sw-measure);
+}
+
+/* ─── grid ────────────────────────────────────────────────────────────── */
+
+#apollo-home .nh-events-grid {
+  /* Was 281.8px 281.8px 235.2px 235.2px at desktop and a 9.375px gutter at
+     mobile — neither modular. Two equal columns on mobile, gutter on the
+     base unit. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sw-gutter);
+}
+
+/* ─── touch targets ───────────────────────────────────────────────────── */
+
+/* Measured 49 interactive elements below 44x44 on a 375px viewport.
+   Scoped INSIDE #apollo-home so the shell (.ax-top, .ax-aside) is untouched:
+   those are core.js-bound and their geometry is a documented constant.
+   min-height rather than height so nothing that is already taller collapses. */
+@media (pointer: coarse) {
+  #apollo-home a,
+  #apollo-home button,
+  #apollo-home [role="button"] {
+    min-height: 44px;
+  }
+  /* Inline links inside a paragraph must NOT become 44px blocks — that would
+     shred the line rhythm of body copy. Only standalone controls grow. */
+  #apollo-home p a,
+  #apollo-home li a.is-inline,
+  #apollo-home .nh-footer-links a {
+    min-height: 0;
+  }
+  #apollo-home .nh-footer-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
+
+/* ─── >= 600px : two-up becomes comfortable ───────────────────────────── */
+
+@media (min-width: 600px) {
+  #apollo-home {
+    --sw-gutter: var(--sw-6);   /* 24 */
+    --sw-rhythm: var(--sw-24);  /* 96 */
+  }
+}
+
+/* ─── >= 1000px : the aside pins here (shell constant), so the field
+       narrows. Rhythm opens up; the grid gains its third and fourth column. */
+
+@media (min-width: 1000px) {
+  #apollo-home {
+    --sw-gutter: var(--sw-8);                        /* 32 */
+    --sw-rhythm: calc(var(--sw-u) * 32);             /* 128 — was 120 */
+  }
+
+  #apollo-home .nh-events-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  #apollo-home p {
+    /* THE DESKTOP REPAIR. Measured live at 19.2px/19.2px — text set solid,
+       leading equal to the type size. Legible at a glance, unreadable in a
+       paragraph. */
+    line-height: 1.55;
+  }
 }

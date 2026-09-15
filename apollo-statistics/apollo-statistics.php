@@ -4,7 +4,7 @@
  * Plugin Name: Apollo Statistics
  * Plugin URI:  https://apollo.rio.br
  * Description: Ultra Modular Pro Analytics Engine — 15 MetricGroup classes, 68 plug-and-play metric instances, PostHog-inspired tracker, amCharts 5 visualizations, gamification bridge. Covers ALL 27 Apollo plugins.
- * Version:     2.0.7
+ * Version:     2.0.8
  * Author:      Apollo RIO
  * Author URI:  https://apollo.rio.br
  * Text Domain: apollo-statistics
@@ -25,6 +25,33 @@
  * - REST: /stats/*, /track
  */
 
+/*
+ * ARCH: apollo-statistics / metricas (sem CPT)
+ * ARCH-MANUAL: escrito a mao (2026-09-09). gen-arch-blocks.js recusa
+ *   ficheiros dirty no git e 41 de 42 estao dirty. Ver nota em apollo-core.
+ * Contrato completo: D:/dev/_cos/verify/MODULE-CONTRACT.md
+ *
+ * OWNER     apollo-statistics   47 arquivos PHP, 10546 LOC
+ * BOOT      plugins_loaded:25 (:312) - o MAIS TARDIO do ecossistema, para
+ *           poder observar o que os outros ja registaram
+ * RUNTIME   nao regista CPT
+ * UI        emite HTML (2); tambem emite em apollo/canvas/head:99
+ *           (src/Plugin.php:288) - prioridade alta de proposito, para
+ *           entrar depois do apollo-core e do apollo-templates
+ * META      2 chaves tocadas
+ * REST      21 rotas, nenhuma leitura publica
+ * REQUIRES  apollo-membership
+ *
+ * NAO FACA
+ *   - baixar a prioridade 25 para "arrancar mais cedo". Este plugin le
+ *     estado que so existe depois dos outros bootarem.
+ *   - assumir um so produtor de apollo/canvas/head: sao dois
+ *     (apollo-core e apollo-templates). Seja idempotente.
+ *   - registar CPT direto: apollo-core e o dono do init:5.
+ *
+ * VERIFICAR   node D:/dev/_cos/verify/plugin-audit.js
+ */
+
 declare(strict_types=1);
 
 if (! defined('ABSPATH')) {
@@ -34,7 +61,7 @@ if (! defined('ABSPATH')) {
 // ─────────────────────────────────────────────────────────────
 // Constantes do plugin
 // ─────────────────────────────────────────────────────────────
-define('APOLLO_STATS_VERSION', '2.0.7');
+define('APOLLO_STATS_VERSION', '2.0.8');
 define('APOLLO_STATS_PATH', plugin_dir_path(__FILE__));
 define('APOLLO_STATS_URL', plugin_dir_url(__FILE__));
 define('APOLLO_STATS_FILE', __FILE__);

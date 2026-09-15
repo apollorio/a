@@ -107,7 +107,7 @@ html.casa-motion.casa-gsap [data-casa-mask] { transition: none; }
 }
 </style>
 
-<script id="casa-motion-script">
+<script<?php echo function_exists('apollo_csp_nonce_attr') ? apollo_csp_nonce_attr() : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> id="casa-motion-script">
 (function () {
     'use strict';
 
@@ -186,8 +186,9 @@ html.casa-motion.casa-gsap [data-casa-mask] { transition: none; }
                 if (!l || typeof l.on !== 'function' || window.__casaLenisBound) { return; }
                 window.__casaLenisBound = true;
                 l.on('scroll', ST.update);
+                /* Drive Lenis from gsap ticker once — do NOT zero lagSmoothing
+                   (that keeps the ticker hot under load and makes /casa feel heavy). */
                 gsap.ticker.add(function (t) { if (typeof l.raf === 'function') { l.raf(t * 1000); } });
-                gsap.ticker.lagSmoothing(0);
             };
             if (window.lenis) {
                 bind(window.lenis);
@@ -202,19 +203,20 @@ html.casa-motion.casa-gsap [data-casa-mask] { transition: none; }
             }
         }
 
-        /* Parallax is the only scrubbed effect this cell owns. Everything
-           else is a one-shot reveal, because scrubbing many elements on a
-           phone is how a luxury page becomes a slow one. */
-        document.querySelectorAll('[data-casa-parallax]').forEach(function (el) {
-            var amt = parseFloat(el.getAttribute('data-casa-parallax')) || -10;
-            gsap.fromTo(el,
-                { yPercent: -amt / 2 },
-                {
-                    yPercent: amt / 2,
-                    ease: 'none',
-                    scrollTrigger: { trigger: el.parentElement || el, start: 'top bottom', end: 'bottom top', scrub: true }
-                });
-        });
+        /* Parallax: desktop only — scrubbing many layers on phone fights touch scroll. */
+        var isPhone = !!(window.matchMedia && window.matchMedia('(max-width: 719px)').matches);
+        if (!isPhone) {
+            document.querySelectorAll('[data-casa-parallax]').forEach(function (el) {
+                var amt = parseFloat(el.getAttribute('data-casa-parallax')) || -10;
+                gsap.fromTo(el,
+                    { yPercent: -amt / 2 },
+                    {
+                        yPercent: amt / 2,
+                        ease: 'none',
+                        scrollTrigger: { trigger: el.parentElement || el, start: 'top bottom', end: 'bottom top', scrub: 1.2 }
+                    });
+            });
+        }
 
         ST.refresh();
         queue.splice(0).forEach(function (fn) { try { fn(gsap, ST); } catch (e) { /* a broken caller must not stop the rest */ } });

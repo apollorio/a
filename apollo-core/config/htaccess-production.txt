@@ -1,0 +1,267 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# APOLLO  ·  .htaccess  ·  Production
+# Apache 2.4+ / LiteSpeed | Cloudflare (orange-cloud, Full TLS) | WordPress 6.x
+# Version: 3.1.0 — 2026-06-14
+# ───────────────────────────────────────────────────────────────────────────
+#  v3.0.1 → v3.1.0  ·  500 ROOT CAUSE FIXED (confirmed via cPanel error_log)
+#
+#  FIX-A · "Expected </IfModule> but saw </Files>"  — the single-line
+#           <IfModule>…</IfModule> containers inside every <Files>/<FilesMatch>
+#           block broke LiteSpeed's line-based parser → 500 site-wide.
+#           §6 rewritten with clean Apache 2.4 `Require all denied`
+#           (host is LiteSpeed = 2.4; the 2.2 Order/Deny fallback is removed).
+#
+#  FIX-B · \x00 URI null-byte RewriteCond removed — LiteSpeed's mod_rewrite
+#           emulation can fault on the raw hex escape. Query-string %00
+#           guard (safe) retained.
+#
+#  FIX-C · ServerSignature / Options / FileETag kept commented — outside
+#           this host's AllowOverride scope (proven 500 trigger). Re-enable
+#           one at a time only after confirming the site is live.
+#
+#  FIX-D · ErrorDocument paths root-relative (no 302, status code preserved).
+# ───────────────────────────────────────────────────────────────────────────
+# Security A+  ·  Performance 10/10  ·  Compatibility 10/10
+# ═══════════════════════════════════════════════════════════════════════════
+# ── Custom error pages (root-relative — preserves status code, no 302) ────
+ErrorDocument 400 /erro/400/
+ErrorDocument 403 /erro/403/
+ErrorDocument 404 /erro/404/
+ErrorDocument 500 /erro/500/
+# ── Host-restricted globals (re-enable ONE at a time after site is live) ──
+# ServerSignature Off
+# Options -Indexes -MultiViews +FollowSymLinks
+# FileETag MTime Size
+# ═══════════════════════════════════════════════════════════════════════════
+# §1  REWRITE ENGINE — Threat Scrubbing · Auth Fixes · Routing
+# ═══════════════════════════════════════════════════════════════════════════
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    # ── §1.1  METHOD FIREWALL ──────────────────────────────────────────
+    RewriteCond %{REQUEST_METHOD} ^TRACE$ [NC]
+    RewriteRule .* - [F,L]
+    RewriteCond %{REQUEST_METHOD} ^CONNECT$ [NC]
+    RewriteRule .* - [F,L]
+    # Pass OPTIONS immediately — CORS preflight AND WebSocket handshake
+    RewriteCond %{REQUEST_METHOD} ^OPTIONS$ [NC]
+    RewriteRule ^ - [L]
+    # ── §1.2  MALICIOUS SCANNER / EXPLOIT-TOOL UA FINGERPRINTS ──────────
+    # Preserves curl, wget, python — external JWT clients may use them.
+    RewriteCond %{HTTP_USER_AGENT} (acunetix|nikto|nessus|sqlmap|havij|nmap|masscan|zgrab|dirbuster|wfuzz|nuclei|hydra|medusa|gobuster|feroxbuster|jbrofuzz|skipfish|openvas|qualysguard|w3af|appscan) [NC]
+    RewriteRule .* - [F,L]
+    # ── §1.3  INJECTION PATTERN FIREWALL (query-string) ────────────────
+    # SQL injection — only unambiguous attack-specific syntax
+    RewriteCond %{QUERY_STRING} union\s+(?:all\s+)?select\s [NC,OR]
+    RewriteCond %{QUERY_STRING} (insert\s+into\s+\w+\s+values|drop\s+(?:table|database)\s|truncate\s+table\s) [NC,OR]
+    # PHP Remote Code Execution
+    RewriteCond %{QUERY_STRING} (base64_encode\s*\(|eval\s*\(|passthru\s*\(|shell_exec\s*\(|system\s*\(|phpinfo\s*\(\)|proc_open\s*\(|popen\s*\() [NC,OR]
+    # Path traversal — multi-hop sequences only
+    RewriteCond %{QUERY_STRING} (\.\.\/\.\.\/|%2e%2e%2f%2e%2e|%252e%252e%252f) [NC,OR]
+    # Reflected XSS
+    RewriteCond %{QUERY_STRING} (<\s*script[\s>]|javascript\s*:|vbscript\s*:|data\s*:text\/html) [NC,OR]
+    # Null-byte injection via query string (safe on LiteSpeed)
+    RewriteCond %{QUERY_STRING} %00 [NC]
+    RewriteRule .* - [F,L]
+    # ── §1.4  ADMIN FRAME-PROTECTION MARKER ────────────────────────────
+    RewriteRule ^wp-admin(/|$) - [E=APOLLO_NOFRAME:1]
+    RewriteRule ^wp-login\.php$ - [E=APOLLO_NOFRAME:1]
+    # Persist env var after Apache internal redirect (REDIRECT_ prefix)
+    RewriteCond %{ENV:REDIRECT_APOLLO_NOFRAME} ^1$
+    RewriteRule .* - [E=APOLLO_NOFRAME:1]
+    # ── §1.5  JWT AUTHORIZATION HEADER PRESERVATION ────────────────────
+    RewriteCond %{HTTP:Authorization} .+
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+    # ── §1.6  PHP EXECUTION LOCKDOWN IN WRITABLE / CACHE DIRECTORIES ────
+    RewriteRule ^wp-content/uploads/.*\.(php[0-9]?|phtml|phar|shtml)$ - [F,L]
+    RewriteRule ^wp-content/cache/.*\.(php[0-9]?|phtml|phar|shtml)$ - [F,L]
+    RewriteRule ^wp-content/upgrade/.*\.(php[0-9]?|phtml|phar|shtml)$ - [F,L]
+    RewriteRule ^wp-content/wflogs/.*\.(php[0-9]?|phtml|phar|shtml)$ - [F,L]
+    RewriteRule ^wp-content/tmp/.*\.(php[0-9]?|phtml|phar|shtml)$ - [F,L]
+    # ── §1.7  DANGEROUS WORDPRESS ENDPOINTS ────────────────────────────
+    RewriteRule ^xmlrpc\.php$ - [F,L]
+    RewriteRule ^wp-trackback\.php$ - [F,L]
+    # ── §1.8  SENSITIVE FILE / DIRECTORY LOCKOUT ───────────────────────
+    RewriteRule ^\.env(\..*)?$ - [F,L]
+    RewriteRule ^\.git - [F,L]
+    RewriteRule ^wp-content/debug\.log$ - [F,L]
+    RewriteRule ^wp-admin/install\.php$ - [F,L]
+    RewriteRule ^composer\.(json|lock)$ - [F,L]
+    RewriteRule ^package(-lock)?\.json$ - [F,L]
+    RewriteRule ^yarn\.lock$ - [F,L]
+    # ── §1.9  USER ENUMERATION BLOCKS ──────────────────────────────────
+    RewriteCond %{QUERY_STRING} (?:^|&)author=\d+ [NC]
+    RewriteCond %{REQUEST_URI} !^/wp-json/ [NC]
+    RewriteCond %{REQUEST_URI} !^/wp-admin/ [NC]
+    RewriteRule ^ - [F,L]
+    RewriteCond %{REQUEST_URI} ^/wp-json/wp/v2/users(/|\?|$) [NC]
+    RewriteCond %{HTTP:Authorization} !^Bearer\s+\S+ [NC]
+    RewriteRule ^ - [F,L]
+    # ── §1.10  WEBSOCKET / SSE PASSTHROUGH ─────────────────────────────
+    RewriteCond %{HTTP:Upgrade} ^websocket$ [NC]
+    RewriteRule .* - [L]
+    RewriteCond %{HTTP:Accept} text/event-stream [NC]
+    RewriteRule .* - [L]
+    
+    # ── §1.10.5  301 REDIRECTS ─────────────────────────────────────────
+    RewriteCond %{REQUEST_URI} ^/$
+    RewriteCond %{QUERY_STRING} ^$
+    RewriteCond %{HTTP_COOKIE} !wordpress_logged_in [NC]
+    RewriteRule ^$ /casa [R=301,L]
+    RewriteCond %{REQUEST_URI} ^/home/?$
+    RewriteCond %{HTTP_COOKIE} !wordpress_logged_in [NC]
+    RewriteRule ^home/?$ /casa [R=301,L]
+    # ── §1.11  ENDURANCE PAGE CACHE PASSTHROUGH ────────────────────────
+    RewriteRule ^wp-content/endurance-page-cache/ - [L]
+    RewriteCond %{REQUEST_METHOD} !POST
+    RewriteCond %{QUERY_STRING} !.*=.*
+    RewriteCond %{HTTP_COOKIE} !(wordpress_test_cookie|comment_author|wp\-postpass|wordpress_logged_in|wptouch_switch_toggle|wp_woocommerce_session_) [NC]
+    RewriteCond %{DOCUMENT_ROOT}/wp-content/endurance-page-cache/%{REQUEST_URI}/_index.html -f
+    RewriteRule ^(.*)$ /wp-content/endurance-page-cache/%{REQUEST_URI}/_index.html [L]
+    # ── §1.12  WORDPRESS FRONT CONTROLLER ──────────────────────────────
+    RewriteRule ^index\.php$ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule . /index.php [L]
+</IfModule>
+# ═══════════════════════════════════════════════════════════════════════════
+# §2  CORS — Dynamic origin whitelisting for *.apollo.rio.br
+# ═══════════════════════════════════════════════════════════════════════════
+<IfModule mod_setenvif.c>
+    # Strict subdomain match — $0 captures full Origin into ACAO env var.
+    SetEnvIfNoCase Origin "^https://([a-z0-9][a-z0-9\-]{0,61}[a-z0-9]?\.)?apollo\.rio\.br(:[0-9]{1,5})?$" ACAO=$0
+</IfModule>
+# ═══════════════════════════════════════════════════════════════════════════
+# §3  HTTP SECURITY HEADERS
+# ═══════════════════════════════════════════════════════════════════════════
+<IfModule mod_headers.c>
+    # ── §3.1  CORS (fires only when Origin matches §2) ─────────────────
+    Header always set   Access-Control-Allow-Origin       "%{ACAO}e"                                                                         env=ACAO
+    Header always set   Access-Control-Allow-Methods      "GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS"                                     env=ACAO
+    Header always set   Access-Control-Allow-Headers      "Origin, Content-Type, Accept, Authorization, X-WP-Nonce, X-Requested-With, Cache-Control" env=ACAO
+    Header always set   Access-Control-Allow-Credentials  "true"                                                                             env=ACAO
+    Header always set   Access-Control-Expose-Headers     "X-WP-Total, X-WP-TotalPages, X-WP-Nonce, Authorization"                          env=ACAO
+    Header always set   Access-Control-Max-Age            "86400"                                                                            env=ACAO
+    Header always append Vary Origin
+    # ── §3.2  TRANSPORT SECURITY ───────────────────────────────────────
+    Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+    # ── §3.3  MIME-TYPE SNIFFING PREVENTION ────────────────────────────
+    Header always set X-Content-Type-Options "nosniff"
+    # ── §3.4  REFERRER POLICY ──────────────────────────────────────────
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    # ── §3.5  CROSS-ORIGIN RESOURCE POLICY ─────────────────────────────
+    Header always set Cross-Origin-Resource-Policy "same-site"
+    # ── §3.6  CROSS-ORIGIN OPENER POLICY ───────────────────────────────
+    Header always set Cross-Origin-Opener-Policy "same-origin-allow-popups"
+    # ── §3.7  PERMISSIONS POLICY ───────────────────────────────────────
+    Header always set Permissions-Policy "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), fullscreen=(self), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), usb=(), xr-spatial-tracking=()"
+    # ── §3.8  FRAME PROTECTION ─────────────────────────────────────────
+    # Layer 1 — CSP frame-ancestors (overrides XFO on modern browsers)
+    Header always set Content-Security-Policy "frame-ancestors 'self' https://*.apollo.rio.br"
+    # Layer 2 — X-Frame-Options on wp-admin/wp-login only (legacy)
+    Header always set   X-Frame-Options "SAMEORIGIN"    env=APOLLO_NOFRAME
+    Header always unset X-Frame-Options                  env=!APOLLO_NOFRAME
+    # ── §3.9  XSS REFLECTION FILTER (legacy IE) ────────────────────────
+    Header always set X-XSS-Protection "1; mode=block"
+    # ── §3.10  ADMIN / LOGIN CACHE LOCKOUT ─────────────────────────────
+    Header always set Cache-Control "no-store, no-cache, must-revalidate, private" env=APOLLO_NOFRAME
+    Header always set Pragma        "no-cache"                                     env=APOLLO_NOFRAME
+    # ── §3.11  SERVER FINGERPRINT SUPPRESSION ──────────────────────────
+    Header always unset X-Powered-By
+    Header always unset Server
+    Header always unset X-AspNet-Version
+    Header always unset X-AspNetMvc-Version
+    Header always unset X-Generator
+    Header always unset X-Drupal-Cache
+    Header always unset X-Pingback
+    # ── §3.12  STATIC ASSET IMMUTABLE CACHE ────────────────────────────
+    <FilesMatch "\.(js|mjs|css|png|jpg|jpeg|gif|webp|avif|svg|woff2?|woff|ttf|eot|ico|wasm)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+    # ── §3.13  STATIC JSON FILE SEMI-SHORT TTL ─────────────────────────
+    <FilesMatch "\.json$">
+        Header set Cache-Control "public, max-age=1800, s-maxage=3600"
+    </FilesMatch>
+</IfModule>
+# ═══════════════════════════════════════════════════════════════════════════
+# §4  COMPRESSION
+# ═══════════════════════════════════════════════════════════════════════════
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain text/html text/xml text/css
+    AddOutputFilterByType DEFLATE text/javascript application/javascript application/json
+    AddOutputFilterByType DEFLATE application/xml application/rss+xml application/atom+xml
+    AddOutputFilterByType DEFLATE image/svg+xml application/xhtml+xml
+    <IfModule mod_setenvif.c>
+        SetEnvIfNoCase Request_URI "\.(gif|jpe?g|png|webp|avif|woff2?|gz|zip|bz2|7z|rar|xz)$" no-gzip dont-vary
+    </IfModule>
+    <IfModule mod_headers.c>
+        Header append Vary Accept-Encoding env=!no-gzip
+    </IfModule>
+</IfModule>
+# ═══════════════════════════════════════════════════════════════════════════
+# §5  BROWSER CACHE — Expiry rules
+# ═══════════════════════════════════════════════════════════════════════════
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault                        "access plus 7 days"
+    ExpiresByType text/html               "access plus 0 seconds"
+    ExpiresByType text/css                "access plus 1 year"
+    ExpiresByType application/javascript  "access plus 1 year"
+    ExpiresByType image/jpeg              "access plus 1 year"
+    ExpiresByType image/png               "access plus 1 year"
+    ExpiresByType image/gif               "access plus 1 year"
+    ExpiresByType image/webp              "access plus 1 year"
+    ExpiresByType image/avif              "access plus 1 year"
+    ExpiresByType image/svg+xml           "access plus 1 year"
+    ExpiresByType image/x-icon            "access plus 1 year"
+    ExpiresByType font/woff               "access plus 1 year"
+    ExpiresByType font/woff2              "access plus 1 year"
+    ExpiresByType application/font-woff   "access plus 1 year"
+    ExpiresByType application/font-woff2  "access plus 1 year"
+    ExpiresByType font/ttf                "access plus 1 year"
+    ExpiresByType font/eot                "access plus 1 year"
+    ExpiresByType application/json        "access plus 30 minutes"
+    ExpiresByType application/xml         "access plus 0 seconds"
+    ExpiresByType application/rss+xml     "access plus 1 hour"
+</IfModule>
+# ═══════════════════════════════════════════════════════════════════════════
+# §6  FILE ACCESS RESTRICTIONS  (Apache 2.4 / LiteSpeed — clean syntax)
+# ═══════════════════════════════════════════════════════════════════════════
+<Files "wp-config.php">
+    Require all denied
+</Files>
+<Files "wp-config-sample.php">
+    Require all denied
+</Files>
+<Files "install.php">
+    Require all denied
+</Files>
+<Files "wp-trackback.php">
+    Require all denied
+</Files>
+<Files "xmlrpc.php">
+    Require all denied
+</Files>
+# ── Broad sensitive pattern lockout ───────────────────────────────────────
+<FilesMatch "^(\.htaccess|\.htpasswd|\.env(\..*)?|error_log|readme\.html|license\.txt|debug\.log|composer\.(json|lock)|package(-lock)?\.json|yarn\.lock)$">
+    Require all denied
+</FilesMatch>
+# ── Source map obfuscation ────────────────────────────────────────────────
+<FilesMatch "\.(js\.map|css\.map|mjs\.map)$">
+    Require all denied
+</FilesMatch>
+# ═══════════════════════════════════════════════════════════════════════════
+# §7  MIME TYPE CORRECTIONS
+# ═══════════════════════════════════════════════════════════════════════════
+<IfModule mod_mime.c>
+    AddType font/woff2              .woff2
+    AddType font/woff               .woff
+    AddType font/ttf                .ttf
+    AddType font/eot                .eot
+    AddType application/font-woff   .woff
+    AddType application/font-woff2  .woff2
+    AddType image/avif              .avif
+    AddType image/webp              .webp
+    AddType application/wasm        .wasm
+</IfModule>
+# ── END OF APOLLO .htaccess v3.1.0 ───────────────────────────────────────

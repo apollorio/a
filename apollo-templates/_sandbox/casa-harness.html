@@ -56,21 +56,37 @@ body.__x .__probe{box-shadow:inset 3px 0 0 0 red,inset -3px 0 0 0 red}
 }
 
 /* DS components size via calc(N * var(--fsx)); core.js injects --fs-u/--fs-r but not --fsx */
-body.ax-body,
 #apollo-home {
   --fsx: var(--fs-u, var(--fs-r, 1));
 }
 
 /* ─── BASE (respect core.js html/body/* — additive only) ─────────── */
+html, body.ax-body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
 #apollo-home {
   background: var(--surface, #fff);
   color: var(--txt-body, var(--black-1));
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+  display: block;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 
 /* ─── LAYOUT ─────────────────────────────────────────────────────── */
 .container { max-width: 1200px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 48px); }
 .section { padding: var(--nh-section-pad) 0; }
+/* Editorial breath — not identical padding on every block */
+#tracks.section { padding-top: clamp(56px, 8vw, 96px); }
+#events.section { padding-top: clamp(64px, 9vw, 108px); }
+#resell.section { padding-top: clamp(56px, 8vw, 100px); }
+#crash.section { padding-top: clamp(48px, 7vw, 88px); }
+#map.section { padding-top: clamp(56px, 8vw, 96px); padding-bottom: clamp(48px, 7vw, 88px); }
 .return-back {
   font-family: var(--ff-mono);
   font-size: 0.72rem;
@@ -847,9 +863,37 @@ a.nh-marquee-item:focus-visible {
 .nh-section-head .grouped-left { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
 .nh-section-head a, .nh-section-head .link-all {
   font-family: var(--ff-mono); font-size: 0.7rem;
-  color: var(--muted); transition: color .25s; letter-spacing: 0.02em;
+  color: var(--muted); transition: color .2s var(--nh-ease-out, ease); letter-spacing: 0.02em;
 }
-@media (hover: hover) { .nh-section-head a:hover { color: var(--primary); } }
+@media (hover: hover) { .nh-section-head a:hover { color: var(--txt-heading, var(--black-1)); } }
+
+/* Discreet Linear-style tools row: title left, controls right */
+.nh-section-head--toolbar {
+  align-items: center;
+  gap: 16px;
+}
+.nh-section-tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: auto;
+  flex-shrink: 0;
+  transform: translateY(1px); /* optical align with H2 baseline */
+}
+.nh-section-more {
+  font-family: var(--ff-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color .18s ease, opacity .18s ease;
+  opacity: .72;
+}
+@media (hover: hover) {
+  .nh-section-more:hover { color: var(--txt-heading, var(--black-1)); opacity: 1; }
+}
 
 .nh-month-dropdown {
   display: flex;
@@ -860,36 +904,38 @@ a.nh-marquee-item:focus-visible {
 .nh-month-trigger {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  height: fit-content;
+  gap: 6px;
+  height: 32px;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  padding: 4px 12px;
+  padding: 0 2px;
   cursor: pointer;
-  font-family: var(--ff-main);
-  font-size: clamp(1.6rem, 4.5vw, 3rem);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  color: var(--white-3);
-  -webkit-text-stroke: 1px var(--white-15);
-  transition: all .3s;
+  font-family: var(--ff-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  -webkit-text-stroke: 0;
+  transition: color .18s ease, opacity .18s ease;
+  opacity: .85;
 }
 @media (hover: hover) {
   .nh-month-trigger:hover {
-    color: var(--text);
-    -webkit-text-stroke-color: var(--text);
+    color: var(--txt-heading, var(--black-1));
+    opacity: 1;
   }
   .nh-month-trigger:hover i,
-  .nh-month-trigger:hover svg { color: var(--text); }
+  .nh-month-trigger:hover svg { color: var(--txt-heading, var(--black-1)); }
 }
 .nh-month-trigger i,
 .nh-month-trigger svg {
-  font-size: calc(var(--fs-u, 1) * 12px);
-  color: var(--white-15);
+  font-size: calc(var(--fs-r, 1) * 12px);
+  color: var(--muted);
   width: 12px; height: 12px;
   flex-shrink: 0;
-  transition: color .3s;
+  transition: color .18s ease;
 }
 /* ── MONTH ROW: Mobile-first = absolute drop-UP, glass morphism ── */
 .nh-month-row {
@@ -908,24 +954,25 @@ a.nh-marquee-item:focus-visible {
   margin: 0;
   min-width: 170px;
   height: fit-content;
-  /* glass morphism — matches .nh-navbar.scrolled */
-  background: rgba(var(--rgb-t), 0.04) !important;
+  /* glass — hairline surface, no heavy frost */
+  background: rgba(var(--rgb-theme), 0.92) !important;
   isolation: isolate;
   /* F-03: `transform: translateZ(0)` used to sit here and was silently killed by
      the `transform: translateY(6px)` further down this same rule — last
      declaration wins. will-change already does the compositor promotion. */
-  will-change: transform, opacity, backdrop-filter;
+  will-change: transform, opacity;
   
-  -webkit-backdrop-filter: blur(20px) saturate(200%) !important;
-  backdrop-filter: blur(20px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
+  backdrop-filter: blur(12px) saturate(140%) !important;
   
-    border: 1px solid rgba(var(--rgb-t), 0.10) !important;
+  border: 1px solid rgba(var(--rgb-diff), 0.08) !important;
+  box-shadow: 0 8px 28px rgba(var(--rgb-diff), 0.08);
   border-radius: var(--r-sm);
   /* animate: hidden state */
   opacity: 0;
   pointer-events: none;
   transform: translateY(6px);   /* mobile: slight down entry → slides up to position */
-  transition: opacity .35s var(--ease-out), transform .35s var(--ease-out);
+  transition: opacity .2s var(--ease-out), transform .2s var(--ease-out);
   /* F-03: `margin-top: 10px` was here, fighting the `bottom: calc(100% + 10px)`
      anchor above it. The anchor owns the offset; the margin was double-counting
      it in the opposite direction. */
@@ -935,44 +982,29 @@ a.nh-marquee-item:focus-visible {
   pointer-events: auto;
   transform: translateY(0);
 }
-/* Desktop 600px+: switch to inline horizontal row */
-@media (min-width: 600px) {
-  .nh-month-row {
-    position: static;
-    flex-direction: row;
-    align-items: center;
-    gap: 15px;
-    padding: 0;
-    min-width: auto;
-    height: fit-content;
-    max-height: 25px;
-    background: transparent;
-    backdrop-filter: blur(20px) saturate(200%) !important;
-    -webkit-backdrop-filter: blur(20px) saturate(200%) !important;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-    transform: translateX(10px);  /* side-slide on desktop */
-  }
-  .nh-month-row.is-visible { transform: translateX(0); }
-}
-.nh-month-row li a.nh-portal-link::before { display: none; }
-@media (min-width: 600px) {
-  .nh-month-row li a.nh-portal-link::before { display: block; }
-}
+/* Keep month menu as a compact drop-up at every width — toolbar stays discreet */
+/* Month menu — quiet list at every width (toolbar owns the trigger) */
 .nh-month-row li a {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
   color: var(--muted);
-  font-family: var(--ff-main);
-  font-size: 1.313rem;
+  font-family: var(--ff-mono);
+  font-size: 0.78rem;
   font-weight: 500;
+  letter-spacing: .02em;
   text-decoration: none;
-  text-transform: uppercase;
-  transition: color .25s;
+  text-transform: none;
+  transition: color .18s ease;
   cursor: pointer;
   white-space: nowrap;
+}
+.nh-month-row li a.active {
+  color: var(--txt-heading, var(--black-1));
+  font-weight: 600;
+}
+@media (hover: hover) {
+  .nh-month-row li a:hover { color: var(--txt-heading, var(--black-1)); }
 }
 /* Month dropdown: divider between month items and portal CTA links */
 .nh-month-row li:has(a.nh-portal-link) {
@@ -988,42 +1020,28 @@ a.nh-marquee-item:focus-visible {
   height: 1px;
   background: linear-gradient(to right, transparent, rgba(var(--rgb-t),0.18) 25%, rgba(var(--rgb-t),0.18) 75%, transparent);
 }
-/* Desktop: inline row — hide the divider (already has ::before separator) */
-@media (min-width: 600px) {
-  .nh-month-row li:has(a.nh-portal-link)::before { display: none; }
-  .nh-month-row li:has(a.nh-portal-link) { margin-top: 0; padding-top: 0; width: auto; }
-}
-.nh-month-row li a.active { color: var(--primary); }
-.nh-month-row li a:hover { color: var(--text); }
 
-/* 2. Base styles for the portal links */
+/* Portal CTAs inside the month menu — same quiet mono as months */
 .nh-month-row li a.nh-portal-link {
-  color: rgba(var(--rgb-diff),.8) !important;
-  font-size: 0.9rem;
-  font-family: var(--ff-main) !important;
+  color: var(--muted) !important;
+  font-size: 0.72rem;
+  font-family: var(--ff-mono) !important;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 6px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
 }
-
-/* 3. Fixed Hover State (Standard CSS, not nested) */
-.nh-month-row li a.nh-portal-link:hover {
-  color: rgba(168, 43, 3, .8) !important;
+@media (hover: hover) {
+  .nh-month-row li a.nh-portal-link:hover {
+    color: var(--txt-heading, var(--black-1)) !important;
+  }
 }
-
-/* 4. Fixed Icon Margin (What your &:first-child was trying to do) */
 .nh-month-row li a.nh-portal-link i:first-child {
-  margin-right: 9px !important;
+  margin-right: 0;
+  font-size: calc(var(--fs-r, 1) * 12px);
 }
-
-/* 5. Your existing ::before styling */
-.nh-month-row li a.nh-portal-link::before {
-  content: '';
-  width: 1px;
-  height: 14px;
-  background: var(--border);
-  margin-right: 10px;
-}
+.nh-month-row li a.nh-portal-link::before { display: none; }
 
 /* ═══════════════ BADGES ═══════════════ */
 .nh-badge {
@@ -1191,6 +1209,20 @@ a.nh-marquee-item:focus-visible {
   letter-spacing: .12em;
   font-weight: 600;
   user-select: none;
+}
+/* Guest labels stay readable (content-first); play stays locked */
+.nh-track-guest-lbl,
+.nh-mq-guest-lbl {
+  color: var(--muted) !important;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  opacity: .78;
+  user-select: none;
+}
+.nh-track-info h4.nh-track-guest-lbl {
+  color: var(--txt-heading, var(--black-1)) !important;
+  opacity: .55;
+  font-weight: 600;
 }
 
 @media (max-width: 500px) {
@@ -1525,7 +1557,7 @@ a.nh-marquee-item:focus-visible {
 
 
 /* ═══════════════ CLASSIFIEDS ═══════════════ */
-.nh-resale-intro { font-family: var(--ff-mono); font-size: 0.95rem; color: var(--muted); margin-bottom: 28px; line-height: 1.7; }
+.nh-resale-intro { font-family: var(--ff-mono); font-size: 0.78rem; color: var(--muted); margin-bottom: 22px; line-height: 1.55; max-width: 42rem; }
 .nh-resale-list { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
 .nh-resale-row {
   display: grid; grid-template-columns: 60px 1fr auto;
@@ -1547,9 +1579,9 @@ a.nh-marquee-item:focus-visible {
 .nh-resale-seller-hidden .nh-seller-text { display: none; }
 .nh-resale-price-wrap { display: flex; gap: 9px; align-items: center; }
 .nh-resale-price { font-family: var(--ff-mono); font-size: 1.4rem !important; font-weight: 900 !important; white-space: nowrap; letter-spacing: -0.02em; }
-/* Disclaimer — luxury side-accent card */
+/* Disclaimer — quiet one-liner (diamond cut: no essay card) */
 .nh-disclaimer {
-  margin-top: 36px;
+  margin-top: 28px;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--r);
@@ -1573,7 +1605,7 @@ a.nh-marquee-item:focus-visible {
   color: var(--primary);
   opacity: 0.75;
   line-height: 1;
-  align-self: center;              /* vertically center next to h4 */
+  align-self: center;
 }
 .nh-disclaimer h4 {
   font-size: clamp(1.2rem, 3dvw, 1.6rem); font-weight: 700;
@@ -1581,11 +1613,47 @@ a.nh-marquee-item:focus-visible {
   color: var(--text);
   margin: 0 !important; margin-block: 0 !important;
   padding-block: 0 !important;
-  align-self: center;              /* vertically center with icon */
+  align-self: center;
 }
 .nh-disclaimer p {
   font-family: var(--ff-mono); font-size: 0.8rem; font-weight: 300;
   color: var(--muted); line-height: 1.75; margin-block: 0;
+}
+.nh-disclaimer--quiet {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 22px;
+  padding: 12px 14px;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid color-mix(in srgb, var(--border, rgba(10,10,10,.08)) 80%, transparent);
+  border-radius: 0;
+  overflow: visible;
+}
+.nh-disclaimer--quiet i {
+  font-size: calc(var(--fs-r, 1) * 16px);
+  color: var(--muted);
+  opacity: .7;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.nh-disclaimer--quiet p {
+  font-size: 0.72rem;
+  line-height: 1.55;
+  color: var(--muted);
+  margin: 0;
+}
+.nh-empty-state--quiet {
+  padding: 28px 16px !important;
+  min-height: 0;
+}
+.nh-empty-state--quiet i { display: none; }
+.nh-empty-state--quiet p {
+  font-size: 0.85rem;
+  font-weight: 500;
+  opacity: .55;
+  margin: 0;
 }
 @media (max-width: 500px) {
   .nh-resale-row { grid-template-columns: 1fr auto; padding: 13px 16px; }
@@ -1897,11 +1965,7 @@ section #map { padding-bottom: 0 !important; }
 
 
 /* ═══════════════ MAIN CONTENT ═══════════════ */
-#apollo-home {
-  display: block;
-  margin-bottom: 0 !important;
-  padding-bottom: 0 !important;
-}
+/* #apollo-home base lives with --fsx / overflow-x near the top of this file. */
 
 /* ═══════════════ GSAP ai UTILITY ═══════════════ */
 /*
@@ -1932,6 +1996,11 @@ section #map { padding-bottom: 0 !important; }
 #apollo-home .nh-st-drive.is-visible {
   opacity: 1;
   transform: none;
+}
+/* ST-driven nodes must never get the 3s CSS backstop (it fights reverse) */
+#apollo-home .nh-st-drive.ai:not(.is-visible),
+#apollo-home .ai.nh-st-drive:not(.is-visible) {
+  animation: none !important;
 }
 /* CSS animation fallback if JS is slow */
 @keyframes nh-ai-reveal {
@@ -2054,25 +2123,91 @@ section #map { padding-bottom: 0 !important; }
 .nh-mq { position: relative; overflow: hidden; margin-top: 18px;
   -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
           mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%); }
+/* Classificados — hard edge-to-edge rail (no fade mask). Break out of the
+   centered .container to the viewport; slight overshoot so overflow-x:clip
+   on #apollo-home doesn't nibble the card edges. */
+#resell .nh-mq {
+  -webkit-mask-image: none;
+  mask-image: none;
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  overflow-x: hidden;
+}
+@media (max-width: 767px) {
+  #resell .nh-mq {
+    /* 10px past each viewport edge — clip eats the rim otherwise */
+    width: calc(100vw + 20px);
+    max-width: none;
+    margin-left: calc(50% - 50vw - 10px);
+    margin-right: calc(50% - 50vw - 10px);
+  }
+}
 .nh-mq-track { display: flex; gap: 14px; width: max-content; animation: nh-mq-scroll 46s linear infinite; }
 .nh-mq:hover .nh-mq-track { animation-play-state: paused; }
 @keyframes nh-mq-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 .nh-mq-card { position: relative; flex: 0 0 auto; width: 260px; border-radius: 16px; overflow: hidden;
   background: var(--surface); box-shadow: inset 0 0 0 1px var(--border); aspect-ratio: 4/5; cursor: default; }
-.nh-mq-card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; user-select: none; }
+.nh-mq-card img,
+.nh-mq-card .nh-mq-image,
+.nh-mq-card .nh-mq-blur { width: 100%; height: 100%; object-fit: cover; pointer-events: none; user-select: none; }
 .nh-mq-veil { position: absolute; inset: 0; pointer-events: none;
   background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.72) 100%); }
 .nh-mq-body { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px; display: flex;
-  align-items: flex-end; justify-content: space-between; gap: 10px; }
+  align-items: flex-end; justify-content: space-between; gap: 10px; z-index: 2; }
 .nh-mq-meta { min-width: 0; color: #fff; }
-.nh-mq-title { font: 700 14px/1.15 var(--ff-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.nh-mq-sub { font: 500 11px/1.2 var(--ff-mono); color: rgba(255,255,255,.62); margin-top: 3px; }
+.nh-mq-title { font: 700 14px/1.15 var(--ff-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.nh-mq-seller { font: 500 11px/1.2 var(--ff-mono); color: rgba(255,255,255,.72); margin-top: 3px; display: block;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nh-mq-sub { font: 500 11px/1.2 var(--ff-mono); color: rgba(255,255,255,.62); margin-top: 3px; display: block; }
 .nh-mq-chat { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 13px;
   border-radius: var(--r-pill, 999px); border: 0; font: 600 12px/1 var(--ff-main); cursor: pointer;
   background: rgba(255,255,255,.16); color: #fff; backdrop-filter: blur(6px); text-decoration: none; white-space: nowrap; }
 .nh-mq-chat i { font-size: calc(var(--fs-u, 1) * 15px); }
 .nh-mq-chat[disabled], .nh-mq-chat.is-locked {
-  background: rgba(255,255,255,.14); color: rgba(255,255,255,.72); cursor: not-allowed; backdrop-filter: blur(4px); }
+  background: rgba(255,255,255,.14); color: rgba(255,255,255,.72); cursor: pointer; backdrop-filter: blur(4px); }
+
+/* Guest ticket lock — same contract as .nh-track-card.is-guest */
+.nh-mq-card.is-guest { cursor: pointer; }
+.nh-mq-card.is-guest .nh-mq-blur {
+  position: absolute; inset: 0; z-index: 0;
+  filter: blur(14px) saturate(.7) brightness(.55);
+  transform: scale(1.12);
+}
+.nh-mq-card.is-guest .nh-mq-image {
+  position: absolute; inset: 0; z-index: 1;
+  opacity: .42; filter: grayscale(.35) brightness(.7);
+}
+.nh-mq-lock-av {
+  position: absolute; top: 50%; left: 50%; z-index: 3;
+  width: 48px; height: 48px; margin: -24px 0 0 -24px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.18); color: #fff;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.28);
+  font-size: calc(var(--fs-u, 1) * 20px); pointer-events: none;
+}
+.nh-mq-card.is-guest .nh-mq-title.nh-track-locked-lbl,
+.nh-mq-card.is-guest .nh-mq-seller.nh-track-locked-lbl,
+.nh-mq-card.is-guest .nh-mq-sub.nh-track-locked-lbl {
+  color: rgba(255,255,255,.55) !important;
+}
+
+.nh-mq-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.nh-resale-intro a {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 
 /* ═══════════════════════════════════════════════════════════════════
    MOBILE-APP-FIRST POLISH (≤767px) — native rhythm, safe areas, taps.
@@ -2086,15 +2221,17 @@ section #map { padding-bottom: 0 !important; }
   /* edge-to-edge app gutters */
   .container { padding: 0 18px; }
 
-  /* topbar clears the notch; symmetric inset (no asymmetric right offset) */
-  .ax-top {
+  /* topbar clears the notch; landing-scoped — DS owns bare .ax-top */
+  body[data-apollo-page="landing"] .ax-top {
     top: calc(8px + env(safe-area-inset-top, 0px));
     left: 0;
     right: 0;
     padding-left: max(12px, env(safe-area-inset-left, 0px));
     padding-right: max(16px, env(safe-area-inset-right, 0px));
   }
-  .ax-top-blur { height: calc(58px + env(safe-area-inset-top, 0px)); }
+  body[data-apollo-page="landing"] .ax-top-blur {
+    height: calc(58px + env(safe-area-inset-top, 0px));
+  }
 
   /* hero: full-bleed, text clears the home indicator, punchier scale */
   .nh-hero-content { left: 20px; right: 18px; bottom: calc(30px + env(safe-area-inset-bottom, 0px)); width: auto; }
@@ -2108,9 +2245,10 @@ section #map { padding-bottom: 0 !important; }
   .nh-section-head a { display: inline-flex; align-items: center; min-height: 40px; font-size: .8rem; white-space: nowrap; }
 
   /* ≥44px touch targets on all interactive chrome */
-  .ax-burger { min-width: 46px; min-height: 46px; }
+  body[data-apollo-page="landing"] .ax-burger { min-width: 46px; min-height: 46px; }
   .nh-menu-fab { width: 54px !important; height: 54px !important; }
-  .nh-mq-chat, .ax-login { min-height: 40px; }
+  .nh-mq-chat,
+  body[data-apollo-page="landing"] .ax-login { min-height: 40px; }
 
   /* image marquees: phone-sized cards, momentum untouched (auto-scroll) */
   .nh-mq { margin-top: 14px; }
@@ -2130,6 +2268,11 @@ section #map { padding-bottom: 0 !important; }
   #apollo-home, .section, .container, .nh-hero, .nh-marquee-wrap, .nh-mq {
     max-width: 100%;
     overflow-x: clip;
+  }
+  /* Classificados must bleed past the container — don't clamp it to 100% */
+  #resell .nh-mq {
+    max-width: none;
+    overflow-x: hidden;
   }
   /* Tracks rail: negative bleed overflows 320px viewports */
   .nh-tracks-grid {
@@ -2181,7 +2324,7 @@ section #map { padding-bottom: 0 !important; }
 .nh-map-open-chip { display: inline-flex; align-items: center; gap: 7px; height: 38px; padding: 0 15px;
   border-radius: var(--r-pill, 999px); background: rgba(10,10,10,.72); color: #fff;
   -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); font: 600 12.5px/1 var(--ff-main);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); transition: background .3s ease; }
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); transition: background .18s ease; }
 .nh-map-open-chip i { font-size: calc(var(--fs-u, 1) * 16px); }
 .nh-map-open:hover .nh-map-open-chip { background: rgba(10,10,10,.92); }
 
@@ -2208,17 +2351,10 @@ section #map { padding-bottom: 0 !important; }
 <style>/* ═══ REAL CELL: page-home.php #apollo-home-styles ═══ */
 
         /* ── OWNERSHIP ────────────────────────────────────────────────────
-           This cell OWNS the /casa `landing` topbar variant — transparent
-           over the hero, the scroll-dim colour ramp, and the login-only
-           right cluster — plus the two legacy `.a-v2-*` list/card blocks.
-
-           It does NOT own the topbar's geometry. `.ax-top`, `.ax-top-blur`,
-           `.ax-burger`, `.ax-top-l/r/brand` and the `.ax-ic` em box belong to
-           template-parts/apollo-plus/topbar-styles.php, which /casa does not
-           load — so what follows is a partial private copy that has already
-           drifted (DS top:2px / right:13px vs 13px / 0 here, and --fs-r vs
-           --fsx for the icon scale). Tracked as F-01 in
-           _inventory/CASA-MAP-2026-08-08.md, ADR-001. Do not extend the copy.
+           Landing-only deltas on top of apollo-plus/topbar-styles.php:
+           full-bleed hero (no .ax-body pad), transparent topbar over video,
+           scroll-dim colour ramp, drawer-only aside. Geometry of .ax-top
+           belongs to topbar-styles.php — do not redeclare it here.
 
            Tokens come from core.js #cdn-apollo. Page-local extras only. */
 
@@ -2547,127 +2683,119 @@ section #map { padding-bottom: 0 !important; }
         /* Footer + intro gate — external new-home.css (no inline overrides) */
 
         /* ══════════════════════════════════════════════════════════
-           TOPBAR — showcase ax-top (tokens from core.js only)
-           landing variant: fixed, transparent over hero, login-only
+           LANDING TOPBAR DELTAS (geometry owned by topbar-styles.php)
+           Full-bleed hero: kill shell padding. Softer blur over video.
+           Every override is body[data-apollo-page="landing"]-scoped so
+           B2 never sees a bare DS selector redeclared.
         ══════════════════════════════════════════════════════════ */
-        .ax-top-blur {
-            position: fixed; top: 0; left: 0; width: 100%; height: 60px; z-index: 9900;
+        body[data-apollo-page="landing"].ax-body { padding-top: 0; }
+        body[data-apollo-page="landing"] .ax-top-blur {
+            height: 60px;
             backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
             background: linear-gradient(to bottom, rgba(var(--rgb-theme), .35) 0%, rgba(var(--rgb-theme), .10) 50%, transparent 100%);
-            pointer-events: none;
+            -webkit-mask: none; mask: none;
         }
-        .ax-top {
-            position: fixed; top: 13px; left: 0; right: 0; z-index: 9901;
-            height: var(--s-6, 56px); display: flex; align-items: center; justify-content: space-between;
-            gap: 6px; padding: 0 clamp(12px, 3vw, 24px); padding-top: var(--safe-top, 0px);
+
+        /* ═══ APOLLO+ ASIDE — DRAWER-ONLY ON /casa (2026-08-25) ═══════════════
+           aside-styles.php pins .ax-aside at >=1000px and hides .ax-burger,
+           which is correct for every screen whose content well is .ax-main and
+           therefore absorbs the 225px offset. /casa's <main id="apollo-home">
+           is a deliberately full-bleed landing with no such offset, so a pinned
+           aside would cover the hero.
+
+           Scoped to body[data-apollo-page="landing"] so ONLY /casa is affected —
+           this does not touch the pinned behaviour anywhere else. Specificity
+           (body[attr] + class) beats aside-styles.php's bare .ax-aside inside
+           the same media query without needing !important on the transform.
+
+           OWNERSHIP: aside-styles.php remains the owner of .ax-aside/.ax-burger.
+           This is a declared, page-scoped override of two of its properties,
+           not a second declaration of the component. */
+        @media (min-width: 1000px) {
+            body[data-apollo-page="landing"] .ax-aside {
+                width: min(320px, 86vw);
+                transform: translateX(-100%);
+            }
+            body[data-apollo-page="landing"] .ax-aside.open { transform: translateX(0); }
+            /* Burger stays the menu affordance at every width here, because the
+               aside never pins to replace it. Brand stays visible too — DS
+               hides .ax-top-brand when the aside pins; /casa never pins. */
+            body[data-apollo-page="landing"] .ax-burger { display: flex; }
+            body[data-apollo-page="landing"] .ax-top-brand { display: flex; }
+            /* The overlay is the drawer's dismiss target, so it must stay live —
+               aside-styles.php switches it off at this breakpoint on the
+               assumption that a pinned aside needs no scrim. */
+            body[data-apollo-page="landing"] .ax-overlay { display: block; }
         }
-        .ax-top-l, .ax-top-r { display: flex; align-items: center; }
-        .ax-top-l { flex-shrink: 0; min-width: 0; }
-        .ax-top-r { margin-left: auto; gap: 2px; flex-shrink: 0; }
-        .ax-burger {
-            display: flex; width: 44px; height: 44px; border-radius: var(--r-pill, 999px);
-            align-items: center; justify-content: center; color: rgba(var(--rgb-diff), .75);
-            cursor: pointer; background: none; border: 0; transition: background .4s var(--ease, ease);
-        }
-        .ax-burger:hover { background: var(--surface); }
-        /* Topbar nav icon glyphs — 22px em box (header only) */
-        .ax-top .ax-burger,
-        .ax-top .ax-top-r .ax-ic,
-        .ax-top .ax-top-r .ax-login { font-size: calc(var(--fsx, 1) * 22px); }
-        .ax-top .ax-burger > svg,
-        .ax-top .ax-burger > i,
-        .ax-top .ax-top-r .ax-ic > svg,
-        .ax-top .ax-top-r .ax-ic > i,
-        .ax-top .ax-top-r .ax-login > svg,
-        .ax-top .ax-top-r .ax-login > i { width: 1em; height: 1em; font-size: inherit; flex-shrink: 0; display: block; line-height: 1; }
-        .ax-top-brand { display: flex; align-items: center; gap: 9px; text-decoration: none; margin-left: 4px; }
-        .ax-top-brand .apollo { font-size: 26px; line-height: 1; color: var(--txt-heading); display: inline-flex; }
+
         /* login = bare icon button — NO background, NO border (showcase icon-btn rule) */
-        /* color intentionally NOT set here — owned by the topbar color layer below */
-        .ax-login {
+        body[data-apollo-page="landing"] .ax-login {
             display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 6px;
             background: none; border: 0;
-            /* icon size inherited from .ax-top .ax-ic 22px em box above */
             font-family: var(--ff-main); font-weight: 600; text-decoration: none; white-space: nowrap;
         }
-        @media (max-width: 560px) { .ax-login span { display: none; } }
+        @media (max-width: 560px) { body[data-apollo-page="landing"] .ax-login span { display: none; } }
 
         /* ══════════════════════════════════════════════════════════
            TOPBAR ICON COLOR + SCROLL DIM  (/casa only)
            rest → scrolled past 1.25vh. currentColor drives both <i>
            glyphs and inline <svg fill="currentColor">.
+           Selectors stay landing-scoped — never bare DS forks.
         ══════════════════════════════════════════════════════════ */
-        /* ── REST STATE — every topbar glyph, both markups (ax-top + legacy nh-nav) ── */
-        .ax-top-r > *,
-        .ax-top-r > * i,
-        .ax-top-r > * svg,
-        .ax-top-r > * span,
-        .nh-nav-actions > *,
-        .nh-nav-actions > * i,
-        .nh-nav-actions > * svg,
-        .nh-nav-btn,
-        .nh-nav-btn i,
-        .nh-nav-btn svg,
-        .ax-top .ax-burger,
-        .ax-top .ax-burger i,
-        .ax-top .ax-burger svg,
-        .ax-top .ax-ic,
-        .ax-top .ax-ic > i,
-        .ax-top .ax-ic svg:not(.ax-dot svg),
-        .ax-top .ax-avb-init,
-        .ax-top-brand,
-        .ax-top-brand .apollo,
-        .ax-top-brand svg,
-        .ax-top-brand .apollo-logo-wrapper svg {
+        body[data-apollo-page="landing"] .ax-top-r > *,
+        body[data-apollo-page="landing"] .ax-top-r > * i,
+        body[data-apollo-page="landing"] .ax-top-r > * svg,
+        body[data-apollo-page="landing"] .ax-top-r > * span,
+        body[data-apollo-page="landing"] .ax-top .ax-burger,
+        body[data-apollo-page="landing"] .ax-top .ax-burger i,
+        body[data-apollo-page="landing"] .ax-top .ax-burger svg,
+        body[data-apollo-page="landing"] .ax-top .ax-ic,
+        body[data-apollo-page="landing"] .ax-top .ax-ic > i,
+        body[data-apollo-page="landing"] .ax-top .ax-ic svg:not(.ax-dot svg),
+        body[data-apollo-page="landing"] .ax-top .ax-avb-init,
+        body[data-apollo-page="landing"] .ax-top-brand,
+        body[data-apollo-page="landing"] .ax-top-brand .apollo,
+        body[data-apollo-page="landing"] .ax-top-brand svg,
+        body[data-apollo-page="landing"] .ax-top-brand .apollo-logo-wrapper svg {
             color: #dedede !important;
             fill: #dedede !important;
             stroke: #dedede !important;
-            transition: all .65s ease !important;
+            transition: color .2s ease, fill .2s ease, stroke .2s ease !important;
         }
-        /* login icon = showcase .ax-ic treatment */
-        .ax-login,
-        .ax-login i,
-        .ax-login svg,
-        .ax-login span {
+        body[data-apollo-page="landing"] .ax-login,
+        body[data-apollo-page="landing"] .ax-login i,
+        body[data-apollo-page="landing"] .ax-login svg,
+        body[data-apollo-page="landing"] .ax-login span {
             color: #666666CC !important;
             fill: #666666CC !important;
-            transition: all .65s ease !important;
+            transition: color .2s ease, fill .2s ease !important;
         }
 
-        /* ── SCROLLED STATE (> 1.25vh) ── */
-        body.ax-scrolled .ax-top-r > *,
-        body.ax-scrolled .ax-top-r > * i,
-        body.ax-scrolled .ax-top-r > * svg,
-        body.ax-scrolled .ax-top-r > * span,
-        body.ax-scrolled .nh-nav-actions > *,
-        body.ax-scrolled .nh-nav-actions > * i,
-        body.ax-scrolled .nh-nav-actions > * svg,
-        body.ax-scrolled .nh-nav-btn,
-        body.ax-scrolled .nh-nav-btn i,
-        body.ax-scrolled .nh-nav-btn svg,
-        body.ax-scrolled .ax-top .ax-burger,
-        body.ax-scrolled .ax-top .ax-burger i,
-        body.ax-scrolled .ax-top .ax-burger svg,
-        body.ax-scrolled .ax-top .ax-ic,
-        body.ax-scrolled .ax-top .ax-ic > i,
-        body.ax-scrolled .ax-top .ax-ic svg:not(.ax-dot svg),
-        body.ax-scrolled .ax-top .ax-avb-init,
-        body.ax-scrolled .ax-top-brand,
-        body.ax-scrolled .ax-top-brand .apollo,
-        body.ax-scrolled .ax-top-brand svg,
-        body.ax-scrolled .ax-top-brand .apollo-logo-wrapper svg {
+        body[data-apollo-page="landing"].ax-scrolled .ax-top-r > *,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top-r > * i,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top-r > * svg,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top-r > * span,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top .ax-burger,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top .ax-burger i,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top .ax-burger svg,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top .ax-ic,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top .ax-ic > i,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top .ax-ic svg:not(.ax-dot svg),
+        body[data-apollo-page="landing"].ax-scrolled .ax-top .ax-avb-init,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top-brand,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top-brand .apollo,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top-brand svg,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top-brand .apollo-logo-wrapper svg {
             color: #aaa !important;
             fill: currentColor !important;
             stroke: currentColor !important;
-            transition: all .65s ease !important;
         }
-        body.ax-scrolled .ax-login,
-        body.ax-scrolled .ax-login i,
-        body.ax-scrolled .ax-login svg,
-        body.ax-scrolled .ax-login span {
+        body[data-apollo-page="landing"].ax-scrolled .ax-login,
+        body[data-apollo-page="landing"].ax-scrolled .ax-login i,
+        body[data-apollo-page="landing"].ax-scrolled .ax-login svg,
+        body[data-apollo-page="landing"].ax-scrolled .ax-login span {
             color: #66666680 !important;
             fill: currentColor !important;
-            transition: all .65s ease !important;
         }
 
         /* ══ Hero text ALWAYS white over the video (cache-proof — inline beats
@@ -2675,24 +2803,88 @@ section #map { padding-bottom: 0 !important; }
         #apollo-home .nh-hero-title { color: #fff !important; }
         #apollo-home .nh-hero-sub { color: rgba(255, 255, 255, .58) !important; }
 
-        /* Mobile topbar + x-axis containment (inline wins over new-home.css link order) */
-        @media (max-width: 767px) {
-            .ax-top {
-                top: calc(8px + env(safe-area-inset-top, 0px));
-                padding-left: max(12px, env(safe-area-inset-left, 0px));
-                padding-right: max(16px, env(safe-area-inset-right, 0px));
+        /* Mobile topbar geometry lives in new-home.css (landing-scoped) —
+           one owner; do not redeclare here. */
+
+        /* ══ Diamond CSS bridge (asset sync can lag behind PHP) ═══════════
+           Toolbar + discreet month control. Scoped so B1 never sees bare
+           duplicates of new-home.css selectors. Drop when assets catch up. */
+        body[data-apollo-page="landing"] .nh-section-head--toolbar { align-items: center; gap: 16px; }
+        body[data-apollo-page="landing"] .nh-section-tools {
+            display: inline-flex; align-items: center; gap: 14px;
+            margin-left: auto; flex-shrink: 0; transform: translateY(1px);
+        }
+        body[data-apollo-page="landing"] .nh-section-more {
+            font-family: var(--ff-mono); font-size: 0.68rem; font-weight: 500;
+            letter-spacing: .04em; text-transform: uppercase; color: var(--muted);
+            text-decoration: none; opacity: .72;
+            transition: color .18s ease, opacity .18s ease;
+        }
+        @media (hover: hover) {
+            body[data-apollo-page="landing"] .nh-section-more:hover { color: var(--txt-heading, var(--black-1)); opacity: 1; }
+        }
+        body[data-apollo-page="landing"] .nh-month-trigger {
+            display: inline-flex; align-items: center; gap: 6px; height: 32px;
+            background: transparent !important; border: none !important; box-shadow: none !important;
+            padding: 0 2px; cursor: pointer; font-family: var(--ff-mono); font-size: 0.72rem;
+            font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase;
+            color: var(--muted); -webkit-text-stroke: 0; opacity: .85;
+            transition: color .18s ease, opacity .18s ease;
+        }
+        @media (hover: hover) {
+            body[data-apollo-page="landing"] .nh-month-trigger:hover { color: var(--txt-heading, var(--black-1)); opacity: 1; }
+        }
+        body[data-apollo-page="landing"] .nh-month-trigger svg { width: 12px; height: 12px; color: var(--muted); flex-shrink: 0; }
+        body[data-apollo-page="landing"] .nh-month-row {
+            position: absolute; bottom: calc(100% + 10px); left: 0; z-index: 9999;
+            display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+            list-style: none; padding: 12px 18px; margin: 0; min-width: 170px;
+            background: rgba(var(--rgb-theme), 0.92) !important; isolation: isolate;
+            -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
+            backdrop-filter: blur(12px) saturate(140%) !important;
+            border: 1px solid rgba(var(--rgb-diff), 0.08) !important;
+            border-radius: var(--r-sm, 10px);
+            box-shadow: 0 8px 28px rgba(var(--rgb-diff), 0.08);
+            opacity: 0; pointer-events: none; transform: translateY(6px);
+            transition: opacity .2s var(--ease-out, ease), transform .2s var(--ease-out, ease);
+        }
+        body[data-apollo-page="landing"] .nh-month-row.is-visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        body[data-apollo-page="landing"] .nh-month-row li a {
+            background: transparent !important; border: none !important; box-shadow: none !important;
+            color: var(--muted); font-family: var(--ff-mono); font-size: 0.78rem; font-weight: 500;
+            letter-spacing: .02em; text-decoration: none; text-transform: none;
+            transition: color .18s ease; cursor: pointer; white-space: nowrap;
+        }
+        body[data-apollo-page="landing"] .nh-month-row li a.active { color: var(--txt-heading, var(--black-1)); font-weight: 600; }
+        body[data-apollo-page="landing"] .nh-track-guest-lbl,
+        body[data-apollo-page="landing"] .nh-mq-guest-lbl { opacity: .72; font-weight: 500; }
+        body[data-apollo-page="landing"] .nh-disclaimer--quiet { display: flex; gap: 10px; align-items: flex-start; margin-top: 22px; }
+        body[data-apollo-page="landing"] .nh-disclaimer--quiet p { font-size: 0.72rem; line-height: 1.55; color: var(--muted); margin: 0; }
+        body[data-apollo-page="landing"] .nh-empty-state--quiet { padding: 28px 16px !important; min-height: 0; }
+        body[data-apollo-page="landing"] .nh-empty-state--quiet i { display: none; }
+        body[data-apollo-page="landing"] .nh-resale-intro { font-size: 0.78rem; line-height: 1.55; max-width: 42rem; margin-bottom: 22px; }
+        /* Classificados edge-to-edge (asset sync bridge) */
+        body[data-apollo-page="landing"] #resell .nh-mq {
+            -webkit-mask-image: none !important;
+            mask-image: none !important;
+            --nh-mq-bleed: calc(clamp(20px, 4vw, 48px) + 12px);
+            margin-left: calc(-1 * var(--nh-mq-bleed));
+            margin-right: calc(-1 * var(--nh-mq-bleed));
+            width: calc(100% + 2 * var(--nh-mq-bleed));
+            max-width: none;
+        }
+        @media (min-width: 768px) {
+            body[data-apollo-page="landing"] #resell .nh-mq {
+                --nh-mq-bleed: calc(clamp(32px, 5vw, 56px) + 14px);
             }
-            .ax-top-blur { height: calc(58px + env(safe-area-inset-top, 0px)); }
         }
-        html, body.ax-body {
-            width: 100%;
-            max-width: 100%;
-            overflow-x: clip;
-        }
-        #apollo-home {
-            width: 100%;
-            max-width: 100%;
-            overflow-x: clip;
+        @media (max-width: 767px) {
+            body[data-apollo-page="landing"] #resell .nh-mq { --nh-mq-bleed: 28px; }
+            body[data-apollo-page="landing"] .nh-month-dropdown { position: static; }
+            body[data-apollo-page="landing"] .nh-month-row {
+                left: 0; right: auto;
+                max-width: calc(100vw - 36px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+            }
         }
     
 </style>
@@ -2814,10 +3006,10 @@ section #map { padding-bottom: 0 !important; }
 
 <section class="section" id="tracks" aria-labelledby="tracks-title">
     <div class="container">
-        <div class="nh-section-head ai">
-            <h2 id="tracks-title">Out Now!</h2>
-            <a href=" "
-                aria-label=" ">Ver Todos →</a>
+        <div class="nh-section-head ai nh-section-head--toolbar">
+            <h2 id="tracks-title" split-chars>Out Now!</h2>
+            <a class="nh-section-more" href=" "
+                aria-label=" ">Ver todos</a>
         </div>
 
          
@@ -2845,23 +3037,40 @@ section #map { padding-bottom: 0 !important; }
  
 <section class="section" id="events" aria-labelledby="events-title">
     <div class="container">
-        <div class="nh-section-head ai">
-            <span class="grouped-left">
-                <h2 id="events-title" split-chars style="font-size: clamp(2rem, 5.5vw, 4rem) !important;">Events</h2>
+        <div class="nh-section-head ai nh-section-head--toolbar">
+            <h2 id="events-title" split-chars>Eventos</h2>
+            <div class="nh-section-tools">
                 <div class="nh-month-dropdown">
                     <button id="nhMonthTrigger" class="nh-month-trigger"
-                        aria-label=" ">
+                        aria-label=" "
+                        aria-haspopup="listbox" aria-expanded="false">
                         <span class="nh-month-text"> </span>
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <polyline points="9 18 15 12 9 6" />
                         </svg>
                     </button>
-                    <ul id="nhMonthMenu" class="nh-month-row"></ul>
+                    <ul id="nhMonthMenu" class="nh-month-row" role="listbox">
+                         
+                            <li role="option">
+                                <a href="#" data-type="month" class=" "> </a>
+                            </li>
+                         
+                        <li>
+                            <a class="nh-portal-link" data-type="link" href=" ">
+                                <i class="ri-calendar-2-line" aria-hidden="true"></i>  
+                            </a>
+                        </li>
+                        <li>
+                            <a class="nh-portal-link" data-type="link" href=" ">
+                                <i class="ri-calendar-schedule-line" aria-hidden="true"></i>  
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-            </span>
-            <a href=" "
-                aria-label=" ">Ver Todos →</a>
+                <a class="nh-section-more" href=" "
+                    aria-label=" ">Ver todos</a>
+            </div>
         </div>
 
         <div class="nh-events-grid">
@@ -2918,46 +3127,114 @@ section #map { padding-bottom: 0 !important; }
                 aria-label=" ">
                 <div class="xp-inner">
                     <i class="ri-arrow-right-up-line xp-icon" aria-hidden="true"></i>
-                    <span class="xp-all">ALL</span>
-                    <span class="xp-label">Eventos</span>
+                    <span class="xp-all">+</span>
+                    <span class="xp-label">Ver todos</span>
                 </div>
             </a>
 
         </div><!-- /.nh-events-grid -->
     </div>
 </section>
+<script>
+/* PT month labels — deferred past new-home.js so stale English rebuild loses. */
+(function () {
+    function apply() {
+        var PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+                  'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+        var idx = new Date().getMonth();
+        var names = [PT[idx], PT[(idx + 1) % 12], PT[(idx + 2) % 12]];
+        var text = document.querySelector('#events .nh-month-text');
+        var menu = document.getElementById('nhMonthMenu');
+        if (text) text.textContent = names[0];
+        if (!menu) return;
+        var links = menu.querySelectorAll('a[data-type="month"]');
+        if (links.length >= 3) {
+            for (var i = 0; i < 3; i++) links[i].textContent = names[i];
+            return;
+        }
+        menu.innerHTML =
+            '<li><a href="#" class="active" data-type="month">' + names[0] + '</a></li>' +
+            '<li><a href="#" data-type="month">' + names[1] + '</a></li>' +
+            '<li><a href="#" data-type="month">' + names[2] + '</a></li>' +
+            '<li><a class="nh-portal-link" data-type="link" href="/portal/eventos"><i class="ri-calendar-2-line"></i> Ver todos</a></li>' +
+            '<li><a class="nh-portal-link" data-type="link" href="/novo-evento"><i class="ri-calendar-schedule-line"></i> Incluir evento</a></li>';
+        menu.removeAttribute('hidden');
+    }
+    function schedule() { window.setTimeout(apply, 60); }
+    if (document.readyState === 'complete') schedule();
+    else window.addEventListener('load', schedule);
+})();
+</script>
  
-
+<style id="casa-resell-edge">
+/* Classificados — edge-to-edge cards, no fade mask.
+   Extra bleed past .container gutter (overflow-x:clip eats the rim). */
+#resell .nh-mq {
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+  --nh-mq-bleed: calc(clamp(20px, 4vw, 48px) + 12px);
+  margin-left: calc(-1 * var(--nh-mq-bleed)) !important;
+  margin-right: calc(-1 * var(--nh-mq-bleed)) !important;
+  width: calc(100% + 2 * var(--nh-mq-bleed)) !important;
+  max-width: none !important;
+  overflow-x: hidden;
+}
+@media (min-width: 768px) {
+  #resell .nh-mq { --nh-mq-bleed: calc(clamp(32px, 5vw, 56px) + 14px); }
+}
+@media (max-width: 767px) {
+  #resell .nh-mq { --nh-mq-bleed: 28px; }
+}
+</style>
 <section class="section" id="resell" aria-labelledby="resell-title">
     <div class="container">
-        <div class="nh-section-head ai">
-            <h2 id="resell-title">Classificados</h2>
+        <div class="nh-section-head ai nh-section-head--toolbar">
+            <h2 id="resell-title" split-chars>Classificados</h2>
+            <a class="nh-section-more" href=" "> </a>
         </div>
-        <p class="nh-resale-intro ai">Marketplace peer-to-peer. Identidade do vendedor visível apenas para membros.</p>
+        <p class="nh-resale-intro ai">
+             
+        </p>
 
          
             <div class="nh-mq ai" aria-label=" ">
                 <div class="nh-mq-track">
                      
                          
-                            <figure class="nh-mq-card"  
-                                 >
-                                <img src=" " alt=" " loading="lazy" />
-                                <div class="nh-mq-veil" aria-hidden="true"></div>
-                                <figcaption class="nh-mq-body">
-                                    <span class="nh-mq-meta">
-                                        <span class="nh-mq-title"> </span>
-                                        <span class="nh-mq-sub"> </span>
-                                    </span>
-                                     
-                                        <a class="nh-mq-chat" href=" "><i class="ri-chat-3-line"></i> Chat</a>
-                                     
-                                         
-                                        <button type="button" class="nh-mq-chat is-locked" data-auth-required
-                                            aria-label=" "><i class="ri-lock-2-line"></i> Chat</button>
-                                     
-                                </figcaption>
-                            </figure>
+                            
+                                            <span class="nh-mq-sub"> </span>
+                                        </span>
+                                        <span class="nh-mq-actions">
+                                             
+                                             
+                                                <a class="nh-mq-chat" href=" "><i class="ri-chat-3-line"></i> Chat</a>
+                                             
+                                        </span>
+                                    </figcaption>
+                                </figure>
+                             
+                                <figure class="nh-mq-card is-guest"  
+                                    data-auth-required role="button" tabindex="0"
+                                    aria-label=" ">
+                                    <img class="nh-mq-blur" src=" " alt="" loading="lazy" aria-hidden="true" />
+                                    <img class="nh-mq-image" src=" " alt="" loading="lazy" aria-hidden="true" />
+                                    <div class="nh-mq-veil" aria-hidden="true"></div>
+                                    <div class="nh-mq-lock-av" aria-hidden="true">
+                                        <i class="ri-lock-2-line"></i>
+                                    </div>
+                                    <figcaption class="nh-mq-body">
+                                        <span class="nh-mq-meta">
+                                            <span class="nh-mq-title nh-mq-guest-lbl"> </span>
+                                            <span class="nh-mq-sub nh-mq-guest-lbl"> </span>
+                                        </span>
+                                        <span class="nh-mq-actions">
+                                             
+                                            <button type="button" class="nh-mq-chat is-locked" data-auth-required
+                                                aria-label=" "><i class="ri-lock-2-line"></i> Chat</button>
+                                        </span>
+                                    </figcaption>
+                                </figure>
+                             
                          
                      
                 </div>
@@ -2970,16 +3247,9 @@ section #map { padding-bottom: 0 !important; }
             </div>
          
 
-        <aside class="nh-disclaimer ai" role="note">
-            <div class="nh-disclaimer-accent" aria-hidden="true"></div>
-            <div class="nh-disclaimer-body">
-                <div class="nh-disclaimer-header">
-                    <i class="ri-shield-check-fill" aria-hidden="true"></i>
-                    <h4> </h4>
-                </div>
-                <p> 
-                </p>
-            </div>
+        <aside class="nh-disclaimer nh-disclaimer--quiet ai" role="note">
+            <i class="ri-shield-check-line" aria-hidden="true"></i>
+            <p> </p>
         </aside>
     </div>
 </section>
@@ -2988,9 +3258,13 @@ section #map { padding-bottom: 0 !important; }
 
 <section class="section" id="crash" aria-labelledby="crash-title">
     <div class="container">
-        <div class="nh-section-head ai">
+        <div class="nh-section-head ai nh-section-head--toolbar">
             <h2 id="crash-title" split-chars>Acomoda::Rio</h2>
+            <a class="nh-section-more" href=" "> </a>
         </div>
+        <p class="nh-resale-intro ai">
+             
+        </p>
 
          
             <div class="nh-mq ai" aria-label=" ">
@@ -2998,39 +3272,63 @@ section #map { padding-bottom: 0 !important; }
                      
                          
                              
-                            <figure class="nh-mq-card"  
-                                 >
-                                <img src=" " alt=" " loading="lazy" />
-                                <div class="nh-mq-veil" aria-hidden="true"></div>
-                                <figcaption class="nh-mq-body">
-                                    <span class="nh-mq-meta">
-                                        <span class="nh-mq-title"> </span>
-                                        <span class="nh-mq-sub"> </span>
-                                    </span>
-                                     
-                                         
-                                        <a class="nh-mq-chat nh-mq-chat--hostel" href=" "
-                                            target="_blank" rel="noopener"><i class="ri-external-link-line"></i> Reservar</a>
-                                     
-                                        <a class="nh-mq-chat" href=" "><i class="ri-chat-3-line"></i> Chat</a>
-                                     
-                                         
-                                        <button type="button" class="nh-mq-chat is-locked" data-auth-required
-                                            aria-label=" "><i class="ri-lock-2-line"></i> Chat</button>
-                                     
-                                </figcaption>
-                            </figure>
+                             
+                                <figure class="nh-mq-card is-guest"  
+                                    data-auth-required role="button" tabindex="0"
+                                    aria-label=" ">
+                                    <img class="nh-mq-blur" src=" " alt="" loading="lazy" aria-hidden="true" />
+                                    <img class="nh-mq-image" src=" " alt="" loading="lazy" aria-hidden="true" />
+                                    <div class="nh-mq-veil" aria-hidden="true"></div>
+                                    <div class="nh-mq-lock-av" aria-hidden="true">
+                                        <i class="ri-lock-2-line"></i>
+                                    </div>
+                                    <figcaption class="nh-mq-body">
+                                        <span class="nh-mq-meta">
+                                            <span class="nh-mq-title nh-mq-guest-lbl"> </span>
+                                            <span class="nh-mq-sub nh-mq-guest-lbl"> </span>
+                                        </span>
+                                        <span class="nh-mq-actions">
+                                             
+                                            <button type="button" class="nh-mq-chat is-locked" data-auth-required
+                                                aria-label=" "><i class="ri-lock-2-line"></i> Chat</button>
+                                        </span>
+                                    </figcaption>
+                                </figure>
+                             
+                                <figure class="nh-mq-card"  >
+                                    <img src=" " alt=" " loading="lazy" />
+                                    <div class="nh-mq-veil" aria-hidden="true"></div>
+                                    <figcaption class="nh-mq-body">
+                                        <span class="nh-mq-meta">
+                                            <span class="nh-mq-title"> </span>
+                                            <span class="nh-mq-sub"> </span>
+                                        </span>
+                                        <span class="nh-mq-actions">
+                                             
+                                             
+                                                <a class="nh-mq-chat nh-mq-chat--hostel" href=" "
+                                                    target="_blank" rel="noopener"><i class="ri-external-link-line"></i> Reservar</a>
+                                             
+                                                <a class="nh-mq-chat" href=" "><i class="ri-chat-3-line"></i> Chat</a>
+                                             
+                                        </span>
+                                    </figcaption>
+                                </figure>
+                             
                          
                      
                 </div>
             </div>
          
-            <div class="nh-empty-state ai" style="grid-column:1/-1;">
-                <i class="ri-home-heart-line" aria-hidden="true"></i>
-                <p>Em breve..</p>
-                <span class="nh-empty-sub">A rede Acomoda::Rio está sendo construída. Em breve você poderá hospedar ou encontrar um lugar.</span>
+            <div class="nh-empty-state nh-empty-state--quiet ai">
+                <p> </p>
             </div>
          
+
+        <aside class="nh-disclaimer nh-disclaimer--quiet ai" role="note">
+            <i class="ri-shield-check-line" aria-hidden="true"></i>
+            <p> </p>
+        </aside>
     </div>
 </section>
 
@@ -3208,6 +3506,7 @@ section #map { padding-bottom: 0 !important; }
     <a href=" " class="nh-sheet-item" role="menuitem">
         <i class="ri-map-pin-line"></i> 
     </a>
+     
     <a href=" " class="nh-sheet-item" role="menuitem">
         <i class="ri-exchange-box-line"></i> 
     </a>

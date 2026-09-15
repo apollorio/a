@@ -1,0 +1,22 @@
+{
+  "recommendations": [
+    "saoudrizwan.claude-dev",
+    "anthropic.claude-code",
+    "bmewburn.vscode-intelephense-client",
+    "johnbillion.vscode-wordpress-hooks",
+    "devsense.composer-php-vscode",
+    "xdebug.php-debug",
+    "valeryanm.vscode-phpsab",
+    "junstyle.php-cs-fixer",
+    "neilbrayfield.php-docblocker",
+    "recca0120.vscode-phpunit",
+    "rifi2k.format-html-in-php",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "ecmel.vscode-html-css",
+    "eamodio.gitlens",
+    "usernamehw.errorlens",
+    "ritwickdey.liveserver"
+  ],
+  "unwantedRecommendations": []
+}

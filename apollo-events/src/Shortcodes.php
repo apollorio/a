@@ -25,7 +25,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Shortcodes {
 
 	public function __construct() {
-		add_action( 'init', array( $this, 'register' ) );
+		/*
+		 * ARCH: priority 20 is deliberate — do not lower it.
+		 *
+		 * apollo-templates registers apollo_events / apollo_event /
+		 * apollo_calendar / apollo_event_form on init:10 and, per doctrine,
+		 * is the render/chrome owner. Both plugins are mu force-loaded
+		 * (events before templates, alphabetically), so at init:10 this class
+		 * would register FIRST and templates would then silently overwrite all
+		 * four — an accidental precedence that nothing recorded.
+		 *
+		 * Running at 20 means shortcode_exists() below sees templates' real
+		 * registration and yields to it. Live behaviour is unchanged (templates
+		 * still wins); what changes is that it is now explicit, and these become
+		 * a genuine fallback if apollo-templates is ever deactivated.
+		 */
+		add_action( 'init', array( $this, 'register' ), 20 );
 	}
 
 	/**
@@ -35,11 +50,23 @@ class Shortcodes {
 		// Shortcode principal
 		add_shortcode( 'a-eve', array( $this, 'render_main' ) );
 
-		// Shortcodes do registry
-		add_shortcode( 'apollo_events', array( $this, 'render_apollo_events' ) );
-		add_shortcode( 'apollo_event', array( $this, 'render_apollo_event' ) );
-		add_shortcode( 'apollo_calendar', array( $this, 'render_apollo_calendar' ) );
-		add_shortcode( 'apollo_event_form', array( $this, 'render_event_form' ) );
+		/*
+		 * Guarded fallback — same idiom as post_type_exists() for CPTs.
+		 * apollo-templates owns these four tags (init:10, richer attribute
+		 * set: style/columns/orderby/order). We only fill in if it is absent.
+		 * Never remove the guard: without it the last registrant wins silently
+		 * and which implementation runs becomes an accident of load order.
+		 */
+		foreach ( array(
+			'apollo_events'     => 'render_apollo_events',
+			'apollo_event'      => 'render_apollo_event',
+			'apollo_calendar'   => 'render_apollo_calendar',
+			'apollo_event_form' => 'render_event_form',
+		) as $apollo_tag => $apollo_cb ) {
+			if ( ! shortcode_exists( $apollo_tag ) ) {
+				add_shortcode( $apollo_tag, array( $this, $apollo_cb ) );
+			}
+		}
 
 		// Registra no apollo-shortcodes (se ativo)
 		add_filter( 'apollo_shortcodes_registry', array( $this, 'register_in_apollo_shortcodes' ) );

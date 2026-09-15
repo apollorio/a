@@ -31,46 +31,83 @@
     };
 
     /**
-     * Load initial data (events list + overview)
+     * Soft-settle one AJAX unit — never rejects the fan-out.
+     * @param {string} action
+     * @param {object=} data
+     * @returns {Promise<{status:string, value?:*, reason?:*}>}
+     */
+    function settleAjax(action, data) {
+        return Promise.resolve()
+            .then(function () { return G.ajax(action, data || {}); })
+            .then(function (res) {
+                return { status: 'fulfilled', value: res };
+            })
+            .catch(function (err) {
+                console.warn('[GestorData] unit failed:', action, err);
+                return { status: 'rejected', reason: err };
+            });
+    }
+
+    function pickData(settled, fallback) {
+        if (settled && settled.status === 'fulfilled' && settled.value && settled.value.success) {
+            return settled.value.data;
+        }
+        return fallback;
+    }
+
+    /**
+     * Load initial data (events list + overview) — isolated parallel.
      */
     function loadAll() {
         return Promise.all([
-            G.ajax('load_events'),
-            G.ajax('load_overview')
+            settleAjax('load_events'),
+            settleAjax('load_overview')
         ]).then(function (results) {
-            Store.events = (results[0] && results[0].success) ? results[0].data : [];
-            Store.charts = (results[1] && results[1].success) ? results[1].data : {};
+            Store.events = pickData(results[0], []);
+            Store.charts = pickData(results[1], {});
             Store._ready = true;
+            Store._statuses = {
+                load_events: results[0].status,
+                load_overview: results[1].status
+            };
 
             Store._callbacks.forEach(function (fn) { fn(Store); });
             Store._callbacks = [];
+            return Store;
         });
     }
 
     /**
-     * Load data for a specific event
+     * Load data for a specific event — allSettled fan-out (one dead AJAX
+     * must not wipe sibling panels).
      * @param {number} eventId
      * @returns {Promise}
      */
     Store.loadEvent = function (eventId) {
         Store._eventId = eventId;
 
-        return Promise.all([
-            G.ajax('load_tasks',      { event_id: eventId }),
-            G.ajax('load_team',       { event_id: eventId }),
-            G.ajax('load_budget',     { event_id: eventId }),
-            G.ajax('load_payments',   { event_id: eventId }),
-            G.ajax('load_milestones', { event_id: eventId }),
-            G.ajax('load_activity',   { event_id: eventId }),
-            G.ajax('load_suppliers',  { event_id: eventId })
-        ]).then(function (results) {
-            Store.tasks      = (results[0] && results[0].success) ? results[0].data : {};
-            Store.team       = (results[1] && results[1].success) ? results[1].data : [];
-            Store.budget     = (results[2] && results[2].success) ? results[2].data : {};
-            Store.financeiro = (results[3] && results[3].success) ? results[3].data : {};
-            Store.milestones = (results[4] && results[4].success) ? results[4].data : [];
-            Store.activity   = (results[5] && results[5].success) ? results[5].data : [];
-            Store.suppliers  = (results[6] && results[6].success) ? results[6].data : [];
+        var units = [
+            ['load_tasks', 'tasks', {}],
+            ['load_team', 'team', []],
+            ['load_budget', 'budget', {}],
+            ['load_payments', 'financeiro', {}],
+            ['load_milestones', 'milestones', []],
+            ['load_activity', 'activity', []],
+            ['load_suppliers', 'suppliers', []]
+        ];
+
+        return Promise.all(
+            units.map(function (u) {
+                return settleAjax(u[0], { event_id: eventId }).then(function (s) {
+                    return { key: u[1], fallback: u[2], settled: s, action: u[0] };
+                });
+            })
+        ).then(function (rows) {
+            Store._statuses = Store._statuses || {};
+            rows.forEach(function (row) {
+                Store[row.key] = pickData(row.settled, row.fallback);
+                Store._statuses[row.action] = row.settled.status;
+            });
 
             /* Build static commands list (cmd palette) */
             Store.commands = {
@@ -89,6 +126,7 @@
                     { icon: 'ri-calculator-line',       label: 'Calculadora de Cachê',  action: 'calculator' }
                 ]
             };
+            return Store;
         });
     };
 

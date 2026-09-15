@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 1680" width="390" height="1680">
+  <rect width="390" height="1680" fill="#111111"/>
+  <text x="195" y="42" text-anchor="middle" fill="#FFFFFF" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="22" font-weight="700">apollo-waha</text>
+  <text x="195" y="64" text-anchor="middle" fill="#7CFFB2" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11">INIT → ADD USER → SEND LATER</text>
+
+  <!-- INIT -->
+  <rect x="24" y="88" width="342" height="520" rx="18" fill="none" stroke="#2A2A2A" stroke-width="1.5"/>
+  <circle cx="48" cy="114" r="11" fill="#7CFFB2"/>
+  <text x="48" y="118" text-anchor="middle" fill="#111" font-size="11" font-weight="700" font-family="ui-sans-serif, system-ui, sans-serif">1</text>
+  <text x="68" y="119" fill="#7CFFB2" font-size="13" font-weight="700" font-family="ui-sans-serif, system-ui, sans-serif">INIT</text>
+
+  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" fill="#F2F2F2">
+    <rect x="48" y="140" width="294" height="36" rx="8" fill="#1A1A1A" stroke="#333"/>
+    <text x="195" y="163" text-anchor="middle">PC / VPS</text>
+    <path d="M195 176 L195 188" stroke="#7CFFB2" stroke-width="1.5"/>
+    <polygon points="195,192 191,186 199,186" fill="#7CFFB2"/>
+
+    <rect x="48" y="194" width="294" height="36" rx="8" fill="#1A1A1A" stroke="#333"/>
+    <text x="195" y="217" text-anchor="middle">docker run WAHA</text>
+    <path d="M195 230 L195 242" stroke="#7CFFB2" stroke-width="1.5"/>
+    <polygon points="195,246 191,240 199,240" fill="#7CFFB2"/>
+
+    <rect x="48" y="248" width="294" height="36" rx="8" fill="#1A1A1A" stroke="#333"/>
+    <text x="195" y="271" text-anchor="middle">Dashboard + session apollo</text>
+    <path d="M195 284 L195 296" stroke="#7CFFB2" stroke-width="1.5"/>
+    <polygon points="195,300 191,294 199,294" fill="#7CFFB2"/>
+
+    <rect x="48" y="302" width="294" height="36" rx="8" fill="#1A1A1A" stroke="#333"/>
+    <text x="195" y="325" text-anchor="middle">Scan QR no celular</text>
+    <path d="M195 338 L195 350" stroke="#7CFFB2" stroke-width="1.5"/>
+    <polygon points="195,354 191,348 199,348" fill="#7CFFB2"/>
+
+    <rect x="48" y="356" width="294" height="36" rx="8" fill="#1A1A1A" stroke="#333"/>
+    <text x="195" y="379" text-anchor="middle">Session OPEN + plugin ON</text>
+    <path d="M195 392 L195 404" stroke="#7CFFB2" stroke-width="1.5"/>
+    <polygon points="195,408 191,402 199,402" fill="#7CFFB2"/>
+
+    <rect x="48" y="410" width="294" height="36" rx="8" fill="#1A1A1A" stroke="#333"/>
+    <text x="195" y="433" text-anchor="middle">Save URL + API key + session</text>
+    <path d="M195 446 L195 458" stroke="#7CFFB2" stroke-width="1.5"/>
+    <polygon points="195,462 191,456 199,456" fill="#7CFFB2"/>
+
+    <polygon points="195,468 255,498 195,528 135,498" fill="#14261C" stroke="#7CFFB2"/>
+    <text x="195" y="502" text-anchor="middle" fill="#7CFFB2" font-size="12">Grupo existe?</text>
+  </g>
+  <text x="78" y="548" fill="#888" font-size="11" font-family="ui-sans-serif, system-ui, sans-serif">Nao → cria grupo</text>
+  <text x="248" y="548" fill="#7CFFB2" font-size="11" font-family="ui-sans-serif, system-ui, sans-serif">Sim → salva @g.us</text>
+  <rect x="48" y="558" width="294" height="36" rx="8" fill="#14261C" stroke="#7CFFB2"/>
+  <text x="195" y="581" text-anchor="middle" fill="#7CFFB2" font-size="13" font-family="ui-sans-serif, system-ui, sans-serif">groupId salvo no apollo-core</text>
+
+  <!-- ADD -->
+  <rect x="24" y="628" width="342" height="430" rx="18" fill="none" stroke="#2A2A2A" stroke-width="1.5"/>
+  <circle cx="48" cy="654" r="11" fill="#7CFFB2"/>
+  <text x="48" y="658" text-anchor="middle" fill="#111" font-size="11" font-weight="700" font-family="ui-sans-serif, system-ui, sans-serif">2</text>
+  <text x="68" y="659" fill="#7CFFB2" font-size="13" font-weight="700" font-family="ui-sans-serif, system-ui, sans-serif">ADD USER</text>
+
+  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" fill="#F2F2F2">
+    <rect x="48" y="680" width="294" height="36" rx="8" fill="#1A1A1A" stroke="#333"/>
+    <text x="195" y="703" text-anchor="middle">User no site pede entrar</text>
+    <path d="M195 716 L195 728" stroke="#7CFFB2" stroke-width="1.5"/>
+    <polygon points="195,732 191,726 199,726" fill="#7CFFB2"/>
+
+    <rect x="48" y="734" width="294" height="36" rx="8" fill="#1A1A1A" stroke="#333"/>
+    <text x="195" y="757" text-anchor="middle">OTP phone ja verificado</text>
+    <path d="M195 770 L195 782" stroke="#7CFFB2" stroke-width="1.5"/>
+    <polygon points="195,786 191,780 199,780" fill="#7CFFB2"/>
+
+    <rect x="48" y="788" width="294" height="36" rx="8" fill="#1A1A1A" stroke="#333"/>
+    <text x="195" y="811" text-anchor="middle">Fila no apollo-core</text>
+    <path d="M195 824 L195 836" stroke="#7CFFB2" stroke-width="1.5"/>
+    <polygon points="195,840 191,834 199,834" fill="#7CFFB2"/>
+
+    <polygon points="195,846 260,880 195,914 130,880" fill="#14261C" stroke="#7CFFB2"/>
+    <text x="195" y="884" text-anchor="middle" fill="#7CFFB2" font-size="12">Admin aprova?</text>
+  </g>
+  <rect x="36" y="930" width="130" height="36" rx="8" fill="#1A1A1A" stroke="#555"/>
+  <text x="101" y="953" text-anchor="middle" fill="#888" font-size="13" font-family="ui-sans-serif, system-ui, sans-serif">Recusar = Fim</text>
+  <rect x="224" y="930" width="130" height="36" rx="8" fill="#14261C" stroke="#7CFFB2"/>
+  <text x="289" y="953" text-anchor="middle" fill="#7CFFB2" font-size="13" font-family="ui-sans-serif, system-ui, sans-serif">Aprovar</text>
+  <path d="M289 966 L289 978" stroke="#7CFFB2" stroke-width="1.5"/>
+  <polygon points="289,982 285,976 293,976" fill="#7CFFB2"/>
+  <rect x="48" y="984" width="294" height="54" rx="8" fill="#14261C" stroke="#7CFFB2"/>
+  <text x="195" y="1006" text-anchor="middle" fill="#7CFFB2" font-size="12" font-family="ui-sans-serif, system-ui, sans-serif">POST /groups/{id}/participants</text>
+  <text x="195" y="1024" text-anchor="middle" fill="#F2F2F2" font-size="12" font-family="ui-sans-serif, system-ui, sans-serif">user entra no @g.us</text>
+
+  <!-- SEND -->
+  <rect x="24" y="1078" width="342" height="400" rx="18" fill="none" stroke="#2A2A2A" stroke-width="1.5"/>
+  <circle cx="48" cy="1104" r="11" fill="#7CFFB2"/>
+  <text x="48" y="1108" text-anchor="middle" fill="#111" font-size="11" font-weight="700" font-family="ui-sans-serif, system-ui, sans-serif">3</text>
+  <text x="68" y="1109" fill="#7CFFB2" font-size="13" font-weight="700" font-family="ui-sans-serif, system-ui, sans-serif">SEND LATER</text>
+
+  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" fill="#F2F2F2">
+    <rect x="48" y="1130" width="294" height="36" rx="8" fill="#1A1A1A" stroke="#333"/>
+    <text x="195" y="1153" text-anchor="middle">Texto + horario no painel</text>
+    <path d="M195 1166 L195 1178" stroke="#7CFFB2" stroke-width="1.5"/>
+    <polygon points="195,1182 191,1176 199,1176" fill="#7CFFB2"/>
+
+    <rect x="48" y="1184" width="294" height="36" rx="8" fill="#1A1A1A" stroke="#333"/>
+    <text x="195" y="1207" text-anchor="middle">WP-Cron via apollo-core</text>
+    <path d="M195 1220 L195 1232" stroke="#7CFFB2" stroke-width="1.5"/>
+    <polygon points="195,1236 191,1230 199,1230" fill="#7CFFB2"/>
+
+    <rect x="48" y="1238" width="294" height="36" rx="8" fill="#1A1A1A" stroke="#333"/>
+    <text x="195" y="1261" text-anchor="middle">apollo-waha HTTP</text>
+    <path d="M195 1274 L195 1286" stroke="#7CFFB2" stroke-width="1.5"/>
+    <polygon points="195,1290 191,1284 199,1284" fill="#7CFFB2"/>
+
+    <polygon points="195,1296 260,1330 195,1364 130,1330" fill="#14261C" stroke="#7CFFB2"/>
+    <text x="195" y="1328" text-anchor="middle" fill="#7CFFB2" font-size="12">Incluir eventos?</text>
+    <text x="195" y="1344" text-anchor="middle" fill="#888" font-size="10">GET /apollo/v1/events/upcoming</text>
+  </g>
+  <rect x="48" y="1380" width="294" height="54" rx="8" fill="#14261C" stroke="#7CFFB2"/>
+  <text x="195" y="1402" text-anchor="middle" fill="#7CFFB2" font-size="12" font-family="ui-sans-serif, system-ui, sans-serif">POST /api/sendText</text>
+  <text x="195" y="1420" text-anchor="middle" fill="#F2F2F2" font-size="12" font-family="ui-sans-serif, system-ui, sans-serif">mensagem no grupo @g.us</text>
+
+  <text x="195" y="1508" text-anchor="middle" fill="#888" font-size="11" font-family="ui-sans-serif, system-ui, sans-serif">WP plugins</text>
+  <text x="195" y="1528" text-anchor="middle" fill="#F2F2F2" font-size="11" font-family="ui-sans-serif, system-ui, sans-serif">core · login · users · events · waha · admin</text>
+  <text x="195" y="1556" text-anchor="middle" fill="#7CFFB2" font-size="12" font-family="ui-sans-serif, system-ui, sans-serif">HTTP → WAHA Docker → WhatsApp</text>
+  <text x="195" y="1584" text-anchor="middle" fill="#666" font-size="10" font-family="ui-sans-serif, system-ui, sans-serif">PC/VPS ligado so pelo Docker WAHA</text>
+</svg>

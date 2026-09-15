@@ -190,23 +190,87 @@ $extra_head = ob_get_clean();
 // Portal context: same listing served at /portal + /portal/eventos (public promoter hub).
 $is_portal  = ! empty($apollo_portal_context) || 'portal_archive' === get_query_var('apollo_event_page');
 $page_title = $is_portal
-    ? 'Eventos no Rio de Janeiro — Portal Apollo::Rio'
+    ? 'Eventos no Rio | Explore, Descubra e Celebre | Apollo'
     : 'Eventos — ' . get_bloginfo('name');
+
+/*
+ * Portal SEO — emit the share-card block from this template.
+ * apollo-seo virtual_context historically matched apollo_event_page=portal
+ * while this route registers portal_archive, so blank-canvas head fell
+ * through to homepage canonical + default thumb. Owning the tags here
+ * (and suppressing apollo/seo/head for this request) guarantees WhatsApp /
+ * OG / Twitter see /eventos/ + thumb-eventos.webp even if Meta.php sync lags.
+ */
+if ( $is_portal ) {
+	remove_all_actions( 'apollo/seo/head' );
+	$portal_thumb = esc_url( content_url( 'uploads/2026/09/thumb-eventos.webp' ) );
+	$portal_canon = esc_url( home_url( '/eventos/' ) );
+	$portal_seo   = "\n<!-- SEO: Portal de Eventos -->\n"
+		. '<meta name="description" content="Explore eventos no Rio de Janeiro: festas, shows, festivais, cultura e experiências para viver a cidade do seu jeito.">' . "\n"
+		. '<link rel="canonical" href="' . $portal_canon . '">' . "\n"
+		. '<meta name="robots" content="index, follow">' . "\n"
+		. '<meta name="theme-color" content="#0B0B0D">' . "\n"
+		. '<meta property="og:type" content="website">' . "\n"
+		. '<meta property="og:locale" content="pt_BR">' . "\n"
+		. '<meta property="og:site_name" content="Apollo Rio">' . "\n"
+		. '<meta property="og:url" content="' . $portal_canon . '">' . "\n"
+		. '<meta property="og:title" content="Portal de Eventos no Rio | Explore, Descubra e Celebre">' . "\n"
+		. '<meta property="og:description" content="Festas, shows, festivais, cultura e experiências. Descubra o que move o Rio, em um só lugar.">' . "\n"
+		. '<meta property="og:image" content="' . $portal_thumb . '">' . "\n"
+		. '<meta property="og:image:secure_url" content="' . $portal_thumb . '">' . "\n"
+		. '<meta property="og:image:type" content="image/webp">' . "\n"
+		. '<meta property="og:image:width" content="1200">' . "\n"
+		. '<meta property="og:image:height" content="630">' . "\n"
+		. '<meta property="og:image:alt" content="Apollo Rio — Portal de Eventos">' . "\n"
+		. '<meta name="twitter:card" content="summary_large_image">' . "\n"
+		. '<meta name="twitter:title" content="Portal de Eventos no Rio | Explore, Descubra e Celebre">' . "\n"
+		. '<meta name="twitter:description" content="Festas, shows, festivais, cultura e experiências. Descubra o que move o Rio, em um só lugar.">' . "\n"
+		. '<meta name="twitter:image" content="' . $portal_thumb . '">' . "\n"
+		. '<meta name="twitter:image:alt" content="Apollo Rio — Portal de Eventos">' . "\n"
+		. '<script type="application/ld+json">'
+		. wp_json_encode(
+			array(
+				'@context'    => 'https://schema.org',
+				'@type'       => 'CollectionPage',
+				'name'        => 'Portal de Eventos no Rio',
+				'description' => 'Explore eventos no Rio de Janeiro: festas, shows, festivais, cultura e experiências para viver a cidade do seu jeito.',
+				'url'         => home_url( '/eventos/' ),
+				'inLanguage'  => 'pt-BR',
+				'isPartOf'    => array(
+					'@type' => 'WebSite',
+					'name'  => 'Apollo Rio',
+					'url'   => home_url( '/' ),
+				),
+			),
+			JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT
+		)
+		. '</script>' . "\n";
+	$extra_head = $portal_seo . $extra_head;
+}
 
 $use_plus = function_exists('apollo_plus_open');
 
 if ($use_plus) {
     apollo_plus_open(
         array(
-            'title'      => $page_title,
-            'extra_head' => $extra_head,
-            'screen'     => 'eventos',
+            'title'       => $page_title,
+            'extra_head'  => $extra_head,
+            'screen'      => 'eventos',
+            'theme_color' => $is_portal ? '#0B0B0D' : '',
+            'skip_seo'    => $is_portal,
         )
     );
 } else {
     // Legacy standalone document — only reachable if apollo-templates is off.
     if (function_exists('apollo_render_document_open')) {
-        apollo_render_document_open(array('title' => $page_title, 'extra_head' => $extra_head));
+        apollo_render_document_open(
+            array(
+                'title'       => $page_title,
+                'extra_head'  => $extra_head,
+                'theme_color' => $is_portal ? '#0B0B0D' : '',
+                'skip_seo'    => $is_portal,
+            )
+        );
     }
     echo '</head><body>';
     if (function_exists('apollo_get_navbar')) {

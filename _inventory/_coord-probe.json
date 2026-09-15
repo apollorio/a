@@ -1,0 +1,190 @@
+{
+  "topKeys": [
+    "$philosophy",
+    "$schema",
+    "$version",
+    "$generated",
+    "$description",
+    "$header",
+    "$apollo_rule",
+    "$GLOBAL_ARCHITECTURE",
+    "architecture",
+    "plugins",
+    "cdn",
+    "icons",
+    "$audit",
+    "$deep_audit",
+    "$data_registry_sync",
+    "runtime_wordpress_packages",
+    "$routing_canonical",
+    "$third_party_plugins",
+    "roles",
+    "timeDisplay",
+    "namingRules",
+    "constants",
+    "summary",
+    "quick_lookup",
+    "divergences",
+    "$to_be_done",
+    "$canvas_shell",
+    "$ssot_audit",
+    "$meta_schemas",
+    "$mockup_field_contract",
+    "$mu_plugins"
+  ],
+  "pluginKeys": [
+    "apollo-admin",
+    "apollo-adverts",
+    "apollo-calendar",
+    "apollo-cena",
+    "apollo-chat",
+    "apollo-classifieds",
+    "apollo-coauthor",
+    "apollo-comment",
+    "apollo-core",
+    "apollo-dashboard",
+    "apollo-dj-sync",
+    "apollo-djs",
+    "apollo-docs",
+    "apollo-elementor",
+    "apollo-elementor-pro",
+    "apollo-email",
+    "apollo-events",
+    "apollo-fav",
+    "apollo-gestor",
+    "apollo-groups",
+    "apollo-hub",
+    "apollo-journal",
+    "apollo-loc",
+    "apollo-login",
+    "apollo-lux-panels",
+    "apollo-maps",
+    "apollo-membership",
+    "apollo-mod",
+    "apollo-notif",
+    "apollo-pane-engine",
+    "apollo-pwa",
+    "apollo-radio",
+    "apollo-remind",
+    "apollo-runtime",
+    "apollo-scheduler",
+    "apollo-seed-runner",
+    "apollo-seo",
+    "apollo-sheets",
+    "apollo-shortcodes",
+    "apollo-sign",
+    "apollo-social",
+    "apollo-soundcloud",
+    "apollo-statistics",
+    "apollo-suppliers",
+    "apollo-telegram",
+    "apollo-templates",
+    "apollo-users",
+    "apollo-wow"
+  ],
+  "layerIsArray": false,
+  "layerKeys": [
+    "L0_foundation",
+    "L1_auth",
+    "L2_content",
+    "L3_social",
+    "L4_communication",
+    "L5_documents",
+    "L6_frontend",
+    "L7_admin",
+    "L8_industry",
+    "L9_pwa",
+    "L10_seo",
+    "L11_data",
+    "L12_runtime",
+    "L13_pagebuilder",
+    "L14_tooling"
+  ],
+  "layersPreview": null,
+  "hasDollarPhilosophy": true,
+  "hasPhilosophy": false,
+  "namingRules": true,
+  "constants": true,
+  "quick_lookup": true,
+  "cdn": true,
+  "layerSummary": {
+    "L0_foundation": [
+      "apollo-core",
+      "apollo-shortcodes"
+    ],
+    "L1_auth": [
+      "apollo-login",
+      "apollo-users",
+      "apollo-membership"
+    ],
+    "L2_content": [
+      "apollo-adverts",
+      "apollo-calendar",
+      "apollo-classifieds",
+      "apollo-dj-sync",
+      "apollo-djs",
+      "apollo-events",
+      "apollo-loc",
+      "apollo-maps",
+      "apollo-scheduler",
+      "apollo-suppliers"
+    ],
+    "L3_social": [
+      "apollo-social",
+      "apollo-groups",
+      "apollo-wow",
+      "apollo-fav",
+      "apollo-comment"
+    ],
+    "L4_communication": [
+      "apollo-chat",
+      "apollo-email",
+      "apollo-notif",
+      "apollo-remind",
+      "apollo-telegram"
+    ],
+    "L5_documents": [
+      "apollo-docs",
+      "apollo-sign",
+      "apollo-gestor",
+      "apollo-journal"
+    ],
+    "L6_frontend": [
+      "apollo-templates",
+      "apollo-dashboard",
+      "apollo-hub",
+      "apollo-radio",
+      "apollo-soundcloud",
+      "apollo-pane-engine"
+    ],
+    "L7_admin": [
+      "apollo-admin",
+      "apollo-coauthor",
+      "apollo-lux-panels",
+      "apollo-mod",
+      "apollo-statistics"
+    ],
+    "L8_industry": [
+      "apollo-cena"
+    ],
+    "L9_pwa": [
+      "apollo-pwa"
+    ],
+    "L10_seo": [
+      "apollo-seo"
+    ],
+    "L11_data": [
+      "apollo-sheets"
+    ],
+    "L12_runtime": [
+      "apollo-runtime"
+    ],
+    "L13_pagebuilder": [
+      "apollo-elementor",
+      "apollo-elementor-pro"
+    ],
+    "L14_tooling": [
+      "apollo-seed-runner"
+    ]
+  }
+}

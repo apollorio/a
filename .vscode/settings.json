@@ -1,0 +1,120 @@
+{
+  // ────────────────────────────────────────────────────────────────
+  // apollo::rio plugins — workspace settings
+  // Deep-analysis hardening 2026-09-03. Additive only; plugin code
+  // and _inventory are never touched. This folder mirrors to
+  // production via RealTimeSync, so everything here is non-destructive.
+  // ────────────────────────────────────────────────────────────────
+
+  // ── Editor core ─────────────────────────────────────────────────
+  "editor.tabSize": 4,
+  "editor.detectIndentation": true,
+  "editor.trimAutoWhitespace": true,
+  // Live-mirror rule: a saved file is a deployed file. Never format on
+  // save — that silently rewrites production bytes.
+  "editor.formatOnSave": false,
+  "editor.rulers": [120],
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active",
+  "diffEditor.ignoreTrimWhitespace": true,
+
+  // ── PHP (platform 8.3, 4-space indent, WordPress stubs) ─────────
+  "intelephense.environment.phpVersion": "8.3.0",
+  "intelephense.compatibility.correctForBaseDefinitions": true,
+  "intelephense.files.maxSize": 5000000,
+  "intelephense.telemetry.enabled": false,
+  "intelephense.stubs": [
+    "wordpress",
+    "standard",
+    "bcmath",
+    "date",
+    "pcre",
+    "spl",
+    "filter",
+    "gd",
+    "intl",
+    "json",
+    "mbstring",
+    "mysqli",
+    "mysqlnd",
+    "openssl",
+    "pdo",
+    "sqlite",
+    "zip",
+    "curl",
+    "dom",
+    "xml",
+    "xmlreader",
+    "xmlwriter",
+    "simplexml"
+  ],
+  "intelephense.files.exclude": [
+    "**/.git/**",
+    "**/.vscode/**",
+    "**/vendor/**",
+    "**/node_modules/**",
+    "**/elementor/**",
+    "**/_to_delete/**",
+    "**/*.min.js",
+    "**/*.min.css"
+  ],
+
+  // ── Default formatters ──────────────────────────────────────────
+  "[php]": {
+    "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+  },
+  "[javascript][javascriptreact][typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json][jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "prettier.singleQuote": false,
+  "prettier.trailingComma": "all",
+  // pre-parentheses/brace space used across the apollo-* PHP body
+  "prettier.arrowParens": "avoid",
+
+  // ── CRITICAL: keep the index/Quick Search out of the swamp ──────
+  // The repo root holds a ~459 MB debug-*.log plus third-party bundles.
+  // Without exclusions Cline's search and VS Code's watcher traverse
+  // them on every keystroke.
+  "files.watcherExclude": {
+    "**/.git/**": true,
+    "**/node_modules/**": true,
+    "**/vendor/**": true,
+    "**/elementor/**": true,
+    "**/_to_delete/**": true,
+    "**/*.log": true,
+    "**/sync.ffs_*": true
+  },
+  "search.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/vendor": true,
+    "**/elementor/**": true,
+    "**/_to_delete": true,
+    "**/*.log": true,
+    "**/*.min.js": true,
+    "**/*.min.css": true,
+    "**/debug-*.log": true
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/debug-*.log": true,
+    "**/sync.ffs_*": true
+  },
+
+  // ── Language packs: UI stays pt-BR; docs/JSON stay ASCII-faithful ──
+  "gitlens.showWelcomeOnInstall": false,
+  "gitlens.currentLine.enabled": false,
+  "workbench.editor.enablePreview": false,
+  "files.encoding": "utf8",
+  "files.eol": "\n"
+}

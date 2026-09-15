@@ -4,7 +4,7 @@
  * Plugin Name: Apollo Login
  * Plugin URI: https://apollo.rio.br/plugins/apollo-login
  * Description: Auth: Login, Register, Password Reset, MANDATORY Aptitude Quiz (Pattern, Simon, Ethics, Reaction), URL Protection (Hide My WP native), Rate Limiting
- * Version: 1.0.43
+ * Version: 1.0.47
  * Author: Apollo::Rio
  * Author URI: https://apollo.rio.br
  * License: Proprietary
@@ -17,6 +17,36 @@
  * @package Apollo\Login
  */
 
+/*
+ * ARCH: apollo-login / autenticacao e /acesso
+ * ARCH-MANUAL: escrito a mao (2026-09-09). gen-arch-blocks.js recusa
+ *   ficheiros dirty no git e 41 de 42 estao dirty. Ver nota em apollo-core.
+ * Contrato completo: D:/dev/_cos/verify/MODULE-CONTRACT.md
+ *
+ * OWNER     apollo-login   54 arquivos PHP, 15573 LOC
+ * BOOT      plugins_loaded:10 (:101). Alem disso intercepta cedo:
+ *           parse_request / wp / template_redirect todos em PHP_INT_MIN.
+ * CARGA     E FORCE-LOADED por mu-plugin/force-load-apollo-login.php, que
+ *           faz require no topo do ficheiro, ANTES de qualquer hook Apollo
+ *           existir. Nenhuma politica de carregamento pode desligar isto.
+ * RUNTIME   CPT/taxonomia/meta registrados por apollo-core (init:5)
+ * REST      26 rotas (16 leituras publicas) - rever intencao por rota
+ * REQUIRES  nenhuma dependencia confirmada
+ *
+ * RISCO     Classificado HIGH no registry junto com apollo-events e
+ *           apollo-membership. Qualquer edicao aqui merece escrutinio
+ *           extra, mesmo as que nao parecem de seguranca.
+ *
+ * NAO FACA
+ *   - baixar a prioridade das intercepcoes PHP_INT_MIN sem provar quem
+ *     depende de correr antes. Sao a razao de /acesso funcionar.
+ *   - assumir que este plugin pode ser desativado para testar: o
+ *     force-load ignora active_plugins.
+ *   - registar um segundo namespace REST. So apollo/v1.
+ *
+ * VERIFICAR   node D:/dev/_cos/verify/plugin-audit.js
+ */
+
 declare(strict_types=1);
 
 namespace Apollo\Login;
@@ -27,7 +57,7 @@ if (! defined('ABSPATH')) {
 }
 
 // Plugin constants.
-define('APOLLO_LOGIN_VERSION', '1.0.43');
+define('APOLLO_LOGIN_VERSION', '1.0.47');
 define('APOLLO_LOGIN_FILE', __FILE__);
 define('APOLLO_LOGIN_DIR', plugin_dir_path(__FILE__));
 define('APOLLO_LOGIN_URL', plugin_dir_url(__FILE__));

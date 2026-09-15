@@ -69,36 +69,50 @@ $months_full = array(
 $current_month_num  = (int) current_time('n');
 $current_month_name = isset($months_full[$current_month_num]) ? $months_full[$current_month_num] : current_time('F');
 
-// Days of the week abbreviations
-$days_pt = array(
-    'Mon' => 'Seg',
-    'Tue' => 'Ter',
-    'Wed' => 'Qua',
-    'Thu' => 'Qui',
-    'Fri' => 'Sex',
-    'Sat' => 'Sáb',
-    'Sun' => 'Dom',
-);
+/* Discreet month menu — rendered server-side (PT) so a stale new-home.js
+   cannot leave English August/September in the DOM. */
+$month_menu_names = array();
+for ($i = 0; $i < 3; $i++) {
+    $idx = (($current_month_num - 1 + $i) % 12) + 1;
+    $month_menu_names[] = $months_full[$idx];
+}
 ?>
 <section class="section" id="events" aria-labelledby="events-title">
     <div class="container">
-        <div class="nh-section-head ai">
-            <span class="grouped-left">
-                <h2 id="events-title" split-chars style="font-size: clamp(2rem, 5.5vw, 4rem) !important;">Events</h2>
+        <div class="nh-section-head ai nh-section-head--toolbar">
+            <h2 id="events-title" split-chars>Eventos</h2>
+            <div class="nh-section-tools">
                 <div class="nh-month-dropdown">
                     <button id="nhMonthTrigger" class="nh-month-trigger"
-                        aria-label="<?php esc_attr_e('Selecionar mês', 'apollo-templates'); ?>">
+                        aria-label="<?php esc_attr_e('Selecionar mês', 'apollo-templates'); ?>"
+                        aria-haspopup="listbox" aria-expanded="false">
                         <span class="nh-month-text"><?php echo esc_html($current_month_name); ?></span>
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <polyline points="9 18 15 12 9 6" />
                         </svg>
                     </button>
-                    <ul id="nhMonthMenu" class="nh-month-row"></ul>
+                    <ul id="nhMonthMenu" class="nh-month-row" role="listbox">
+                        <?php foreach ($month_menu_names as $i => $label) : ?>
+                            <li role="option">
+                                <a href="#" data-type="month" class="<?php echo 0 === $i ? 'active' : ''; ?>"><?php echo esc_html($label); ?></a>
+                            </li>
+                        <?php endforeach; ?>
+                        <li>
+                            <a class="nh-portal-link" data-type="link" href="<?php echo esc_url(home_url('/portal/eventos')); ?>">
+                                <i class="ri-calendar-2-line" aria-hidden="true"></i> <?php esc_html_e('Ver todos', 'apollo-templates'); ?>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="nh-portal-link" data-type="link" href="<?php echo esc_url(home_url('/novo-evento')); ?>">
+                                <i class="ri-calendar-schedule-line" aria-hidden="true"></i> <?php esc_html_e('Incluir evento', 'apollo-templates'); ?>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-            </span>
-            <a href="<?php echo esc_url(home_url('/eventos')); ?>"
-                aria-label="<?php esc_attr_e('Ver todos os eventos', 'apollo-templates'); ?>">Ver Todos →</a>
+                <a class="nh-section-more" href="<?php echo esc_url(home_url('/eventos')); ?>"
+                    aria-label="<?php esc_attr_e('Ver todos os eventos', 'apollo-templates'); ?>">Ver todos</a>
+            </div>
         </div>
 
         <div class="nh-events-grid">
@@ -117,7 +131,9 @@ $days_pt = array(
                     $dj_ids      = get_post_meta($event_id, '_event_dj_ids', true);
                     $status      = get_post_meta($event_id, '_event_status', true);
                     $thumb_url   = get_the_post_thumbnail_url($event_id, 'medium_large');
-                    $placeholder = 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=600&q=75';
+                    // Event card fallback when the post has no featured image. Was a hot-linked
+                    // Unsplash URL — third-party, unversioned, and outside our CDN.
+                    $placeholder = 'https://assets.apollo.rio.br/img/bg/fallback.jpg';
                     $image       = $thumb_url ? $thumb_url : $placeholder;
 
                     // Parse date
@@ -238,11 +254,41 @@ $days_pt = array(
                 aria-label="<?php esc_attr_e('Ver todos os eventos', 'apollo-templates'); ?>">
                 <div class="xp-inner">
                     <i class="ri-arrow-right-up-line xp-icon" aria-hidden="true"></i>
-                    <span class="xp-all">ALL</span>
-                    <span class="xp-label">Eventos</span>
+                    <span class="xp-all">+</span>
+                    <span class="xp-label">Ver todos</span>
                 </div>
             </a>
 
         </div><!-- /.nh-events-grid -->
     </div>
 </section>
+<script>
+/* PT month labels — deferred past new-home.js so stale English rebuild loses. */
+(function () {
+    function apply() {
+        var PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+                  'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+        var idx = new Date().getMonth();
+        var names = [PT[idx], PT[(idx + 1) % 12], PT[(idx + 2) % 12]];
+        var text = document.querySelector('#events .nh-month-text');
+        var menu = document.getElementById('nhMonthMenu');
+        if (text) text.textContent = names[0];
+        if (!menu) return;
+        var links = menu.querySelectorAll('a[data-type="month"]');
+        if (links.length >= 3) {
+            for (var i = 0; i < 3; i++) links[i].textContent = names[i];
+            return;
+        }
+        menu.innerHTML =
+            '<li><a href="#" class="active" data-type="month">' + names[0] + '</a></li>' +
+            '<li><a href="#" data-type="month">' + names[1] + '</a></li>' +
+            '<li><a href="#" data-type="month">' + names[2] + '</a></li>' +
+            '<li><a class="nh-portal-link" data-type="link" href="/portal/eventos"><i class="ri-calendar-2-line"></i> Ver todos</a></li>' +
+            '<li><a class="nh-portal-link" data-type="link" href="/novo-evento"><i class="ri-calendar-schedule-line"></i> Incluir evento</a></li>';
+        menu.removeAttribute('hidden');
+    }
+    function schedule() { window.setTimeout(apply, 60); }
+    if (document.readyState === 'complete') schedule();
+    else window.addEventListener('load', schedule);
+})();
+</script>

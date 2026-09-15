@@ -300,3 +300,7 @@
 {"ok":true,"result":[]}
 {"ok":true,"result":[]}
 {"ok":true,"result":[]}
+{"ok":true,"result":[]}
+{"ok":true,"result":[{"update_id":868704700,"message":{"message_id":37,"from":{"id":5245669371,"is_bot":false,"first_name":"Junior","last_name":"Trevisan","username":"juniortrevisan","language_code":"pt-br"},"chat":{"id":5245669371,"first_name":"Junior","last_name":"Trevisan","username":"juniortrevisan","type":"private"},"date":1788451749,"text":"\/start d87085fc-cec1-434d-8216-54dc682f12e8","entities":[{"offset":0,"length":6,"type":"bot_command"}]}}]}
+{"ok":true,"result":[]}
+{"ok":true,"result":[]}

@@ -1,0 +1,813 @@
+{
+  "$philosophy": {
+    "PARTY_MODEL": "ALL users are auto-connected on registration â€” everyone is linked to everyone. Like a party, everyone is reachable.",
+    "NO_SELECTIVE_FOLLOW": "There is NO follow/unfollow mechanism. No selective connections. Auto-connect only.",
+    "NO_FRIENDS_HIERARCHY": "No friends list, no followers hierarchy, no following hierarchy. Everyone = connected.",
+    "NO_EGO_COUNTERS": "No followers count, no following count, no friend counts displayed as status. AGAINST numbers ego and status.",
+    "WOW_NOT_LIKE": "Reactions use WOW (fire, clap, etc.) instead of likes. No like buttons, no like counts as vanity metric.",
+    "SHARE_YES": "Sharing content is allowed and encouraged.",
+    "FORBIDDEN_CONCEPTS": [
+      "follow button",
+      "unfollow button",
+      "followers count",
+      "following count",
+      "like button",
+      "friend request",
+      "friend count"
+    ]
+  },
+  "architecture": {
+    "layers": {
+      "L0_foundation": [
+        "apollo-core",
+        "apollo-shortcodes"
+      ],
+      "L1_auth": [
+        "apollo-login",
+        "apollo-users",
+        "apollo-membership"
+      ],
+      "L2_content": [
+        "apollo-adverts",
+        "apollo-calendar",
+        "apollo-classifieds",
+        "apollo-dj-sync",
+        "apollo-djs",
+        "apollo-events",
+        "apollo-loc",
+        "apollo-maps",
+        "apollo-scheduler",
+        "apollo-suppliers"
+      ],
+      "L3_social": [
+        "apollo-social",
+        "apollo-groups",
+        "apollo-wow",
+        "apollo-fav",
+        "apollo-comment"
+      ],
+      "L4_communication": [
+        "apollo-chat",
+        "apollo-email",
+        "apollo-notif",
+        "apollo-remind",
+        "apollo-telegram",
+        "apollo-waha"
+      ],
+      "L5_documents": [
+        "apollo-docs",
+        "apollo-sign",
+        "apollo-gestor",
+        "apollo-journal"
+      ],
+      "L6_frontend": [
+        "apollo-templates",
+        "apollo-dashboard",
+        "apollo-hub",
+        "apollo-radio",
+        "apollo-soundcloud",
+        "apollo-pane-engine",
+        "apollo-ui"
+      ],
+      "L7_admin": [
+        "apollo-admin",
+        "apollo-coauthor",
+        "apollo-lux-panels",
+        "apollo-mod",
+        "apollo-statistics"
+      ],
+      "L8_industry": [
+        "apollo-cena"
+      ],
+      "L9_pwa": [
+        "apollo-pwa"
+      ],
+      "L10_seo": [
+        "apollo-seo"
+      ],
+      "L11_data": [
+        "apollo-sheets"
+      ],
+      "L12_runtime": [
+        "apollo-runtime"
+      ],
+      "L13_pagebuilder": [
+        "apollo-elementor",
+        "apollo-elementor-pro"
+      ],
+      "L14_tooling": [
+        "apollo-seed-runner"
+      ]
+    }
+  },
+  "plugins": {
+    "apollo-admin": {
+      "slug": "apollo-admin",
+      "status": "IMPLEMENTED",
+      "layer": "L7_admin",
+      "cpts": [],
+      "rest_prefixes": [
+        "admin",
+        "errorlog",
+        "preferences",
+        "settings",
+        "toolbar"
+      ]
+    },
+    "apollo-adverts": {
+      "slug": "apollo-adverts",
+      "status": "IMPLEMENTED",
+      "layer": "L2_content",
+      "cpts": [
+        "classified",
+        "hostel"
+      ],
+      "rest_prefixes": [
+        "classifieds",
+        "events"
+      ]
+    },
+    "apollo-calendar": {
+      "slug": "apollo-calendar",
+      "status": "IMPLEMENTED",
+      "layer": "L2_content",
+      "cpts": [],
+      "rest_prefixes": [
+        "calendar"
+      ]
+    },
+    "apollo-chat": {
+      "slug": "apollo-chat",
+      "status": "IMPLEMENTED",
+      "layer": "L4_communication",
+      "cpts": [],
+      "rest_prefixes": [
+        "chat"
+      ]
+    },
+    "apollo-coauthor": {
+      "slug": "apollo-coauthor",
+      "status": "IMPLEMENTED",
+      "layer": "L7_admin",
+      "cpts": [],
+      "rest_prefixes": [
+        "coauthors"
+      ]
+    },
+    "apollo-comment": {
+      "slug": "apollo-comment",
+      "status": "IMPLEMENTED",
+      "layer": "L3_social",
+      "cpts": [],
+      "rest_prefixes": []
+    },
+    "apollo-core": {
+      "slug": "apollo-core",
+      "status": "IMPLEMENTED",
+      "layer": "L0_foundation",
+      "cpts": [],
+      "rest_prefixes": [
+        "health",
+        "pane-mode",
+        "registry",
+        "search",
+        "sounds"
+      ]
+    },
+    "apollo-dashboard": {
+      "slug": "apollo-dashboard",
+      "status": "IMPLEMENTED",
+      "layer": "L6_frontend",
+      "cpts": [],
+      "rest_prefixes": [
+        "dashboard"
+      ]
+    },
+    "apollo-dj-sync": {
+      "slug": "apollo-dj-sync",
+      "status": "IMPLEMENTED",
+      "layer": "L2_content",
+      "cpts": [],
+      "rest_prefixes": []
+    },
+    "apollo-djs": {
+      "slug": "apollo-djs",
+      "status": "IMPLEMENTED",
+      "layer": "L2_content",
+      "cpts": [
+        "dj",
+        "track"
+      ],
+      "rest_prefixes": [
+        "djs"
+      ]
+    },
+    "apollo-docs": {
+      "slug": "apollo-docs",
+      "status": "IMPLEMENTED",
+      "layer": "L5_documents",
+      "cpts": [
+        "doc"
+      ],
+      "rest_prefixes": []
+    },
+    "apollo-elementor": {
+      "slug": "apollo-elementor",
+      "status": "IMPLEMENTED",
+      "layer": "L13_pagebuilder",
+      "cpts": [],
+      "rest_prefixes": []
+    },
+    "apollo-elementor-pro": {
+      "slug": "apollo-elementor-pro",
+      "status": "IMPLEMENTED",
+      "layer": "L13_pagebuilder",
+      "cpts": [],
+      "rest_prefixes": []
+    },
+    "apollo-email": {
+      "slug": "apollo-email",
+      "status": "IMPLEMENTED",
+      "layer": "L4_communication",
+      "cpts": [
+        "email_aprio"
+      ],
+      "rest_prefixes": [
+        "email",
+        "newsletter"
+      ]
+    },
+    "apollo-events": {
+      "slug": "apollo-events",
+      "status": "IMPLEMENTED",
+      "layer": "L2_content",
+      "cpts": [
+        "event"
+      ],
+      "rest_prefixes": [
+        "cena-rio",
+        "eventos"
+      ]
+    },
+    "apollo-fav": {
+      "slug": "apollo-fav",
+      "status": "IMPLEMENTED",
+      "layer": "L3_social",
+      "cpts": [],
+      "rest_prefixes": []
+    },
+    "apollo-gestor": {
+      "slug": "apollo-gestor",
+      "status": "IMPLEMENTED",
+      "layer": "L5_documents",
+      "cpts": [],
+      "rest_prefixes": []
+    },
+    "apollo-groups": {
+      "slug": "apollo-groups",
+      "status": "IMPLEMENTED",
+      "layer": "L3_social",
+      "cpts": [],
+      "rest_prefixes": [
+        "groups",
+        "my"
+      ]
+    },
+    "apollo-hub": {
+      "slug": "apollo-hub",
+      "status": "IMPLEMENTED",
+      "layer": "L6_frontend",
+      "cpts": [
+        "hub"
+      ],
+      "rest_prefixes": [
+        "hubs"
+      ]
+    },
+    "apollo-journal": {
+      "slug": "apollo-journal",
+      "status": "IMPLEMENTED",
+      "layer": "L5_documents",
+      "cpts": [
+        "journal_news",
+        "journal_nota"
+      ],
+      "rest_prefixes": [
+        "journal"
+      ]
+    },
+    "apollo-loc": {
+      "slug": "apollo-loc",
+      "status": "IMPLEMENTED",
+      "layer": "L2_content",
+      "cpts": [
+        "local"
+      ],
+      "rest_prefixes": []
+    },
+    "apollo-login": {
+      "slug": "apollo-login",
+      "status": "IMPLEMENTED",
+      "layer": "L1_auth",
+      "cpts": [],
+      "rest_prefixes": [
+        "activity",
+        "app",
+        "auth",
+        "csp-report",
+        "dj",
+        "quiz",
+        "security",
+        "simon"
+      ]
+    },
+    "apollo-lux-panels": {
+      "slug": "apollo-lux-panels",
+      "status": "IMPLEMENTED",
+      "layer": "L7_admin",
+      "cpts": [],
+      "rest_prefixes": []
+    },
+    "apollo-maps": {
+      "slug": "apollo-maps",
+      "status": "IMPLEMENTED",
+      "layer": "L2_content",
+      "cpts": [],
+      "rest_prefixes": [
+        "map"
+      ]
+    },
+    "apollo-membership": {
+      "slug": "apollo-membership",
+      "status": "IMPLEMENTED",
+      "layer": "L1_auth",
+      "cpts": [],
+      "rest_prefixes": [
+        "achievements",
+        "leaderboard",
+        "membership",
+        "membership-badge",
+        "points",
+        "ranks",
+        "report",
+        "user-achievements",
+        "user-rank",
+        "user-summary"
+      ]
+    },
+    "apollo-mod": {
+      "slug": "apollo-mod",
+      "status": "IMPLEMENTED",
+      "layer": "L7_admin",
+      "cpts": [],
+      "rest_prefixes": [
+        "mod"
+      ]
+    },
+    "apollo-notif": {
+      "slug": "apollo-notif",
+      "status": "IMPLEMENTED",
+      "layer": "L4_communication",
+      "cpts": [],
+      "rest_prefixes": [
+        "notifications"
+      ]
+    },
+    "apollo-pane-engine": {
+      "slug": "apollo-pane-engine",
+      "status": "IMPLEMENTED",
+      "layer": "L6_frontend",
+      "cpts": [],
+      "rest_prefixes": [
+        "pane"
+      ]
+    },
+    "apollo-radio": {
+      "slug": "apollo-radio",
+      "status": "IMPLEMENTED",
+      "layer": "L6_frontend",
+      "cpts": [],
+      "rest_prefixes": []
+    },
+    "apollo-remind": {
+      "slug": "apollo-remind",
+      "status": "IMPLEMENTED",
+      "layer": "L4_communication",
+      "cpts": [],
+      "rest_prefixes": [
+        "remind"
+      ]
+    },
+    "apollo-scheduler": {
+      "slug": "apollo-scheduler",
+      "status": "IMPLEMENTED",
+      "layer": "L2_content",
+      "cpts": [
+        "appointment",
+        "service",
+        "resource"
+      ],
+      "rest_prefixes": []
+    },
+    "apollo-seed-runner": {
+      "slug": "apollo-seed-runner",
+      "status": "IMPLEMENTED",
+      "layer": "L14_tooling",
+      "cpts": [],
+      "rest_prefixes": []
+    },
+    "apollo-seo": {
+      "slug": "apollo-seo",
+      "status": "IMPLEMENTED",
+      "layer": "L10_seo",
+      "cpts": [],
+      "rest_prefixes": [
+        "seo"
+      ]
+    },
+    "apollo-sheets": {
+      "slug": "apollo-sheets",
+      "status": "IMPLEMENTED",
+      "layer": "L11_data",
+      "cpts": [
+        "apollo_sheet"
+      ],
+      "rest_prefixes": []
+    },
+    "apollo-sign": {
+      "slug": "apollo-sign",
+      "status": "IMPLEMENTED",
+      "layer": "L5_documents",
+      "cpts": [],
+      "rest_prefixes": []
+    },
+    "apollo-social": {
+      "slug": "apollo-social",
+      "status": "IMPLEMENTED",
+      "layer": "L3_social",
+      "cpts": [],
+      "rest_prefixes": [
+        "activity",
+        "block",
+        "blocks",
+        "depo",
+        "feed",
+        "members"
+      ]
+    },
+    "apollo-soundcloud": {
+      "slug": "apollo-soundcloud",
+      "status": "IMPLEMENTED",
+      "layer": "L6_frontend",
+      "cpts": [],
+      "rest_prefixes": []
+    },
+    "apollo-statistics": {
+      "slug": "apollo-statistics",
+      "status": "IMPLEMENTED",
+      "layer": "L7_admin",
+      "cpts": [],
+      "rest_prefixes": [
+        "stats"
+      ]
+    },
+    "apollo-telegram": {
+      "slug": "apollo-telegram",
+      "status": "IMPLEMENTED",
+      "layer": "L4_communication",
+      "cpts": [
+        "event"
+      ],
+      "rest_prefixes": [
+        "broadcast",
+        "check-phone-available",
+        "poll-tick",
+        "request-support-verification",
+        "telegram",
+        "verification-status",
+        "verify-support-code"
+      ]
+    },
+    "apollo-templates": {
+      "slug": "apollo-templates",
+      "status": "IMPLEMENTED",
+      "layer": "L6_frontend",
+      "cpts": [],
+      "rest_prefixes": [
+        "canvas",
+        "templates"
+      ]
+    },
+    "apollo-ui": {
+      "slug": "apollo-ui",
+      "status": "IMPLEMENTED",
+      "layer": "L6_frontend",
+      "cpts": [],
+      "rest_prefixes": []
+    },
+    "apollo-users": {
+      "slug": "apollo-users",
+      "status": "IMPLEMENTED",
+      "layer": "L1_auth",
+      "cpts": [],
+      "rest_prefixes": [
+        "profile",
+        "users"
+      ]
+    },
+    "apollo-waha": {
+      "slug": "apollo-waha",
+      "status": "IMPLEMENTED",
+      "layer": "L4_communication",
+      "cpts": [],
+      "rest_prefixes": [
+        "wa"
+      ]
+    },
+    "apollo-wow": {
+      "slug": "apollo-wow",
+      "status": "IMPLEMENTED",
+      "layer": "L3_social",
+      "cpts": [],
+      "rest_prefixes": [
+        "wows"
+      ]
+    }
+  },
+  "namingRules": {
+    "FORBIDDEN_TERMS": {
+      "venue": "USE 'loc' INSTEAD",
+      "local": "USE 'loc' INSTEAD (except in Portuguese text)",
+      "location": "USE 'loc' INSTEAD",
+      "interesse": "USE 'fav' INSTEAD",
+      "interessado": "USE 'fav' INSTEAD",
+      "interest": "USE 'fav' INSTEAD",
+      "bookmark": "USE 'fav' INSTEAD",
+      "like": "USE 'wow' INSTEAD",
+      "heart": "USE 'wow' INSTEAD",
+      "reaction": "USE 'wow' INSTEAD",
+      "comment": "USE 'depoimento' INSTEAD",
+      "review": "USE 'depoimento' INSTEAD",
+      "cult": "USE 'cena' INSTEAD",
+      "document": "USE 'doc' INSTEAD",
+      "/user/": "USE '/id/' INSTEAD"
+    }
+  },
+  "constants": {
+    "APOLLO_VERSION": "6.0.0",
+    "APOLLO_MIN_WP": "6.4",
+    "APOLLO_MIN_PHP": "8.1",
+    "APOLLO_REST_NAMESPACE": "apollo/v1",
+    "APOLLO_TABLE_PREFIX": "apollo_",
+    "APOLLO_CDN_URL": "https://cdn.apollo.rio.br/v1.0.0/"
+  },
+  "quick_lookup": {
+    "all_cpt_slugs": [
+      "apollo_agent_log",
+      "apollo_sheet",
+      "appointment",
+      "classified",
+      "dj",
+      "doc",
+      "email_aprio",
+      "event",
+      "hostel",
+      "hub",
+      "journal_news",
+      "journal_nota",
+      "local",
+      "resource",
+      "service",
+      "supplier",
+      "track"
+    ],
+    "all_taxonomy_slugs": [
+      "coauthor",
+      "doc_folder",
+      "doc_type",
+      "event_category",
+      "event_tag",
+      "event_type",
+      "local_area",
+      "local_type",
+      "season",
+      "sound",
+      "supplier_category",
+      "supplier_service"
+    ],
+    "all_table_names": [
+      "apollo_achievements",
+      "apollo_activity",
+      "apollo_audit_log",
+      "apollo_blocks",
+      "apollo_chat_attachments",
+      "apollo_chat_blocks",
+      "apollo_chat_messages",
+      "apollo_chat_participants",
+      "apollo_chat_presence",
+      "apollo_chat_reactions",
+      "apollo_chat_reports",
+      "apollo_chat_threads",
+      "apollo_chat_typing",
+      "apollo_connections",
+      "apollo_cron_execution_log",
+      "apollo_doc_downloads",
+      "apollo_doc_versions",
+      "apollo_email_log",
+      "apollo_email_queue",
+      "apollo_email_verifications",
+      "apollo_event_rsvp",
+      "apollo_favorites",
+      "apollo_favs",
+      "apollo_follows",
+      "apollo_gestor_activity",
+      "apollo_gestor_income",
+      "apollo_gestor_milestones",
+      "apollo_gestor_payments",
+      "apollo_gestor_reminder_log",
+      "apollo_gestor_staff",
+      "apollo_gestor_tasks",
+      "apollo_gestor_team",
+      "apollo_group_bans",
+      "apollo_group_invitations",
+      "apollo_group_members",
+      "apollo_group_meta",
+      "apollo_group_requests",
+      "apollo_groups",
+      "apollo_industry_calendar",
+      "apollo_lockouts",
+      "apollo_login_attempts",
+      "apollo_matchmaking",
+      "apollo_mod_actions",
+      "apollo_mod_log",
+      "apollo_mod_queue",
+      "apollo_mod_reports",
+      "apollo_newsletter_subscribers",
+      "apollo_notif_prefs",
+      "apollo_notifications",
+      "apollo_points",
+      "apollo_profile_views",
+      "apollo_quiz_sessions",
+      "apollo_ranks",
+      "apollo_registry_state",
+      "apollo_remind_log",
+      "apollo_remind_push_subs",
+      "apollo_remind_telegram",
+      "apollo_reminders",
+      "apollo_settings",
+      "apollo_signature_audit",
+      "apollo_signatures",
+      "apollo_social_posts",
+      "apollo_statistics",
+      "apollo_stats_clicks",
+      "apollo_stats_content",
+      "apollo_stats_events",
+      "apollo_stats_pageviews",
+      "apollo_stats_radio",
+      "apollo_stats_sessions",
+      "apollo_stats_users",
+      "apollo_steps",
+      "apollo_telegram_verif",
+      "apollo_triggers",
+      "apollo_user_fields",
+      "apollo_user_ratings",
+      "apollo_wow_reactions",
+      "apollo_wow_types",
+      "apollo_wows"
+    ],
+    "all_rest_prefixes": [
+      "achievements",
+      "activity",
+      "admin",
+      "app",
+      "auth",
+      "block",
+      "blocks",
+      "broadcast",
+      "calendar",
+      "canvas",
+      "cena",
+      "cena-rio",
+      "chat",
+      "check-phone-available",
+      "classifieds",
+      "coauthors",
+      "csp-report",
+      "dashboard",
+      "depo",
+      "dj",
+      "djs",
+      "email",
+      "errorlog",
+      "eventos",
+      "events",
+      "feed",
+      "groups",
+      "health",
+      "hubs",
+      "journal",
+      "leaderboard",
+      "map",
+      "members",
+      "membership",
+      "membership-badge",
+      "mod",
+      "my",
+      "newsletter",
+      "notifications",
+      "pane",
+      "pane-mode",
+      "points",
+      "poll-tick",
+      "preferences",
+      "profile",
+      "pwa",
+      "quiz",
+      "ranks",
+      "registry",
+      "remind",
+      "report",
+      "request-support-verification",
+      "search",
+      "security",
+      "seo",
+      "settings",
+      "shortcodes",
+      "simon",
+      "sounds",
+      "stats",
+      "suppliers",
+      "telegram",
+      "templates",
+      "toolbar",
+      "user-achievements",
+      "user-rank",
+      "user-summary",
+      "users",
+      "verification-status",
+      "verify-support-code",
+      "wa",
+      "wows"
+    ],
+    "forbidden_terms_quick": {
+      "venue/local/location": "â†’ loc",
+      "interesse/interest/bookmark": "â†’ fav",
+      "like/heart/reaction": "â†’ wow",
+      "comment/review": "â†’ depoimento",
+      "cult": "â†’ cena",
+      "/user/": "â†’ /id/"
+    },
+    "profile_url_pattern": "/id/{username}",
+    "hub_url_pattern": "/hub/{username}",
+    "chat_url_pattern": "/mensagens/{thread_id}",
+    "explore_url_pattern": "/explore OR /mural"
+  },
+  "cdn": {
+    "url": "https://cdn.apollo.rio.br/v1.0.0/core.js?v=Random.x.1",
+    "version": "1.0.0",
+    "mandatory": true,
+    "load_priority": "high",
+    "includes": [
+      "apollo-stylesheet",
+      "gsap-3.13.0",
+      "remixicon",
+      "jquery-3.7.1",
+      "popper",
+      "dark-theme",
+      "reveal-up",
+      "translate-2.2.4",
+      "tracker",
+      "logo-morphing"
+    ],
+    "global_objects": {
+      "ApolloTrack": {
+        "methods": [
+          "event",
+          "pageview",
+          "eventView"
+        ],
+        "description": "Analytics tracker"
+      },
+      "Translate": {
+        "version": "2.2.4",
+        "methods": [
+          "get",
+          "has",
+          "apply",
+          "observe",
+          "register",
+          "load"
+        ],
+        "description": "i18n translation system"
+      }
+    },
+    "html_load": "<script src=\"https://cdn.apollo.rio.br/v1.0.0/core.min.js\" fetchpriority=\"high\"></script>",
+    "wp_enqueue": {
+      "handle": "apollo-cdn",
+      "src": "https://cdn.apollo.rio.br/v1.0.0/core.min.js",
+      "deps": [],
+      "ver": "1.0.0",
+      "in_footer": false
+    }
+  }
+}

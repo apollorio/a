@@ -1,0 +1,370 @@
+{
+  "registry": "apollo-whatsapp",
+  "registry_type": "per-plugin JSON contract",
+  "root_index_ref": "00-registry-map.json",
+  "registry_version": "0.1.0",
+  "status": "draft — pre-build naming contract, not yet implemented",
+  "generated": "2026-09-02",
+  "philosophy": "Minor adjusts for major results. Nothing named here is invented beyond what the brainstorm already decided — every gap that had to be filled to make the naming complete is flagged \"inferred\": true with a reason. Where the brainstorm proposed two options for the same thing, \"resolution_notes\" records which one wins and why.",
+
+  "depends_on": ["apollo-core", "apollo-login"],
+  "external_system": "WAHA (WhatsApp HTTP API), self-hosted, engine GOWS",
+
+  "resolution_notes": [
+    {
+      "conflict": "HMAC secret storage — global env WHATSAPP_HOOK_HMAC_KEY vs per-session key set in the Apollo plugin",
+      "resolved": "per-session, stored as the WP option apollo_wa_hmac_key, non-autoload",
+      "why": "brainstorm explicitly states 'preferir por session no Apollo'; per-session also lets the key rotate without touching the WAHA container env and without a restart"
+    },
+    {
+      "conflict": "Queue status naming — 'blocked' (screen-3 table) vs 'blocked_privacy' (later UX status line)",
+      "resolved": "blocked_privacy is canonical; 'blocked' is not used anywhere in code",
+      "why": "the plugin will likely grow other non-privacy block reasons (rate limit, WAHA send failure) later — a bare 'blocked' would collide with those; 'blocked_privacy' names the reason, not just the state"
+    },
+    {
+      "conflict": "Approve button copy — 'Aprovar' (control label in the table) vs 'Processar entrada' (the line that says the button must not promise success)",
+      "resolved": "internal action key stays approve; the rendered button label is 'Processar entrada'. 'Recusar' keeps its literal label — no ambiguity was raised for it",
+      "why": "explicit in the brainstorm: the button can't promise 'entrou' before the async add/invite chain resolves"
+    },
+    {
+      "conflict": "Engine — GOWS vs NOWEB vs Baileys(WEBJS) for the daemon session",
+      "resolved": "GOWS (whatsmeow/Go) is the only engine used in production; NOWEB is explicitly avoided ('Invalid patch mac' corruption pattern), Baileys/WEBJS is lab-only if WAHA itself ever needs replacing",
+      "why": "stated directly and repeatedly — GOWS has native LID resolution, the keepalive envs, and is what the WAHA container defaults to for long-lived sessions"
+    },
+    {
+      "conflict": "keepalive — write a custom daemon (whatsapp-keeper style) vs use the engine's built-in setting",
+      "resolved": "WAHA_GOWS_KEEPALIVE_INTERVAL_MIN/MAX env vars only, no companion process",
+      "why": "explicit veto: 'whatsapp-keeper não é o melhor repo pra você... o keepalive já veio no motor'"
+    },
+    {
+      "conflict": "check-exists endpoint shape — with vs without {session} in the path",
+      "resolved": "GET /api/contacts/check-exists?session={session}&phone={phone} — session is a query param, not a path segment",
+      "why": "verified against WAHA's ContactsController — check-exists lives under /api/contacts with session in the query string; this differs from the newer /api/{session}/groups/... family used elsewhere. _inferred: true — confirm both shapes against the exact 2026.8.2 swagger before writing the HTTP client, WAHA has mixed legacy/session-prefixed routes across controllers."
+    },
+    {
+      "conflict": "capability for admin actions — brainstorm says 'cap manage_options / cap Apollo' without picking one",
+      "resolved": "custom capability manage_apollo_whatsapp, mapped to manage_options by default on activation",
+      "why": "inferred — no Apollo-suite-wide capability convention was stated in this brainstorm; using a dedicated cap keeps this plugin consistent with WP best practice and lets a future Apollo-wide role map override the mapping without touching this plugin's code. Confirm against whatever capability convention the other ~40 apollo-* plugins already use, if any."
+    }
+  ],
+
+  "processes": {
+    "A_wordpress": {
+      "role": "apollo-core + apollo-whatsapp — login, users, events, admin UI. Never holds the WhatsApp session itself.",
+      "runtime": "PHP, LocalWP for lab / VPS for production",
+      "fails_open_to": "site keeps working if B is down; queue and pane just stop updating"
+    },
+    "B_waha": {
+      "role": "WAHA Docker container, session name apollo, engine GOWS",
+      "runtime": "PC (lab) or Linux VPS (24h production)",
+      "network": "bind 127.0.0.1 or a Docker network only — never public",
+      "fails_open_to": "if down, WhatsApp keeps running on the phone, but WordPress is blind to it"
+    },
+    "C_phone": {
+      "role": "operation phone — the device paired to the session",
+      "constraint": "must NOT be the Apollo verified Business number",
+      "maintenance": "open the WhatsApp app on it roughly once a week"
+    }
+  },
+
+  "plugin": {
+    "slug": "apollo-whatsapp",
+    "main_file": "apollo-whatsapp.php",
+    "text_domain": "apollo-whatsapp",
+    "prefix": "apollo_wa_",
+    "requires_plugins": ["apollo-core"],
+    "capability": {
+      "cap": "manage_apollo_whatsapp",
+      "default_grant": "manage_options",
+      "inferred": true,
+      "note": "add_cap on activation, remove_cap on uninstall — never hardcode manage_options in the route/menu checks, always check the custom cap"
+    }
+  },
+
+  "security": {
+    "webhook_inbound_headers": {
+      "X-Webhook-Hmac": "hex(HMAC_SHA512(hmac.key, raw_body))",
+      "X-Webhook-Hmac-Algorithm": "must equal literal string sha512, any other value is a 401",
+      "X-Webhook-Request-Id": "used for replay dedupe",
+      "X-Webhook-Timestamp": "unix ms, used for the replay window"
+    },
+    "hmac_key": {
+      "option": "apollo_wa_hmac_key",
+      "generated": "wp_generate_password(48, true, true) on plugin activation",
+      "storage": "WP option, non-autoload, never echoed to JS or the DOM, never committed to git",
+      "configured_on": "the WAHA session's webhooks[].hmac.key — set via the WAHA API when the session is created/updated from screen 1"
+    },
+    "replay_window_ms": 300000,
+    "dedupe_transient": {
+      "key_pattern": "apollo_wa_hook_{request_id}",
+      "ttl_seconds": 600,
+      "behavior_on_repeat": "return 200 empty body — acknowledge without reprocessing, never 401 a legitimate retry twice"
+    },
+    "max_body_bytes": 262144,
+    "pipeline_order": [
+      "1. HTTPS only in production (LocalWP lab exempted)",
+      "2. read the raw body via file_get_contents('php://input') — never let WP parse JSON before the HMAC check",
+      "3. missing X-Webhook-Hmac → 401, log, stop",
+      "4. X-Webhook-Hmac-Algorithm not exactly 'sha512' → 401",
+      "5. hash_equals(hash_hmac('sha512', $raw, $secret), $header) — timing-safe compare, never ===",
+      "6. |now_ms - X-Webhook-Timestamp| > replay_window_ms → 401",
+      "7. dedupe on X-Webhook-Request-Id via the apollo_wa_hook_{id} transient — seen before → 200 empty, do not reprocess",
+      "8. payload.session !== apollo_wa_session_name option → drop",
+      "9. body larger than max_body_bytes → 413",
+      "10. only then switch on payload.event — never eval, never raw SQL built from the body"
+    ],
+    "rest_permission_callback": "custom machine check (the pipeline above) — never is_user_logged_in, never __return_true with zero verification",
+    "outbound_auth": {
+      "header": "X-Api-Key",
+      "option": "apollo_wa_api_key",
+      "storage": "WP option, non-autoload, plaintext only ever lives in WordPress — the WAHA container only stores its hash (WAHA_API_KEY=sha512:{hash})"
+    },
+    "not_security": [
+      "?token=... query string on the webhook URL — leaks into access logs, CDN logs, referrer headers",
+      "trusting payload.session alone without the HMAC — anyone can write that JSON",
+      "IP allowlist as the only control — Docker/NAT changes the source IP",
+      "=== instead of hash_equals for the HMAC compare",
+      "a REST route with __return_true and no signature check",
+      "logging the raw body next to the HMAC key — that logs the secret"
+    ],
+    "checklist": [
+      "HMAC key >= 32 bytes, generated on activate",
+      "SHA512 + hash_equals on the raw body",
+      "timestamp window enforced",
+      "request-id dedupe enforced",
+      "session allowlist enforced",
+      "REST route has no cookie auth and fails closed",
+      "hmac/api keys never reach the front end",
+      "outbound calls to WAHA always send X-Api-Key",
+      "WAHA is not publicly reachable",
+      "a 401 never reveals whether the key was 'close'"
+    ]
+  },
+
+  "rest_api": {
+    "namespace": "apollo/v1",
+    "routes": {
+      "webhook_in": {
+        "method": "POST",
+        "route": "/wa/webhook",
+        "full_path": "/wp-json/apollo/v1/wa/webhook",
+        "permission_callback": "security.rest_permission_callback",
+        "owner": "apollo-whatsapp"
+      },
+      "events_upcoming": {
+        "method": "GET",
+        "route": "/events/upcoming",
+        "owner": "apollo-core (already exists — consumed, not owned, by this plugin's 'evento' keyword)"
+      }
+    }
+  },
+
+  "options": {
+    "apollo_wa_waha_url": { "type": "string", "example": "http://127.0.0.1:3000", "note": "base URL of the WAHA container" },
+    "apollo_wa_api_key": { "type": "string", "autoload": false, "note": "outbound X-Api-Key" },
+    "apollo_wa_hmac_key": { "type": "string", "autoload": false, "note": "inbound webhook HMAC secret, see security.hmac_key" },
+    "apollo_wa_session_name": { "type": "string", "default": "apollo" },
+    "apollo_wa_group_id": { "type": "string", "example": "120363...@g.us" },
+    "apollo_wa_group_approve_new_members": { "type": "bool", "default": false, "note": "screen 1 card B toggle — turns on WhatsApp's own group join-approval" },
+    "apollo_wa_mirror_group_to_pane": { "type": "bool", "default": true },
+    "apollo_wa_dm_bot_enabled": { "type": "bool", "default": true },
+    "apollo_wa_group_anchor_enabled": { "type": "bool", "default": true },
+    "apollo_wa_group_anchors": { "type": "array<string>", "default": ["!apollo", "!evento"] },
+    "apollo_wa_admin_prefix": { "type": "string", "default": "/", "note": "composer command prefix, see composer_commands" },
+    "apollo_wa_rate_seconds": { "type": "int", "default": 10, "note": "minimum seconds between outbound sends, anti-ban" },
+    "apollo_wa_flow_keywords": { "type": "json object", "default": "flows_mvp.keyword_map", "note": "editable from screen 5" }
+  },
+
+  "user_meta": {
+    "_apollo_whatsapp_phone": {
+      "owner": "apollo-login (existing, inherited — do not rename)",
+      "note": "the phone number the user entered/verified via OTP"
+    },
+    "_apollo_whatsapp_optin": {
+      "owner": "apollo-login (existing, inherited — do not rename)",
+      "note": "consent flag for WhatsApp contact"
+    },
+    "_apollo_wa_candidates": {
+      "owner": "apollo-whatsapp",
+      "type": "array<string>",
+      "note": "both BR digit-count variants (12 and 13 digit) derived from _apollo_whatsapp_phone, see phone_resolution"
+    },
+    "_apollo_wa_jid": {
+      "owner": "apollo-whatsapp",
+      "type": "string",
+      "inferred": true,
+      "note": "the JID that check-exists confirmed as real, cached so later sends skip re-resolving. Not explicitly named in the brainstorm but required by its own rule: 'confie no chatId que o check-exists devolveu', which has to be stored somewhere"
+    },
+    "_apollo_wa_flow_state": {
+      "owner": "apollo-whatsapp",
+      "enum": ["IDLE", "FLOW", "HUMAN"],
+      "default": "IDLE"
+    }
+  },
+
+  "transients": {
+    "apollo_wa_hook_{request_id}": { "ttl_seconds": 600, "purpose": "webhook replay dedupe, see security.dedupe_transient" }
+  },
+
+  "queue": {
+    "storage": "apollo-core queue table/meta — no new custom post type for this",
+    "statuses": {
+      "queued": "user asked, waiting on admin",
+      "adding": "add attempt in flight",
+      "added": "confirmed in the group",
+      "invited": "403 on add, invite link sent to the user's DM instead",
+      "pending_approval": "join-request sitting in WhatsApp's own group approval queue",
+      "already": "409 — was already a member",
+      "rejected": "admin declined",
+      "blocked_privacy": "add failed (403) and the DM invite delivery also failed — genuine dead end, needs manual outreach. supersedes the earlier 'blocked' label, see resolution_notes",
+      "session_down": "attempted while WAHA session was not WORKING"
+    },
+    "screen3_controls": {
+      "per_row": ["approve (button label: 'Processar entrada')", "reject (button label: 'Recusar')", "resend_link", "open_dm_in_pane"],
+      "top": ["filter_by_status", "bulk_approve_queued (with confirm)", "search_name_or_phone"]
+    }
+  },
+
+  "flow_state": {
+    "meta_key": "_apollo_wa_flow_state",
+    "values": {
+      "IDLE": "default, no active thread state",
+      "FLOW": "reserved for a future multi-step flow — not used by the MVP keyword set",
+      "HUMAN": "bot is muted for this user; admin is handling the thread manually"
+    },
+    "human_timeout": "2 hours, or until admin clicks 'liberar' in the pane"
+  },
+
+  "flows_mvp": {
+    "keyword_map": {
+      "evento | hoje | rolê": "events.upcoming — GET /apollo/v1/events/upcoming, answered in the DM",
+      "entrar | grupo": "join.queue — creates a screen-3 row",
+      "humano | atendente": "handoff — sets HUMAN + pings admin, badge in the pane",
+      "sair | para": "idle — resets flow state to IDLE"
+    },
+    "match_mode": "exact or starts-with, never regex/fuzzy — a chatty bot in a group is the pattern the community flags as a ban risk",
+    "fallback": "one generic reply plus 'digita evento | entrar | humano'",
+    "reaction_to_wow": {
+      "status": "phase_2, not in the MVP webhook handler",
+      "note": "message.reaction webhook event is still subscribed at the session level, but no handler consumes it in v1"
+    }
+  },
+
+  "channels": {
+    "group": {
+      "jid": "apollo_wa_group_id, single thread",
+      "listens_only_to": "the configured anchors (apollo_wa_group_anchors) or an explicit reply to the bot",
+      "on_anchor_hit": "reply is sent to the user's DM (the 'whisper'), never back into the group",
+      "otherwise": "mirrored into the pane only, no auto-reply",
+      "admin_send": "composer default destination toggle, or the /grupo command override"
+    },
+    "dm": {
+      "state_machine": "flow_state",
+      "human_state": "bot silent, pane only",
+      "keyword_state": "flows_mvp.keyword_map",
+      "admin_send": "composer default destination toggle, or the /dm {number} command override"
+    }
+  },
+
+  "admin_screens": {
+    "1_settings": { "menu_slug": "apollo-whatsapp-settings", "audience": "admin", "cards": ["conexao", "grupo", "numero", "comportamento"] },
+    "2_session_strip": { "note": "not a separate page — the live status strip rendered at the top of screen 1", "states": ["WORKING", "SCAN_QR/starting", "FAILED/down"] },
+    "3_queue": { "menu_slug": "apollo-whatsapp-queue", "audience": "admin" },
+    "4_pane": { "menu_slug": "apollo-whatsapp-pane", "audience": "admin", "tabs": ["grupo", "dms"] },
+    "5_flows": { "menu_slug": "apollo-whatsapp-flows", "audience": "admin" },
+    "6_user_button": { "location": "profile / event page block, front-end", "audience": "logged-in user" },
+    "7_user_inbox": { "location": "\"meus pedidos\" block on the Apollo profile", "audience": "logged-in user" },
+    "L_waha_dashboard": { "location": "WAHA's own dashboard, e.g. http://127.0.0.1:3000", "audience": "admin only, setup/debug — never linked to a regular user" }
+  },
+
+  "composer_commands": {
+    "prefix_option": "apollo_wa_admin_prefix",
+    "commands": {
+      "/grupo": "force send to the group regardless of the thread's default destination",
+      "/dm {number}": "force send to a specific DM",
+      "/silent": "record in WordPress only, do not send to WhatsApp",
+      "/humano": "mark the current thread's flow_state as HUMAN"
+    },
+    "note": "any admin-sent message carries fromMe on the WAHA side and must never re-trigger a keyword flow"
+  },
+
+  "pane": {
+    "data_source": "apollo-core's existing chat/notifications store — not the DOM, not a new CPT",
+    "population": "webhook events message / message.any write into the core store, the pane reads from it",
+    "outbound": "admin composer POSTs sendText to either the group JID or the open thread's JID",
+    "typing_indicator": "startTyping / stopTyping, ~800ms",
+    "mute_on_open": "opening a thread in the pane mutes the bot for that thread (mirrors a human agent 'joining' without needing Chatwoot)"
+  },
+
+  "waha": {
+    "session_name": "apollo",
+    "engine": "GOWS",
+    "dashboard_env": "WAHA_DASHBOARD_ENABLED=false in production unless actively debugging",
+    "keepalive_env": {
+      "WAHA_GOWS_KEEPALIVE_INTERVAL_MIN": 20,
+      "WAHA_GOWS_KEEPALIVE_INTERVAL_MAX": 25
+    },
+    "volume": "./sessions:/app/.sessions — persistent, never wiped on redeploy",
+    "endpoints_used": {
+      "check_session": "GET /api/sessions/{session}",
+      "check_exists": "GET /api/contacts/check-exists?session={session}&phone={phone} — see resolution_notes on path shape",
+      "put_contact": "PUT /api/{session}/contacts/{chatId} — call 2-3x with a few seconds between calls, the device-side app can be flaky",
+      "add_participants": "POST /api/{session}/groups/{id}/participants/add",
+      "invite_code": "GET /api/{session}/groups/{id}/invite-code",
+      "join_requests": "GET /api/{session}/groups/{id}/participants/join-requests",
+      "send_text": "POST /api/sendText — session goes in the body, not the path (confirmed against WAHA's controller shape)",
+      "create_group": "POST /api/{session}/groups"
+    },
+    "webhook_events_subscribed": ["session.status", "message", "message.any", "message.reaction", "group.v2.participants"]
+  },
+
+  "phone_resolution": {
+    "candidates_meta": "_apollo_wa_candidates",
+    "br_rule": "store both the 12-digit (pre-2012, no 9th digit) and 13-digit (post-ANATEL, with 9th digit) forms — never assume one is correct",
+    "resolution_order": [
+      "try both candidates against GET /api/contacts/check-exists",
+      "use whichever candidate the endpoint reports exists=true",
+      "cache the confirmed chatId in _apollo_wa_jid",
+      "never trust raw user input for the add/send call — always use the check-exists result"
+    ]
+  },
+
+  "add_chain": {
+    "steps": [
+      "1. session === WORKING? if not → status session_down, stop",
+      "2. resolve phone via phone_resolution → jid",
+      "3. PUT contact (2-3x, ~3s apart)",
+      "4. wait ~5s",
+      "5. POST participants/add",
+      "6. 200 with no Error → added",
+      "7. 409 → already",
+      "8. Error 403 with AddRequest.Code in the body → send https://chat.whatsapp.com/{Code} to the user's DM → invited",
+      "9. Error 403 without a Code → GET invite-code, send that link instead → invited",
+      "10. invite DM delivery itself fails → blocked_privacy",
+      "11. never loop-retry the add call"
+    ],
+    "never_use_the_official_number_here": "the Apollo verified Business number must never be paired into this WAHA session"
+  },
+
+  "cron": {
+    "status": "not built yet — this registry only reserves the naming",
+    "trigger": "WP-Cron with a lock, reuses the same composer/sendText path as the pane",
+    "guard": "only fires if GET /api/sessions/{session} reports WORKING",
+    "rate": "one send every 8-15s when flushing a queue, same anti-ban rationale as apollo_wa_rate_seconds"
+  },
+
+  "out_of_scope_v1": [
+    "cloning the full WhatsApp Web UI in WordPress (media library, 400-chat inbox, statuses) — that stays on WAHA's own dashboard (screen L)",
+    "Chatwoot / Typebot / n8n — shelved until there are multiple human agents",
+    "auto-reply to every group message — anchor-only, whisper to DM",
+    "message.reaction → 'WOW' feature (phase 2)",
+    "official WhatsApp Cloud API / Coexistence — revisit only if broadcast-at-scale or OTP templates become a requirement"
+  ],
+
+  "glossary": {
+    "JID": "WhatsApp's internal chat identifier, e.g. 5521999990000@c.us for a DM or 120363...@g.us for a group",
+    "LID": "the anonymized identifier WhatsApp is rolling out to replace phone-number-based identity inside groups by end of 2026",
+    "GOWS": "the whatsmeow-based Go engine WAHA uses for the session — chosen over NOWEB and Baileys/WEBJS",
+    "whisper": "a group-anchor keyword hit that gets answered in the user's DM instead of back into the group"
+  }
+}

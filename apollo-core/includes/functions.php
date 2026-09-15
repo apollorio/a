@@ -516,6 +516,31 @@ if (! function_exists('apollo_cdn_suffix')) {
     }
 }
 
+if (! function_exists('apollo_cdn_append_query')) {
+    /**
+     * Append one query fragment to a URL, once.
+     *
+     * Small, but it exists so the append rule is declared in a single place: three call
+     * sites in apollo_cdn_core_js_url() previously each re-implemented "is there a ? yet,
+     * and is this fragment already present" — and the copies had already drifted apart.
+     *
+     * @since 6.4.5
+     * @param string $url      Absolute or relative URL.
+     * @param string $fragment Query fragment such as 'v=t0x7'. Leading ? or & is tolerated.
+     * @return string
+     */
+    function apollo_cdn_append_query(string $url, string $fragment): string
+    {
+        $fragment = ltrim(trim($fragment), '?&');
+
+        if ($fragment === '' || strpos($url, $fragment) !== false) {
+            return $url;
+        }
+
+        return $url . (strpos($url, '?') !== false ? '&' : '?') . $fragment;
+    }
+}
+
 if (! function_exists('apollo_cdn_core_js_url')) {
     /**
      * Full URL to Apollo CDN core.js with cache-bust (+ dev=local + local disk on Local Sites).
@@ -539,6 +564,29 @@ if (! function_exists('apollo_cdn_core_js_url')) {
             if (strpos($url, 'versao=') === false) {
                 $url .= (strpos($url, '?') !== false ? '&' : '?') . 'versao=bb';
             }
+
+            // ── The cache-bust used to stop here, and that was the bug. Fixed 2026-08-25.
+            //
+            //    constants.php says of APOLLO_CDN_Q: "Bump one character to bust CDN/browser
+            //    cache." For core.js that was never true. APOLLO_CDN_CORE_JS is always
+            //    defined, so this branch always wins, and it returned a URL that is byte-for-
+            //    byte identical on every request: the fixed literal ending in ?versao=bb.
+            //    $q and $suffix were computed at the top of this function and then thrown
+            //    away — $suffix was never used in ANY branch.
+            //
+            //    core.js is not a small asset to get wrong. It injects the entire design
+            //    system: ~31 KB of inline CSS, 160+ tokens including --safe-* and the whole
+            //    neutral ramp, three Google families and the Has The Right face. The site's
+            //    root .htaccess caches JavaScript for a year. A returning visitor could
+            //    therefore be handed a year-old token set while today's markup assumes the
+            //    current one — which does not fail loudly, it just renders slightly wrong
+            //    forever. Bumping APOLLO_CDN_Q now actually reaches the browser.
+            //
+            //    Verified against the live CDN before shipping: it serves the file normally
+            //    with these extra parameters present.
+            $url = apollo_cdn_append_query($url, $q);
+            $url = apollo_cdn_append_query($url, $suffix);
+
             return $url;
         }
 

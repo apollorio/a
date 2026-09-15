@@ -327,7 +327,7 @@
       "apollo/core/initialized"
     ]
   },
-  "version": "1.1.1",
+  "version": "1.2.2",
   "cron": [],
   "hooks_fired": [
     "apollo/adverts/form/load",
@@ -2124,5 +2124,11 @@
       "includes/functions.php",
       "templates/form.php"
     ]
+  },
+  "$version_synced": {
+    "date": "2026-08-31",
+    "from": "1.1.1",
+    "to": "1.2.2",
+    "source": "disk constant; docblock said 1.2.0 while APOLLO_ADVERTS_VERSION said 1.2.2 — docblock corrected to 1.2.2 in the same pass"
   }
 }

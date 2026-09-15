@@ -1,0 +1,84 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-ui",
+    "owner": "apollo-ui",
+    "wrap": "plugins.apollo-ui",
+    "source": "disk scan 2026-09-15",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-ui",
+  "namespace": "Apollo\\UI",
+  "priority": 20,
+  "status": "IMPLEMENTED",
+  "version": "1.0.0",
+  "layer": "L6_frontend",
+  "description": "Card type system (type-1 … type-6) registered into apollo-core's card contract, plus global shortcodes and lightbox binding via window.APOLLO_SURFACES. Presentation-only — no CPT, taxonomy, meta, or table registration.",
+  "dependencies": [
+    "apollo-core",
+    "apollo-events"
+  ],
+  "provides": [
+    "card-styles",
+    "card-shortcodes",
+    "lightbox-binding",
+    "ui-surfaces"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [],
+  "meta": {},
+  "rest": [],
+  "pages": [],
+  "shortcodes": [
+    "apollo_card",
+    "apollo_cards"
+  ],
+  "ajax": {
+    "priv": [],
+    "nopriv": []
+  },
+  "cron": [],
+  "hooks_fired": [
+    "apollo/ui/emit"
+  ],
+  "hooks_listened": [
+    "init",
+    "wp_enqueue_scripts",
+    "apollo/canvas/head",
+    "apollo/canvas/before_close",
+    "apollo/plus/before_close"
+  ],
+  "admin_menus": [
+    "apollo-ui"
+  ],
+  "assets": {
+    "scripts": [
+      "apollo-ui"
+    ],
+    "styles": [
+      "apollo-ui"
+    ]
+  },
+  "options": [
+    "apollo_ui_settings"
+  ],
+  "security": {
+    "risk_band": "LOW",
+    "risk_score": null,
+    "rest_open_routes": 0
+  },
+  "$product_surface": true,
+  "$disk_status": "PRESENT",
+  "$disk_facts": {
+    "scanned": "2026-09-15",
+    "php_files": 7,
+    "rest_routes_found": 0,
+    "cpts_found": [],
+    "tables_found": [],
+    "shortcodes_found": [
+      "apollo_card",
+      "apollo_cards"
+    ]
+  },
+  "$registry_gap_closed": "On disk since 2026-09-05; doctrine-audit superseded the prior 'apollo-ui does not exist' rule. Entry created 2026-09-15."
+}

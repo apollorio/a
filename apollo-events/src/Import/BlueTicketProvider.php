@@ -43,11 +43,13 @@ declare(strict_types=1);
 
 namespace Apollo\Event\Import;
 
+use Apollo\Event\Import\Contracts\ImportProviderInterface;
+
 if (! defined('ABSPATH')) {
     exit;
 }
 
-final class BlueTicketProvider
+final class BlueTicketProvider implements ImportProviderInterface
 {
     /** Host that answers /events/{id}/detail in production, then the fallback. */
     private const API_HOSTS = array(
@@ -56,6 +58,11 @@ final class BlueTicketProvider
     );
 
     private const TIMEOUT = 15;
+
+    public static function provider(): string
+    {
+        return 'blueticket';
+    }
 
     /**
      * Does this provider own the given URL?
@@ -260,6 +267,7 @@ final class BlueTicketProvider
            Video URLs (YouTube / file) land in video_url when present. */
         $cover     = '';
         $video_url = '';
+        $cover_raw = array();
         foreach ((array) ($d['media'] ?? array()) as $m) {
             if (! is_array($m) || empty($m['url'])) {
                 continue;
@@ -269,12 +277,17 @@ final class BlueTicketProvider
                 $video_url = $url;
                 continue;
             }
-            if (1 === (int) ($m['type'] ?? 0) && '' === $cover) {
-                $cover = $url;
-                continue;
-            }
-            if ('' === $cover && preg_match('~\.(jpe?g|png|webp|avif)(\?|$)~i', $url)) {
-                $cover = $url;
+            $is_type_cover = (1 === (int) ($m['type'] ?? 0));
+            $looks_image   = (bool) preg_match('~\.(jpe?g|png|webp|avif)(\?|$)~i', $url);
+            if ($is_type_cover || $looks_image) {
+                $cover_raw[] = array(
+                    'url'      => $url,
+                    'source'   => $is_type_cover ? 'blueticket_media_type1' : 'blueticket_media_image',
+                    'priority' => $is_type_cover ? 1 : 4,
+                );
+                if ('' === $cover && ($is_type_cover || $looks_image)) {
+                    $cover = $url;
+                }
             }
         }
 
@@ -319,7 +332,7 @@ final class BlueTicketProvider
         $loc_name = (string) ($venue['name'] ?? $split['presenter']);
 
         return array(
-            'provider'      => 'blueticket',
+            'provider'      => self::provider(),
             'provider_id'   => (string) $id,
             'source_url'    => $ticket_url,
             'coupon'        => strtoupper(sanitize_text_field($coupon)),
@@ -329,6 +342,7 @@ final class BlueTicketProvider
             'raw_name'      => $raw_name,
 
             'cover'         => $cover,
+            'cover_candidates_raw' => $cover_raw,
             'about'         => wp_kses_post((string) ($info['description'] ?? '')),
             'video_url'     => $video_url,
 

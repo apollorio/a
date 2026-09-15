@@ -45,6 +45,11 @@ ob_start();
 apollo_plus_part('feed/styles');
 $apf_head = ob_get_clean();
 
+// #region agent log
+$apollo_dbg_feed_beacon = '<script>(function(){fetch("http://127.0.0.1:7754/ingest/da9d552b-a038-4061-bf95-e47d2c529b38",{method:"POST",headers:{"Content-Type":"application/json","X-Debug-Session-Id":"161c5c"},body:JSON.stringify({sessionId:"161c5c",runId:"pre-fix",hypothesisId:"A",location:"page-feed.php:open",message:"logged user rendered /feed",data:{href:location.href,ref:document.referrer||""},timestamp:Date.now()})}).catch(function(){})})();</script>';
+$apf_head               = $apollo_dbg_feed_beacon . $apf_head;
+// #endregion
+
 apollo_plus_open(
     array(
         'title'      => get_bloginfo('name') . ' — Feed',

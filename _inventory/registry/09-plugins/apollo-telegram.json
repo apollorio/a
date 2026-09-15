@@ -10,7 +10,7 @@
   "namespace": "Apollo\\Telegram",
   "priority": 50,
   "status": "IMPLEMENTED",
-  "version": "1.1.2",
+  "version": "1.1.5",
   "description": "Apollo Telegram Bot - Independent test plugin for Telegram Bot integration with Apollo Rio. Test mode only. No registry involvement yet.",
   "dependencies": [
     "apollo-core",
@@ -1443,5 +1443,11 @@
       "apollo_telegram_verif"
     ],
     "shortcodes_found": []
+  },
+  "$version_synced": {
+    "date": "2026-08-31",
+    "from": "1.1.2",
+    "to": "1.1.5",
+    "source": "disk docblock via doctor.js"
   }
 }

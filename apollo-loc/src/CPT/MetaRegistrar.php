@@ -51,10 +51,14 @@ final class MetaRegistrar {
 		 * sanitize_callback with none at all — the later registration wins and
 		 * nothing anywhere reports the conflict.
 		 *
-		 * It also hooked `apollo_core_register_meta`, which is not a filter that
-		 * exists. The real name is `apollo_core_register_post_meta` (MetaRegistry
-		 * line 1865, applied on init:8). So the one legal path was mis-spelled and
-		 * the illegal path was the only one running.
+		 * It also hooked `apollo_core_register_meta`. CORRECTION (2026-08-25):
+		 * that filter DOES exist — MetaRegistry::apply_external_definitions()
+		 * fires it as the `$legacy_post_meta` compatibility alias immediately
+		 * before `apollo_core_register_post_meta`. apollo-djs still hooks the
+		 * legacy name and works. This comment previously asserted the filter was
+		 * imaginary, which would send the next reader off to "fix" a plugin that
+		 * is not broken. Prefer `apollo_core_register_post_meta` for new code —
+		 * it is the canonical name — but the alias is supported, not a bug.
 		 *
 		 * Now: contribute through the filter, register nothing here. apollo-core
 		 * stays the single registrar, per 02-header.CRITICAL_apollo_core_centralization.

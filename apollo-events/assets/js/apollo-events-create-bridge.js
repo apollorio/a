@@ -140,6 +140,7 @@
 		if ($id('ev-video')) $id('ev-video').value = ev.video_url || '';
 		if ($id('ev-audio')) $id('ev-audio').value = ev.audio_url || '';
 		if ($id('ev-banner')) $id('ev-banner').value = ev.banner ? String(ev.banner) : '';
+		if ($id('ev-banner-url')) $id('ev-banner-url').value = ev.banner_url || '';
 		var bgColor = /^#[0-9a-fA-F]{6}$/.test(ev.bg_color || '') ? ev.bg_color : '#0a0a0a';
 		if ($id('ev-bg-color')) $id('ev-bg-color').value = bgColor;
 		if ($id('ev-bg-color-picker')) $id('ev-bg-color-picker').value = bgColor;
@@ -235,6 +236,7 @@
 			event_status: ($id('ev-status') && $id('ev-status').value) || 'scheduled',
 			coupon_code: ($id('ev-coupon-code') && $id('ev-coupon-code').value) || '',
 			lista_cta_label: ($id('ev-lista-cta-label') && $id('ev-lista-cta-label').value || '').trim(),
+			highlighted: ($id('ev-highlighted') && $id('ev-highlighted').value === '1') ? '1' : '0',
 			post_status: 'draft'
 		};
 
@@ -321,12 +323,14 @@
 
 		var btn = $id(btnId || 'saveBtn');
 		var originalHTML = btn ? btn.innerHTML : '';
+		var originalAria = btn ? btn.getAttribute('aria-label') : '';
 		var editId = parseInt(($id('a_eve_edit_id') && $id('a_eve_edit_id').value) || CFG.editId || 0, 10) || 0;
 		var isEdit = editId > 0;
 		var data = collectPayload();
 
 		if (btn) {
-			btn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> ' + (isEdit ? 'Atualizando...' : 'Gravando...');
+			btn.innerHTML = '<i class="ri-loader-4-line ri-spin" aria-hidden="true"></i>';
+			btn.setAttribute('aria-label', isEdit ? 'Atualizando...' : 'Gravando...');
 			btn.style.pointerEvents = 'none';
 		}
 
@@ -353,9 +357,12 @@
 			}
 
 			var newId = result.id || editId;
-			if (btn) btn.innerHTML = '<i class="ri-check-line"></i> ' + (isEdit
-				? ((CFG.i18n && CFG.i18n.updated) || 'Atualizado!')
-				: ((CFG.i18n && CFG.i18n.saved) || 'Gravado!'));
+			if (btn) {
+				btn.innerHTML = '<i class="ri-check-line" aria-hidden="true"></i>';
+				btn.setAttribute('aria-label', isEdit
+					? ((CFG.i18n && CFG.i18n.updated) || 'Atualizado!')
+					: ((CFG.i18n && CFG.i18n.saved) || 'Gravado!'));
+			}
 			toastSafe(isEdit
 				? ((CFG.i18n && CFG.i18n.updated) || 'Evento atualizado!')
 				: ((CFG.i18n && CFG.i18n.saved) || 'Evento salvo!'));
@@ -367,6 +374,7 @@
 			} else if (btn) {
 				setTimeout(function () {
 					btn.innerHTML = originalHTML;
+					if (originalAria) btn.setAttribute('aria-label', originalAria);
 					btn.style.pointerEvents = 'auto';
 				}, 1600);
 			}
@@ -374,6 +382,7 @@
 			toastSafe(err.message || ((CFG.i18n && CFG.i18n.errNetwork) || 'Falha ao salvar'));
 			if (btn) {
 				btn.innerHTML = originalHTML;
+				if (originalAria) btn.setAttribute('aria-label', originalAria);
 				btn.style.pointerEvents = 'auto';
 			}
 		}
@@ -381,6 +390,21 @@
 
 	window.createNewEvent = function () {
 		window.location.href = CFG.createUrl || '/novo-evento/';
+	};
+
+	/* Destacar (highlight) toggle — flips the hidden field the REST payload
+	   reads (see collectPayload() above) and mirrors state on the button so
+	   it stays pressed/gold until the next save. Persists only on Salvar. */
+	window.toggleHighlighted = function (btnId) {
+		var hidden = $id('ev-highlighted');
+		if (!hidden) return;
+		var on = hidden.value === '1';
+		hidden.value = on ? '0' : '1';
+		var btn = $id(btnId || 'highlightBtn');
+		if (btn) {
+			btn.classList.toggle('is-on', !on);
+			btn.setAttribute('aria-pressed', on ? 'false' : 'true');
+		}
 	};
 
 	window.openDeleteEventModal = function () {
@@ -443,7 +467,11 @@
 	document.addEventListener('DOMContentLoaded', function () {
 		if (typeof buildDJOptions === 'function') buildDJOptions();
 
-		syncDeleteBtnVisibility(!!(CFG.editId || ($id('a_eve_edit_id') && $id('a_eve_edit_id').value)));
+		/* BUGFIX (2026-08-29): the hidden input's value is the STRING "0" on
+		   the create page, and !!"0" is true in JS — that truthy-string trap
+		   made syncDeleteBtnVisibility(true) fire on every load, showing the
+		   Deletar icon with nothing to delete. Parse to a real number first. */
+		syncDeleteBtnVisibility((parseInt(($id('a_eve_edit_id') && $id('a_eve_edit_id').value) || CFG.editId || 0, 10) || 0) > 0);
 
 		/* form.js's own init() already ran synchronously before this script
 		 * loaded and re-rendered #sidebarEvents with mockup-only links

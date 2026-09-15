@@ -27,9 +27,11 @@ if (! defined('ABSPATH')) {
 
 $gate  = $gate ?? 'unlock';
 $pair  = $pair ?? '';
-$label = 'context' === $gate
-    ? __('Só contexto', 'apollo-adverts')
-    : __('Libera', 'apollo-adverts');
+$label = $gate_label ?? (
+	'context' === $gate
+		? __('Só contexto', 'apollo-adverts')
+		: __('Libera', 'apollo-adverts')
+);
 ?>
 <article class="ap-check is-loading" data-check="<?php echo esc_attr($key); ?>" data-state="off">
 	<div class="ap-check__top">

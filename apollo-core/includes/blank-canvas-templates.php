@@ -102,7 +102,15 @@ Loaded on core.js are:
 }</style>
 
 <!-- Viewport for mobile-first, lock zoom.. -->
-<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=overlays-content">
+<!-- Pinch-zoom restored 2026-08-26. This tag used to carry maximum-scale=1 and
+     user-scalable=no. Safari has ignored both since iOS 10; Android Chrome obeys
+     them, so on Android the page could not be magnified at all — a WCAG 2.1 SC 1.4.4
+     failure, and the one line most at odds with the "ahead of Apple" bar. The
+     reference layout never had it. viewport-fit=cover stays, because every
+     env(safe-area-inset-*) rule in the tree is dead without it, and
+     interactive-widget=overlays-content stays so the on-screen keyboard overlays
+     the page instead of resizing the viewport under a fixed topbar. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, viewport-fit=cover, interactive-widget=overlays-content">
 
 <!-- PWA metas for app-like behavior -->
 <meta name="mobile-web-app-capable" content="yes">
@@ -206,15 +214,94 @@ if ( ! function_exists( 'apollo_blank_canvas_is_plus' ) ) {
 
 if ( ! function_exists( 'apollo_render_blank_canvas_shell' ) ) {
     /**
-     * Print the Apollo+ shell chrome (topbar + overlay + panels).
+     * Print the COMPLETE Apollo+ shell chrome: topbar + overlay + panels,
+     * AND the aside drawer the topbar's #burger opens.
      *
-     * MARKUP IS NOT DUPLICATED HERE. The canonical showcase markup lives in
-     * apollo-templates (`apollo_render_app_shell()`); core only guarantees it
-     * is called. If apollo-templates is unavailable, a minimal contract-safe
-     * topbar is printed so an Apollo+ page is never left without chrome —
-     * same ids core.js's shell behaviour already binds to.
+     * MARKUP IS NOT DUPLICATED HERE. The canonical markup lives in
+     * apollo-templates — `apollo_render_app_shell()` for the topbar,
+     * `apollo-plus/aside.php` for the drawer; core only guarantees both are
+     * called, in that order. If apollo-templates is unavailable, a minimal
+     * contract-safe topbar is printed so an Apollo+ page is never left without
+     * chrome — same ids core.js's shell behaviour already binds to.
+     *
+     * @see apollo_render_blank_canvas_topbar()  topbar half
+     * @see apollo_render_blank_canvas_aside()   aside half (why it has no fallback)
      */
     function apollo_render_blank_canvas_shell(): void {
+        /* ─────────────────────────────────────────────────────────────────
+           THE APOLLO+ SHELL IS TWO HALVES, NOT ONE (fixed 2026-08-25).
+
+           This function used to render ONLY the topbar and return. But the
+           topbar contains #burger, and #burger does nothing on its own — the
+           element it opens (#ax-aside) and the script that binds it BOTH live
+           in apollo-templates' apollo-plus/aside.php. Rendering half the shell
+           produced a visible, focusable, permanently dead hamburger on every
+           Apollo+ page that came through this path:
+
+             · apollo-dashboard  render_blank_canvas_plus()  → /painel
+             · any future caller of render_blank_canvas( …, 'plus' )
+
+           18-canvas-shell.json's $unification_2026_08_05 records these shells
+           as collapsed into apollo_plus_open(). They were not — this function
+           survived, and kept diverging, which is why the burger works on
+           /eventos (path B, apollo_plus_open → renders the aside) and is dead
+           on path A. Emitting the aside here closes that gap at the ONE place
+           core guarantees the Apollo+ contract, instead of patching each
+           screen.
+
+           ORDER IS LOAD-BEARING: topbar first (it owns #burger), aside second
+           (its inline script does getElementById('burger') at parse time and
+           binds defensively if absent — bind it before the button exists and
+           the drawer is dead again, silently).
+           ───────────────────────────────────────────────────────────────── */
+
+        /* Topbar half. Guarded independently of the aside half: another caller
+           having already emitted the topbar must NOT also suppress the aside,
+           which is exactly the bug the single combined guard used to cause. */
+        if ( ! defined( 'APOLLO_APP_SHELL_LOADED' ) ) {
+            apollo_render_blank_canvas_topbar();
+        }
+
+        /* Aside half — the drawer #burger actually opens. */
+        apollo_render_blank_canvas_aside();
+    }
+}
+
+if ( ! function_exists( 'apollo_render_blank_canvas_aside' ) ) {
+    /**
+     * Print the Apollo+ aside (the drawer #burger opens).
+     *
+     * Markup is NOT duplicated here, for the same reason the topbar is not:
+     * apollo-templates owns it (`apollo-plus/aside.php`), and that file also
+     * carries the inline script binding #burger → .ax-aside.open plus its own
+     * APOLLO_PLUS_ASIDE_LOADED idempotency guard.
+     *
+     * If apollo-templates is unavailable there is deliberately NO fallback: a
+     * hand-rolled stand-in would be a second owner of .ax-aside — the cardinal
+     * sin — and an empty drawer is worse than no drawer. The topbar's own
+     * fallback exists only because core must guarantee *chrome*; navigation is
+     * apollo-templates' contract.
+     */
+    function apollo_render_blank_canvas_aside(): void {
+        if ( defined( 'APOLLO_PLUS_ASIDE_LOADED' ) ) {
+            return;
+        }
+        if ( function_exists( 'apollo_plus_part' ) ) {
+            apollo_plus_part( 'apollo-plus/aside' );
+        } elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+            echo '<!-- apollo+: aside unavailable (apollo-templates inactive) — #burger will not open -->';
+        }
+    }
+}
+
+if ( ! function_exists( 'apollo_render_blank_canvas_topbar' ) ) {
+    /**
+     * Print the Apollo+ topbar only.
+     *
+     * Split out of apollo_render_blank_canvas_shell() so the two halves of the
+     * shell can be guarded — and reasoned about — separately.
+     */
+    function apollo_render_blank_canvas_topbar(): void {
         if ( defined( 'APOLLO_APP_SHELL_LOADED' ) ) {
             return;
         }

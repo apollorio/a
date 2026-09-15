@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Marketplace Card Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap">
+
+<style>
+/* Same tokens as the operations console — one design system, two pages. */
+:root{
+  --ground:#FAF9F7; --surface:#FFFFFF; --raised:#F3F1ED; --sunk:#EEEBE5;
+  --line:#E4E0D9; --line-soft:#EDEAE4;
+  --ink:#17171A; --ink-2:#3D3D44; --muted:#77747D; --faint:#A5A2AA;
+  --brand:#E07600; --brand-ink:#B45E00; --brand-wash:#FDF1E2;
+  --alarm:#C8283C; --alarm-wash:#FBE9EB;
+  --warn:#9A6700; --warn-wash:#FCF3DC;
+  --ok:#1E7A4E; --ok-wash:#E7F3EC;
+  --on-brand:#FFFFFF;
+  --ff-d:"Syne","Space Grotesk",system-ui,sans-serif;
+  --ff-b:"Space Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --ff-m:"Space Mono",ui-monospace,Menlo,Consolas,monospace;
+  --r:13px; --r-sm:8px; --r-xs:5px; --r-pill:999px;
+  --shadow:0 1px 2px rgba(23,23,26,.04), 0 10px 30px -22px rgba(23,23,26,.4);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0D0D0F; --surface:#151518; --raised:#1C1C20; --sunk:#222227;
+    --line:#2A2A30; --line-soft:#212126;
+    --ink:#F2F0EC; --ink-2:#C8C5C0; --muted:#8E8B93; --faint:#615E67;
+    --brand:#FF9820; --brand-ink:#FFB257; --brand-wash:#241A0C;
+    --alarm:#FF5F72; --alarm-wash:#2A1418;
+    --warn:#E0A63A; --warn-wash:#241D0E;
+    --ok:#54C48A; --ok-wash:#0F1E17;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 12px 34px -24px #000;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0D0D0F; --surface:#151518; --raised:#1C1C20; --sunk:#222227;
+  --line:#2A2A30; --line-soft:#212126;
+  --ink:#F2F0EC; --ink-2:#C8C5C0; --muted:#8E8B93; --faint:#615E67;
+  --brand:#FF9820; --brand-ink:#FFB257; --brand-wash:#241A0C;
+  --alarm:#FF5F72; --alarm-wash:#2A1418;
+  --warn:#E0A63A; --warn-wash:#241D0E;
+  --ok:#54C48A; --ok-wash:#0F1E17;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 12px 34px -24px #000;
+}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--ff-b);
+  font-size:14.5px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+h1,h2,h3{font-family:var(--ff-d);margin:0;text-wrap:balance}
+h1{font-size:clamp(26px,4vw,42px);font-weight:800;letter-spacing:-.035em;line-height:1.03}
+h2{font-size:20px;font-weight:700;letter-spacing:-.025em}
+h3{font-size:15px;font-weight:700;letter-spacing:-.01em}
+code{font-family:var(--ff-m);font-size:.85em;background:var(--raised);padding:.1em .34em;
+  border-radius:var(--r-xs);border:1px solid var(--line-soft);color:var(--ink-2);overflow-wrap:anywhere}
+.eyebrow{font-family:var(--ff-m);font-size:9.5px;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--brand);margin:0 0 10px}
+
+header{background:var(--surface);border-bottom:1px solid var(--line);padding:34px 0 0}
+header .lede{margin:12px 0 0;color:var(--ink-2);max-width:62ch;font-size:15px}
+.status{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  border-top:1px solid var(--line-soft);margin-top:26px}
+.st{padding:15px 18px;border-right:1px solid var(--line-soft)}
+.st:last-child{border-right:0}
+.st .n{font-family:var(--ff-d);font-size:24px;font-weight:800;letter-spacing:-.03em;
+  line-height:1;display:block;margin-bottom:6px;font-variant-numeric:tabular-nums}
+.st .l{font-family:var(--ff-m);font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
+.st.ok .n{color:var(--ok)} .st.bad .n{color:var(--alarm)} .st.warn .n{color:var(--brand)}
+
+main{padding:34px 0 80px}
+section{margin-bottom:34px}
+section > h2{margin-bottom:6px}
+section > .sub{color:var(--muted);font-size:13.5px;margin:0 0 16px;max-width:66ch}
+
+.panel{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:13.5px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+th{font-family:var(--ff-m);font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--muted);background:var(--raised);font-weight:700;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.crit{font-family:var(--ff-m);font-size:11px;color:var(--muted);white-space:nowrap}
+.mark{font-family:var(--ff-m);font-weight:700;font-size:12px;white-space:nowrap}
+.mark.y{color:var(--ok)} .mark.n{color:var(--alarm)} .mark.p{color:var(--brand)}
+
+.find{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:16px 18px;
+  border-bottom:1px solid var(--line-soft)}
+.find:last-child{border-bottom:0}
+.find .rank{font-family:var(--ff-d);font-size:19px;font-weight:800;color:var(--faint);line-height:1.1}
+.find h3{margin-bottom:5px}
+.find p{margin:0 0 8px;color:var(--ink-2);font-size:13.5px}
+.find .where{font-family:var(--ff-m);font-size:11px;color:var(--muted);overflow-wrap:anywhere}
+.pill{display:inline-block;font-family:var(--ff-m);font-size:9px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;padding:3px 8px;border-radius:var(--r-pill);border:1px solid;margin-left:8px;
+  vertical-align:2px}
+.pill.trust{color:var(--alarm);border-color:var(--alarm);background:var(--alarm-wash)}
+.pill.a11y{color:var(--brand-ink);border-color:var(--brand);background:var(--brand-wash)}
+.pill.craft{color:var(--muted);border-color:var(--line);background:var(--raised)}
+
+.note{border-left:3px solid var(--brand);background:var(--brand-wash);padding:14px 17px;
+  border-radius:0 var(--r-sm) var(--r-sm) 0;margin:0 0 18px;font-size:13.5px;color:var(--ink-2)}
+.note.bad{border-left-color:var(--alarm);background:var(--alarm-wash)}
+.note b{color:var(--ink)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.two{grid-template-columns:1fr}}
+.card{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:16px 18px}
+.card h3{margin-bottom:8px}
+.card ul{margin:0;padding-left:17px;color:var(--ink-2);font-size:13.5px}
+.card li{margin-bottom:5px}
+
+footer{border-top:1px solid var(--line-soft);padding:26px 0 60px;color:var(--muted);font-size:12.5px}
+footer p{margin:0 0 6px;max-width:72ch}
+
+@media(max-width:700px){
+  .wrap{padding:0 15px}
+  header{padding-top:22px}
+  .st{padding:12px 15px}
+  .st .n{font-size:20px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <p class="eyebrow">apollo::rio · live audit · 2026-08-26</p>
+    <h1>Two stylesheets, one screen,<br>and only one gets loaded.</h1>
+    <p class="lede">apollo-adverts ships a complete fan-carousel stylesheet for these cards. It is
+      enqueued on the create screen and nowhere else, so <code>/anuncios</code> runs on a second,
+      independently written sheet that duplicates ten of the same selectors — and mistyped one.
+      Rendered the real cards through PHP and measured them: every card sat flush against the
+      glass at every width. That is now fixed.</p>
+    <div class="status">
+      <div class="st ok"><span class="n">3/3</span><span class="l">routes live</span></div>
+      <div class="st warn"><span class="n">1</span><span class="l">ticket published</span></div>
+      <div class="st bad"><span class="n">0</span><span class="l">stays published</span></div>
+      <div class="st bad"><span class="n">2/15</span><span class="l">rubric met</span></div>
+      <div class="st ok"><span class="n">0px</span><span class="l">gutter → 16px</span></div>
+      <div class="st ok"><span class="n">44px</span><span class="l">tap target, was 29</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section>
+  <h2>Routing — verified against production</h2>
+  <p class="sub">Fetched live, not inferred from source.</p>
+  <div class="panel scroll">
+    <table>
+      <thead><tr><th>URL</th><th>Serves</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td><code>/marketplace</code></td><td><span class="mark y">200</span></td><td>“Marketplace — Apollo::Rio”. Sections: Repasses (1), Hospedagem (0).</td></tr>
+        <tr><td><code>/anuncios</code></td><td><span class="mark y">200</span></td><td>Same query var, same template. The canonical slug per the CPT's own rewrite.</td></tr>
+        <tr><td><code>/classificados</code></td><td><span class="mark y">200</span></td><td><b>Fixed today.</b> It had no rewrite rule at all — the navbar linked to a 404. Confirmed live after the flush.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Scored against your reference</h2>
+  <p class="sub">Fifteen traits extracted from the booking-slider you supplied, each checked against
+    the two live card partials and the screen's own stylesheet
+    (<code>marketplace/parts/mk/styles.php</code>, 17 KB).</p>
+  <div class="panel scroll">
+    <table>
+      <thead><tr><th>Trait in the reference</th><th>Ticket</th><th>Stay</th><th>Evidence</th></tr></thead>
+      <tbody>
+        <tr><td>Carousel with a <code>slidesPerView</code> ladder (1.15 → 1.5 → 2 → 3)</td><td><span class="mark n">no</span></td><td><span class="mark n">no</span></td><td class="crit">static grid, <code>auto-fill minmax(280px)</code> / <code>(240px)</code></td></tr>
+        <tr><td>Active-slide focus — inactive collapses footer to 0, image 244→204px</td><td><span class="mark n">no</span></td><td><span class="mark n">no</span></td><td class="crit">no active state exists</td></tr>
+        <tr><td>Nav arrows with a <code>.disabled</code> state, hidden under 992px</td><td><span class="mark n">no</span></td><td><span class="mark n">no</span></td><td class="crit">—</td></tr>
+        <tr><td>Pagination bullets, active pill 8→30px</td><td><span class="mark n">no</span></td><td><span class="mark n">no</span></td><td class="crit">—</td></tr>
+        <tr><td><code>@media (hover:hover)</code> vs <code>@media (hover:none)</code> — separate touch treatment</td><td><span class="mark n">no</span></td><td><span class="mark n">no</span></td><td class="crit">0 occurrences in the whole sheet</td></tr>
+        <tr><td>Image <code>scale(1.05)</code> on hover, <code>.6s ease-out</code></td><td><span class="mark n">no</span></td><td><span class="mark n">no</span></td><td class="crit">14 transitions, none on the media</td></tr>
+        <tr><td>Breakpoint ladder (575 / 992 / 1366)</td><td><span class="mark n">no</span></td><td><span class="mark n">no</span></td><td class="crit">one breakpoint: <code>max-width:479px</code></td></tr>
+        <tr><td>Structured spec row — beds, baths, m² with icons</td><td class="crit">n/a</td><td><span class="mark n">no</span></td><td class="crit">no amenity fields exist on the CPT</td></tr>
+        <tr><td>Title is a heading <em>and</em> a link</td><td><span class="mark n">no</span></td><td><span class="mark p">half</span></td><td class="crit">ticket title is a bare <code>&lt;div&gt;</code>; stay has <code>&lt;h3&gt;</code>, not linked</td></tr>
+        <tr><td>Animated CTA affordance</td><td><span class="mark n">no</span></td><td><span class="mark n">no</span></td><td class="crit">plain icon button</td></tr>
+        <tr><td><code>loading="lazy"</code> on media</td><td><span class="mark n">no</span></td><td><span class="mark n">no</span></td><td class="crit">0 occurrences in either partial</td></tr>
+        <tr><td><code>user-select:none</code> on the swipe surface</td><td><span class="mark n">no</span></td><td><span class="mark n">no</span></td><td class="crit">—</td></tr>
+        <tr><td>One namespaced block per component</td><td><span class="mark n">no</span></td><td><span class="mark y">yes</span></td><td class="crit">ticket leaks <code>.top</code> <code>.bottom</code> <code>.rip</code> <code>.barcode</code> into the global sheet</td></tr>
+        <tr><td>Every image carries <code>alt</code></td><td><span class="mark y">yes</span></td><td><span class="mark y">yes</span></td><td class="crit">both correct</td></tr>
+        <tr><td><code>prefers-reduced-motion</code> respected</td><td><span class="mark y">yes</span></td><td><span class="mark y">yes</span></td><td class="crit">1 guard, covers the reveal animation</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>What the audit found beyond the rubric</h2>
+  <p class="sub">Ranked by what it costs, not by how hard it is to fix.</p>
+  <div class="note bad"><b>Two calls in the first version of this audit were wrong, and the
+    correction matters more than the original claim.</b> <code>.carousel-item</code> is not a
+    fossil and <code>type="ticket"</code> is not a stray typo: the live markup matches the design
+    mockup's own selector, <code>article[type=ticket].carousel-item</code>, and apollo-adverts
+    already ships the CSS that animates it —
+    <code>assets/css/marketplace/_carousel-{desktop,tablet,sm,xs}.css</code> plus
+    <code>_ticket-grid.css</code>, with <code>carousel-state.js</code> and
+    <code>filter-toggle.js</code> reading the same class. That handle is registered at
+    <code>src/Plugin.php:341</code> and enqueued on exactly one screen:
+    <code>create-classified.php:23</code>. Renaming either hook is a coordinated six-file change,
+    not a cleanup.</div>
+
+  <div class="panel">
+
+    <div class="find">
+      <div class="rank">★</div>
+      <div>
+        <h3>The screen had no gutter at any width<span class="pill trust">fixed</span></h3>
+        <p>Rendered the real card partials through PHP 8.4 with a WordPress stub and measured
+          them in a browser at 390, 768 and 1280. The first card's left edge was
+          <b>x = 0 at all three</b>, and the page overflowed horizontally by 2px on a phone —
+          a 392px card inside a 390px viewport. The Apollo+ shell is full-bleed by contract, so
+          the screen owns its gutter, and <code>.mk-screen</code> declares only CSS variables:
+          no padding, no margin. Cards ran into the glass, which clipped the ticket's own
+          perforated edge and rounded corners — the detail that makes it read as a ticket.</p>
+        <p class="where">Now <code>padding-inline: max(16px, env(safe-area-inset-…))</code>.
+          Measured after: overflow 0, left 16, at every width. Column counts held by lowering the
+          auto-fill floor 20px, so no breakpoint was silently re-laid-out.</p>
+      </div>
+    </div>
+
+    <div class="find">
+      <div class="rank">★</div>
+      <div>
+        <h3>Touch devices were stuck in <code>:hover</code><span class="pill trust">fixed</span></h3>
+        <p>The screen's stylesheet contains zero occurrences of any <code>hover</code> or
+          <code>pointer</code> media feature. Every <code>:hover</code> rule therefore also fires
+          on tap, and on a touchscreen nothing takes it away until you tap elsewhere — the card
+          stays lifted and the image stays scaled. Rather than rewrite rules that are correct for
+          a mouse, the patch cancels their effect under <code>@media (hover:none)</code> and gives
+          touch its own brief <code>:active</code> feedback, driven by
+          <code>--mk-ease-snappy</code> — a token the file declares and had never once used.</p>
+        <p class="where">Also fixed: <code>.btn-accom</code> measured 29px tall and is now 44px;
+          <code>.ticket-tourname</code> had no styling at all on this screen.</p>
+      </div>
+    </div>
+
+    <div class="find">
+      <div class="rank">1</div>
+      <div>
+        <h3>Every stay shows ★ 4.5, and no one has ever rated one<span class="pill trust">trust</span></h3>
+        <p>The card reads <code>get_post_meta('_classified_rating') ?: '4.5'</code> and then renders a
+          filled star with that number, unconditionally. I checked whether anything writes that key:
+          <b>nothing does.</b> There is no rating UI, no REST write, no importer — the meta is declared
+          and never populated. So the fallback always fires, and every accommodation listing on the site
+          displays a review score that does not exist. This is not a styling gap; it is a number a
+          visitor will reasonably believe.</p>
+        <p class="where">card-accommodation.php:38 and :63 · key declared twice, at
+          apollo-core/src/Core/MetaRegistry.php:924 <em>and</em> apollo-adverts/includes/constants.php:101</p>
+      </div>
+    </div>
+
+    <div class="find">
+      <div class="rank">2</div>
+      <div>
+        <h3>The stay card cannot be reached by keyboard at all<span class="pill a11y">a11y</span></h3>
+        <p>The ticket card is a proper target — <code>tabindex="0"</code>, <code>role="link"</code>,
+          an <code>aria-label</code> naming the advert. The stay card has the same
+          <code>data-mk-permalink</code> click handler and <b>none</b> of that: no tabindex, no role,
+          no label. A mouse opens it; a keyboard cannot. Two cards on one screen, sharing one JS
+          handler, disagreeing about whether keyboard users exist.</p>
+        <p class="where">card-accommodation.php:47-55 vs card-ticket.php:47-60</p>
+      </div>
+    </div>
+
+    <div class="find">
+      <div class="rank">3</div>
+      <div>
+        <h3>A link inside a link, on the card that <em>is</em> accessible<span class="pill a11y">a11y</span></h3>
+        <p>The ticket card carries <code>role="link"</code> on the <code>&lt;article&gt;</code> and then
+          nests a real <code>&lt;a&gt;</code> (the chat button) inside it. Nested interactive controls
+          are ambiguous to assistive tech, and the inner click also bubbles into the card's own
+          navigate handler — so the seller-chat button and “open the advert” compete for the same tap.</p>
+        <p class="where">card-ticket.php:47 (role) and :121 (the nested anchor)</p>
+      </div>
+    </div>
+
+    <div class="find">
+      <div class="rank">4</div>
+      <div>
+        <h3><code>&lt;article type="ticket"&gt;</code> is invalid HTML — and load-bearing<span class="pill craft">craft</span></h3>
+        <p><code>type</code> is not an attribute of <code>&lt;article&gt;</code>. It parses, it does
+          nothing, and it will not survive a validator or a strict sanitiser. It wants to be
+          <code>data-type</code> — which is what the rest of this card already uses. But it cannot be
+          changed alone: four stylesheets and two scripts in this plugin, and the design mockup
+          itself, all select on <code>article[type=ticket]</code>. Correct it everywhere in one
+          commit or not at all.</p>
+        <p class="where">card-ticket.php:46</p>
+      </div>
+    </div>
+
+    <div class="find">
+      <div class="rank">5</div>
+      <div>
+        <h3>The carousel exists — it is just never loaded here<span class="pill craft">craft</span></h3>
+        <p>The container is <code>.mk-grid</code>, a static grid — but the fan carousel your reference
+          asks for is <em>already written</em>, in <code>assets/css/marketplace/</code>, driven by
+          <code>--active</code> / <code>--x</code> / <code>--rot</code> custom properties that
+          <code>carousel-state.js</code> sets per card. It is enqueued only on the create screen.
+          Getting it onto <code>/anuncios</code> is an enqueue plus a filter-mechanism change — the
+          current <code>display:none</code> filter would desync the engine's index maths, and the
+          mockup already solves that with <code>refreshItems(visibleCards)</code>.</p>
+        <p class="where">card-ticket.php:46 · mk/styles.php:44-49</p>
+      </div>
+    </div>
+
+    <div class="find">
+      <div class="rank">6</div>
+      <div>
+        <h3>A third-party stock photo is the built-in fallback<span class="pill craft">craft</span></h3>
+        <p>When a stay has no featured image the card hardcodes an Unsplash URL. That is an external
+          host on the critical render path of a page you own, with no <code>loading="lazy"</code>, and
+          it will one day 404 or rate-limit. A local placeholder costs nothing and never disappears.</p>
+        <p class="where">card-accommodation.php:44</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section>
+  <h2>What it takes to clear the bar</h2>
+  <p class="sub">The gap is not polish. Two of these are data problems wearing a UI costume.</p>
+  <div class="two">
+    <div class="card">
+      <h3>Before any of it can look right</h3>
+      <ul>
+        <li><b>Delete the rating fallback.</b> Render the block only when a real rating exists. Then decide whether ratings are a product at all — a star score sits oddly beside <code>NO_EGO_COUNTERS</code>.</li>
+        <li><b>Give stays the fields the reference shows.</b> Beds, baths, area — the amenity row cannot be built because no meta key holds those values. That is a MetaRegistry entry, not CSS.</li>
+        <li><b>Collapse the double registration</b> of <code>_classified_rating</code>. Two owners, and the master registry is meant to be the only one.</li>
+        <li><b>Publish something.</b> One ticket and zero stays is not enough surface to judge a grid, let alone a carousel.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Then the card itself</h3>
+      <ul>
+        <li><b>One breakpoint becomes a ladder.</b> 479px alone cannot express 1.15 → 1.5 → 2 → 3 columns.</li>
+        <li><b>Split hover from touch</b> — <code>(hover:hover) and (pointer:fine)</code> for the scale, <code>(hover:none)</code> for the <code>:active</code> equivalent. Right now a phone gets a hover state it can never leave.</li>
+        <li><b>The active-slide focus is the whole idea.</b> The reference's footer collapsing on inactive slides is what makes it read as a carousel rather than a row. It is one <code>max-height</code> transition.</li>
+        <li><b>Namespace the ticket card.</b> <code>.top</code>, <code>.bottom</code>, <code>.rip</code> and <code>.barcode</code> are four global names one plugin away from a collision.</li>
+        <li><b>Lazy-load every card image</b> and give the media an <code>aspect-ratio</code> so the grid stops shifting as photos arrive.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Routing checked by fetching <code>apollo.rio.br</code> live. Card traits checked against
+      <code>apollo-adverts/templates/marketplace/parts/card-ticket.php</code>,
+      <code>card-accommodation.php</code> and <code>parts/mk/styles.php</code> on disk.</p>
+    <p>Counts of CSS features are literal occurrence counts in that stylesheet, not estimates.
+      Nothing in this audit was changed — it reports only.</p>
+  </div>
+</footer>
+
+</body>
+</html>

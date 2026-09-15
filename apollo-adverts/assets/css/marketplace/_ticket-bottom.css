@@ -5,8 +5,8 @@
 article[type=ticket] .bottom {
     background-color: #fff;
     display: grid;
-    grid-template-columns: 1fr 50px;
-    gap: 16px;
+    grid-template-columns: 1fr 44px 50px;
+    gap: 10px;
     padding: 16px 20px 24px 20px;
     align-items: center;
     margin-bottom: 0;

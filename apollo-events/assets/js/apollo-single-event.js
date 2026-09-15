@@ -283,19 +283,151 @@
   Instance.prototype.share = function () {
     var title = this.conf.title || d.title;
     var url = this.conf.shareUrl || w.location.href;
+    var text = this.conf.shareText || '';
+    if (text.length > 180) { text = text.slice(0, 177) + '…'; }
     if (navigator.share) {
-      navigator.share({ title: title, url: url }).catch(function () {});
+      var payload = { title: title, url: url };
+      if (text) { payload.text = text; }
+      navigator.share(payload).catch(function () {});
     } else if (navigator.clipboard) {
       navigator.clipboard.writeText(url).catch(function () {});
     }
   };
 
-  /* ═══════════════════════ hero ambient video ═════════════════════ */
-
+  /* ═══════════════════════ hero ambient video ═════════════════════
+   * Wait until playing → +3.5s → fade.
+   * STRICT chrome kill: whenever YT is not playing, drop .is-on so the
+   * banner covers any prev/pause/next bezel, then force playVideo().
+   */
   Instance.prototype.initHeroVideo = function () {
     var yt = this.q('hero-yt');
     if (!yt) { return; }
-    this.later(function () { yt.classList.add('is-on'); }, 2600);
+    var iframe = yt.querySelector('iframe');
+    if (!iframe) { return; }
+    if (REDUCE) { return; }
+
+    var self = this;
+    var FADE_AFTER_READY_MS = 3500;
+    var SAFETY_MS = 14000;
+    var armed = false;
+    var everFaded = false;
+    var win = iframe.contentWindow;
+
+    function ytCmd(func, args) {
+      try {
+        win.postMessage(JSON.stringify({
+          event: 'command',
+          func: func,
+          args: args || []
+        }), '*');
+      } catch (err) { /* ignore */ }
+    }
+
+    function showVideo() {
+      yt.style.transition = '';
+      yt.classList.add('is-on');
+    }
+
+    function hideVideoToBanner() {
+      /* Snap under banner — do not animate chrome away slowly. */
+      yt.style.transition = 'opacity .12s linear';
+      yt.classList.remove('is-on');
+    }
+
+    function armFade() {
+      if (armed) { return; }
+      armed = true;
+      self.later(function () {
+        everFaded = true;
+        showVideo();
+        // #region agent log
+        fetch('http://127.0.0.1:7754/ingest/da9d552b-a038-4061-bf95-e47d2c529b38', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '837565' },
+          body: JSON.stringify({
+            sessionId: '837565',
+            runId: 'chrome-hide-v2',
+            hypothesisId: 'BANNERCOVER',
+            location: 'apollo-single-event.js:armFade',
+            message: 'ambient fade-in + top-origin crop',
+            data: {
+              transform: w.getComputedStyle(iframe).transform,
+              transformOrigin: w.getComputedStyle(iframe).transformOrigin,
+              hasCatch: !!yt.querySelector('.apollo-yt-ambient__catch')
+            },
+            timestamp: Date.now()
+          })
+        }).catch(function () {});
+        // #endregion
+      }, FADE_AFTER_READY_MS);
+    }
+
+    function onMsg(e) {
+      var origin = String(e && e.origin || '');
+      if (origin.indexOf('youtube.com') === -1 && origin.indexOf('youtube-nocookie.com') === -1) {
+        return;
+      }
+      var data = e.data;
+      if (typeof data === 'string') {
+        try { data = JSON.parse(data); } catch (err) { return; }
+      }
+      if (!data || typeof data !== 'object') { return; }
+
+      if (data.event === 'onReady') {
+        ytCmd('addEventListener', ['onStateChange']);
+        ytCmd('mute');
+        ytCmd('playVideo');
+        return;
+      }
+
+      var state = null;
+      if (data.event === 'onStateChange') {
+        state = typeof data.info === 'number' ? data.info : (data.info && data.info.playerState);
+      } else if (data.event === 'infoDelivery' && data.info && typeof data.info.playerState === 'number') {
+        state = data.info.playerState;
+      }
+
+      /* YT states: -1 unstarted, 0 ended, 1 playing, 2 paused, 3 buffering, 5 cued */
+      if (state === 1) {
+        if (everFaded) { showVideo(); }
+        armFade();
+      } else if (state === 2 || state === 0 || state === 3) {
+        /* Hide bezel behind banner; keep ambient looping. */
+        if (everFaded) { hideVideoToBanner(); }
+        if (state === 2 || state === 0) {
+          ytCmd('playVideo');
+          // #region agent log
+          fetch('http://127.0.0.1:7754/ingest/da9d552b-a038-4061-bf95-e47d2c529b38', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '837565' },
+            body: JSON.stringify({
+              sessionId: '837565',
+              runId: 'chrome-hide-v2',
+              hypothesisId: 'BANNERCOVER',
+              location: 'apollo-single-event.js:onMsg',
+              message: 'hid yt under banner + force play',
+              data: { state: state },
+              timestamp: Date.now()
+            })
+          }).catch(function () {});
+          // #endregion
+        }
+      }
+    }
+
+    w.addEventListener('message', onMsg);
+
+    iframe.addEventListener('load', function () {
+      try {
+        win.postMessage(JSON.stringify({ event: 'listening', id: 1 }), '*');
+      } catch (err) { /* ignore */ }
+      self.later(function () {
+        if (!armed) { armFade(); }
+      }, 5000);
+    });
+    self.later(function () {
+      if (!armed) { armFade(); }
+    }, SAFETY_MS);
   };
 
   /* ═══════════ RSVP — mesh-gradient warm-up border + status ═══════ */

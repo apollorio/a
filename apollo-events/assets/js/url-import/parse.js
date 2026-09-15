@@ -302,7 +302,8 @@
       let locName = '';
       let performers = [];
       let startDay = '';
-  
+      let ticket_price = '';
+
       if (ld) {
         title = String(ld.name || '').trim().replace(/\s+/g, ' ');
         cover = firstHttpUrl(ld.image);
@@ -310,6 +311,7 @@
         const loc = ld.location;
         if (loc && typeof loc === 'object') locName = String(loc.name || '').trim().replace(/\s+/g, ' ');
         else if (typeof loc === 'string') locName = loc.trim();
+        ticket_price = cheapestOfferPrice(ld.offers);
         const perf = ld.performer;
         if (Array.isArray(perf)) {
           performers = perf.map(p => (typeof p === 'string' ? p : (p && p.name) || '')).filter(Boolean);
@@ -364,8 +366,7 @@
         start_time: hours.start_time,
         end_date: hours.end_date,
         end_time: hours.end_time,
-        /* Button title — never the offer amount or the page URL. */
-        ticket_price: 'Ingressos do Evento',
+        ticket_price: ticket_price || '',
         ticketUrl, coupon,
         sourceUrl: rawUrl || ticketUrl,
         performers

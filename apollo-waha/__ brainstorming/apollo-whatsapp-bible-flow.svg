@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 2200" width="390" height="2200">
+  <rect width="390" height="2200" fill="#111111"/>
+  <text x="195" y="36" text-anchor="middle" fill="#fff" font-family="ui-sans-serif,system-ui,-apple-system,sans-serif" font-size="18" font-weight="700">apollo-whatsapp</text>
+  <text x="195" y="56" text-anchor="middle" fill="#7CFFB2" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11">BIBLE FLOW  ·  waha-registry.json</text>
+
+  <rect x="20" y="76" width="350" height="118" rx="14" fill="#1A1A1A" stroke="#333"/>
+  <text x="195" y="100" text-anchor="middle" fill="#7CFFB2" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif" font-weight="700">3 PROCESSOS</text>
+  <text x="195" y="122" text-anchor="middle" fill="#F2F2F2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif">A WP  ·  core + whatsapp + login/events</text>
+  <text x="195" y="142" text-anchor="middle" fill="#F2F2F2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif">B WAHA Docker GOWS session apollo</text>
+  <text x="195" y="162" text-anchor="middle" fill="#888" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">C celular operacao 1x/semana  ·  nao Business</text>
+
+  <text x="195" y="222" text-anchor="middle" fill="#7CFFB2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif" font-weight="700">1 INIT</text>
+  <rect x="36" y="236" width="318" height="34" rx="8" fill="#1A1A1A" stroke="#333"/>
+  <text x="195" y="258" text-anchor="middle" fill="#F2F2F2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif">docker WAHA + volume sessions</text>
+  <path d="M195 270 L195 280" stroke="#7CFFB2"/>
+  <rect x="36" y="282" width="318" height="34" rx="8" fill="#1A1A1A" stroke="#333"/>
+  <text x="195" y="304" text-anchor="middle" fill="#F2F2F2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif">QR / pairing  ·  session OPEN</text>
+  <path d="M195 316 L195 326" stroke="#7CFFB2"/>
+  <rect x="36" y="328" width="318" height="48" rx="8" fill="#14261C" stroke="#7CFFB2"/>
+  <text x="195" y="348" text-anchor="middle" fill="#7CFFB2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif">Tela 1 settings</text>
+  <text x="195" y="366" text-anchor="middle" fill="#F2F2F2" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">URL key session groupId hmac</text>
+
+  <text x="195" y="410" text-anchor="middle" fill="#7CFFB2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif" font-weight="700">2 PORTA HMAC</text>
+  <rect x="36" y="424" width="318" height="70" rx="8" fill="#14261C" stroke="#7CFFB2"/>
+  <text x="195" y="448" text-anchor="middle" fill="#7CFFB2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif">POST /apollo/v1/wa/webhook</text>
+  <text x="195" y="466" text-anchor="middle" fill="#F2F2F2" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">SHA512 raw body  ·  hash_equals</text>
+  <text x="195" y="482" text-anchor="middle" fill="#888" font-size="10" font-family="ui-sans-serif,system-ui,sans-serif">timestamp 5min  ·  Request-Id dedupe</text>
+  <text x="36" y="516" fill="#888" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">fail → 401</text>
+  <text x="250" y="516" fill="#7CFFB2" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">ok → switch event</text>
+
+  <text x="195" y="550" text-anchor="middle" fill="#7CFFB2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif" font-weight="700">3 JOIN  ·  Tela 6→3</text>
+  <rect x="36" y="564" width="318" height="34" rx="8" fill="#1A1A1A" stroke="#333"/>
+  <text x="195" y="586" text-anchor="middle" fill="#F2F2F2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif">user OTP + Quero entrar</text>
+  <path d="M195 598 L195 608" stroke="#7CFFB2"/>
+  <rect x="36" y="610" width="318" height="34" rx="8" fill="#1A1A1A" stroke="#333"/>
+  <text x="195" y="632" text-anchor="middle" fill="#F2F2F2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif">fila queued  ·  apollo_wa_queue</text>
+  <path d="M195 644 L195 654" stroke="#7CFFB2"/>
+  <polygon points="195,658 258,690 195,722 132,690" fill="#14261C" stroke="#7CFFB2"/>
+  <text x="195" y="694" text-anchor="middle" fill="#7CFFB2" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">Admin processar?</text>
+  <rect x="24" y="736" width="150" height="32" rx="8" fill="#1A1A1A" stroke="#555"/>
+  <text x="99" y="756" text-anchor="middle" fill="#888" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif">reject</text>
+  <rect x="216" y="736" width="150" height="32" rx="8" fill="#14261C" stroke="#7CFFB2"/>
+  <text x="291" y="756" text-anchor="middle" fill="#7CFFB2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif">WORKING?</text>
+  <rect x="36" y="784" width="318" height="88" rx="8" fill="#14261C" stroke="#7CFFB2"/>
+  <text x="195" y="806" text-anchor="middle" fill="#F2F2F2" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">check-exists 12+13  ·  PUT contact</text>
+  <text x="195" y="824" text-anchor="middle" fill="#F2F2F2" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">POST participants/add</text>
+  <text x="195" y="844" text-anchor="middle" fill="#7CFFB2" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">200 added  ·  409 already</text>
+  <text x="195" y="860" text-anchor="middle" fill="#7CFFB2" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">403 + Code → DM invite link</text>
+
+  <text x="195" y="910" text-anchor="middle" fill="#7CFFB2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif" font-weight="700">4 DOIS CANAIS</text>
+  <rect x="20" y="924" width="168" height="92" rx="12" fill="#1A1A1A" stroke="#333"/>
+  <text x="104" y="950" text-anchor="middle" fill="#7CFFB2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif">GRUPO @g.us</text>
+  <text x="104" y="970" text-anchor="middle" fill="#F2F2F2" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">admin + cron</text>
+  <text x="104" y="988" text-anchor="middle" fill="#888" font-size="10" font-family="ui-sans-serif,system-ui,sans-serif">ancora !evento so whisper</text>
+  <rect x="202" y="924" width="168" height="92" rx="12" fill="#1A1A1A" stroke="#333"/>
+  <text x="286" y="950" text-anchor="middle" fill="#7CFFB2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif">DM 1:1</text>
+  <text x="286" y="970" text-anchor="middle" fill="#F2F2F2" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">keywords + handoff</text>
+  <text x="286" y="988" text-anchor="middle" fill="#888" font-size="10" font-family="ui-sans-serif,system-ui,sans-serif">IDLE FLOW HUMAN</text>
+
+  <text x="195" y="1050" text-anchor="middle" fill="#7CFFB2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif" font-weight="700">5 PANE  ·  Tela 4</text>
+  <rect x="36" y="1064" width="318" height="70" rx="8" fill="#1A1A1A" stroke="#333"/>
+  <text x="195" y="1088" text-anchor="middle" fill="#F2F2F2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif">composer → sendText grupo ou DM</text>
+  <text x="195" y="1108" text-anchor="middle" fill="#888" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">fromMe nao dispara fluxo  ·  /silent /grupo</text>
+
+  <text x="195" y="1168" text-anchor="middle" fill="#7CFFB2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif" font-weight="700">6 KEYWORD  ·  Tela 5</text>
+  <rect x="36" y="1182" width="318" height="100" rx="8" fill="#1A1A1A" stroke="#333"/>
+  <text x="195" y="1204" text-anchor="middle" fill="#F2F2F2" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">evento hoje role → upcoming no DM</text>
+  <text x="195" y="1222" text-anchor="middle" fill="#F2F2F2" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">entrar grupo → fila</text>
+  <text x="195" y="1240" text-anchor="middle" fill="#F2F2F2" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">humano → HUMAN 2h + badge</text>
+  <text x="195" y="1258" text-anchor="middle" fill="#888" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">grupo sem ancora = so espelha pane</text>
+
+  <text x="195" y="1318" text-anchor="middle" fill="#7CFFB2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif" font-weight="700">7 TELAS</text>
+  <text x="36" y="1342" fill="#F2F2F2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif">1 settings   2 strip   3 fila</text>
+  <text x="36" y="1362" fill="#F2F2F2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif">4 pane   5 fluxos</text>
+  <text x="36" y="1382" fill="#F2F2F2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif">6 join button   7 meus pedidos</text>
+  <text x="36" y="1402" fill="#888" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif">L dashboard WAHA lab only</text>
+
+  <text x="195" y="1444" text-anchor="middle" fill="#7CFFB2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif" font-weight="700">SLUGS TRAVADOS</text>
+  <text x="36" y="1468" fill="#F2F2F2" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">plugin   apollo-whatsapp</text>
+  <text x="36" y="1486" fill="#F2F2F2" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">session  apollo</text>
+  <text x="36" y="1504" fill="#F2F2F2" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">REST     /apollo/v1/wa/*</text>
+  <text x="36" y="1522" fill="#F2F2F2" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">hook     apollo/whatsapp/*</text>
+  <text x="36" y="1540" fill="#F2F2F2" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">meta     _apollo_wa_*</text>
+  <text x="36" y="1558" fill="#888" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">nao usar apollo-waha / whats / channel</text>
+
+  <rect x="20" y="1584" width="350" height="130" rx="14" fill="#14261C" stroke="#7CFFB2"/>
+  <text x="195" y="1612" text-anchor="middle" fill="#7CFFB2" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif" font-weight="700">BEST SOLUTION LOCKED</text>
+  <text x="195" y="1634" text-anchor="middle" fill="#F2F2F2" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">pane = web  ·  fila = porta</text>
+  <text x="195" y="1652" text-anchor="middle" fill="#F2F2F2" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">DM = flowchart  ·  grupo = sala</text>
+  <text x="195" y="1670" text-anchor="middle" fill="#F2F2F2" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">403 = convite  ·  HMAC = porta</text>
+  <text x="195" y="1688" text-anchor="middle" fill="#888" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">cron depois  ·  reusa sendText</text>
+
+  <text x="195" y="1750" text-anchor="middle" fill="#666" font-size="10" font-family="ui-sans-serif,system-ui,sans-serif">waha-registry.json is SSOT</text>
+  <text x="195" y="1768" text-anchor="middle" fill="#666" font-size="10" font-family="ui-sans-serif,system-ui,sans-serif">depends apollo-core only</text>
+</svg>

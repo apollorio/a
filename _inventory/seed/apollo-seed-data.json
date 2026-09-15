@@ -1,0 +1,995 @@
+{
+  "$meta": {
+    "generated": "2026-08-17",
+    "purpose": "Seed content for apollo.rio.br — 2 locs, 2 DJs, 11 events. Consumed by _inventory/seed/apollo-seed.php.",
+    "provenance": "Every field was researched from a live source or transcribed from operator-supplied text. Nothing is invented. Fields that could not be confirmed are absent rather than guessed — an absent field renders as empty; a fabricated one renders as a lie.",
+    "idempotency": "Each entry carries a seed_key. The seeder looks a post up by _apollo_seed_key and updates rather than duplicating, so it is safe to re-run.",
+    "unresolved": "RESOLVED 2026-08-17. The four Blueticket events were recovered from the site's own JSON API (api2.blueticket.com.br/events/{id}/detail) after the rendered page and 20+ web searches had failed. All four are D-Edge Rio nights and are now related to loc-dedge-rio by seed key. The API also supplied the venue capacity, WhatsApp and Instagram, which enriched the loc entry."
+  },
+  "locs": [
+    {
+      "seed_key": "loc-dedge-rio",
+      "title": "D-Edge Rio",
+      "meta": {
+        "_local_name": "D-Edge Rio",
+        "_local_address": "Av. Rodrigues Alves, 293",
+        "_local_region": "Saúde",
+        "_local_city": "Rio de Janeiro",
+        "_local_state": "RJ",
+        "_local_country": "Brasil",
+        "_local_postal": "20220-360",
+        "_local_website": "https://www.ccd.art.br",
+        "_local_founded_year": "2023",
+        "_local_tagline": "Centro cultural de quatro andares na Zona Portuária",
+        "_local_description": "D-Edge Rio é um centro cultural de quatro andares inaugurado em 2023 na Zona Portuária, que combina música, arte, moda, design e gastronomia. O complexo possui duas pistas de dança com estética industrial e sistema de som de alta fidelidade, com vistas para a Baía de Guanabara. A programação atravessa house, techno, minimal e experimental, apresentando DJs internacionais ao lado de talentos locais. Inclui loja multimarcas, record store com café e galeria dedicada à arte contemporânea.",
+        "_local_capacity": "5000",
+        "_local_whatsapp": "5521971986491",
+        "_local_instagram": "https://www.instagram.com/dedgeclubrio/"
+      },
+      "taxonomies": {
+        "local_type": [
+          "Club",
+          "Centro cultural"
+        ],
+        "sound": [
+          "House",
+          "Techno",
+          "Minimal",
+          "Experimental"
+        ]
+      },
+      "sources": [
+        "https://pt-br.ra.co/clubs/227842",
+        "https://www.ccd.art.br/en",
+        "https://api2.blueticket.com.br/events/41530/detail"
+      ],
+      "gaps": [
+        "_local_lat",
+        "_local_lng",
+        "_local_phone",
+        "_local_price_range"
+      ]
+    },
+    {
+      "seed_key": "loc-baiuca-dj-bar",
+      "title": "Baiuca DJ Bar",
+      "meta": {
+        "_local_name": "Baiuca DJ Bar",
+        "_local_address": "Rua União, 18",
+        "_local_region": "Santo Cristo",
+        "_local_city": "Rio de Janeiro",
+        "_local_state": "RJ",
+        "_local_country": "Brasil",
+        "_local_postal": "20220-505",
+        "_local_instagram": "https://www.instagram.com/baiucadjbar/",
+        "_local_tagline": "Quintal de vanguarda na Pequena África",
+        "_local_description": "Baiuca DJ Bar é um espaço no coração da Pequena África, em Santo Cristo, que se estabeleceu como território de vanguarda da cultura urbana carioca. Com estética industrial e som de alta fidelidade, funciona como refúgio para amantes de música eletrônica, sons brasileiros e seleções de vinil. O espaço oferece um ambiente seguro e inclusivo, com programação que atravessa DJs locais e internacionais. No cardápio, pratos quentes, petiscos, criações veganas e coquetelaria."
+      },
+      "taxonomies": {
+        "local_type": [
+          "Bar",
+          "DJ Bar"
+        ],
+        "sound": [
+          "House",
+          "Downtempo",
+          "Trip Hop",
+          "Soul",
+          "Acid Jazz",
+          "Brasilidades"
+        ]
+      },
+      "hours_note": "Quinta a sábado, 17h–01h (conforme RA)",
+      "sources": [
+        "https://pt-br.ra.co/clubs/260890",
+        "https://www.instagram.com/baiucadjbar/",
+        "https://www.timeout.com/pt/rio-de-janeiro/noticias/baiuca-de-birosca-e-o-novo-ponto-fora-e-na-curva-da-pequena-africa-carioca-052125"
+      ],
+      "gaps": [
+        "_local_lat",
+        "_local_lng",
+        "_local_phone",
+        "_local_whatsapp",
+        "_local_capacity",
+        "_local_founded_year"
+      ]
+    }
+  ],
+  "djs": [
+    {
+      "seed_key": "dj-leo-janeiro",
+      "title": "Leo Janeiro",
+      "confidence": "HIGH",
+      "meta": {
+        "_dj_name": "Leo Janeiro",
+        "_dj_home_city": "Rio de Janeiro",
+        "_dj_bio_short": "DJ e produtor carioca com mais de duas décadas dedicadas à house music. Residente do Warung Beach Club, do Freak Chic do D-Edge e do Beehive Club.",
+        "_dj_bio": "Influenciado pela black music dos bailes cariocas, Leo Janeiro se apaixonou pela novidade que a música eletrônica representava nos anos 90. No início dos anos 2000 dedicou-se inteiramente à música e rapidamente se tornou um dos grandes representantes das pistas do Rio. Forjou reputação por um house atmosférico e com profundidade desde o EP de estreia First Contact, em 2006. É residente do Warung Beach Club desde 2009, além do Freak Chic do D-Edge e do Beehive Club. Fundou a Cocada Music, selo que incentiva talentos brasileiros e latino-americanos. Suas produções saíram por Warung Recordings, Suara, D-Edge Records, D.O.C e Get Physical. Seu álbum de estreia, Tempo, chegou em dezembro de 2025 celebrando duas décadas na eletrônica.",
+        "_dj_statement": "Rio é contraste entre brisa, floresta e caos — e é essa energia que vai para a pista.",
+        "_dj_booking": "leojaneiro@uol.com.br",
+        "_dj_website": "https://www.truelovemusic.com/leo-janeiro/",
+        "_dj_soundcloud": "https://soundcloud.com/leojaneiro",
+        "_dj_spotify": "https://open.spotify.com/artist/0WmI1dw6gD0yBHeoqjjYQJ",
+        "_dj_instagram": "https://www.instagram.com/leojaneiro/",
+        "_dj_facebook": "https://www.facebook.com/leo.janeiro/",
+        "_dj_youtube": "https://www.youtube.com/channel/UCcBlq_36VmvEs3Vc_X8qujw",
+        "_dj_bandcamp": "https://cocadamusic.bandcamp.com/",
+        "_dj_beatport": "https://www.beatport.com/artist/leo-janeiro/20263",
+        "_dj_resident_advisor": "https://ra.co/dj/leojaneiro"
+      },
+      "taxonomies": {
+        "sound": [
+          "House",
+          "Deep House",
+          "Disco",
+          "Soul",
+          "Jazz"
+        ]
+      },
+      "tracks": [
+        {
+          "title": "Tempo",
+          "artists": "Leo Janeiro",
+          "release_date": "2025-12-01",
+          "album": "Tempo",
+          "label": "Cocada Music",
+          "url_bandcamp": "https://cocadamusic.bandcamp.com/album/leo-janeiro-tempo-album"
+        },
+        {
+          "title": "Copa Jazzin'",
+          "artists": "Leo Janeiro",
+          "release_date": "2024-01-01",
+          "label": "Cocada Music",
+          "url_bandcamp": "https://cocadamusic.bandcamp.com/track/leo-janeiro-copa-jazzin"
+        },
+        {
+          "title": "Carioca Flute / Som na Caixa",
+          "artists": "Leo Janeiro",
+          "release_date": "2025-01-01",
+          "label": "Cocada Music",
+          "url_bandcamp": "https://cocadamusic.bandcamp.com/album/carioca-flute-som-na-caixa"
+        },
+        {
+          "title": "Marambaia / Uncle Silva",
+          "artists": "Leo Janeiro",
+          "release_date": "2023-01-01",
+          "label": "Get Physical",
+          "url_bandcamp": "https://leojaneirogetphysical.bandcamp.com/album/leo-janeiro-marambaia-uncle-silva"
+        },
+        {
+          "title": "Boiler Room Rio de Janeiro DJ Set",
+          "artists": "Leo Janeiro",
+          "release_date": "2014-01-01",
+          "url_soundcloud": "https://soundcloud.com/platform/leo-janeiro-boiler-room-rio-de"
+        }
+      ],
+      "sources": [
+        "https://ra.co/dj/leojaneiro",
+        "https://www.beatport.com/artist/leo-janeiro/20263",
+        "https://electronicgroove.com/leo-janeiro-interview-2025/"
+      ],
+      "gaps": [
+        "_dj_image",
+        "_dj_banner",
+        "_dj_mixcloud",
+        "_dj_media_kit_url"
+      ]
+    },
+    {
+      "seed_key": "dj-marta-supernova",
+      "title": "Marta Supernova",
+      "confidence": "HIGH",
+      "meta": {
+        "_dj_name": "Marta Supernova",
+        "_dj_home_city": "Rio de Janeiro",
+        "_dj_bio_short": "Artista visual e sonora, DJ, produtora e percussionista carioca. Pesquisa culturas negras diaspóricas no Brasil através da música e das artes visuais.",
+        "_dj_bio": "Marta Lopes Ferreira Soares, conhecida como Marta Supernova, é artista visual e sonora, DJ, produtora de música eletrônica e percussionista baseada no Rio de Janeiro. Formada em cinema, desenvolve uma linguagem própria que atravessa música e arte contemporânea. Sua pesquisa se concentra nas culturas negras diaspóricas no Brasil, construindo uma rede de colaboradores negros multidisciplinares e pensando como comunidades afro-ameríndias, afro-americanas, afro-latinas e LGBTQIAP+ constroem caminhos alternativos dentro de sistemas hegemônicos. Já se apresentou em palcos como Rock in Rio e Novas Frequências. Lançou o primeiro EP, tá foda essa bocada, em 2021 pela Gop Rec, manipulando pesquisa de ritmos afro-brasileiros. Foi bolsista da residência Pivô Arte e Pesquisa, em São Paulo, em 2021.",
+        "_dj_booking": "msupernova.producao@gmail.com",
+        "_dj_soundcloud": "https://soundcloud.com/martasupernova",
+        "_dj_spotify": "https://open.spotify.com/artist/2qwKgojIcRvCIbfCLu80JX",
+        "_dj_instagram": "https://www.instagram.com/martasupernova/",
+        "_dj_facebook": "https://www.facebook.com/martasupernova/",
+        "_dj_mixcloud": "https://www.mixcloud.com/martasupernova/",
+        "_dj_resident_advisor": "https://ra.co/dj/martasupernova-br",
+        "_dj_website": "https://audiovisualsound.com/audiovisualsound-e-Marta-Supernova/"
+      },
+      "taxonomies": {
+        "sound": [
+          "House",
+          "Afro-Brazilian",
+          "Funk",
+          "Experimental",
+          "Percussão"
+        ]
+      },
+      "tracks": [
+        {
+          "title": "tá foda essa bocada",
+          "artists": "Marta Supernova",
+          "release_date": "2021-01-01",
+          "album": "tá foda essa bocada",
+          "label": "Gop Rec",
+          "url_bandcamp": "https://goptun.bandcamp.com/album/t-foda-essa-bocada"
+        },
+        {
+          "title": "Jejum",
+          "artists": "Marta Supernova",
+          "release_date": "2021-01-01",
+          "label": "Gop Rec",
+          "url_bandcamp": "https://goptun.bandcamp.com/track/jejum"
+        },
+        {
+          "title": "Rio Shines At Night",
+          "artists": "Marta Supernova",
+          "label": "Ransom Note",
+          "url_bandcamp": "https://ransomnoterecords.bandcamp.com/track/rio-shines-at-night"
+        },
+        {
+          "title": "cRème 011",
+          "artists": "Marta Supernova",
+          "label": "DJ Mag Brasil",
+          "url_soundcloud": "https://soundcloud.com/djmagbr/creme-011-marta-supernova"
+        }
+      ],
+      "statement_note": "No quotable public tagline was found; _dj_statement is deliberately left empty rather than invented.",
+      "sources": [
+        "https://ra.co/dj/martasupernova-br",
+        "https://goptun.bandcamp.com/album/t-foda-essa-bocada",
+        "https://www.pivo.org.br/en/residencies/participants/marta-supernova/"
+      ],
+      "gaps": [
+        "_dj_image",
+        "_dj_banner",
+        "_dj_statement",
+        "_dj_youtube",
+        "_dj_bandcamp",
+        "_dj_beatport"
+      ]
+    },
+    {
+      "seed_key": "dj-capetini",
+      "title": "Capetini",
+      "confidence": "HIGH",
+      "meta": {
+        "_dj_name": "Capetini",
+        "_dj_home_city": "Rio de Janeiro",
+        "_dj_bio_short": "DJ e produtor do Rio ligado à Doblado Records — house, dub, jazz e leftfield.",
+        "_dj_bio": "Capetini (Rafael Capetini) é DJ e produtor do Rio de Janeiro, ligado à Doblado Records. Atividade recente concentrada em 2025–2026, com lançamentos em selos como 40% Foda/Maneiríssimo, Tandera Records e DSRPTV.",
+        "_dj_soundcloud": "https://soundcloud.com/capetini",
+        "_dj_bandcamp": "https://capetini.bandcamp.com/"
+      },
+      "taxonomies": {
+        "sound": ["House", "Dub", "Leftfield", "Electronica"]
+      },
+      "tracks": [
+        {
+          "title": "Cidade de Zion",
+          "artists": "Capetini",
+          "release_date": "2026-04-29",
+          "album": "40% Foda/Maneirissimo 100",
+          "label": "40% Foda/Maneiríssimo",
+          "duration": "4:40",
+          "url_soundcloud": "https://soundcloud.com/capetini",
+          "url_bandcamp": "https://40porcentofodabarramaneirissimo.bandcamp.com/track/capetini-cidade-de-zion"
+        },
+        {
+          "title": "Jah No Dead (Edit)",
+          "artists": "Capetini",
+          "release_date": "2026-01-15",
+          "label": "Capetini",
+          "url_bandcamp": "https://capetini.bandcamp.com/",
+          "url_soundcloud": "https://soundcloud.com/capetini"
+        },
+        {
+          "title": "MOST WANTED DUBS",
+          "artists": "Fortunato feat. Capetini",
+          "release_date": "2025-10-03",
+          "album": "GRAVE MATRIZ",
+          "label": "Tandera Records",
+          "duration": "4:59",
+          "url_bandcamp": "https://tanderarecords.bandcamp.com/album/grave-matriz"
+        },
+        {
+          "title": "Desire To Dream",
+          "artists": "Capetini",
+          "release_date": "2025-08-08",
+          "album": "DOB001 – Dobs Vol.1",
+          "label": "Doblado Records",
+          "url_soundcloud": "https://soundcloud.com/capetini"
+        },
+        {
+          "title": "We The Sound",
+          "artists": "Capetini",
+          "release_date": "2025-03-28",
+          "album": "We The Sound",
+          "label": "DSRPTV Records",
+          "duration": "23:00",
+          "url_bandcamp": "https://capetini.bandcamp.com/album/we-the-sound"
+        }
+      ],
+      "sources": [
+        "https://soundcloud.com/capetini",
+        "https://capetini.bandcamp.com/"
+      ],
+      "gaps": ["_dj_image", "_dj_banner", "_dj_spotify", "_dj_instagram"]
+    },
+    {
+      "seed_key": "dj-bernardo-campos",
+      "title": "Bernardo Campos",
+      "confidence": "HIGH",
+      "meta": {
+        "_dj_name": "Bernardo Campos",
+        "_dj_home_city": "Rio de Janeiro",
+        "_dj_bio_short": "Produtor de house / nu-disco com sequência densa de lançamentos em 2026.",
+        "_dj_bio": "Bernardo Campos é produtor brasileiro com catálogo ativo em 2026 — Banana Gold, Twig, Shock Machine, Apparel Music, LW/Bliss e Duchesse.",
+        "_dj_spotify": "https://open.spotify.com/artist/3bhH5pEgf6XA0FMduX0Nbj"
+      },
+      "taxonomies": {
+        "sound": ["House", "Deep House", "Nu-Disco", "Minimal"]
+      },
+      "tracks": [
+        {
+          "title": "3 da Tarde (Zopelar Remix)",
+          "artists": "BENO, Bernardo Campos, Zopelar",
+          "release_date": "2026-07-24",
+          "label": "Banana Gold",
+          "duration": "6:10",
+          "url_spotify": "https://open.spotify.com/track/10y8TEVMollVSuu7jtherp",
+          "url_bandcamp": "https://bananagoldrecords.bandcamp.com/track/beno-bernardo-campos-3-da-tarde-zopelar-remix"
+        },
+        {
+          "title": "Motel Destino",
+          "artists": "Bernardo Campos",
+          "release_date": "2026-07-17",
+          "label": "Twig Records",
+          "url_spotify": "https://open.spotify.com/artist/3bhH5pEgf6XA0FMduX0Nbj"
+        },
+        {
+          "title": "Rebeldia (Bernardo Campos Remix)",
+          "artists": "Filipe Shock, Bernardo Campos",
+          "release_date": "2026-07-03",
+          "label": "Shock Machine Records",
+          "duration": "5:30",
+          "url_bandcamp": "https://shockmachinerecords.bandcamp.com/album/vol-1-remixes"
+        },
+        {
+          "title": "Ave Rapina",
+          "artists": "Bernardo Campos & BENO",
+          "release_date": "2026-06-19",
+          "label": "Tunes Delivery",
+          "duration": "7:24",
+          "url_spotify": "https://open.spotify.com/artist/3bhH5pEgf6XA0FMduX0Nbj"
+        },
+        {
+          "title": "Sonhos Distantes",
+          "artists": "Bernardo Campos",
+          "release_date": "2026-05-29",
+          "label": "Duchesse",
+          "duration": "5:04",
+          "url_spotify": "https://open.spotify.com/artist/3bhH5pEgf6XA0FMduX0Nbj",
+          "url_bandcamp": "https://duchesse.bandcamp.com/"
+        },
+        {
+          "title": "Dreamstate",
+          "artists": "Bernardo Campos",
+          "release_date": "2026-05-22",
+          "label": "LW Recordings",
+          "url_soundcloud": "https://soundcloud.com/house-six/premiere-bernardo-campos",
+          "url_spotify": "https://open.spotify.com/artist/3bhH5pEgf6XA0FMduX0Nbj"
+        },
+        {
+          "title": "Mr Roboto",
+          "artists": "Bernardo Campos",
+          "release_date": "2026-05-15",
+          "label": "LW Recordings / Bliss Records",
+          "url_bandcamp": "https://blissrecords.bandcamp.com/",
+          "url_spotify": "https://open.spotify.com/artist/3bhH5pEgf6XA0FMduX0Nbj"
+        },
+        {
+          "title": "Saudade da Bahia EP",
+          "artists": "Bernardo Campos, Fabio Santanna / Nu Azeite",
+          "release_date": "2026-03-06",
+          "album": "Saudade da Bahia EP",
+          "label": "Apparel Music",
+          "url_bandcamp": "https://nuazeite-apparelmusic.bandcamp.com/album/saudade-da-bahia-ep",
+          "url_spotify": "https://open.spotify.com/artist/3bhH5pEgf6XA0FMduX0Nbj"
+        }
+      ],
+      "sources": [
+        "https://open.spotify.com/artist/3bhH5pEgf6XA0FMduX0Nbj",
+        "https://www.beatport.com/artist/bernardo-campos/130135"
+      ],
+      "gaps": ["_dj_image", "_dj_banner", "_dj_soundcloud", "_dj_instagram"]
+    },
+    {
+      "seed_key": "dj-barbara-boeing",
+      "title": "Bárbara Boeing",
+      "confidence": "HIGH",
+      "meta": {
+        "_dj_name": "Bárbara Boeing",
+        "_dj_home_city": "Brasil",
+        "_dj_bio_short": "House/disco com identidade brasileira — Toy Tonics, Soundway, Permanent Vacation.",
+        "_dj_bio": "Bárbara Boeing é DJ e produtora brasileira. Debut EP Brasiliana pela Toy Tonics (2023); colaborações recentes incluem Metalmadeira II (Soundway) com Marco Bosco e Alter Disco.",
+        "_dj_spotify": "https://open.spotify.com/artist/7uf1b4UI1VVKwwcQO0laWZ",
+        "_dj_soundcloud": "https://soundcloud.com/barbaraboeing"
+      },
+      "taxonomies": {
+        "sound": ["House", "Disco", "Indie Dance"]
+      },
+      "tracks": [
+        {
+          "title": "Metalmadeira II",
+          "artists": "Marco Bosco, Alter Disco, Bárbara Boeing",
+          "release_date": "2025-11-14",
+          "album": "Metalmadeira II",
+          "label": "Soundway Records",
+          "url_spotify": "https://open.spotify.com/artist/7uf1b4UI1VVKwwcQO0laWZ"
+        },
+        {
+          "title": "Pedra",
+          "artists": "Marco Bosco, Alter Disco, Bárbara Boeing",
+          "release_date": "2025-10-10",
+          "label": "Soundway Records",
+          "duration": "4:25",
+          "url_spotify": "https://open.spotify.com/artist/7uf1b4UI1VVKwwcQO0laWZ"
+        },
+        {
+          "title": "Love Loop (Barbara Boeing Remix)",
+          "artists": "Benjamin Fröhlich, Bárbara Boeing",
+          "release_date": "2025-03-28",
+          "label": "Permanent Vacation",
+          "duration": "4:41",
+          "url_bandcamp": "https://benjaminfrhlich.bandcamp.com/track/love-loop-barbara-boeing-remix"
+        },
+        {
+          "title": "Brasiliana EP",
+          "artists": "Bárbara Boeing",
+          "release_date": "2023-01-01",
+          "album": "Brasiliana",
+          "label": "Toy Tonics",
+          "url_spotify": "https://open.spotify.com/artist/7uf1b4UI1VVKwwcQO0laWZ",
+          "url_soundcloud": "https://soundcloud.com/barbaraboeing"
+        }
+      ],
+      "sources": [
+        "https://open.spotify.com/artist/7uf1b4UI1VVKwwcQO0laWZ",
+        "https://soundcloud.com/barbaraboeing"
+      ],
+      "gaps": ["_dj_image", "_dj_banner", "_dj_bandcamp", "_dj_instagram"]
+    },
+    {
+      "seed_key": "dj-marvitto",
+      "title": "Marvitto",
+      "confidence": "HIGH",
+      "meta": {
+        "_dj_name": "Marvitto",
+        "_dj_home_city": "Brasil",
+        "_dj_bio_short": "Remixer e produtor de house — catálogo recente forte no SoundCloud.",
+        "_dj_bio": "Marvitto publica remixes e originais de house, com circulação recente concentrada no SoundCloud (2024–2025).",
+        "_dj_soundcloud": "https://soundcloud.com/marvitto"
+      },
+      "taxonomies": {
+        "sound": ["House"]
+      },
+      "tracks": [
+        {
+          "title": "A Sina de Ofélia (Marvitto Remix)",
+          "artists": "Marvitto",
+          "release_date": "2025-12-19",
+          "url_soundcloud": "https://soundcloud.com/marvitto/ofeliamarvittoremix"
+        },
+        {
+          "title": "It Feels So Good (Marvitto Remix)",
+          "artists": "Marvitto",
+          "release_date": "2025-12-05",
+          "url_soundcloud": "https://soundcloud.com/marvitto/ifsgmarvittoremix"
+        },
+        {
+          "title": "We Belong Together (Marvitto House Remix)",
+          "artists": "Marvitto",
+          "release_date": "2025-06-11",
+          "url_soundcloud": "https://soundcloud.com/marvitto/wbt-marvitto-remix"
+        },
+        {
+          "title": "On The Dancefloor",
+          "artists": "BRUNA STRAIT & MARVITTO",
+          "release_date": "2024-06-21",
+          "label": "AlphaBeat Records",
+          "url_spotify": "https://open.spotify.com/intl-tr/playlist/2OV1DGeJyxncGajt1j5Gcf"
+        }
+      ],
+      "sources": [
+        "https://soundcloud.com/marvitto"
+      ],
+      "gaps": ["_dj_image", "_dj_banner", "_dj_spotify", "_dj_bandcamp", "_dj_instagram"]
+    }
+  ],
+  "events": [
+    {
+      "seed_key": "ev-brisa-pier",
+      "title": "Brisa",
+      "status": "publish",
+      "meta": {
+        "_event_start_date": "2026-09-05",
+        "_event_start_time": "22:00",
+        "_event_end_time": "06:00",
+        "_event_local_name": "Píer Mauá",
+        "_event_ticket_url": "https://www.sympla.com.br/evento/brisa-a-festa---pier/3465998?d=APOLLO",
+        "_event_coupon_code": "APOLLO",
+        "_event_ticket_status": "available",
+        "_event_banner": "https://images.sympla.com.br/6a3062f04adf7-lg.jpg"
+      },
+      "content": "A quinta edição da Festa Brisa será ainda mais surpreendente, com o melhor do house music para um público exigente e refinado. Num espaço de tirar o fôlego, o Píer Mauá, na zona portuária do Rio de Janeiro, será a próxima parada para uma noite entre elegância e entretenimento.",
+      "lineup_names": [
+        "RARA",
+        "AFFAIR DJs",
+        "TROPICALS",
+        "MANIA DJs",
+        "ELISA AMARAL"
+      ],
+      "taxonomies": {
+        "sound": [
+          "House"
+        ]
+      },
+      "address_note": "Avenida Rodrigues Alves, 10 — Doca Space Píer, Saúde, Rio de Janeiro",
+      "source": "https://www.sympla.com.br/evento/brisa-a-festa---pier/3465998?d=APOLLO"
+    },
+    {
+      "seed_key": "ev-brisa-no-trauma",
+      "title": "Brisa No Trauma",
+      "status": "publish",
+      "meta": {
+        "_event_start_date": "2026-08-28",
+        "_event_start_time": "22:00",
+        "_event_end_time": "05:00",
+        "_event_local_name": "TRAUMA",
+        "_event_ticket_url": "https://shotgun.live/pt-br/events/banana-gold-festa-la-em-cima-apresentam-brisa",
+        "_event_ticket_status": "available",
+        "_event_banner": "https://res.cloudinary.com/shotgun/image/upload/c_limit,w_1200,h_630/f_jpg/q_auto/production/artworks/CAPA_SHOTGUN-BRISA_ccbhx8.png"
+      },
+      "content": "A Banana Gold Records se une à Festa Lá em Cima para apresentar a primeira edição da BRISA, uma noite dedicada aos diferentes caminhos da música eletrônica brasileira. O lineup reúne Beno, Sô Lyma e Thales, três artistas com trajetórias conectadas pela pesquisa musical e pela energia das pistas do Rio.",
+      "lineup_names": [
+        "Beno",
+        "Sô Lyma",
+        "thales"
+      ],
+      "taxonomies": {
+        "sound": [
+          "House",
+          "Disco",
+          "Soul",
+          "Italo Disco",
+          "Deep House"
+        ]
+      },
+      "address_note": "Rua do Carmo, 58 — Centro, Rio de Janeiro",
+      "source": "https://shotgun.live/pt-br/events/banana-gold-festa-la-em-cima-apresentam-brisa"
+    },
+    {
+      "seed_key": "ev-no-limiar-convida",
+      "title": "No Limiar: Dornelles, Borgy, Rxvena, Feri e Baiano",
+      "status": "publish",
+      "meta": {
+        "_event_start_date": "2026-08-28",
+        "_event_start_time": "23:00",
+        "_event_end_time": "03:00",
+        "_event_local_name": "Acervo Bar",
+        "_event_ticket_url": "https://shotgun.live/pt-br/events/nolimiarconvida",
+        "_event_ticket_status": "available",
+        "_event_banner": "https://res.cloudinary.com/shotgun/image/upload/c_limit,w_1200,h_630/f_jpg/q_auto/production/artworks/172648_lmuffg.jpg"
+      },
+      "content": "No Limiar Convida apresenta seu coletivo no histórico Edifício Touring com um lineup de peso: Dornelles, Borgy, Rxvena e Feri b2b Baiano, no Acervo Bar. Respeitem o som, respeitem o ambiente, respeitem as pessoas.",
+      "lineup_names": [
+        "Dornelles",
+        "borgy",
+        "Rxvena",
+        "Feri",
+        "baiano"
+      ],
+      "taxonomies": {
+        "sound": [
+          "Funk",
+          "Baile Funk",
+          "Afrobeat",
+          "Pop",
+          "Hyperpop"
+        ]
+      },
+      "address_note": "Av. Rodrigues Alves — Praça Mauá, 10, Saúde, Rio de Janeiro",
+      "source": "https://shotgun.live/pt-br/events/nolimiarconvida"
+    },
+    {
+      "seed_key": "ev-louder-x-artecore",
+      "title": "Louder x Artecore",
+      "status": "publish",
+      "meta": {
+        "_event_start_date": "2026-08-29",
+        "_event_start_time": "21:00",
+        "_event_end_time": "05:00",
+        "_event_local_name": "Local secreto",
+        "_event_ticket_url": "https://shotgun.live/pt-br/events/louderxartecore",
+        "_event_ticket_price": "40",
+        "_event_ticket_status": "available",
+        "_event_banner": "https://res.cloudinary.com/shotgun/image/upload/c_limit,w_1200,h_630/f_jpg/q_auto/production/artworks/LDRBANNERSHOTGUN_1_h2w8xk.png"
+      },
+      "content": "A LOUDER assume o comando do after party do Arte Core, um dos maiores e mais importantes festivais de cultura e arte urbana do Rio. O evento acontece a partir das 21h em local a ser divulgado. O lineup reúne Deekapz (São Paulo), AKILA, Joazz e The Black Rosas (Caio Rosa e Thiago Rosa).",
+      "lineup_names": [
+        "Deekapz",
+        "AKILA",
+        "Joazz",
+        "Caio Rosa",
+        "Thiago Rosa"
+      ],
+      "taxonomies": {
+        "sound": [
+          "House",
+          "R&B",
+          "Funk",
+          "UK Garage",
+          "Dancehall"
+        ]
+      },
+      "source": "https://shotgun.live/pt-br/events/louderxartecore"
+    },
+    {
+      "seed_key": "ev-paradis-3-anos",
+      "title": "Paradis: 3 Anos c/ Valesuchi",
+      "status": "publish",
+      "meta": {
+        "_event_start_date": "2026-08-29",
+        "_event_start_time": "22:00",
+        "_event_end_time": "06:00",
+        "_event_local_name": "Local secreto",
+        "_event_ticket_url": "https://shotgun.live/pt-br/events/paradis-3-anos",
+        "_event_ticket_status": "soldout_soon",
+        "_event_banner": "https://res.cloudinary.com/shotgun/image/upload/c_limit,w_1200,h_630/f_jpg/q_auto/c_limit,f_auto,fl_lossy,q_auto,w_1920/v1787151491/production/artworks/Paradis-12_SHOTGUN_-_TEASER_16x9_copy_lziqqr"
+      },
+      "content": "A Paradis celebra 3 anos de pista em um lugar icônico e intimista do Rio de Janeiro, convidando a DJ chileno-carioca Valesuchi para dividir a cabine. Uma noite próxima, confortável e cercada de amizades. Apenas 300 ingressos disponíveis.",
+      "lineup_names": [
+        "Valesuchi",
+        "Antes E Depois",
+        "bossa"
+      ],
+      "taxonomies": {
+        "sound": [
+          "Balearic",
+          "House",
+          "Electro",
+          "Disco House",
+          "Italo Disco"
+        ]
+      },
+      "source": "https://shotgun.live/pt-br/events/paradis-3-anos"
+    },
+    {
+      "seed_key": "ev-festa-da-lora",
+      "title": "Acervo: Festa da Lora",
+      "status": "publish",
+      "meta": {
+        "_event_start_date": "2026-08-29",
+        "_event_start_time": "23:00",
+        "_event_end_time": "03:00",
+        "_event_local_name": "Acervo Bar",
+        "_event_ticket_url": "https://shotgun.live/pt-br/events/acervo-apresenta-festa-da-lora",
+        "_event_ticket_status": "available",
+        "_event_banner": "https://res.cloudinary.com/shotgun/image/upload/c_limit,w_1200,h_630/f_jpg/q_auto/production/artworks/ARTES-PRINCIPAISSHOT_pzfvzf.png"
+      },
+      "content": "Para celebrar dez anos de pista, duda olive convida amigos para a festa da lora — uma noite de comemoração com quem fez parte dessa trajetória. Duda transita pelo pop em todas as suas possibilidades, navegando pelo eletrônico com experimentações de house, techno e muita criatividade.",
+      "lineup_names": [
+        "duda olive",
+        "Toni",
+        "Gui Serrano"
+      ],
+      "taxonomies": {
+        "sound": [
+          "Pop",
+          "Electronica",
+          "House"
+        ]
+      },
+      "address_note": "Av. Rodrigues Alves — Praça Mauá, 10, Saúde, Rio de Janeiro",
+      "source": "https://shotgun.live/pt-br/events/acervo-apresenta-festa-da-lora"
+    },
+    {
+      "seed_key": "ev-baile-camp",
+      "title": "Baile Camp",
+      "status": "publish",
+      "meta": {
+        "_event_start_date": "2026-08-29",
+        "_event_start_time": "16:00",
+        "_event_end_time": "22:00",
+        "_event_local_name": "Mirante do Pedrão",
+        "_event_ticket_url": "https://shotgun.live/pt-br/events/baile-camp",
+        "_event_ticket_status": "available",
+        "_event_banner": "https://res.cloudinary.com/shotgun/image/upload/c_limit,w_1200,h_630/f_jpg/q_auto/production/artworks/BAILE-CAMP-SHOTGUNPrancheta-1-copiar-4_4_yszhwr.png"
+      },
+      "content": "O baile mais camp do Rio de Janeiro está de volta de lata nova. É pop, é arte, é camp. A festa acontece em Laranjeiras, no Mirante do Pedrão, a partir das 16h. Ingressos colaborativos.",
+      "lineup_names": [
+        "KALEBY",
+        "Guido Rocha",
+        "JALES",
+        "RUAN ANTONIO"
+      ],
+      "taxonomies": {
+        "sound": [
+          "Electronica",
+          "Pop",
+          "House"
+        ]
+      },
+      "address_note": "Rua Oswaldo Seabra, 357 — Laranjeiras, Rio de Janeiro",
+      "source": "https://shotgun.live/pt-br/events/baile-camp"
+    },
+    {
+      "seed_key": "ev-baiuca-quinta-27",
+      "title": "Open XDJ + Show Brasilidades",
+      "status": "publish",
+      "loc_seed_key": "loc-baiuca-dj-bar",
+      "free": true,
+      "meta": {
+        "_event_start_date": "2026-08-27",
+        "_event_start_time": "17:00",
+        "_event_access_buttons": [
+          {
+            "label": "Entrada gratuita",
+            "kind": "ticket",
+            "style": "soft"
+          }
+        ]
+      },
+      "content": "Abrimos a semana vibrante com vozes ao vivo e repertório nacional para esquentar o clima desde cedo.",
+      "lineup_names": [
+        "Jô Pratta",
+        "Marcela Brandão",
+        "Leopold Nunan"
+      ],
+      "taxonomies": {
+        "sound": [
+          "Brasilidades",
+          "MPB"
+        ]
+      },
+      "source": "Agenda semanal fornecida pelo Baiuca DJ Bar"
+    },
+    {
+      "seed_key": "ev-baiuca-sexta-28",
+      "title": "Slow Pulse Club",
+      "status": "publish",
+      "loc_seed_key": "loc-baiuca-dj-bar",
+      "free": true,
+      "meta": {
+        "_event_start_date": "2026-08-28",
+        "_event_start_time": "17:00",
+        "_event_access_buttons": [
+          {
+            "label": "Entrada gratuita",
+            "kind": "ticket",
+            "style": "soft"
+          }
+        ]
+      },
+      "content": "Uma imersão profunda em frequências e batidas para curtir ao som de trip hop, downtempo, soul e acid jazz.",
+      "lineup_names": [
+        "Jaguateejay",
+        "Mau dos Anjos",
+        "Soft Club Radio"
+      ],
+      "taxonomies": {
+        "sound": [
+          "Trip Hop",
+          "Downtempo",
+          "Soul",
+          "Acid Jazz"
+        ]
+      },
+      "source": "Agenda semanal fornecida pelo Baiuca DJ Bar"
+    },
+    {
+      "seed_key": "ev-baiuca-sabado-29",
+      "title": "Depeche Shop Boys",
+      "status": "publish",
+      "loc_seed_key": "loc-baiuca-dj-bar",
+      "free": true,
+      "meta": {
+        "_event_start_date": "2026-08-29",
+        "_event_start_time": "17:00",
+        "_event_access_buttons": [
+          {
+            "label": "Entrada gratuita",
+            "kind": "ticket",
+            "style": "soft"
+          }
+        ]
+      },
+      "content": "Sintetizadores marcantes e a energia dos anos 80 e 90 dominam a pista numa noite de climão dançante, com muito synth, pop, dance e rock.",
+      "lineup_names": [
+        "Fábio Maia",
+        "Water K",
+        "Umbra",
+        "Depeche Shop Boys"
+      ],
+      "taxonomies": {
+        "sound": [
+          "Synth Pop",
+          "Dance",
+          "Rock",
+          "New Wave"
+        ]
+      },
+      "source": "Agenda semanal fornecida pelo Baiuca DJ Bar"
+    },
+    {
+      "seed_key": "ev-baiuca-domingo-30",
+      "title": "Thayná Bittar Convida",
+      "status": "publish",
+      "loc_seed_key": "loc-baiuca-dj-bar",
+      "free": true,
+      "meta": {
+        "_event_start_date": "2026-08-30",
+        "_event_start_time": "17:00",
+        "_event_access_buttons": [
+          {
+            "label": "Entrada gratuita",
+            "kind": "ticket",
+            "style": "soft"
+          }
+        ]
+      },
+      "content": "Para fechar o fim de semana: brasilidades, samba, forró e reggae.",
+      "lineup_names": [
+        "Thayná Bittar"
+      ],
+      "taxonomies": {
+        "sound": [
+          "Samba",
+          "Forró",
+          "Reggae",
+          "Brasilidades"
+        ]
+      },
+      "source": "Agenda semanal fornecida pelo Baiuca DJ Bar"
+    },
+    {
+      "seed_key": "ev-blueticket-41530",
+      "title": "D-Edge: TECHBOX w/ JØRD",
+      "status": "publish",
+      "loc_seed_key": "loc-dedge-rio",
+      "meta": {
+        "_event_start_date": "2026-08-28",
+        "_event_start_time": "23:00",
+        "_event_local_name": "D-Edge Rio",
+        "_event_ticket_url": "https://www.blueticket.com.br/evento/41530?c=apollo",
+        "_event_coupon_code": "APOLLO",
+        "_event_ticket_price": "70",
+        "_event_ticket_status": "available",
+        "_event_banner": "https://cdn.blueticket.com.br/images/imagens/full/BCUgBn0uXLRGM7PVaD8y8pZTJu0NzXivcKjRBCQP.jpeg"
+      },
+      "content": "Noite no D-Edge Rio, centro cultural de quatro andares na Zona Portuária. Abertura às 23h. 18 anos. Ingresso digital — PIX, cartão ou boleto. Reservas e informações pelo WhatsApp (21) 97198-6491.",
+      "lineup_names": [
+        "JØRD"
+      ],
+      "taxonomies": {
+        "sound": [
+          "Techno"
+        ]
+      },
+      "ticket_detail": "Pista lote 1 — R$ 70 + R$ 9.10 taxa = R$ 79.10",
+      "source": "https://api2.blueticket.com.br/events/41530/detail"
+    },
+    {
+      "seed_key": "ev-blueticket-41578",
+      "title": "D-Edge: 10&MEIO",
+      "status": "publish",
+      "loc_seed_key": "loc-dedge-rio",
+      "meta": {
+        "_event_start_date": "2026-09-05",
+        "_event_start_time": "23:00",
+        "_event_local_name": "D-Edge Rio",
+        "_event_ticket_url": "https://www.blueticket.com.br/evento/41578?c=apollo",
+        "_event_coupon_code": "APOLLO",
+        "_event_ticket_price": "70",
+        "_event_ticket_status": "available",
+        "_event_banner": "https://cdn.blueticket.com.br/images/imagens/full/YjVPvy7LKOU7snaina8IkAWVqINEKVp5knotZK6c.jpeg"
+      },
+      "content": "Noite no D-Edge Rio, centro cultural de quatro andares na Zona Portuária. Abertura às 23h. 18 anos. Ingresso digital — PIX, cartão ou boleto. Reservas e informações pelo WhatsApp (21) 97198-6491.",
+      "lineup_names": [
+        "10&MEIO"
+      ],
+      "taxonomies": {
+        "sound": [
+          "House",
+          "Techno"
+        ]
+      },
+      "ticket_detail": "Pista lote 1 — R$ 70 + R$ 9.10 taxa = R$ 79.10",
+      "source": "https://api2.blueticket.com.br/events/41578/detail"
+    },
+    {
+      "seed_key": "ev-blueticket-41588",
+      "title": "D-Edge: ASHIBAH, ELISA AMARAL E MARIAN FLOW",
+      "status": "publish",
+      "loc_seed_key": "loc-dedge-rio",
+      "meta": {
+        "_event_start_date": "2026-09-11",
+        "_event_start_time": "23:00",
+        "_event_local_name": "D-Edge Rio",
+        "_event_ticket_url": "https://www.blueticket.com.br/evento/41588?c=apollo",
+        "_event_coupon_code": "APOLLO",
+        "_event_ticket_price": "90",
+        "_event_ticket_status": "available",
+        "_event_banner": "https://cdn.blueticket.com.br/images/imagens/full/Yk0WplLF7NRLeUucsAEaaVGiMU8rWzn9HF8Md6Gq.jpeg"
+      },
+      "content": "Noite no D-Edge Rio, centro cultural de quatro andares na Zona Portuária. Abertura às 23h. 18 anos. Ingresso digital — PIX, cartão ou boleto. Reservas e informações pelo WhatsApp (21) 97198-6491.",
+      "lineup_names": [
+        "ASHIBAH",
+        "ELISA AMARAL",
+        "MARIAN FLOW"
+      ],
+      "taxonomies": {
+        "sound": [
+          "House",
+          "Deep House"
+        ]
+      },
+      "ticket_detail": "Entrada Seca lote 2 — R$ 90 + R$ 11.70 taxa = R$ 101.70",
+      "source": "https://api2.blueticket.com.br/events/41588/detail"
+    },
+    {
+      "seed_key": "ev-blueticket-41685",
+      "title": "D-Edge: SELVAGEM",
+      "status": "publish",
+      "loc_seed_key": "loc-dedge-rio",
+      "meta": {
+        "_event_start_date": "2026-09-19",
+        "_event_start_time": "23:00",
+        "_event_local_name": "D-Edge Rio",
+        "_event_ticket_url": "https://www.blueticket.com.br/evento/41685?c=apollo",
+        "_event_coupon_code": "APOLLO",
+        "_event_ticket_price": "70",
+        "_event_ticket_status": "available",
+        "_event_banner": "https://cdn.blueticket.com.br/images/imagens/full/uLLe8ama70vzuQQfOzj1XfiEkOwleRlhNGCqbUpa.jpeg"
+      },
+      "content": "Noite no D-Edge Rio, centro cultural de quatro andares na Zona Portuária. Abertura às 23h. 18 anos. Ingresso digital — PIX, cartão ou boleto. Reservas e informações pelo WhatsApp (21) 97198-6491.",
+      "lineup_names": [
+        "SELVAGEM"
+      ],
+      "taxonomies": {
+        "sound": [
+          "House",
+          "Disco"
+        ]
+      },
+      "ticket_detail": "Pista lote 1 — R$ 70 + R$ 9.10 taxa = R$ 79.10",
+      "source": "https://api2.blueticket.com.br/events/41685/detail",
+      "note": "siteVisibility 'N' na Blueticket — ainda não listado na home deles, e o flyer é placeholder (logo D-EDGE sobre preto). Venda abre 2026-09-09 23:00. Trocar a arte quando a definitiva sair."
+    }
+  ],
+  "excluded": [
+    {
+      "url": "https://shotgun.live/pt-br/events/fritassaumparty",
+      "title": "Fritassaumparty",
+      "reason": "Venue MammaGrazzy is in NOVA IGUAÇU, not Rio de Janeiro. The brief asked for Rio events only. Data was captured and is available if you want it seeded anyway.",
+      "captured": {
+        "start_date": "2026-08-28",
+        "start_time": "20:00",
+        "end_time": "01:15",
+        "venue": "MammaGrazzy",
+        "address": "Rua Francisca de Melo, 64 — Centro, Nova Iguaçu",
+        "lineup": [
+          "Grazzy.DJ",
+          "CΛЯBӨПÉƬƬICΛ",
+          "LARIS",
+          "DJ Java"
+        ],
+        "genres": [
+          "Pop",
+          "Tech House",
+          "Garage",
+          "Funk"
+        ],
+        "cover": "https://res.cloudinary.com/shotgun/image/upload/c_limit,w_1200,h_630/f_jpg/q_auto/production/artworks/1001154932_c0gpgv.jpg"
+      }
+    }
+  ]
+}

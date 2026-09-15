@@ -1,0 +1,284 @@
+================================================================================
+APOLLO-WAHA — FOLLOW-UP
+Written: 2026-09-11
+SSOT:    waha-registry.json v1.3.0  (this file is a companion, the JSON is law)
+Plugin:  D:\dev\_apollo.rio.br\plugins\apollo-waha
+================================================================================
+
+READ THIS FIRST
+---------------
+SUPERSEDED IN PART — RUN 2 HAS SINCE BEEN BUILT (2026-09-11, registry v1.4.0).
+This document was written when RUN 2 was still unimplemented. What changed:
+
+  * AUD-06 is CLOSED. inc/class-options.php is now the FIRST require in
+    class-plugin.php's $files; the fragile guarded require is gone from
+    class-client.php.
+  * inc/Webhook/class-webhook.php now implements all 10 pipeline[] steps.
+    11/11 behaviour cases pass against the real class loaded with WP stubs.
+    Dedupe decision taken: set_transient BEFORE dispatch, delete_transient on
+    throw (section 4.2 R3 — the threat-agent synthesis).
+
+Still true: NOTHING has been run inside a real WordPress or against a live WAHA
+container. "Implemented" still means code-path + stub-verified, not observed.
+Section 4 below remains the authoritative spec and is now also the record of
+what was implemented. Sections 3 (open findings), 5 (next actions) still stand
+except that AUD-06 is done.
+
+What IS built: RUN 1 (Client, Session WORKING gate, Settings + strip, secrets)
+and RUN 2 (the HMAC door). Phone, Queue, Pane, Flows remain untouched stubs.
+
+
+================================================================================
+1. RUN LOG — WHAT ACTUALLY HAPPENED
+================================================================================
+
+RUN 0 — Relocate plugin off the WP plugin tree .............. SKIPPED
+  Precondition could not be verified. scan-plugins.js and gen-manifests.js do
+  not exist anywhere in this checkout, so there is no --strict to prove it is
+  red *because of* this folder. membership.verify_structure was already
+  "deliberate_red_undeclared" — a known, accepted state, not a new failure.
+  Moving 36 files on a guess was judged worse than leaving them.
+  => Plugin still lives at plugins/apollo-waha. Decision is yours to reverse.
+
+RUN 1 — Client + Session + Settings ......................... DONE
+  Landed:
+    inc/class-options.php        (NEW) apollo_wa_* get/set, secrets autoload
+                                 false, mask() for display
+    inc/Client/class-client.php  real wp_remote_request, X-Api-Key, 20s timeout,
+                                 typed {ok,status,body}, key never logged
+    inc/Session/class-session.php ping() + 30s transient cache, is_working(),
+                                 status_label() -> WORKING|SCAN_QR_CODE|
+                                 STARTING|FAILED|STOPPED|DOWN
+    admin/class-admin.php        menu wiring, admin-post save, AJAX "Testar"
+    admin/views/settings.php     Tela 1 form + Tela 2 strip embedded
+    assets/admin.css/.js         strip states + fetch-based test button
+  Menu parent: 'apollo' — apollo-admin/src/AdminPage.php:66, detected via
+  menu_page_url('apollo', false) at priority 25, with a standalone top-level
+  fallback. Same pattern apollo-radio already uses.
+  NOT PROVEN: no WP install and no WAHA container were available. "Implemented"
+  here means the code path is real and fails safe, not that it was observed
+  working.
+
+RUN 2 — Webhook HMAC ........... BUILT 2026-09-11 (see READ THIS FIRST)
+  Superseded entry below is kept as the record of why it stalled the first time.
+
+RUN 2 (first attempt) ....................... NOT IMPLEMENTED (zero code)
+  A design workflow was launched (recon -> 3 independent drafts -> 3 judges).
+  All 3 recon agents completed. All 3 drafts and all 3 judges died on an
+  account session limit ("resets 3:20pm America/Sao_Paulo").
+  The 3 recon results SURVIVED and are reproduced in section 4 — they are the
+  best artefact from that run and are good enough to implement directly from.
+
+AUDIT — Registry-vs-disk truth + RUN 1 review ............... DONE (inline)
+  A 5-lens adversarial subagent audit was launched; ALL SIX of its agents died
+  on the same session limit and returned nothing. The audit in section 3 was
+  therefore performed inline by one reviewer with direct tool reads. It has NOT
+  been independently verified. Treat it as single-reviewer work.
+
+
+================================================================================
+2. TRUE STATE RIGHT NOW
+================================================================================
+
+  runtime_ready ............ false
+  overall_product_pct ...... 14
+  runtime_bridge_pct ....... 30
+  webhook .................. registered, verify() hardcoded false -> always 401
+  phone .................... returns []
+  queue .................... process() returns session_down
+  pane / flows ............. empty
+  git ...................... untracked (0 tracked files)
+  inventory ................ absent (48 canonical plugins; this would be 49th)
+  files .................... 36 total / 31 outside _plan/ / 19 PHP / 793 LOC
+
+  VERIFIED CLEAN (2026-09-11):
+    - never[] compliance: 0 register_post_type, 0 wp_cache_*, 0 active_plugins
+      mutation, 0 mu/force-load require
+    - only REST namespace used is apollo/v1 + /wa/webhook
+    - only hook families: apollo/whatsapp/* plus the allowed LISTEN
+      apollo/login/phone_verified
+    - containment: RUN 1 modified nothing outside this folder
+      (other plugins DO show modifications in git status — those are
+      pre-existing repo state, NOT caused by this work)
+    - no secret literals in waha-registry.json
+    - php -l clean on all 6 touched/created PHP files
+    - boot boundary intact: plugins_loaded:20 + apollo-core guard
+
+
+================================================================================
+3. AUDIT FINDINGS — 6 OPEN
+================================================================================
+(5 more were registry drift and are already FIXED in v1.3.0: the missing
+ apollo_wa_last_ping option key, the unrecorded session-ping transient, the two
+ unrecorded admin endpoints, and two wrong file counts. Full record in
+ waha-registry.json -> audit{}.)
+
+AUD-06  MEDIUM  code-fragility   <- DO THIS FIRST
+  Apollo_Waha_Options is require_once'd ONLY from the top of
+  inc/Client/class-client.php. It works today purely because class-plugin.php
+  happens to list Client first in $files. Reorder that array — or reach
+  Session/Admin by any path that does not load Client — and every call fatals
+  with "Class Apollo_Waha_Options not found".
+  Latent, not currently reachable (uninstall.php does not use it; boot() always
+  loads Client first).
+  FIX: add 'inc/class-options.php' as the FIRST entry of $files in
+  inc/class-plugin.php, drop the guarded require from class-client.php.
+  One line. class-plugin.php was off-limits during RUN 1 — that boundary is why
+  the workaround exists.
+
+AUD-07  LOW  security
+  Apollo_Waha_Options::mask() reveals 4 of 7 chars on short secrets:
+  'abcdefg' -> 'ab***fg' (verified by executing the function). Harmless for the
+  48-char HMAC key or a normal API key; the <=6 all-bullets threshold is too low.
+  FIX: raise the full-mask threshold to <=12, or always reveal at most 2 chars.
+
+AUD-08  LOW  security
+  Apollo_Waha_Options::set() passes autoload=false for secrets, but on
+  WordPress < 6.6 update_option() ignores the autoload argument when the option
+  ALREADY exists. A secret written before this code shipped could stay
+  autoload=yes. Fresh installs unaffected.
+  FIX: for secrets, delete_option() then add_option($k,$v,'',false) on first
+  write — or require WP >= 6.6.
+
+AUD-09  INFO  performance
+  apollo_wa_last_ping autoloads (only the two SECRET_KEYS are forced false) yet
+  is written on every ping cache miss.
+  FIX: add a NON_AUTOLOAD list alongside SECRET_KEYS.
+
+AUD-10  LOW  security
+  apollo_wa_base_url is admin-settable and flows unvalidated into
+  wp_remote_request — no scheme or host allowlist. Gated behind manage_options,
+  so it is an admin-can-do-admin-things issue. BUT security.media_fetch_allowlist
+  already declares "waha base host only + X-Api-Key" as the intent, so a
+  declared control is simply not implemented.
+  FIX: validate scheme is http/https; pin media fetches to the base-URL host.
+
+AUD-11  INFO  wp-standards
+  admin/views/settings.php reads $_GET['updated'] with isset() and no
+  sanitisation. The value is never echoed so it is not an injection, but WPCS
+  flags the unslashed superglobal and any admin can trigger the success notice
+  with &updated=1.
+
+
+================================================================================
+4. RUN 2 SPEC — SALVAGED, READY TO IMPLEMENT
+================================================================================
+Source: 3 surviving recon agents. Raw JSON kept at:
+  <scratchpad>/run2-recon-checklist.json        10 steps + 5 rulings
+  <scratchpad>/run2-recon-wp-or-threat-2.json   26-finding threat model
+  <scratchpad>/run2-recon-wp-or-threat-3.json   10-finding WP semantics
+(scratchpad = C:\Users\User\AppData\Local\Temp\claude\C--Users-User\
+ ba862781-282e-4428-9e59-8dab47cf81ba\scratchpad — TEMP. Copy them into _plan/
+ if you want them to survive.)
+
+4.1 WHERE EACH PIPELINE STEP LIVES
+  1  https-prod ..................... verify   -> 401
+  2  read-php-input-raw ............. verify   -> pass-through
+  3  require-hmac-header-401 ........ verify   -> 401
+  4  allowlist-sha512-401 ........... verify   -> 401
+  5  hash_hmac sha512 + hash_equals . verify   -> 401
+  6  timestamp-window-300s .......... verify   -> 401
+  7  transient dedupe ............... SPLIT    -> 200-empty on hit
+  8  session-name-must-match ........ verify   -> 401
+  9  body-max-256kb ................. verify   -> 413
+  10 switch-event ................... handle   -> 200
+
+  THE STEP-7 TRICK (this is the important one):
+  permission_callback can only pass or fail, so it can never emit a 200-empty.
+  But step 7 sits ahead of 8 and 9, so it cannot just be deferred to the handler
+  without inverting SSOT order. Resolution: verify() does the get_transient()
+  lookup at position 7 and on a hit does NOT return — it sets a replay flag and
+  CONTINUES evaluating 8 and 9 (so a replayed request with a wrong session still
+  401s, and a replayed oversized body still 413s). verify() returns true; handle()
+  checks the replay flag FIRST and returns 200 empty without dispatching step 10.
+  Carry the flag in a private array keyed by spl_object_id($request) — WP hands
+  the SAME WP_REST_Request instance to permission_callback and callback. Do NOT
+  use $request->set_param() (it injects a fake field into the payload step 10
+  reads) and do NOT use a static bool (rest_do_request() can dispatch twice per
+  process). handle() must fail closed with 401 when no state row exists.
+
+4.2 THE FIVE RULINGS
+  R1 Missing X-Webhook-Hmac-Algorithm -> 401, same as present-but-wrong.
+     "Allowlist" admits only values IN the list; absent is not in it. Soften only
+     what costs nothing: compare strtolower(trim($h)) === 'sha512'. Log a
+     DISTINCT internal reason code so ops can tell "algo header absent" from
+     "bad hmac" — never in the response body. Keep it as one isolated
+     conditional so it can be relaxed in one line if the Docker lab proves a
+     WAHA build or proxy omits the header.
+  R2 Missing X-Webhook-Request-Id -> derive a fallback, never skip dedupe, never
+     401. Validate the header against /^[A-Za-z0-9._:-]{1,64}$/ and ALWAYS hash
+     it into the key; fall back to a body/signature-derived digest. Never put a
+     raw client-controlled string into an option name.
+  R3 WHEN to write the dedupe transient — THE TWO RECON AGENTS DISAGREED:
+       checklist agent: write AFTER the handler succeeds, because the SSOT's own
+         status table ("handler error -> 500, WAHA will retry") is only coherent
+         if a failed handle leaves no dedupe record. Choose double-processing
+         over silent loss.
+       threat agent: set BEFORE dispatch and delete_transient() in a catch, to
+         also close the TOCTOU double-processing window.
+     RECOMMENDED SYNTHESIS: the threat agent's shape achieves both — set before
+     dispatch, delete on throw. Decide explicitly and write the reason in a
+     comment; this is the single subtlest choice in the whole pipeline.
+  R4 body-max-256kb at step 9 (after the HMAC) is FINE — follow SSOT order. The
+     DoS framing does not survive the request lifecycle: PHP already buffered the
+     whole body (post_max_size) and nginx already rejected bigger ones
+     (client_max_body_size) long before WordPress booted. The memory is already
+     spent; a userland check cannot un-spend it. Use strlen($raw), never
+     (int) $_SERVER['CONTENT_LENGTH'].
+  R5 "session.status updates Session strip" — do do_action(
+     'apollo/whatsapp/session_status', $data ) and nothing else. The contract
+     goes live end-to-end (Session::hooks() already binds on_status at 10/1), but
+     THE STRIP WILL NOT MOVE ONE PIXEL because on_status() is an empty method.
+     State that honestly in the registry rather than papering over it. Wiring
+     on_status() is a class-session.php edit — a different run.
+
+4.3 THE SIX THAT WOULD ACTUALLY GET YOU EXPLOITED
+  * EMPTY/SHORT HMAC KEY = UNIVERSAL FORGERY. hash_hmac with an empty key still
+    produces a digest anyone can compute. Refuse before hashing:
+      if (!is_string($key) || strlen($key) < 32) return $this->deny();
+    A missing secret is an OUTAGE, not an open door. Never tell the caller.
+  * BARE `false` FROM permission_callback GIVES 403, NOT 401, for logged-in
+    callers (rest_authorization_required_code()). The spec demands 401 for every
+    auth failure. Return one shared WP_Error with array('status' => 401), the
+    same object and message for every failure so 401 never hints which check
+    failed or that a key was "almost correct".
+  * hash_equals(null, ...) THROWS A TypeError -> 500 with a stack trace instead
+    of a clean 401. Type-guard every header, and wrap verify() in
+    try { } catch (\Throwable) { return $this->deny(); }.
+  * ALGORITHM CONFUSION: never feed the client's algorithm header into
+    hash_hmac(). sha512 is a hardcoded literal; the header is a conformance
+    check only.
+  * TIMESTAMP AND REQUEST-ID ARE OUTSIDE THE MAC. The HMAC covers the body only,
+    so an attacker replaying a captured valid body can rewrite X-Webhook-Timestamp
+    to "now" and sail through the 300s window. The Request-Id dedupe ledger is
+    therefore the ONLY real replay defence — it is not optional hardening.
+  * RAW BODY SOURCE. Use WP_REST_Request::get_body() — WP_REST_Server already
+    consumed php://input into it. Reading php://input again can yield empty on
+    some SAPIs, and reading the body twice risks verifying one body and handling
+    another (the classic signature bypass). Hash and handle the SAME bytes.
+  Also: validate the signature is /^[0-9a-f]{128}$/ before comparing; use
+  time()/microtime() not current_time() (site-local would shift the window by the
+  WP timezone offset); X-Webhook-Timestamp is MILLISECONDS.
+
+
+================================================================================
+5. NEXT ACTIONS, IN ORDER
+================================================================================
+  1. AUD-06 — move the class-options require into class-plugin.php's loader.
+     One line. Removes a latent fatal. Needs the class-plugin.php boundary lifted.
+  2. Stand up the WAHA Docker lab + put the API key in the settings screen, then
+     click "Testar" and confirm the strip reaches WORKING. This is the first
+     moment ANY RUN 1 claim stops being code-path-only and becomes observed.
+  3. RUN 2 — implement the webhook from section 4. Decide R3 explicitly first.
+  4. Re-run the adversarial audit once the session limit resets — sections 3 and
+     4 are single-reviewer work and deserve a second pair of eyes.
+  5. AUD-07..AUD-11 — the small hardening batch.
+  6. Only then: Phone (BR 12/13 JID) -> Queue join chain -> promotion to the
+     inventory as plugin 49.
+
+  Ops number for testing: +55 21 93300-8447 (Rio de Janeiro).
+  Expected candidates: 5521933008447 and 552133008447.
+  This is the OPERATION number and must never be swapped for the verified
+  Apollo Business number (never[]).
+
+================================================================================

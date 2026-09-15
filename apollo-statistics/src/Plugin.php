@@ -279,7 +279,8 @@ final class Plugin {
             $printed = true;
 
             printf(
-                '<script src="%s" defer></script>' . "\n",
+                '<script%s src="%s" defer></script>' . "\n",
+                function_exists('apollo_csp_nonce_attr') ? apollo_csp_nonce_attr() : '',
                 esc_url(APOLLO_STATS_URL . 'assets/js/tracker.js?v=' . rawurlencode(APOLLO_STATS_VERSION))
             );
         };

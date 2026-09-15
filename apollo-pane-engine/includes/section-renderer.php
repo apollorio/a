@@ -185,16 +185,46 @@ add_filter(
  */
 function apollo_pane_internal_fetch(string $path): array
 {
-    $request  = new \WP_REST_Request('GET', '/apollo/v1' . $path);
-    $response = rest_do_request($request);
-    $data     = $response->get_data();
-    $status   = $response->get_status();
+    try {
+        $request  = new \WP_REST_Request('GET', '/apollo/v1' . $path);
+        $response = rest_do_request($request);
+        $data     = $response->get_data();
+        $status   = $response->get_status();
 
-    return [
-        'ok'     => $status >= 200 && $status < 300,
-        'status' => $status,
-        'data'   => $data,
-    ];
+        return [
+            'ok'     => $status >= 200 && $status < 300,
+            'status' => $status,
+            'data'   => $data,
+            'path'   => $path,
+        ];
+    } catch (\Throwable $e) {
+        return [
+            'ok'     => false,
+            'status' => 500,
+            'data'   => null,
+            'path'   => $path,
+            'error'  => $e->getMessage(),
+        ];
+    }
+}
+
+/**
+ * Fail-soft multi-fetch — isolated units, never aborts siblings.
+ *
+ * PHP cannot true-parallel in-process REST, but each path is try/catch
+ * isolated and returns an allSettled-shaped map keyed by path.
+ *
+ * @param string[] $paths REST paths under apollo/v1
+ * @return array<string, array{ok:bool,status:int,data:mixed,path:string}>
+ */
+function apollo_pane_fetch_many(array $paths): array
+{
+    $out = [];
+    foreach ($paths as $path) {
+        $path = (string) $path;
+        $out[$path] = apollo_pane_internal_fetch($path);
+    }
+    return $out;
 }
 
 /**
@@ -215,9 +245,10 @@ function apollo_pane_status_dot(bool $ok): string
  */
 function apollo_pane_render_casa(): string
 {
-    $health  = apollo_pane_internal_fetch('/health');
-    $plugins = apollo_pane_internal_fetch('/pane/plugins');
-    $radio   = apollo_pane_internal_fetch('/radio/status');
+    $bundle  = apollo_pane_fetch_many(['/health', '/pane/plugins', '/radio/status']);
+    $health  = $bundle['/health'];
+    $plugins = $bundle['/pane/plugins'];
+    $radio   = $bundle['/radio/status'];
 
     $html = '<div class="pane-section pane-section--casa">';
 
@@ -281,8 +312,9 @@ function apollo_pane_render_casa(): string
  */
 function apollo_pane_render_gigs(): string
 {
-    $events      = apollo_pane_internal_fetch('/events/upcoming');
-    $classifieds = apollo_pane_internal_fetch('/classifieds');
+    $bundle      = apollo_pane_fetch_many(['/events/upcoming', '/classifieds']);
+    $events      = $bundle['/events/upcoming'];
+    $classifieds = $bundle['/classifieds'];
 
     $base = esc_url_raw(rest_url('apollo/v1/pane/section/evento/'));
 
@@ -360,8 +392,9 @@ function apollo_pane_render_gigs(): string
  */
 function apollo_pane_render_sounds(): string
 {
-    $djs   = apollo_pane_internal_fetch('/djs');
-    $radio = apollo_pane_internal_fetch('/radio/status');
+    $bundle = apollo_pane_fetch_many(['/djs', '/radio/status']);
+    $djs    = $bundle['/djs'];
+    $radio  = $bundle['/radio/status'];
 
     $dj_base = esc_url_raw(rest_url('apollo/v1/pane/section/dj/'));
 
@@ -496,9 +529,10 @@ function apollo_pane_render_spots(): string
  */
 function apollo_pane_render_social(): string
 {
-    $feed    = apollo_pane_internal_fetch('/feed');
-    $unread  = apollo_pane_internal_fetch('/notifications/unread-count');
-    $threads = apollo_pane_internal_fetch('/chat/threads');
+    $bundle  = apollo_pane_fetch_many(['/feed', '/notifications/unread-count', '/chat/threads']);
+    $feed    = $bundle['/feed'];
+    $unread  = $bundle['/notifications/unread-count'];
+    $threads = $bundle['/chat/threads'];
 
     $html = '<div class="pane-section pane-section--social">';
 
@@ -582,8 +616,9 @@ function apollo_pane_render_social(): string
  */
 function apollo_pane_render_tools(): string
 {
-    $me          = apollo_pane_internal_fetch('/users/me');
-    $leaderboard = apollo_pane_internal_fetch('/membership/leaderboard');
+    $bundle      = apollo_pane_fetch_many(['/users/me', '/membership/leaderboard']);
+    $me          = $bundle['/users/me'];
+    $leaderboard = $bundle['/membership/leaderboard'];
 
     $html = '<div class="pane-section pane-section--tools">';
 

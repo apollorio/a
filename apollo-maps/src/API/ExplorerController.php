@@ -46,13 +46,35 @@ class ExplorerController extends RestBase
         $upcoming   = (int) $request->get_param('upcoming') !== 0;
         $with_locs  = (int) $request->get_param('with_locs') !== 0;
 
-        $events = $this->fetch_events($per_page, $upcoming);
-        $locs   = $with_locs ? $this->fetch_locs() : array();
+        $events = array();
+        $locs   = array();
+        $status = array(
+            'events' => 'fulfilled',
+            'locs'   => $with_locs ? 'fulfilled' : 'skipped',
+        );
+
+        try {
+            $events = $this->fetch_events($per_page, $upcoming);
+        } catch (\Throwable $e) {
+            $status['events'] = 'rejected';
+            $events = array();
+        }
+
+        if ($with_locs) {
+            try {
+                $locs = $this->fetch_locs();
+            } catch (\Throwable $e) {
+                $status['locs'] = 'rejected';
+                $locs = array();
+            }
+        }
 
         return $this->prepare_response(
             array(
-                'events' => $events,
-                'locs'   => $locs,
+                'events'   => $events,
+                'locs'     => $locs,
+                '_status'  => $status,
+                '_partial' => in_array('rejected', $status, true),
             )
         );
     }

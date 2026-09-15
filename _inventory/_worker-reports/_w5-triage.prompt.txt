@@ -1,0 +1,7 @@
+ROLE: local Apollo worker under Grok Bot coordinator. Model constraints: do not invent PHP. No product PHP edits.
+
+Read D:\dev\_apollo.rio.br\plugins\_inventory\_worker-reports\W5-hits.txt and W5-reg-excerpts.json.
+Classify hits into: TRUE_VIOLATION (forbidden social ego counters / follow-friend-like outside allowed Wow), CORE_OK (apollo-core registering CPT/meta is expected), FALSE_POSITIVE (word follow in unrelated context), SKIP_THIRD_PARTY.
+
+Write markdown report to D:\dev\_apollo.rio.br\plugins\_inventory\_worker-reports\W5-triage.md
+Then stop. Do not edit plugins PHP. Do not touch apollo-registry.json monolith.

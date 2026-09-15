@@ -2,11 +2,9 @@
 /**
  * Structured Data — Schema.org/MusicEvent JSON-LD
  *
- * Injeta <script type="application/ld+json"> nas páginas de single event
- * para SEO e rich snippets no Google (rich results).
- *
- * @see https://schema.org/MusicEvent
- * @see https://developers.google.com/search/docs/appearance/structured-data/event
+ * @deprecated 1.7.14 Event JSON-LD is owned by apollo-seo Schema::event_schema()
+ *             via Pipeline A (apollo/seo/head). wp_head never runs on blank-canvas singles.
+ * @see \Apollo\SEO\Schema::event_schema()
  * @package Apollo\Event
  */
 
@@ -21,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class StructuredData {
 
 	public function __construct() {
-		add_action( 'wp_head', array( $this, 'output' ), 1 );
+		// Retired — see apollo-seo Schema::event_schema().
 	}
 
 	/**
@@ -70,16 +68,13 @@ class StructuredData {
 		$end_iso   = $this->to_iso8601( $end_date ?: $start_date, $end_time, $tz );
 
 		// ── Banner / imagem ──
-		$banner_id = get_post_meta( $post_id, '_event_banner', true );
-		$image_url = '';
-		if ( $banner_id ) {
-			$img = wp_get_attachment_image_src( (int) $banner_id, 'large' );
-			if ( $img ) {
-				$image_url = $img[0];
-			}
+		$image = array();
+		if ( function_exists( 'apollo_event_share_image' ) ) {
+			$image = apollo_event_share_image( $post_id, 'full' );
 		}
+		$image_url = (string) ( $image['url'] ?? '' );
 		if ( ! $image_url && has_post_thumbnail( $post_id ) ) {
-			$img = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'large' );
+			$img = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'full' );
 			if ( $img ) {
 				$image_url = $img[0];
 			}

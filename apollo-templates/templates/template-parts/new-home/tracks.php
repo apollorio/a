@@ -64,14 +64,18 @@ $can_render = function_exists('apollo_card_render') && function_exists('apollo_c
 if (! $can_render) {
     return;
 }
+
+if ($has_real && function_exists('apollo_track_enqueue_listen_assets')) {
+    apollo_track_enqueue_listen_assets($track_ids);
+}
 ?>
 
 <section class="section" id="tracks" aria-labelledby="tracks-title">
     <div class="container">
-        <div class="nh-section-head ai">
-            <h2 id="tracks-title">Out Now!</h2>
-            <a href="<?php echo esc_url(home_url('/tracks')); ?>"
-                aria-label="<?php esc_attr_e('Ver todos os lançamentos', 'apollo-templates'); ?>">Ver Todos →</a>
+        <div class="nh-section-head ai nh-section-head--toolbar">
+            <h2 id="tracks-title" split-chars>Out Now!</h2>
+            <a class="nh-section-more" href="<?php echo esc_url(home_url('/tracks')); ?>"
+                aria-label="<?php esc_attr_e('Ver todos os lançamentos', 'apollo-templates'); ?>">Ver todos</a>
         </div>
 
         <?php

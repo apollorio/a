@@ -293,6 +293,8 @@ final class SafetyController
         apollo_adverts_safety_clear($advert, $buyer, 'vouch:' . $login);
         $this->forget_request($advert, $buyer, $witness);
 
+        delete_transient('ap_safety_inbox_' . $witness);
+
         return new WP_REST_Response(array('confirmed' => true, 'username' => $login), 200);
     }
 

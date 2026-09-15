@@ -16,6 +16,32 @@
  * @package Apollo\Calendar
  */
 
+/*
+ * ARCH: apollo-calendar
+ *
+ * Gerado de código real (scan-plugins.js). Não edite à mão: rode
+ * `node D:/dev/_cos/verify/gen-arch-blocks.js` para regenerar.
+ * Contrato completo: D:/dev/_cos/verify/MODULE-CONTRACT.md
+ *
+ * OWNER     apollo-calendar   16 arquivos PHP, 2893 LOC
+ * RUNTIME   CPT/taxonomia/meta registrados por apollo-core (init:5)
+ * UI        emite HTML (5); chrome é do apollo-templates
+ * META      8 chaves tocadas, 4 SEM definição governante
+ * REST      namespace não literal no código — 5 rotas (1 públicas)
+ * REQUIRES  apollo-core, apollo-remind
+ *
+ * NÃO FAÇA
+ *   - registrar CPT direto: apollo-core é o dono do init:5.
+ *     Fallback do owner só com post_type_exists().
+ *   - gravar meta de outro domínio (hoje 227 chaves não têm dono).
+ *   - registrar um segundo namespace REST. Só apollo/v1.
+ *     Já existe um namespace fora do padrão no apollo-telegram.
+ *   - add_shortcode() sem shortcode_exists(): o último a registrar
+ *     vence em silêncio e quem roda vira acidente de ordem de carga.
+ *
+ * VERIFICAR   node D:/dev/_cos/verify/plugin-audit.js
+ */
+
 declare(strict_types=1);
 
 namespace Apollo\Calendar;

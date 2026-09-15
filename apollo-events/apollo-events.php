@@ -3,7 +3,7 @@
  * Plugin Name: Apollo Events
  * Plugin URI: https://apollo.rio.br/plugins/apollo-events
  * Description: Events CPT: Backend, listings, single event, multi-view calendar, card/list/map views, 4 style packs (base, apollo-v1, ui-thim, ui-lis), expiration system 30min. Adapted from WP Event Manager + Apollo Events Manager.
- * Version: 1.7.7
+ * Version: 1.7.16
  * Author: Apollo::Rio
  * Author URI: https://apollo.rio.br
  * License: Proprietary
@@ -52,8 +52,12 @@ if ( ! defined( 'ABSPATH' ) ) {
    ('pt' default | 'en'); label/question now resolve per language while
    require/exclude (the actual match rule) stay the one language-independent
    copy. Backward compatible — no-arg callers keep getting pt. Consumed by
-   apollo-telegram's new bilingual Lang service. */
-define( 'APOLLO_EVENT_VERSION', '1.7.7' );
+   apollo-telegram's new bilingual Lang service.
+   1.7.13 — heal_cover runs on template_redirect (before wp_head) so og:image
+   resolves the same featured image as the hero; debug trace session 837565.
+   1.7.15 — /eventos/importa Smart Import Engine: ProviderRegistry,
+   ShotgunProvider, CoverResolver/Sideloader, ImportPipeline, batch UI. */
+define( 'APOLLO_EVENT_VERSION', '1.7.16' );
 define( 'APOLLO_EVENT_FILE', __FILE__ );
 define( 'APOLLO_EVENT_DIR', plugin_dir_path( __FILE__ ) );
 define( 'APOLLO_EVENT_URL', plugin_dir_url( __FILE__ ) );
@@ -61,6 +65,13 @@ define( 'APOLLO_EVENT_BASENAME', plugin_basename( __FILE__ ) );
 
 /** Absolute CDN grain fallback — assets subdomain (never concat with APOLLO_EVENT_URL). */
 define( 'APOLLO_ASSETS_GRAIN_URL', 'https://assets.apollo.rio.br/img/bg/grain-001.jpg' );
+
+/**
+ * Event social-share / hero fallback when the CPT has no featured image.
+ * og:image, twitter:image and the visible hero MUST use this same URL.
+ * 1200×630 JPEG — WhatsApp / Twitter card size.
+ */
+define( 'APOLLO_EVENT_DEFAULT_SHARE_IMAGE', 'https://assets.apollo.rio.br/img/thumb/thumb.jpg' );
 
 // ═══════════════════════════════════════════════════════════════════════════
 // DEPENDENCY CHECK — apollo-core é OBRIGATÓRIO

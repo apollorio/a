@@ -1,0 +1,141 @@
+{
+  "FORBIDDEN_CONCEPTS": [
+    "follow button",
+    "unfollow button",
+    "followers count",
+    "following count",
+    "like button",
+    "friend request",
+    "friend count"
+  ],
+  "philosophyKeys": [
+    "PARTY_MODEL",
+    "NO_SELECTIVE_FOLLOW",
+    "NO_FRIENDS_HIERARCHY",
+    "NO_EGO_COUNTERS",
+    "WOW_NOT_LIKE",
+    "SHARE_YES",
+    "FORBIDDEN_CONCEPTS"
+  ],
+  "namingRules": {
+    "FORBIDDEN_TERMS": {
+      "venue": "USE 'loc' INSTEAD",
+      "local": "USE 'loc' INSTEAD (except in Portuguese text)",
+      "location": "USE 'loc' INSTEAD",
+      "interesse": "USE 'fav' INSTEAD",
+      "interessado": "USE 'fav' INSTEAD",
+      "interest": "USE 'fav' INSTEAD",
+      "bookmark": "USE 'fav' INSTEAD",
+      "like": "USE 'wow' INSTEAD",
+      "heart": "USE 'wow' INSTEAD",
+      "reaction": "USE 'wow' INSTEAD",
+      "comment": "USE 'depoimento' INSTEAD",
+      "review": "USE 'depoimento' INSTEAD",
+      "cult": "USE 'cena' INSTEAD",
+      "document": "USE 'doc' INSTEAD",
+      "/user/": "USE '/id/' INSTEAD"
+    }
+  },
+  "apollo_rule": {
+    "MANDATORY": "This section defines the single source of truth architecture for ALL Apollo development.",
+    "data_flow": {
+      "php_array_object": "Source of truth â€” all data originates from PHP backend",
+      "rendered_html": "Only user-facing content â€” never stores truth in DOM",
+      "data_attributes": "Only interaction hooks (data-a-*) â€” never hidden DOM truth",
+      "debug_helper": "Server log or admin-only debug panel â€” never client-side in production",
+      "production": "No debug output, no helper attributes, no console.log",
+      "secure_db_data": "Injected only in PHP before render, never as hidden DOM truth"
+    },
+    "mandatory_architecture": [
+      "apollo_get_profile_context($user_id) â€” single source of truth for profile data",
+      "Render profile from that array â€” no scattered inline DB reads",
+      "Optionally pass a minimal JS config with wp_json_encode()",
+      "Keep helper tooltip/debug matching in WP_DEBUG only"
+    ],
+    "audit_verificator": {
+      "description": "12-point security and architecture audit checklist â€” run on every commit",
+      "checks": [
+        {
+          "id": 1,
+          "check": "Unescaped echo/print in templates",
+          "severity": "HIGH",
+          "fix": "Wrap with esc_html(), esc_attr(), esc_url(), wp_kses_post()"
+        },
+        {
+          "id": 2,
+          "check": "Sensitive data in data-* attributes",
+          "severity": "CRITICAL",
+          "fix": "Move nonces/tokens to wp_json_encode() JS config block"
+        },
+        {
+          "id": 3,
+          "check": "Raw SQL without $wpdb->prepare()",
+          "severity": "CRITICAL",
+          "fix": "Always use $wpdb->prepare() for any variable interpolation"
+        },
+        {
+          "id": 4,
+          "check": "Debug output in production (console.log, error_log without WP_DEBUG)",
+          "severity": "MEDIUM",
+          "fix": "Guard with if (WP_DEBUG) or remove entirely"
+        },
+        {
+          "id": 5,
+          "check": "Nonce + capability on write operations",
+          "severity": "HIGH",
+          "fix": "Always wp_verify_nonce() + current_user_can() before mutations"
+        },
+        {
+          "id": 6,
+          "check": "JS config exposing admin data to non-admins",
+          "severity": "HIGH",
+          "fix": "Conditional: include admin keys only when current_user_can('manage_options')"
+        },
+        {
+          "id": 7,
+          "check": "ABSPATH guard on every PHP file",
+          "severity": "HIGH",
+          "fix": "if (!defined('ABSPATH')) { exit; }"
+        },
+        {
+          "id": 8,
+          "check": "REST permission_callback on every endpoint",
+          "severity": "CRITICAL",
+          "fix": "Never use __return_true for write operations"
+        },
+        {
+          "id": 9,
+          "check": "File uploads: type validation + size limits",
+          "severity": "HIGH",
+          "fix": "wp_check_filetype() + configurable max size"
+        },
+        {
+          "id": 10,
+          "check": "Sanitize ALL input at system boundaries",
+          "severity": "HIGH",
+          "fix": "sanitize_text_field(), sanitize_email(), absint(), etc."
+        },
+        {
+          "id": 11,
+          "check": "No direct $_GET/$_POST/$_REQUEST without sanitization",
+          "severity": "HIGH",
+          "fix": "Always sanitize before use"
+        },
+        {
+          "id": 12,
+          "check": "Rate limiting on public endpoints",
+          "severity": "MEDIUM",
+          "fix": "Throttle via apollo-login RateLimiter or per-endpoint logic"
+        }
+      ]
+    },
+    "development_guidelines": {
+      "naming": "See namingRules.FORBIDDEN_TERMS â€” always use Apollo vocabulary",
+      "hooks": "apollo/{plugin}/{action} pattern â€” never legacy underscored hooks in new code",
+      "rest": "All under apollo/v1 â€” check registry for exact endpoint definitions",
+      "templates": "Canvas (uses wp_head/wp_footer) vs Blank Canvas (zero theme â€” apollo-login pattern)",
+      "cdn": "MANDATORY: load APOLLO_CDN_URL on every frontend template",
+      "time": "MANDATORY: use apollo_time_ago() â€” never human_time_diff() + 'atrÃ¡s'"
+    }
+  }
+}

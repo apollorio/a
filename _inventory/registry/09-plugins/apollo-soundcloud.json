@@ -11,7 +11,7 @@
   "priority": 40,
   "status": "IMPLEMENTED",
   "description": "One SoundCloud player for the whole ecosystem. Apollo's own UI driving a hidden Widget-API iframe, with preview (25-65%) and full modes. Replaces seven hand-rolled implementations.",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "layer": "L6_frontend",
   "dependencies": [
     "apollo-core"
@@ -108,5 +108,11 @@
       "assets/js/apollo-sc.js",
       "assets/css/apollo-sc.css"
     ]
+  },
+  "$version_synced": {
+    "date": "2026-08-31",
+    "from": "1.0.0",
+    "to": "1.0.3",
+    "source": "disk docblock via doctor.js"
   }
 }

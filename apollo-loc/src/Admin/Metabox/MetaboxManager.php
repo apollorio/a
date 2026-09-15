@@ -22,6 +22,10 @@ final class MetaboxManager {
 		new ContactMetabox();
 		new DetailsMetabox();
 		new GalleryMetabox();
+		/* Renders local_type / local_area as single-choice <select>s instead of
+		   WordPress's default hierarchical checkbox list. Saving is driven by
+		   MetaboxSaver, not a second save_post hook — see that class. */
+		new TaxonomySelectMetabox();
 		new MetaboxSaver();
 	}
 }

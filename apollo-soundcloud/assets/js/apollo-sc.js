@@ -147,21 +147,26 @@
 					widget.getDuration(function (ms) {
 						state.duration = ms || 0;
 
+			var hold = parseInt(el.getAttribute('data-apsc-hold'), 10);
 						var sPct = parseInt(el.getAttribute('data-apsc-start'), 10);
 						var ePct = parseInt(el.getAttribute('data-apsc-end'), 10);
-						if (isNaN(sPct)) { sPct = parseInt(CFG.startPct, 10) || 25; }
+						if (isNaN(sPct)) { sPct = parseInt(CFG.startPct, 10) || 20; }
 						if (isNaN(ePct)) { ePct = parseInt(CFG.endPct, 10) || 65; }
 
-						if (state.mode === 'preview' && state.duration > MIN_SECONDS * 1000) {
+						if (!isNaN(hold) && hold > 0 && state.duration > MIN_SECONDS * 1000) {
+							state.start = Math.floor(state.duration * (sPct / 100));
+							state.end = Math.min(state.duration, state.start + hold * 1000);
+						} else if (state.mode === 'preview' && state.duration > MIN_SECONDS * 1000) {
 							state.start = Math.floor(state.duration * (sPct / 100));
 							state.end = Math.floor(state.duration * (ePct / 100));
 						} else {
-							/* Full mode, or a track too short for a meaningful
-							   middle slice — a 4-second ID clip has no useful
-							   40% excerpt, so it plays whole. */
 							state.start = 0;
 							state.end = 0;
 						}
+
+						var volAttr = parseInt(el.getAttribute('data-apsc-vol'), 10);
+						state.volTarget = !isNaN(volAttr) ? volAttr : (parseInt(CFG.vol, 10) || 20);
+						state.vol = 0;
 
 						el.classList.add('is-ready');
 						emit('apollo:sc:ready', el, { duration: state.duration });
@@ -171,6 +176,7 @@
 
 				widget.bind(w.SC.Widget.Events.PLAY, function () {
 					setUi(el, true);
+					fadeVol(state, state.volTarget || 20, parseInt(CFG.fadeInMs, 10) || 420);
 					emit('apollo:sc:play', el, { url: el.getAttribute('data-apsc-url') });
 				});
 
@@ -193,11 +199,15 @@
 				widget.bind(w.SC.Widget.Events.PLAY_PROGRESS, function (e) {
 					var pos = (e && e.currentPosition) || 0;
 
-					if (state.end && pos >= state.end) {
-						widget.pause();
-						widget.seekTo(state.start);
-						setUi(el, false);
-						if (current === el) { current = null; }
+					if (state.end && pos >= state.end && !state.stopping) {
+						state.stopping = true;
+						fadeVol(state, 0, parseInt(CFG.fadeOutMs, 10) || 280, function () {
+							try { widget.pause(); } catch (err) {}
+							try { widget.seekTo(state.start); } catch (err2) {}
+							setUi(el, false);
+							if (current === el) { current = null; }
+							emit('apollo:sc:pause', el, { finished: true });
+						});
 						return;
 					}
 
@@ -208,26 +218,64 @@
 				});
 
 				widget.bind(w.SC.Widget.Events.ERROR, function () {
-					fallback(el);
+					if (el.hasAttribute('data-apsc-manual-fallback')) {
+						setUi(el, false);
+						if (current === el) { current = null; }
+						emit('apollo:sc:error', el);
+					} else {
+						fallback(el);
+					}
 				});
 			});
 		}).catch(function () {
-			fallback(el);
+			if (!el.hasAttribute('data-apsc-manual-fallback')) {
+				fallback(el);
+			} else {
+				emit('apollo:sc:error', el);
+			}
 			throw new Error('apsc: transport unavailable');
 		});
 
 		return state.ready;
 	}
 
+	function fadeVol(state, to, ms, done) {
+		if (!state || !state.widget) {
+			if (typeof done === 'function') { done(); }
+			return;
+		}
+		if (state.fadeTimer) {
+			clearInterval(state.fadeTimer);
+			state.fadeTimer = null;
+		}
+		var from = typeof state.vol === 'number' ? state.vol : 0;
+		var t0 = (w.performance && performance.now) ? performance.now() : Date.now();
+		ms = Math.max(80, ms || 300);
+		state.fadeTimer = setInterval(function () {
+			var now = (w.performance && performance.now) ? performance.now() : Date.now();
+			var p = Math.min(1, (now - t0) / ms);
+			var v = Math.round(from + (to - from) * p);
+			state.vol = v;
+			try { state.widget.setVolume(v); } catch (err) {}
+			if (p >= 1) {
+				clearInterval(state.fadeTimer);
+				state.fadeTimer = null;
+				if (typeof done === 'function') { done(); }
+			}
+		}, 40);
+	}
+
 	/**
 	 * SDK blocked, or the widget errored — reveal the real embed.
 	 *
-	 * DEGRADE HONESTLY. A dead play button that does nothing is worse than
-	 * SoundCloud's own chrome appearing: the visitor can still hear the track.
-	 * Ad blockers and strict privacy extensions block w.soundcloud.com often
-	 * enough that this is a normal path, not an exotic one.
+	 * Out Now cards set data-apsc-never-reveal: the iframe stays a hidden
+	 * transport. SoundCloud chrome on the rail is a UX defect, not a fallback.
 	 */
 	function fallback(el) {
+		if (!el || el.hasAttribute('data-apsc-never-reveal')) {
+			emit('apollo:sc:error', el);
+			return;
+		}
 		if (el.classList.contains('is-fallback')) { return; }
 		el.classList.add('is-fallback');
 
@@ -250,21 +298,87 @@
 	}
 
 	function play(el) {
-		if (!el) { return; }
+		if (!el) { return Promise.reject(new Error('no element')); }
 		stopAll(el);
-		bind(el).then(function (state) {
-			if (!state || !state.widget) { return; }
+		return bind(el).then(function (state) {
+			if (!state || !state.widget) {
+				return Promise.reject(new Error('no widget'));
+			}
 			current = el;
-			/* Seek before play so a preview never opens on the intro. */
+			state.stopping = false;
+			try { state.widget.setVolume(0); } catch (err) {}
+			state.vol = 0;
 			state.widget.seekTo(state.start || 0);
 			state.widget.play();
-		}).catch(function () { /* fallback() already handled it */ });
+			return state;
+		}).catch(function (err) {
+			if (!el.hasAttribute('data-apsc-manual-fallback')) {
+				/* fallback() already ran */
+			}
+			return Promise.reject(err);
+		});
+	}
+
+	/**
+	 * Play and resolve when SC fires PLAY, or reject on error / timeout.
+	 * Used by track-card orchestrator for chained fallbacks.
+	 */
+	function playAsync(el, timeoutMs) {
+		timeoutMs = timeoutMs || 8000;
+		return new Promise(function (resolve, reject) {
+			if (!el) { reject(new Error('no element')); return; }
+
+			var done = false;
+			function finish(ok, payload) {
+				if (done) { return; }
+				done = true;
+				d.removeEventListener('apollo:sc:play', onPlay);
+				d.removeEventListener('apollo:sc:error', onErr);
+				clearTimeout(timer);
+				if (ok) { resolve(payload); } else { reject(payload); }
+			}
+
+			function onPlay(e) {
+				if (e.detail && e.detail.el === el) {
+					finish(true, el);
+				}
+			}
+
+			function onErr(e) {
+				if (e.detail && e.detail.el === el) {
+					finish(false, new Error('sc widget error'));
+				}
+			}
+
+			d.addEventListener('apollo:sc:play', onPlay);
+			d.addEventListener('apollo:sc:error', onErr);
+
+			var timer = setTimeout(function () {
+				if (!el.classList.contains('is-playing')) {
+					finish(false, new Error('sc timeout'));
+				}
+			}, timeoutMs);
+
+			play(el).catch(function (err) {
+				finish(false, err);
+			});
+		});
 	}
 
 	function pause(el) {
 		if (!el || !el.__apsc || !el.__apsc.widget) { return; }
-		el.__apsc.widget.pause();
-		if (current === el) { current = null; }
+		var state = el.__apsc;
+		if (state.stopping) {
+			try { state.widget.pause(); } catch (err) {}
+			if (current === el) { current = null; }
+			return;
+		}
+		state.stopping = true;
+		fadeVol(state, 0, parseInt(CFG.fadeOutMs, 10) || 280, function () {
+			try { state.widget.pause(); } catch (err2) {}
+			setUi(el, false);
+			if (current === el) { current = null; }
+		});
 	}
 
 	function stopAll(except) {
@@ -305,11 +419,18 @@
 		if (!e.detail || e.detail.source !== 'soundcloud') { stopAll(null); }
 	});
 
+	/* Track orchestrator stopped — pause SC widget. */
+	d.addEventListener('apollo:track:stop', function () {
+		stopAll(null);
+	});
+
 	w.ApolloSC = {
 		play: play,
+		playAsync: playAsync,
 		pause: pause,
 		toggle: toggle,
 		stopAll: function () { stopAll(null); },
+		fallback: fallback,
 		mount: mount,
 		current: function () { return current; }
 	};

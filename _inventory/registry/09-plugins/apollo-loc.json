@@ -254,7 +254,7 @@
       "_source": "deep_live_scan"
     }
   ],
-  "version": "1.0.1",
+  "version": "1.0.5",
   "ajax": {
     "priv": [],
     "nopriv": []
@@ -1389,5 +1389,11 @@
     "warning_inherited_from_djs": "When the loc mockup is copied in, check its encoding FIRST. The DJ mockup is character-corrupted (152 lines) while its generated cells are clean — see 09-plugins/apollo-djs.json $mockup_corrupted_generator_disarmed_2026_08_17. If the two mockups travelled together they were likely damaged together.",
     "philosophy_violations_still_open_in_the_loc_mockup": "21-mockup-field-contract.json records VIO-02 (#dockFollow 'Seguir' button with a heart icon), VIO-03 ('Siga o local' copy) and VIO-04 (.map-note printing raw lat/lng plus an internal meta name and the non-existent CPT slug 'events_local' — the real slug is 'local'). These must be fixed in the mockup BEFORE any generator slices it, or the violations become permanent in shipped cells. Copy and icon changes only; no new storage — the fav tables already exist.",
     "risk_if_ignored": "Building loc cells from an unaudited mockup would bake a follow button into production, which 01-philosophy forbids outright (NO_SELECTIVE_FOLLOW, NO_EGO_COUNTERS)."
+  },
+  "$version_synced": {
+    "date": "2026-08-31",
+    "from": "1.0.1",
+    "to": "1.0.5",
+    "source": "disk docblock via doctor.js"
   }
 }

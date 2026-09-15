@@ -1,0 +1,670 @@
+# units
+#
+# Apollo DEV registry — GENERATED, do not hand-edit.
+# Source of truth is the code; regenerate with
+#   node D:/dev/_cos/verify/gen-dev-registry.js
+#
+# One entry per apollo-* plugin plus mu-plugin. apollo-waha excluded by interlock.
+generated: '2026-09-15T05:29:41.847Z'
+excluded: [apollo-waha]
+units:
+  - unit: apollo-admin
+    version: 1.1.0
+    plugin_name: 'Apollo Admin'
+    files: 123
+    loc: 16113
+    entry: plugins/apollo-admin/apollo-admin.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 28
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 18
+    shortcodes: 0
+    ajax_sites: 4
+    boot: [plugins_loaded]
+  - unit: apollo-adverts
+    version: 1.2.2
+    plugin_name: 'Apollo Adverts'
+    files: 88
+    loc: 16633
+    entry: plugins/apollo-adverts/apollo-adverts.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 16
+    cpt_sites: 1
+    tax_sites: 2
+    rest_sites: 9
+    shortcodes: 7
+    ajax_sites: 7
+    boot: [plugins_loaded, init]
+  - unit: apollo-calendar
+    version: 1.1.0
+    plugin_name: 'Apollo Calendar'
+    files: 16
+    loc: 2919
+    entry: plugins/apollo-calendar/apollo-calendar.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 12
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 5
+    shortcodes: 0
+    ajax_sites: 0
+    boot: [plugins_loaded]
+  - unit: apollo-chat
+    version: 2.2.8
+    plugin_name: 'Apollo Chat'
+    files: 9
+    loc: 4939
+    entry: plugins/apollo-chat/apollo-chat.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 3
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 30
+    shortcodes: 0
+    ajax_sites: 0
+    boot: [plugins_loaded]
+  - unit: apollo-coauthor
+    version: 1.0.2
+    plugin_name: 'Apollo CoAuthor'
+    files: 18
+    loc: 3765
+    entry: plugins/apollo-coauthor/apollo-coauthor.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 14
+    cpt_sites: 0
+    tax_sites: 1
+    rest_sites: 3
+    shortcodes: 2
+    ajax_sites: 0
+    boot: [plugins_loaded]
+  - unit: apollo-comment
+    version: 1.0.1
+    plugin_name: 'Apollo — Depoimentos'
+    files: 10
+    loc: 1685
+    entry: plugins/apollo-comment/apollo-comment.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 6
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 2
+    shortcodes: 2
+    ajax_sites: 0
+    boot: [plugins_loaded]
+  - unit: apollo-core
+    version: 6.6.0
+    plugin_name: 'Apollo Core'
+    files: 77
+    loc: 23856
+    entry: plugins/apollo-core/apollo-core.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 38
+    cpt_sites: 1
+    tax_sites: 1
+    rest_sites: 20
+    shortcodes: 0
+    ajax_sites: 0
+    boot: [init, rest_api_init, plugins_loaded]
+  - unit: apollo-dashboard
+    version: 1.1.0
+    plugin_name: 'Apollo Dashboard'
+    files: 16
+    loc: 4386
+    entry: plugins/apollo-dashboard/apollo-dashboard.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 3
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 4
+    shortcodes: 2
+    ajax_sites: 0
+    boot: [plugins_loaded]
+  - unit: apollo-dj-sync
+    version: 1.0.1
+    plugin_name: 'Apollo DJ Sync'
+    files: 5
+    loc: 795
+    entry: plugins/apollo-dj-sync/apollo-dj-sync.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 3
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 1
+    shortcodes: 0
+    ajax_sites: 0
+    boot: [rest_api_init]
+  - unit: apollo-djs
+    version: 1.1.7
+    plugin_name: 'Apollo DJs'
+    files: 87
+    loc: 11389
+    entry: plugins/apollo-djs/apollo-djs.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 10
+    cpt_sites: 2
+    tax_sites: 1
+    rest_sites: 5
+    shortcodes: 4
+    ajax_sites: 1
+    boot: [plugins_loaded]
+  - unit: apollo-docs
+    version: 1.0.1
+    plugin_name: 'Apollo Docs'
+    files: 13
+    loc: 2750
+    entry: plugins/apollo-docs/apollo-docs.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 9
+    cpt_sites: 1
+    tax_sites: 2
+    rest_sites: 15
+    shortcodes: 0
+    ajax_sites: 1
+    boot: [plugins_loaded]
+  - unit: apollo-elementor
+    version: 1.0.1
+    plugin_name: 'Apollo Elementor'
+    files: 49
+    loc: 3967
+    entry: plugins/apollo-elementor/apollo-elementor.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 27
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 0
+    shortcodes: 0
+    ajax_sites: 0
+    boot: [plugins_loaded]
+  - unit: apollo-elementor-pro
+    version: 1.0.1
+    plugin_name: 'Apollo Elementor Pro'
+    files: 23
+    loc: 1738
+    entry: plugins/apollo-elementor-pro/apollo-elementor-pro.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 21
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 0
+    shortcodes: 0
+    ajax_sites: 0
+    boot: [plugins_loaded]
+  - unit: apollo-email
+    version: 1.0.1
+    plugin_name: 'Apollo Email'
+    files: 43
+    loc: 10080
+    entry: plugins/apollo-email/apollo-email.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 19
+    cpt_sites: 1
+    tax_sites: 0
+    rest_sites: 16
+    shortcodes: 2
+    ajax_sites: 0
+    boot: [plugins_loaded, init]
+  - unit: apollo-events
+    version: 1.7.16
+    plugin_name: 'Apollo Events'
+    files: 150
+    loc: 31367
+    entry: plugins/apollo-events/apollo-events.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 31
+    cpt_sites: 1
+    tax_sites: 5
+    rest_sites: 29
+    shortcodes: 4
+    ajax_sites: 1
+    boot: [plugins_loaded]
+  - unit: apollo-fav
+    version: 1.0.1
+    plugin_name: 'Apollo Fav'
+    files: 11
+    loc: 4100
+    entry: plugins/apollo-fav/apollo-fav.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 8
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 5
+    shortcodes: 5
+    ajax_sites: 6
+    boot: [plugins_loaded, rest_api_init]
+  - unit: apollo-gestor
+    version: 1.0.1
+    plugin_name: 'Apollo Gestor'
+    files: 46
+    loc: 6934
+    entry: plugins/apollo-gestor/apollo-gestor.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 24
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 0
+    shortcodes: 0
+    ajax_sites: 1
+    boot: [plugins_loaded]
+  - unit: apollo-groups
+    version: 1.2.0
+    plugin_name: 'Apollo Groups'
+    files: 55
+    loc: 7271
+    entry: plugins/apollo-groups/apollo-groups.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 4
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 24
+    shortcodes: 5
+    ajax_sites: 0
+    boot: [plugins_loaded]
+  - unit: apollo-hub
+    version: 1.0.2
+    plugin_name: 'Apollo Hub'
+    files: 35
+    loc: 5417
+    entry: plugins/apollo-hub/apollo-hub.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 11
+    cpt_sites: 2
+    tax_sites: 0
+    rest_sites: 6
+    shortcodes: 2
+    ajax_sites: 0
+    boot: [plugins_loaded]
+  - unit: apollo-journal
+    version: 1.0.1
+    plugin_name: 'Apollo Journal'
+    files: 16
+    loc: 4543
+    entry: plugins/apollo-journal/apollo-journal.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 7
+    cpt_sites: 2
+    tax_sites: 1
+    rest_sites: 3
+    shortcodes: 5
+    ajax_sites: 0
+    boot: [plugins_loaded]
+  - unit: apollo-loc
+    version: 1.0.5
+    plugin_name: 'Apollo Local'
+    files: 66
+    loc: 9023
+    entry: plugins/apollo-loc/apollo-loc.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 39
+    cpt_sites: 1
+    tax_sites: 2
+    rest_sites: 6
+    shortcodes: 4
+    ajax_sites: 0
+    boot: [plugins_loaded]
+  - unit: apollo-login
+    version: 1.0.47
+    plugin_name: 'Apollo Login'
+    files: 54
+    loc: 15603
+    entry: plugins/apollo-login/apollo-login.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 23
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 26
+    shortcodes: 6
+    ajax_sites: 20
+    boot: [plugins_loaded, template_redirect]
+  - unit: apollo-lux-panels
+    version: 1.2.0
+    plugin_name: 'Apollo Lux Panels'
+    files: 6
+    loc: 1758
+    entry: plugins/apollo-lux-panels/apollo-lux-panels.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 6
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 0
+    shortcodes: 0
+    ajax_sites: 0
+    boot: [plugins_loaded]
+  - unit: apollo-maps
+    version: 1.0.1
+    plugin_name: 'Apollo Maps'
+    files: 9
+    loc: 850
+    entry: plugins/apollo-maps/apollo-maps.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 5
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 1
+    shortcodes: 1
+    ajax_sites: 0
+    boot: [plugins_loaded]
+  - unit: apollo-membership
+    version: 1.0.3
+    plugin_name: 'Apollo Membership'
+    files: 42
+    loc: 8015
+    entry: plugins/apollo-membership/apollo-membership.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 12
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 23
+    shortcodes: 9
+    ajax_sites: 6
+    boot: [plugins_loaded]
+  - unit: apollo-mod
+    version: 1.0.1
+    plugin_name: 'Apollo Moderation'
+    files: 7
+    loc: 990
+    entry: plugins/apollo-mod/apollo-mod.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 4
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 7
+    shortcodes: 0
+    ajax_sites: 1
+    boot: [plugins_loaded]
+  - unit: apollo-notif
+    version: 1.0.1
+    plugin_name: 'Apollo Notifications'
+    files: 8
+    loc: 3731
+    entry: plugins/apollo-notif/apollo-notif.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 4
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 13
+    shortcodes: 2
+    ajax_sites: 0
+    boot: [plugins_loaded]
+  - unit: apollo-pane-engine
+    version: 2.0.1
+    plugin_name: 'Apollo Pane Engine'
+    files: 7
+    loc: 1719
+    entry: plugins/apollo-pane-engine/apollo-pane-engine.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 0
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 5
+    shortcodes: 0
+    ajax_sites: 0
+    boot: []
+  - unit: apollo-radio
+    version: 1.0.1
+    plugin_name: 'Apollo Radio'
+    files: 9
+    loc: 990
+    entry: plugins/apollo-radio/apollo-radio.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 5
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 4
+    shortcodes: 1
+    ajax_sites: 0
+    boot: [plugins_loaded]
+  - unit: apollo-remind
+    version: 1.0.1
+    plugin_name: 'Apollo::Rio Reminders'
+    files: 16
+    loc: 2135
+    entry: plugins/apollo-remind/apollo-remind.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 11
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 13
+    shortcodes: 0
+    ajax_sites: 0
+    boot: [plugins_loaded]
+  - unit: apollo-scheduler
+    version: 1.0.1
+    plugin_name: 'Apollo Scheduler'
+    files: 34
+    loc: 2929
+    entry: plugins/apollo-scheduler/apollo-scheduler.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 26
+    cpt_sites: 1
+    tax_sites: 0
+    rest_sites: 8
+    shortcodes: 2
+    ajax_sites: 0
+    boot: [plugins_loaded]
+  - unit: apollo-seed-runner
+    version: 1.0.0
+    plugin_name: 'Apollo Seed Runner'
+    files: 1
+    loc: 59
+    entry: plugins/apollo-seed-runner/apollo-seed-runner.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 0
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 0
+    shortcodes: 0
+    ajax_sites: 0
+    boot: []
+  - unit: apollo-seo
+    version: 1.0.6
+    plugin_name: 'Apollo SEO'
+    files: 10
+    loc: 4736
+    entry: plugins/apollo-seo/apollo-seo.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 8
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 3
+    shortcodes: 0
+    ajax_sites: 0
+    boot: [plugins_loaded]
+  - unit: apollo-sheets
+    version: 1.0.1
+    plugin_name: 'Apollo Sheets'
+    files: 27
+    loc: 8565
+    entry: plugins/apollo-sheets/apollo-sheets.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 19
+    cpt_sites: 1
+    tax_sites: 0
+    rest_sites: 6
+    shortcodes: 2
+    ajax_sites: 13
+    boot: [plugins_loaded]
+  - unit: apollo-sign
+    version: 1.2.1
+    plugin_name: 'Apollo Sign'
+    files: 39
+    loc: 7965
+    entry: plugins/apollo-sign/apollo-sign.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 10
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 10
+    shortcodes: 1
+    ajax_sites: 1
+    boot: [plugins_loaded]
+  - unit: apollo-social
+    version: 1.0.1
+    plugin_name: 'Apollo Social'
+    files: 24
+    loc: 3873
+    entry: plugins/apollo-social/apollo-social.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 7
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 11
+    shortcodes: 2
+    ajax_sites: 0
+    boot: [plugins_loaded]
+  - unit: apollo-soundcloud
+    version: 1.0.3
+    plugin_name: 'Apollo SoundCloud'
+    files: 4
+    loc: 598
+    entry: plugins/apollo-soundcloud/apollo-soundcloud.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 0
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 0
+    shortcodes: 1
+    ajax_sites: 0
+    boot: []
+  - unit: apollo-statistics
+    version: 2.0.8
+    plugin_name: 'Apollo Statistics'
+    files: 47
+    loc: 10573
+    entry: plugins/apollo-statistics/apollo-statistics.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 42
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 21
+    shortcodes: 2
+    ajax_sites: 5
+    boot: [plugins_loaded]
+  - unit: apollo-telegram
+    version: 1.1.5
+    plugin_name: 'Apollo Telegram'
+    files: 60
+    loc: 11092
+    entry: plugins/apollo-telegram/apollo-telegram.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 49
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 8
+    shortcodes: 1
+    ajax_sites: 0
+    boot: [rest_api_init, init, plugins_loaded, template_redirect]
+  - unit: apollo-templates
+    version: 1.6.24
+    plugin_name: 'Apollo Templates'
+    files: 130
+    loc: 28321
+    entry: plugins/apollo-templates/apollo-templates.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 9
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 6
+    shortcodes: 6
+    ajax_sites: 11
+    boot: [plugins_loaded, template_redirect]
+  - unit: apollo-ui
+    version: 1.0.0
+    plugin_name: 'Apollo UI'
+    files: 7
+    loc: 1144
+    entry: plugins/apollo-ui/apollo-ui.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 0
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 0
+    shortcodes: 1
+    ajax_sites: 0
+    boot: [init]
+  - unit: apollo-users
+    version: 1.1.0
+    plugin_name: 'Apollo Users'
+    files: 30
+    loc: 13313
+    entry: plugins/apollo-users/apollo-users.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 11
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 21
+    shortcodes: 6
+    ajax_sites: 13
+    boot: [plugins_loaded, init, template_redirect]
+  - unit: apollo-wow
+    version: 1.0.1
+    plugin_name: 'Apollo WOW Reactions'
+    files: 6
+    loc: 626
+    entry: plugins/apollo-wow/apollo-wow.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 3
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 4
+    shortcodes: 2
+    ajax_sites: 0
+    boot: [plugins_loaded]
+  - unit: mu-plugin
+    version: 1.2.0
+    plugin_name: 'Apollo Brain (Must-Use)'
+    files: 16
+    loc: 4540
+    entry: mu-plugin/apollo-brain.php
+    abspath_guard: true
+    requires_plugins: null
+    classes: 3
+    cpt_sites: 0
+    tax_sites: 0
+    rest_sites: 0
+    shortcodes: 0
+    ajax_sites: 0
+    boot: [plugins_loaded, template_redirect, muplugins_loaded]

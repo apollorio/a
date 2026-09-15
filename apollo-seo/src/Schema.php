@@ -39,9 +39,11 @@ final class Schema {
 		$graph[] = self::organization();
 		$graph[] = self::webpage();
 
-		/* Breadcrumbs */
+		/* Breadcrumbs — skip for virtual CollectionPage (no crumb trail). */
+		$virtual = Meta::virtual_context();
+		$skip_crumbs = $virtual && ! empty( $virtual['schema_type'] ) && 'CollectionPage' === $virtual['schema_type'];
 		$breadcrumb = self::breadcrumb_list();
-		if ( $breadcrumb && Settings::get( 'schema_breadcrumbs', true ) ) {
+		if ( $breadcrumb && ! $skip_crumbs && Settings::get( 'schema_breadcrumbs', true ) ) {
 			$graph[] = $breadcrumb;
 		}
 
@@ -208,12 +210,14 @@ final class Schema {
 	private static function webpage(): array {
 		$home = home_url( '/' );
 		$url  = Meta::canonical_url();
-		$name = Meta::build_title();
 		$desc = Meta::build_description();
+		$virtual = Meta::virtual_context();
 
 		/* Determine type */
 		$type = 'WebPage';
-		if ( is_front_page() ) {
+		if ( $virtual && ! empty( $virtual['schema_type'] ) ) {
+			$type = (string) $virtual['schema_type'];
+		} elseif ( is_front_page() ) {
 			$type = 'WebPage';
 		} elseif ( is_singular() ) {
 			$type = 'ItemPage';
@@ -223,13 +227,34 @@ final class Schema {
 			$type = 'SearchResultsPage';
 		}
 
+		$name = Meta::build_title();
+		if ( $virtual && ! empty( $virtual['schema_name'] ) ) {
+			$name = (string) $virtual['schema_name'];
+		}
+
+		$site_name = Settings::get( 'site_title' ) ?: get_bloginfo( 'name' );
+		if ( $virtual && ! empty( $virtual['site_name'] ) ) {
+			$site_name = (string) $virtual['site_name'];
+		}
+
+		/* Portal CollectionPage: inline isPartOf WebSite (share-card shape). */
+		if ( $virtual && 'CollectionPage' === $type ) {
+			$is_part_of = array(
+				'@type' => 'WebSite',
+				'name'  => $site_name,
+				'url'   => $home,
+			);
+		} else {
+			$is_part_of = array( '@id' => $home . '#website' );
+		}
+
 		$schema = array(
 			'@type'      => $type,
 			'@id'        => $url . '#webpage',
 			'url'        => $url,
 			'name'       => $name,
-			'isPartOf'   => array( '@id' => $home . '#website' ),
-			'inLanguage' => get_locale(),
+			'isPartOf'   => $is_part_of,
+			'inLanguage' => 'pt_BR' === get_locale() || 'pt-BR' === get_locale() ? 'pt-BR' : get_locale(),
 		);
 
 		if ( $desc ) {
@@ -242,7 +267,7 @@ final class Schema {
 			$schema['dateModified']  = get_the_modified_date( 'c' );
 		}
 
-		if ( Settings::get( 'schema_breadcrumbs', true ) ) {
+		if ( Settings::get( 'schema_breadcrumbs', true ) && ! ( $virtual && 'CollectionPage' === $type ) ) {
 			$schema['breadcrumb'] = array( '@id' => $url . '#breadcrumb' );
 		}
 
@@ -355,24 +380,19 @@ final class Schema {
 		$url   = get_permalink( $post );
 		$image = Meta::resolve_image( array( 'post_id' => $id ) );
 
-		/* Event dates */
 		$start_date = get_post_meta( $id, '_event_start_date', true )
 			?: get_post_meta( $id, '_event_date', true );
 		$end_date   = get_post_meta( $id, '_event_end_date', true );
-		$start_time = get_post_meta( $id, '_event_start_time', true );
-		$end_time   = get_post_meta( $id, '_event_end_time', true );
+		$start_time = get_post_meta( $id, '_event_start_time', true ) ?: '00:00';
+		$end_time   = get_post_meta( $id, '_event_end_time', true ) ?: '23:59';
 
-		if ( $start_date && $start_time ) {
-			$start_date = $start_date . 'T' . $start_time;
-		}
-		if ( $end_date && $end_time ) {
-			$end_date = $end_date . 'T' . $end_time;
+		if ( ! $start_date ) {
+			return null;
 		}
 
-		/* Location */
-		$loc_id   = get_post_meta( $id, '_event_loc_id', true );
-		$loc_name = get_post_meta( $id, '_event_loc_name', true );
-		$loc_addr = get_post_meta( $id, '_event_address', true );
+		$tz        = wp_timezone_string();
+		$start_iso = self::event_to_iso8601( $start_date, $start_time, $tz );
+		$end_iso   = self::event_to_iso8601( $end_date ?: $start_date, $end_time, $tz );
 
 		$schema = array(
 			'@type'       => 'Event',
@@ -380,48 +400,125 @@ final class Schema {
 			'name'        => $title,
 			'url'         => $url,
 			'description' => $desc,
+			'startDate'   => $start_iso,
+			'endDate'     => $end_iso,
 		);
 
-		if ( $start_date ) {
-			$schema['startDate'] = $start_date;
-		}
-		if ( $end_date ) {
-			$schema['endDate'] = $end_date;
+		$event_status = get_post_meta( $id, '_event_status', true );
+		$is_gone      = (bool) get_post_meta( $id, '_event_is_gone', true );
+		if ( $is_gone ) {
+			$schema['eventStatus'] = 'https://schema.org/EventScheduled';
+		} elseif ( $event_status === 'cancelled' ) {
+			$schema['eventStatus'] = 'https://schema.org/EventCancelled';
+		} elseif ( $event_status === 'postponed' ) {
+			$schema['eventStatus'] = 'https://schema.org/EventPostponed';
+		} else {
+			$schema['eventStatus'] = 'https://schema.org/EventScheduled';
 		}
 
-		$schema['eventStatus']         = 'https://schema.org/EventScheduled';
-		$schema['eventAttendanceMode'] = 'https://schema.org/OfflineEventAttendanceMode';
+		$ticket_url = (string) get_post_meta( $id, '_event_ticket_url', true );
+		$attendance = 'https://schema.org/OfflineEventAttendanceMode';
+		if ( $ticket_url && ( str_contains( $ticket_url, 'online' ) || str_contains( $ticket_url, 'live' ) ) ) {
+			$attendance = 'https://schema.org/MixedEventAttendanceMode';
+		}
+		$schema['eventAttendanceMode'] = $attendance;
 
-		/* Image */
 		if ( ! empty( $image['url'] ) ) {
 			$schema['image'] = $image['url'];
 		}
 
-		/* Location */
-		if ( $loc_name || $loc_addr ) {
-			$place = array(
-				'@type' => 'Place',
-				'name'  => $loc_name ?: '',
-			);
-			if ( $loc_addr ) {
-				$place['address'] = array(
-					'@type'           => 'PostalAddress',
-					'streetAddress'   => $loc_addr,
-					'addressLocality' => 'Rio de Janeiro',
-					'addressRegion'   => 'RJ',
-					'addressCountry'  => 'BR',
+		$loc_id = (int) get_post_meta( $id, '_event_loc_id', true );
+		if ( $loc_id && function_exists( 'apollo_event_get_loc' ) ) {
+			$loc = apollo_event_get_loc( $id );
+			if ( $loc ) {
+				$place = array(
+					'@type' => 'Place',
+					'name'  => $loc['title'],
+					'url'   => get_permalink( $loc['id'] ),
 				);
+
+				$postal = array( '@type' => 'PostalAddress' );
+				if ( ! empty( $loc['address'] ) ) {
+					$postal['streetAddress'] = $loc['address'];
+				}
+				if ( ! empty( $loc['city'] ) ) {
+					$postal['addressLocality'] = $loc['city'];
+				} else {
+					$postal['addressLocality'] = 'Rio de Janeiro';
+				}
+				$postal['addressRegion']  = 'RJ';
+				$postal['addressCountry'] = 'BR';
+
+				if ( count( $postal ) > 1 ) {
+					$place['address'] = $postal;
+				}
+
+				if ( ! empty( $loc['lat'] ) && ! empty( $loc['lng'] ) ) {
+					$place['geo'] = array(
+						'@type'     => 'GeoCoordinates',
+						'latitude'  => (float) $loc['lat'],
+						'longitude' => (float) $loc['lng'],
+					);
+				}
+
+				$schema['location'] = $place;
 			}
-			$schema['location'] = $place;
 		}
 
-		/* Organizer */
+		$performers = array();
+		if ( function_exists( 'apollo_event_get_djs' ) ) {
+			foreach ( apollo_event_get_djs( $id ) as $dj ) {
+				$performer = array(
+					'@type' => 'MusicGroup',
+					'name'  => $dj['title'],
+					'url'   => get_permalink( $dj['id'] ),
+				);
+				if ( ! empty( $dj['image'] ) ) {
+					$performer['image'] = $dj['image'];
+				}
+				$performers[] = $performer;
+			}
+		}
+
+		if ( $performers ) {
+			$schema['performer'] = count( $performers ) === 1 ? $performers[0] : $performers;
+		}
+
+		$ticket_price = get_post_meta( $id, '_event_ticket_price', true );
+		if ( $ticket_url || ( $ticket_price !== '' && $ticket_price !== null ) ) {
+			$offers = array(
+				'@type'         => 'Offer',
+				'availability'  => 'https://schema.org/InStock',
+				'priceCurrency' => 'BRL',
+				'validFrom'     => $start_iso,
+			);
+			if ( $ticket_price !== '' && $ticket_price !== null ) {
+				$offers['price'] = (float) $ticket_price;
+			}
+			if ( $ticket_url ) {
+				$offers['url'] = esc_url( $ticket_url );
+			}
+			$schema['offers'] = $offers;
+		}
+
 		$schema['organizer'] = array(
 			'@type' => 'Organization',
 			'@id'   => home_url( '/' ) . '#organization',
 		);
 
 		return $schema;
+	}
+
+	/**
+	 * ISO 8601 date/time with site timezone (event singles).
+	 */
+	private static function event_to_iso8601( string $date, string $time, string $tz ): string {
+		try {
+			$dt = new \DateTimeImmutable( $date . 'T' . $time, new \DateTimeZone( $tz ) );
+			return $dt->format( \DateTime::ATOM );
+		} catch ( \Throwable $e ) {
+			return $date . 'T' . $time;
+		}
 	}
 
 	/**

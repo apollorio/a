@@ -33,7 +33,7 @@ $meses_pt = array(
 
 $dias_semana = array( 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom' );
 
-$first_day = mktime( var(--rgb-d), $month, 1, $year );
+$first_day = mktime( 0, 0, 0, $month, 1, $year );
 $days_in   = (int) date( 't', $first_day );
 $start_dow = ( (int) date( 'N', $first_day ) ) - 1;
 $today     = current_time( 'Y-m-d' );

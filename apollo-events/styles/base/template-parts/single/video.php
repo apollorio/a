@@ -29,10 +29,13 @@ if ( preg_match( '/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=))([a-zA
     <div class="event-video-frame">
         <?php if ( $youtube_id ) : ?>
             <iframe
-                src="<?php echo esc_url( 'https://www.youtube.com/embed/' . $youtube_id . '?autoplay=1&mute=1&loop=1&playlist=' . $youtube_id . '&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1' ); ?>"
+                class="apollo-yt-ambient"
+                src="<?php echo esc_url( 'https://www.youtube-nocookie.com/embed/' . $youtube_id . '?autoplay=1&mute=1&loop=1&playlist=' . $youtube_id . '&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1&disablekb=1&fs=0&cc_load_policy=0' ); ?>"
+                referrerpolicy="strict-origin-when-cross-origin"
                 allow="autoplay; encrypted-media"
                 allowfullscreen
                 loading="lazy"
+                tabindex="-1"
                 title="<?php esc_attr_e( 'Vídeo do evento', 'apollo-events' ); ?>">
             </iframe>
         <?php else : ?>

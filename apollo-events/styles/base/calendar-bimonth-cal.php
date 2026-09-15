@@ -42,7 +42,7 @@ $today       = current_time( 'Y-m-d' );
 			$cm -= 12;
 			++$cy; }
 
-		$first     = mktime( var(--rgb-d), $cm, 1, $cy );
+		$first     = mktime( 0, 0, 0, $cm, 1, $cy );
 		$days_in   = (int) date( 't', $first );
 		$start_dow = ( (int) date( 'N', $first ) ) - 1;
 		?>

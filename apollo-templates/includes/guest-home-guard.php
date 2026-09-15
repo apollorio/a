@@ -95,43 +95,52 @@ function apollo_templates_purge_guest_home_cache(): void {
 
 /**
  * Ensure Apache redirects guest / and /home to /casa BEFORE NFD EPC serves static cache.
+ * Never mutate Apollo production .htaccess (v3.1.0 already has §1.10.5).
  */
 function apollo_templates_ensure_guest_home_htaccess(): void {
     $htaccess = ABSPATH . '.htaccess';
     $contents = is_readable($htaccess) ? (string) file_get_contents($htaccess) : '';
 
-    $block = <<<'HTA'
-# BEGIN Apollo guest home
-<IfModule mod_rewrite.c>
-RewriteEngine On
-RewriteCond %{REQUEST_URI} ^/$
-RewriteCond %{QUERY_STRING} ^$
-RewriteCond %{HTTP_COOKIE} !wordpress_logged_in [NC]
-RewriteRule ^$ /casa [R=301,L]
-RewriteCond %{REQUEST_URI} ^/home/?$
-RewriteCond %{HTTP_COOKIE} !wordpress_logged_in [NC]
-RewriteRule ^home/?$ /casa [R=301,L]
-</IfModule>
-# END Apollo guest home
+    $is_apollo = str_contains($contents, 'APOLLO  ·  .htaccess')
+        || str_contains($contents, 'Version: 3.1.0')
+        || str_contains($contents, 'ErrorDocument 500 /erro/500/')
+        || str_contains($contents, '# ── END OF APOLLO .htaccess');
 
-HTA;
+    $already_has_casa = str_contains($contents, '/casa [R=301')
+        || str_contains($contents, '# BEGIN Apollo guest home')
+        || str_contains($contents, '§1.10.5');
 
-    if (str_contains($contents, '# BEGIN Apollo guest home')) {
+    // #region agent log
+    $log = (defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : '') . '/debug-161c5c.log';
+    @file_put_contents(
+        $log,
+        wp_json_encode(
+            array(
+                'sessionId'    => '161c5c',
+                'runId'        => 'htaccess-guard',
+                'hypothesisId' => 'H2',
+                'location'     => 'guest-home-guard.php:ensure_htaccess',
+                'message'      => 'guest home htaccess gate',
+                'data'         => array(
+                    'bytes'           => strlen($contents),
+                    'is_apollo'       => $is_apollo,
+                    'already_has_casa'=> $already_has_casa,
+                    'will_write'      => false,
+                ),
+                'timestamp'    => (int) round(microtime(true) * 1000),
+            )
+        ) . "\n",
+        FILE_APPEND
+    );
+    // #endregion
+
+    // Root .htaccess is owned by apollo-core (canonical v3.1.0). Never mutate it here.
+    if ($is_apollo || $already_has_casa) {
         return;
     }
-
-    if (str_contains($contents, '# BEGIN NFD EPC')) {
-        $new = preg_replace('/(# BEGIN NFD EPC)/', $block . "\n$1", $contents, 1);
-    } else {
-        $new = $block . "\n" . ltrim($contents);
+    if (function_exists('apollo_core_htaccess_enforce')) {
+        apollo_core_htaccess_enforce();
     }
-
-    if (! is_string($new) || $new === $contents) {
-        return;
-    }
-
-    // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
-    @file_put_contents($htaccess, $new);
 }
 
 /**

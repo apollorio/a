@@ -1,0 +1,332 @@
+{
+  "$schema": "https://doc.apollo.rio.br/schemas/plugin-registry.json",
+  "bible": "apollo-whatsapp + WAHA GOWS — source of truth for namings, slugs, hooks, REST, meta, screens, security, join chain",
+  "version": "1.0.0",
+  "updated": "2026-09-02",
+  "status": "SSOT-LOCKED",
+  "verdict": {
+    "best_solution": true,
+    "why": "Do not clone WhatsApp Web. WP pane is the operator UI. WAHA Docker is the session. Official Cloud API cannot add to a 200-person group (max 8, invite-only). Chatwoot/Typebot/n8n/keeper are phase-2. Operation number != Apollo verified Business number.",
+    "engine": "WAHA 2026.8.2+ GOWS",
+    "plugin": "apollo-whatsapp",
+    "session": "apollo",
+    "not": ["apollo-waha", "apollo-whats", "apollo-channel", "wawp", "evolution-in-wp", "baileys-in-php"]
+  },
+  "plugin": {
+    "name": "Apollo WhatsApp",
+    "slug": "apollo-whatsapp",
+    "textdomain": "apollo-whatsapp",
+    "prefix": "apollo_wa_",
+    "capability": "apollo_manage_whatsapp",
+    "capability_fallback": "manage_options",
+    "depends": ["apollo-core"],
+    "integrates": ["apollo-login", "apollo-users", "apollo-events", "apollo-admin"],
+    "provides": ["whatsapp-session-bridge", "group-join-queue", "operator-pane", "keyword-flow-dm"],
+    "register_meta_via": "apollo-core",
+    "no_cpt_outside_core": true
+  },
+  "processes": {
+    "A_wordpress": "LocalWP or VPS — PHP plugins only, no WA session",
+    "B_waha": "Docker 24h Linux — session apollo, engine GOWS, volume ./sessions",
+    "C_phone": "Operation number WhatsApp app — open once per week — NEVER the verified Apollo Business number"
+  },
+  "waha": {
+    "image": "devlikeapro/waha",
+    "min_version": "2026.8.2",
+    "engine": "GOWS",
+    "session_name": "apollo",
+    "apps": ["Brazilian Phone Numbers"],
+    "env": {
+      "WAHA_API_KEY": "sha512:{HASH}",
+      "WAHA_API_KEY_PLAIN": "only-in-wp-options-not-in-git",
+      "WAHA_DASHBOARD_ENABLED": "true-in-lab-false-in-prod-if-unused",
+      "WAHA_GOWS_KEEPALIVE_INTERVAL_MIN": "20",
+      "WAHA_GOWS_KEEPALIVE_INTERVAL_MAX": "25",
+      "WHATSAPP_HOOK_HMAC_KEY": "prefer-per-session-hmac-instead"
+    },
+    "bind": "127.0.0.1:3000 or private docker network — not public internet"
+  },
+  "screens": {
+    "1_settings": {
+      "slug": "apollo-wa-settings",
+      "parent": "apollo-admin",
+      "menu": "Apollo → WhatsApp",
+      "who": "admin",
+      "cards": ["connection", "group", "operation-number", "behavior"]
+    },
+    "2_session_strip": {
+      "slug": "apollo-wa-session-strip",
+      "parent": "apollo-wa-settings",
+      "who": "admin",
+      "states": ["WORKING", "SCAN_QR_CODE", "STARTING", "FAILED", "STOPPED"]
+    },
+    "3_join_queue": {
+      "slug": "apollo-wa-queue",
+      "menu": "Apollo → WhatsApp → Fila",
+      "who": "admin",
+      "approve_label": "Processar entrada"
+    },
+    "4_pane": {
+      "slug": "apollo-wa-pane",
+      "menu": "Apollo → WhatsApp → Conversas",
+      "who": "admin",
+      "tabs": ["group", "dms"]
+    },
+    "5_flows": {
+      "slug": "apollo-wa-flows",
+      "menu": "Apollo → WhatsApp → Fluxos",
+      "who": "admin"
+    },
+    "6_join_button": {
+      "slug": "apollo-wa-join",
+      "shortcode": "[apollo_wa_join]",
+      "who": "logged-in user with verified phone"
+    },
+    "7_user_requests": {
+      "slug": "apollo-wa-my-requests",
+      "template_part": "apollo-whatsapp/my-requests",
+      "who": "logged-in user"
+    },
+    "L_waha_dashboard": {
+      "slug": "waha-dashboard",
+      "url": "http://127.0.0.1:3000",
+      "who": "operator lab only"
+    }
+  },
+  "rest": {
+    "namespace": "apollo/v1",
+    "routes": {
+      "webhook": {
+        "method": "POST",
+        "path": "/wa/webhook",
+        "full": "/wp-json/apollo/v1/wa/webhook",
+        "auth": "hmac-sha512-fail-closed",
+        "permission_callback": "apollo_wa_verify_webhook",
+        "cookie_auth": false
+      },
+      "session_ping": { "method": "GET", "path": "/wa/session", "cap": "apollo_manage_whatsapp" },
+      "groups_list": { "method": "GET", "path": "/wa/groups", "cap": "apollo_manage_whatsapp" },
+      "group_create": { "method": "POST", "path": "/wa/groups", "cap": "apollo_manage_whatsapp" },
+      "queue_list": { "method": "GET", "path": "/wa/queue", "cap": "apollo_manage_whatsapp" },
+      "queue_process": { "method": "POST", "path": "/wa/queue/(?P<id>\\d+)/process", "cap": "apollo_manage_whatsapp", "nonce": true },
+      "queue_reject": { "method": "POST", "path": "/wa/queue/(?P<id>\\d+)/reject", "cap": "apollo_manage_whatsapp", "nonce": true },
+      "queue_resend_invite": { "method": "POST", "path": "/wa/queue/(?P<id>\\d+)/invite", "cap": "apollo_manage_whatsapp", "nonce": true },
+      "pane_threads": { "method": "GET", "path": "/wa/pane/threads", "cap": "apollo_manage_whatsapp" },
+      "pane_messages": { "method": "GET", "path": "/wa/pane/threads/(?P<jid>[^/]+)/messages", "cap": "apollo_manage_whatsapp" },
+      "pane_send": { "method": "POST", "path": "/wa/pane/send", "cap": "apollo_manage_whatsapp", "nonce": true },
+      "pane_mute": { "method": "POST", "path": "/wa/pane/threads/(?P<jid>[^/]+)/mute", "cap": "apollo_manage_whatsapp", "nonce": true },
+      "join_request": { "method": "POST", "path": "/wa/join", "auth": "logged-in + verified phone + nonce" },
+      "my_requests": { "method": "GET", "path": "/wa/me/requests", "auth": "logged-in" }
+    }
+  },
+  "hooks": {
+    "actions": [
+      "apollo/whatsapp/session_status",
+      "apollo/whatsapp/message_in",
+      "apollo/whatsapp/message_out",
+      "apollo/whatsapp/queue_requested",
+      "apollo/whatsapp/queue_processed",
+      "apollo/whatsapp/join_added",
+      "apollo/whatsapp/join_invited",
+      "apollo/whatsapp/join_rejected",
+      "apollo/whatsapp/flow_hit",
+      "apollo/whatsapp/handoff",
+      "apollo/whatsapp/wow_reaction"
+    ],
+    "filters": [
+      "apollo/whatsapp/normalize_br_phone",
+      "apollo/whatsapp/resolve_jid",
+      "apollo/whatsapp/keyword_map",
+      "apollo/whatsapp/send_text",
+      "apollo/whatsapp/queue_status_label"
+    ],
+    "listens": [
+      "apollo/login/phone_verified",
+      "apollo/event/published"
+    ]
+  },
+  "meta_user": {
+    "_apollo_whatsapp_phone": "canonical digits E.164-ish 55...",
+    "_apollo_whatsapp_optin": "1|0 explicit opt-in",
+    "_apollo_wa_candidates": "json array of 12 and 13 digit BR forms",
+    "_apollo_wa_jid": "resolved chatId from check-exists @c.us or @s.whatsapp.net",
+    "_apollo_wa_lid": "resolved @lid when present",
+    "_apollo_wa_flow_state": "IDLE|FLOW|HUMAN",
+    "_apollo_wa_flow_until": "unix HUMAN expiry",
+    "_apollo_wa_pane_mute": "1 when admin has thread open"
+  },
+  "options": {
+    "autoload_false": [
+      "apollo_wa_api_key",
+      "apollo_wa_hmac_key"
+    ],
+    "keys": {
+      "apollo_wa_base_url": "http://127.0.0.1:3000",
+      "apollo_wa_api_key": "plain key — never front, never git",
+      "apollo_wa_hmac_key": "48+ chars wp_generate_password on activate",
+      "apollo_wa_session": "apollo",
+      "apollo_wa_group_id": "120363...@g.us",
+      "apollo_wa_engine": "GOWS",
+      "apollo_wa_mirror_group": "1",
+      "apollo_wa_bot_dm": "1",
+      "apollo_wa_group_anchor": "1",
+      "apollo_wa_send_gap_seconds": "10",
+      "apollo_wa_sends_paused": "0"
+    }
+  },
+  "store": {
+    "queue_table": "apollo_wa_queue",
+    "register_via": "apollo-core",
+    "queue_columns": [
+      "id",
+      "user_id",
+      "phone_raw",
+      "candidates_json",
+      "jid",
+      "lid",
+      "status",
+      "invite_code",
+      "invite_expires",
+      "last_error",
+      "created_at",
+      "updated_at",
+      "processed_by"
+    ],
+    "queue_statuses": [
+      "queued",
+      "adding",
+      "added",
+      "invited",
+      "pending_approval",
+      "already",
+      "blocked",
+      "rejected",
+      "session_down"
+    ],
+    "pane_table": "apollo_wa_messages",
+    "pane_columns": [
+      "id",
+      "thread_jid",
+      "direction",
+      "from_jid",
+      "from_lid",
+      "from_me",
+      "body",
+      "wa_message_id",
+      "webhook_request_id",
+      "created_at"
+    ]
+  },
+  "webhook": {
+    "events": [
+      "session.status",
+      "message",
+      "message.any",
+      "message.reaction",
+      "group.v2.participants"
+    ],
+    "headers": {
+      "X-Webhook-Hmac": "sha512 hex of raw body",
+      "X-Webhook-Hmac-Algorithm": "sha512 only",
+      "X-Webhook-Request-Id": "idempotency key",
+      "X-Webhook-Timestamp": "unix ms"
+    },
+    "pipeline": [
+      "https-prod",
+      "read-php-input-raw",
+      "require-hmac-header-401",
+      "allowlist-sha512-401",
+      "hash_hmac-sha512 + hash_equals",
+      "timestamp-window-300s-401",
+      "transient-apollo_wa_hook_{id}-ttl-10min-200-empty-if-replay",
+      "session-name-must-match-option",
+      "body-max-256kb-413",
+      "switch-event-no-eval-no-raw-sql"
+    ],
+    "transient_prefix": "apollo_wa_hook_",
+    "rate_limit": "30 events/min/session"
+  },
+  "outbound_waha": {
+    "header": "X-Api-Key",
+    "endpoints": {
+      "session_get": "GET /api/sessions/apollo",
+      "check_exists": "GET /api/contacts/check-exists?phone={n}&session=apollo",
+      "upsert_contact": "PUT /api/apollo/contacts/{chatId}",
+      "group_create": "POST /api/apollo/groups",
+      "groups_list": "GET /api/apollo/groups",
+      "participants_add": "POST /api/apollo/groups/{groupId}/participants/add",
+      "invite_code": "GET /api/apollo/groups/{groupId}/invite-code",
+      "join_requests": "GET /api/apollo/groups/{groupId}/participants/join-requests",
+      "join_approve": "POST /api/apollo/groups/{groupId}/participants/join-requests/approve",
+      "send_text": "POST /api/sendText",
+      "start_typing": "POST /api/startTyping",
+      "stop_typing": "POST /api/stopTyping"
+    }
+  },
+  "join_chain": [
+    "session must be WORKING else status session_down",
+    "resolve BR candidates 12 and 13 digits — never add 9 to landline",
+    "GET check-exists both forms — trust returned chatId",
+    "store _apollo_wa_jid and _apollo_wa_lid",
+    "PUT contact twice with 3s pause",
+    "wait 5s",
+    "POST participants/add",
+    "HTTP 200 and no Error field → added",
+    "409 → already",
+    "Error 403 + AddRequest.Code → sendText DM https://chat.whatsapp.com/{Code} → invited",
+    "403 without Code → GET invite-code → invited",
+    "never retry add in a loop",
+    "never treat body Error 403 as session logout"
+  ],
+  "flows": {
+    "states": ["IDLE", "FLOW", "HUMAN"],
+    "human_ttl_seconds": 7200,
+    "group_policy": "never auto-reply every group message",
+    "group_anchors": ["!evento", "!apollo", "@apollo"],
+    "whisper": "group anchor replies in DM only",
+    "defaults": [
+      { "keys": ["evento", "hoje", "rolê"], "listen": ["dm", "group_anchor"], "action": "events.upcoming", "reply": "dm" },
+      { "keys": ["entrar", "grupo"], "listen": ["dm"], "action": "join.queue", "reply": "dm" },
+      { "keys": ["humano", "atendente"], "listen": ["dm"], "action": "handoff", "reply": "dm" },
+      { "keys": ["sair", "para"], "listen": ["dm"], "action": "idle", "reply": "dm" }
+    ],
+    "admin_composer_commands": ["/grupo", "/silent", "/humano", "/dm"]
+  },
+  "br_phone": {
+    "country": "55",
+    "mobile": "55 + DDD2 + 9 + 8 = 13 digits",
+    "legacy_wa_id": "55 + DDD2 + 8 = 12 digits pre-2012 accounts",
+    "landline": "55 + DDD2 + 8 starting 2-5 — do not insert 9"
+  },
+  "security": {
+    "fail_closed": true,
+    "hmac_min_bytes": 32,
+    "compare": "hash_equals",
+    "webhook_never_approves_queue": true,
+    "admin_actions_need_nonce_and_cap": true,
+    "no_token_in_querystring": true,
+    "no_secrets_in_dom": true,
+    "media_fetch_allowlist": "waha base host only + X-Api-Key",
+    "apollo_rule": "PHP array_object SSOT — HTML render only"
+  },
+  "cron_later": {
+    "hook": "apollo_cron_wa_digest",
+    "requires": "session WORKING and apollo_wa_sends_paused=0",
+    "reuses": "pane sendText to groupId",
+    "not_in_mvp": true
+  },
+  "files_target": [
+    "apollo-whatsapp.php",
+    "inc/class-client.php",
+    "inc/class-webhook.php",
+    "inc/class-queue.php",
+    "inc/class-pane.php",
+    "inc/class-flows.php",
+    "inc/class-phone.php",
+    "admin/settings.php",
+    "admin/queue.php",
+    "admin/pane.php",
+    "admin/flows.php",
+    "public/join.php"
+  ]
+}

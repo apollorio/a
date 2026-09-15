@@ -1051,7 +1051,7 @@
       "description": "RSVP widget + vibe popup + warm-up mural with composer, GSAP animations, skeleton loading, optimistic UI"
     }
   ],
-  "version": "1.7.5",
+  "version": "1.7.16",
   "ajax": {
     "priv": [
       "apollo_event_save_settings"
@@ -3743,5 +3743,11 @@
       "_sandbox/build-portal-harness.mjs",
       "apollo-events.php (version bump 1.7.1 -> 1.7.2)"
     ]
+  },
+  "$version_synced": {
+    "date": "2026-08-31",
+    "from": "1.7.5",
+    "to": "1.7.16",
+    "source": "disk docblock via doctor.js"
   }
 }

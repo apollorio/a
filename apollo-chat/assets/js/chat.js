@@ -77,6 +77,9 @@
     let messages        = [];
     let pollTimer       = null;
     let presenceTimer   = null;
+    let editingMessageId = null; // while set, skip DOM wipe so inline edit survives poll/react
+    let knownMsgIds     = new Set(); // for entrance animation (new balloons only)
+    let suppressEnterAnim = false; // true while loading a full thread history
     let lastPollTS      = '';
     let replyTo         = null;   // { id, sender_name, text }
     let pendingGif      = null;   // { url, preview, title }
@@ -116,7 +119,11 @@
         });
         if (!res.ok) {
             const err = await res.json().catch(() => ({}));
-            throw new Error(err.error || err.message || `HTTP ${res.status}`);
+            const msg = err.error || err.message || `HTTP ${res.status}`;
+            const e = new Error(msg);
+            e.status = res.status;
+            e.payload = err;
+            throw e;
         }
         return res.json();
     }
@@ -142,7 +149,9 @@
     }
 
     function linkify(text) {
-        const escaped = esc(text);
+        /* Trim trailing whitespace/newlines — leftover \n → <br> was inflating
+           bubble height and pushing the timestamp far from the message text. */
+        const escaped = esc(String(text || '').replace(/[ \t\u00a0]+\n/g, '\n').replace(/\n+$/g, '').replace(/^\n+/g, ''));
         return escaped.replace(
             /(https?:\/\/[^\s<]+)/g,
             '<a href="$1" target="_blank" rel="noopener">$1</a>'
@@ -317,10 +326,14 @@
             const tid    = t.thread_id || t.id;
             const active = tid == activeThreadId ? ' active' : '';
             const unread = t.unread_count > 0 ? ' unread' : '';
-            const muted  = t.is_muted && parseInt(t.is_muted, 10) === 1 ? ' muted' : '';
+            const isMuted = t.is_muted && parseInt(t.is_muted, 10) === 1;
+            const muted  = isMuted ? ' muted' : '';
             const isGrp  = t.is_group;
             const online = !isGrp && t.is_online;
             const onlineDot = online ? '<span class="ac-online-dot"></span>' : '';
+            const muteMark = isMuted
+                ? '<i class="ri-ghost-4-fill ac-thread-muted-icon" title="Conversa silenciada" aria-label="Conversa silenciada"></i>'
+                : '';
 
             // Avatar
             let avatarHtml;
@@ -350,7 +363,7 @@
                 ${avatarHtml}
                 <div class="ac-thread-body">
                     <div class="ac-thread-row">
-                        <span class="ac-thread-name">${esc(t.display_name || 'Conversa')}</span>
+                        <span class="ac-thread-name">${esc(t.display_name || 'Conversa')}${muteMark}</span>
                         <span class="ac-thread-time">${tempoHTML(t.time_ago || '')}</span>
                     </div>
                     <div class="ac-thread-meta">
@@ -411,20 +424,36 @@
             }
         }
 
-        // Show header + compose
+        // Show header + compose (hidden attr — never rely on empty display '')
         const header = $('.ac-chat-header');
         const compose = $('.ac-compose');
-        if (header) header.style.display = '';
-        if (compose) compose.style.display = '';
+        const mainPane = $('.ac-main');
+        if (mainPane) mainPane.classList.add('is-open');
+        if (header) {
+            header.hidden = false;
+            header.setAttribute('aria-hidden', 'false');
+        }
+        if (compose) {
+            compose.hidden = false;
+            compose.setAttribute('aria-hidden', 'false');
+        }
 
         try {
             const data = await api(`/threads/${threadId}`);
             messages = data.messages || [];
             activeThreadMeta = data.meta || {};
+            // Server may consolidate duplicate DMs → switch to canonical id.
+            if (data.thread_id && parseInt(data.thread_id, 10) > 0) {
+                activeThreadId = parseInt(data.thread_id, 10);
+                threadId = activeThreadId;
+            }
 
             renderChatHeader();
             if (_msgLoadingFX) { _msgLoadingFX.stop(); _msgLoadingFX = null; }
+            knownMsgIds = new Set();
+            suppressEnterAnim = true;
             renderMessages();
+            suppressEnterAnim = false;
             scrollToBottom();
 
             // Mark as read
@@ -442,9 +471,28 @@
             const input = $('.ac-compose-input');
             if (input && !isMobile) input.focus();
 
-            // Update URL without reload
+            // Update URL without reload.
+            //
+            // Prefer the handle: /mensagens/@login rather than /mensagens/42.
+            // This is the URL the user can see and copy, so if it stays numeric
+            // the naming stops at the server boundary and every link shared out
+            // of the app is a surrogate key again.
+            //
+            // Groups keep the numeric form — there is no single counterpart to
+            // name. So does any thread whose payload predates other_user_login,
+            // which is why this falls back instead of assuming the field.
             if (window.history.replaceState) {
-                window.history.replaceState(null, '', '/mensagens/' + threadId);
+                const openThreadData = threads.find(x => parseInt(x.thread_id || x.id, 10) === threadId);
+                const peerLogin      = openThreadData && !openThreadData.is_group
+                    ? (openThreadData.other_user_login || '')
+                    : '';
+                window.history.replaceState(
+                    null,
+                    '',
+                    peerLogin
+                        ? '/mensagens/@' + encodeURIComponent(peerLogin)
+                        : '/mensagens/' + threadId
+                );
             }
 
             // BroadcastChannel notify
@@ -478,28 +526,59 @@
         // Find thread in list
         const t = threads.find(th => (th.thread_id || th.id) == activeThreadId) || {};
         const meta = activeThreadMeta || {};
-        const name = t.display_name || meta.subject || 'Conversa';
-        const avatar = t.avatar_url || '';
-        const isOnline = !t.is_group && t.is_online;
-        const statusText = t.is_group
-            ? `${t.member_count || ''} participantes`
-            : (isOnline ? 'Online' : 'Offline');
-        const statusClass = isOnline ? ' online' : '';
+
+        /*
+         * Fall back to the thread payload's own participants.
+         *
+         * The inbox list is the primary source and is loaded before any thread
+         * opens (init: loadThreadList().then(openThread)), but it does NOT
+         * always contain this thread. /mensagens/@handle CREATES the DM when
+         * none exists (Plugin::resolve_user_thread → find_or_create), so on a
+         * first-ever conversation the list was fetched before the row existed
+         * and `t` is empty — the chip then read "Conversa" with a blank avatar,
+         * on the one screen whose entire job is to say who you are talking to.
+         *
+         * apollo_chat_get_thread_meta() already returns every participant with
+         * display_name, user_login, avatar_url and is_online, so the answer is
+         * in the response we just awaited. Take the first participant who is
+         * not me.
+         */
+        const isGroup = t.is_group !== undefined ? t.is_group : !!meta.is_group;
+        const peer = !isGroup
+            ? (meta.participants || []).find(p => parseInt(p.user_id, 10) !== MY_ID) || {}
+            : {};
+
+        const name = t.display_name || peer.display_name || meta.group_name || meta.subject || 'Conversa';
+        const avatar = t.avatar_url || peer.avatar_url || '';
+        const handle = !isGroup ? (t.other_user_login || peer.user_login || '') : '';
+        const isOnline = !isGroup && (t.is_online !== undefined ? !!t.is_online : !!peer.is_online);
+
+        /* Status eyebrow: handle or group size only — presence is a name-adjacent dot. */
+        const statusHTML = isGroup
+            ? esc(`${t.member_count || (meta.participants || []).length || ''} participantes`)
+            : (handle ? `<span class="ac-header-handle">@${esc(handle)}</span>` : '');
+
+        const presenceDot = !isGroup
+            ? `<span class="ac-presence-dot${isOnline ? ' is-online' : ''}" title="${isOnline ? 'Online' : 'Offline'}" aria-label="${isOnline ? 'Online' : 'Offline'}"></span>`
+            : '';
 
         header.innerHTML = `
-            <button class="ac-icon-btn ac-back-btn" title="Voltar"><span class="navbar-highlighted"><i class="ri-arrow-left-line"></i></span></button>
-            <div class="ac-header-avatar">
-                <img src="${esc(avatar)}" alt="">
-                ${isOnline ? '<span class="ac-online-dot"></span>' : ''}
-            </div>
-            <div class="ac-header-info">
-                <div class="ac-header-name">${esc(name)}</div>
-                <div class="ac-header-status${statusClass}">${esc(statusText)}</div>
-            </div>
-            <div class="ac-header-actions">
-                <button class="ac-icon-btn" data-action="search" title="Buscar"><span class="navbar-highlighted"><i class="ri-search-line"></i></span></button>
-                ${t.is_group ? '<button class="ac-icon-btn" data-action="members" title="Membros"><span class="navbar-highlighted"><i class="ri-group-line"></i></span></button>' : ''}
-                <button class="ac-icon-btn" data-action="more" title="Mais opções"><span class="navbar-highlighted"><i class="ri-more-2-fill"></i></span></button>
+            <button class="ac-back-btn" type="button" title="Voltar" aria-label="Voltar">
+                <i class="ri-arrow-left-wide-line" aria-hidden="true"></i>
+            </button>
+            <div class="ac-peer-chip">
+                <div class="ac-header-avatar">
+                    ${avatar ? `<img src="${esc(avatar)}" alt="">` : `<span class="ac-avatar-fallback"><i class="ri-user-3-line"></i></span>`}
+                </div>
+                <div class="ac-header-info">
+                    <div class="ac-header-name"><span class="ac-header-name-text">${esc(name)}</span>${presenceDot}</div>
+                    <div class="ac-header-status">${statusHTML}</div>
+                </div>
+                <div class="ac-header-actions">
+                    <button class="ac-icon-btn" data-action="search" title="Buscar" type="button" aria-label="Buscar"><i class="ri-search-line"></i></button>
+                    ${isGroup ? '<button class="ac-icon-btn" data-action="members" title="Membros" type="button" aria-label="Membros"><i class="ri-group-line"></i></button>' : ''}
+                    <button class="ac-icon-btn" data-action="more" title="Mais opções" type="button" aria-label="Mais opções"><i class="ri-more-2-fill"></i></button>
+                </div>
             </div>`;
 
         // Back button (mobile)
@@ -523,7 +602,7 @@
         $$('[data-action]', header).forEach(btn => {
             btn.addEventListener('click', () => {
                 const action = btn.dataset.action;
-                if (action === 'search') toggleSearch();
+                if (action === 'search') toggleSearch(btn);
                 if (action === 'members') openMembersModal();
                 if (action === 'more') openThreadMenu();
             });
@@ -538,8 +617,10 @@
         const area = $('.ac-messages');
         if (!area) return;
 
+
         if (!messages.length) {
             area.innerHTML = '<div class="ac-empty-chat"><i class="ri-chat-smile-2-line"></i><p>Envie a primeira mensagem!</p></div>';
+            knownMsgIds = new Set();
             return;
         }
 
@@ -551,7 +632,9 @@
             oldestMsgId = parseInt(messages[0].id, 10);
         }
 
+        const nextIds = new Set();
         messages.forEach((m, idx) => {
+            nextIds.add(String(m.id));
             const msgDate = formatDate(m.created_at);
             if (msgDate !== lastDate) {
                 html += `<div class="ac-date-sep"><span>${esc(msgDate)}</span></div>`;
@@ -568,10 +651,53 @@
             </span>
         </div>`;
 
+        const freshIds = [];
+        nextIds.forEach(function (id) {
+            if (!knownMsgIds.has(id)) freshIds.push(id);
+        });
+
         area.innerHTML = html;
+        knownMsgIds = nextIds;
 
         // Attach bubble event listeners
         bindMessageEvents(area);
+
+        // Fancy slide-up only for newly appeared balloons (mine + received)
+        freshIds.forEach(function (id) {
+            const row = area.querySelector('.ac-msg-row[data-mid="' + id + '"]');
+            if (!row) return;
+            if (suppressEnterAnim) {
+                row.dataset.acEntered = '1';
+                return;
+            }
+            animateMsgEnter(row);
+        });
+    }
+
+    /** Balloon rises from below the fold — sent & received. */
+    function animateMsgEnter(row) {
+        if (!row || row.dataset.acEntered === '1') return;
+        row.dataset.acEntered = '1';
+        if (window.ApolloChatMotion && typeof ApolloChatMotion.msgEnter === 'function') {
+            ApolloChatMotion.msgEnter(row);
+            return;
+        }
+        const bubble = row.querySelector('.ac-bubble') || row;
+        if (typeof gsap === 'undefined') {
+            return;
+        }
+        gsap.fromTo(bubble, {
+            opacity: 0,
+            y: 64,
+            scale: 0.94
+        }, {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.58,
+            ease: 'power3.out',
+            clearProps: 'transform'
+        });
     }
 
     function renderMessageBubble(m) {
@@ -610,8 +736,11 @@
         if (m.reply_to_preview) {
             const rp = m.reply_to_preview;
             replyHtml = `<div class="ac-reply-quote" data-goto-msg="${rp.id || ''}">
-                <div class="ac-reply-sender">${esc(rp.sender_name || rp.sender || '')}</div>
-                <div class="ac-reply-text">${esc(rp.message || rp.preview || '')}</div>
+                <span class="ac-reply-rail" aria-hidden="true"></span>
+                <div class="ac-reply-body">
+                    <div class="ac-reply-sender">${esc(rp.sender_name || rp.sender || '')}</div>
+                    <div class="ac-reply-text">${esc(rp.message || rp.preview || '')}</div>
+                </div>
             </div>`;
         }
 
@@ -676,7 +805,8 @@
             ${isMine ? '<button data-act="delete" title="Apagar"><i class="ri-delete-bin-line"></i></button>' : ''}
         </div>`;
 
-        return `<div class="ac-msg-row ${dir}" data-mid="${mid}">
+        const hasReact = reactList.length > 0;
+        return `<div class="ac-msg-row ${dir}${hasReact ? ' has-reactions' : ''}" data-mid="${mid}">
             ${avatarHtml}
             <div class="ac-bubble">
                 ${senderHtml}
@@ -689,8 +819,8 @@
                     ${receiptHtml}
                 </div>
                 ${actionsHtml}
+                ${reactionsHtml}
             </div>
-            ${reactionsHtml}
         </div>`;
     }
 
@@ -786,8 +916,17 @@
         }
         const header = $('.ac-chat-header');
         const compose = $('.ac-compose');
-        if (header) header.style.display = 'none';
-        if (compose) compose.style.display = 'none';
+        const mainPane = $('.ac-main');
+        if (mainPane) mainPane.classList.remove('is-open');
+        if (header) {
+            header.hidden = true;
+            header.setAttribute('aria-hidden', 'true');
+            header.innerHTML = '';
+        }
+        if (compose) {
+            compose.hidden = true;
+            compose.setAttribute('aria-hidden', 'true');
+        }
     }
 
     /* ═══════════════════════════════════════════════════════════════════
@@ -830,16 +969,34 @@
         };
 
         messages.push(optimistic);
+        knownMsgIds.add(String(tempId));
         const area = $('.ac-messages');
         if (area) {
-            // Remove typing indicator temporarily, append message, re-add
+            const empty = area.querySelector('.ac-empty-chat');
+            if (empty) empty.remove();
             const typing = $('#ac-typing', area);
             const msgHtml = renderMessageBubble(optimistic);
             if (typing) typing.insertAdjacentHTML('beforebegin', msgHtml);
             else area.insertAdjacentHTML('beforeend', msgHtml);
             bindMessageEvents(area);
+            const row = area.querySelector('.ac-msg-row[data-mid="' + tempId + '"]');
+            scrollToBottom(false);
+            if (row) {
+                if (!pendingGif && window.ApolloChatMotion && typeof ApolloChatMotion.flySend === 'function') {
+                    ApolloChatMotion.flySend({
+                        fromEl: input,
+                        destRow: row,
+                        text: text,
+                        composeForm: $('.ac-compose-form'),
+                        sendBtn: $('.ac-send-btn'),
+                    });
+                } else {
+                    animateMsgEnter(row);
+                }
+            }
+        } else {
+            scrollToBottom(true);
         }
-        scrollToBottom(true);
 
         // Clear input state
         input.value = '';
@@ -902,13 +1059,86 @@
     }
 
     /* ═══════════════════════════════════════════════════════════════════
-       EDIT MESSAGE
+       EDIT MESSAGE — inline in bubble (no browser prompt)
        ═══════════════════════════════════════════════════════════════════ */
 
     function promptEditMessage(msg) {
-        const newText = prompt('Editar mensagem:', msg.message || '');
-        if (newText === null || newText.trim() === '' || newText.trim() === (msg.message || '').trim()) return;
-        editMessage(msg.id, newText.trim());
+        const mid = parseInt(msg.id, 10);
+        const row = document.querySelector('.ac-msg-row[data-mid="' + mid + '"]');
+        if (!row) {
+            return;
+        }
+        const bubble = row.querySelector('.ac-bubble');
+        const content = bubble && bubble.querySelector('.ac-msg-content');
+        if (!bubble || !content || bubble.classList.contains('is-editing')) return;
+
+        // Cancel any other inline edit first
+        if (editingMessageId && editingMessageId !== mid) {
+            editingMessageId = null;
+            renderMessages();
+            return promptEditMessage(msg);
+        }
+
+        const original = String(msg.message || '');
+        editingMessageId = mid;
+        bubble.classList.add('is-editing');
+
+        const wrap = document.createElement('div');
+        wrap.className = 'ac-inline-edit';
+        wrap.innerHTML =
+            '<textarea class="ac-inline-edit-input" rows="2" aria-label="Editar mensagem"></textarea>' +
+            '<button type="button" class="ac-inline-save" title="Salvar" aria-label="Salvar">' +
+            '<i class="ri-check-line"></i></button>';
+
+        const ta = wrap.querySelector('textarea');
+        ta.value = original;
+        content.replaceWith(wrap);
+
+
+        const finish = () => {
+            editingMessageId = null;
+            bubble.classList.remove('is-editing');
+        };
+
+        const save = async () => {
+            const text = ta.value.trim();
+            if (!text) { toast('Mensagem vazia'); return; }
+            if (text === original.trim()) {
+                finish();
+                renderMessages();
+                return;
+            }
+            await editMessage(msg.id, text);
+        };
+
+        const cancel = () => {
+            finish();
+            renderMessages();
+        };
+
+        wrap.querySelector('.ac-inline-save').addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            save();
+        });
+        ta.addEventListener('mousedown', (e) => e.stopPropagation());
+        ta.addEventListener('click', (e) => e.stopPropagation());
+        ta.addEventListener('keydown', (e) => {
+            e.stopPropagation();
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); save(); }
+            if (e.key === 'Escape') { e.preventDefault(); cancel(); }
+        });
+
+        requestAnimationFrame(function () {
+            ta.focus();
+            try { ta.setSelectionRange(ta.value.length, ta.value.length); } catch (eSel) {}
+            ta.style.height = 'auto';
+            ta.style.height = Math.min(140, Math.max(28, ta.scrollHeight)) + 'px';
+        });
+        ta.addEventListener('input', function () {
+            ta.style.height = 'auto';
+            ta.style.height = Math.min(140, Math.max(28, ta.scrollHeight)) + 'px';
+        });
     }
 
     async function editMessage(mid, text) {
@@ -923,8 +1153,8 @@
                 m.message = text;
                 m.is_edited = true;
             }
+            editingMessageId = null;
             renderMessages();
-            scrollToBottom();
             toast('Mensagem editada', 'ri-pencil-line');
         } catch (e) {
             toast('Erro ao editar', 'ri-error-warning-line');
@@ -949,7 +1179,6 @@
                 m.message = '';
             }
             renderMessages();
-            scrollToBottom();
             toast('Mensagem apagada', 'ri-delete-bin-line');
         } catch (e) {
             toast('Erro ao apagar', 'ri-error-warning-line');
@@ -968,17 +1197,17 @@
         if (existing) existing.remove();
 
         const popup = document.createElement('div');
-        popup.className = 'ac-quick-react';
-        popup.style.cssText = 'position:absolute;bottom:100%;left:0;display:flex;gap:2px;background:var(--ac-card-bg);border:1px solid var(--ac-border);border-radius:var(--ac-radius-full);padding:4px 6px;box-shadow:var(--ac-shadow-md);z-index:20;';
+        popup.className = 'ac-quick-react ac-glass-panel';
         popup.innerHTML = QUICK_EMOJIS.map(e =>
-            `<span style="cursor:pointer;font-size:1.15rem;padding:2px 4px;border-radius:4px;transition:transform .15s;"
-                  data-re="${e}"
-                  onmouseover="this.style.transform='scale(1.3)'"
-                  onmouseout="this.style.transform=''">${e}</span>`
+            `<span class="ac-quick-re" data-re="${e}">${e}</span>`
         ).join('');
 
         const row = anchorBtn.closest('.ac-msg-row');
         if (row) row.querySelector('.ac-bubble').appendChild(popup);
+
+        if (window.ApolloChatMotion && typeof ApolloChatMotion.popIn === 'function') {
+            ApolloChatMotion.popIn(popup);
+        }
 
         popup.querySelectorAll('[data-re]').forEach(s => {
             s.addEventListener('click', (ev) => {
@@ -1005,6 +1234,28 @@
             const m = messages.find(x => parseInt(x.id, 10) === mid);
             if (m && result) {
                 m.reactions = result.reactions || result;
+            }
+            /* GSAP exit when this emoji chip disappears entirely */
+            if (result && result.action === 'removed' && typeof gsap !== 'undefined') {
+                const still = (Array.isArray(m && m.reactions) ? m.reactions : [])
+                    .some(r => r && r.emoji === emoji && (r.count || 0) > 0);
+                if (!still) {
+                    const el = Array.from(document.querySelectorAll(`.ac-reaction[data-mid="${mid}"]`))
+                        .find(n => n.dataset.emoji === emoji);
+                    if (el) {
+                        await new Promise(function (resolve) {
+                            gsap.to(el, {
+                                opacity: 0,
+                                scale: 0.2,
+                                y: 10,
+                                rotation: 12,
+                                duration: 0.28,
+                                ease: 'back.in(1.5)',
+                                onComplete: resolve,
+                            });
+                        });
+                    }
+                }
             }
             renderMessages();
             // Keep scroll position instead of jumping to bottom for reactions
@@ -1106,14 +1357,19 @@
                         const exists = messages.find(m => parseInt(m.id, 10) === parseInt(nm.id, 10));
                         if (!exists) {
                             messages.push(nm);
+                            knownMsgIds.add(String(nm.id));
                             const area = $('.ac-messages');
-                            if (area) {
+                            if (area && !editingMessageId) {
                                 const typing = $('#ac-typing', area);
                                 const html = renderMessageBubble(nm);
                                 if (typing) typing.insertAdjacentHTML('beforebegin', html);
                                 else area.insertAdjacentHTML('beforeend', html);
                                 bindMessageEvents(area);
+                                const row = area.querySelector('.ac-msg-row[data-mid="' + nm.id + '"]');
+                                if (row) animateMsgEnter(row);
                                 scrollToBottom(true);
+                            } else if (area && editingMessageId) {
+                                // keep edit intact — message is in array; will show after save
                             }
                         }
                     }
@@ -1147,7 +1403,7 @@
                     if (u.action === 'deleted') { m.is_deleted = 1; m.message = ''; needsRerender = true; }
                     if (u.action === 'edited') { m.message = u.message; m.is_edited = true; needsRerender = true; }
                 });
-                if (needsRerender) { renderMessages(); scrollToBottom(); }
+                if (needsRerender && !editingMessageId) { renderMessages(); scrollToBottom(); }
             }
 
             // ── Read receipts ──
@@ -1183,14 +1439,17 @@
                 dot.remove();
             }
         });
-        // Update header
+        // Update header presence dot (after name)
         if (activeThreadId) {
             const t = threads.find(th => (th.thread_id || th.id) === activeThreadId);
             if (t && !t.is_group) {
-                const status = $('.ac-header-status');
-                if (status) {
-                    status.textContent = t.is_online ? 'Online' : 'Offline';
-                    status.classList.toggle('online', t.is_online);
+                const header = $('.ac-chat-header');
+                const dot = header && $('.ac-presence-dot', header);
+                if (dot) {
+                    dot.classList.toggle('is-online', !!t.is_online);
+                    const label = t.is_online ? 'Online' : 'Offline';
+                    dot.setAttribute('title', label);
+                    dot.setAttribute('aria-label', label);
                 }
             }
         }
@@ -1347,14 +1606,24 @@
        SEARCH
        ═══════════════════════════════════════════════════════════════════ */
 
-    function toggleSearch() {
+    function toggleSearch(originBtn) {
         const overlay = $('.ac-search-overlay');
         if (!overlay) return;
         searchOpen = !searchOpen;
-        overlay.classList.toggle('show', searchOpen);
+        const origin = originBtn || $('[data-action="search"]');
+        if (window.ApolloChatMotion) {
+            if (searchOpen) {
+                ApolloChatMotion.searchOpen(overlay, origin);
+            } else {
+                ApolloChatMotion.searchClose(overlay);
+            }
+        } else {
+            overlay.classList.toggle('show', searchOpen);
+            overlay.setAttribute('aria-hidden', searchOpen ? 'false' : 'true');
+        }
         if (searchOpen) {
             const input = $('input', overlay);
-            if (input) { input.value = ''; input.focus(); }
+            if (input) { input.value = ''; if (!window.ApolloChatMotion) input.focus(); }
             const results = $('.ac-search-results', overlay);
             if (results) results.innerHTML = '';
         }
@@ -1390,6 +1659,9 @@
                     if (tid) openThread(tid);
                 });
             });
+            if (window.ApolloChatMotion && typeof ApolloChatMotion.staggerIn === 'function') {
+                ApolloChatMotion.staggerIn($$('.ac-search-result', results));
+            }
         } catch (e) {
             results.innerHTML = '<div style="padding:1rem;text-align:center;color:var(--ac-text-muted);">Erro na busca</div>';
         }
@@ -1462,12 +1734,12 @@
         if (isMine) items.push({ label: 'Apagar', icon: 'ri-delete-bin-line', action: 'delete', danger: true });
 
         menu = document.createElement('div');
-        menu.className = 'ac-context-menu';
-        menu.style.cssText = `position:fixed;top:${y}px;left:${x}px;z-index:9998;background:var(--ac-card-bg);border:1px solid var(--ac-border);border-radius:var(--ac-radius-md);box-shadow:var(--ac-shadow-lg);padding:4px 0;min-width:160px;`;
+        menu.className = 'ac-context-menu ac-glass-panel';
+        menu.style.cssText = `position:fixed;top:${y}px;left:${x}px;z-index:9998;`;
 
         menu.innerHTML = items.map(it =>
-            `<div class="ac-ctx-item${it.danger ? ' danger' : ''}" data-act="${it.action}" style="display:flex;align-items:center;gap:10px;padding:8px 14px;cursor:pointer;font-size:.85rem;transition:background .15s;${it.danger ? 'color:var(--ac-danger);' : ''}">
-                <i class="${it.icon}" style="font-size:1rem;width:18px;"></i> ${it.label}
+            `<div class="ac-ctx-item${it.danger ? ' danger' : ''}" data-act="${it.action}">
+                <i class="${it.icon}"></i> ${it.label}
             </div>`
         ).join('');
 
@@ -1478,11 +1750,18 @@
         if (rect.right > window.innerWidth) menu.style.left = (x - rect.width) + 'px';
         if (rect.bottom > window.innerHeight) menu.style.top = (y - rect.height) + 'px';
 
-        // Hover effects
-        $$('.ac-ctx-item', menu).forEach(el => {
-            el.addEventListener('mouseenter', () => el.style.background = 'var(--ac-hover)');
-            el.addEventListener('mouseleave', () => el.style.background = '');
-        });
+        if (window.ApolloChatMotion && typeof ApolloChatMotion.panelOpen === 'function') {
+            ApolloChatMotion.panelOpen(menu);
+        }
+
+        function dismissCtx() {
+            document.removeEventListener('click', close);
+            if (window.ApolloChatMotion && typeof ApolloChatMotion.panelClose === 'function') {
+                ApolloChatMotion.panelClose(menu);
+            } else if (menu.parentNode) {
+                menu.remove();
+            }
+        }
 
         // Click handlers
         $$('[data-act]', menu).forEach(el => {
@@ -1502,13 +1781,13 @@
                         if (btn) showQuickReact(btn, msg);
                     }
                 }
-                menu.remove();
+                dismissCtx();
             });
         });
 
         // Close on outside click
         const close = (ev) => {
-            if (!menu.contains(ev.target)) { menu.remove(); document.removeEventListener('click', close); }
+            if (!menu.contains(ev.target)) dismissCtx();
         };
         setTimeout(() => document.addEventListener('click', close), 50);
     }
@@ -1554,11 +1833,11 @@
         const rect = btn ? btn.getBoundingClientRect() : { bottom: 60, right: 100 };
 
         menu = document.createElement('div');
-        menu.className = 'ac-thread-menu';
-        menu.style.cssText = `position:fixed;top:${rect.bottom + 4}px;right:${window.innerWidth - rect.right}px;z-index:9998;background:var(--ac-card-bg);border:1px solid var(--ac-border);border-radius:var(--ac-radius-md);box-shadow:var(--ac-shadow-lg);padding:4px 0;min-width:200px;`;
+        menu.className = 'ac-thread-menu ac-glass-panel';
+        menu.style.cssText = `position:fixed;top:${rect.bottom + 6}px;right:${window.innerWidth - rect.right}px;z-index:9998;`;
         menu.innerHTML = items.map(it =>
-            `<div data-act="${it.action}" style="display:flex;align-items:center;gap:10px;padding:8px 14px;cursor:pointer;font-size:.85rem;${it.danger ? 'color:var(--ac-danger);' : ''}">
-                <i class="${it.icon}" style="font-size:1rem;width:18px;"></i> ${it.label}
+            `<div class="ac-ctx-item${it.danger ? ' danger' : ''}" data-act="${it.action}">
+                <i class="${it.icon}"></i> ${it.label}
             </div>`
         ).join('');
 
@@ -1569,17 +1848,30 @@
         if (menuRect.right > window.innerWidth) menu.style.left = (rect.left) + 'px';
         if (menuRect.bottom > window.innerHeight) menu.style.top = (rect.top - menuRect.height) + 'px';
 
+        if (window.ApolloChatMotion && typeof ApolloChatMotion.panelOpen === 'function') {
+            ApolloChatMotion.panelOpen(menu, btn);
+        }
+
+        function dismissThreadMenu() {
+            document.removeEventListener('click', close);
+            if (window.ApolloChatMotion && typeof ApolloChatMotion.panelClose === 'function') {
+                ApolloChatMotion.panelClose(menu);
+            } else if (menu.parentNode) {
+                menu.remove();
+            }
+        }
+
         $$('[data-act]', menu).forEach(el => {
-            el.addEventListener('mouseenter', () => el.style.background = 'var(--ac-hover)');
-            el.addEventListener('mouseleave', () => el.style.background = '');
             el.addEventListener('click', async () => {
                 const act = el.dataset.act;
+                dismissThreadMenu();
                 if (act === 'toggle-mute') {
                     try {
                         const newMute = !(isMuted);
                         await api(`/threads/${activeThreadId}/mute`, { method: 'POST', body: JSON.stringify({ mute: newMute }) });
                         t.is_muted = newMute ? 1 : 0;
-                        toast(newMute ? 'Conversa silenciada' : 'Conversa com som', newMute ? 'ri-volume-mute-line' : 'ri-volume-up-line');
+                        renderThreadList();
+                        toast(newMute ? 'Conversa silenciada' : 'Conversa com som', newMute ? 'ri-ghost-4-fill' : 'ri-volume-up-line');
                     } catch (e) { toast('Erro', 'ri-error-warning-line'); }
                 }
                 if (act === 'pinned') {
@@ -1608,12 +1900,11 @@
                         } catch (e) { toast('Erro', 'ri-error-warning-line'); }
                     }
                 }
-                menu.remove();
             });
         });
 
         const close = (ev) => {
-            if (!menu.contains(ev.target) && ev.target !== btn) { menu.remove(); document.removeEventListener('click', close); }
+            if (!menu.contains(ev.target) && ev.target !== btn) dismissThreadMenu();
         };
         setTimeout(() => document.addEventListener('click', close), 50);
     }
@@ -1640,7 +1931,7 @@
                     body.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--ac-text-muted);"><i class="ri-pushpin-line" style="font-size:2rem;display:block;margin-bottom:.5rem;"></i>Nenhuma mensagem fixada</div>';
                 } else {
                     body.innerHTML = `<div class="ac-pinned-list">${pinned.map(p => `
-                        <div class="ac-pinned-item" data-mid="${p.id}" style="border-bottom:1px solid var(--ac-border);padding:10px 0;">
+                        <div class="ac-pinned-item" data-mid="${p.id}" style="padding:10px 0;">
                             <div style="font-size:.75rem;color:var(--ac-text-muted);margin-bottom:2px;">${esc(p.sender_name || '')} · ${formatTime(p.created_at)}</div>
                             <div style="font-size:.85rem;color:var(--ac-text-primary);">${esc(p.message || '')}</div>
                             <button class="ac-unpin-btn" data-mid="${p.id}" style="margin-top:4px;font-size:.7rem;color:var(--ac-danger);background:none;border:none;cursor:pointer;"><i class="ri-unpin-line"></i> Desafixar</button>
@@ -1760,13 +2051,13 @@
             body.innerHTML = `
                 <div style="text-align:center;padding:1rem 0;">
                     <div style="position:relative;display:inline-block;">
-                        <img src="${esc(avatarUrl || '')}" alt="" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--ac-primary);">
-                        ${isOnl ? '<span style="position:absolute;bottom:2px;right:2px;width:14px;height:14px;border-radius:50%;background:#22c55e;border:2px solid var(--ac-card-bg);"></span>' : ''}
+                        <img src="${esc(avatarUrl || '')}" alt="" style="width:80px;height:80px;border-radius:50%;object-fit:cover;">
+                        ${isOnl ? '<span style="position:absolute;bottom:2px;right:2px;width:14px;height:14px;border-radius:50%;background:#22c55e;"></span>' : ''}
                     </div>
                     <h3 style="margin:.75rem 0 .25rem;font-size:1.1rem;color:var(--ac-text-primary);">${esc(name || '')}</h3>
                     <span style="font-size:.8rem;color:${isOnl ? '#22c55e' : 'var(--ac-text-muted)'};">${isOnl ? 'Online agora' : 'Offline'}</span>
                 </div>
-                <div style="display:flex;justify-content:center;gap:12px;padding:.75rem 0;border-top:1px solid var(--ac-border);border-bottom:1px solid var(--ac-border);margin:.5rem 0;">
+                <div style="display:flex;justify-content:center;gap:12px;padding:.75rem 0;margin:.5rem 0;">
                     <a href="/id/${esc(name || '')}" class="ac-btn" style="font-size:.8rem;text-decoration:none;" target="_blank"><i class="ri-user-line"></i> Ver perfil</a>
                     <button class="ac-btn" data-act="block-user" style="font-size:.8rem;color:var(--ac-danger);"><i class="ri-user-unfollow-line"></i> Bloquear</button>
                 </div>`;
@@ -1793,57 +2084,45 @@
     }
 
     /* ═══════════════════════════════════════════════════════════════════
-       NEW THREAD MODAL
+       NEW CHAT — bottom sheet (search → mini-tags → open empty DM)
        ═══════════════════════════════════════════════════════════════════ */
-
-    let selectedRecipients = [];
 
     function initNewThreadModal() {
         const btn = $('#ac-new-thread-btn');
         if (btn) btn.addEventListener('click', openNewThreadModal);
+        const sheet = $('#ac-new-chat-sheet');
+        if (!sheet) return;
+        const closeBtn = $('.ac-sheet-close', sheet);
+        if (closeBtn) closeBtn.addEventListener('click', closeNewThreadModal);
+        sheet.addEventListener('click', (e) => {
+            if (e.target === sheet) closeNewThreadModal();
+        });
     }
 
     function openNewThreadModal() {
-        selectedRecipients = [];
-        const overlay = $('.ac-modal-overlay');
-        if (!overlay) return;
-        overlay.classList.add('show');
-
-        // Clear fields
-        const search = $('#ac-nt-search', overlay);
-        const msg = $('#ac-nt-message', overlay);
-        const results = $('#ac-nt-results', overlay);
-        const tags = $('#ac-nt-tags', overlay);
+        const sheet = $('#ac-new-chat-sheet');
+        if (!sheet) return;
+        const search = $('#ac-nt-search', sheet);
+        const results = $('#ac-nt-results', sheet);
         if (search) search.value = '';
-        if (msg) msg.value = '';
         if (results) results.innerHTML = '';
-        if (tags) tags.innerHTML = '';
 
-        // Close button
-        const closeBtn = $('.ac-modal-close', overlay);
-        if (closeBtn) closeBtn.addEventListener('click', closeNewThreadModal, { once: true });
+        sheet.classList.add('show');
+        sheet.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('ac-sheet-open');
 
-        // Overlay click to close
-        overlay.addEventListener('click', (e) => {
-            if (e.target === overlay) closeNewThreadModal();
-        }, { once: true });
 
-        // Search users
         if (search) {
+            search.focus();
             search.oninput = debounce(async function () {
                 const q = search.value.trim();
                 if (q.length < 2) { if (results) results.innerHTML = ''; return; }
 
                 try {
-                    const res = await fetch(USERS_URL + '?search=' + encodeURIComponent(q) + '&per_page=10', {
+                    const res = await fetch(USERS_URL + '?search=' + encodeURIComponent(q) + '&per_page=16', {
                         headers: headers(),
                         credentials: 'same-origin',
                     });
-                    /* apollo/v1/users answers { users:[…], total, pages } and each item
-                       is { id, username, display_name, social_name, avatar_url } — NOT
-                       wp/v2's { name, avatar_urls{48} }. Normalising here rather than at
-                       every use site; the `|| data` arm keeps a bare array working if the
-                       endpoint is ever swapped back. Same mapping apollo-groups uses. */
                     const payload = await res.json();
                     const users = (payload && payload.users ? payload.users : (Array.isArray(payload) ? payload : []))
                         .map(u => ({
@@ -1851,95 +2130,67 @@
                             name: u.display_name || u.social_name || u.username || ('#' + u.id),
                             avatar: u.avatar_url || (u.avatar_urls ? (u.avatar_urls['48'] || u.avatar_urls['24'] || '') : ''),
                         }))
-                        .filter(u => u.id);
-                    if (results) {
-                        results.innerHTML = users
-                            .filter(u => u.id !== MY_ID)
-                            .map(u => {
-                                const selected = selectedRecipients.find(r => r.id === u.id) ? ' selected' : '';
-                                const avatar = u.avatar;
-                                return `<div class="ac-user-item${selected}" data-uid="${u.id}" data-uname="${esc(u.name)}">
-                                    <img src="${esc(avatar)}" alt="">
-                                    <span class="ac-user-name">${esc(u.name)}</span>
-                                    <i class="ac-user-check ri-check-line"></i>
-                                </div>`;
-                            }).join('');
+                        .filter(u => u.id && u.id !== MY_ID);
 
-                        $$('.ac-user-item', results).forEach(el => {
-                            el.addEventListener('click', () => toggleRecipient(el));
+                    if (results) {
+                        results.innerHTML = users.map(u =>
+                            `<button type="button" class="ac-user-mini-tag" role="listitem" data-uid="${u.id}" data-uname="${esc(u.name)}" data-avatar="${esc(u.avatar)}">
+                                <img src="${esc(u.avatar)}" alt="" width="28" height="28">
+                                <span>${esc(u.name)}</span>
+                            </button>`
+                        ).join('') || '<span class="ac-sheet-empty">Nenhum usuário</span>';
+
+                        $$('.ac-user-mini-tag', results).forEach(el => {
+                            el.addEventListener('click', () => {
+                                startDmWithUser({
+                                    id: parseInt(el.dataset.uid, 10),
+                                    name: el.dataset.uname,
+                                    avatar: el.dataset.avatar,
+                                });
+                            });
                         });
                     }
                 } catch (e) { console.error(e); }
-            }, 300);
-        }
-
-        // Send button
-        const sendBtn = $('#ac-nt-send');
-        if (sendBtn) {
-            sendBtn.onclick = async () => {
-                if (!selectedRecipients.length) { toast('Selecione um destinatário'); return; }
-                const msgText = msg ? msg.value.trim() : '';
-                if (!msgText) { toast('Escreva uma mensagem'); return; }
-
-                try {
-                    const isGroup = selectedRecipients.length > 1;
-                    const resp = await api('/send', {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            recipients: selectedRecipients.map(r => r.id),
-                            message: msgText,
-                            subject: 'Chat',
-                            is_group: isGroup,
-                        }),
-                    });
-                    closeNewThreadModal();
-                    await loadThreadList();
-                    if (resp.thread_id) openThread(resp.thread_id);
-                    bcSend('message-sent', { threadId: resp.thread_id });
-                } catch (e) {
-                    toast('Erro ao criar conversa', 'ri-error-warning-line');
-                }
-            };
+            }, 280);
         }
     }
 
-    function toggleRecipient(el) {
-        const uid = parseInt(el.dataset.uid, 10);
-        const name = el.dataset.uname;
-        const idx = selectedRecipients.findIndex(r => r.id === uid);
+    async function startDmWithUser(user) {
+        if (!user || !user.id) return;
+        try {
+            const existing = threads.find(t =>
+                !t.is_group && parseInt(t.other_user_id, 10) === user.id
+            );
+            let tid = existing ? (existing.thread_id || existing.id) : 0;
 
-        if (idx !== -1) {
-            selectedRecipients.splice(idx, 1);
-            el.classList.remove('selected');
-        } else {
-            selectedRecipients.push({ id: uid, name });
-            el.classList.add('selected');
+            if (!tid) {
+                const resp = await api('/dm', {
+                    method: 'POST',
+                    body: JSON.stringify({ user_id: user.id }),
+                });
+                tid = resp && resp.thread_id ? parseInt(resp.thread_id, 10) : 0;
+            }
+
+
+            await closeNewThreadModal();
+            if (tid) {
+                await loadThreadList();
+                openThread(tid);
+            } else {
+                toast('Não foi possível abrir o chat', 'ri-error-warning-line');
+            }
+        } catch (e) {
+            toast('Erro ao abrir conversa', 'ri-error-warning-line');
         }
-        renderRecipientTags();
-    }
-
-    function renderRecipientTags() {
-        const tags = $('#ac-nt-tags');
-        if (!tags) return;
-        tags.innerHTML = selectedRecipients.map(r =>
-            `<span class="ac-selected-tag">${esc(r.name)} <span class="ac-tag-remove" data-uid="${r.id}"><i class="ri-close-line"></i></span></span>`
-        ).join('');
-
-        $$('.ac-tag-remove', tags).forEach(el => {
-            el.addEventListener('click', () => {
-                const uid = parseInt(el.dataset.uid, 10);
-                selectedRecipients = selectedRecipients.filter(r => r.id !== uid);
-                renderRecipientTags();
-                // Update visual in list
-                const item = $(`.ac-user-item[data-uid="${uid}"]`);
-                if (item) item.classList.remove('selected');
-            });
-        });
     }
 
     function closeNewThreadModal() {
-        const overlay = $('.ac-modal-overlay');
-        if (overlay) overlay.classList.remove('show');
+        const sheet = $('#ac-new-chat-sheet');
+        if (!sheet) return Promise.resolve();
+        sheet.classList.remove('show');
+        sheet.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('ac-sheet-open');
+        return Promise.resolve();
     }
 
     /* ═══════════════════════════════════════════════════════════════════
@@ -2108,7 +2359,23 @@
                 const lb = $('.ac-lightbox.show');
                 if (lb) { lb.classList.remove('show'); return; }
                 const ctx = $('.ac-context-menu');
-                if (ctx) { ctx.remove(); return; }
+                if (ctx) {
+                    if (window.ApolloChatMotion && typeof ApolloChatMotion.panelClose === 'function') {
+                        ApolloChatMotion.panelClose(ctx);
+                    } else {
+                        ctx.remove();
+                    }
+                    return;
+                }
+                const threadMenu = $('.ac-thread-menu');
+                if (threadMenu) {
+                    if (window.ApolloChatMotion && typeof ApolloChatMotion.panelClose === 'function') {
+                        ApolloChatMotion.panelClose(threadMenu);
+                    } else {
+                        threadMenu.remove();
+                    }
+                    return;
+                }
             }
         });
     }

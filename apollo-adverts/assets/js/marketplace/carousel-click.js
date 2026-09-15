@@ -17,8 +17,14 @@
             item.addEventListener('click', function(e) {
                 if (!c.isActive) return;
                 if (e.target.closest('button') || e.target.closest('a')) return;
-                c.progress = (i / Math.max(1, c.$items.length - 1)) * 100;
-                c.animate();
+                var last = Math.max(1, c.$items.length - 1);
+                var activeIndex = Math.round((c.progress / 100) * last);
+                if (c.$items.length > 1 && i !== activeIndex) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    c.progress = (i / last) * 100;
+                    c.animate();
+                }
             });
         });
     };

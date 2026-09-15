@@ -24,7 +24,7 @@ if (! defined('ABSPATH')) {
  */
 function apollo_build_marquee_items()
 {
-    $cache_key = 'apollo_marquee_items_v5';
+    $cache_key = 'apollo_marquee_items_v6';
     $cached    = get_transient($cache_key);
     if (false !== $cached) {
         return $cached;
@@ -44,11 +44,16 @@ function apollo_build_marquee_items()
     if ($news_q->have_posts()) {
         while ($news_q->have_posts()) {
             $news_q->the_post();
+            $title = trim(wp_strip_all_tags(get_the_title()));
+            /* Demo / seed posts destroy editorial calm under the hero. */
+            if ($title === '' || preg_match('/^hello\s*world!?$/iu', $title)) {
+                continue;
+            }
             $items[] = array(
                 'type'  => 'news',
                 'icon'  => 'ri-newspaper-line',
                 'date'  => get_the_date('d/m'),
-                'title' => wp_trim_words(get_the_title(), 8, '…'),
+                'title' => wp_trim_words($title, 8, '…'),
                 // Clicking a ticker item opens that exact post. News is public
                 // (post type `post`), so no auth gate here — unlike tracks /
                 // resell / accommodation, which route through the hub lightbox.
@@ -58,14 +63,16 @@ function apollo_build_marquee_items()
         wp_reset_postdata();
     }
 
-    // ── Fallback if no news posts exist yet ──
+    // ── Fallback if no real news posts exist yet — quiet, not spammy ──
     if (empty($items)) {
-        $today = current_time('d/m');
-        // No real posts yet → nothing to open, so these carry an empty url and
-        // render as plain (non-clickable) items.
         $items = array(
-            array('type' => 'news', 'icon' => 'ri-newspaper-line', 'date' => $today, 'title' => 'Apollo v6 — Underground Culture Guide 2026', 'url' => ''),
-            array('type' => 'news', 'icon' => 'ri-newspaper-line', 'date' => $today, 'title' => 'Novas matérias sendo publicadas em breve', 'url' => ''),
+            array(
+                'type'  => 'news',
+                'icon'  => 'ri-newspaper-line',
+                'date'  => current_time('d/m'),
+                'title' => __('Novas matérias em breve', 'apollo-templates'),
+                'url'   => '',
+            ),
         );
     }
 

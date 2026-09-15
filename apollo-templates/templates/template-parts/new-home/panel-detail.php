@@ -36,7 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	single-classified, single-group, single-post, profile
 	═══════════════════════════════════════════════════════════════ -->
 <section data-panel="detail" data-glyph="→">
-	<div class="container" style="padding-top:calc(80px + var(--safe-top)); padding-bottom: 40px;">
+	<div class="container" style="padding-top:calc(80px + var(--safe-top, 0px)); padding-bottom: 40px;">
 
 		<!-- Back button -->
 		<button data-back="1" class="return-back" aria-label="<?php esc_attr_e( 'Voltar', 'apollo-templates' ); ?>">

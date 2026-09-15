@@ -362,3 +362,65 @@
   .ap-safety .ap-preloader__seal { animation: none; }
   .ap-safety .ap-preloader__steps i::after { transition: none; }
 }
+
+/* ══ PRIMARY ASK + WAITING (buyer UX) ═════════════════════════════════════ */
+.ap-safety .ap-primary-ask { margin: 0 0 var(--s-3); }
+.ap-safety .ap-primary-ask__btn { width: 100%; justify-content: center; }
+
+.ap-safety .ap-waiting {
+  padding: var(--s-4); border-radius: var(--r);
+  background: rgba(var(--gate-ink), .06); box-shadow: var(--gate-vidro);
+  display: flex; flex-flow: column nowrap; gap: 6px;
+}
+.ap-safety .ap-waiting__title {
+  font-size: clamp(.875rem, 3.6cqi, 1rem); font-weight: 600;
+  color: var(--orange-300); letter-spacing: -.015em;
+}
+.ap-safety .ap-waiting__sub {
+  font-size: clamp(.75rem, 3.2cqi, .9rem); line-height: 1.5;
+  color: rgba(var(--gate-ink), .62); margin: 0;
+}
+
+/* ══ WITNESS CONFIRM ══════════════════════════════════════════════════════ */
+.ap-safety.is-witness .apollo-warn__inner > * { opacity: 1; pointer-events: auto; }
+
+.ap-safety .ap-witness {
+  padding: var(--s-4); border-radius: var(--r);
+  background: rgba(var(--gate-ink), .05); box-shadow: var(--gate-vidro);
+  display: flex; flex-flow: column nowrap; gap: var(--s-3);
+}
+.ap-safety .ap-witness__who,
+.ap-safety .ap-witness__ad {
+  display: flex; flex-flow: column nowrap; gap: 2px;
+}
+.ap-safety .ap-witness__lbl {
+  font-family: var(--ff-mono); font-size: clamp(.5625rem, 2.2cqi, .6875rem);
+  text-transform: uppercase; letter-spacing: .12em; color: rgba(var(--gate-ink), .4);
+}
+.ap-safety .ap-witness__who strong,
+.ap-safety .ap-witness__ad strong {
+  font-size: clamp(.875rem, 3.6cqi, 1rem); color: rgba(var(--gate-ink), .95);
+}
+.ap-safety .ap-witness__h {
+  font-family: var(--ff-mono); font-size: clamp(.6875rem, 2.9cqi, .82rem);
+  color: var(--orange-300);
+}
+.ap-safety .ap-witness__say {
+  font-size: clamp(.75rem, 3.2cqi, .9rem); line-height: 1.55;
+  color: rgba(var(--gate-ink), .62); margin: 0;
+  padding-left: var(--s-3); box-shadow: inset 3px 0 0 0 var(--orange-400);
+}
+.ap-safety .ap-witness__actions {
+  display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-2);
+}
+.ap-safety .ap-witness__actions .btn { flex: 1 1 auto; justify-content: center; }
+.ap-safety .ap-witness__done {
+  font-size: clamp(.8125rem, 3.4cqi, .95rem); font-weight: 600;
+  color: var(--orange-300); margin: 0;
+}
+
+@container (max-width: 480px) {
+  .ap-safety .ap-witness__actions { flex-flow: column nowrap; }
+  .ap-safety .ap-primary-ask__btn { font-size: clamp(.75rem, 3.2cqi, .875rem); }
+}
+

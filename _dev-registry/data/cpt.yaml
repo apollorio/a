@@ -1,0 +1,273 @@
+# custom post types
+#
+# Apollo DEV registry — GENERATED, do not hand-edit.
+# Source of truth is the code; regenerate with
+#   node D:/dev/_cos/verify/gen-dev-registry.js
+#
+# declared = apollo-core/config/cpts.php evaluated by PHP.
+declared:
+  event:
+    owner: apollo-events
+    rewrite: evento
+    archive: eventos
+    rest_base: events
+    public: true
+    has_archive: true
+    map_meta_cap: true
+    supports: [title, editor, thumbnail, author]
+    menu_icon: dashicons-calendar-alt
+    governed_meta_keys: 18
+  dj:
+    owner: apollo-djs
+    rewrite: dj
+    archive: djs
+    rest_base: djs
+    public: true
+    has_archive: true
+    map_meta_cap: null
+    supports: [title, editor, thumbnail, author]
+    menu_icon: dashicons-format-audio
+    governed_meta_keys: 11
+  track:
+    owner: apollo-djs
+    rewrite: track
+    archive: tracks
+    rest_base: tracks
+    public: true
+    has_archive: true
+    map_meta_cap: null
+    supports: [title, editor, thumbnail, author]
+    menu_icon: dashicons-album
+    governed_meta_keys: 0
+  hostel:
+    owner: apollo-adverts
+    rewrite: hostel
+    archive: hostels
+    rest_base: hostels
+    public: true
+    has_archive: true
+    map_meta_cap: null
+    supports: [title, editor, thumbnail]
+    menu_icon: dashicons-building
+    governed_meta_keys: 0
+  local:
+    owner: apollo-loc
+    rewrite: local
+    archive: locais
+    rest_base: local
+    public: true
+    has_archive: true
+    map_meta_cap: null
+    supports: [title, editor, thumbnail]
+    menu_icon: dashicons-location
+    governed_meta_keys: 13
+  classified:
+    owner: apollo-adverts
+    rewrite: anuncio
+    archive: anuncios
+    rest_base: classifieds
+    public: true
+    has_archive: true
+    map_meta_cap: true
+    supports: [title, editor, thumbnail, author, excerpt]
+    menu_icon: dashicons-megaphone
+    governed_meta_keys: 9
+  supplier:
+    owner: apollo-suppliers
+    rewrite: fornecedor
+    archive: fornecedores
+    rest_base: suppliers
+    public: false
+    has_archive: false
+    map_meta_cap: null
+    supports: [title, editor, thumbnail]
+    menu_icon: dashicons-store
+    governed_meta_keys: 9
+  doc:
+    owner: apollo-docs
+    rewrite: documento
+    archive: false
+    rest_base: docs
+    public: false
+    has_archive: false
+    map_meta_cap: null
+    supports: [title, editor, author]
+    menu_icon: dashicons-media-document
+    governed_meta_keys: 8
+  email_aprio:
+    owner: apollo-email
+    rewrite: false
+    archive: false
+    rest_base: email-templates
+    public: false
+    has_archive: false
+    map_meta_cap: null
+    supports: [title, editor]
+    menu_icon: dashicons-email-alt
+    governed_meta_keys: 3
+  hub:
+    owner: apollo-hub
+    rewrite: hub
+    archive: false
+    rest_base: hubs
+    public: true
+    has_archive: false
+    map_meta_cap: null
+    supports: [title, author]
+    menu_icon: dashicons-admin-links
+    governed_meta_keys: 7
+  apollo_sheet:
+    owner: apollo-sheets
+    rewrite: false
+    archive: false
+    rest_base: sheets
+    public: false
+    has_archive: false
+    map_meta_cap: true
+    supports: [title, editor, excerpt, revisions, author]
+    menu_icon: dashicons-editor-table
+    governed_meta_keys: 0
+  appointment:
+    owner: apollo-scheduler
+    rewrite: agendamento
+    archive: agendamentos
+    rest_base: appointments
+    public: true
+    has_archive: true
+    map_meta_cap: null
+    supports: [title, editor, author]
+    menu_icon: dashicons-calendar
+    governed_meta_keys: 0
+  service:
+    owner: apollo-scheduler
+    rewrite: servico
+    archive: servicos
+    rest_base: services
+    public: true
+    has_archive: true
+    map_meta_cap: null
+    supports: [title, editor, author]
+    menu_icon: dashicons-hammer
+    governed_meta_keys: 0
+  resource:
+    owner: apollo-scheduler
+    rewrite: recurso
+    archive: recursos
+    rest_base: resources
+    public: true
+    has_archive: true
+    map_meta_cap: null
+    supports: [title, editor, author]
+    menu_icon: dashicons-building
+    governed_meta_keys: 0
+  apollo_agent_log:
+    owner: apollo-membership
+    rewrite: false
+    archive: false
+    rest_base: agent-log
+    public: false
+    has_archive: false
+    map_meta_cap: null
+    supports: [title]
+    menu_icon: dashicons-list-view
+    governed_meta_keys: 0
+as_built:
+  - unit: apollo-adverts
+    file: plugins/apollo-adverts/includes/cpt.php
+    line: 42
+    arg_resolved: classified
+    arg_how: CONSTANT_DEFINE
+    arg_expr: APOLLO_CPT_CLASSIFIED
+    guarded: true
+  - unit: apollo-core
+    file: plugins/apollo-core/src/Core/CPTRegistry.php
+    line: 180
+    arg_resolved: null
+    arg_how: UNKNOWN
+    arg_expr: '$slug'
+    guarded: false
+  - unit: apollo-djs
+    file: plugins/apollo-djs/src/Registry.php
+    line: 56
+    arg_resolved: dj
+    arg_how: CONSTANT_DEFINE
+    arg_expr: APOLLO_DJ_CPT
+    guarded: true
+  - unit: apollo-djs
+    file: plugins/apollo-djs/src/Registry.php
+    line: 122
+    arg_resolved: track
+    arg_how: LITERAL
+    arg_expr: '''track'''
+    guarded: true
+  - unit: apollo-docs
+    file: plugins/apollo-docs/src/Core/Registrar.php
+    line: 31
+    arg_resolved: doc
+    arg_how: LITERAL
+    arg_expr: '''doc'''
+    guarded: true
+  - unit: apollo-email
+    file: plugins/apollo-email/src/Core/CPT.php
+    line: 32
+    arg_resolved: email_aprio
+    arg_how: LITERAL
+    arg_expr: '''email_aprio'''
+    guarded: true
+  - unit: apollo-events
+    file: plugins/apollo-events/src/Registry.php
+    line: 69
+    arg_resolved: event
+    arg_how: CONSTANT_DEFINE
+    arg_expr: APOLLO_EVENT_CPT
+    guarded: true
+  - unit: apollo-hub
+    file: plugins/apollo-hub/src/Activation.php
+    line: 45
+    arg_resolved: hub
+    arg_how: CONSTANT_DEFINE
+    arg_expr: APOLLO_HUB_CPT
+    guarded: true
+  - unit: apollo-hub
+    file: plugins/apollo-hub/src/Registry.php
+    line: 58
+    arg_resolved: hub
+    arg_how: CONSTANT_DEFINE
+    arg_expr: APOLLO_HUB_CPT
+    guarded: true
+  - unit: apollo-journal
+    file: plugins/apollo-journal/src/Plugin.php
+    line: 117
+    arg_resolved: journal_news
+    arg_how: LITERAL
+    arg_expr: '''journal_news'''
+    guarded: true
+  - unit: apollo-journal
+    file: plugins/apollo-journal/src/Plugin.php
+    line: 168
+    arg_resolved: journal_nota
+    arg_how: LITERAL
+    arg_expr: '''journal_nota'''
+    guarded: true
+  - unit: apollo-loc
+    file: plugins/apollo-loc/src/CPT/CPTRegistrar.php
+    line: 29
+    arg_resolved: local
+    arg_how: CONSTANT_DEFINE
+    arg_expr: APOLLO_LOCAL_CPT
+    guarded: true
+  - unit: apollo-scheduler
+    file: plugins/apollo-scheduler/src/Registry.php
+    line: 70
+    arg_resolved: null
+    arg_how: UNKNOWN
+    arg_expr: '$slug'
+    guarded: true
+  - unit: apollo-sheets
+    file: plugins/apollo-sheets/src/Plugin.php
+    line: 113
+    arg_resolved: apollo_sheet
+    arg_how: CONSTANT_DEFINE
+    arg_expr: APOLLO_SHEETS_CPT
+    guarded: true
+undeclared: [journal_news, journal_nota]

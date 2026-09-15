@@ -1,0 +1,62 @@
+/* apollo-waha admin — screens 1–5. Tela 1 (settings) + Tela 2 (session strip) live this run. */
+
+.apollo-wa-strip {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 12px 0;
+	padding: 10px 14px;
+	border: 1px solid #dcdcde;
+	border-left-width: 4px;
+	border-radius: 2px;
+	background: #fff;
+}
+
+.apollo-wa-strip__dot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: #a7aaad;
+	flex-shrink: 0;
+}
+
+.apollo-wa-strip__label {
+	font-weight: 600;
+	letter-spacing: 0.02em;
+}
+
+.apollo-wa-strip__ping {
+	color: #646970;
+	font-size: 12px;
+}
+
+.apollo-wa-strip--working {
+	border-left-color: #00a32a;
+}
+.apollo-wa-strip--working .apollo-wa-strip__dot {
+	background: #00a32a;
+}
+
+.apollo-wa-strip--scan_qr_code,
+.apollo-wa-strip--starting {
+	border-left-color: #dba617;
+}
+.apollo-wa-strip--scan_qr_code .apollo-wa-strip__dot,
+.apollo-wa-strip--starting .apollo-wa-strip__dot {
+	background: #dba617;
+}
+
+.apollo-wa-strip--failed,
+.apollo-wa-strip--stopped,
+.apollo-wa-strip--down {
+	border-left-color: #d63638;
+}
+.apollo-wa-strip--failed .apollo-wa-strip__dot,
+.apollo-wa-strip--stopped .apollo-wa-strip__dot,
+.apollo-wa-strip--down .apollo-wa-strip__dot {
+	background: #d63638;
+}
+
+.apollo-wa-strip__ping {
+	margin-right: auto;
+}

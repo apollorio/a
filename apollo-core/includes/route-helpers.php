@@ -181,12 +181,22 @@ function apollo_is_blank_canvas_request(): bool
 		'apollo_user_page',
 		'apollo_event_page',
 		'apollo_dashboard_page',
+		'apollo_adverts_page',
+		'apollo_casa_page',
 	);
 
 	foreach ($canvas_vars as $var) {
 		if (! empty(get_query_var($var, ''))) {
 			return true;
 		}
+	}
+
+	/* Reserved virtual slugs are plugin templates that skip wp_head.
+	   Without this, /anuncios (and siblings) inherit the theme-page CSP
+	   (nonce + strict-dynamic) and every helper script without a nonce
+	   is held/blocked while core.js still fans out a CDN request storm. */
+	if (apollo_is_reserved_virtual_path()) {
+		return true;
 	}
 
 	return (bool) apply_filters('apollo/routes/is_blank_canvas', false);

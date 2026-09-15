@@ -36,7 +36,10 @@
  * this policy — that is read-only backward compat, not a way back in.
  *
  * REST namespace: apollo/v1
- * Pages: /mensagens, /mensagens/{id}
+ * Pages: /mensagens              inbox
+ *        /mensagens/{login}     the DM with that person   (preferred)
+ *        /mensagens/@{login}    same, explicit form
+ *        /mensagens/{id}        a thread by numeric id    (legacy, still works)
  *
  * @package Apollo\Chat
  */
@@ -81,16 +84,72 @@ final class Plugin
     }
 
     // ─── Rewrite Rules ──────────────────────────────────────────────
+    /**
+     * URL shapes
+     * ----------
+     *   /mensagens              inbox
+     *   /mensagens/{id}         a THREAD by numeric id  (legacy, still supported)
+     *   /mensagens/{login}      the DM with that person
+     *   /mensagens/@{login}     the same, explicit form
+     *
+     * The three patterns are MUTUALLY EXCLUSIVE by their first character, so
+     * they do not depend on registration order. That matters: add_rewrite_rule
+     * with 'top' PREPENDS, so the last rule added would otherwise win, and a
+     * reader fixing an unrelated bug could reorder these and silently send
+     * every thread link to the username handler.
+     *
+     *   (\d+)          digits only            -> thread id
+     *   @(...)         explicit @ prefix      -> login
+     *   ([^/@0-9]...)  starts with neither    -> login
+     *
+     * A login that is entirely numeric ("12345") is therefore only reachable as
+     * /mensagens/@12345 — the bare form belongs to thread ids, which existed
+     * first and are still emitted by e-mail notifications.
+     */
     public function register_rewrite_rules(): void
     {
         add_rewrite_rule('^mensagens/?$', 'index.php?apollo_chat_page=inbox', 'top');
         add_rewrite_rule('^mensagens/(\d+)/?$', 'index.php?apollo_chat_page=thread&apollo_thread_id=$matches[1]', 'top');
+        add_rewrite_rule('^mensagens/@([^/]+)/?$', 'index.php?apollo_chat_page=user&apollo_chat_user=$matches[1]', 'top');
+        add_rewrite_rule('^mensagens/([^/@0-9][^/]*)/?$', 'index.php?apollo_chat_page=user&apollo_chat_user=$matches[1]', 'top');
+
+        /*
+         * Rewrite rules only reach the database on flush, and this plugin
+         * flushes solely in Activation.php. It is already active, so without
+         * this the two new rules would never resolve — /mensagens/teste would
+         * 404 until someone happened to re-save permalinks.
+         *
+         * Gated on its own option rather than APOLLO_CHAT_VERSION so a routine
+         * version bump does not trigger a needless flush, and so this does not
+         * have to touch apollo-chat.php. Bump the string to force a re-flush.
+         *
+         * THE FLUSH MUST NOT HAPPEN HERE. This method runs on init:1, and
+         * flush_rewrite_rules() serialises whatever rules exist AT THAT MOMENT
+         * into the database. Most plugins — apollo-hub, apollo-events,
+         * apollo-users' /id/{login} — register theirs on init:10 or later, so
+         * flushing from init:1 would persist a rule set with all of them
+         * MISSING and 404 half the site until the next flush.
+         *
+         * wp_loaded fires after every init handler has run, so the rule set is
+         * complete by then. This is the only safe point to flush from a
+         * plugin that is already active.
+         */
+        if (get_option('apollo_chat_rewrite_v') !== '2') {
+            add_action(
+                'wp_loaded',
+                static function (): void {
+                    flush_rewrite_rules(false);
+                    update_option('apollo_chat_rewrite_v', '2', false);
+                }
+            );
+        }
     }
 
     public function register_query_vars(array $vars): array
     {
         $vars[] = 'apollo_chat_page';
         $vars[] = 'apollo_thread_id';
+        $vars[] = 'apollo_chat_user';
         return $vars;
     }
 
@@ -106,8 +165,101 @@ final class Plugin
             exit;
         }
 
+        /*
+         * /mensagens/{login} and /mensagens/@{login}
+         *
+         * Resolve the login to a user, then to the DM thread the two of them
+         * share, and hand the template the thread id it already understands.
+         * templates/chat.php reads exactly one thing — get_query_var
+         * ('apollo_thread_id') — so nothing downstream needs to change.
+         *
+         * Authorization is unaffected: the thread produced here always has the
+         * current user as a participant, and every message read still goes
+         * through apollo_get_thread_messages(), which re-checks
+         * chat_participants and fails closed. This route changes ADDRESSING,
+         * not access.
+         */
+        if ('user' === $page) {
+            $login = (string) get_query_var('apollo_chat_user');
+            $tid   = $this->resolve_user_thread($login);
+
+            if ($tid <= 0) {
+                // Unknown login, or the user addressed themselves. Send them to
+                // the inbox rather than rendering an empty shell that looks broken.
+                wp_safe_redirect(home_url('/mensagens'));
+                exit;
+            }
+
+            set_query_var('apollo_thread_id', $tid);
+        }
+
         $template = APOLLO_CHAT_PATH . 'templates/chat.php';
         $this->render_blank_canvas($template);
+    }
+
+    /**
+     * Login (or nicename) -> the DM thread id shared with the current user.
+     *
+     * Returns 0 when the login is unknown, inactive, or is the caller's own —
+     * a self-DM is not a thing, and creating one would put a junk row in every
+     * inbox that visits their own handle.
+     *
+     * Lookup order mirrors apollo-users' /id/{login} profile URLs so the same
+     * handle works in both places: login first, then nicename.
+     */
+    private function resolve_user_thread(string $login): int
+    {
+        $login = sanitize_user(rawurldecode($login), true);
+        if ('' === $login) {
+            return 0;
+        }
+
+        $user = get_user_by('login', $login);
+        if (! $user) {
+            $user = get_user_by('slug', $login);   // nicename, as used by /id/{login}
+        }
+        if (! $user || ! $user->ID) {
+            return 0;
+        }
+
+        $me = get_current_user_id();
+        if ((int) $user->ID === $me) {
+            return 0;
+        }
+
+        /*
+         * Look for an existing thread FIRST. find_or_create() would return the
+         * right answer either way, but it routes through
+         * apollo_chat_consolidate_dm_pair(), which merges duplicate DM pairs —
+         * real work we should not do on every page view when a plain lookup
+         * answers the question.
+         */
+        if (function_exists('apollo_chat_find_dm_thread_ids')) {
+            $existing = apollo_chat_find_dm_thread_ids($me, (int) $user->ID);
+            if (! empty($existing)) {
+                return (int) $existing[0];
+            }
+        }
+
+        /*
+         * No thread yet: create one, so the page opens ready to type instead of
+         * bouncing to the inbox.
+         *
+         * TRADE-OFF, stated rather than hidden: this makes a GET create a row,
+         * so a logged-in user walking /mensagens/@handle could seed an empty
+         * thread in other people's inboxes. That is not new — the existing
+         * apollo_chat_thread_url() already calls find_or_create() whenever it
+         * renders a "Message" button, and POST /chat/dm does the same. This
+         * route inherits that behaviour rather than inventing a stricter one.
+         * If empty-thread spam ever shows up, the fix belongs in ONE place:
+         * make thread creation lazy until the first message is sent, for every
+         * caller at once.
+         */
+        if (function_exists('apollo_chat_find_or_create_thread')) {
+            return (int) apollo_chat_find_or_create_thread($me, (int) $user->ID);
+        }
+
+        return 0;
     }
 
     // ─── REST API Registration ──────────────────────────────────────
@@ -145,6 +297,17 @@ final class Plugin
             array(
                 'methods'             => 'POST',
                 'callback'            => array($this, 'rest_send_message'),
+                'permission_callback' => $auth,
+            )
+        );
+
+        // Open/create empty 1:1 DM (no first message required)
+        register_rest_route(
+            $ns,
+            '/chat/dm',
+            array(
+                'methods'             => 'POST',
+                'callback'            => array($this, 'rest_open_dm'),
                 'permission_callback' => $auth,
             )
         );
@@ -481,6 +644,28 @@ final class Plugin
     {
         $tid  = (int) $req->get_param('id');
         $uid  = get_current_user_id();
+
+        // If this is a duplicate 1:1, merge history into the canonical DM first.
+        if (function_exists('apollo_chat_get_thread_meta') && function_exists('apollo_chat_consolidate_dm_pair')) {
+            $meta_probe = apollo_chat_get_thread_meta($tid, $uid);
+            if (is_array($meta_probe) && empty($meta_probe['is_group'])) {
+                $peer = 0;
+                foreach ((array) ( $meta_probe['participants'] ?? array() ) as $p) {
+                    $pid = (int) ( $p['user_id'] ?? 0 );
+                    if ($pid > 0 && $pid !== $uid) {
+                        $peer = $pid;
+                        break;
+                    }
+                }
+                if ($peer > 0) {
+                    $canonical = apollo_chat_consolidate_dm_pair($uid, $peer);
+                    if ($canonical > 0) {
+                        $tid = $canonical;
+                    }
+                }
+            }
+        }
+
         $msgs = apollo_get_thread_messages($tid, $uid);
 
         foreach ($msgs as &$m) {
@@ -504,11 +689,35 @@ final class Plugin
 
         return new \WP_REST_Response(
             array(
-                'messages' => $msgs,
-                'meta'     => $meta,
+                'messages'  => $msgs,
+                'meta'      => $meta,
+                'thread_id' => $tid,
             ),
             200
         );
+    }
+
+    /**
+     * POST /chat/dm — open or create an empty 1:1 thread with peer (no message).
+     */
+    public function rest_open_dm(\WP_REST_Request $req): \WP_REST_Response
+    {
+        $uid  = get_current_user_id();
+        $peer = (int) $req->get_param('user_id');
+        if ($peer <= 0 || $peer === $uid) {
+            return new \WP_REST_Response(array('error' => 'invalid_user'), 400);
+        }
+        if (! get_userdata($peer)) {
+            return new \WP_REST_Response(array('error' => 'user_not_found'), 404);
+        }
+        if (! function_exists('apollo_chat_consolidate_dm_pair')) {
+            return new \WP_REST_Response(array('error' => 'unavailable'), 500);
+        }
+        $tid = apollo_chat_consolidate_dm_pair($uid, $peer);
+        if ($tid <= 0) {
+            return new \WP_REST_Response(array('error' => 'create_failed'), 500);
+        }
+        return new \WP_REST_Response(array('thread_id' => $tid), 200);
     }
 
     public function rest_send_message(\WP_REST_Request $req): \WP_REST_Response
@@ -530,17 +739,55 @@ final class Plugin
         $is_group   = (bool) $req->get_param('is_group');
         $group_name = sanitize_text_field($req->get_param('group_name') ?? '');
 
+        // #region agent log
+        $apollo_chat_dbg = static function (string $hypothesis_id, string $message, array $data): void {
+            $payload = array(
+                'sessionId'    => '161c5c',
+                'runId'        => 'chat-pre',
+                'hypothesisId' => $hypothesis_id,
+                'location'     => 'Plugin.php:rest_send_message',
+                'message'      => $message,
+                'data'         => $data,
+                'timestamp'    => (int) round(microtime(true) * 1000),
+            );
+            $line = wp_json_encode($payload) . "\n";
+            foreach (
+                array(
+                    ( defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : '' ) . '/debug-161c5c.log',
+                    ( defined('ABSPATH') ? ABSPATH : '' ) . 'debug-161c5c.log',
+                ) as $log
+            ) {
+                if ($log !== '/debug-161c5c.log' && $log !== 'debug-161c5c.log') {
+                    // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+                    @file_put_contents($log, $line, FILE_APPEND);
+                }
+            }
+            if (! headers_sent()) {
+                header('X-Apollo-Debug-Chat: ' . rawurlencode((string) wp_json_encode($payload)));
+            }
+        };
+        // #endregion
+
         if (empty($message)) {
+            // #region agent log
+            $apollo_chat_dbg('C3', 'reject empty message', array('sender' => $sender_id, 'thread' => $thread_id));
+            // #endregion
             return new \WP_REST_Response(array('error' => 'Mensagem vazia'), 400);
         }
 
         // ── Flood control ──────────────────────────────────
         if (apollo_chat_check_flood($sender_id)) {
+            // #region agent log
+            $apollo_chat_dbg('C4', 'reject flood', array('sender' => $sender_id));
+            // #endregion
             return new \WP_REST_Response(array('error' => 'Você está enviando mensagens muito rápido. Aguarde um momento.'), 429);
         }
 
         // ── Per-role quota ─────────────────────────────────
         if (apollo_chat_is_over_quota($sender_id)) {
+            // #region agent log
+            $apollo_chat_dbg('C4', 'reject quota', array('sender' => $sender_id));
+            // #endregion
             return new \WP_REST_Response(array('error' => 'Limite de mensagens atingido para seu plano.'), 403);
         }
 
@@ -549,14 +796,34 @@ final class Plugin
 
         // ── Block check ────────────────────────────────────
         if ($thread_id && apollo_chat_is_blocked_in_thread($thread_id, $sender_id)) {
+            // #region agent log
+            $apollo_chat_dbg('C5', 'reject blocked', array('sender' => $sender_id, 'thread' => $thread_id));
+            // #endregion
             return new \WP_REST_Response(array('error' => 'Bloqueado nesta conversa'), 403);
         }
+
+        $recip_ids = is_array($recipients) ? array_map('intval', $recipients) : array();
+
+        // #region agent log
+        $apollo_chat_dbg(
+            'C2',
+            'send attempt',
+            array(
+                'sender'     => $sender_id,
+                'thread'     => $thread_id,
+                'recipCount' => count($recip_ids),
+                'recipients' => $recip_ids,
+                'msgLen'     => strlen($message),
+                'is_group'   => $is_group,
+            )
+        );
+        // #endregion
 
         $result = apollo_send_message(
             array(
                 'sender_id'   => $sender_id,
                 'thread_id'   => $thread_id,
-                'recipients'  => is_array($recipients) ? array_map('intval', $recipients) : array(),
+                'recipients'  => $recip_ids,
                 'subject'     => $subject,
                 'message'     => $message,
                 'reply_to_id' => $reply_to,
@@ -573,6 +840,10 @@ final class Plugin
             $preview = wp_trim_words($message, 10, '...');
             apollo_chat_maybe_notify_by_email($result, $sender_id, $preview);
 
+            // #region agent log
+            $apollo_chat_dbg('C2', 'send OK', array('thread_id' => (int) $result));
+            // #endregion
+
             return new \WP_REST_Response(
                 array(
                     'thread_id' => $result,
@@ -581,7 +852,29 @@ final class Plugin
                 201
             );
         }
-        return new \WP_REST_Response(array('error' => 'Erro ao enviar mensagem'), 500);
+
+        // #region agent log
+        global $wpdb;
+        $apollo_chat_dbg(
+            'C6',
+            'apollo_send_message returned false',
+            array(
+                'sender'     => $sender_id,
+                'thread'     => $thread_id,
+                'recipCount' => count($recip_ids),
+                'db_error'   => (string) $wpdb->last_error,
+                'last_query' => substr((string) $wpdb->last_query, 0, 240),
+            )
+        );
+        // #endregion
+
+        return new \WP_REST_Response(
+            array(
+                'error'    => 'Erro ao enviar mensagem',
+                'db_error' => (string) $wpdb->last_error,
+            ),
+            500
+        );
     }
 
     public function rest_unread_count(): \WP_REST_Response
@@ -961,7 +1254,7 @@ final class Plugin
         return new \WP_REST_Response(
             array(
                 'thread_id'        => $thread_id,
-                'thread_url'       => home_url('/mensagens/' . $thread_id),
+                'thread_url'       => apollo_chat_thread_permalink((int) $thread_id, (int) get_current_user_id()),
                 'recipient_name'   => $recipient ? $recipient->display_name : '',
                 'recipient_avatar' => $this->get_avatar($recipient_id),
             ),
@@ -1110,6 +1403,24 @@ final class Plugin
                 $t['is_group']      = false;
                 $t['other_user_id'] = $uid;
                 $t['is_online']     = $uid ? apollo_chat_is_online($uid) : false;
+
+                /*
+                 * The counterpart's login, so the client can put a HANDLE in the
+                 * address bar instead of a thread id. Without this the SPA calls
+                 * history.replaceState('/mensagens/' + threadId) and every URL a
+                 * user copies out of the app is numeric again — the naming would
+                 * stop at the server boundary.
+                 *
+                 * user_login only; no e-mail, no capabilities. It is already
+                 * public at /id/{login}, so this exposes nothing new.
+                 */
+                $t['other_user_login'] = '';
+                if ($uid) {
+                    $peer = get_userdata($uid);
+                    if ($peer && '' !== (string) $peer->user_login) {
+                        $t['other_user_login'] = (string) $peer->user_login;
+                    }
+                }
             }
 
             $t['time_ago'] = function_exists('apollo_time_ago') && ! empty($t['last_message_at'])

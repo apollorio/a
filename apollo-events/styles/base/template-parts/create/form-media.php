@@ -17,6 +17,12 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
                     </div>
                     <!-- PHP: media-library picker seta o attachment id aqui -->
                     <input type="hidden" id="ev-banner" name="banner" value="">
+                    <input type="url" id="ev-banner-url" class="apollo-input" style="margin-top:10px"
+                        placeholder="https://…/flyer.jpg" autocomplete="off"
+                        aria-label="<?php esc_attr_e( 'URL da imagem de capa (mesma da destacada)', 'apollo-events' ); ?>">
+                    <span class="txt-mono muted" style="display:block;margin-top:6px;text-transform:none;letter-spacing:0;font-size:11px;">
+                        <?php esc_html_e( 'A URL deve ser uma imagem de verdade — é a mesma capa do post e do card no WhatsApp.', 'apollo-events' ); ?>
+                    </span>
                 </div>
 
                 <div class="grid-2">

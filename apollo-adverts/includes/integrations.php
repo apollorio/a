@@ -304,43 +304,28 @@ function apollo_adverts_chat_button(int $post_id): string
     }
 
     // Chat plugin active: gate already cleared for this member/advert pair.
+    // Safety interstitial already covered the warning — no second disclaimer modal.
     if (function_exists('apollo_chat_thread_url') || function_exists('apollo_chat_find_or_create_thread')) {
         $author      = get_userdata($post->post_author);
         $author_name = $author ? $author->display_name : __('Anunciante', 'apollo-adverts');
 
-        wp_enqueue_style('apollo-adverts-marketplace');
-        wp_enqueue_script('apollo-adverts-marketplace');
-
-        add_action(
-            'wp_footer',
-            function () use ($post_id) {
-                static $modal_rendered = false;
-                if ($modal_rendered) {
-                    return;
-                }
-                $modal_rendered = true;
-                $tmpl = APOLLO_ADVERTS_DIR . 'templates/marketplace/parts/modal-disclaimer.php';
-                if (file_exists($tmpl)) {
-                    load_template($tmpl, false, array('post_id' => $post_id));
-                }
-            },
-            99
-        );
+        $chat_url = function_exists('apollo_chat_thread_url')
+            ? apollo_chat_thread_url(
+                array(
+                    'recipient' => (int) $post->post_author,
+                    'context'   => 'classified:' . $post_id,
+                    'subject'   => get_the_title($post_id),
+                )
+            )
+            : home_url(
+                '/mensagens?new=1&to=' . (int) $post->post_author
+                . '&ctx=' . rawurlencode('classified:' . $post_id)
+            );
 
         return sprintf(
-            '<button type="button" class="button apollo-adverts-chat-btn btn-open-modal"
-				data-a-user="%d" data-classified-id="%d"
-				data-rest-url="%s" data-nonce="%s"
-				aria-label="%s">
-				<i class="ri-chat-3-line"></i>
-				<span>%s</span>
-				<span class="chat-author-name">%s</span>
-			</button>',
-            (int) $post->post_author,
-            (int) $post_id,
-            esc_url(rest_url('apollo/v1/chat/thread-for-context')),
-            esc_attr(is_user_logged_in() ? wp_create_nonce('wp_rest') : ''),
-            esc_attr(sprintf(__('Contatar %s via Chat', 'apollo-adverts'), $author_name)),
+            '<a href="%s" class="button apollo-adverts-chat-btn">' .
+                '<i class="ri-chat-3-line"></i> <span>%s</span> <span class="chat-author-name">%s</span></a>',
+            esc_url($chat_url),
             esc_html__('Conversar com', 'apollo-adverts'),
             esc_html($author_name)
         );

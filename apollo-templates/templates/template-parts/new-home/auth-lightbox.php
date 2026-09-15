@@ -48,7 +48,7 @@ if (is_user_logged_in()) {
 
         <div class="hub-hero">
             <i class="ri-body-scan-line" aria-hidden="true"></i>
-            <h1 id="nhAuthBoxTitle">Opa, seu nome não tá na lista...</h1>
+            <h2 id="nhAuthBoxTitle">Opa, seu nome não tá na lista...</h2>
             <p class="hub-tag">Entre para ter acesso</p>
             <div class="hub-notice">
                 <p>

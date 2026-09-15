@@ -39,9 +39,12 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline: non
 p { text-wrap: pretty; }
 a, .btn, .ni, .si, .fr, .fni, .adj, .tag, .stat-card, .event-row, .gallery-card, .gallery-card img,
 .apollo-select, .field-input, .dropdown-item, .acc-hd, .swatch, .ax-ic, .ax-burger, .ax-avb, .toggle-track, .toggle-track::after, .ctrl-btn, .play-pause-btn, .btn-more, .pill, .pill .th, .card-hover { transition: background-color .4s var(--ease), background .4s var(--ease), color .35s var(--ease), box-shadow .4s var(--ease), transform .4s var(--ease-snappy), opacity .4s var(--ease), filter .4s var(--ease);}
-.tref-sec { padding: 48px 0; border-bottom: .5px solid var(--border); }
+/* 2026-08-29: border-bottom + the label's trailing rule-line removed on request
+   ("remove border line from sections — whitespaces are mandatory"). Padding is
+   UNCHANGED and is what now carries the section break — a hairline was never
+   load-bearing for the separation, just decoration on top of it. */
+.tref-sec { padding: 48px 0; }
 .tref-sec-lbl { display: flex; align-items: center; gap: 14px; font-family: var(--ff-mono, monospace); font-size: calc(var(--fs-r, 1) * .5rem)!important; font-weight: 300; text-transform: uppercase; color: var(--primary); margin-bottom: 8px; }
-.tref-sec-lbl::after { content: ''; flex: 1; height: .5px; background: var(--border); }
 
 /* DEPTH (inset only) */
 .ins, .vidro { border: 1px solid rgba(var(--rgb-diff),.04); box-shadow: inset 0 1px 0 0 rgba(var(--rgb-theme),.9), inset 0 0 0 1px rgba(var(--rgb-theme),.4); }
@@ -82,8 +85,16 @@ a, .btn, .ni, .si, .fr, .fni, .adj, .tag, .stat-card, .event-row, .gallery-card,
 .btn-primary { background: var(--black-1); color: var(--bg)!important; corner-shape: squircle; }
 .btn-primary:hover { background: var(--black-6)!important; transform: translateY(-1px); }
 .btn-secondary { background: var(--card); color: var(--txt-heading); border: 1px solid rgba(var(--rgb-diff),.04); box-shadow: inset 0 1px 0 0 rgba(var(--rgb-theme),.9), inset 0 0 0 1px rgba(var(--rgb-theme),.4); }
-.btn-icon { width: 44px; height: 44px; padding: 0; border-radius: 50%; background: var(--surface); color: var(--txt-heading); }
+.btn-icon { width: 44px; height: 44px; padding: 0; border-radius: 50%; background: var(--surface); color: var(--txt-heading); font-size: calc(var(--fs-r, 1) * 16px); }
 .btn-icon-sm { width: 32px; height: 32px; padding: 0; border-radius: 50%; background: var(--surface); color: var(--txt-heading); display: inline-flex; align-items: center; justify-content: center; }
+/* .btn-icon comes after .btn-primary in source order, so without this it would
+   silently steal the primary's black background back to --surface — the
+   create-header Salvar/Atualizar button must stay solid black per spec. */
+.btn-primary.btn-icon { background: var(--black-1); color: var(--bg); }
+.btn-primary.btn-icon:hover { background: var(--black-6); }
+/* Destacar toggle — pressed/gold once the event is marked highlighted. */
+#highlightBtn.is-on { background: linear-gradient(155deg, #FFD166, #FFAA33); color: #2b1600; box-shadow: inset 0 1px 0 0 rgba(255,255,255,.5), inset 0 0 0 1px rgba(0,0,0,.08); }
+#highlightBtn.is-on:hover { filter: brightness(1.05); }
 
 /* FORM FIELDS */
 .field { margin-bottom: var(--s-4, 24px); width: 100%; }
@@ -299,13 +310,15 @@ textarea.apollo-input { resize: vertical; min-height: 80px; }
 .cover-upload i { font-size: 32px; color: var(--muted); }
 .cover-upload span { font-size: 13px; color: var(--txt-heading); font-weight: 500; }
 
-.coupon-section { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(var(--rgb-diff),.05); }
+.coupon-section { display: none; margin-top: 16px; padding-top: 16px; }
 .coupon-section.is-active { display: block; }
 
 /* ═══ CO-AUTHORS (create/edit · not shown on public single) ═══ */
 .ax-coauthors-card {
-  border: 1px solid rgba(255, 92, 0, .28) !important;
-  box-shadow: 0 0 0 1px rgba(255, 92, 0, .08), inset 0 1px 0 0 rgba(var(--rgb-theme),.9);
+  /* 2026-08-29: the orange !important outline removed on request ("remove
+     border line from sections — whitespaces are mandatory"). The section
+     still reads as distinct via its own padding/margin and the "seleção
+     múltipla" accent label — it doesn't need a boxed warning border too. */
 }
 .ax-coauthors-req {
   margin-left: 8px;
@@ -587,6 +600,19 @@ textarea.apollo-input { resize: vertical; min-height: 80px; }
     .lineup-row .dj-actions { grid-column: 4; grid-row: 1 / span 2; flex-direction: column; }
     .lineup-row .dj-in { grid-column: 2; }
     .lineup-row .dj-out { grid-column: 3; }
+
+    /* ── Criar/Editar Evento — cabeçalho (2026-08-29) ────────────────────────
+       .flex-between colocava título e os 3 botões de ação lado a lado sem
+       quebra — abaixo de 720px isso sobra pouco espaço pro título (que
+       embrulha em duas linhas) e empurra os botões pra um canto apertado.
+       Empilha título em cima, ações embaixo, e os botões dividem a largura
+       em vez de ficarem espremidos. */
+    .create-header { flex-direction: column; align-items: stretch; gap: 16px; }
+    .create-header #formHeaderActions { width: 100%; }
+    /* Icon-only buttons (deletar/destacar/salvar) stay fixed circles — only
+       the text "Descartar" link is allowed to grow and fill the row. */
+    .create-header #formHeaderActions .btn:not(.btn-icon) { flex: 1 1 0; justify-content: center; white-space: nowrap; }
+    .create-header #formHeaderActions .btn-icon { flex: 0 0 auto; }
 }
 
 /* ── Fechamento: recibo (65%) + clima (35%) + Gravar Dados ── */

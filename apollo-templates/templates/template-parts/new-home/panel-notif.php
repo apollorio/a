@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <section data-panel="notif" data-glyph="N">
-	<div class="container" style="padding-top:calc(80px + var(--safe-top));">
+	<div class="container" style="padding-top:calc(80px + var(--safe-top, 0px));">
 		<button data-back="1" class="return-back" style="margin-bottom:28px;" aria-label="<?php esc_attr_e( 'Fechar notificações', 'apollo-templates' ); ?>">
 			<i class="ri-corner-up-right-line"></i>
 		</button>

@@ -62,9 +62,21 @@ define('APOLLO_PLUS_TOPBAR_STYLES', true);
 ?>
 <style id="apollo-plus-topbar">
 /* ═══ APP SHELL — estrutura EXATA de apollo.theme.showcase.html ═══ */
+/* ── --safe-top now has a fallback, added 2026-08-25.
+   The bare var(--safe-top) was correct but unguarded. --safe-top IS defined — by the
+   ~31 KB token block that cdn.apollo.rio.br/v1.0.0/core.js injects (verified against the
+   live CDN on 2026-08-25: it declares --safe-top/-bottom/-left/-right among 160+ tokens).
+   But core.js is an EXTERNAL, render-blocking fetch. Until it lands, var(--safe-top)
+   resolves to nothing and this fixed topbar — burger, avatar, icons — sits flush under
+   the Dynamic Island on every cold load and every slow network.
+   env(safe-area-inset-top) needs no JavaScript and no network. It costs nothing when
+   core.js is fast and saves the header when it is not. navbar.v2.css:336 and
+   new-home.css:2114 already use exactly this defensive form; the shell core did not.
+   Requires viewport-fit=cover, which document-head.php:141 already emits. ── */
+
 .ax-body { padding-top: 56px; }
 .ax-top-blur { position: fixed; inset: 0 0 auto 0; height: 78px; z-index: 9900; pointer-events: none; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); background: linear-gradient(to bottom, rgba(var(--rgb-theme),1) 0%, rgba(var(--rgb-theme),.4) 50%, transparent 100%); -webkit-mask: linear-gradient(to bottom, #000 0%, rgba(0,0,0,.7) 45%, transparent 100%); mask: linear-gradient(to bottom, #000 0%, rgba(0,0,0,.7) 45%, transparent 100%); }
-.ax-top { position: fixed; top: 2px; left: 0; right: 13px; z-index: 9901; height: 56px; display: flex; align-items: center; gap: 6px; padding: 0 clamp(8px,2vw,16px); padding-top: var(--safe-top); }
+.ax-top { position: fixed; top: 2px; left: 0; right: 13px; z-index: 9901; height: 56px; display: flex; align-items: center; gap: 6px; padding: 0 clamp(8px,2vw,16px); padding-top: var(--safe-top, env(safe-area-inset-top, 0px)); }
 .ax-top-l, .ax-top-r { display: flex; align-items: center; }
 .ax-top-r { margin-left: auto; gap: 2px; }
 .ax-burger { display: flex; width: 44px; height: 44px; border-radius: var(--r-pill); align-items: center; justify-content: center; color: var(--txt-heading); cursor: pointer; }

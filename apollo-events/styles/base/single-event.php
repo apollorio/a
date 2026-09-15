@@ -77,10 +77,15 @@ $body_html = apollo_event_render_single(
 	)
 );
 
+$doc_title = $title . ' — Apollo::Rio';
+if ( class_exists( '\Apollo\SEO\Meta' ) ) {
+	$doc_title = \Apollo\SEO\Meta::title_for( array( 'post_id' => $post_id ) );
+}
+
 if ( function_exists( 'apollo_render_document_open' ) ) {
 	apollo_render_document_open(
 		array(
-			'title'      => $title . ' — Apollo::Rio',
+			'title'      => $doc_title,
 			'extra_head' => $extra_head,
 		)
 	);
@@ -96,7 +101,7 @@ if ( function_exists( 'apollo_render_document_open' ) ) {
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 	<link rel="preconnect" href="https://assets.apollo.rio.br">
 	<link rel="preconnect" href="https://cdn.apollo.rio.br">
-	<title><?php echo esc_html( $title ); ?> — Apollo::Rio</title>
+	<title><?php echo $doc_title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Meta::title_for() escapes. ?></title>
 	<?php
 	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- trusted template part output.
 	echo $extra_head;

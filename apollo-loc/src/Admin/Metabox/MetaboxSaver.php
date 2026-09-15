@@ -83,12 +83,32 @@ final class MetaboxSaver {
 			}
 		}
 
-		// Save float coords
+		/* Save float coords.
+		   ─────────────────────────────────────────────────────────────────
+		   ⚠ A BLANK FIELD MUST DELETE THE KEY, NOT WRITE "0".
+
+		   This loop used to do `(float) ''` → 0.0 → update_post_meta(…, "0")
+		   for every empty coordinate box. Two lines below, Geocoder::
+		   maybe_geocode() decides whether to look the address up by testing
+		   `$lat !== ''`. "0" is not '', so the guard passed and geocoding was
+		   skipped — permanently, on every save. The venue was then pinned at
+		   0,0 (Gulf of Guinea), and apollo-maps' shape_loc_payload() drops it,
+		   which is why /map/explorer returned an empty locs array with every
+		   loc in the database sitting at 0,0.
+
+		   Deleting instead leaves the key genuinely absent, so maybe_geocode()
+		   below can do its job. A real 0 is not a loss: latitude 0 / longitude 0
+		   is open ocean off Africa and can never be a Rio venue. */
 		foreach ( self::FLOAT_KEYS as $key ) {
-			if ( isset( $_POST[ $key ] ) ) {
-				$val = (float) sanitize_text_field( wp_unslash( $_POST[ $key ] ) );
-				update_post_meta( $post_id, $key, (string) $val );
+			if ( ! isset( $_POST[ $key ] ) ) {
+				continue;
 			}
+			$raw = trim( sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) );
+			if ( '' === $raw || ! is_numeric( $raw ) || 0.0 === (float) $raw ) {
+				delete_post_meta( $post_id, $key );
+				continue;
+			}
+			update_post_meta( $post_id, $key, (string) (float) $raw );
 		}
 
 		// Gallery images (_local_image_1..5) — attachment ID or URL string.
@@ -162,6 +182,73 @@ final class MetaboxSaver {
 			}
 			update_post_meta( $post_id, '_local_amenities', $amenities );
 		}
+
+		/* ─── 2026-08-25 · keys that were registered but unreachable ───────
+		   Each of these existed in apollo-core's MetaRegistry with no control
+		   and no save path, so it could never hold a value. Inputs added in
+		   DetailsMetabox; this is the other half. */
+
+		// Region — validated against the same five zone keys the accommodation
+		// map filters on. An unknown value is dropped rather than stored, so a
+		// tampered POST cannot introduce a zone the map has no polygon for.
+		if ( isset( $_POST['_local_region'] ) ) {
+			$allowed_regions = array( '', 'zona-sul', 'zona-norte', 'centro', 'zona-oeste', 'niteroi-sg' );
+			$region          = sanitize_text_field( wp_unslash( $_POST['_local_region'] ) );
+			if ( in_array( $region, $allowed_regions, true ) ) {
+				if ( '' === $region ) {
+					delete_post_meta( $post_id, '_local_region' );
+				} else {
+					update_post_meta( $post_id, '_local_region', $region );
+				}
+			}
+		}
+
+		if ( isset( $_POST['_local_tagline'] ) ) {
+			update_post_meta( $post_id, '_local_tagline', sanitize_text_field( wp_unslash( $_POST['_local_tagline'] ) ) );
+		}
+
+		// Founded year — a blank box must clear the key, not store 0, or the
+		// derived "X anos" on the single reads as ~2026 years old.
+		if ( isset( $_POST['_local_founded_year'] ) ) {
+			$year = absint( $_POST['_local_founded_year'] );
+			if ( $year < 1900 || $year > (int) current_time( 'Y' ) ) {
+				delete_post_meta( $post_id, '_local_founded_year' );
+			} else {
+				update_post_meta( $post_id, '_local_founded_year', $year );
+			}
+		}
+
+		if ( isset( $_POST['_local_user_id'] ) ) {
+			$uid = absint( $_POST['_local_user_id'] );
+			if ( 0 === $uid ) {
+				delete_post_meta( $post_id, '_local_user_id' );
+			} else {
+				update_post_meta( $post_id, '_local_user_id', $uid );
+			}
+		}
+
+		// Rooms — edited as one comma-separated line, stored as a clean array.
+		// The room COUNT shown on the single is derived from this array, so
+		// empty fragments are stripped rather than kept as blank entries.
+		if ( isset( $_POST['_local_rooms'] ) ) {
+			$rooms_raw = sanitize_text_field( wp_unslash( $_POST['_local_rooms'] ) );
+			$rooms     = array_values( array_filter( array_map( 'trim', explode( ',', $rooms_raw ) ), static function ( $r ) {
+				return '' !== $r;
+			} ) );
+			update_post_meta( $post_id, '_local_rooms', $rooms );
+		}
+
+		/* _local_testimonials is deliberately NOT saved here. Depoimentos are
+		   apollo-comment's vocabulary and storage (15-conventions maps
+		   comment/review → depoimento); DetailsMetabox only prints the count so
+		   an editor can see the section is fed. Writing it here would create a
+		   second owner of the same data. */
+
+		/* Taxonomy selects (local_type / local_area). Driven from here so this
+		   screen keeps ONE save_post handler — a second one would race with
+		   this at an undefined priority. TaxonomySelectMetabox::save() carries
+		   its own nonce check, so a screen without those selects is a no-op. */
+		TaxonomySelectMetabox::save( $post_id );
 
 		// Auto-geocode if coords are missing
 		Geocoder::maybe_geocode( $post_id );

@@ -63,30 +63,72 @@ if (function_exists('apollo_render_document_open')) {
     <?php
 }
 ?>
-    <!-- Apollo Forms — minimalist underline design system -->
-    <script src="https://cdn.apollo.rio.br/v1.0.0/js/forms.js" defer></script>
+    <?php
+    // #region agent log
+    $apollo_dbg_logged = $is_logged ? 1 : 0;
+    $apollo_dbg_path   = function_exists('apollo_normalize_request_path')
+        ? apollo_normalize_request_path()
+        : '';
+    ?>
+    <script>
+    (function () {
+      var logged = <?php echo (int) $apollo_dbg_logged; ?>;
+      var path = <?php echo wp_json_encode($apollo_dbg_path); ?>;
+      var hdr = '';
+      try {
+        /* visible only if server set X-Apollo-Debug-Mural on this response */
+        hdr = document.currentScript && document.currentScript.getAttribute('data-mural') || '';
+      } catch (e) {}
+      fetch('http://127.0.0.1:7754/ingest/da9d552b-a038-4061-bf95-e47d2c529b38', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '161c5c' },
+        body: JSON.stringify({
+          sessionId: '161c5c',
+          runId: 'pre-fix',
+          hypothesisId: logged ? 'A' : 'B',
+          location: 'page-home.php:head',
+          message: logged
+            ? 'LOGGED user rendered /casa (mural redirect FAILED)'
+            : 'guest rendered /casa (expected)',
+          data: { loggedIn: !!logged, path: path, href: location.href },
+          timestamp: Date.now()
+        })
+      }).catch(function () {});
+    })();
+    </script>
+    <?php
+    // #endregion
+    ?>
+    <?php
+    /* forms.js is NOT on the CDN (live 302 → /erro/404/). Chrome then tries to
+       execute the HTML 404 as a script (MIME block). /casa has no forms. */
+    ?>
 
     <?php if ($css) : ?>
         <link rel="stylesheet" href="<?php echo esc_url($css); ?>">
     <?php endif; ?>
 
-    <!-- Leaflet CSS — required for map section tiles.
-         cdn.jsdelivr.net, not unpkg.com (unpkg isn't CSP-allowlisted). -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+    <?php
+    /* F-01 close: load canonical topbar CSS (was only pulled by apollo_plus_open).
+       Landing keeps full-bleed hero via scoped overrides below — not a private
+       geometry fork of .ax-top. */
+    if (function_exists('apollo_plus_part')) {
+        apollo_plus_part('apollo-plus/topbar-styles');
+    }
+    ?>
 
+    <?php
+    /* Leaflet CSS is loaded with the map cell (below-fold, IntersectionObserver)
+       so it does not compete with core.js on first paint. */
+    ?>
+
+    <!-- casa-shell 1.6.4 dead-asset-cut -->
     <style id="apollo-home-styles">
         /* ── OWNERSHIP ────────────────────────────────────────────────────
-           This cell OWNS the /casa `landing` topbar variant — transparent
-           over the hero, the scroll-dim colour ramp, and the login-only
-           right cluster — plus the two legacy `.a-v2-*` list/card blocks.
-
-           It does NOT own the topbar's geometry. `.ax-top`, `.ax-top-blur`,
-           `.ax-burger`, `.ax-top-l/r/brand` and the `.ax-ic` em box belong to
-           template-parts/apollo-plus/topbar-styles.php, which /casa does not
-           load — so what follows is a partial private copy that has already
-           drifted (DS top:2px / right:13px vs 13px / 0 here, and --fs-r vs
-           --fsx for the icon scale). Tracked as F-01 in
-           _inventory/CASA-MAP-2026-08-08.md, ADR-001. Do not extend the copy.
+           Landing-only deltas on top of apollo-plus/topbar-styles.php:
+           full-bleed hero (no .ax-body pad), transparent topbar over video,
+           scroll-dim colour ramp, drawer-only aside. Geometry of .ax-top
+           belongs to topbar-styles.php — do not redeclare it here.
 
            Tokens come from core.js #cdn-apollo. Page-local extras only. */
 
@@ -415,29 +457,18 @@ if (function_exists('apollo_render_document_open')) {
         /* Footer + intro gate — external new-home.css (no inline overrides) */
 
         /* ══════════════════════════════════════════════════════════
-           TOPBAR — showcase ax-top (tokens from core.js only)
-           landing variant: fixed, transparent over hero, login-only
+           LANDING TOPBAR DELTAS (geometry owned by topbar-styles.php)
+           Full-bleed hero: kill shell padding. Softer blur over video.
+           Every override is body[data-apollo-page="landing"]-scoped so
+           B2 never sees a bare DS selector redeclared.
         ══════════════════════════════════════════════════════════ */
-        .ax-top-blur {
-            position: fixed; top: 0; left: 0; width: 100%; height: 60px; z-index: 9900;
+        body[data-apollo-page="landing"].ax-body { padding-top: 0; }
+        body[data-apollo-page="landing"] .ax-top-blur {
+            height: 60px;
             backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
             background: linear-gradient(to bottom, rgba(var(--rgb-theme), .35) 0%, rgba(var(--rgb-theme), .10) 50%, transparent 100%);
-            pointer-events: none;
+            -webkit-mask: none; mask: none;
         }
-        .ax-top {
-            position: fixed; top: 13px; left: 0; right: 0; z-index: 9901;
-            height: var(--s-6, 56px); display: flex; align-items: center; justify-content: space-between;
-            gap: 6px; padding: 0 clamp(12px, 3vw, 24px); padding-top: var(--safe-top, 0px);
-        }
-        .ax-top-l, .ax-top-r { display: flex; align-items: center; }
-        .ax-top-l { flex-shrink: 0; min-width: 0; }
-        .ax-top-r { margin-left: auto; gap: 2px; flex-shrink: 0; }
-        .ax-burger {
-            display: flex; width: 44px; height: 44px; border-radius: var(--r-pill, 999px);
-            align-items: center; justify-content: center; color: rgba(var(--rgb-diff), .75);
-            cursor: pointer; background: none; border: 0; transition: background .4s var(--ease, ease);
-        }
-        .ax-burger:hover { background: var(--surface); }
 
         /* ═══ APOLLO+ ASIDE — DRAWER-ONLY ON /casa (2026-08-25) ═══════════════
            aside-styles.php pins .ax-aside at >=1000px and hides .ax-burger,
@@ -461,112 +492,84 @@ if (function_exists('apollo_render_document_open')) {
             }
             body[data-apollo-page="landing"] .ax-aside.open { transform: translateX(0); }
             /* Burger stays the menu affordance at every width here, because the
-               aside never pins to replace it. */
+               aside never pins to replace it. Brand stays visible too — DS
+               hides .ax-top-brand when the aside pins; /casa never pins. */
             body[data-apollo-page="landing"] .ax-burger { display: flex; }
+            body[data-apollo-page="landing"] .ax-top-brand { display: flex; }
             /* The overlay is the drawer's dismiss target, so it must stay live —
                aside-styles.php switches it off at this breakpoint on the
                assumption that a pinned aside needs no scrim. */
             body[data-apollo-page="landing"] .ax-overlay { display: block; }
         }
 
-        /* Topbar nav icon glyphs — 22px em box (header only) */
-        .ax-top .ax-burger,
-        .ax-top .ax-top-r .ax-ic,
-        .ax-top .ax-top-r .ax-login { font-size: calc(var(--fsx, 1) * 22px); }
-        .ax-top .ax-burger > svg,
-        .ax-top .ax-burger > i,
-        .ax-top .ax-top-r .ax-ic > svg,
-        .ax-top .ax-top-r .ax-ic > i,
-        .ax-top .ax-top-r .ax-login > svg,
-        .ax-top .ax-top-r .ax-login > i { width: 1em; height: 1em; font-size: inherit; flex-shrink: 0; display: block; line-height: 1; }
-        .ax-top-brand { display: flex; align-items: center; gap: 9px; text-decoration: none; margin-left: 4px; }
-        .ax-top-brand .apollo { font-size: 26px; line-height: 1; color: var(--txt-heading); display: inline-flex; }
         /* login = bare icon button — NO background, NO border (showcase icon-btn rule) */
-        /* color intentionally NOT set here — owned by the topbar color layer below */
-        .ax-login {
+        body[data-apollo-page="landing"] .ax-login {
             display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 6px;
             background: none; border: 0;
-            /* icon size inherited from .ax-top .ax-ic 22px em box above */
             font-family: var(--ff-main); font-weight: 600; text-decoration: none; white-space: nowrap;
         }
-        @media (max-width: 560px) { .ax-login span { display: none; } }
+        @media (max-width: 560px) { body[data-apollo-page="landing"] .ax-login span { display: none; } }
 
         /* ══════════════════════════════════════════════════════════
            TOPBAR ICON COLOR + SCROLL DIM  (/casa only)
            rest → scrolled past 1.25vh. currentColor drives both <i>
            glyphs and inline <svg fill="currentColor">.
+           Selectors stay landing-scoped — never bare DS forks.
         ══════════════════════════════════════════════════════════ */
-        /* ── REST STATE — every topbar glyph, both markups (ax-top + legacy nh-nav) ── */
-        .ax-top-r > *,
-        .ax-top-r > * i,
-        .ax-top-r > * svg,
-        .ax-top-r > * span,
-        .nh-nav-actions > *,
-        .nh-nav-actions > * i,
-        .nh-nav-actions > * svg,
-        .nh-nav-btn,
-        .nh-nav-btn i,
-        .nh-nav-btn svg,
-        .ax-top .ax-burger,
-        .ax-top .ax-burger i,
-        .ax-top .ax-burger svg,
-        .ax-top .ax-ic,
-        .ax-top .ax-ic > i,
-        .ax-top .ax-ic svg:not(.ax-dot svg),
-        .ax-top .ax-avb-init,
-        .ax-top-brand,
-        .ax-top-brand .apollo,
-        .ax-top-brand svg,
-        .ax-top-brand .apollo-logo-wrapper svg {
+        body[data-apollo-page="landing"] .ax-top-r > *,
+        body[data-apollo-page="landing"] .ax-top-r > * i,
+        body[data-apollo-page="landing"] .ax-top-r > * svg,
+        body[data-apollo-page="landing"] .ax-top-r > * span,
+        body[data-apollo-page="landing"] .ax-top .ax-burger,
+        body[data-apollo-page="landing"] .ax-top .ax-burger i,
+        body[data-apollo-page="landing"] .ax-top .ax-burger svg,
+        body[data-apollo-page="landing"] .ax-top .ax-ic,
+        body[data-apollo-page="landing"] .ax-top .ax-ic > i,
+        body[data-apollo-page="landing"] .ax-top .ax-ic svg:not(.ax-dot svg),
+        body[data-apollo-page="landing"] .ax-top .ax-avb-init,
+        body[data-apollo-page="landing"] .ax-top-brand,
+        body[data-apollo-page="landing"] .ax-top-brand .apollo,
+        body[data-apollo-page="landing"] .ax-top-brand svg,
+        body[data-apollo-page="landing"] .ax-top-brand .apollo-logo-wrapper svg {
             color: #dedede !important;
             fill: #dedede !important;
             stroke: #dedede !important;
-            transition: all .65s ease !important;
+            transition: color .2s ease, fill .2s ease, stroke .2s ease !important;
         }
-        /* login icon = showcase .ax-ic treatment */
-        .ax-login,
-        .ax-login i,
-        .ax-login svg,
-        .ax-login span {
+        body[data-apollo-page="landing"] .ax-login,
+        body[data-apollo-page="landing"] .ax-login i,
+        body[data-apollo-page="landing"] .ax-login svg,
+        body[data-apollo-page="landing"] .ax-login span {
             color: #666666CC !important;
             fill: #666666CC !important;
-            transition: all .65s ease !important;
+            transition: color .2s ease, fill .2s ease !important;
         }
 
-        /* ── SCROLLED STATE (> 1.25vh) ── */
-        body.ax-scrolled .ax-top-r > *,
-        body.ax-scrolled .ax-top-r > * i,
-        body.ax-scrolled .ax-top-r > * svg,
-        body.ax-scrolled .ax-top-r > * span,
-        body.ax-scrolled .nh-nav-actions > *,
-        body.ax-scrolled .nh-nav-actions > * i,
-        body.ax-scrolled .nh-nav-actions > * svg,
-        body.ax-scrolled .nh-nav-btn,
-        body.ax-scrolled .nh-nav-btn i,
-        body.ax-scrolled .nh-nav-btn svg,
-        body.ax-scrolled .ax-top .ax-burger,
-        body.ax-scrolled .ax-top .ax-burger i,
-        body.ax-scrolled .ax-top .ax-burger svg,
-        body.ax-scrolled .ax-top .ax-ic,
-        body.ax-scrolled .ax-top .ax-ic > i,
-        body.ax-scrolled .ax-top .ax-ic svg:not(.ax-dot svg),
-        body.ax-scrolled .ax-top .ax-avb-init,
-        body.ax-scrolled .ax-top-brand,
-        body.ax-scrolled .ax-top-brand .apollo,
-        body.ax-scrolled .ax-top-brand svg,
-        body.ax-scrolled .ax-top-brand .apollo-logo-wrapper svg {
+        body[data-apollo-page="landing"].ax-scrolled .ax-top-r > *,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top-r > * i,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top-r > * svg,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top-r > * span,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top .ax-burger,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top .ax-burger i,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top .ax-burger svg,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top .ax-ic,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top .ax-ic > i,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top .ax-ic svg:not(.ax-dot svg),
+        body[data-apollo-page="landing"].ax-scrolled .ax-top .ax-avb-init,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top-brand,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top-brand .apollo,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top-brand svg,
+        body[data-apollo-page="landing"].ax-scrolled .ax-top-brand .apollo-logo-wrapper svg {
             color: #aaa !important;
             fill: currentColor !important;
             stroke: currentColor !important;
-            transition: all .65s ease !important;
         }
-        body.ax-scrolled .ax-login,
-        body.ax-scrolled .ax-login i,
-        body.ax-scrolled .ax-login svg,
-        body.ax-scrolled .ax-login span {
+        body[data-apollo-page="landing"].ax-scrolled .ax-login,
+        body[data-apollo-page="landing"].ax-scrolled .ax-login i,
+        body[data-apollo-page="landing"].ax-scrolled .ax-login svg,
+        body[data-apollo-page="landing"].ax-scrolled .ax-login span {
             color: #66666680 !important;
             fill: currentColor !important;
-            transition: all .65s ease !important;
         }
 
         /* ══ Hero text ALWAYS white over the video (cache-proof — inline beats
@@ -574,24 +577,209 @@ if (function_exists('apollo_render_document_open')) {
         #apollo-home .nh-hero-title { color: #fff !important; }
         #apollo-home .nh-hero-sub { color: rgba(255, 255, 255, .58) !important; }
 
-        /* Mobile topbar + x-axis containment (inline wins over new-home.css link order) */
-        @media (max-width: 767px) {
-            .ax-top {
-                top: calc(8px + env(safe-area-inset-top, 0px));
-                padding-left: max(12px, env(safe-area-inset-left, 0px));
-                padding-right: max(16px, env(safe-area-inset-right, 0px));
+        /* Mobile topbar geometry lives in new-home.css (landing-scoped) —
+           one owner; do not redeclare here. */
+
+        /* ══ Diamond CSS bridge (asset sync can lag behind PHP) ═══════════
+           Toolbar + discreet month control. Scoped so B1 never sees bare
+           duplicates of new-home.css selectors. Drop when assets catch up. */
+        body[data-apollo-page="landing"] .nh-section-head--toolbar { align-items: center; gap: 16px; }
+        body[data-apollo-page="landing"] .nh-section-tools {
+            display: inline-flex; align-items: center; gap: 14px;
+            margin-left: auto; flex-shrink: 0; transform: translateY(1px);
+        }
+        body[data-apollo-page="landing"] .nh-section-more {
+            font-family: var(--ff-mono); font-size: 0.68rem; font-weight: 500;
+            letter-spacing: .04em; text-transform: uppercase; color: var(--muted);
+            text-decoration: none; opacity: .72;
+            transition: color .18s ease, opacity .18s ease;
+        }
+        @media (hover: hover) {
+            body[data-apollo-page="landing"] .nh-section-more:hover { color: var(--txt-heading, var(--black-1)); opacity: 1; }
+        }
+        body[data-apollo-page="landing"] .nh-month-trigger {
+            display: inline-flex; align-items: center; gap: 6px; height: 32px;
+            background: transparent !important; border: none !important; box-shadow: none !important;
+            padding: 0 2px; cursor: pointer; font-family: var(--ff-mono); font-size: 0.72rem;
+            font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase;
+            color: var(--muted); -webkit-text-stroke: 0; opacity: .85;
+            transition: color .18s ease, opacity .18s ease;
+        }
+        @media (hover: hover) {
+            body[data-apollo-page="landing"] .nh-month-trigger:hover { color: var(--txt-heading, var(--black-1)); opacity: 1; }
+        }
+        body[data-apollo-page="landing"] .nh-month-trigger svg { width: 12px; height: 12px; color: var(--muted); flex-shrink: 0; }
+        body[data-apollo-page="landing"] .nh-month-row {
+            position: absolute; bottom: calc(100% + 10px); left: 0; z-index: 9999;
+            display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+            list-style: none; padding: 12px 18px; margin: 0; min-width: 170px;
+            background: rgba(var(--rgb-theme), 0.92) !important; isolation: isolate;
+            -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
+            backdrop-filter: blur(12px) saturate(140%) !important;
+            border: 1px solid rgba(var(--rgb-diff), 0.08) !important;
+            border-radius: var(--r-sm, 10px);
+            box-shadow: 0 8px 28px rgba(var(--rgb-diff), 0.08);
+            opacity: 0; pointer-events: none; transform: translateY(6px);
+            transition: opacity .2s var(--ease-out, ease), transform .2s var(--ease-out, ease);
+        }
+        body[data-apollo-page="landing"] .nh-month-row.is-visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        body[data-apollo-page="landing"] .nh-month-row li a {
+            background: transparent !important; border: none !important; box-shadow: none !important;
+            color: var(--muted); font-family: var(--ff-mono); font-size: 0.78rem; font-weight: 500;
+            letter-spacing: .02em; text-decoration: none; text-transform: none;
+            transition: color .18s ease; cursor: pointer; white-space: nowrap;
+        }
+        body[data-apollo-page="landing"] .nh-month-row li a.active { color: var(--txt-heading, var(--black-1)); font-weight: 600; }
+        body[data-apollo-page="landing"] .nh-track-guest-lbl,
+        body[data-apollo-page="landing"] .nh-mq-guest-lbl { opacity: .72; font-weight: 500; }
+        body[data-apollo-page="landing"] .nh-disclaimer--quiet { display: flex; gap: 10px; align-items: flex-start; margin-top: 22px; }
+        body[data-apollo-page="landing"] .nh-disclaimer--quiet p { font-size: 0.72rem; line-height: 1.55; color: var(--muted); margin: 0; }
+        body[data-apollo-page="landing"] .nh-empty-state--quiet { padding: 28px 16px !important; min-height: 0; }
+        body[data-apollo-page="landing"] .nh-empty-state--quiet i { display: none; }
+        body[data-apollo-page="landing"] .nh-resale-intro { font-size: 0.78rem; line-height: 1.55; max-width: 42rem; margin-bottom: 22px; }
+        /* Classificados edge-to-edge (asset sync bridge) */
+        body[data-apollo-page="landing"] #resell .nh-mq {
+            -webkit-mask-image: none !important;
+            mask-image: none !important;
+            width: calc(100vw + 16px) !important;
+            max-width: none !important;
+            margin-left: calc(50% - 50vw - 8px) !important;
+            margin-right: calc(50% - 50vw - 8px) !important;
+            overflow-x: hidden;
+        }
+        /* BRUTAL card sizes — tracks 120/128/132, mq 120 mobile / 168 desktop. Events untouched. */
+        html body[data-apollo-page="landing"] #apollo-home .nh-tracks-rail > .nh-track-card,
+        html body[data-apollo-page="landing"] #apollo-home .nh-tracks-rail > .nh-explore-card,
+        html body[data-apollo-page="landing"] #apollo-home .nh-tracks-rail > article.nh-track-card,
+        html body[data-apollo-page="landing"] .nh-tracks-rail > .nh-track-card,
+        html body[data-apollo-page="landing"] .nh-tracks-rail > article.nh-track-card,
+        html body[data-apollo-page="landing"] #tracks .nh-tracks-rail > .nh-track-card,
+        html body[data-apollo-page="landing"] #tracks .nh-tracks-rail > .nh-explore-card {
+            width: 120px !important;
+            max-width: 120px !important;
+            min-width: 120px !important;
+            flex: 0 0 120px !important;
+            flex-basis: 120px !important;
+            height: auto !important;
+            box-sizing: border-box !important;
+        }
+        html body[data-apollo-page="landing"] #tracks .nh-track-artwork {
+            width: 100% !important;
+            aspect-ratio: 1 / 1 !important;
+            height: auto !important;
+        }
+        html body[data-apollo-page="landing"] #tracks .nh-track-info { padding: 6px 8px 8px !important; }
+        html body[data-apollo-page="landing"] #tracks .nh-track-info h4 { font-size: 0.78rem !important; line-height: 1.2 !important; margin: 0 0 2px !important; }
+        html body[data-apollo-page="landing"] #tracks .nh-track-artist { font-size: 0.66rem !important; margin: 0 0 2px !important; }
+        html body[data-apollo-page="landing"] #tracks .nh-track-meta { font-size: 0.58rem !important; gap: 4px !important; }
+        html body[data-apollo-page="landing"] #tracks .nh-track-play-btn { width: 32px !important; height: 32px !important; font-size: 14px !important; }
+        html body[data-apollo-page="landing"] #tracks .apsc-transport,
+        html body[data-apollo-page="landing"] #tracks .apsc.is-fallback .apsc-transport,
+        html body[data-apollo-page="landing"] #tracks .nh-track-sc-transport {
+            position: absolute !important; width: 1px !important; height: 1px !important;
+            overflow: hidden !important; clip: rect(0,0,0,0) !important;
+            opacity: 0 !important; pointer-events: none !important;
+            display: block !important; margin: 0 !important;
+        }
+        html body[data-apollo-page="landing"] #tracks .nh-track-card.is-expanded {
+            height: auto !important;
+            align-self: flex-start !important;
+        }
+        html body[data-apollo-page="landing"] #resell .nh-mq-card,
+        html body[data-apollo-page="landing"] #crash .nh-mq-card,
+        html body[data-apollo-page="landing"] .nh-mq-card {
+            width: 120px !important;
+            max-width: 120px !important;
+            min-width: 120px !important;
+            height: 160px !important;
+            max-height: 160px !important;
+            min-height: 160px !important;
+            flex: 0 0 120px !important;
+            aspect-ratio: unset !important;
+            border-radius: 12px !important;
+            box-sizing: border-box !important;
+        }
+        html body[data-apollo-page="landing"] .nh-mq-track { gap: 10px !important; }
+        html body[data-apollo-page="landing"] .nh-mq-body { padding: 8px !important; }
+        html body[data-apollo-page="landing"] .nh-mq-title { font: 600 11px/1.15 var(--ff-main) !important; }
+        html body[data-apollo-page="landing"] .nh-mq-seller,
+        html body[data-apollo-page="landing"] .nh-mq-sub { font: 500 9px/1.2 var(--ff-mono) !important; }
+        html body[data-apollo-page="landing"] .nh-mq-chat { height: 26px !important; padding: 0 8px !important; font: 600 10px/1 var(--ff-main) !important; }
+        html body[data-apollo-page="landing"] .nh-mq-lock-av { width: 32px !important; height: 32px !important; margin: -16px 0 0 -16px !important; font-size: 16px !important; }
+        html body[data-apollo-page="landing"] .rt-card,
+        html body[data-apollo-page="landing"] .rt-card--rail {
+            width: min(340px, 82vw) !important;
+            max-width: 340px !important;
+            min-width: 0 !important;
+            height: auto !important;
+            max-height: none !important;
+            min-height: 0 !important;
+            flex: 0 0 auto !important;
+            aspect-ratio: unset !important;
+        }
+        @media (min-width: 768px) {
+            html body[data-apollo-page="landing"] #resell .nh-mq-card,
+            html body[data-apollo-page="landing"] #crash .nh-mq-card,
+            html body[data-apollo-page="landing"] .nh-mq-card {
+                width: 168px !important;
+                max-width: 168px !important;
+                min-width: 168px !important;
+                height: 224px !important;
+                max-height: 224px !important;
+                min-height: 224px !important;
+                flex: 0 0 168px !important;
             }
-            .ax-top-blur { height: calc(58px + env(safe-area-inset-top, 0px)); }
+            html body[data-apollo-page="landing"] .nh-mq-body { padding: 10px !important; }
+            html body[data-apollo-page="landing"] .nh-mq-title { font: 600 12px/1.15 var(--ff-main) !important; }
+            html body[data-apollo-page="landing"] .nh-mq-seller,
+            html body[data-apollo-page="landing"] .nh-mq-sub { font: 500 10px/1.2 var(--ff-mono) !important; }
+            html body[data-apollo-page="landing"] .nh-mq-chat { height: 28px !important; padding: 0 10px !important; font: 600 11px/1 var(--ff-main) !important; }
         }
-        html, body.ax-body {
-            width: 100%;
-            max-width: 100%;
-            overflow-x: clip;
+        @media (min-width: 1024px) {
+            html body[data-apollo-page="landing"] #apollo-home .nh-tracks-rail > .nh-track-card,
+            html body[data-apollo-page="landing"] #apollo-home .nh-tracks-rail > .nh-explore-card,
+            html body[data-apollo-page="landing"] #apollo-home .nh-tracks-rail > article.nh-track-card,
+            html body[data-apollo-page="landing"] .nh-tracks-rail > .nh-track-card,
+            html body[data-apollo-page="landing"] .nh-tracks-rail > article.nh-track-card,
+            html body[data-apollo-page="landing"] #tracks .nh-tracks-rail > .nh-track-card,
+            html body[data-apollo-page="landing"] #tracks .nh-tracks-rail > .nh-explore-card {
+                width: 128px !important;
+                max-width: 128px !important;
+                min-width: 128px !important;
+                flex: 0 0 128px !important;
+                flex-basis: 128px !important;
+            }
+            html body[data-apollo-page="landing"] #tracks .nh-track-info h4 { font-size: 0.82rem !important; }
+            html body[data-apollo-page="landing"] #tracks .nh-track-artist { font-size: 0.7rem !important; }
+            html body[data-apollo-page="landing"] #tracks .nh-track-meta { font-size: 0.62rem !important; }
         }
-        #apollo-home {
-            width: 100%;
-            max-width: 100%;
-            overflow-x: clip;
+        @media (min-width: 1400px) {
+            html body[data-apollo-page="landing"] #apollo-home .nh-tracks-rail > .nh-track-card,
+            html body[data-apollo-page="landing"] #apollo-home .nh-tracks-rail > .nh-explore-card,
+            html body[data-apollo-page="landing"] #apollo-home .nh-tracks-rail > article.nh-track-card,
+            html body[data-apollo-page="landing"] .nh-tracks-rail > .nh-track-card,
+            html body[data-apollo-page="landing"] .nh-tracks-rail > article.nh-track-card,
+            html body[data-apollo-page="landing"] #tracks .nh-tracks-rail > .nh-track-card,
+            html body[data-apollo-page="landing"] #tracks .nh-tracks-rail > .nh-explore-card {
+                width: 132px !important;
+                max-width: 132px !important;
+                min-width: 132px !important;
+                flex: 0 0 132px !important;
+                flex-basis: 132px !important;
+            }
+            html body[data-apollo-page="landing"] #tracks .nh-track-info h4 { font-size: 0.84rem !important; }
+        }
+        @media (max-width: 767px) {
+            body[data-apollo-page="landing"] #resell .nh-mq {
+                width: calc(100vw + 20px) !important;
+                margin-left: calc(50% - 50vw - 10px) !important;
+                margin-right: calc(50% - 50vw - 10px) !important;
+            }
+            body[data-apollo-page="landing"] .nh-month-dropdown { position: static; }
+            body[data-apollo-page="landing"] .nh-month-row {
+                left: 0; right: auto;
+                max-width: calc(100vw - 36px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+            }
         }
     </style>
 
@@ -681,15 +869,224 @@ if (function_exists('apollo_render_document_open')) {
     <!-- ═══════════════════════════════════════════════════════════════
          PAGE SCRIPTS
     ═══════════════════════════════════════════════════════════════ -->
-    <?php if ($js) : ?>
-        <script src="<?php echo esc_url($js); ?>"></script>
+    <?php
+    $adverts_v = defined('APOLLO_ADVERTS_VERSION') ? APOLLO_ADVERTS_VERSION : '1.1.5';
+    $share_js  = defined('APOLLO_ADVERTS_URL')
+        ? APOLLO_ADVERTS_URL . 'assets/js/share-advert.js?ver=' . $adverts_v
+        : '';
+    $share_css = defined('APOLLO_ADVERTS_URL')
+        ? APOLLO_ADVERTS_URL . 'assets/css/share-advert.css?ver=' . $adverts_v
+        : '';
+    if ($share_css) :
+        ?>
+        <link rel="stylesheet" href="<?php echo esc_url($share_css); ?>">
     <?php endif; ?>
+    <?php if ($js) : ?>
+        <?php if ($share_js) : ?>
+            <script<?php echo function_exists('apollo_csp_nonce_attr') ? apollo_csp_nonce_attr() : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> src="<?php echo esc_url($share_js); ?>"></script>
+        <?php endif; ?>
+        <script<?php echo function_exists('apollo_csp_nonce_attr') ? apollo_csp_nonce_attr() : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> src="<?php echo esc_url($js); ?>"></script>
+        <?php
+        $reveal_fix = defined('APOLLO_TEMPLATES_URL')
+            ? APOLLO_TEMPLATES_URL . 'assets/js/casa-reveal-fix.js?ver=' . $ver
+            : '';
+        $scroll_lite = defined('APOLLO_TEMPLATES_URL')
+            ? APOLLO_TEMPLATES_URL . 'assets/js/casa-scroll-lite.js?ver=' . $ver
+            : '';
+        if ($reveal_fix) :
+            ?>
+        <script<?php echo function_exists('apollo_csp_nonce_attr') ? apollo_csp_nonce_attr() : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> src="<?php echo esc_url($reveal_fix); ?>"></script>
+        <?php endif; ?>
+        <?php if ($scroll_lite) : ?>
+        <script<?php echo function_exists('apollo_csp_nonce_attr') ? apollo_csp_nonce_attr() : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> src="<?php echo esc_url($scroll_lite); ?>"></script>
+        <?php endif; ?>
+        <script<?php echo function_exists('apollo_csp_nonce_attr') ? apollo_csp_nonce_attr() : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+        /* Diamond polish bridge - runs AFTER new-home.js so a stale cached
+           asset (English months / empty menu wipe) cannot win the last paint.
+           sync-probe-reveal-837565 */
+        (function () {
+            var PT = ['Janeiro','Fevereiro','Marco','Abril','Maio','Junho',
+                      'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+            var idx = new Date().getMonth();
+            var names = [PT[idx], PT[(idx + 1) % 12], PT[(idx + 2) % 12]];
+            var text = document.querySelector('.nh-month-text');
+            var menu = document.getElementById('nhMonthMenu');
+            if (text) text.textContent = names[0];
+            if (!menu) return;
+            var monthLinks = menu.querySelectorAll('a[data-type="month"]');
+            if (monthLinks.length >= 3) {
+                for (var i = 0; i < 3; i++) monthLinks[i].textContent = names[i];
+                return;
+            }
+            menu.innerHTML =
+                '<li><a href="#" class="active" data-type="month">' + names[0] + '</a></li>' +
+                '<li><a href="#" data-type="month">' + names[1] + '</a></li>' +
+                '<li><a href="#" data-type="month">' + names[2] + '</a></li>' +
+                '<li><a class="nh-portal-link" data-type="link" href="/portal/eventos"><i class="ri-calendar-2-line"></i> Ver todos</a></li>' +
+                '<li><a class="nh-portal-link" data-type="link" href="/novo-evento"><i class="ri-calendar-schedule-line"></i> Incluir evento</a></li>';
+            menu.removeAttribute('hidden');
+        })();
+        /* sync-probe-scroll-lite-837565 — lighter scroll: snappier Lenis, kill scrub circus, batch reveals */
+        (function () {
+            var done = false;
+            function go() {
+                var g = window.gsap, ST = window.ScrollTrigger, home = document.getElementById('apollo-home');
+                if (done || !g || !ST || !home) return;
+                var l = window.lenis;
+                if (l && l.options) { l.options.lerp = 0.22; l.options.wheelMultiplier = 1.12; l.options.touchMultiplier = 1.15; }
+                try { ST.config({ limitCallbacks: true, ignoreMobileResize: true }); } catch (e) {}
+                try { if (g.ticker && g.ticker.lagSmoothing) g.ticker.lagSmoothing(500, 33); } catch (e2) {}
+                var kill = { 'casa-events': 1, 'casa-events-title': 1, 'casa-crash': 1, 'casa-tracks-title': 1, 'casa-resell': 1, 'casa-resell-title': 1, 'casa-map': 1 };
+                var phone = !!(window.matchMedia && window.matchMedia('(max-width:719px)').matches);
+                ST.getAll().forEach(function (t) {
+                    var id = t.vars && t.vars.id;
+                    if (!id) return;
+                    if (kill[id] || (phone && id === 'casa-hero') || /^(casa-copy-|casa-track-|casa-resell-card-|casa-fix-)/.test(String(id))) t.kill();
+                });
+                home.querySelectorAll('#events-title .split-char,#tracks-title .split-char,#resell-title .split-char,#crash-title .split-char,.nh-section-head,#nhMap,.nh-map-wrap').forEach(function (el) {
+                    el.classList.add('nh-st-drive', 'is-visible', 'ap-skip');
+                    el.style.opacity = '1';
+                    el.style.transform = 'none';
+                });
+                var nodes = [];
+                home.querySelectorAll('.a-eve-card.ai,.nh-track-card,#resell .rt-card:not([aria-hidden="true"]),#resell .nh-mq-card:not([aria-hidden="true"]), .reveal-up.ai,.ai.reveal-up').forEach(function (el) {
+                    if (el.closest('.nh-hero') || el.closest('.nh-mq-track') || nodes.indexOf(el) !== -1) return;
+                    nodes.push(el);
+                    el.classList.add('nh-st-drive', 'is-visible', 'ap-skip');
+                    g.set(el, { y: 22, opacity: 0, force3D: true });
+                });
+                if (nodes.length && typeof ST.batch === 'function') {
+                    ST.batch(nodes, {
+                        start: 'top 92%', end: 'bottom top', interval: 0.12, batchMax: 6,
+                        onEnter: function (b) { g.to(b, { y: 0, opacity: 1, duration: 0.45, stagger: 0.04, ease: 'power2.out', overwrite: 'auto', force3D: true }); },
+                        onLeave: function (b) { g.to(b, { y: -12, opacity: 0, duration: 0.28, stagger: 0.02, ease: 'power1.in', overwrite: 'auto', force3D: true }); },
+                        onEnterBack: function (b) { g.to(b, { y: 0, opacity: 1, duration: 0.4, stagger: 0.03, ease: 'power2.out', overwrite: 'auto', force3D: true }); },
+                        onLeaveBack: function (b) { g.to(b, { y: 18, opacity: 0, duration: 0.28, stagger: 0.02, ease: 'power1.in', overwrite: 'auto', force3D: true }); }
+                    });
+                }
+                try { ST.refresh(); } catch (e3) {}
+                done = true;
+            }
+            function boot() {
+                go();
+                if (window.Apollo && Apollo.whenReady) Apollo.whenReady(function () { setTimeout(go, 100); setTimeout(go, 700); setTimeout(go, 1600); });
+                var n = 0, iv = setInterval(function () { go(); if (done || ++n > 22) clearInterval(iv); }, 350);
+            }
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+        })();
+        </script>
+    <?php endif; ?>
+    <?php
+    /* Always mount listen player on /casa — never wait for can_play.
+       Stale cards used <a target=_blank>; the player intercepts those too. */
+    $listen_assets = isset($GLOBALS['apollo_casa_listen_assets']) && is_array($GLOBALS['apollo_casa_listen_assets'])
+        ? $GLOBALS['apollo_casa_listen_assets']
+        : array();
+    $player_js = (string) ($listen_assets['player_js'] ?? '');
+    if ('' === $player_js && defined('APOLLO_TEMPLATES_URL')) {
+        $player_js = APOLLO_TEMPLATES_URL . 'assets/js/apollo-track-player.js?ver=' . $ver;
+    }
+    $sc_js  = (string) ($listen_assets['sc_js'] ?? '');
+    $sc_css = (string) ($listen_assets['sc_css'] ?? '');
+    if ('' === $sc_js && defined('APOLLO_SC_URL') && defined('APOLLO_SC_VERSION')) {
+        $sc_js  = APOLLO_SC_URL . 'assets/js/apollo-sc.js?ver=' . APOLLO_SC_VERSION;
+        $sc_css = APOLLO_SC_URL . 'assets/css/apollo-sc.css?ver=' . APOLLO_SC_VERSION;
+    }
+    if ('' !== $sc_css) :
+        ?>
+    <link rel="stylesheet" href="<?php echo esc_url($sc_css); ?>">
+    <?php endif; ?>
+    <?php if ('' !== $sc_js) : ?>
+    <script<?php echo function_exists('apollo_csp_nonce_attr') ? apollo_csp_nonce_attr() : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+    window.APOLLO_SC = <?php echo wp_json_encode(
+        array(
+            'sdk'        => 'https://w.soundcloud.com/player/api.js',
+            'provider'   => function_exists('apollo_sc_provider') ? apollo_sc_provider() : 'widget',
+            'startPct'   => defined('APOLLO_SC_PREVIEW_START_PCT') ? (int) APOLLO_SC_PREVIEW_START_PCT : 20,
+            'endPct'     => defined('APOLLO_SC_PREVIEW_END_PCT') ? (int) APOLLO_SC_PREVIEW_END_PCT : 65,
+            'minSeconds' => defined('APOLLO_SC_PREVIEW_MIN_SECONDS') ? (int) APOLLO_SC_PREVIEW_MIN_SECONDS : 20,
+            'vol'        => 20,
+            'fadeInMs'   => 420,
+            'fadeOutMs'  => 280,
+            'i18n'       => array(
+                'play'  => __('Tocar', 'apollo-soundcloud'),
+                'pause' => __('Pausar', 'apollo-soundcloud'),
+            ),
+        )
+    ); ?>;
+    </script>
+    <script<?php echo function_exists('apollo_csp_nonce_attr') ? apollo_csp_nonce_attr() : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> src="<?php echo esc_url($sc_js); ?>"></script>
+    <?php endif; ?>
+    <?php if ('' !== $player_js) : ?>
+    <script<?php echo function_exists('apollo_csp_nonce_attr') ? apollo_csp_nonce_attr() : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+    window.APOLLO_TRACK_PLAYER = <?php echo wp_json_encode(
+        array(
+                'restStream'  => (string) ($listen_assets['restStream'] ?? (function_exists('rest_url') ? rest_url('apollo/v1/radio/stream') : '/wp-json/apollo/v1/radio/stream')),
+                'targetVol'   => 0.2,
+                'holdSeconds' => 60,
+                'fadeInMs'    => 420,
+                'fadeOutMs'   => 280,
+        )
+    ); ?>;
+    </script>
+    <script<?php echo function_exists('apollo_csp_nonce_attr') ? apollo_csp_nonce_attr() : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> src="<?php echo esc_url($player_js); ?>"></script>
+    <?php endif; ?>
+    <!-- apollo-listen forced player=<?php echo '' !== $player_js ? '1' : '0'; ?> sc=<?php echo '' !== $sc_js ? '1' : '0'; ?> -->
 
-    <script>
+    <script<?php echo function_exists('apollo_csp_nonce_attr') ? apollo_csp_nonce_attr() : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
         (function() {
             'use strict';
 
-            /* Topbar icon dim — fires once past 1.25vh of scroll (/casa only). */
+            /* BRUTAL: Out Now track cards never navigate. Kill target=_blank
+               and default <a> navigation before anything else. Preview only. */
+            (function () {
+                function disarm(root) {
+                    (root || document).querySelectorAll('#tracks .nh-track-card a, .nh-track-card[data-casa-track-rail] a').forEach(function (a) {
+                        a.removeAttribute('target');
+                        a.setAttribute('data-apollo-nav-killed', '1');
+                    });
+                }
+                document.addEventListener('click', function (e) {
+                    var card = e.target.closest('#tracks .nh-track-card, .nh-track-card[data-casa-track-rail]');
+                    if (!card) { return; }
+                    if (e.target.closest('[data-track-plat]') && card.classList.contains('is-expanded')) { return; }
+                    var a = e.target.closest('a');
+                    if (a && card.contains(a)) {
+                        e.preventDefault();
+                        a.removeAttribute('target');
+                    }
+                }, true);
+                disarm(document);
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', function () { disarm(document); });
+                }
+            })();
+
+            /* PT months — last paint wins over stale new-home.js English labels. */
+            (function () {
+                var PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+                          'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+                var idx = new Date().getMonth();
+                var names = [PT[idx], PT[(idx + 1) % 12], PT[(idx + 2) % 12]];
+                var text = document.querySelector('.nh-month-text');
+                var menu = document.getElementById('nhMonthMenu');
+                if (text) text.textContent = names[0];
+                if (!menu) return;
+                var links = menu.querySelectorAll('a[data-type="month"]');
+                if (links.length >= 3) {
+                    for (var i = 0; i < 3; i++) links[i].textContent = names[i];
+                    return;
+                }
+                menu.innerHTML =
+                    '<li><a href="#" class="active" data-type="month">' + names[0] + '</a></li>' +
+                    '<li><a href="#" data-type="month">' + names[1] + '</a></li>' +
+                    '<li><a href="#" data-type="month">' + names[2] + '</a></li>' +
+                    '<li><a class="nh-portal-link" data-type="link" href="/portal/eventos"><i class="ri-calendar-2-line"></i> Ver todos</a></li>' +
+                    '<li><a class="nh-portal-link" data-type="link" href="/novo-evento"><i class="ri-calendar-schedule-line"></i> Incluir evento</a></li>';
+                menu.removeAttribute('hidden');
+            })();
+
+            /* Topbar icon dim - fires once past 1.25vh of scroll (/casa only). sync-probe-reveal-837565 */
             (function () {
                 var t = false;
                 function sync() {
@@ -703,6 +1100,51 @@ if (function_exists('apollo_render_document_open')) {
                     window.requestAnimationFrame(sync);
                 }, { passive: true });
                 sync();
+            })();
+
+            /* BRUTAL card clamp — inline styles beat stale CSS/asset cache */
+            (function () {
+                function trackW() {
+                    var vw = window.innerWidth || 1200;
+                    if (vw >= 1400) return 132;
+                    if (vw >= 1024) return 128;
+                    return 120;
+                }
+                function mqSize() {
+                    var vw = window.innerWidth || 1200;
+                    return vw >= 768 ? { w: 168, h: 224 } : { w: 120, h: 160 };
+                }
+                function brutalCards() {
+                    var tw = trackW();
+                    var mq = mqSize();
+                    document.querySelectorAll('#tracks .nh-track-card, #tracks .nh-explore-card, [data-casa-track-rail]').forEach(function (el) {
+                        el.style.setProperty('width', tw + 'px', 'important');
+                        el.style.setProperty('max-width', tw + 'px', 'important');
+                        el.style.setProperty('min-width', tw + 'px', 'important');
+                        el.style.setProperty('flex', '0 0 ' + tw + 'px', 'important');
+                        el.style.setProperty('flex-basis', tw + 'px', 'important');
+                        if (el.classList.contains('is-expanded')) {
+                            el.style.setProperty('height', 'auto', 'important');
+                            el.style.setProperty('align-self', 'flex-start', 'important');
+                        }
+                    });
+                    document.querySelectorAll('#resell .nh-mq-card, #crash .nh-mq-card, [data-casa-mq]').forEach(function (el) {
+                        if (el.closest('.rt-card') || el.classList.contains('rt-card')) return;
+                        el.style.setProperty('width', mq.w + 'px', 'important');
+                        el.style.setProperty('max-width', mq.w + 'px', 'important');
+                        el.style.setProperty('min-width', mq.w + 'px', 'important');
+                        el.style.setProperty('height', mq.h + 'px', 'important');
+                        el.style.setProperty('max-height', mq.h + 'px', 'important');
+                        el.style.setProperty('min-height', mq.h + 'px', 'important');
+                        el.style.setProperty('flex', '0 0 ' + mq.w + 'px', 'important');
+                        el.style.setProperty('aspect-ratio', 'unset', 'important');
+                    });
+                }
+                brutalCards();
+                window.addEventListener('resize', brutalCards);
+                window.addEventListener('load', brutalCards);
+                setTimeout(brutalCards, 100);
+                setTimeout(brutalCards, 500);
             })();
 
             /* BURGER → APOLLO+ ASIDE (2026-08-25).
@@ -724,9 +1166,10 @@ if (function_exists('apollo_render_document_open')) {
                    overlay (auth-lightbox.php) in place; the overlay's own
                    "Entrar" button is what actually goes to /acesso. Falls back
                    to the old redirect if the overlay somehow didn't render. */
-                document.addEventListener('click', function(e) {
+        document.addEventListener('click', function(e) {
                     var t = e.target.closest('[data-auth-required]');
                     if (!t) return;
+                    if (e.target.closest('[data-advert-share], .ap-advert-share-pop')) return;
                     e.preventDefault();
                     e.stopPropagation();
                     if (window.apolloAuthBox && window.apolloAuthBox.open) {
@@ -741,9 +1184,12 @@ if (function_exists('apollo_render_document_open')) {
 
     <?php
     do_action('apollo/home/after_content');
-    /* Canvas Mode — NO wp_footer() to prevent theme interference */
-    ?>
-
-</body>
-
-</html>
+    /* Close through the canvas helper so mobile cells (supervisor/unlock/
+       gestures/boot) actually emit. Raw </body></html> skipped that hook,
+       so /casa never applied the mobile helpers even though the manifest
+       and connectors existed. NO wp_footer() — theme must stay out. */
+    if (function_exists('apollo_render_document_close')) {
+        apollo_render_document_close();
+    } else {
+        echo '</body></html>';
+    }

@@ -685,7 +685,149 @@ function apollo_event_get_loc(int $post_id): ?array
 }
 
 /**
- * Retorna URL do banner do evento com fallback para thumbnail
+ * Documented event fallback flyer — og:image, twitter:image and the visible
+ * hero all use this SAME url when the event has no cover. Never mix grain vs
+ * site thumb; WhatsApp wants ≥200×200 and ideally 1200×630.
+ */
+function apollo_event_default_share_image(): string
+{
+	if (defined('APOLLO_EVENT_DEFAULT_SHARE_IMAGE') && APOLLO_EVENT_DEFAULT_SHARE_IMAGE) {
+		return (string) APOLLO_EVENT_DEFAULT_SHARE_IMAGE;
+	}
+	return 'https://assets.apollo.rio.br/img/thumb/thumb.jpg';
+}
+
+/**
+ * Single source of truth for event cover / OG / Twitter / WhatsApp / hero.
+ *
+ * Priority: CPT featured image → `_event_banner` attachment → `_event_banner`
+ * URL → first gallery attachment/URL → documented default flyer.
+ * One URL everywhere. Never a competing flyer vs featured thumb.
+ *
+ * @param int    $post_id Event post id.
+ * @param string $size    WP image size. Social share uses `full`.
+ * @return array{url:string,width:int,height:int,alt:string,id:int}
+ */
+function apollo_event_share_image(int $post_id, string $size = 'full'): array
+{
+	$fallback = array(
+		'url'    => apollo_event_default_share_image(),
+		'width'  => 1200,
+		'height' => 630,
+		'alt'    => '',
+		'id'     => 0,
+	);
+
+	$post_id = absint($post_id);
+	if (! $post_id) {
+		return $fallback;
+	}
+
+	$pack = static function (int $att_id) use ($size, $fallback): array {
+		if ($att_id <= 0 || 'attachment' !== get_post_type($att_id)) {
+			return $fallback;
+		}
+		$src = wp_get_attachment_image_src($att_id, $size);
+		if (! $src) {
+			$src = wp_get_attachment_image_src($att_id, 'full');
+		}
+		if (! $src || empty($src[0])) {
+			return $fallback;
+		}
+		return array(
+			'url'    => (string) $src[0],
+			'width'  => (int) $src[1],
+			'height' => (int) $src[2],
+			'alt'    => (string) get_post_meta($att_id, '_wp_attachment_image_alt', true),
+			'id'     => $att_id,
+		);
+	};
+
+	$thumb_id = (int) get_post_thumbnail_id($post_id);
+	if ($thumb_id) {
+		$got = $pack($thumb_id);
+		if ($got['id']) {
+			// #region agent log
+			if (\function_exists('apollo_event_debug_log_837565')) {
+				\apollo_event_debug_log_837565(
+					'functions.php:apollo_event_share_image',
+					'branch featured thumb',
+					array('post_id' => $post_id, 'thumb_id' => $thumb_id, 'url' => $got['url']),
+					'H1'
+				);
+			}
+			// #endregion
+			return $got;
+		}
+	}
+
+	$banner = get_post_meta($post_id, '_event_banner', true);
+	if (is_numeric($banner) && (int) $banner > 0) {
+		$got = $pack((int) $banner);
+		if ($got['id']) {
+			// #region agent log
+			if (\function_exists('apollo_event_debug_log_837565')) {
+				\apollo_event_debug_log_837565(
+					'functions.php:apollo_event_share_image',
+					'branch _event_banner attachment',
+					array('post_id' => $post_id, 'banner_id' => (int) $banner, 'url' => $got['url']),
+					'H3'
+				);
+			}
+			// #endregion
+			return $got;
+		}
+	} elseif (is_string($banner) && '' !== $banner) {
+		$url = esc_url_raw($banner, array('http', 'https'));
+		if ('' !== $url) {
+			// #region agent log
+			if (\function_exists('apollo_event_debug_log_837565')) {
+				\apollo_event_debug_log_837565(
+					'functions.php:apollo_event_share_image',
+					'branch _event_banner URL string (no featured attachment)',
+					array('post_id' => $post_id, 'thumb_id' => $thumb_id, 'banner_url' => $url),
+					'H3'
+				);
+			}
+			// #endregion
+			return array(
+				'url'    => $url,
+				'width'  => 1200,
+				'height' => 630,
+				'alt'    => '',
+				'id'     => 0,
+			);
+		}
+	}
+
+	$gallery = get_post_meta($post_id, '_event_gallery', true);
+	if (is_array($gallery)) {
+		foreach ($gallery as $ref) {
+			if (is_numeric($ref) && (int) $ref > 0) {
+				$got = $pack((int) $ref);
+				if ($got['id']) {
+					return $got;
+				}
+			} elseif (is_string($ref) && '' !== $ref && ! is_numeric($ref)) {
+				$url = esc_url_raw($ref, array('http', 'https'));
+				if ('' !== $url) {
+					return array(
+						'url'    => $url,
+						'width'  => 1200,
+						'height' => 630,
+						'alt'    => '',
+						'id'     => 0,
+					);
+				}
+			}
+		}
+	}
+
+	return $fallback;
+}
+
+/**
+ * Retorna URL do banner do evento — same bytes/URL as OG / featured image.
  *
  * @param int    $post_id ID do evento.
  * @param string $size    Tamanho da imagem.
@@ -693,55 +835,117 @@ function apollo_event_get_loc(int $post_id): ?array
  */
 function apollo_event_get_banner(int $post_id, string $size = 'large'): string
 {
-	/*
-	 * _event_banner holds EITHER an attachment id (uploaded to the Apollo media
-	 * library) OR an absolute URL to an image hosted elsewhere — users without
-	 * upload_files can only supply the latter.
-	 */
-	$banner = get_post_meta($post_id, '_event_banner', true);
-	$thumb_id = (int) get_post_thumbnail_id($post_id);
-	$branch = 'grain';
-	$result = '';
+	$img = apollo_event_share_image($post_id, $size);
+	return (string) ($img['url'] ?? apollo_event_default_share_image());
+}
 
-	if (is_string($banner) && '' !== $banner && ! is_numeric($banner)) {
-		$branch = 'meta_url';
-		$result = esc_url_raw($banner);
+/**
+ * Persist featured image + `_event_banner` to the same attachment when one
+ * side is missing. Read-only for remote URLs (no GET-time sideload).
+ *
+ * @param int $post_id Event post id.
+ * @return int Attachment id that is now the cover, or 0.
+ */
+function apollo_event_heal_cover(int $post_id): int
+{
+	$post_id = absint($post_id);
+	if (! $post_id || 'event' !== get_post_type($post_id)) {
+		return 0;
+	}
+
+	$thumb_id  = (int) get_post_thumbnail_id($post_id);
+	$banner    = get_post_meta($post_id, '_event_banner', true);
+	$banner_id = is_numeric($banner) ? (int) $banner : 0;
+
+	if ($thumb_id > 0 && 'attachment' === get_post_type($thumb_id)) {
+		if ($banner_id !== $thumb_id) {
+			update_post_meta($post_id, '_event_banner', $thumb_id);
+		}
+		return $thumb_id;
+	}
+
+	if ($banner_id > 0 && 'attachment' === get_post_type($banner_id)) {
+		set_post_thumbnail($post_id, $banner_id);
+		return $banner_id;
+	}
+
+	$gallery = get_post_meta($post_id, '_event_gallery', true);
+	if (is_array($gallery)) {
+		foreach ($gallery as $ref) {
+			$id = is_numeric($ref) ? (int) $ref : 0;
+			if ($id > 0 && 'attachment' === get_post_type($id)) {
+				set_post_thumbnail($post_id, $id);
+				update_post_meta($post_id, '_event_banner', $id);
+				return $id;
+			}
+		}
+	}
+
+	return 0;
+}
+
+/**
+ * HEAD/GET a remote URL and require a real image/* body (not HTML).
+ *
+ * WhatsApp / OG crawlers refuse HTML landings and tiny files. Extension-only
+ * checks are not enough (CDNs, signed URLs, hotlink pages).
+ *
+ * @param string $url Candidate image URL.
+ * @return true|\WP_Error
+ */
+function apollo_event_validate_remote_image(string $url)
+{
+	if (class_exists('\\Apollo\\Event\\API\\EventsController')) {
+		$clean = \Apollo\Event\API\EventsController::sanitize_image_ref($url);
 	} else {
-		$banner_id = (int) $banner;
-
-		if ($banner_id) {
-			$url = wp_get_attachment_image_url($banner_id, $size);
-			if ($url) {
-				$branch = 'meta_attachment';
-				$result = $url;
-			} else {
-				$branch = 'meta_attachment_broken';
-			}
-		}
-
-		if ('' === $result) {
-			$thumb = get_the_post_thumbnail_url($post_id, $size);
-			if ($thumb) {
-				$branch = 'featured_thumb';
-				$result = $thumb;
-			}
-		}
+		$clean = esc_url_raw(trim($url), array('http', 'https'));
 	}
 
-	if ('' === $result) {
-		$branch = 'grain';
-		$result = defined( 'APOLLO_ASSETS_GRAIN_URL' )
-			? APOLLO_ASSETS_GRAIN_URL
-			: 'https://assets.apollo.rio.br/img/bg/grain-001.jpg';
+	if (! is_string($clean) || '' === $clean) {
+		return new \WP_Error('apollo_image_bad_url', __('URL de imagem inválida.', 'apollo-events'));
 	}
 
-	/* A debug beacon lived here (removed 2026-08-17). apollo_event_get_banner()
-	   is called on every event card and every event page, and this fired a
-	   server-side wp_remote_post() to http://127.0.0.1:7514 plus a
-	   file_put_contents() to D:/dev/_livro.rvalle.com.br/… on the hot render
-	   path. $apollo_rule.data_flow: no debug output in production. */
+	$args = array(
+		'timeout'     => 10,
+		'redirection' => 3,
+		'sslverify'   => true,
+		'headers'     => array(
+			'Accept' => 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
+		),
+	);
 
-	return $result;
+	$response = wp_remote_head($clean, $args);
+	if (is_wp_error($response) || (int) wp_remote_retrieve_response_code($response) >= 400) {
+		$args['headers']['Range'] = 'bytes=0-2047';
+		$response = wp_remote_get($clean, $args);
+	}
+
+	if (is_wp_error($response)) {
+		return $response;
+	}
+
+	$code = (int) wp_remote_retrieve_response_code($response);
+	if ($code < 200 || $code >= 400) {
+		return new \WP_Error('apollo_image_http', __('Não foi possível ler a imagem nesse endereço.', 'apollo-events'));
+	}
+
+	$type = strtolower((string) wp_remote_retrieve_header($response, 'content-type'));
+	$type = trim(strtok($type, ';') ?: $type);
+
+	if ('' === $type || str_starts_with($type, 'text/html') || str_starts_with($type, 'application/json') || str_starts_with($type, 'text/')) {
+		return new \WP_Error('apollo_image_not_image', __('Esse endereço não é uma imagem (veio HTML ou outro tipo).', 'apollo-events'));
+	}
+
+	if (! str_starts_with($type, 'image/')) {
+		return new \WP_Error('apollo_image_not_image', __('O servidor não devolveu content-type image/*.', 'apollo-events'));
+	}
+
+	/* SVG is not a WhatsApp/OG preview. */
+	if ('image/svg+xml' === $type) {
+		return new \WP_Error('apollo_image_svg', __('SVG não serve como capa / card de compartilhamento.', 'apollo-events'));
+	}
+
+	return true;
 }
 
 /**
@@ -753,9 +957,10 @@ function apollo_event_get_banner(int $post_id, string $size = 'large'): string
  *
  * @param int   $post_id Event post id.
  * @param mixed $ref     Attachment id, https image URL, or empty to clear.
+ * @param bool  $strict  When true, sideload failure returns WP_Error (import path).
  * @return int|\WP_Error Attachment id, or WP_Error when a URL cannot be sideloaded.
  */
-function apollo_event_set_banner(int $post_id, $ref)
+function apollo_event_set_banner(int $post_id, $ref, bool $strict = false)
 {
 	$post_id = absint($post_id);
 	if (! $post_id) {
@@ -780,15 +985,34 @@ function apollo_event_set_banner(int $post_id, $ref)
 	}
 
 	$att_id = 0;
-	$source = 'attachment';
 
 	if (is_int($ref) && $ref > 0) {
 		$att_id = $ref;
 	} elseif (is_string($ref) && '' !== $ref) {
-		$source = 'sideload';
-		$att_id = apollo_event_sideload_image($ref, $post_id, get_the_title($post_id) ?: 'evento');
-		if (is_wp_error($att_id)) {
-			return $att_id;
+		$local = attachment_url_to_postid($ref);
+		if ($local > 0) {
+			$att_id = $local;
+		} else {
+			$valid = apollo_event_validate_remote_image($ref);
+			if (is_wp_error($valid)) {
+				return $valid;
+			}
+			$att_id = apollo_event_sideload_image($ref, $post_id, get_the_title($post_id) ?: 'evento');
+			if (is_wp_error($att_id)) {
+				if ($strict) {
+					return $att_id;
+				}
+				/*
+				 * Sideload can fail without upload_files. Keep ONE validated
+				 * remote URL so OG + hero still match; never a second flyer.
+				 */
+				update_post_meta($post_id, '_event_banner', $ref);
+				delete_post_thumbnail($post_id);
+				return 0;
+			}
+			if ($att_id > 0 && function_exists('update_post_meta')) {
+				update_post_meta((int) $att_id, \Apollo\Event\Import\Media\CoverSideloader::SOURCE_META, $ref);
+			}
 		}
 	}
 
@@ -799,9 +1023,6 @@ function apollo_event_set_banner(int $post_id, $ref)
 
 	update_post_meta($post_id, '_event_banner', $att_id);
 	set_post_thumbnail($post_id, $att_id);
-
-	/* Second debug beacon removed here 2026-08-17 — fired on every banner sync,
-	   same foreign log path and same localhost POST as the one above. */
 
 	return $att_id;
 }
@@ -1513,6 +1734,7 @@ function apollo_event_prepare_form_payload(int $post_id): array
 		'lista_cta_label'     => (string) get_post_meta($post_id, '_event_lista_cta_label', true),
 		'access_buttons'      => $access_buttons,
 		'coauthors'           => apollo_event_get_coauthor_ids($post_id),
+		'highlighted'         => (string) get_post_meta($post_id, '_event_highlighted', true) === '1',
 	);
 }
 

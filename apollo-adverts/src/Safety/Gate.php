@@ -66,6 +66,56 @@ final class Gate
     }
 
     /**
+     * Buyer who asked for a vouch (witness mode only).
+     */
+    public static function buyer_id(): int
+    {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only route.
+        return isset($_GET['buyer']) ? absint(wp_unslash($_GET['buyer'])) : 0;
+    }
+
+    /**
+     * Is this request the witness confirmation surface?
+     *
+     * `/seguranca/?anuncio={id}&buyer={id}&witness=1` — current user must be
+     * the person who was asked, not the buyer.
+     */
+    public static function is_witness_mode(): bool
+    {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only route.
+        $flag = isset($_GET['witness']) ? (string) wp_unslash($_GET['witness']) : '';
+        if ($flag !== '1' && $flag !== 'true') {
+            return false;
+        }
+
+        $advert = self::advert_id();
+        $buyer  = self::buyer_id();
+        $me     = get_current_user_id();
+
+        if (! $advert || ! $buyer || ! $me || $me === $buyer) {
+            return false;
+        }
+
+        return function_exists('apollo_adverts_safety_was_asked')
+            && apollo_adverts_safety_was_asked($advert, $buyer, $me);
+    }
+
+    /**
+     * Canonical deep link for a witness to confirm a vouch request.
+     */
+    public static function witness_url(int $advert, int $buyer): string
+    {
+        return (string) add_query_arg(
+            array(
+                'anuncio' => $advert,
+                'buyer'   => $buyer,
+                'witness' => '1',
+            ),
+            home_url('/seguranca/')
+        );
+    }
+
+    /**
      * Where to send the member once the gate clears.
      *
      * Never trust it: an open redirect on a page whose entire job is trust
@@ -89,17 +139,29 @@ final class Gate
     {
         $seller = (int) get_post_field('post_author', $post_id);
 
+        if (self::is_witness_mode()) {
+            self::part(
+                'witness',
+                array(
+                    'post_id'   => $post_id,
+                    'seller_id' => $seller,
+                    'buyer_id'  => self::buyer_id(),
+                )
+            );
+            return;
+        }
+
         // First in the DOM and last to leave. Everything below it ships at
         // opacity 0 and is revealed as one piece — see the part's docblock.
         self::part('preloader');
 
-        self::part('seal');
         self::part('lede', array('post_id' => $post_id, 'seller_id' => $seller));
         self::part('target', array('post_id' => $post_id, 'seller_id' => $seller));
         self::part('rule');
         self::part('checks', array('post_id' => $post_id, 'seller_id' => $seller));
         self::part('note');
-        self::part('verdict', array('post_id' => $post_id));
+        /* Verdict foot is rendered by templates/safety/gate.php OUTSIDE the
+           scroll scroller so it sticks as the decision bar (mockup parity). */
     }
 
     /**

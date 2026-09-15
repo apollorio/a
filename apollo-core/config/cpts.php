@@ -31,6 +31,7 @@ return array(
         'archive'     => 'eventos',
         'rest_base'   => 'events',
         'public'      => true,
+        'map_meta_cap' => true,
         'has_archive' => true,
         'supports'    => array('title', 'editor', 'thumbnail', 'author'),
         'labels'      => array(
@@ -219,8 +220,9 @@ return array(
         'archive'     => 'anuncios',
         'rest_base'   => 'classifieds',
         'public'      => true,
+        'map_meta_cap' => true,
         'has_archive' => true,
-        'supports'    => array('title', 'editor', 'thumbnail', 'author'),
+        'supports'    => array('title', 'editor', 'thumbnail', 'author', 'excerpt'),
         'labels'      => array(
             'name'               => 'Anúncios',
             'singular_name'      => 'Anúncio',
@@ -364,6 +366,13 @@ return array(
         'archive'     => false,
         'rest_base'   => 'sheets',
         'public'      => false,
+        /* Mirrors apollo-sheets/src/Plugin.php::register_post_type(). Sheets are
+           reached through apollo-sheets' own SheetsController on apollo/v1, never
+           the stock wp/v2 posts controller. Without these three keys core's
+           init:5 fallback published apollo_sheet at /wp-json/wp/v2/sheets. */
+        'show_in_rest' => false,
+        'show_ui'      => false,
+        'map_meta_cap' => true,
         'has_archive' => false,
         'supports'    => array('title', 'editor', 'excerpt', 'revisions', 'author'),
         'labels'      => array(

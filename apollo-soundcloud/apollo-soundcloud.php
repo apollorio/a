@@ -2,8 +2,8 @@
 /**
  * Plugin Name: Apollo SoundCloud
  * Plugin URI: https://apollo.rio.br/plugins/apollo-soundcloud
- * Description: One SoundCloud player for the whole ecosystem. Apollo's own UI driving a hidden Widget-API iframe, with preview (25–65%) and full modes. Replaces seven hand-rolled implementations.
- * Version: 1.0.0
+ * Description: One SoundCloud player for the whole ecosystem. Apollo's own UI driving a hidden Widget-API iframe, with preview (20–65%) and full modes. Replaces seven hand-rolled implementations.
+ * Version: 1.0.3
  * Author: Apollo::Rio
  * Author URI: https://apollo.rio.br
  * License: Proprietary
@@ -42,7 +42,7 @@
  *
  * That is why the Widget API is the PRIMARY path here and not a fallback: it
  * needs no credentials, it is available to everyone today, and it is the only
- * way to implement a 25–65% preview at all — that requires getDuration(), which
+ * way to implement a 20–65% preview at all — that requires getDuration(), which
  * a bare iframe cannot provide.
  *
  * If credentials ever arrive, apollo_sc_provider() returns 'api', direct stream
@@ -53,19 +53,43 @@
  * @see     _inventory/PLAN-apollo-soundcloud.md
  */
 
+/*
+ * ARCH: apollo-soundcloud / embed de audio (sem CPT)
+ * ARCH-MANUAL: escrito a mao (2026-09-09). gen-arch-blocks.js recusa
+ *   ficheiros dirty no git e 41 de 42 estao dirty. Ver nota em apollo-core.
+ * Contrato completo: D:/dev/_cos/verify/MODULE-CONTRACT.md
+ *
+ * OWNER     apollo-soundcloud   4 arquivos PHP, 574 LOC
+ * BOOT      NENHUM. Este plugin nao tem binding em plugins_loaded nem em
+ *           init: so wp_enqueue_scripts:10 (:146) e
+ *           admin_enqueue_scripts:10 (:147). E deliberado - nao ha nada
+ *           para arrancar. Nao acrescente um so por simetria.
+ * RUNTIME   nao regista CPT, taxonomia, meta nem tabela
+ * REST      nenhuma rota
+ * REQUIRES  nenhuma dependencia confirmada
+ * EXPOE     filtro apollo/soundcloud/provider (:100)
+ *
+ * NAO FACA
+ *   - crescer isto para dominio. Se precisar de CPT, meta ou REST, e outro
+ *     plugin, e apollo-core continua a ser o dono do registo.
+ *   - registar um segundo namespace REST. So apollo/v1.
+ *
+ * VERIFICAR   node D:/dev/_cos/verify/plugin-audit.js
+ */
+
 declare(strict_types=1);
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'APOLLO_SC_VERSION', '1.0.0' );
+define( 'APOLLO_SC_VERSION', '1.0.3' );
 define( 'APOLLO_SC_FILE', __FILE__ );
 define( 'APOLLO_SC_DIR', plugin_dir_path( __FILE__ ) );
 define( 'APOLLO_SC_URL', plugin_dir_url( __FILE__ ) );
 
 /** Preview window, as percentages of total duration. Overridable per call. */
-define( 'APOLLO_SC_PREVIEW_START_PCT', 25 );
+define( 'APOLLO_SC_PREVIEW_START_PCT', 20 );
 define( 'APOLLO_SC_PREVIEW_END_PCT', 65 );
 
 /**

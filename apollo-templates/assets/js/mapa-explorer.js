@@ -179,6 +179,10 @@
       var card = d.createElement('article');
       card.className = 'place-card place-card--loading';
       card.setAttribute('aria-label', place.name);
+      card.setAttribute('data-ap-card', '1');
+      card.setAttribute('data-pid', place.id || '');
+      if (place.url) card.setAttribute('data-ap-url', place.url);
+      card.setAttribute('data-ap-title', place.name || '');
 
       var imgWrap = d.createElement('div'); imgWrap.className = 'card__imgwrap';
       var img = d.createElement('img'); img.className = 'card__img'; img.alt = place.name; img.loading = 'eager'; img.decoding = 'async';
@@ -264,7 +268,15 @@
 
     function initSheet() {
       var sheet = $('#mapSheet'), drag = $('#sheetDrag');
-      function start(y) { dragging = true; dragY0 = y; dragH0 = sheet.offsetHeight; lastY = y; lastT = Date.now(); velocity = 0; sheet.style.transition = 'none'; }
+      function setDragging(on) {
+        dragging = !!on;
+        try { w.__apSheetDragging = dragging; } catch (e) { /* isolate */ }
+      }
+      function start(y) {
+        setDragging(true);
+        dragY0 = y; dragH0 = sheet.offsetHeight; lastY = y; lastT = Date.now(); velocity = 0;
+        sheet.style.transition = 'none';
+      }
       function move(y) {
         if (!dragging) return;
         var now = Date.now(); velocity = (lastY - y) / Math.max(1, now - lastT); lastY = y; lastT = now;
@@ -272,7 +284,8 @@
         sheet.style.height = nh + 'px'; sheetH = nh;
       }
       function end() {
-        if (!dragging) return; dragging = false;
+        if (!dragging) return;
+        setDragging(false);
         sheet.style.transition = 'height .52s cubic-bezier(.16,1,.3,1)';
         if (velocity > 1.1) snap('full');
         else if (velocity < -1.1) snap('hidden');
@@ -282,9 +295,22 @@
           snap(states[dists.indexOf(Math.min.apply(Math, dists))]);
         }
       }
-      drag.addEventListener('touchstart', function (e) { start(e.touches[0].clientY); }, { passive: true });
-      d.addEventListener('touchmove', function (e) { if (dragging) { e.preventDefault(); move(e.touches[0].clientY); } }, { passive: false });
-      d.addEventListener('touchend', end);
+      /* Touch listeners stay on the HANDLE — never document-wide preventDefault
+         (that bricked sheet-inner slide-to-scroll when dragging stuck true). */
+      drag.addEventListener('touchstart', function (e) {
+        if (!e.touches[0]) return;
+        start(e.touches[0].clientY);
+      }, { passive: true });
+      drag.addEventListener('touchmove', function (e) {
+        if (!dragging || !e.touches[0]) return;
+        e.preventDefault();
+        move(e.touches[0].clientY);
+      }, { passive: false });
+      drag.addEventListener('touchend', end);
+      drag.addEventListener('touchcancel', end);
+      d.addEventListener('apollo:touch-watchdog-clear', function () {
+        if (dragging) setDragging(false);
+      });
       drag.addEventListener('mousedown', function (e) { start(e.clientY); });
       d.addEventListener('mousemove', function (e) { if (dragging) move(e.clientY); });
       d.addEventListener('mouseup', end);
@@ -323,7 +349,8 @@
       } else {
         rail.innerHTML = list.slice(0, 12).map(function (p) {
           var t = themeOf(p.type);
-          return '<div class="pcm" data-pid="' + esc(p.id) + '">' +
+          var u = p.url || p.link || '';
+          return '<div class="pcm" data-pid="' + esc(p.id) + '" data-ap-url="' + esc(u) + '" data-ap-title="' + esc(p.name) + '" data-ap-card="1">' +
             '<div class="pcm-img-wrap"><img class="pcm-img" src="' + esc(p.image) + '" alt="' + esc(p.name) + '" loading="lazy" decoding="async"></div>' +
             '<div class="pcm-body">' +
               '<div class="pcm-cat"><span class="pcm-cat-dot" style="background:' + t.color + '"></span><span style="color:' + t.color + '">' + esc(t.label) + '</span></div>' +
@@ -334,7 +361,8 @@
 
         llist.innerHTML = list.map(function (p) {
           var t = themeOf(p.type);
-          return '<div class="pr" data-pid="' + esc(p.id) + '">' +
+          var u = p.url || p.link || '';
+          return '<div class="pr" data-pid="' + esc(p.id) + '" data-ap-url="' + esc(u) + '" data-ap-title="' + esc(p.name) + '" data-ap-card="1">' +
             '<img class="pr-thumb" src="' + esc(p.image) + '" alt="' + esc(p.name) + '" loading="lazy" decoding="async">' +
             '<div class="pr-info"><div class="pr-name">' + esc(p.name) + '</div>' +
             '<div class="pr-sub"><span class="pr-cat-dot" style="background:' + t.color + '"></span>' + esc(p.category) + (p.shortRef ? ' · ' + esc(p.shortRef) : '') + '</div></div>' +

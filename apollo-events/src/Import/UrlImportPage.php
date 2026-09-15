@@ -1,7 +1,7 @@
 <?php
 
 /**
- * URL importer page — boot config for /eventos/url.
+ * URL importer page — boot config for /eventos/importa.
  *
  * @package Apollo\Event
  * @since   1.7.0
@@ -54,9 +54,12 @@ final class UrlImportPage
         return array(
             'utils',
             'parse',
+            'cover',
+            'diagnostics',
             'api',
             'ui',
             'app',
+            'run',
         );
     }
 
@@ -66,10 +69,13 @@ final class UrlImportPage
     public static function asset_url(string $relative): string
     {
         $rel = ltrim($relative, '/');
-        $ver = function_exists('apollo_event_asset_ver')
-            ? apollo_event_asset_ver($rel)
-            : (defined('APOLLO_EVENT_VERSION') ? APOLLO_EVENT_VERSION : '1.0.0');
+        $path = APOLLO_EVENT_DIR . $rel;
+        $ver  = file_exists($path)
+            ? (string) filemtime($path)
+            : (function_exists('apollo_event_asset_ver')
+                ? apollo_event_asset_ver($rel)
+                : (defined('APOLLO_EVENT_VERSION') ? APOLLO_EVENT_VERSION : '1.0.0'));
 
-        return APOLLO_EVENT_URL . $rel . '?v=' . rawurlencode((string) $ver);
+        return APOLLO_EVENT_URL . $rel . '?v=' . rawurlencode($ver);
     }
 }

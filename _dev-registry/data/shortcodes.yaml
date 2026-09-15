@@ -1,0 +1,541 @@
+# shortcodes
+#
+# Apollo DEV registry — GENERATED, do not hand-edit.
+# Source of truth is the code; regenerate with
+#   node D:/dev/_cos/verify/gen-dev-registry.js
+#
+as_built:
+  - unit: apollo-adverts
+    file: plugins/apollo-adverts/includes/integrations.php
+    line: 360
+    arg: apollo_adverts_chat_button
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-adverts
+    file: plugins/apollo-adverts/includes/shortcodes.php
+    line: 27
+    arg: apollo_classifieds
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-adverts
+    file: plugins/apollo-adverts/includes/shortcodes.php
+    line: 28
+    arg: apollo_classified
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-adverts
+    file: plugins/apollo-adverts/includes/shortcodes.php
+    line: 29
+    arg: apollo_classified_form
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-adverts
+    file: plugins/apollo-adverts/includes/shortcodes.php
+    line: 31
+    arg: apollo_classifieds_sell_ticket
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-adverts
+    file: plugins/apollo-adverts/includes/shortcodes.php
+    line: 32
+    arg: apollo_classifieds_rent_space
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-adverts
+    file: plugins/apollo-adverts/src/RelatedAds.php
+    line: 42
+    arg: apollo_related_classifieds
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-coauthor
+    file: plugins/apollo-coauthor/src/Components/Shortcodes.php
+    line: 42
+    arg: apollo_coauthors
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-coauthor
+    file: plugins/apollo-coauthor/src/Components/Shortcodes.php
+    line: 43
+    arg: apollo_coauthor_count
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-comment
+    file: plugins/apollo-comment/src/Shortcodes.php
+    line: 20
+    arg: apollo_depoimentos
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-comment
+    file: plugins/apollo-comment/src/Shortcodes.php
+    line: 21
+    arg: apollo_depoimento_form
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-dashboard
+    file: plugins/apollo-dashboard/includes/class-plugin.php
+    line: 79
+    arg: apollo_dashboard
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-dashboard
+    file: plugins/apollo-dashboard/includes/class-plugin.php
+    line: 80
+    arg: apollo_dashboard_menu
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-djs
+    file: plugins/apollo-djs/src/Shortcodes.php
+    line: 23
+    arg: apollo_djs
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-djs
+    file: plugins/apollo-djs/src/Shortcodes.php
+    line: 24
+    arg: apollo_dj
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-djs
+    file: plugins/apollo-djs/src/Shortcodes.php
+    line: 25
+    arg: apollo_dj_carousel
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-djs
+    file: plugins/apollo-djs/src/Shortcodes.php
+    line: 26
+    arg: apollo_add_dj
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-email
+    file: plugins/apollo-email/src/Newsletter.php
+    line: 62
+    arg: apollo_newsletter
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-email
+    file: plugins/apollo-email/src/Plugin.php
+    line: 114
+    arg: apollo_email_prefs
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-events
+    file: plugins/apollo-events/includes/render-single.php
+    line: 1043
+    arg: apollo_event_single
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-events
+    file: plugins/apollo-events/src/Cena_Rio_Submissions.php
+    line: 38
+    arg: apollo_cena_submit_event
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-events
+    file: plugins/apollo-events/src/Shortcodes.php
+    line: 51
+    arg: a-eve
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-events
+    file: plugins/apollo-events/src/Shortcodes.php
+    line: 67
+    arg: null
+    arg_kind: DYNAMIC
+    guarded: true
+  - unit: apollo-fav
+    file: plugins/apollo-fav/includes/class-dashboard.php
+    line: 62
+    arg: apollo_my_favs
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-fav
+    file: plugins/apollo-fav/includes/class-dashboard.php
+    line: 65
+    arg: apollo_fav
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-fav
+    file: plugins/apollo-fav/includes/class-fav-ranking.php
+    line: 51
+    arg: apollo_top_sounds
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-fav
+    file: plugins/apollo-fav/includes/class-fav-sound-dashboard.php
+    line: 28
+    arg: apollo_fav_dashboard
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-fav
+    file: plugins/apollo-fav/includes/class-fav-sound-dashboard.php
+    line: 30
+    arg: apollo_interesse_dashboard
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-groups
+    file: plugins/apollo-groups/src/Plugin.php
+    line: 995
+    arg: apollo_groups
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-groups
+    file: plugins/apollo-groups/src/Plugin.php
+    line: 996
+    arg: apollo_group
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-groups
+    file: plugins/apollo-groups/src/Plugin.php
+    line: 997
+    arg: apollo_my_groups
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-groups
+    file: plugins/apollo-groups/src/Plugin.php
+    line: 998
+    arg: apollo_create_nucleo
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-groups
+    file: plugins/apollo-groups/src/Plugin.php
+    line: 999
+    arg: apollo_create_comuna
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-hub
+    file: plugins/apollo-hub/src/Shortcodes.php
+    line: 24
+    arg: apollo_hub
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-hub
+    file: plugins/apollo-hub/src/Shortcodes.php
+    line: 25
+    arg: apollo_hub_builder
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-journal
+    file: plugins/apollo-journal/src/Shortcodes.php
+    line: 38
+    arg: apollo_journal
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-journal
+    file: plugins/apollo-journal/src/Shortcodes.php
+    line: 39
+    arg: apollo_journal_marquee
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-journal
+    file: plugins/apollo-journal/src/Shortcodes.php
+    line: 40
+    arg: apollo_journal_card
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-journal
+    file: plugins/apollo-journal/src/Shortcodes.php
+    line: 41
+    arg: apollo_add_news
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-journal
+    file: plugins/apollo-journal/src/Shortcodes.php
+    line: 42
+    arg: apollo_add_nrep
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-loc
+    file: plugins/apollo-loc/src/Shortcodes/ShortcodeRegistry.php
+    line: 21
+    arg: apollo_locals
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-loc
+    file: plugins/apollo-loc/src/Shortcodes/ShortcodeRegistry.php
+    line: 22
+    arg: apollo_local
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-loc
+    file: plugins/apollo-loc/src/Shortcodes/ShortcodeRegistry.php
+    line: 23
+    arg: apollo_map
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-loc
+    file: plugins/apollo-loc/src/Shortcodes/ShortcodeRegistry.php
+    line: 24
+    arg: apollo_add_loc
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Core/Plugin.php
+    line: 339
+    arg: apollo_login
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Core/Plugin.php
+    line: 340
+    arg: apollo_register
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Core/Plugin.php
+    line: 341
+    arg: apollo_quiz
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Core/Plugin.php
+    line: 342
+    arg: apollo_simon
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Core/Plugin.php
+    line: 343
+    arg: apollo_password_reset
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Core/Plugin.php
+    line: 344
+    arg: apollo_verify_email
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-maps
+    file: plugins/apollo-maps/src/Shortcodes/MapShortcode.php
+    line: 22
+    arg: apollo_maps
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-membership
+    file: plugins/apollo-membership/includes/shortcodes/apollo-achievement-single.php
+    line: 108
+    arg: apollo_achievement
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-membership
+    file: plugins/apollo-membership/includes/shortcodes/apollo-achievements-list.php
+    line: 106
+    arg: apollo_achievements
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-membership
+    file: plugins/apollo-membership/includes/shortcodes/apollo-evidence.php
+    line: 95
+    arg: apollo_evidence
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-membership
+    file: plugins/apollo-membership/includes/shortcodes/apollo-leaderboard.php
+    line: 96
+    arg: apollo_leaderboard
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-membership
+    file: plugins/apollo-membership/includes/shortcodes/apollo-points.php
+    line: 107
+    arg: apollo_points
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-membership
+    file: plugins/apollo-membership/includes/shortcodes/apollo-rank-single.php
+    line: 79
+    arg: apollo_rank
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-membership
+    file: plugins/apollo-membership/includes/shortcodes/apollo-ranks.php
+    line: 75
+    arg: apollo_ranks
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-membership
+    file: plugins/apollo-membership/includes/shortcodes/apollo-user-achievements.php
+    line: 88
+    arg: apollo_user_achievements
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-membership
+    file: plugins/apollo-membership/includes/shortcodes/apollo-user-rank.php
+    line: 79
+    arg: apollo_user_rank
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-notif
+    file: plugins/apollo-notif/src/Plugin.php
+    line: 534
+    arg: apollo_notif
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-notif
+    file: plugins/apollo-notif/src/Plugin.php
+    line: 535
+    arg: apollo_notif_badge
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-radio
+    file: plugins/apollo-radio/src/Shortcode/RadioShortcode.php
+    line: 19
+    arg: apollo_radio
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-scheduler
+    file: plugins/apollo-scheduler/src/Frontend/BookingWizard.php
+    line: 19
+    arg: apollo_scheduler_book
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-scheduler
+    file: plugins/apollo-scheduler/src/Frontend/ManagerCalendar.php
+    line: 19
+    arg: apollo_scheduler_manager
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-sheets
+    file: plugins/apollo-sheets/src/Shortcodes.php
+    line: 24
+    arg: apollo-sheet
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-sheets
+    file: plugins/apollo-sheets/src/Shortcodes.php
+    line: 25
+    arg: apollo-sheet-info
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-sign
+    file: plugins/apollo-sign/src/Plugin.php
+    line: 56
+    arg: apollo_signature_pad
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-social
+    file: plugins/apollo-social/src/Plugin.php
+    line: 583
+    arg: apollo_feed
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-social
+    file: plugins/apollo-social/src/Plugin.php
+    line: 584
+    arg: apollo_follow_btn
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-soundcloud
+    file: plugins/apollo-soundcloud/includes/render.php
+    line: 170
+    arg: apollo_soundcloud
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/includes/class-reports.php
+    line: 33
+    arg: apollo_stats_widget
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/includes/class-user-stats-widget.php
+    line: 33
+    arg: apollo_user_stats
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-telegram
+    file: plugins/apollo-telegram/src/Shortcodes/ShortcodeManager.php
+    line: 24
+    arg: null
+    arg_kind: DYNAMIC
+    guarded: false
+  - unit: apollo-templates
+    file: plugins/apollo-templates/examples/user-radar-examples.php
+    line: 310
+    arg: apollo_user_badge
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-templates
+    file: plugins/apollo-templates/examples/user-radar-examples.php
+    line: 332
+    arg: apollo_user_ranking
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-templates
+    file: plugins/apollo-templates/includes/class-shortcodes.php
+    line: 56
+    arg: apollo_events
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-templates
+    file: plugins/apollo-templates/includes/class-shortcodes.php
+    line: 57
+    arg: apollo_event
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-templates
+    file: plugins/apollo-templates/includes/class-shortcodes.php
+    line: 58
+    arg: apollo_calendar
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-templates
+    file: plugins/apollo-templates/includes/class-shortcodes.php
+    line: 59
+    arg: apollo_event_form
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-ui
+    file: plugins/apollo-ui/includes/shortcode.php
+    line: 149
+    arg: null
+    arg_kind: DYNAMIC
+    guarded: true
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Plugin.php
+    line: 156
+    arg: apollo_profile
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Plugin.php
+    line: 157
+    arg: apollo_profile_edit
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Plugin.php
+    line: 158
+    arg: apollo_radar
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Plugin.php
+    line: 159
+    arg: apollo_user_card
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Plugin.php
+    line: 160
+    arg: apollo_matchmaking
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Plugin.php
+    line: 161
+    arg: apollo_profile_fields
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-wow
+    file: plugins/apollo-wow/src/Plugin.php
+    line: 146
+    arg: apollo_wow
+    arg_kind: LITERAL
+    guarded: false
+  - unit: apollo-wow
+    file: plugins/apollo-wow/src/Plugin.php
+    line: 147
+    arg: apollo_wow_chart
+    arg_kind: LITERAL
+    guarded: false

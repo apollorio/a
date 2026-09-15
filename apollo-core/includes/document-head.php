@@ -13,6 +13,22 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
+if (! function_exists('apollo_csp_nonce_attr')) {
+    /**
+     * Per-request CSP nonce attribute for parser-inserted <script> tags.
+     *
+     * Blank-canvas pages that still receive the strict policy (nonce +
+     * strict-dynamic) silently drop any script without this attribute —
+     * Chrome lists them as blocked/held. Mobile cells, trackers and
+     * screen inline boots must print this or they never run.
+     */
+    function apollo_csp_nonce_attr(): string
+    {
+        $nonce = isset($GLOBALS['apollo_csp_nonce']) ? (string) $GLOBALS['apollo_csp_nonce'] : '';
+        return $nonce !== '' ? ' nonce="' . esc_attr($nonce) . '"' : '';
+    }
+}
+
 if (! function_exists('apollo_document_head_debug')) {
     /**
      * NDJSON probe for document-head compliance (sessions 4ad441 + c0df4e).
@@ -50,6 +66,8 @@ if (! function_exists('apollo_render_document_head')) {
      *     @type bool   $auth_lite     Emit window.__APOLLO_AUTH_LITE__ = true.
      *     @type string $apple_title   apple-mobile-web-app-title. Default 'apollo::rio'.
      *     @type string $root_style_id ID for the empty :root style block.
+     *     @type string $theme_color   When set, emit a single theme-color meta
+     *                                 instead of the light/dark pair.
      * }
      */
     function apollo_render_document_head(array $args = array()): void
@@ -63,6 +81,7 @@ if (! function_exists('apollo_render_document_head')) {
             'auth_lite'     => false,
             'apple_title'   => 'apollo::rio',
             'root_style_id' => 'apollo-page-tokens',
+            'theme_color'   => '',
         );
         $opts = wp_parse_args($args, $defaults);
 
@@ -138,14 +157,27 @@ Loaded on core.js are:
 /* ALL TOKENS VIA MAIN :root { must be from core.js injected, ONLY LOCAL WEBPAGE EXTRA :root IF  NEEDED then allowed to do only :root for extra element to the page!!! And same: respct is mandatory to injected stylesheets of:  html {} body {} and *{} !important */
 }
 </style>
-<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=overlays-content">
+<!-- Pinch-zoom restored 2026-08-26. This tag used to carry maximum-scale=1 and
+     user-scalable=no. Safari has ignored both since iOS 10; Android Chrome obeys
+     them, so on Android the page could not be magnified at all — a WCAG 2.1 SC 1.4.4
+     failure, and the one line most at odds with the "ahead of Apple" bar. The
+     reference layout never had it. viewport-fit=cover stays, because every
+     env(safe-area-inset-*) rule in the tree is dead without it, and
+     interactive-widget=overlays-content stays so the on-screen keyboard overlays
+     the page instead of resizing the viewport under a fixed topbar. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, viewport-fit=cover, interactive-widget=overlays-content">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="format-detection" content="telephone=no">
 <meta name="apple-mobile-web-app-title" content="<?php echo esc_attr((string) $opts['apple_title']); ?>">
+<?php if ('' !== (string) $opts['theme_color']) : ?>
+<meta name="theme-color" content="<?php echo esc_attr((string) $opts['theme_color']); ?>">
+<?php else : ?>
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#101010" media="(prefers-color-scheme: dark)">
+<?php endif; ?>
 <title><?php echo esc_html((string) $opts['title']); ?></title>
 <?php
         if (! (bool) $opts['skip_seo']) {
@@ -255,6 +287,12 @@ if (! function_exists('apollo_render_document_close')) {
      */
     function apollo_render_document_close(string $extra = ''): void
     {
+        /**
+         * Fires once, just before </body>, on every blank-canvas document.
+         * Plug-n-play runtimes (mobile premium, trackers) mount here.
+         */
+        do_action('apollo/canvas/before_close');
+
         if ($extra !== '') {
             // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Trusted HTML from plugin templates.
             echo $extra;

@@ -14,6 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<span class="tag" id="platformPill">—</span>
 	</div>
 	<div class="imp-led-grid" id="ledGrid"></div>
+	<div class="imp-diagnostics-host" id="diagnosticsHost" style="display:none;"></div>
+	<div class="imp-cover-host" id="coverPreviewHost"></div>
 	<div class="imp-verify">
 		<span class="imp-gate" id="gateMsg"><?php esc_html_e( 'preencha os campos obrigatórios para liberar a importação', 'apollo-events' ); ?></span>
 		<button type="button" class="btn btn-accent" id="btnConfirmRow" disabled>

@@ -1,0 +1,38 @@
+{
+  "$chapter": {
+    "id": "09-plugins/apollo-seed-runner",
+    "owner": "apollo-seed-runner",
+    "wrap": "plugins.apollo-seed-runner",
+    "source": "disk scan 2026-08-31",
+    "merge": "deep_merge_last_wins"
+  },
+  "slug": "apollo-seed-runner",
+  "namespace": null,
+  "priority": 99,
+  "status": "IMPLEMENTED",
+  "version": "1.0.0",
+  "layer": "L14_tooling",
+  "description": "Minimal loader plugin whose only job is to require _inventory/seed/apollo-seed.php so the idempotent JSON-driven seeder actually executes. Created 2026-08-29 to solve a real autoload gap: the seeder lived outside wp-content/plugins/*/*.php, so WordPress never scanned it and its admin_init hook never registered — the script documented its own usage but could never run.",
+  "dependencies": [],
+  "provides": [
+    "seed-runner"
+  ],
+  "cpts": [],
+  "taxonomies": [],
+  "tables": [],
+  "meta": {},
+  "rest": [],
+  "pages": [],
+  "shortcodes": [],
+  "$product_surface": false,
+  "$tooling": {
+    "role": "maintenance",
+    "loads": "plugins/_inventory/seed/apollo-seed.php",
+    "trigger": "admin_init, gated on ?apollo_seed=1 (dry run) and &write=1 (actually writes)",
+    "idempotency": "_apollo_seed_key post meta is the dedupe key — re-running never duplicates rows",
+    "default_behaviour": "DRY RUN. Writing requires an explicit &write=1.",
+    "data_source": "plugins/_inventory/seed/apollo-seed-data.json"
+  },
+  "$why_it_stays_active": "Left active deliberately: it is admin-gated, dry-run by default, and idempotent, so it is safe to leave in place for future re-seeds. If that judgement changes, deactivating it is harmless — nothing else depends on it.",
+  "$registry_gap_closed": "Created on disk 2026-08-29 but had no registry entry until 2026-08-31. Found by doctor.js."
+}

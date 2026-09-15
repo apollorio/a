@@ -32,6 +32,9 @@
 /* ── Accommodation ── */
 @import url("marketplace/_accommodation.css");
 
+/* ── Share popover (cards + single) ── */
+@import url("../share-advert.css");
+
 /* ── Modal ── */
 @import url("marketplace/_modal-overlay.css");
 @import url("marketplace/_modal-content.css");

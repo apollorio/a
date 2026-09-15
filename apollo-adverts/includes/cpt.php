@@ -331,6 +331,88 @@ function apollo_adverts_link_event( int $post_id, int $event_id ): void {
 }
 
 /**
+ * Keep every resale advert's event snapshot current.
+ *
+ * apollo_adverts_link_event() above promises, in its own docblock, that
+ * "re-running this refreshes the snapshot if the event later moves or is
+ * renamed". Nothing re-ran it. It fires on ClassifiedsController.php:496 and
+ * Plugin.php:883 — both of which are the ADVERT being saved, never the event.
+ *
+ * So an event could be renamed, moved to another venue or shifted to a new
+ * date, and every resale advert pointing at it kept showing the old copy,
+ * silently, forever. The relation was correct; only the refresh was missing.
+ *
+ * Why a snapshot at all rather than reading the event at render time: the
+ * cards are listed twelve at a time on /anuncios, and joining to the event on
+ * every card on every request is a query per card. The denormalised copy is
+ * deliberate. This function is the invalidation the design always assumed.
+ *
+ * Bounded on purpose. An event with more than APOLLO_ADVERTS_EVENT_RESYNC_MAX
+ * resale adverts is not a real scenario today, and an unbounded loop inside a
+ * save_post handler is how an admin screen starts timing out. The cap is
+ * filterable so it never becomes a silent ceiling.
+ *
+ * Known limit, stated rather than hidden: this fires on save_post_event. An
+ * event edited purely through a REST meta write that does not touch the post
+ * row will not trigger it. Re-saving the advert still refreshes it, exactly as
+ * before, so the worst case is the behaviour that shipped until today.
+ *
+ * @since 1.1.9
+ * @param int      $event_id Event post ID.
+ * @param \WP_Post|null $post  The event post, as passed by save_post_event.
+ * @return void
+ */
+function apollo_adverts_resync_event_adverts( int $event_id, $post = null ): void {
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+		return;
+	}
+	if ( wp_is_post_revision( $event_id ) || wp_is_post_autosave( $event_id ) ) {
+		return;
+	}
+
+	$post = $post instanceof WP_Post ? $post : get_post( $event_id );
+	if ( ! $post || 'event' !== $post->post_type ) {
+		return;
+	}
+
+	/**
+	 * How many resale adverts one event may refresh in a single save.
+	 *
+	 * @param int $max Default 500.
+	 */
+	$max = (int) apply_filters( 'apollo_adverts_event_resync_max', 500 );
+
+	$adverts = get_posts(
+		array(
+			'post_type'      => APOLLO_CPT_CLASSIFIED,
+			'post_status'    => 'any',
+			'posts_per_page' => $max,
+			'fields'         => 'ids',
+			'no_found_rows'  => true,
+			'meta_query'     => array(
+				array(
+					'key'   => '_classified_event_id',
+					'value' => (string) $event_id,
+				),
+			),
+		)
+	);
+
+	foreach ( $adverts as $advert_id ) {
+		apollo_adverts_link_event( (int) $advert_id, $event_id );
+	}
+
+	/**
+	 * Fires after an event's resale adverts have been refreshed.
+	 *
+	 * @param int   $event_id Event post ID.
+	 * @param int[] $adverts  Advert IDs refreshed.
+	 */
+	do_action( 'apollo/adverts/event_resynced', $event_id, $adverts );
+}
+add_action( 'save_post_event', 'apollo_adverts_resync_event_adverts', 20, 2 );
+
+/**
  * Is this accommodation a hostel?
  *
  * The single switch that decides whether an accommodation listing is public.

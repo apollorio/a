@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <section data-panel="chat" data-glyph="C">
-	<div class="container" style="padding-top:calc(80px + var(--safe-top));">
+	<div class="container" style="padding-top:calc(80px + var(--safe-top, 0px));">
 		<button data-back="1" class="return-back" aria-label="<?php esc_attr_e( 'Voltar', 'apollo-templates' ); ?>">
 			<i class="ri-corner-up-right-line"></i>
 		</button>

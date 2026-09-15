@@ -10,10 +10,12 @@
 (function () {
     'use strict';
 
-    /* Resolve base URL from this <script> tag */
-    var scripts = document.getElementsByTagName('script');
-    var current = scripts[scripts.length - 1];
-    var baseUrl = current.src.replace(/marketplace\.js(\?.*)?$/, 'marketplace/');
+    /* Resolve base URL from this <script> tag (defer-safe). */
+    var current = document.currentScript || document.querySelector('script[src*="marketplace.js"]');
+    var baseUrl = current && current.src ? current.src.replace(/marketplace\.js(\?.*)?$/, 'marketplace/') : '';
+    if (!baseUrl) {
+        return;
+    }
 
     /* Ordered module list — dependencies first, init last */
     var modules = [
@@ -30,11 +32,17 @@
         'init'
     ];
 
+    var nonceMeta = document.querySelector('meta[name="apollo-csp-nonce"]');
+    var nonce = nonceMeta ? nonceMeta.getAttribute('content') : '';
+
     /* Load each module sequentially (async=false preserves order) */
     modules.forEach(function (name) {
         var s = document.createElement('script');
         s.src = baseUrl + name + '.js';
         s.async = false;
+        if (nonce) {
+            s.setAttribute('nonce', nonce);
+        }
         document.head.appendChild(s);
     });
 })();

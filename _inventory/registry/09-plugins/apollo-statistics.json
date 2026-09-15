@@ -10,7 +10,7 @@
   "namespace": "Apollo\\Statistics",
   "priority": 5,
   "status": "IMPLEMENTED",
-  "version": "2.0.6",
+  "version": "2.0.8",
   "description": "Ultra Modular Pro Analytics Engine — 15 MetricGroup classes, 68 plug-and-play metric instances, PostHog-inspired tracker, amCharts 5 visualizations, gamification bridge. Covers ALL 27 Apollo plugins.",
   "dependencies": [
     "apollo-admin",
@@ -2773,5 +2773,11 @@
       "apollo_stats_widget",
       "apollo_user_stats"
     ]
+  },
+  "$version_synced": {
+    "date": "2026-08-31",
+    "from": "2.0.6",
+    "to": "2.0.8",
+    "source": "disk docblock via doctor.js"
   }
 }
