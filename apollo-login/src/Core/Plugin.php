@@ -145,61 +145,77 @@ final class Plugin {
 	}
 
 	/**
-	 * Ensure .htaccess always contains the WordPress front-controller rewrite block.
+	 * Ensure .htaccess has a WordPress front-controller — without clobbering
+	 * Apollo production .htaccess (v3.1.0+), which is custom and deliberately
+	 * has NO `# BEGIN WordPress` markers.
 	 *
-	 * Endurance / NFD EPC (or a bad hard flush) can leave only cache rules, which
-	 * breaks pretty permalinks (/acesso, /registre, /evento/…) — Apache never
-	 * reaches index.php and returns HostGator/ModSecurity 404/406.
+	 * HISTORY (2026-08-27): the previous check required `# BEGIN WordPress`.
+	 * Apollo v3.1.0 already contains `RewriteRule . /index.php` but not those
+	 * markers, so this ran on every request and rewrote the root .htaccess to
+	 * weak NFD EPC + stock WP blocks → LiteSpeed 500 site-wide.
 	 *
 	 * @return void
 	 */
 	public function maybe_repair_htaccess(): void {
 		$htaccess = ABSPATH . '.htaccess';
 		$contents = is_readable( $htaccess ) ? (string) file_get_contents( $htaccess ) : '';
-		$has_wp   = str_contains( $contents, '# BEGIN WordPress' )
-			&& str_contains( $contents, 'RewriteRule . /index.php' );
 
-		if ( $has_wp ) {
-			return;
+		$is_apollo = $this->is_apollo_production_htaccess( $contents );
+		$has_front = (bool) preg_match( '/RewriteRule\s+\.\s+\/index\.php/i', $contents );
+		$has_wp    = str_contains( $contents, '# BEGIN WordPress' )
+			&& $has_front;
+
+		// #region agent log
+		$log_line = wp_json_encode(
+			array(
+				'sessionId'    => '161c5c',
+				'runId'        => 'htaccess-guard',
+				'hypothesisId' => 'H1',
+				'location'     => 'apollo-login/Plugin.php:maybe_repair_htaccess',
+				'message'      => 'htaccess repair gate',
+				'data'         => array(
+					'bytes'       => strlen( $contents ),
+					'is_apollo'   => $is_apollo,
+					'has_front'   => $has_front,
+					'has_wp'      => $has_wp,
+					'will_write'  => false,
+					'snippet'     => substr( preg_replace( '/\s+/', ' ', $contents ) ?? '', 0, 120 ),
+				),
+				'timestamp'    => (int) round( microtime( true ) * 1000 ),
+			)
+		) . "\n";
+		foreach (
+			array(
+				( defined( 'WP_CONTENT_DIR' ) ? WP_CONTENT_DIR : '' ) . '/debug-161c5c.log',
+				( defined( 'WP_CONTENT_DIR' ) ? WP_CONTENT_DIR : '' ) . '/plugins/debug-161c5c.log',
+			) as $log
+		) {
+			if ( $log !== '/debug-161c5c.log' && $log !== '/plugins/debug-161c5c.log' ) {
+				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+				@file_put_contents( $log, $log_line, FILE_APPEND );
+			}
 		}
+		// #endregion
 
-		$epc = '';
-		if ( preg_match( '/# BEGIN NFD EPC.*?# END NFD EPC\s*/s', $contents, $m ) ) {
-			$epc = trim( $m[0] ) . "\n\n";
+		// NEVER write the weak NFD/WP stub. Apollo Core owns restoration.
+		if ( function_exists( 'apollo_core_htaccess_enforce' ) ) {
+			apollo_core_htaccess_enforce();
 		}
+	}
 
-		$wp = <<<'HTA'
-# BEGIN WordPress
-<IfModule mod_rewrite.c>
-RewriteEngine On
-RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-RewriteBase /
-RewriteRule ^index\.php$ - [L]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /index.php [L]
-</IfModule>
-# END WordPress
-
-HTA;
-
-		$stripped = preg_replace( '/# BEGIN WordPress.*?# END WordPress\s*/s', '', $contents );
-		$stripped = preg_replace( '/# BEGIN NFD EPC.*?# END NFD EPC\s*/s', '', (string) $stripped );
-		$stripped = trim( (string) $stripped );
-
-		$new = $epc . $wp;
-		if ( $stripped !== '' ) {
-			$new .= "\n" . $stripped . "\n";
+	/**
+	 * Detect Apollo-managed production root .htaccess (must never be rewritten).
+	 */
+	private function is_apollo_production_htaccess( string $contents ): bool {
+		if ( $contents === '' ) {
+			return false;
 		}
-
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
-		$written = @file_put_contents( $htaccess, $new );
-		if ( false === $written ) {
-			return;
-		}
-
-		// Soft flush is enough once front-controller rules exist on disk.
-		flush_rewrite_rules( false );
+		return str_contains( $contents, 'APOLLO  ·  .htaccess' )
+			|| str_contains( $contents, 'APOLLO · .htaccess' )
+			|| str_contains( $contents, 'Version: 3.1.0' )
+			|| str_contains( $contents, 'ErrorDocument 500 /erro/500/' )
+			|| str_contains( $contents, '§1.12  WORDPRESS FRONT CONTROLLER' )
+			|| str_contains( $contents, '# ── END OF APOLLO .htaccess' );
 	}
 
 	/**

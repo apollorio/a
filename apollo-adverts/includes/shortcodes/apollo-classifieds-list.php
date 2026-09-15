@@ -43,6 +43,9 @@ function apollo_adverts_shortcode_list( $atts = array() ): string {
 	// Enqueue assets
 	wp_enqueue_style( 'apollo-adverts' );
 	wp_enqueue_script( 'apollo-adverts' );
+	if ( function_exists( 'apollo_adverts_enqueue_rt_card' ) ) {
+		apollo_adverts_enqueue_rt_card();
+	}
 
 	// Current page
 	$paged = max( 1, get_query_var( 'paged', 1 ) );

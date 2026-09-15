@@ -2,9 +2,9 @@
 Contributors: softaculous, loginizer, pagelayer
 Tags: security, access, admin, Loginizer, login, logs, ban ip, failed login, ip, whitelist ip, blacklist ip, failed attempts, lockouts, hack, authentication, login, security, rename login url, rename login, rename wp-admin, secure wp-admin, rename admin url, secure admin, brute force protection
 Requires at least: 3.0
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 5.5
-Stable tag: 2.0.8
+Stable tag: 2.1.0
 License: LGPLv2.1
 License URI: http://www.gnu.org/licenses/lgpl-2.1.html
 
@@ -59,6 +59,7 @@ Pro Features :
 * Social Login - Users can login or register with their Google, Github, Facebook, X (Twitter), Discord, Twitch, LinkedIn, Microsoft with support for WooCommerce and Ultimate Member.
 * Key Less Social Login - Use Loginizer's Social Auth for easy key less Social login configuration, now supports Google, GitHub, X, LinkedIn more to be added later
 * Country Blocking - Block IPs from specific countries to restrict access to your website.
+* User enumeration - Helps prevent attackers from knowing usernames, by blocking unauthenticated access to common username list/access paths.
 
 Features in Loginizer include:
 
@@ -86,6 +87,19 @@ That's it. You're done!
 3. Loginizer Brute Force Settings page
 
 == Changelog ==
+
+= 2.1.0 =
+* [Pro Feature] User enumeration protection, hiding unauthenticated access to username lists.
+* [Improvement Pro] Passwordless login, now have option to disable username based login and only allow login through email.
+* [Improvement Pro] The plugin now comes with Italian translations(it_IT).
+* [Bug-Fix Pro] Passwordless login, was not honoring Remember me on login, this has been fixed.
+* [Bug-Fix] There was a race condition happening in Bruteforce protection, that has been fixed.
+
+= 2.0.9 =
+* [Bug-Fix Pro] There was an issue in Limit Concurrent Attempts, where session was getting destroyed, this has been fixed.
+* [Bug-Fix] Microsoft Graph Social Login, had some issues that has been fixed.
+* [Bug-Fix] Blacklist check function was generating warnings, that has been fixed.
+* [Bug-Fix] There was some PHP 7.0 related button UI issues, those has been fixed.
 
 = 2.0.8 =
 * [Improvement Pro] Admin slug htaccess rule, now handles the new slug not having / at the end in the URL.

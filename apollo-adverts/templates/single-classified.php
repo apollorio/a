@@ -4,8 +4,8 @@
  * Single classified — /anuncio/{slug}/
  *
  * Blank Canvas Apollo+ screen. One advert, one URL. Body is the marketplace
- * card infos for that listing plus the pre-contact safety step (users in
- * common / trust / staff) when the core safety contract applies.
+ * card infos for that listing. Pre-contact safety lives on /seguranca/ —
+ * #contato only links there when the gate still applies.
  *
  * Mount only — layout and styles live under templates/parts/single/.
  *
@@ -47,13 +47,16 @@ if (is_readable($single_parts . 'styles.php')) {
     require $single_parts . 'styles.php';
 }
 $mk_head = ob_get_clean();
-
-if ($needs_gate) {
-    wp_enqueue_style('apollo-adverts-safety-gate');
-    wp_enqueue_script('apollo-adverts-safety-gate');
+$mk_v    = defined('APOLLO_ADVERTS_VERSION') ? APOLLO_ADVERTS_VERSION : '1.2.0';
+if (defined('APOLLO_ADVERTS_URL')) {
+    $mk_head .= '<link rel="stylesheet" href="' . esc_url(APOLLO_ADVERTS_URL . 'assets/css/rt-card.css?v=' . $mk_v) . '">';
+    $nonce    = function_exists('apollo_csp_nonce_attr') ? apollo_csp_nonce_attr() : '';
+    $mk_head .= '<script' . $nonce . ' src="' . esc_url(APOLLO_ADVERTS_URL . 'assets/js/rt-card.js?v=' . $mk_v) . '" defer></script>';
 }
 
-$mk_use_plus = function_exists('apollo_plus_open');
+/* Gate assets load only on /seguranca/ — single never embeds the interstitial. */
+
+$mk_use_plus = function_exists('apollo_plus_open') && function_exists('apollo_plus_close');
 
 if ($mk_use_plus) {
     apollo_plus_open(
@@ -82,7 +85,7 @@ if (is_readable($single_parts . 'layout.php')) {
     require $single_parts . 'layout.php';
 }
 
-if ($mk_use_plus) {
+if ($mk_use_plus && function_exists('apollo_plus_close')) {
     apollo_plus_close();
 } elseif (function_exists('apollo_render_document_close')) {
     echo '</main>';

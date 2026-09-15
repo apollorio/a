@@ -47,6 +47,8 @@ final class Plugin
         add_action('init', array($this, 'register_rewrite_rules'), 1);
         add_filter('query_vars', array($this, 'register_query_vars'));
         add_action('parse_request', array($this, 'parse_request_fallback'), 1);
+        add_action('template_redirect', array($this, 'heal_cover_before_head'), 0);
+        add_action('template_redirect', array($this, 'redirect_legacy_import_url'), 4);
         add_action('template_redirect', array($this, 'handle_virtual_pages'), 5);
 
         // A stale static file in the document root can shadow a virtual route
@@ -84,8 +86,77 @@ final class Plugin
         // Equipe do Evento: grant edit/delete/read_post like the author.
         add_filter('map_meta_cap', array($this, 'map_event_team_meta_cap'), 10, 4);
 
+        add_action('rest_after_insert_' . APOLLO_EVENT_CPT, array($this, 'heal_cover_after_rest'), 20, 1);
+
         // Componentes
         $this->init_components();
+    }
+
+    /**
+     * Heal featured === `_event_banner` BEFORE wp_head prints og:image / twitter:image.
+     * Without this, Meta resolves on stale meta while the hero heals later in the template.
+     */
+    public function heal_cover_before_head(): void
+    {
+        if (! is_singular(APOLLO_EVENT_CPT)) {
+            return;
+        }
+        $post_id = (int) get_queried_object_id();
+        if ($post_id <= 0) {
+            return;
+        }
+
+        $thumb_before = (int) get_post_thumbnail_id($post_id);
+        $banner_before = get_post_meta($post_id, '_event_banner', true);
+        $share_before  = function_exists('apollo_event_share_image')
+            ? apollo_event_share_image($post_id, 'full')
+            : array('url' => '', 'id' => 0);
+
+        if (function_exists('apollo_event_heal_cover')) {
+            apollo_event_heal_cover($post_id);
+        }
+
+        $thumb_after = (int) get_post_thumbnail_id($post_id);
+        $banner_after = get_post_meta($post_id, '_event_banner', true);
+        $share_after  = function_exists('apollo_event_share_image')
+            ? apollo_event_share_image($post_id, 'full')
+            : array('url' => '', 'id' => 0);
+
+        // #region agent log
+        if (function_exists('apollo_event_debug_log_837565')) {
+            apollo_event_debug_log_837565(
+                'Plugin.php:heal_cover_before_head',
+                'cover heal before wp_head',
+                array(
+                    'post_id'       => $post_id,
+                    'slug'          => (string) get_post_field('post_name', $post_id),
+                    'thumb_before'  => $thumb_before,
+                    'thumb_after'   => $thumb_after,
+                    'banner_before' => $banner_before,
+                    'banner_after'  => $banner_after,
+                    'share_before'  => $share_before['url'] ?? '',
+                    'share_after'   => $share_after['url'] ?? '',
+                    'changed'       => ($share_before['url'] ?? '') !== ($share_after['url'] ?? ''),
+                ),
+                'H5'
+            );
+        }
+        // #endregion
+    }
+
+    /**
+     * Keep featured image === `_event_banner` after REST (Gutenberg / app) saves.
+     *
+     * @param \WP_Post $post Inserted or updated event.
+     */
+    public function heal_cover_after_rest($post): void
+    {
+        if (! $post instanceof \WP_Post) {
+            return;
+        }
+        if (function_exists('apollo_event_heal_cover')) {
+            apollo_event_heal_cover((int) $post->ID);
+        }
     }
 
     /**
@@ -202,8 +273,8 @@ final class Plugin
             // new template, additive only — the 3 legacy slugs above still
             // work unchanged.
             '^eventos/novo/?$'   => 'create',
-            // /eventos/url — Shotgun/BlueTicket URL importer (standalone HTML).
-            '^eventos/url/?$'    => 'url_import',
+            // /eventos/importa — canonical URL importer (BlueTicket + Shotgun).
+            '^eventos/importa/?$' => 'url_import',
             // DASHBOARD / PAINEL DE EVENTOS (manage view → dashboard-event.php)
             '^meus-eventos/?$'   => 'dashboard',
             '^painel/?$'         => 'dashboard',
@@ -253,7 +324,7 @@ final class Plugin
             'criar-evento'   => 'create',
             'add-evento'     => 'create',
             'eventos/novo'   => 'create',
-            'eventos/url'    => 'url_import',
+            'eventos/importa' => 'url_import',
             'meus-eventos'   => 'dashboard',
             'painel'         => 'dashboard',
             'painel/eventos' => 'dashboard',
@@ -455,6 +526,29 @@ final class Plugin
         update_option('apollo_events_rewrite_version', $signature);
     }
 
+    /**
+     * Legacy slug /eventos/url → canonical /eventos/importa (301).
+     */
+    public function redirect_legacy_import_url(): void
+    {
+        $path = function_exists('apollo_normalize_request_path')
+            ? apollo_normalize_request_path()
+            : trim((string) parse_url(isset($_SERVER['REQUEST_URI']) ? (string) $_SERVER['REQUEST_URI'] : '', PHP_URL_PATH), '/');
+
+        if ('eventos/url' !== $path) {
+            return;
+        }
+
+        $target = home_url('/eventos/importa');
+        $query  = (string) parse_url(isset($_SERVER['REQUEST_URI']) ? (string) $_SERVER['REQUEST_URI'] : '', PHP_URL_QUERY);
+        if ('' !== $query) {
+            $target = $target . '?' . $query;
+        }
+
+        wp_safe_redirect($target, 301);
+        exit;
+    }
+
     public function handle_virtual_pages(): void
     {
         $page = get_query_var('apollo_event_page');
@@ -496,7 +590,7 @@ final class Plugin
             return;
         }
 
-        // URL IMPORTER — /eventos/url (modular PHP + enqueued JS, create-event pattern).
+        // URL IMPORTER — /eventos/importa (modular PHP + enqueued JS, create-event pattern).
         if ('url_import' === $page) {
             $this->render_blank_canvas_plus(APOLLO_EVENT_DIR . 'styles/base/url-import.php');
             return;
@@ -537,7 +631,7 @@ final class Plugin
         // Registro de CPT/meta via hooks do apollo-core
         new Registry();
 
-        /* Importador de eventos por URL (/eventos/url) — REST server-side.
+        /* Importador de eventos por URL (/eventos/importa) — REST server-side.
            Autoloads via PSR-4 from src/Import/. Registers
            POST apollo/v1/eventos/importar-url{,/preview}, both gated on
            edit_posts. The fetch to the ticketing provider happens PHP-side, so
@@ -554,9 +648,6 @@ final class Plugin
         // Template Loader
         new TemplateLoader();
 
-        // Schema.org JSON-LD para SEO / rich snippets
-        new StructuredData();
-
         // Integrações com outros plugins Apollo
         new Integrations();
 
@@ -567,6 +658,7 @@ final class Plugin
         if (is_admin()) {
             new Admin\Dashboard();
             new Admin\Metabox();
+            new Admin\CoverMetabox();
             // Internal ranking (0-10, NEVER frontend) for apollo-telegram's
             // event-selection logic. Own file, own concern — see
             // src/Admin/RankMetabox.php header.

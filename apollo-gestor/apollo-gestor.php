@@ -17,6 +17,32 @@
  * @package Apollo\Gestor
  */
 
+/*
+ * ARCH: apollo-gestor
+ *
+ * Gerado de código real (scan-plugins.js). Não edite à mão: rode
+ * `node D:/dev/_cos/verify/gen-arch-blocks.js` para regenerar.
+ * Contrato completo: D:/dev/_cos/verify/MODULE-CONTRACT.md
+ *
+ * OWNER     apollo-gestor   46 arquivos PHP, 6890 LOC
+ * RUNTIME   CPT/taxonomia/meta registrados por apollo-core (init:5)
+ * UI        emite HTML (1); chrome é do apollo-templates
+ * META      11 chaves tocadas, 7 SEM definição governante
+ * REST      nenhuma rota
+ * REQUIRES  apollo-core
+ *
+ * NÃO FAÇA
+ *   - registrar CPT direto: apollo-core é o dono do init:5.
+ *     Fallback do owner só com post_type_exists().
+ *   - gravar meta de outro domínio (hoje 227 chaves não têm dono).
+ *   - registrar um segundo namespace REST. Só apollo/v1.
+ *     Já existe um namespace fora do padrão no apollo-telegram.
+ *   - add_shortcode() sem shortcode_exists(): o último a registrar
+ *     vence em silêncio e quem roda vira acidente de ordem de carga.
+ *
+ * VERIFICAR   node D:/dev/_cos/verify/plugin-audit.js
+ */
+
 declare(strict_types=1);
 
 namespace Apollo\Gestor;
@@ -104,8 +130,26 @@ function apollo_gestor_init(): void {
 	$plugin = Plugin::get_instance();
 	$plugin->init();
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\\apollo_gestor_init', 15 );
-// Initialization bridge: also respond when apollo-core fires its ready hook.
+/*
+ * BOOT  apollo/core/initialized  (apollo-core fires it at plugins_loaded:1)
+ *
+ * This plugin used to bind the same callback twice: here, and again at
+ * plugins_loaded:15. The second one never did anything. apollo-core fires
+ * apollo/core/initialized from inside apollo_core_bootstrap(), which runs at
+ * plugins_loaded:1 -- so the "bridge" was not a later fallback, it was the
+ * EARLIER of the two, and Plugin::init()'s $this->initialized guard
+ * (src/Plugin.php:52) made the :15 pass a silent no-op on every request.
+ *
+ * The :15 line was removed rather than this one, deliberately: dropping the
+ * call that already no-ops changes nothing at runtime, while dropping this
+ * one would move the plugin's real boot 14 priority levels later.
+ *
+ * Consequence to keep in mind: gestor boots at plugins_loaded:1, BEFORE the
+ * ~21 plugins that boot at :15 and the batch at :20. Every plugin FILE has
+ * been required by then, but their plugins_loaded callbacks have not run.
+ * Do not reach into another Apollo plugin's initialised state from
+ * Plugin::init() -- use that plugin's own hook, or defer to init.
+ */
 add_action( 'apollo/core/initialized', __NAMESPACE__ . '\\apollo_gestor_init' );
 
 // ═══════════════════════════════════════════════════════════════════════════

@@ -11,6 +11,7 @@
 
   AUI.boot = boot;
   AUI.state = { rows: [], counter: 0, currentExtract: null };
+  AUI.Api = AUI.Api || {};
   AUI.PROMOTER_LOC_MAP = boot.promoterLocMap || {
     'd-edge': { slug: 'dedge', name: 'D-EDGE' },
     dedge: { slug: 'dedge', name: 'D-EDGE' }
@@ -69,6 +70,8 @@
       AUI.dom.btnConfirmRow = $('btnConfirmRow');
       AUI.dom.resultsList = $('resultsList');
       AUI.dom.countPill = $('countPill');
+      AUI.dom.coverPreviewHost = $('coverPreviewHost');
+      AUI.dom.diagnosticsHost = $('diagnosticsHost');
     }
   };
 

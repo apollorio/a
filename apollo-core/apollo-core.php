@@ -15,7 +15,7 @@
  * Plugin Name: Apollo Core
  * Plugin URI: https://apollo.rio.br
  * Description: Core fundacional do ecossistema Apollo - MASTER REGISTRY de CPTs, Taxonomias e Meta Keys. Sistema de fallback para plugins inativos. Foundation com hooks, CDN e REST API.
- * Version: 6.4.4
+ * Version: 6.6.0
  * Author: Apollo Team
  * Author URI: https://apollo.rio.br
  * License: GPL-2.0-or-later
@@ -25,6 +25,47 @@
  * Requires at least: 6.4
  * Tested up to: 6.9
  * Requires PHP: 8.1
+ */
+
+/*
+ * ARCH: apollo-core / L0 — registo, contratos e arranque
+ * ARCH-MANUAL: escrito a mao (2026-09-09). gen-arch-blocks.js nao pode
+ *   escrever aqui: recusa ficheiros dirty no git e 41 de 42 estao dirty.
+ *   Nao apagar por "regeneracao" — os NAO FACA abaixo sao especificos.
+ * Contrato completo: D:/dev/_cos/verify/MODULE-CONTRACT.md
+ *
+ * OWNER     apollo-core   77 arquivos PHP, 23726 LOC
+ * BOOT      plugins_loaded:1  (apollo-core.php:392) — o PRIMEIRO do
+ *           ecossistema; dispara apollo/core/initialized em :364
+ * RUNTIME   dono do registo: CPT/taxonomia/meta em init:5/4/9
+ * UI        define 10 funcoes apollo_render_* — ver NAO FACA
+ * META      MetaRegistry e o governante; 227 chaves no ecossistema
+ *           continuam sem definicao governante
+ * REST      22 rotas (13 leituras publicas)
+ * REQUIRES  nenhuma — e a raiz. 31 plugins dependem deste.
+ *
+ * ESTE FICHEIRO E O PONTO DE ENTRADA DE TRES CONTRATOS
+ *   includes/surface-contract.php   apollo_surface_register()
+ *   includes/card-contract.php      apollo_card_register()
+ *   includes/safety-contract.php    apollo_safety_register()
+ *   Adocao medida em 2026-09-09: surface 3, card 2, safety 1, de 43
+ *   plugins. Sao contratos reais com quase nenhum consumidor — antes de
+ *   criar um quarto contrato, pergunte porque os tres nao pegaram.
+ *   Os nomes de hook vivem em src/Config/ApolloHook.php + config/hooks.php.
+ *
+ * NAO FACA
+ *   - adicionar uma 11a funcao apollo_render_*. As 10 que existem sao uma
+ *     violacao de L0 conhecida, atras de 31 dependentes; e o item de maior
+ *     raio de impacto do quadro (Fase 6). Nao aumente a divida.
+ *   - assumir que apollo/canvas/head tem um so produtor: tem DOIS —
+ *     includes/document-head.php:192 e apollo-templates/includes/
+ *     class-persistent-ui.php:233. Quem escuta tem de ser idempotente.
+ *   - renomear APOLLO_TELEGRAM/v1 "para arrumar". A string vai para o
+ *     setWebhook do Telegram; renomear so as rotas perde mensagens de
+ *     entrada por ate 24h.
+ *   - registar um segundo namespace REST. So apollo/v1.
+ *
+ * VERIFICAR   node D:/dev/_cos/verify/doctrine-audit.js
  */
 
 declare(strict_types=1);
@@ -57,11 +98,41 @@ if (! defined('ABSPATH')) {
           own health report ended up filed under WordPress Tools while every
           other Apollo screen sat under Apollo. All three now ask the helper and
           hook admin_menu at priority 20, after apollo-admin registers the root.
+   6.4.5 — Apollo+ shell split into _topbar() + _aside(). See the note below.
+   6.4.6 — the CDN cache-bust actually reaches the browser. apollo_cdn_core_js_url()
+          computed APOLLO_CDN_Q and the suffix and then discarded both, so core.js —
+          which injects the whole design system, ~31 KB of CSS and 160+ tokens — was
+          requested at one fixed URL forever, under a root .htaccess that caches JS
+          for a year. Bumping APOLLO_CDN_Q now does what constants.php has always
+          claimed it does. New helper: apollo_cdn_append_query() in includes/functions.php.
+   6.4.7 — blank-canvas detector covers /anuncios + reserved virtual slugs
+          (CSP connector); apollo_csp_nonce_attr() for parser-inserted scripts.
    See _inventory/CPT-REGISTRATION-MAP-2026-08-11.md */
-define('APOLLO_CORE_VERSION', '6.4.4');
+define('APOLLO_CORE_VERSION', '6.6.0');
+// 6.4.8 — 2026-08-25: registered _local_hours + _local_amenities. apollo-loc's
+// MetaboxSaver had been WRITING both since the Details metabox shipped while
+// neither was declared in MetaRegistry, so both bypassed this registry's
+// sanitize_callback/auth_callback and stayed invisible to REST regardless of
+// what a consumer asked for. The write path now matches the read path.
+//
+// 6.4.7 — 2026-08-25: Apollo+ shell was rendering only HALF of itself.
+// apollo_render_blank_canvas_shell() emitted the topbar (which owns #burger)
+// and returned — never the aside (#ax-aside) that #burger opens, nor the
+// script that binds it. Result: a dead hamburger on every path-A Apollo+ page.
+// Split into apollo_render_blank_canvas_topbar() + _aside(), each guarded
+// independently so one already being emitted cannot suppress the other.
+// See includes/blank-canvas-templates.php for the full rationale.
 define('APOLLO_CORE_PATH', plugin_dir_path(__FILE__));
 define('APOLLO_CORE_URL', plugin_dir_url(__FILE__));
 define('APOLLO_CORE_FILE', __FILE__);
+
+// Lock root .htaccess to Apollo v3.1.0 BEFORE anything else can rewrite it.
+require_once APOLLO_CORE_PATH . 'includes/htaccess-lock.php';
+
+/* WebP layer — apollo-core carries the MU source under mu-plugins/ and copies
+   it to WPMU_PLUGIN_DIR, because only wp-content/plugins/ is mirrored to this
+   host. Same mechanism as the .htaccess lock directly above. */
+require_once APOLLO_CORE_PATH . 'includes/webp-install.php';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // AUTOLOADER (must load BEFORE constants — ConfigLoader needs it)

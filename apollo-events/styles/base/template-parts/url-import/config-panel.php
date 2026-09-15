@@ -17,30 +17,19 @@ $default_coupon = (string) ( $import_config['defaultCoupon'] ?? 'apollo' );
 	</summary>
 	<div class="imp-config-body">
 		<p class="imp-hint">
-			<?php esc_html_e( 'BlueTicket importa via API server-side', 'apollo-events' ); ?>
-			<code>apollo/v1/eventos/importar-url</code>
-			<?php esc_html_e( '(capa → featured image, venue → _event_loc_id). Shotgun ainda usa scrape HTML +', 'apollo-events' ); ?>
-			<code>POST /eventos</code>.
+			<?php esc_html_e( 'O navegador não consegue buscar HTML de shotgun.live / blueticket.com.br diretamente (CORS). Duas saídas: (1) endpoint server-side de fetch HTML no painel Avançado, ou (2) colar o HTML manualmente — Ctrl+U na página do evento, copie tudo e cole quando pedido.', 'apollo-events' ); ?>
 		</p>
 		<div class="imp-field-grid">
-			<div class="field full">
-				<label class="field-label" for="cfgFetchProxy"><?php esc_html_e( 'Endpoint de fetch HTML (só Shotgun / fallback)', 'apollo-events' ); ?></label>
-				<input class="apollo-input" type="text" id="cfgFetchProxy" placeholder="<?php echo esc_attr( rest_url( 'apollo/v1/fetch-html?url={url}' ) ); ?>">
-			</div>
 			<div class="field full">
 				<label class="field-label" for="cfgWpBase"><?php esc_html_e( 'Base da REST API do WP', 'apollo-events' ); ?></label>
 				<input class="apollo-input" type="text" id="cfgWpBase" placeholder="<?php echo esc_attr( rest_url() ); ?>" value="<?php echo esc_attr( $import_config['restUrl'] ?? '' ); ?>">
 			</div>
 			<div class="field">
-				<label class="field-label" for="cfgImportPath"><?php esc_html_e( 'Endpoint importar-url (BlueTicket)', 'apollo-events' ); ?></label>
+				<label class="field-label" for="cfgImportPath"><?php esc_html_e( 'Endpoint importar-url', 'apollo-events' ); ?></label>
 				<input class="apollo-input" type="text" id="cfgImportPath" placeholder="apollo/v1/eventos/importar-url" value="<?php echo esc_attr( $import_config['importPath'] ?? 'apollo/v1/eventos/importar-url' ); ?>">
 			</div>
 			<div class="field">
-				<label class="field-label" for="cfgInsertPath"><?php esc_html_e( 'Endpoint inserção (Shotgun / avançado)', 'apollo-events' ); ?></label>
-				<input class="apollo-input" type="text" id="cfgInsertPath" placeholder="apollo/v1/eventos" value="<?php echo esc_attr( $import_config['insertPath'] ?? 'apollo/v1/eventos' ); ?>">
-			</div>
-			<div class="field">
-				<label class="field-label" for="cfgLocPath"><?php esc_html_e( 'Endpoint de busca de loc (Shotgun)', 'apollo-events' ); ?></label>
+				<label class="field-label" for="cfgLocPath"><?php esc_html_e( 'Endpoint de busca de loc', 'apollo-events' ); ?></label>
 				<input class="apollo-input" type="text" id="cfgLocPath" placeholder="apollo/v1/local" value="<?php echo esc_attr( $import_config['locPath'] ?? 'apollo/v1/local' ); ?>">
 			</div>
 			<div class="field full">
@@ -59,5 +48,18 @@ $default_coupon = (string) ( $import_config['defaultCoupon'] ?? 'apollo' );
 				<input class="apollo-input" type="text" id="cfgCoupon" value="<?php echo esc_attr( $default_coupon ); ?>">
 			</div>
 		</div>
+		<details class="imp-advanced">
+			<summary><?php esc_html_e( 'Avançado (fallback HTML colado)', 'apollo-events' ); ?></summary>
+			<div class="imp-field-grid">
+				<div class="field full">
+					<label class="field-label" for="cfgFetchProxy"><?php esc_html_e( 'Endpoint fetch HTML (emergência)', 'apollo-events' ); ?></label>
+					<input class="apollo-input" type="text" id="cfgFetchProxy" placeholder="<?php echo esc_attr( rest_url( 'apollo/v1/fetch-html?url={url}' ) ); ?>">
+				</div>
+				<div class="field full">
+					<label class="field-label" for="cfgInsertPath"><?php esc_html_e( 'Endpoint inserção legado POST /eventos', 'apollo-events' ); ?></label>
+					<input class="apollo-input" type="text" id="cfgInsertPath" placeholder="apollo/v1/eventos" value="<?php echo esc_attr( $import_config['insertPath'] ?? 'apollo/v1/eventos' ); ?>">
+				</div>
+			</div>
+		</details>
 	</div>
 </details>

@@ -32,31 +32,73 @@ function loginizer_pro_get_free_version_num(){
 	}
 	
 	// In case of loginizer deactive
-	include_once(ABSPATH . 'wp-admin/includes/plugin.php');
-	$free_plugin_data = get_plugin_data(WP_PLUGIN_DIR . '/loginizer/loginizer.php');
+	return loginizer_pro_file_get_version_num('loginizer/loginizer.php');
+
+}
+
+// Prevent update of Loginizer free
+function loginizer_pro_file_get_version_num($plugin){
 	
-	if(empty($free_plugin_data)){
+	// In case of Loginizer deactive
+	include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+	$plugin_data = get_plugin_data(WP_PLUGIN_DIR . '/'.$plugin);
+
+	if(empty($plugin_data)){
 		return false;
 	}
-	
-	return $free_plugin_data['Version'];
-	
+
+	return $plugin_data['Version'];
+
 }
 
 // Prevent update of loginizer free
 function loginizer_pro_disable_manual_update_for_plugin($transient){
 	$plugin = 'loginizer/loginizer.php';
+	$pro_plugin = 'loginizer-security/loginizer-security.php';
 
 	// Is update available?
-	if(!isset($transient->response) || !isset($transient->response[$plugin])){
+	if(!isset($transient->response) || (!isset($transient->response[$plugin]) && !isset($transient->response[$pro_plugin]))){
 		return $transient;
 	}
 
 	$free_version = loginizer_pro_get_free_version_num();
+	$pro_version = LOGINIZER_PRO_VERSION;
+	
+	// If no free update is available, do not show a Pro update either.
+	// The free version is the source of truth on wp.org and is subject to a
+	// 24-hour review delay; the Pro update must not be offered ahead of it.
+	// https://wordpress.org/news/2026/06/pts/
+	if(!isset($transient->response[$plugin]) && isset($transient->response[$pro_plugin])){
+		unset($transient->response[$pro_plugin]);
+		
+		return $transient;
+	} else if(isset($transient->response[$plugin]) && !isset($transient->response[$pro_plugin]) && empty($GLOBALS['loginizer_pro_is_upgraded'])){
+		unset($transient->response[$plugin]);
+
+		return $transient;
+	}
+	
+	// Reset if we find a mismatch
+	if(isset($transient->response[$plugin]) && isset($transient->response[$pro_plugin])){
+		$free_update_ver = (!empty($transient->response[$plugin]) && !empty($transient->response[$plugin]->new_version)) ? $transient->response[$plugin]->new_version : false;
+		$pro_update_ver = (!empty($transient->response[$pro_plugin]) && !empty($transient->response[$pro_plugin]->new_version)) ? $transient->response[$pro_plugin]->new_version : false;
+
+		if(!empty($free_update_ver) && !empty($pro_update_ver) && version_compare($free_update_ver, $pro_update_ver, '!=')){
+			unset($transient->response[$plugin]);
+			unset($transient->response[$pro_plugin]);
+
+			return $transient;
+		}
+	}
+
+	if(!empty($GLOBALS['loginizer_pro_is_upgraded'])){
+		$pro_version = loginizer_pro_file_get_version_num($pro_plugin);
+	}
 
 	// Update the Loginizer version to the equivalent of Pro version
-	if(version_compare($free_version, LOGINIZER_PRO_VERSION, '<')){
-		$transient->response[$plugin]->package = 'https://downloads.wordpress.org/plugin/loginizer.'.LOGINIZER_PRO_VERSION.'.zip';
+	if(!empty($pro_version) && version_compare($free_version, $pro_version, '<')){
+		$transient->response[$plugin]->new_version = $pro_version;
+		$transient->response[$plugin]->package = 'https://downloads.wordpress.org/plugin/loginizer.'.$pro_version.'.zip';
 	}else{
 		unset($transient->response[$plugin]);
 	}
@@ -78,7 +120,7 @@ function loginizer_pro_update_free_after_pro($upgrader_object, $options) {
 
 	// Check if the pro plugin is in the list of updated plugins
 	if( 
-		(isset($options['plugins']) && in_array($pro_slug, $options['plugins'])) ||
+		(isset($options['plugins']) && in_array($pro_slug, $options['plugins']) && !in_array($free_slug, $options['plugins'])) ||
 		(isset($options['plugin']) && $pro_slug == $options['plugin'])
 	){
 
@@ -88,19 +130,37 @@ function loginizer_pro_update_free_after_pro($upgrader_object, $options) {
 		if(empty($current_version)){
 			return;
 		}
+		
+		$GLOBALS['loginizer_pro_is_upgraded'] = true;
+		
+		// This will set the 'update_plugins' transient again
+		wp_update_plugins();
 
 		// Check for updates for the free plugin
 		include_once(ABSPATH . 'wp-admin/includes/plugin.php');
 		$update_plugins = get_site_transient('update_plugins');
 		
-		if(isset($update_plugins->response[$free_slug])){
-			$free_plugin_update = $update_plugins->response[$free_slug];
-
-			// If there's an update available, proceed to update the free plugin
-			if(version_compare($free_plugin_update->new_version, $current_version, '>')){
-				require_once(ABSPATH . 'wp-admin/includes/class-wp-upgrader.php');
-				$upgrader = new Plugin_Upgrader();
-				$upgrader->upgrade($free_slug);
+		if(empty($update_plugins) || !isset($update_plugins->response[$free_slug]) || version_compare($update_plugins->response[$free_slug]->new_version, $current_version, '<=')){
+			return;
+		}
+		
+		require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+		require_once(ABSPATH . 'wp-admin/includes/class-wp-upgrader.php');
+		
+		$skin = wp_doing_ajax()? new WP_Ajax_Upgrader_Skin() : null;
+		
+		$upgrader = new Plugin_Upgrader($skin);
+		$upgraded = $upgrader->upgrade($free_slug);
+		
+		if(!is_wp_error($upgraded) && $upgraded){
+			// Re-active free plugins
+			if( file_exists( WP_PLUGIN_DIR . '/'.  $free_slug ) && is_plugin_inactive($free_slug) ){
+				activate_plugin($free_slug); // TODO for network
+			}
+			
+			// Re-active pro plugins
+			if( file_exists( WP_PLUGIN_DIR . '/'.  $pro_slug ) && is_plugin_inactive($pro_slug) ){
+				activate_plugin($pro_slug); // TODO for network
 			}
 		}
 	}

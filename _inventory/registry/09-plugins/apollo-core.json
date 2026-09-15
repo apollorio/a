@@ -968,7 +968,7 @@
     }
   ],
   "shortcodes": [],
-  "version": "6.3.0",
+  "version": "6.6.0",
   "ajax": {
     "priv": [],
     "nopriv": []
@@ -5945,5 +5945,54 @@
     },
     "operator_verification": "Open Tools → Apollo Health. It will show, permanently and on one page, every gap this audit took a day to find: which CPTs still have no panel (appointment, service, resource, apollo_sheet, and the rest), which meta keys have no input, and whether any panel schema is failing. That page is the deliverable — not a number, a standing instrument.",
     "still_open_and_gated": "Unchanged: Phase 1-1/1-2, 1-4, 2-6/2-7/2-8, and Phases 3-4. All five decisions in PLAN-cpt-and-admin-panels.md §6 remain unanswered; the sharpest is apollo_sheet's REST posture, where closing the exposure could break a consumer not visible from here and leaving it open should be a decision made on purpose."
+  },
+  "$panel_to_frontend_derivation_2026_08_17": {
+    "date": "2026-08-17",
+    "action": "CONTRACT_EXTENDED",
+    "file": "apollo-templates/includes/panel-to-frontend.php",
+    "plan": "_inventory/PLAN-dj-loc-finalization.md §D2",
+    "problem_measured": {
+      "dj": "35 admin panel fields vs 14 frontend form fields — 21 missing, including EVERY social and platform link (_dj_instagram, _dj_facebook, _dj_twitter, _dj_tiktok, _dj_youtube, _dj_soundcloud, _dj_spotify, _dj_bandcamp, _dj_beatport, _dj_mixcloud, _dj_resident_advisor, _dj_website).",
+      "loc": "21 admin vs 16 frontend — 8 missing (_local_amenities, _local_description, _local_facebook, _local_founded_year, _local_hours, _local_rooms, _local_tagline, _local_whatsapp).",
+      "the_sharp_edge": "The approved dj single-page mockup RENDERS _dj_soundcloud, _dj_spotify and _dj_bandcamp. A DJ editing their own page could not fill three fields their own page displays — only an administrator could, in wp-admin.",
+      "bidirectional": "They diverged BOTH ways: the frontend owns _local_image_1..5 and both loc taxonomies, which the admin panel lacks. Neither surface was a superset of the other."
+    },
+    "why_derivation_not_addition": "Hand-writing the missing 21 would produce two files of 35 that must then stay in sync forever — the same two-declarations defect at a larger size. One schema with two renderers cannot drift from itself. Same reasoning as the surface, card and panel contracts.",
+    "design": {
+      "additive_never_destructive": "Runs at priority 20 on apollo_frontend_fields_{cpt}, AFTER each plugin's own definitions at priority 10. A hand-written field ALWAYS wins; derivation only fills gaps. Hand-written definitions carry human-tuned placeholders, descriptions and section assignments, and a generated field must never overwrite considered copy. The old files keep working and can be retired one at a time once proven equivalent.",
+      "type_map_lives_once": "apollo_panel_type_to_frontend(). The two systems grew separate vocabularies — panel says toggle/media_single/wysiwyg, editor says checkbox/image/textarea. Every plugin previously bridged them by hand, which is how _dj_verified ended up a toggle in admin and a checkbox on the front end.",
+      "unrenderable_types_are_SKIPPED_not_downgraded": "repeater, repeater_card, media_gallery, hours, lineup and user_multiselect map to '' and are omitted. FrontendEditor::sanitize_field() returns a string with no array branch, so a repeater submitted through the frontend would be FLATTENED and its stored rows destroyed. A repeater rendered as a text input is a data-loss bug wearing a field's clothing. That same limitation is why `track` became a CPT rather than staying a repeater.",
+      "capability_and_context_honoured": "A field with 'cap' is excluded for users lacking it, so staff-only fields never reach a self-service form. 'contexts' => ['admin'] excludes without needing a capability, for things that are simply not the author's business."
+    },
+    "verified": "Simulated against the real dj panel shape. Admin: 14 hand-written -> 29 fields, +15 derived, all 12 social links gained including the 3 the mockup renders. All four array-shaped fields correctly skipped. Hand-written _dj_name not overwritten. Admin-only _dj_user_id excluded. Non-admin: _dj_verified stays staff-only.",
+    "checked_and_found_SOUND": "FrontendEditor::handle_save() DOES honour 'readonly' (line 681 skips those fields), so the hand-written _dj_verified was already protected against a crafted POST. Investigated on suspicion; the suspicion was wrong and is recorded so it is not re-investigated.",
+    "health_surface": "Tools -> Apollo Health gained a Frontend column showing 'n (+d)' — total fields and how many are derived — plus an 'admin-only (no frontend renderer)' gap line. That line exists so nobody 'fixes' an array-shaped field by downgrading it to text.",
+    "versions_bumped": {
+      "apollo-templates": "-> 1.5.4 (superseded on disk by 1.6.4 from a parallel pass)",
+      "apollo-djs": "docblock 1.0.8 -> 1.0.9 — MISMATCH REPAIR, not a feature bump: the constant had been moved to 1.0.9 by another pass while the docblock stayed at 1.0.8. WordPress reads the docblock and cache-busting reads the constant, so the two disagreeing means cache-busting lies. All 9 plugins now agree."
+    }
+  },
+  "$version_synced": {
+    "date": "2026-08-31",
+    "from": "6.5.2",
+    "to": "6.6.0",
+    "source": "WebP layer added — docblock and APOLLO_CORE_VERSION bumped together",
+    "previous": {
+      "date": "2026-08-31",
+      "from": "6.3.0",
+      "to": "6.5.2",
+      "source": "disk docblock via doctor.js"
+    }
+  },
+  "$webp_layer_2026_08_31": {
+    "what": "apollo-core became the carrier for the WebP MU-plugin.",
+    "files_added": [
+      "mu-plugins/apollo-webp-force.php",
+      "includes/webp-install.php"
+    ],
+    "why_here": "Only wp-content/plugins/ is mirrored to the host, so an MU-plugin cannot be deployed directly. apollo-core already solved this for the .htaccess lock; webp-install.php mirrors apollo_core_htaccess_install_mu_plugin() rather than inventing a second mechanism.",
+    "registered_in": "22-mu-plugins.json -> $mu_plugins -> apollo-webp-force",
+    "phase": "1 of 6 — subsizes convert, originals untouched.",
+    "no_new_surface": "No CPT, no meta key, no option, no REST route, no admin page. One require_once added beside includes/htaccess-lock.php."
   }
 }

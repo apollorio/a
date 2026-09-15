@@ -50,7 +50,7 @@ final class VisualStamp {
 
 		imagesavealpha( $im, true );
 		imagealphablending( $im, false );
-		$transparent = imagecolorallocatealpha( $im, var(--rgb-d), 127 );
+		$transparent = imagecolorallocatealpha( $im, 0, 0, 0, 127 );
 		imagefill( $im, 0, 0, $transparent );
 		imagealphablending( $im, true );
 

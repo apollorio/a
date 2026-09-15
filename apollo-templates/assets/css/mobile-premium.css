@@ -1,0 +1,79 @@
+/**
+ * Apollo mobile premium — gesture hover + context menu + native-scroll flags.
+ * Tokens from core.js only. Scoped component props under .ap-*.
+ */
+html.ap-native-scroll {
+  scroll-behavior: auto;
+}
+html.ap-unlock-live body {
+  -webkit-overflow-scrolling: touch;
+}
+@media (pointer: coarse) {
+  html.ap-unlock-live body {
+    touch-action: pan-x pan-y;
+    overscroll-behavior-y: contain;
+  }
+  /* Map markers / cards: touch hover parity without sticky :hover */
+  .mapa-app .apl-m.ap-hover,
+  .mapa-app .apl-m.is-hover {
+    box-shadow: 0 0 0 0.5px rgba(var(--rgb-diff, 0, 0, 0), 0.08),
+      0 2px 4px rgba(var(--rgb-diff, 0, 0, 0), 0.06),
+      0 8px 20px rgba(var(--rgb-diff, 0, 0, 0), 0.2);
+    transform: scale(1.14);
+  }
+  .mapa-app .pcm.ap-hover,
+  .mapa-app .pcm.is-hover,
+  .mapa-app .pr.ap-hover,
+  .mapa-app .pr.is-hover {
+    background: rgba(var(--rgb-diff, 0, 0, 0), 0.04);
+  }
+}
+
+.ap-ctx-menu {
+  position: fixed;
+  z-index: 99999;
+  min-width: 200px;
+  max-width: min(280px, 86dvw);
+  padding: 8px;
+  border-radius: var(--r-sm, 15px);
+  background: var(--card, #fff);
+  color: var(--txt-heading, #111);
+  box-shadow: 0 12px 40px rgba(var(--rgb-diff, 0, 0, 0), 0.22),
+    0 2px 8px rgba(var(--rgb-diff, 0, 0, 0), 0.08);
+  border: 1px solid rgba(var(--rgb-diff, 0, 0, 0), 0.06);
+  font-family: var(--ff-main, system-ui, sans-serif);
+  font-size: calc(var(--fs-r, 1) * var(--fs-body-sm, 13px));
+}
+.ap-ctx-menu[hidden] {
+  display: none !important;
+}
+.ap-ctx-menu__title {
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted, #888);
+  padding: 6px 10px 8px;
+}
+.ap-ctx-menu button,
+.ap-ctx-menu__link {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 10px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+}
+.ap-ctx-menu button:active,
+.ap-ctx-menu__link:active {
+  background: rgba(var(--rgb-diff, 0, 0, 0), 0.06);
+}
+.ap-ctx-menu__empty {
+  padding: 12px 10px;
+  color: var(--muted, #888);
+}

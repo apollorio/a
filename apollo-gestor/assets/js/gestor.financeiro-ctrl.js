@@ -83,19 +83,35 @@
 
             var self = this;
 
+            function soft(action) {
+                return Promise.resolve()
+                    .then(function () { return G.ajax(action, { event_id: eventId }); })
+                    .then(function (res) { return { status: 'fulfilled', value: res }; })
+                    .catch(function (err) {
+                        console.warn('[GestorFinCtrl] unit failed:', action, err);
+                        return { status: 'rejected', reason: err };
+                    });
+            }
+
             Promise.all([
-                G.ajax('load_income',   { event_id: eventId }),
-                G.ajax('load_payments', { event_id: eventId }),
-                G.ajax('load_budget',   { event_id: eventId })
+                soft('load_income'),
+                soft('load_payments'),
+                soft('load_budget')
             ]).then(function (results) {
-                _incomeItems = (results[0] && results[0].data && results[0].data.items) || [];
-                _payments    = (results[1] && results[1].data && results[1].data.payments) || [];
-                _budgetData  = (results[2] && results[2].data) || {};
+                var income = results[0].status === 'fulfilled' ? results[0].value : null;
+                var pays   = results[1].status === 'fulfilled' ? results[1].value : null;
+                var budget = results[2].status === 'fulfilled' ? results[2].value : null;
+
+                _incomeItems = (income && income.data && income.data.items) || [];
+                _payments    = (pays && pays.data && pays.data.payments) || [];
+                _budgetData  = (budget && budget.data) || {};
                 _loaded      = true;
 
                 self._renderAll();
-            }).catch(function () {
-                G.toast('Erro ao carregar dados financeiros', 'error');
+
+                if (results.some(function (r) { return r.status === 'rejected'; })) {
+                    G.toast('Alguns dados financeiros falharam — parcial', 'error');
+                }
             });
         },
 

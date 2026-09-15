@@ -68,13 +68,71 @@ if ( ! function_exists( 'apollo_event_get_banner' ) ) {
 	}
 }
 
+if ( ! function_exists( 'apollo_event_share_image' ) ) {
+	/**
+	 * @return array{url:string,width:int,height:int,alt:string,id:int}
+	 */
+	function apollo_event_share_image( int $post_id, string $size = 'full' ): array {
+		return \Apollo\Event\apollo_event_share_image( $post_id, $size );
+	}
+}
+
+if ( ! function_exists( 'apollo_event_heal_cover' ) ) {
+	function apollo_event_heal_cover( int $post_id ): int {
+		return \Apollo\Event\apollo_event_heal_cover( $post_id );
+	}
+}
+
+if ( ! function_exists( 'apollo_event_debug_log_837565' ) ) {
+	/**
+	 * Debug session 837565 — event cover / OG image trace (NDJSON).
+	 *
+	 * @param array<string,mixed> $data
+	 */
+	function apollo_event_debug_log_837565( string $location, string $message, array $data = array(), string $hypothesis_id = 'H0' ): void {
+		if ( ! defined( 'APOLLO_EVENT_DIR' ) ) {
+			return;
+		}
+		$log_file = dirname( APOLLO_EVENT_DIR, 2 ) . '/debug-837565.log';
+		$line     = wp_json_encode(
+			array(
+				'sessionId'    => '837565',
+				'timestamp'    => (int) round( microtime( true ) * 1000 ),
+				'location'     => $location,
+				'message'      => $message,
+				'hypothesisId' => $hypothesis_id,
+				'data'         => $data,
+			)
+		);
+		if ( is_string( $line ) ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+			file_put_contents( $log_file, $line . "\n", FILE_APPEND | LOCK_EX );
+		}
+	}
+}
+
+if ( ! function_exists( 'apollo_event_validate_remote_image' ) ) {
+	/**
+	 * @return true|\WP_Error
+	 */
+	function apollo_event_validate_remote_image( string $url ) {
+		return \Apollo\Event\apollo_event_validate_remote_image( $url );
+	}
+}
+
+if ( ! function_exists( 'apollo_event_default_share_image' ) ) {
+	function apollo_event_default_share_image(): string {
+		return \Apollo\Event\apollo_event_default_share_image();
+	}
+}
+
 if ( ! function_exists( 'apollo_event_set_banner' ) ) {
 	/**
 	 * @param mixed $ref Attachment id, URL, or empty.
 	 * @return int|\WP_Error
 	 */
-	function apollo_event_set_banner( int $post_id, $ref ) {
-		return \Apollo\Event\apollo_event_set_banner( $post_id, $ref );
+	function apollo_event_set_banner( int $post_id, $ref, bool $strict = false ) {
+		return \Apollo\Event\apollo_event_set_banner( $post_id, $ref, $strict );
 	}
 }
 

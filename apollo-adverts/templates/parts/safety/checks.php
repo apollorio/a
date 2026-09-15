@@ -43,10 +43,11 @@ $ap_pair = ($ap_viewer && $ap_seller)
 	Gate::part(
 		'check',
 		array(
-			'key'   => 'instagram',
-			'title' => __('Pessoas que vocês dois conhecem', 'apollo-adverts'),
-			'gate'  => 'unlock',
-			'pair'  => $ap_pair,
+			'key'        => 'instagram',
+			'title'      => __('Pessoas que vocês dois conhecem', 'apollo-adverts'),
+			'gate'       => 'unlock',
+			'gate_label' => __('Uma confirmação libera', 'apollo-adverts'),
+			'pair'       => $ap_pair,
 		)
 	);
 

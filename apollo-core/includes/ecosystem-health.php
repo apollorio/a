@@ -147,7 +147,21 @@ if ( ! function_exists( 'apollo_health_report' ) ) {
 				$schema_problems = ( new \DeclarativePanel( $cpt, $panels[ $cpt ] ) )->validate_schema();
 			}
 
+			/*
+			 * Frontend coverage. The admin panel and the frontend form were two
+			 * separate declarations that drifted in both directions — dj had 35
+			 * admin fields against 14 on the front end, including every social
+			 * link the approved single-page mockup renders. The derivation bridge
+			 * closes the gap; this column is what stops it silently re-opening.
+			 */
+			$fe = function_exists( 'apollo_panel_frontend_coverage' )
+				? apollo_panel_frontend_coverage( $cpt )
+				: array( 'panel' => 0, 'frontend' => 0, 'derived' => 0, 'unrenderable' => array() );
+
 			$rows[ $cpt ] = array(
+				'fe_frontend'     => (int) $fe['frontend'],
+				'fe_derived'      => (int) $fe['derived'],
+				'fe_unrenderable' => (array) $fe['unrenderable'],
 				'registered'      => post_type_exists( $cpt ),
 				'in_config'       => isset( $cpts_config[ $cpt ] ),
 				'owner'           => $cpts_config[ $cpt ]['owner'] ?? '—',
@@ -235,7 +249,7 @@ if ( ! function_exists( 'apollo_health_render' ) ) {
 		);
 
 		echo '<table class="widefat striped"><thead><tr>';
-		foreach ( array( 'CPT', 'Owner', 'Registered', 'Meta', 'Panel', 'Inputs', 'Surface', 'Card', 'Gaps' ) as $h ) {
+		foreach ( array( 'CPT', 'Owner', 'Registered', 'Meta', 'Panel', 'Inputs', 'Frontend', 'Surface', 'Card', 'Gaps' ) as $h ) {
 			echo '<th>' . esc_html( $h ) . '</th>';
 		}
 		echo '</tr></thead><tbody>';
@@ -260,14 +274,26 @@ if ( ! function_exists( 'apollo_health_render' ) ) {
 				$gaps[] = '<strong>' . esc_html( $p ) . '</strong>';
 			}
 
+			if ( $row['fe_unrenderable'] ) {
+				/* Admin-only by necessity, not by oversight: the frontend editor
+				   has no array-shaped renderer, so a repeater submitted there
+				   would be flattened and its rows destroyed. Worth showing so
+				   nobody "fixes" it by downgrading the field to a text input. */
+				$gaps[] = esc_html__( 'admin-only (no frontend renderer):', 'apollo-core' ) . ' '
+					. esc_html( implode( ', ', array_slice( $row['fe_unrenderable'], 0, 4 ) ) );
+			}
+
 			printf(
-				'<tr><td><code>%s</code></td><td>%s</td><td>%s</td><td>%d</td><td>%s</td><td>%d</td><td>%s</td><td>%s</td><td>%s</td></tr>',
+				'<tr><td><code>%s</code></td><td>%s</td><td>%s</td><td>%d</td><td>%s</td><td>%d</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>',
 				esc_html( (string) $cpt ),
 				esc_html( (string) $row['owner'] ),
 				$row['registered'] ? '&#10003;' : '<span style="color:#b32d2e;">&#10007;</span>',
 				(int) $row['meta_declared'],
 				$row['has_panel'] ? '&#10003;' : '<span style="color:#b32d2e;">&#10007;</span>',
 				(int) $row['inputs'],
+				$row['fe_frontend']
+					? esc_html( sprintf( '%d (+%d)', (int) $row['fe_frontend'], (int) $row['fe_derived'] ) )
+					: '&mdash;',
 				esc_html( (string) $row['surface'] ),
 				esc_html( (string) $row['card'] ),
 				$gaps ? wp_kses_post( implode( '<br>', $gaps ) ) : '<span style="color:#00a32a;">&#10003;</span>'

@@ -48,6 +48,12 @@ final class Meta {
 	 * Build the full <title> string.
 	 */
 	public static function build_title( array $args = array() ): string {
+		$virtual = self::virtual_context();
+		/* Virtual routes may ship a complete document title (already branded). */
+		if ( $virtual && ! empty( $virtual['title'] ) && ! empty( $virtual['title_complete'] ) ) {
+			return self::sanitize_title( (string) $virtual['title'] );
+		}
+
 		$sep       = Settings::separator();
 		$site_name = Settings::get( 'site_title' ) ?: get_bloginfo( 'name' );
 		$location  = Settings::get( 'title_location', 'right' );
@@ -106,6 +112,11 @@ final class Meta {
 	 * Auto-generate title from context.
 	 */
 	private static function get_generated_title( array $args = array() ): string {
+		$virtual = self::virtual_context();
+		if ( $virtual && ! empty( $virtual['title'] ) ) {
+			return (string) $virtual['title'];
+		}
+
 		/* Homepage */
 		if ( is_front_page() || is_home() ) {
 			$ht = Settings::get( 'homepage_title' );
@@ -358,6 +369,11 @@ final class Meta {
 	 * Auto-generate description from content.
 	 */
 	private static function get_generated_description( array $args = array() ): string {
+		$virtual = self::virtual_context();
+		if ( $virtual && ! empty( $virtual['description'] ) ) {
+			return self::clamp( (string) $virtual['description'], 160 );
+		}
+
 		/* Homepage */
 		if ( is_front_page() || is_home() ) {
 			$home_desc = Settings::get( 'homepage_desc' );
@@ -473,18 +489,44 @@ final class Meta {
 	 * default engines emit generic tags. This resolver gives the canonical
 	 * routes real titles, descriptions, canonicals and PT+EN keywords.
 	 *
-	 * @return array{title:string,description:string,canonical:string,keywords:array<int,string>}|null
+	 * apollo-events registers /eventos, /portal and /portal/eventos as
+	 * apollo_event_page=portal_archive (not the legacy value "portal").
+	 *
+	 * @return array<string,mixed>|null
 	 */
 	public static function virtual_context(): ?array {
 		$context = null;
+		$event_page = (string) get_query_var( 'apollo_event_page' );
 
-		if ( 'portal' === get_query_var( 'apollo_event_page' ) ) {
+		/* Path fallback: blank-canvas head can run before query vars are
+		   visible to get_query_var() on some boots; /eventos is the portal. */
+		$req_path = trim( (string) ( wp_parse_url( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH ) ?: '' ), '/' );
+		$is_portal = in_array( $event_page, array( 'portal_archive', 'portal' ), true )
+			|| in_array( $req_path, array( 'eventos', 'portal', 'portal/eventos' ), true );
+
+		/* Portal de Eventos — /eventos/ (canonical) + /portal aliases. */
+		if ( $is_portal ) {
+			$thumb = content_url( 'uploads/2026/09/thumb-eventos.webp' );
 			$context = array(
-				'title'       => 'Eventos no Rio de Janeiro — Agenda de Festas e Música Eletrônica',
-				'description' => 'Portal de eventos do Rio de Janeiro: festas, raves, clubes e música eletrônica. ' .
-					'Lineups de DJs, locais e ingressos em um só lugar. Rio de Janeiro events, parties and nightlife guide.',
-				'canonical'   => home_url( '/portal/eventos' ),
-				'keywords'    => self::base_keywords( 'events' ),
+				'title'            => 'Eventos no Rio | Explore, Descubra e Celebre | Apollo',
+				'title_complete'   => true,
+				'description'      => 'Explore eventos no Rio de Janeiro: festas, shows, festivais, cultura e experiências para viver a cidade do seu jeito.',
+				'canonical'        => home_url( '/eventos/' ),
+				'robots'           => 'index, follow',
+				'theme_color'      => '#0B0B0D',
+				'site_name'        => 'Apollo Rio',
+				'og_title'         => 'Portal de Eventos no Rio | Explore, Descubra e Celebre',
+				'og_description'   => 'Festas, shows, festivais, cultura e experiências. Descubra o que move o Rio, em um só lugar.',
+				'schema_type'      => 'CollectionPage',
+				'schema_name'      => 'Portal de Eventos no Rio',
+				'keywords'         => self::base_keywords( 'events' ),
+				'image'            => array(
+					'url'    => $thumb,
+					'width'  => 1200,
+					'height' => 630,
+					'type'   => 'image/webp',
+					'alt'    => 'Apollo Rio — Portal de Eventos',
+				),
 			);
 		} elseif ( get_query_var( 'apollo_home_page' ) ) {
 			$context = array(
@@ -711,6 +753,43 @@ final class Meta {
 	 */
 	public static function resolve_image( array $args = array() ): array {
 		$post_id = $args['post_id'] ?? ( is_singular() ? get_the_ID() : 0 );
+		$post_id = (int) $post_id;
+
+		/*
+		 * Event CPT — featured image is the ONLY share image (og + twitter + WhatsApp).
+		 * Classifieds / DJ / loc keep the chain below (do not regress /anuncios).
+		 */
+		if ( $post_id && 'event' === get_post_type( $post_id ) && function_exists( 'apollo_event_share_image' ) ) {
+			$img = apollo_event_share_image( $post_id, 'full' );
+			if ( ! empty( $img['url'] ) ) {
+				// #region agent log
+				if ( function_exists( 'apollo_event_debug_log_837565' ) ) {
+					apollo_event_debug_log_837565(
+						'Meta.php:resolve_image',
+						'event OG image resolved',
+						array(
+							'post_id'      => $post_id,
+							'thumb_id'     => (int) get_post_thumbnail_id( $post_id ),
+							'banner_meta'  => get_post_meta( $post_id, '_event_banner', true ),
+							'resolved_url' => (string) $img['url'],
+							'resolved_id'  => (int) ( $img['id'] ?? 0 ),
+						),
+						'H1'
+					);
+				}
+				// #endregion
+				$alt = (string) ( $img['alt'] ?? '' );
+				if ( $alt === '' ) {
+					$alt = get_the_title( $post_id );
+				}
+				return array(
+					'url'    => (string) $img['url'],
+					'width'  => (int) ( $img['width'] ?? 1200 ),
+					'height' => (int) ( $img['height'] ?? 630 ),
+					'alt'    => $alt,
+				);
+			}
+		}
 
 		/* 1. Custom social image */
 		if ( $post_id ) {
@@ -727,7 +806,10 @@ final class Meta {
 		/* 2. Featured image */
 		if ( $post_id && has_post_thumbnail( $post_id ) ) {
 			$thumb_id = get_post_thumbnail_id( $post_id );
-			$src      = wp_get_attachment_image_src( $thumb_id, 'large' );
+			$src      = wp_get_attachment_image_src( $thumb_id, 'full' );
+			if ( ! $src ) {
+				$src = wp_get_attachment_image_src( $thumb_id, 'large' );
+			}
 			if ( $src ) {
 				return array(
 					'url'    => $src[0],
@@ -793,6 +875,11 @@ final class Meta {
 	 * Build canonical URL.
 	 */
 	public static function canonical_url(): string {
+		$virtual = self::virtual_context();
+		if ( $virtual && ! empty( $virtual['canonical'] ) ) {
+			return esc_url( (string) $virtual['canonical'] );
+		}
+
 		if ( is_singular() ) {
 			$id = get_the_ID();
 			if ( $id ) {
@@ -912,7 +999,7 @@ final class Meta {
 		if ( is_singular() ) {
 			$type = get_post_type();
 			if ( $type === 'event' ) {
-				return 'article';
+				return 'website';
 			}
 			return 'article';
 		}
@@ -963,13 +1050,36 @@ final class Meta {
 			$title       = ! empty( $virtual['title'] ) ? (string) $virtual['title'] : $title;
 			$description = ! empty( $virtual['description'] ) ? self::clamp( (string) $virtual['description'], 160 ) : $description;
 			$canonical   = ! empty( $virtual['canonical'] ) ? esc_url( (string) $virtual['canonical'] ) : $canonical;
-			$robots      = 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1';
+			$robots      = ! empty( $virtual['robots'] )
+				? (string) $virtual['robots']
+				: 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1';
 			$og_type     = 'website';
+			if ( ! empty( $virtual['site_name'] ) ) {
+				$site_name = (string) $virtual['site_name'];
+			}
+			if ( ! empty( $virtual['image'] ) && is_array( $virtual['image'] ) && ! empty( $virtual['image']['url'] ) ) {
+				$image = array(
+					'url'    => (string) $virtual['image']['url'],
+					'width'  => (int) ( $virtual['image']['width'] ?? 1200 ),
+					'height' => (int) ( $virtual['image']['height'] ?? 630 ),
+					'alt'    => (string) ( $virtual['image']['alt'] ?? '' ),
+					'type'   => (string) ( $virtual['image']['type'] ?? '' ),
+				);
+			}
 		}
 
 		/* OG title / description overrides */
 		$og_title = $title;
 		$og_desc  = $description;
+
+		if ( $virtual ) {
+			if ( ! empty( $virtual['og_title'] ) ) {
+				$og_title = (string) $virtual['og_title'];
+			}
+			if ( ! empty( $virtual['og_description'] ) ) {
+				$og_desc = (string) $virtual['og_description'];
+			}
+		}
 
 		if ( is_singular() ) {
 			$id = get_the_ID();
@@ -1031,7 +1141,11 @@ final class Meta {
 			}
 
 			if ( ! empty( $image['url'] ) ) {
-				printf( '<meta property="og:image" content="%s">' . "\n", esc_url( $image['url'] ) );
+				$img_url = esc_url( $image['url'] );
+				printf( '<meta property="og:image" content="%s">' . "\n", $img_url );
+				if ( 0 === stripos( (string) $image['url'], 'https://' ) ) {
+					printf( '<meta property="og:image:secure_url" content="%s">' . "\n", $img_url );
+				}
 				if ( ! empty( $image['width'] ) ) {
 					printf( '<meta property="og:image:width" content="%d">' . "\n", $image['width'] );
 				}
@@ -1041,18 +1155,24 @@ final class Meta {
 				if ( ! empty( $image['alt'] ) ) {
 					printf( '<meta property="og:image:alt" content="%s">' . "\n", esc_attr( $image['alt'] ) );
 				}
-				/* og:image:type — detect MIME from URL extension */
-				$ext_map = array(
-					'jpg'  => 'image/jpeg',
-					'jpeg' => 'image/jpeg',
-					'png'  => 'image/png',
-					'gif'  => 'image/gif',
-					'webp' => 'image/webp',
-					'svg'  => 'image/svg+xml',
-				);
-				$ext     = strtolower( pathinfo( wp_parse_url( $image['url'], PHP_URL_PATH ) ?? '', PATHINFO_EXTENSION ) );
-				if ( isset( $ext_map[ $ext ] ) ) {
-					printf( '<meta property="og:image:type" content="%s">' . "\n", esc_attr( $ext_map[ $ext ] ) );
+				/* og:image:type — explicit virtual type, else detect from URL */
+				$img_type = ! empty( $image['type'] ) ? (string) $image['type'] : '';
+				if ( '' === $img_type ) {
+					$ext_map = array(
+						'jpg'  => 'image/jpeg',
+						'jpeg' => 'image/jpeg',
+						'png'  => 'image/png',
+						'gif'  => 'image/gif',
+						'webp' => 'image/webp',
+						'svg'  => 'image/svg+xml',
+					);
+					$ext = strtolower( pathinfo( wp_parse_url( $image['url'], PHP_URL_PATH ) ?? '', PATHINFO_EXTENSION ) );
+					if ( isset( $ext_map[ $ext ] ) ) {
+						$img_type = $ext_map[ $ext ];
+					}
+				}
+				if ( '' !== $img_type ) {
+					printf( '<meta property="og:image:type" content="%s">' . "\n", esc_attr( $img_type ) );
 				}
 			}
 

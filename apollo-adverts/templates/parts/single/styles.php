@@ -37,9 +37,11 @@ if (! defined('ABSPATH')) {
   position:sticky;top:72px;
 }
 .mk-single__card article[type=ticket],
-.mk-single__card .accom-card{
+.mk-single__card .accom-card,
+.mk-single__card .rt-card{
   cursor:default;
   max-width:100%;
+  width:100%;
 }
 .mk-single__card article[type=ticket]{height:auto;max-height:none;min-height:420px;}
 .mk-single__card article[type=ticket] .ticket-img{height:160px;min-height:160px;max-height:160px;}
@@ -55,6 +57,9 @@ if (! defined('ABSPATH')) {
   font-size:clamp(1.35rem,2.4vw,1.85rem);font-weight:800;letter-spacing:-.03em;
   color:var(--txt-heading);margin:0;line-height:1.15;
 }
+.mk-single__share{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.mk-single-share{background:var(--surface);color:var(--txt-heading);box-shadow:inset 0 0 0 1px var(--border);}
+.mk-single__share-hint{font-family:var(--ff-mono);font-size:10px;color:var(--muted);letter-spacing:.04em;}
 .mk-single__meta{
   display:flex;flex-wrap:wrap;gap:8px 14px;
   font-family:var(--ff-mono);font-size:11px;color:var(--muted);
@@ -85,22 +90,12 @@ if (! defined('ABSPATH')) {
 .mk-single__box p{margin:0 0 6px;font-size:14px;}
 .mk-single__box p:last-child{margin-bottom:0;}
 .mk-single__contact{scroll-margin-top:80px;}
+.mk-single__gate-note{margin:0 0 14px;font-size:14px;color:var(--muted);line-height:1.45;}
 .mk-single__contact .apollo-adverts-chat-btn{
   display:inline-flex;align-items:center;gap:8px;
   border-radius:var(--r-pill);padding:12px 18px;text-decoration:none;
   font-family:var(--ff-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
   background:var(--txt-heading);color:var(--bg,#fff);border:0;cursor:pointer;
-}
-.mk-single .ap-safety{
-  --gate-ink: var(--rgb-diff, 20,16,10);
-  border-radius:var(--r-lg,14px);
-  overflow:hidden;
-}
-.mk-single .apollo-stage.ap-safety{
-  min-height:0;
-}
-.mk-single .apollo-warn{
-  max-width:none;margin:0;
 }
 </style>
 <?php

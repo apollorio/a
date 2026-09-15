@@ -252,6 +252,10 @@ function apollo_event_single_context( int $post_id, string $uid = '' ): array {
 		apollo_event_ensure_helpers();
 	}
 
+	if ( function_exists( 'apollo_event_heal_cover' ) ) {
+		apollo_event_heal_cover( $post_id );
+	}
+
 	$post    = get_post( $post_id );
 	$title   = $post ? (string) $post->post_title : '';
 	$content = $post ? (string) apply_filters( 'the_content', $post->post_content ) : '';
@@ -279,7 +283,7 @@ function apollo_event_single_context( int $post_id, string $uid = '' ): array {
 		$dj_slots = array();
 	}
 
-	$banner = function_exists( 'apollo_event_get_banner' ) ? apollo_event_get_banner( $post_id ) : '';
+	$banner = function_exists( 'apollo_event_get_banner' ) ? apollo_event_get_banner( $post_id, 'full' ) : '';
 
 	$bg_color = (string) get_post_meta( $post_id, '_event_bg_color', true );
 	$bg_color = ( $bg_color && preg_match( '/^#[0-9a-fA-F]{3,6}$/', $bg_color ) ) ? $bg_color : '#0a0a0a';
@@ -1157,7 +1161,11 @@ function apollo_event_single_js_config( int $post_id, array $ev = array() ): arr
 		'id'           => $post_id,
 		'uid'          => (string) ( $ev['uid'] ?? '' ),
 		'title'        => (string) ( $ev['title'] ?? '' ),
+		'shareText'    => wp_strip_all_tags( (string) ( $ev['content'] ?? '' ) ),
 		'shareUrl'     => (string) ( $ev['permalink'] ?? '' ),
+		'shareImage'   => function_exists( 'apollo_event_get_banner' )
+			? (string) apollo_event_get_banner( $post_id, 'full' )
+			: '',
 		'restRsvp'     => esc_url_raw( rest_url( 'apollo/v1/eventos/' . $post_id . '/participantes' ) ),
 		'restComments' => esc_url_raw( rest_url( 'apollo/v1/depoimentos' ) ),
 		'loggedIn'     => $logged,

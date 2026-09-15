@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Template: URL Event Importer — /eventos/url
+ * Template: URL Event Importer — /eventos/importa
  *
  * Modular orchestrator (create-event pattern). Markup in template-parts/url-import/;
  * logic in assets/js/url-import/*.js; REST boot via UrlImportPage::config().
@@ -52,7 +52,7 @@ if ($plus_open) {
 		array(
 			'title'      => $page_title . ' — Apollo::Rio',
 			'extra_head' => $extra_head,
-			'screen'     => 'eventos/url',
+			'screen'     => 'eventos/importa',
 			'theme'      => 'dark',
 			'html_class' => 'is-logged',
 		)

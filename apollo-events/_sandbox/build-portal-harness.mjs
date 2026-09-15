@@ -1404,8 +1404,16 @@ check('E29 · surface, card, panel and health contracts hold their invariants', 
   for (const fn of ['apollo_panel_register', 'apollo_panel_registry', 'apollo_panel_boot_registered']) {
     if (!p.includes(`function ${fn}(`)) throw new Error(`panel contract is missing ${fn}()`);
   }
-  if (!/class DeclarativePanel extends Panel/.test(p)) {
-    throw new Error('DeclarativePanel is gone — panels would need a subclass again');
+  /* The parent may be written bare or fully qualified, and it may be `final`.
+     This assertion went red on 2026-08-26 for exactly that reason and nothing else:
+     registry.php:71 was changed to `final class DeclarativePanel extends
+     \\Apollo\\LuxPanels\\Panel` four hours after this file was last touched, and the
+     literal string stopped matching a class that was still perfectly present. The
+     invariant being tested is "DeclarativePanel still extends Panel, so declaring a
+     panel never requires writing a subclass" — that is what the pattern must express,
+     not one particular spelling of the parent's name. */
+  if (!/class\s+DeclarativePanel\s+extends\s+[\\\w]*\bPanel\b/.test(p)) {
+    throw new Error('DeclarativePanel no longer extends Panel — panels would need a subclass again');
   }
   /* Dormant-safe: a panel for a CPT that never registered must be skipped, not
      turned into an orphan metabox on no screen. */

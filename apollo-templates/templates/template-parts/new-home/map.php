@@ -127,29 +127,20 @@ if (empty($map_events)) {
     </div>
 </section>
 
-<!-- Leaflet JS + simple init. cdn.jsdelivr.net, not unpkg.com (unpkg isn't
-     CSP-allowlisted — see 2026-08-01 audit note in render-single.php). -->
-<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-<script>
+<!-- Leaflet JS is deferred until #nhMap is near the viewport. Loading it in
+     <head> + initializing immediately pulled 20–40 CARTO tiles on first paint
+     and held them behind core.js's GSAP/font cascade — that is the /casa
+     request storm. cdn.jsdelivr.net, not unpkg.com (CSP). -->
+<script<?php echo function_exists('apollo_csp_nonce_attr') ? apollo_csp_nonce_attr() : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
     (function() {
         'use strict';
 
-        var EVENTS = <?php echo wp_json_encode($map_events); ?>;
+        var EVENTS = <?php echo function_exists('apollo_json_for_script') ? apollo_json_for_script($map_events) : wp_json_encode($map_events); ?>;
+        var started = false;
 
-        function waitForLeaflet(cb, n) {
-            n = n || 0;
-            if (typeof L !== 'undefined') {
-                cb();
-            } else if (n < 80) {
-                setTimeout(function() {
-                    waitForLeaflet(cb, n + 1);
-                }, 50);
-            }
-        }
-
-        waitForLeaflet(function() {
+        function initMap() {
             var el = document.getElementById('nhMap');
-            if (!el) return;
+            if (!el || typeof L === 'undefined') return;
 
             var map = L.map(el, {
                 center: [-22.9502, -43.1903],
@@ -187,22 +178,51 @@ if (empty($map_events)) {
             });
 
             window.ApolloMapHome = map;
-        });
 
-        /* CARTO tile enforcer — prevents OSM tile fallback */
-        var obs = new MutationObserver(function(muts) {
-            muts.forEach(function(m) {
-                m.addedNodes.forEach(function(n) {
-                    if (n.tagName === 'IMG' && n.src && n.src.indexOf('openstreetmap') !== -1) {
-                        n.src = n.src.replace(/tile\.openstreetmap\.org/, 'a.basemaps.cartocdn.com/light_all');
-                    }
+            var obs = new MutationObserver(function(muts) {
+                muts.forEach(function(m) {
+                    m.addedNodes.forEach(function(n) {
+                        if (n.tagName === 'IMG' && n.src && n.src.indexOf('openstreetmap') !== -1) {
+                            n.src = n.src.replace(/tile\.openstreetmap\.org/, 'a.basemaps.cartocdn.com/light_all');
+                        }
+                    });
                 });
             });
-        });
-        var mc = document.getElementById('nhMap');
-        if (mc) obs.observe(mc, {
-            childList: true,
-            subtree: true
-        });
+            obs.observe(el, { childList: true, subtree: true });
+        }
+
+        function loadLeaflet() {
+            if (started) return;
+            started = true;
+            if (!document.querySelector('link[href*="leaflet@1.9.4/dist/leaflet.css"]')) {
+                var css = document.createElement('link');
+                css.rel = 'stylesheet';
+                css.href = 'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css';
+                css.crossOrigin = '';
+                document.head.appendChild(css);
+            }
+            if (typeof L !== 'undefined') {
+                initMap();
+                return;
+            }
+            var s = document.createElement('script');
+            s.src = 'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js';
+            s.crossOrigin = '';
+            s.onload = initMap;
+            document.head.appendChild(s);
+        }
+
+        var el = document.getElementById('nhMap');
+        if (!el) return;
+        if ('IntersectionObserver' in window) {
+            var io = new IntersectionObserver(function(entries) {
+                if (!entries.some(function(e) { return e.isIntersecting; })) return;
+                io.disconnect();
+                loadLeaflet();
+            }, { rootMargin: '240px 0px' });
+            io.observe(el);
+        } else {
+            loadLeaflet();
+        }
     })();
 </script>

@@ -203,6 +203,144 @@ if ( ! function_exists( 'apollo_track_credits_line' ) ) {
 	}
 }
 
+if ( ! function_exists( 'apollo_track_soundcloud_artwork' ) ) {
+	/**
+	 * Cached SoundCloud oEmbed thumbnail — used when apollo-soundcloud is off.
+	 *
+	 * Budget-capped per request so /casa does not block on 15 HTTP calls.
+	 *
+	 * @param string $sc_url SoundCloud permalink.
+	 * @return string Image URL or ''.
+	 */
+	function apollo_track_soundcloud_artwork( string $sc_url ): string {
+		static $budget = 4;
+		$sc_url        = trim( $sc_url );
+		if ( '' === $sc_url ) {
+			return '';
+		}
+
+		$key    = 'apollo_sc_art_' . md5( $sc_url );
+		$cached = get_transient( $key );
+		if ( is_string( $cached ) ) {
+			return $cached;
+		}
+
+		if ( $budget <= 0 ) {
+			return '';
+		}
+		--$budget;
+
+		$art  = '';
+		$resp = wp_remote_get(
+			'https://soundcloud.com/oembed?format=json&url=' . rawurlencode( $sc_url ),
+			array(
+				'timeout'    => 2,
+				'user-agent' => 'ApolloRio/track-cover',
+			)
+		);
+		if ( ! is_wp_error( $resp ) && 200 === (int) wp_remote_retrieve_response_code( $resp ) ) {
+			$body = json_decode( (string) wp_remote_retrieve_body( $resp ), true );
+			$art  = esc_url_raw( (string) ( $body['thumbnail_url'] ?? '' ) );
+		}
+		set_transient( $key, $art, DAY_IN_SECONDS );
+		return $art;
+	}
+}
+
+if ( ! function_exists( 'apollo_track_resolve_cover' ) ) {
+	/**
+	 * Resolve track artwork — featured image, meta URL, oEmbed artwork, DJ fallback.
+	 *
+	 * @param int $track_id Track post ID.
+	 * @return string Image URL or ''.
+	 */
+	function apollo_track_resolve_cover( int $track_id ): string {
+		$thumb_id = (int) get_post_thumbnail_id( $track_id );
+		if ( $thumb_id > 0 ) {
+			foreach ( array( 'medium', 'large', 'thumbnail' ) as $size ) {
+				$url = (string) wp_get_attachment_image_url( $thumb_id, $size );
+				if ( '' !== $url ) {
+					return $url;
+				}
+			}
+		}
+
+		$cover = trim( (string) get_post_meta( $track_id, '_track_cover_url', true ) );
+		if ( '' !== $cover ) {
+			return esc_url_raw( $cover );
+		}
+
+		$sc_url = trim( (string) get_post_meta( $track_id, '_track_url_soundcloud', true ) );
+		if ( '' === $sc_url ) {
+			$sc_url = trim( (string) get_post_meta( $track_id, '_track_preview_url', true ) );
+		}
+		if ( '' !== $sc_url && function_exists( 'apollo_track_url_is_soundcloud' ) && apollo_track_url_is_soundcloud( $sc_url ) ) {
+			$art = '';
+			if ( function_exists( 'apollo_soundcloud_meta' ) ) {
+				$meta = apollo_soundcloud_meta( $sc_url, true );
+				$art  = trim( (string) ( $meta['artwork'] ?? '' ) );
+			}
+			if ( '' === $art ) {
+				$art = apollo_track_soundcloud_artwork( $sc_url );
+			}
+			if ( '' !== $art ) {
+				return esc_url_raw( $art );
+			}
+		}
+
+		$credits = apollo_track_credits( $track_id );
+		$first   = $credits[0]['id'] ?? 0;
+		if ( $first && function_exists( 'apollo_dj_get_image' ) ) {
+			$dj_cover = (string) apollo_dj_get_image( $first );
+			if ( '' !== $dj_cover && ! str_contains( $dj_cover, 'placeholder-dj' ) ) {
+				return $dj_cover;
+			}
+		}
+
+		return '';
+	}
+}
+
+if ( ! function_exists( 'apollo_track_display_urls' ) ) {
+	/**
+	 * Platform URLs for the expanded icon row — excludes listen-only duplicates.
+	 *
+	 * When SoundCloud is only the in-page preview transport (same URL as listen
+	 * canonical), do not show a redundant SC icon in the collapsed rail.
+	 *
+	 * @param int                $track_id Track post ID.
+	 * @param array<string,mixed> $listen  Listen contract from apollo_track_listen().
+	 * @return array<string,string> spotify|bandcamp|soundcloud|youtube => url
+	 */
+	function apollo_track_display_urls( int $track_id, array $listen = array() ): array {
+		$raw = array(
+			'spotify'    => trim( (string) get_post_meta( $track_id, '_track_url_spotify', true ) ),
+			'bandcamp'   => trim( (string) get_post_meta( $track_id, '_track_url_bandcamp', true ) ),
+			'soundcloud' => trim( (string) get_post_meta( $track_id, '_track_url_soundcloud', true ) ),
+			'youtube'    => trim( (string) get_post_meta( $track_id, '_track_url_youtube', true ) ),
+		);
+
+		$listen_canonical = trim( (string) ( $listen['canonical'] ?? '' ) );
+		$listen_provider  = (string) ( $listen['provider'] ?? '' );
+
+		$out = array();
+		foreach ( $raw as $key => $href ) {
+			if ( '' === $href ) {
+				continue;
+			}
+			// Drop SC icon when it is the same URL used only for in-page preview.
+			if ( 'soundcloud' === $key && 'soundcloud' === $listen_provider && $listen_canonical !== '' ) {
+				if ( untrailingslashit( strtolower( $href ) ) === untrailingslashit( strtolower( $listen_canonical ) ) ) {
+					continue;
+				}
+			}
+			$out[ $key ] = $href;
+		}
+
+		return $out;
+	}
+}
+
 if ( ! function_exists( 'apollo_track_preview' ) ) {
 	/**
 	 * Resolve a track's preview source to something a player can mount.
@@ -277,13 +415,11 @@ if ( ! function_exists( 'apollo_track_preview' ) ) {
 			}
 
 			/*
-			 * youtube-nocookie, no related videos, no branding, controls off.
-			 * The card is the control surface — an embedded YouTube chrome
-			 * inside a 15-card rail is noise, and autoplay is driven by the
-			 * player, not by the iframe.
+			 * STRICT ambient-style embed: no chrome, no keyboard, no fullscreen.
+			 * Card UI is the only control surface.
 			 */
 			$src = sprintf(
-				'https://www.youtube-nocookie.com/embed/%s?start=%d&rel=0&modestbranding=1&controls=0&playsinline=1&enablejsapi=1',
+				'https://www.youtube-nocookie.com/embed/%s?start=%d&rel=0&modestbranding=1&controls=0&playsinline=1&disablekb=1&fs=0&iv_load_policy=3&cc_load_policy=0&enablejsapi=1',
 				rawurlencode( $id ),
 				$start
 			);
@@ -295,6 +431,23 @@ if ( ! function_exists( 'apollo_track_preview' ) ) {
 				'start'    => $start,
 				'seconds'  => $seconds,
 			);
+		}
+
+		// ── SoundCloud — Widget API transport (PLAN S3).
+		if ( function_exists( 'apollo_soundcloud_is' ) && apollo_soundcloud_is( $url ) ) {
+			$r = function_exists( 'apollo_soundcloud_resolve' )
+				? apollo_soundcloud_resolve( $url )
+				: array( 'kind' => '', 'embed_url' => '', 'canonical' => '' );
+			if ( '' !== ( $r['kind'] ?? '' ) && '' !== ( $r['embed_url'] ?? '' ) ) {
+				return array(
+					'provider'  => 'soundcloud',
+					'src'       => esc_url_raw( (string) $r['embed_url'] ),
+					'mode'      => 'widget',
+					'start'     => $start,
+					'seconds'   => $seconds,
+					'canonical' => esc_url_raw( (string) ( $r['canonical'] ?? $url ) ),
+				);
+			}
 		}
 
 		// ── Anything else is only accepted if it is plainly an audio file.
@@ -325,17 +478,7 @@ if ( ! function_exists( 'apollo_track_card_data' ) ) {
 	 * @return array<string,mixed>
 	 */
 	function apollo_track_card_data( int $track_id ): array {
-		$cover = (string) get_the_post_thumbnail_url( $track_id, 'medium' );
-		if ( '' === $cover ) {
-			$cover = (string) get_post_meta( $track_id, '_track_cover_url', true );
-		}
-		if ( '' === $cover ) {
-			$credits = apollo_track_credits( $track_id );
-			$first   = $credits[0]['id'] ?? 0;
-			if ( $first && function_exists( 'apollo_dj_get_image' ) ) {
-				$cover = (string) apollo_dj_get_image( $first );
-			}
-		}
+		$cover = apollo_track_resolve_cover( $track_id );
 
 		$genre = '';
 		$terms = get_the_terms( $track_id, 'sound' );
@@ -346,12 +489,26 @@ if ( ! function_exists( 'apollo_track_card_data' ) ) {
 			$genre = (string) get_post_meta( $track_id, '_track_genre_legacy', true );
 		}
 
-		// First non-empty release link, in the documented priority order.
+		// Per-platform release links (icon row). Empty values stay empty.
+		$urls = array(
+			'spotify'    => (string) get_post_meta( $track_id, '_track_url_spotify', true ),
+			'bandcamp'   => (string) get_post_meta( $track_id, '_track_url_bandcamp', true ),
+			'soundcloud' => (string) get_post_meta( $track_id, '_track_url_soundcloud', true ),
+			'youtube'    => (string) get_post_meta( $track_id, '_track_url_youtube', true ),
+			'download'   => (string) get_post_meta( $track_id, '_track_url_download', true ),
+		);
+
+		$listen = function_exists( 'apollo_track_listen' )
+			? apollo_track_listen( $track_id )
+			: apollo_track_listen_none();
+
+		$platform_urls = apollo_track_display_urls( $track_id, $listen );
+
+		// First non-empty release link — play fallback when no in-page preview.
 		$url = '';
-		foreach ( array( 'soundcloud', 'spotify', 'bandcamp', 'download' ) as $p ) {
-			$v = (string) get_post_meta( $track_id, '_track_url_' . $p, true );
-			if ( '' !== $v ) {
-				$url = $v;
+		foreach ( array( 'spotify', 'bandcamp', 'soundcloud', 'youtube', 'download' ) as $p ) {
+			if ( '' !== $urls[ $p ] ) {
+				$url = $urls[ $p ];
 				break;
 			}
 		}
@@ -363,10 +520,14 @@ if ( ! function_exists( 'apollo_track_card_data' ) ) {
 			'artists'   => apollo_track_credits_line( $track_id ),
 			'credits'   => apollo_track_credits( $track_id ),
 			'cover'     => $cover,
+			'has_cover' => '' !== $cover,
 			'genre'     => $genre,
 			'duration'  => (string) get_post_meta( $track_id, '_track_duration', true ),
 			'url'       => $url,
+			'urls'      => $urls,
+			'platform_urls' => $platform_urls,
 			'preview'   => apollo_track_preview( $track_id ),
+			'listen'    => $listen,
 		);
 	}
 }

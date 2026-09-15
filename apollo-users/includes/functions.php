@@ -28,14 +28,42 @@ function apollo_users(): Plugin
 /**
  * Get user profile URL
  *
- * @param int|null $user_id User ID (defaults to current user)
+ * Accepts a user id OR a WP_User. The object form is not a convenience: SIX
+ * existing call sites already pass a WP_User, and one of them
+ * (src/Components/AuthorProtection.php:86) tests `$author instanceof \WP_User`
+ * immediately before the call. The callers were written against an object
+ * signature; the `?int` hint was the mismatch.
+ *
+ * That never surfaced because this file is namespaced Apollo\Users, so an
+ * unqualified call from any other namespace could not reach this function at
+ * all — PHP falls back to \global, never to a sibling namespace. Every one of
+ * those sites sits behind a `function_exists('apollo_get_profile_url')` guard
+ * that is permanently false, so the else-branch ran and the TypeError was never
+ * reached. Verified: passing a WP_User to `?int` raises
+ *   TypeError: Argument #1 ($user_id) must be of type ?int, WP_User given
+ * in coercive mode as well as strict.
+ *
+ * Widening here fixes all six sites in one clean file instead of editing six,
+ * and stays backward compatible — src/Plugin.php:211 and
+ * templates/edit-profile.php:104 already pass an int and keep working.
+ *
+ * No PHP 8 union type: the production PHP version is not visible from here
+ * (Cloudflare strips the header), so this stays PHP 7 compatible.
+ *
+ * @param int|\WP_User|null $user_id User ID or WP_User (defaults to current user)
  * @return string Profile URL
  */
-function apollo_get_profile_url(?int $user_id = null): string
+function apollo_get_profile_url($user_id = null): string
 {
+    if ($user_id instanceof \WP_User) {
+        $user_id = (int) $user_id->ID;
+    }
+
     if (null === $user_id) {
         $user_id = get_current_user_id();
     }
+
+    $user_id = (int) $user_id;
 
     if (! $user_id) {
         return '';

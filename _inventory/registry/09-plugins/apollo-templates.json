@@ -407,7 +407,7 @@
       "_source": "deep_live_scan"
     }
   ],
-  "version": "1.5.1",
+  "version": "1.6.24",
   "cron": [],
   "hooks_fired": [
     "apollo/adverts/render_create_form",
@@ -2207,5 +2207,11 @@
       "templates/template-parts/apollo-plus/aside-styles.php",
       "apollo-templates.php (version bump 1.4.1 -> 1.4.2)"
     ]
+  },
+  "$version_synced": {
+    "date": "2026-08-31",
+    "from": "1.5.1",
+    "to": "1.6.24",
+    "source": "disk docblock via doctor.js"
   }
 }

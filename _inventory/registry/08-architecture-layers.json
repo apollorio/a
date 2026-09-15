@@ -11,10 +11,11 @@
   "architecture": {
     "principle": "Each plugin = ONE focused responsibility. Connected via apollo-core hooks.",
     "master_registry": "apollo-core owns ALL CPT/Taxonomy/Meta/Table definitions - GLOBAL BRIDGE",
-    "total_plugins": 46,
+    "total_plugins": 48,
     "layers": {
       "L0_foundation": [
-        "apollo-core"
+        "apollo-core",
+        "apollo-shortcodes"
       ],
       "L1_auth": [
         "apollo-login",
@@ -24,6 +25,7 @@
       "L2_content": [
         "apollo-adverts",
         "apollo-calendar",
+        "apollo-classifieds",
         "apollo-dj-sync",
         "apollo-djs",
         "apollo-events",
@@ -85,19 +87,27 @@
       "L13_pagebuilder": [
         "apollo-elementor",
         "apollo-elementor-pro"
+      ],
+      "L14_tooling": [
+        "apollo-seed-runner"
       ]
     },
-    "total_plugins_on_disk": 40,
+    "total_plugins_on_disk": 42,
     "total_plugins_absent": 6,
     "$layers_absent_from_disk": [
       "apollo-cena",
+      "apollo-classifieds",
       "apollo-pwa",
       "apollo-runtime",
+      "apollo-shortcodes",
       "apollo-suppliers"
     ],
     "$layer_notes": {
       "apollo-lux-panels": "L7_admin — admin metabox input surface for event/dj/local, not a page builder.",
-      "L8_industry / L9_pwa / L12_runtime": "Contain only plugins absent from disk; layers are currently empty in practice."
+      "L8_industry / L9_pwa / L12_runtime": "Contain only plugins absent from disk; layers are currently empty in practice.",
+      "apollo-classifieds": "L2_content — absorbed into apollo-adverts; entry kept, folder absent.",
+      "apollo-shortcodes": "L0_foundation — absorbed into apollo-core; entry kept, folder absent.",
+      "L14_tooling": "Maintenance/dev utilities that are real activated plugins but carry no product surface."
     }
   }
 }

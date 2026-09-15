@@ -119,7 +119,7 @@ html.mapa-scroll-lock,html.mapa-scroll-lock body{overflow:hidden!important;overs
 .mapa-app .sheet-drag:active{cursor:grabbing;}
 .mapa-app .sheet-handle{width:36px;height:4px;border-radius:2px;background:rgba(var(--rgb-diff),.14);transition:background .2s;}
 .mapa-app .map-sheet:active .sheet-handle{background:rgba(var(--rgb-diff),.24);}
-.mapa-app .sheet-inner{overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;height:calc(100% - 44px);scrollbar-width:none;user-select:none;-webkit-user-select:none;}
+.mapa-app .sheet-inner{overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;height:calc(100% - 44px);scrollbar-width:none;user-select:none;-webkit-user-select:none;touch-action:pan-y;}
 .mapa-app .sheet-inner::-webkit-scrollbar{display:none;}
 .mapa-app .sheet-hd{padding:2px 18px 12px;}
 .mapa-app .sheet-hd-row{display:flex;align-items:flex-end;justify-content:space-between;}

@@ -83,7 +83,7 @@ $cev_cfg = wp_json_encode(
         <div class="cev-scroll" data-lenis-prevent data-lenis-prevent-wheel data-lenis-prevent-touch>
 
             <figure class="cev-hero" id="cevHero">
-                <img class="cev-hero-img" id="cevImg" src="" alt="" />
+                <img class="cev-hero-img" id="cevImg" alt="" />
                 <div class="cev-hero-veil" aria-hidden="true"></div>
             </figure>
 
@@ -393,7 +393,7 @@ body.cev-lock { overflow: hidden; }
 }
 </style>
 
-<script id="cev-script">
+<script<?php echo function_exists('apollo_csp_nonce_attr') ? apollo_csp_nonce_attr() : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> id="cev-script">
 (function () {
     'use strict';
 

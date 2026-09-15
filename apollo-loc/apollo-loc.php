@@ -3,7 +3,7 @@
  * Plugin Name: Apollo Local
  * Plugin URI: https://apollo.rio.br/plugins/apollo-local
  * Description: Locations CPT (local). Geocoding, maps, nearby search, area zones. Style: apollo-v1.
- * Version: 1.0.4
+ * Version: 1.0.5
  * Author: Apollo::Rio
  * Author URI: https://apollo.rio.br
  * License: Proprietary
@@ -14,6 +14,35 @@
  * Network: false
  *
  * @package Apollo\Local
+ */
+
+/*
+ * ARCH: apollo-loc / APOLLO_LOCAL_CPT, local
+ * ARCH-MANUAL: escrito a mao (2026-09-09). Ver nota em apollo-core.
+ * Contrato completo: D:/dev/_cos/verify/MODULE-CONTRACT.md
+ *
+ * OWNER     apollo-loc   66 arquivos PHP, 8954 LOC
+ * BOOT      plugins_loaded:15 (apollo-loc.php:109)
+ * RUNTIME   CPT/taxonomia/meta registrados por apollo-core (init:5)
+ * UI        emite HTML (8); chrome e do apollo-templates
+ * META      33 chaves tocadas
+ * REST      6 rotas (6 publicas)
+ * REQUIRES  apollo-core, apollo-fav, apollo-wow
+ *
+ * NAO FACA
+ *   - trocar o did_action() de src/Integration/CoreIntegration.php:20 e de
+ *     src/Integrations.php:44 por um add_action() simples. Este plugin
+ *     arranca em plugins_loaded:15 e apollo/core/initialized ja disparou em
+ *     plugins_loaded:1 — um add_action() ali subscreve um evento terminado
+ *     e on_core_ready() nunca corre. Passou despercebido durante meses
+ *     porque o handler so re-emite apollo/loc/core_ready, que nao tem
+ *     ouvintes. Corrigido em 2026-09-09.
+ *   - resolver isso movendo o boot para mais cedo. :15 e a convencao de 21
+ *     outros plugins; mover reordena este plugin contra todos eles.
+ *   - registar CPT direto: apollo-core e o dono do init:5.
+ *     Fallback do owner so com post_type_exists().
+ *
+ * VERIFICAR   node D:/dev/_cos/verify/plugin-audit.js
  */
 
 declare(strict_types=1);
@@ -28,7 +57,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // CONSTANTS
 // ═══════════════════════════════════════════════════════════════════════════
 
-define( 'APOLLO_LOCAL_VERSION', '1.0.4' ); /* 1.0.4 — debug beacon stripped from GalleryMetabox; src/Registry.php and src/Admin/Metabox.php retired as tombstones (dead duplicate CPT/taxonomy/metabox registrations). */
+define( 'APOLLO_LOCAL_VERSION', '1.0.5' ); /* 1.0.5 — MAP FIX: blank lat/lng now DELETE the key instead of writing "0", which had permanently short-circuited Geocoder::maybe_geocode() and pinned every venue at 0,0 (empty /map/explorer). Geocoder now treats 0 as missing so existing rows self-repair. Added the 5 registered-but-unreachable inputs (region, tagline, founded_year, user_id, rooms); local_type/local_area render as single-choice selects. */
 define( 'APOLLO_LOCAL_FILE', __FILE__ );
 define( 'APOLLO_LOCAL_DIR', plugin_dir_path( __FILE__ ) );
 define( 'APOLLO_LOCAL_URL', plugin_dir_url( __FILE__ ) );

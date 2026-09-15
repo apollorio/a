@@ -1,0 +1,12 @@
+# Apollo DEV registry — never served over HTTP.
+#
+# This mirrors plugins/_inventory/.htaccess, which is proven to return 403
+# on this host (LiteSpeed / Apache 2.4 semantics).
+#
+# Host constraints inherited from plugins/.htaccess — do not violate them:
+#   NO <IfModule>   — broke the LiteSpeed line parser, 500 site-wide
+#   NO Options      — outside AllowOverride scope here, proven 500
+#   NO RewriteEngine in a subdirectory — drops the root rewrite context
+# Only Require, which the parent file already proves works.
+
+Require all denied

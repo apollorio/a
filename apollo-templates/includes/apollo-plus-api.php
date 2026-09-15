@@ -81,10 +81,10 @@ if (! function_exists('apollo_plus_open')) {
         $args = wp_parse_args(
             $args,
             array(
-                'title'      => get_bloginfo('name'),
-                'extra_head' => '',
-                'screen'     => '',
-                'main_class' => '',
+                'title'       => get_bloginfo('name'),
+                'extra_head'  => '',
+                'screen'      => '',
+                'main_class'  => '',
                 /* UNIFICATION (2026-08-05) — these two exist so the legacy
                    hand-rolled Apollo+ documents can migrate onto this function
                    without losing behaviour they already had. create-event.php
@@ -94,8 +94,10 @@ if (! function_exists('apollo_plus_open')) {
                    which is exactly how a "unification" turns into a rewrite
                    nobody trusts. Defaults reproduce the previous output byte
                    for byte, so every existing caller is unaffected. */
-                'theme'      => '',
-                'html_class' => '',
+                'theme'       => '',
+                'html_class'  => '',
+                'theme_color' => '',
+                'skip_seo'    => false,
             )
         );
 
@@ -109,9 +111,13 @@ if (! function_exists('apollo_plus_open')) {
                 'title'      => $args['title'],
                 'extra_head' => $args['extra_head'],
                 'html_class' => $html_class,
+                'skip_seo'   => (bool) $args['skip_seo'],
             );
             if ('' !== $args['theme']) {
                 $doc['theme'] = $args['theme'];
+            }
+            if ('' !== (string) $args['theme_color']) {
+                $doc['theme_color'] = (string) $args['theme_color'];
             }
             apollo_render_document_open($doc);
         }

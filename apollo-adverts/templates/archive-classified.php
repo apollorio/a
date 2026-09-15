@@ -27,14 +27,36 @@ $mk_parts = plugin_dir_path(__FILE__) . 'marketplace/parts/mk/';
 
 ob_start();
 require $mk_parts . 'styles.php';
-$mk_head = ob_get_clean();
+$mk_chrome = ob_get_clean();
+
+$mk_v   = defined('APOLLO_ADVERTS_VERSION') ? APOLLO_ADVERTS_VERSION : '1.2.2';
+$mk_css = defined('APOLLO_ADVERTS_URL') ? APOLLO_ADVERTS_URL . 'assets/css/market-screen.css?v=' . $mk_v : '';
+$mk_rt  = defined('APOLLO_ADVERTS_URL') ? APOLLO_ADVERTS_URL . 'assets/css/rt-card.css?v=' . $mk_v : '';
+$mk_rtjs = defined('APOLLO_ADVERTS_URL') ? APOLLO_ADVERTS_URL . 'assets/js/rt-card.js?v=' . $mk_v : '';
+$mk_js  = defined('APOLLO_ADVERTS_URL') ? APOLLO_ADVERTS_URL . 'assets/js/marketplace.js?v=' . $mk_v : '';
+$mk_nonce = function_exists('apollo_csp_nonce_attr') ? apollo_csp_nonce_attr() : '';
+$mk_head  = '';
+if ($mk_css !== '') {
+    $mk_head .= '<link rel="stylesheet" id="apollo-mk-screen" href="' . esc_url($mk_css) . '">';
+}
+if ($mk_rt !== '') {
+    $mk_head .= '<link rel="stylesheet" id="apollo-rt-card" href="' . esc_url($mk_rt) . '">';
+}
+$mk_head .= $mk_chrome;
+if ($mk_js !== '') {
+    $mk_head .= '<script' . $mk_nonce . ' src="' . esc_url($mk_js) . '" defer></script>';
+}
+if ($mk_rtjs !== '') {
+    $mk_head .= '<script' . $mk_nonce . ' src="' . esc_url($mk_rtjs) . '" defer></script>';
+}
 
 $mk_use_plus = function_exists('apollo_plus_open');
+$mk_title    = 'Classificados — Marketplace Apollo::Rio';
 
 if ($mk_use_plus) {
     apollo_plus_open(
         array(
-            'title'      => 'Marketplace — Apollo::Rio',
+            'title'      => $mk_title,
             'extra_head' => $mk_head,
             'screen'     => 'anuncios',
         )
@@ -42,7 +64,7 @@ if ($mk_use_plus) {
 } else {
     // Legacy standalone document — only if apollo-templates is inactive.
     if (function_exists('apollo_render_document_open')) {
-        apollo_render_document_open(array('title' => 'Marketplace — Apollo::Rio', 'extra_head' => $mk_head));
+        apollo_render_document_open(array('title' => $mk_title, 'extra_head' => $mk_head));
     }
     echo '</head><body>';
     if (function_exists('apollo_get_navbar')) {

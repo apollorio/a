@@ -11,7 +11,7 @@
  * Plugin Name: Apollo Adverts
  * Plugin URI: https://apollo.rio.br/plugins/apollo-adverts
  * Description: Classificados/Marketplace: CPT classified, formulários frontend, galeria, busca, gerenciamento. Integrado com BuddyPress, Fav, WOW, Notif.
- * Version: 1.1.4
+ * Version: 1.2.2
  * Author: Apollo::Rio
  * Author URI: https://apollo.rio.br
  * License: Proprietary
@@ -20,6 +20,36 @@
  * Requires at least: 6.4
  * Requires PHP: 8.1
  * Network: false
+ */
+
+/*
+ * ARCH: apollo-adverts / APOLLO_CPT_CLASSIFIED
+ * ARCH-MANUAL: escrito a mao (2026-09-09). gen-arch-blocks.js recusa
+ *   ficheiros dirty no git e 41 de 42 estao dirty. Ver nota em apollo-core.
+ * Contrato completo: D:/dev/_cos/verify/MODULE-CONTRACT.md
+ *
+ * OWNER     apollo-adverts   88 arquivos PHP, 16593 LOC
+ * BOOT      plugins_loaded:15 (:163); includes carregados em init:5 (:147)
+ * RUNTIME   CPT/taxonomia/meta registrados por apollo-core (init:5)
+ * UI        emite HTML (38); chrome e do apollo-templates
+ * META      32 chaves tocadas
+ * REST      apollo/v1 - 9 rotas (4 publicas)
+ * REQUIRES  apollo-chat, apollo-core, apollo-fav, apollo-login,
+ *           apollo-notif, apollo-social, apollo-templates, apollo-wow
+ *           - o maior fan-out de dependencias do ecossistema
+ *
+ * CONTRATO  Unico consumidor de apollo_safety_register()
+ *           (includes/safety-gate.php:87). O contrato e default-deny.
+ *
+ * NAO FACA
+ *   - adicionar isencoes ao safety gate sem nomear a razao. A isencao
+ *     hostel_missing_url dispensa exatamente o portao que devia manter -
+ *     defeito aberto, registado, nao corrigido.
+ *   - registar CPT direto: apollo-core e o dono do init:5.
+ *     Fallback do owner so com post_type_exists().
+ *   - gravar meta de outro dominio.
+ *
+ * VERIFICAR   node D:/dev/_cos/verify/plugin-audit.js
  */
 
 declare(strict_types=1);
@@ -33,7 +63,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // CONSTANTS
 // ═══════════════════════════════════════════════════════════════════════════
 
-define( 'APOLLO_ADVERTS_VERSION', '1.1.4' ); /* 1.1.4 — Singular /anuncio/{slug}/ + inline pre-contact gate. */
+define( 'APOLLO_ADVERTS_VERSION', '1.2.2' ); /* 1.2.2 — /anuncios mockup layout: market-screen.css + carousel stage. */
 define( 'APOLLO_ADVERTS_FILE', __FILE__ );
 define( 'APOLLO_ADVERTS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'APOLLO_ADVERTS_URL', plugin_dir_url( __FILE__ ) );
@@ -123,11 +153,20 @@ function apollo_adverts_load_includes(): void {
 	// Ecosystem integrations (Fav, WOW, Notif, Social, Chat)
 	require_once $dir . 'integrations.php';
 
+	// Share affordance — [data-advert-share] on cards + /casa marquees.
+	require_once $dir . 'share.php';
+
+	// Expandable resale/accommodation ticket — /casa + /anuncios + list.
+	require_once $dir . 'rt-card.php';
+
 	// Safety gate — answers apollo-core's safety contract. Loads AFTER
 	// integrations.php because it guards the chat CTA that file renders, and
 	// registers the exemption that keeps hostel adverts (booking link, never a
 	// chat) out of the gate. Every other advert is gated by default.
 	require_once $dir . 'safety-gate.php';
+
+	// Witness vouch inbox + deep-link notify (after safety-gate helpers exist).
+	require_once $dir . 'safety-notify.php';
 
 	// Event selector for ticket resale classifieds + Solicitar Evento popup
 	require_once $dir . 'event-selector.php';

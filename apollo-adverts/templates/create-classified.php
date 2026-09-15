@@ -16,7 +16,7 @@ if (! defined('ABSPATH')) {
 
 // Segurança: redireciona usuário não autenticado
 if (! is_user_logged_in()) {
-    wp_safe_redirect(home_url('/login/?redirect_to=' . rawurlencode((string) $_SERVER['REQUEST_URI'])));
+    wp_safe_redirect(home_url('/acesso?redirect=' . rawurlencode((string) $_SERVER['REQUEST_URI'])));
     exit;
 }
 

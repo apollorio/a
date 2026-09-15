@@ -1,0 +1,1029 @@
+# AJAX and cron
+#
+# Apollo DEV registry — GENERATED, do not hand-edit.
+# Source of truth is the code; regenerate with
+#   node D:/dev/_cos/verify/gen-dev-registry.js
+#
+# nopriv true = reachable by a logged-out visitor.
+ajax:
+  - unit: apollo-admin
+    file: plugins/apollo-admin/src/AdminPage.php
+    line: 52
+    action: apollo_cpanel_save
+    nopriv: false
+  - unit: apollo-admin
+    file: plugins/apollo-admin/src/AdminPage.php
+    line: 55
+    action: apollo_admin_create_draft
+    nopriv: false
+  - unit: apollo-admin
+    file: plugins/apollo-admin/src/Frontend/Controller/PendingController.php
+    line: 24
+    action: apollo_approve_post
+    nopriv: false
+  - unit: apollo-admin
+    file: plugins/apollo-admin/src/Frontend/Controller/PendingController.php
+    line: 25
+    action: apollo_reject_post
+    nopriv: false
+  - unit: apollo-adverts
+    file: plugins/apollo-adverts/includes/ajax-handlers.php
+    line: 62
+    action: apollo_adverts_change_status
+    nopriv: false
+  - unit: apollo-adverts
+    file: plugins/apollo-adverts/includes/ajax-handlers.php
+    line: 92
+    action: apollo_adverts_toggle_featured
+    nopriv: false
+  - unit: apollo-adverts
+    file: plugins/apollo-adverts/includes/ajax-handlers.php
+    line: 142
+    action: apollo_adverts_dashboard_stats
+    nopriv: false
+  - unit: apollo-adverts
+    file: plugins/apollo-adverts/includes/gallery.php
+    line: 233
+    action: apollo_adverts_gallery_upload
+    nopriv: false
+  - unit: apollo-adverts
+    file: plugins/apollo-adverts/includes/gallery.php
+    line: 266
+    action: apollo_adverts_gallery_delete
+    nopriv: false
+  - unit: apollo-adverts
+    file: plugins/apollo-adverts/includes/gallery.php
+    line: 295
+    action: apollo_adverts_gallery_reorder
+    nopriv: false
+  - unit: apollo-adverts
+    file: plugins/apollo-adverts/includes/gallery.php
+    line: 324
+    action: apollo_adverts_gallery_set_featured
+    nopriv: false
+  - unit: apollo-djs
+    file: plugins/apollo-djs/src/Admin/Dashboard.php
+    line: 21
+    action: apollo_dj_save_settings
+    nopriv: false
+  - unit: apollo-docs
+    file: plugins/apollo-docs/src/Admin/Controller.php
+    line: 35
+    action: apollo_docs_
+    nopriv: false
+  - unit: apollo-events
+    file: plugins/apollo-events/src/Admin/Dashboard.php
+    line: 32
+    action: apollo_event_save_settings
+    nopriv: false
+  - unit: apollo-fav
+    file: plugins/apollo-fav/includes/class-cbx-bridge.php
+    line: 46
+    action: apollo_fav_toggle
+    nopriv: false
+  - unit: apollo-fav
+    file: plugins/apollo-fav/includes/class-cbx-bridge.php
+    line: 47
+    action: apollo_fav_toggle
+    nopriv: true
+  - unit: apollo-fav
+    file: plugins/apollo-fav/includes/class-dashboard.php
+    line: 71
+    action: apollo_fav_load_more
+    nopriv: false
+  - unit: apollo-fav
+    file: plugins/apollo-fav/includes/class-fav-ranking.php
+    line: 48
+    action: apollo_get_ranking_data
+    nopriv: false
+  - unit: apollo-fav
+    file: plugins/apollo-fav/includes/class-fav-ranking.php
+    line: 49
+    action: apollo_get_user_top_sounds
+    nopriv: false
+  - unit: apollo-fav
+    file: plugins/apollo-fav/includes/class-fav-ranking.php
+    line: 50
+    action: apollo_get_user_top_sounds
+    nopriv: true
+  - unit: apollo-gestor
+    file: plugins/apollo-gestor/src/Admin/Controller.php
+    line: 46
+    action: apollo_gestor_save_permissions
+    nopriv: false
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Auth/EmailVerification.php
+    line: 48
+    action: apollo_resend_verification
+    nopriv: true
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Auth/EmailVerification.php
+    line: 49
+    action: apollo_resend_verification
+    nopriv: false
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Auth/LoginHandler.php
+    line: 31
+    action: apollo_login
+    nopriv: true
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Auth/LoginHandler.php
+    line: 32
+    action: apollo_login
+    nopriv: false
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Auth/LoginHandler.php
+    line: 34
+    action: apollo_auth_nonce
+    nopriv: true
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Auth/LoginHandler.php
+    line: 35
+    action: apollo_auth_nonce
+    nopriv: false
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Auth/PasswordReset.php
+    line: 32
+    action: apollo_forgot_password
+    nopriv: true
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Auth/PasswordReset.php
+    line: 33
+    action: apollo_forgot_password
+    nopriv: false
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Auth/PasswordReset.php
+    line: 34
+    action: apollo_reset_confirm
+    nopriv: true
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Auth/PasswordReset.php
+    line: 35
+    action: apollo_reset_confirm
+    nopriv: false
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Auth/RegisterHandler.php
+    line: 33
+    action: apollo_register
+    nopriv: true
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Auth/RegisterHandler.php
+    line: 34
+    action: apollo_register
+    nopriv: false
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Auth/RegisterHandler.php
+    line: 44
+    action: apollo_validate_cpf
+    nopriv: true
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Auth/RegisterHandler.php
+    line: 45
+    action: apollo_validate_cpf
+    nopriv: false
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Auth/RegisterHandler.php
+    line: 48
+    action: apollo_auth_debug_log
+    nopriv: true
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Auth/RegisterHandler.php
+    line: 49
+    action: apollo_auth_debug_log
+    nopriv: false
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Security/Firewall.php
+    line: 86
+    action: apollo_blacklist_ip
+    nopriv: false
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Security/Firewall.php
+    line: 87
+    action: apollo_unblacklist_ip
+    nopriv: false
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Security/Lockout.php
+    line: 62
+    action: apollo_unlock_user
+    nopriv: false
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Security/Lockout.php
+    line: 63
+    action: apollo_unlock_ip
+    nopriv: false
+  - unit: apollo-membership
+    file: plugins/apollo-membership/includes/ajax-handlers.php
+    line: 21
+    action: apollo_membership_recalc_points
+    nopriv: false
+  - unit: apollo-membership
+    file: plugins/apollo-membership/includes/ajax-handlers.php
+    line: 62
+    action: apollo_membership_recalc_achievements
+    nopriv: false
+  - unit: apollo-membership
+    file: plugins/apollo-membership/includes/ajax-handlers.php
+    line: 105
+    action: apollo_membership_recalc_ranks
+    nopriv: false
+  - unit: apollo-membership
+    file: plugins/apollo-membership/includes/ajax-handlers.php
+    line: 146
+    action: apollo_membership_reset_triggers
+    nopriv: false
+  - unit: apollo-membership
+    file: plugins/apollo-membership/includes/ajax-handlers.php
+    line: 179
+    action: apollo_membership_seed_defaults
+    nopriv: false
+  - unit: apollo-membership
+    file: plugins/apollo-membership/includes/points/triggers.php
+    line: 179
+    action: heartbeat
+    nopriv: false
+  - unit: apollo-mod
+    file: plugins/apollo-mod/src/Plugin.php
+    line: 41
+    action: apollo_report_content
+    nopriv: false
+  - unit: apollo-sheets
+    file: plugins/apollo-sheets/src/Admin/Controller.php
+    line: 33
+    action: apollo_sheets_save
+    nopriv: false
+  - unit: apollo-sheets
+    file: plugins/apollo-sheets/src/Admin/Controller.php
+    line: 34
+    action: apollo_sheets_add_row
+    nopriv: false
+  - unit: apollo-sheets
+    file: plugins/apollo-sheets/src/Admin/Controller.php
+    line: 35
+    action: apollo_sheets_add_col
+    nopriv: false
+  - unit: apollo-sheets
+    file: plugins/apollo-sheets/src/Admin/Controller.php
+    line: 36
+    action: apollo_sheets_delete
+    nopriv: false
+  - unit: apollo-sheets
+    file: plugins/apollo-sheets/src/Admin/Controller.php
+    line: 37
+    action: apollo_sheets_import
+    nopriv: false
+  - unit: apollo-sheets
+    file: plugins/apollo-sheets/src/Admin/Controller.php
+    line: 38
+    action: apollo_sheets_export
+    nopriv: false
+  - unit: apollo-sheets
+    file: plugins/apollo-sheets/src/Admin/Controller.php
+    line: 39
+    action: apollo_sheets_preview
+    nopriv: false
+  - unit: apollo-sheets
+    file: plugins/apollo-sheets/src/Admin/Controller.php
+    line: 40
+    action: apollo_sheets_save_settings
+    nopriv: false
+  - unit: apollo-sheets
+    file: plugins/apollo-sheets/src/Admin/Controller.php
+    line: 41
+    action: apollo_sheets_export_zip
+    nopriv: false
+  - unit: apollo-sheets
+    file: plugins/apollo-sheets/src/Bulk/Manager.php
+    line: 113
+    action: apollo_bulk_load
+    nopriv: false
+  - unit: apollo-sheets
+    file: plugins/apollo-sheets/src/Bulk/Manager.php
+    line: 114
+    action: apollo_bulk_save
+    nopriv: false
+  - unit: apollo-sheets
+    file: plugins/apollo-sheets/src/Bulk/Manager.php
+    line: 115
+    action: apollo_bulk_insert
+    nopriv: false
+  - unit: apollo-sheets
+    file: plugins/apollo-sheets/src/Bulk/Manager.php
+    line: 116
+    action: apollo_bulk_delete
+    nopriv: false
+  - unit: apollo-sign
+    file: plugins/apollo-sign/src/Admin/Controller.php
+    line: 42
+    action: apollo_sign_
+    nopriv: false
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/includes/class-user-stats-widget.php
+    line: 36
+    action: apollo_get_user_stats_widget
+    nopriv: false
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/includes/class-user-stats-widget.php
+    line: 37
+    action: apollo_get_user_stats_widget
+    nopriv: true
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/includes/class-user-stats-widget.php
+    line: 40
+    action: apollo_update_stats_visibility
+    nopriv: false
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/src/Admin/TestPanel.php
+    line: 113
+    action: apollo_stats_run_test
+    nopriv: false
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/src/Admin/TestPanel.php
+    line: 114
+    action: apollo_stats_cleanup_tests
+    nopriv: false
+  - unit: apollo-templates
+    file: plugins/apollo-templates/apollo-templates.php
+    line: 534
+    action: apollo_navbar_login
+    nopriv: true
+  - unit: apollo-templates
+    file: plugins/apollo-templates/apollo-templates.php
+    line: 568
+    action: apollo_panel_login
+    nopriv: true
+  - unit: apollo-templates
+    file: plugins/apollo-templates/apollo-templates.php
+    line: 637
+    action: apollo_suggest_event
+    nopriv: true
+  - unit: apollo-templates
+    file: plugins/apollo-templates/apollo-templates.php
+    line: 638
+    action: apollo_suggest_event
+    nopriv: false
+  - unit: apollo-templates
+    file: plugins/apollo-templates/includes/class-navbar-settings.php
+    line: 52
+    action: apollo_navbar_upload_image
+    nopriv: false
+  - unit: apollo-templates
+    file: plugins/apollo-templates/includes/class-plugin.php
+    line: 74
+    action: apollo_navbar_reset_defaults
+    nopriv: false
+  - unit: apollo-templates
+    file: plugins/apollo-templates/includes/pages.php
+    line: 199
+    action: apollo_save_test_spreadsheet
+    nopriv: false
+  - unit: apollo-templates
+    file: plugins/apollo-templates/includes/weather-helpers.php
+    line: 259
+    action: apollo_refresh_weather
+    nopriv: false
+  - unit: apollo-templates
+    file: plugins/apollo-templates/src/FrontendEditor.php
+    line: 79
+    action: apollo_frontend_save
+    nopriv: false
+  - unit: apollo-templates
+    file: plugins/apollo-templates/src/FrontendEditor.php
+    line: 80
+    action: apollo_frontend_upload
+    nopriv: false
+  - unit: apollo-templates
+    file: plugins/apollo-templates/src/FrontendEditor.php
+    line: 81
+    action: apollo_frontend_delete_image
+    nopriv: false
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Components/DepoimentoHandler.php
+    line: 28
+    action: apollo_submit_depoimento
+    nopriv: false
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Components/DepoimentoHandler.php
+    line: 29
+    action: apollo_delete_depoimento
+    nopriv: false
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Components/ProfileHandler.php
+    line: 27
+    action: apollo_update_profile
+    nopriv: false
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Components/ProfileHandler.php
+    line: 28
+    action: apollo_upload_avatar
+    nopriv: false
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Components/ProfileHandler.php
+    line: 29
+    action: apollo_upload_cover
+    nopriv: false
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Components/ProfileHandler.php
+    line: 30
+    action: apollo_delete_avatar
+    nopriv: false
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Components/ProfileHandler.php
+    line: 31
+    action: apollo_delete_cover
+    nopriv: false
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Components/RatingHandler.php
+    line: 53
+    action: apollo_submit_rating
+    nopriv: false
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Components/RatingHandler.php
+    line: 54
+    action: apollo_get_ratings
+    nopriv: false
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Components/RatingHandler.php
+    line: 55
+    action: apollo_get_voter_list
+    nopriv: false
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Components/RatingHandler.php
+    line: 58
+    action: apollo_admin_get_voters
+    nopriv: false
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Components/RatingHandler.php
+    line: 59
+    action: apollo_admin_adjust_rating
+    nopriv: false
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Components/RatingHandler.php
+    line: 60
+    action: apollo_admin_delete_rating
+    nopriv: false
+cron:
+  - unit: apollo-adverts
+    file: plugins/apollo-adverts/includes/cron.php
+    line: 23
+    fn: wp_next_scheduled
+    hook: apollo_classifieds_check_expired
+  - unit: apollo-adverts
+    file: plugins/apollo-adverts/includes/cron.php
+    line: 24
+    fn: wp_schedule_event
+    hook: apollo_classifieds_check_expired
+  - unit: apollo-adverts
+    file: plugins/apollo-adverts/includes/cron.php
+    line: 28
+    fn: wp_next_scheduled
+    hook: apollo_classifieds_notify_expiring
+  - unit: apollo-adverts
+    file: plugins/apollo-adverts/includes/cron.php
+    line: 29
+    fn: wp_schedule_event
+    hook: apollo_classifieds_notify_expiring
+  - unit: apollo-adverts
+    file: plugins/apollo-adverts/includes/cron.php
+    line: 33
+    fn: wp_next_scheduled
+    hook: apollo_classifieds_gc_temp
+  - unit: apollo-adverts
+    file: plugins/apollo-adverts/includes/cron.php
+    line: 34
+    fn: wp_schedule_event
+    hook: apollo_classifieds_gc_temp
+  - unit: apollo-adverts
+    file: plugins/apollo-adverts/src/Deactivation.php
+    line: 42
+    fn: wp_next_scheduled
+    hook: null
+  - unit: apollo-adverts
+    file: plugins/apollo-adverts/uninstall.php
+    line: 87
+    fn: wp_clear_scheduled_hook
+    hook: null
+  - unit: apollo-calendar
+    file: plugins/apollo-calendar/src/Admin/HolidaysAdmin.php
+    line: 232
+    fn: wp_next_scheduled
+    hook: apollo_calendar_seed_holidays
+  - unit: apollo-calendar
+    file: plugins/apollo-calendar/src/Admin/HolidaysAdmin.php
+    line: 233
+    fn: wp_schedule_event
+    hook: yearly
+  - unit: apollo-calendar
+    file: plugins/apollo-calendar/src/Deactivation.php
+    line: 21
+    fn: wp_next_scheduled
+    hook: apollo_calendar_seed_holidays
+  - unit: apollo-calendar
+    file: plugins/apollo-calendar/uninstall.php
+    line: 34
+    fn: wp_next_scheduled
+    hook: apollo_calendar_seed_holidays
+  - unit: apollo-chat
+    file: plugins/apollo-chat/src/Deactivation.php
+    line: 11
+    fn: wp_clear_scheduled_hook
+    hook: apollo_chat_cleanup
+  - unit: apollo-chat
+    file: plugins/apollo-chat/src/Plugin.php
+    line: 81
+    fn: wp_next_scheduled
+    hook: apollo_chat_cleanup
+  - unit: apollo-chat
+    file: plugins/apollo-chat/src/Plugin.php
+    line: 82
+    fn: wp_schedule_event
+    hook: apollo_chat_cleanup
+  - unit: apollo-chat
+    file: plugins/apollo-chat/uninstall.php
+    line: 34
+    fn: wp_next_scheduled
+    hook: apollo_chat_cleanup
+  - unit: apollo-core
+    file: plugins/apollo-core/src/Core/ActivationHandler.php
+    line: 264
+    fn: wp_next_scheduled
+    hook: apollo_cleanup_expired_sessions
+  - unit: apollo-core
+    file: plugins/apollo-core/src/Core/ActivationHandler.php
+    line: 265
+    fn: wp_schedule_event
+    hook: apollo_cleanup_expired_sessions
+  - unit: apollo-core
+    file: plugins/apollo-core/src/Core/ActivationHandler.php
+    line: 269
+    fn: wp_next_scheduled
+    hook: apollo_cleanup_old_lockouts
+  - unit: apollo-core
+    file: plugins/apollo-core/src/Core/ActivationHandler.php
+    line: 270
+    fn: wp_schedule_event
+    hook: apollo_cleanup_old_lockouts
+  - unit: apollo-core
+    file: plugins/apollo-core/src/Core/ActivationHandler.php
+    line: 274
+    fn: wp_next_scheduled
+    hook: apollo_process_email_queue
+  - unit: apollo-core
+    file: plugins/apollo-core/src/Core/ActivationHandler.php
+    line: 275
+    fn: wp_schedule_event
+    hook: five_minutes
+  - unit: apollo-core
+    file: plugins/apollo-core/src/Core/ActivationHandler.php
+    line: 279
+    fn: wp_next_scheduled
+    hook: apollo_cleanup_audit_log
+  - unit: apollo-core
+    file: plugins/apollo-core/src/Core/ActivationHandler.php
+    line: 280
+    fn: wp_schedule_event
+    hook: apollo_cleanup_audit_log
+  - unit: apollo-core
+    file: plugins/apollo-core/src/Core/ActivationHandler.php
+    line: 284
+    fn: wp_next_scheduled
+    hook: apollo_daily_statistics
+  - unit: apollo-core
+    file: plugins/apollo-core/src/Core/ActivationHandler.php
+    line: 285
+    fn: wp_schedule_event
+    hook: apollo_daily_statistics
+  - unit: apollo-core
+    file: plugins/apollo-core/src/Core/UninstallHandler.php
+    line: 178
+    fn: wp_clear_scheduled_hook
+    hook: null
+  - unit: apollo-core
+    file: plugins/apollo-core/src/Deactivation.php
+    line: 57
+    fn: wp_next_scheduled
+    hook: null
+  - unit: apollo-dashboard
+    file: plugins/apollo-dashboard/src/Deactivation.php
+    line: 58
+    fn: wp_next_scheduled
+    hook: null
+  - unit: apollo-email
+    file: plugins/apollo-email/src/Activation.php
+    line: 196
+    fn: wp_next_scheduled
+    hook: apollo_five_minutes
+  - unit: apollo-email
+    file: plugins/apollo-email/src/Activation.php
+    line: 197
+    fn: wp_schedule_event
+    hook: apollo_five_minutes
+  - unit: apollo-email
+    file: plugins/apollo-email/src/Core/Cron.php
+    line: 59
+    fn: wp_next_scheduled
+    hook: apollo_five_minutes
+  - unit: apollo-email
+    file: plugins/apollo-email/src/Core/Cron.php
+    line: 60
+    fn: wp_schedule_event
+    hook: apollo_five_minutes
+  - unit: apollo-email
+    file: plugins/apollo-email/src/Deactivation.php
+    line: 25
+    fn: wp_next_scheduled
+    hook: apollo_email_activated
+  - unit: apollo-email
+    file: plugins/apollo-email/src/Newsletter.php
+    line: 73
+    fn: wp_next_scheduled
+    hook: apollo_newsletter_send_scheduled
+  - unit: apollo-email
+    file: plugins/apollo-email/src/Newsletter.php
+    line: 74
+    fn: wp_schedule_event
+    hook: apollo_newsletter_send_scheduled
+  - unit: apollo-email
+    file: plugins/apollo-email/uninstall.php
+    line: 27
+    fn: wp_next_scheduled
+    hook: apollo_email_process_queue
+  - unit: apollo-email
+    file: plugins/apollo-email/uninstall.php
+    line: 65
+    fn: wp_next_scheduled
+    hook: apollo_newsletter_send_scheduled
+  - unit: apollo-email
+    file: plugins/apollo-email/views/admin/settings.php
+    line: 82
+    fn: wp_next_scheduled
+    hook: Ativo
+  - unit: apollo-events
+    file: plugins/apollo-events/src/Activation.php
+    line: 27
+    fn: wp_next_scheduled
+    hook: apollo_event_check_expiration
+  - unit: apollo-events
+    file: plugins/apollo-events/src/Activation.php
+    line: 28
+    fn: wp_schedule_event
+    hook: every_five_minutes
+  - unit: apollo-events
+    file: plugins/apollo-events/src/Deactivation.php
+    line: 23
+    fn: wp_next_scheduled
+    hook: apollo_event_check_expiration
+  - unit: apollo-events
+    file: plugins/apollo-events/uninstall.php
+    line: 20
+    fn: wp_next_scheduled
+    hook: apollo_event_check_expiration
+  - unit: apollo-fav
+    file: plugins/apollo-fav/includes/class-statistics-merge.php
+    line: 44
+    fn: wp_next_scheduled
+    hook: apollo_fav_daily_stats
+  - unit: apollo-fav
+    file: plugins/apollo-fav/includes/class-statistics-merge.php
+    line: 45
+    fn: wp_schedule_event
+    hook: apollo_fav_daily_stats
+  - unit: apollo-gestor
+    file: plugins/apollo-gestor/apollo-gestor.php
+    line: 173
+    fn: wp_next_scheduled
+    hook: null
+  - unit: apollo-gestor
+    file: plugins/apollo-gestor/src/Cron/TaskReminderCron.php
+    line: 67
+    fn: wp_next_scheduled
+    hook: apollo_five_minutes
+  - unit: apollo-gestor
+    file: plugins/apollo-gestor/src/Cron/TaskReminderCron.php
+    line: 68
+    fn: wp_schedule_event
+    hook: apollo_five_minutes
+  - unit: apollo-gestor
+    file: plugins/apollo-gestor/src/Cron/TaskReminderCron.php
+    line: 313
+    fn: wp_next_scheduled
+    hook: null
+  - unit: apollo-journal
+    file: plugins/apollo-journal/src/Deactivation.php
+    line: 44
+    fn: wp_clear_scheduled_hook
+    hook: apollo_journal_daily_digest
+  - unit: apollo-journal
+    file: plugins/apollo-journal/src/NREP.php
+    line: 104
+    fn: wp_schedule_single_event
+    hook: apollo_journal_retry_nrep
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Activation.php
+    line: 48
+    fn: wp_next_scheduled
+    hook: apollo_login_purge_unverified_users
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Activation.php
+    line: 49
+    fn: wp_schedule_event
+    hook: apollo_login_purge_unverified_users
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Auth/PendingRegistrationCleanup.php
+    line: 21
+    fn: wp_next_scheduled
+    hook: apollo_login_pending_registration_cleanup
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Auth/PendingRegistrationCleanup.php
+    line: 22
+    fn: wp_schedule_event
+    hook: apollo_login_pending_registration_cleanup
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Deactivation.php
+    line: 59
+    fn: wp_next_scheduled
+    hook: null
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Security/JWTAuth.php
+    line: 96
+    fn: wp_next_scheduled
+    hook: apollo_jwt_purge_expired
+  - unit: apollo-login
+    file: plugins/apollo-login/src/Security/JWTAuth.php
+    line: 97
+    fn: wp_schedule_event
+    hook: apollo_jwt_purge_expired
+  - unit: apollo-membership
+    file: plugins/apollo-membership/src/Deactivation.php
+    line: 24
+    fn: wp_clear_scheduled_hook
+    hook: apollo_membership_daily_check
+  - unit: apollo-membership
+    file: plugins/apollo-membership/uninstall.php
+    line: 76
+    fn: wp_clear_scheduled_hook
+    hook: apollo_membership_daily_cleanup
+  - unit: apollo-membership
+    file: plugins/apollo-membership/uninstall.php
+    line: 77
+    fn: wp_clear_scheduled_hook
+    hook: apollo_membership_weekly_recap
+  - unit: apollo-notif
+    file: plugins/apollo-notif/src/Deactivation.php
+    line: 11
+    fn: wp_clear_scheduled_hook
+    hook: apollo_notif_cleanup
+  - unit: apollo-notif
+    file: plugins/apollo-notif/src/Deactivation.php
+    line: 12
+    fn: wp_clear_scheduled_hook
+    hook: apollo_notif_digest_dispatch
+  - unit: apollo-notif
+    file: plugins/apollo-notif/src/Plugin.php
+    line: 91
+    fn: wp_next_scheduled
+    hook: apollo_notif_cleanup
+  - unit: apollo-notif
+    file: plugins/apollo-notif/src/Plugin.php
+    line: 92
+    fn: wp_schedule_event
+    hook: apollo_notif_cleanup
+  - unit: apollo-notif
+    file: plugins/apollo-notif/src/Plugin.php
+    line: 97
+    fn: wp_next_scheduled
+    hook: apollo_notif_digest_dispatch
+  - unit: apollo-notif
+    file: plugins/apollo-notif/src/Plugin.php
+    line: 98
+    fn: wp_schedule_event
+    hook: apollo_notif_digest_dispatch
+  - unit: apollo-notif
+    file: plugins/apollo-notif/uninstall.php
+    line: 34
+    fn: wp_next_scheduled
+    hook: null
+  - unit: apollo-remind
+    file: plugins/apollo-remind/src/Core/Activation.php
+    line: 18
+    fn: wp_clear_scheduled_hook
+    hook: apollo_remind_process_queue
+  - unit: apollo-remind
+    file: plugins/apollo-remind/src/Core/Activation.php
+    line: 19
+    fn: wp_clear_scheduled_hook
+    hook: apollo_remind_daily_cleanup
+  - unit: apollo-remind
+    file: plugins/apollo-remind/src/Core/Activation.php
+    line: 98
+    fn: wp_next_scheduled
+    hook: apollo_remind_process_queue
+  - unit: apollo-remind
+    file: plugins/apollo-remind/src/Core/Activation.php
+    line: 99
+    fn: wp_schedule_event
+    hook: apollo_remind_two_minutes
+  - unit: apollo-remind
+    file: plugins/apollo-remind/src/Core/Activation.php
+    line: 101
+    fn: wp_next_scheduled
+    hook: apollo_remind_daily_cleanup
+  - unit: apollo-remind
+    file: plugins/apollo-remind/src/Core/Activation.php
+    line: 102
+    fn: wp_schedule_event
+    hook: apollo_remind_daily_cleanup
+  - unit: apollo-remind
+    file: plugins/apollo-remind/uninstall.php
+    line: 47
+    fn: wp_clear_scheduled_hook
+    hook: apollo_remind_process_queue
+  - unit: apollo-remind
+    file: plugins/apollo-remind/uninstall.php
+    line: 48
+    fn: wp_clear_scheduled_hook
+    hook: apollo_remind_daily_cleanup
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/apollo-statistics.php
+    line: 290
+    fn: wp_clear_scheduled_hook
+    hook: apollo_stats_daily_collect
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/apollo-statistics.php
+    line: 291
+    fn: wp_clear_scheduled_hook
+    hook: apollo_stats_daily_aggregate
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/apollo-statistics.php
+    line: 292
+    fn: wp_clear_scheduled_hook
+    hook: apollo_stats_weekly_rotate
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/apollo-statistics.php
+    line: 293
+    fn: wp_clear_scheduled_hook
+    hook: apollo_stats_session_cleanup
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/apollo-statistics.php
+    line: 294
+    fn: wp_clear_scheduled_hook
+    hook: apollo_stats_cron_events_reminder_email
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/apollo-statistics.php
+    line: 295
+    fn: wp_clear_scheduled_hook
+    hook: apollo_stats_cron_weekly_roundup_email
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/includes/class-data-collector.php
+    line: 67
+    fn: wp_next_scheduled
+    hook: apollo_stats_daily_collect
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/includes/class-data-collector.php
+    line: 68
+    fn: wp_schedule_event
+    hook: apollo_stats_daily_collect
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/src/Admin/TestPanel.php
+    line: 560
+    fn: wp_next_scheduled
+    hook: apollo_stats_daily_aggregate
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/src/Admin/TestPanel.php
+    line: 566
+    fn: wp_next_scheduled
+    hook: apollo_stats_weekly_rotate
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/src/Collectors/CronCollector.php
+    line: 34
+    fn: wp_next_scheduled
+    hook: apollo_stats_daily_aggregate
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/src/Collectors/CronCollector.php
+    line: 35
+    fn: wp_schedule_event
+    hook: apollo_stats_daily_aggregate
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/src/Collectors/CronCollector.php
+    line: 40
+    fn: wp_next_scheduled
+    hook: apollo_stats_weekly_rotate
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/src/Collectors/CronCollector.php
+    line: 41
+    fn: wp_schedule_event
+    hook: apollo_stats_weekly_rotate
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/src/Collectors/SessionCollector.php
+    line: 31
+    fn: wp_next_scheduled
+    hook: apollo_stats_session_cleanup
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/src/Collectors/SessionCollector.php
+    line: 32
+    fn: wp_schedule_event
+    hook: apollo_stats_session_cleanup
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/src/Collectors/WeeklyDigestCron.php
+    line: 49
+    fn: wp_next_scheduled
+    hook: null
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/src/Collectors/WeeklyDigestCron.php
+    line: 50
+    fn: wp_schedule_single_event
+    hook: null
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/src/Collectors/WeeklyDigestCron.php
+    line: 52
+    fn: wp_next_scheduled
+    hook: null
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/src/Collectors/WeeklyDigestCron.php
+    line: 53
+    fn: wp_schedule_single_event
+    hook: null
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/src/Collectors/WeeklyDigestCron.php
+    line: 100
+    fn: wp_schedule_single_event
+    hook: null
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/src/Collectors/WeeklyDigestCron.php
+    line: 135
+    fn: wp_schedule_single_event
+    hook: null
+  - unit: apollo-statistics
+    file: plugins/apollo-statistics/uninstall.php
+    line: 53
+    fn: wp_next_scheduled
+    hook: null
+  - unit: apollo-telegram
+    file: plugins/apollo-telegram/apollo-telegram.php
+    line: 321
+    fn: wp_next_scheduled
+    hook: apollo_clean_expired_verifs
+  - unit: apollo-telegram
+    file: plugins/apollo-telegram/apollo-telegram.php
+    line: 323
+    fn: wp_schedule_event
+    hook: apollo_clean_expired_verifs
+  - unit: apollo-telegram
+    file: plugins/apollo-telegram/apollo-telegram.php
+    line: 353
+    fn: wp_clear_scheduled_hook
+    hook: apollo_clean_expired_verifs
+  - unit: apollo-templates
+    file: plugins/apollo-templates/examples/user-radar-examples.php
+    line: 115
+    fn: wp_next_scheduled
+    hook: apollo_daily_ranking_update
+  - unit: apollo-templates
+    file: plugins/apollo-templates/examples/user-radar-examples.php
+    line: 116
+    fn: wp_schedule_event
+    hook: apollo_daily_ranking_update
+  - unit: apollo-templates
+    file: plugins/apollo-templates/src/Deactivation.php
+    line: 58
+    fn: wp_next_scheduled
+    hook: null
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Activation.php
+    line: 321
+    fn: wp_next_scheduled
+    hook: apollo_matchmaking_recompute
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Activation.php
+    line: 327
+    fn: wp_schedule_event
+    hook: apollo_matchmaking_recompute
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Activation.php
+    line: 331
+    fn: wp_next_scheduled
+    hook: apollo_matchmaking_incremental
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Activation.php
+    line: 332
+    fn: wp_schedule_event
+    hook: five_minutes
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Deactivation.php
+    line: 32
+    fn: wp_clear_scheduled_hook
+    hook: apollo_matchmaking_recompute
+  - unit: apollo-users
+    file: plugins/apollo-users/src/Deactivation.php
+    line: 33
+    fn: wp_clear_scheduled_hook
+    hook: apollo_matchmaking_incremental
+  - unit: mu-plugin
+    file: mu-plugin/endurance-page-cache.php
+    line: 550
+    fn: wp_next_scheduled
+    hook: null
+  - unit: mu-plugin
+    file: mu-plugin/endurance-page-cache.php
+    line: 551
+    fn: wp_schedule_single_event
+    hook: null

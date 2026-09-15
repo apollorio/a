@@ -1,8 +1,7 @@
 /**
  * Apollo URL Importer — REST / fetch API layer.
  *
- * BlueTicket → server preview + importar-url (strict CPT contract).
- * Shotgun   → client HTML scrape → POST /eventos (until PHP provider exists).
+ * BlueTicket + Shotgun → server preview + importar-url (strict CPT contract).
  *
  * @package apollo-events
  */
@@ -35,10 +34,10 @@
   }
 
   async function fetchHTML(rawUrl) {
-    const proxyTemplate = AUI.$('cfgFetchProxy').value.trim();
+    const proxyTemplate = AUI.$('cfgFetchProxy') && AUI.$('cfgFetchProxy').value.trim();
 
     try {
-      logMsg('tentando fetch direto...', 'info');
+      logMsg('tentando fetch direto (fallback emergência)...', 'info');
       const res = await fetch(rawUrl, { mode: 'cors' });
       if (res.ok) {
         const text = await res.text();
@@ -75,8 +74,6 @@
       } catch (e) {
         logMsg('proxy configurado falhou: ' + e.message, 'warn');
       }
-    } else {
-      logMsg('nenhum endpoint de fetch configurado.', 'warn');
     }
 
     return null;
@@ -85,19 +82,21 @@
   /**
    * Map server preview payload → checklist extract shape.
    */
-  function extractFromServerPreview(data, rawUrl) {
+  function extractFromServerPreview(body, rawUrl) {
+    const data = body.data || body;
     const loc = data.loc || {};
     const matched = data.matched_loc ? String(data.matched_loc) : '';
-    /* Submitted URL wins for the ticket CTA — provider may only append ?c=. */
     const ticketUrl = rawUrl || data.ticket_url || data.source_url || '';
     return {
-      platform: data.provider || 'blueticket',
+      platform: data.provider || 'unknown',
       title: data.title || '',
       start_date: data.start_date || '',
       start_time: data.start_time || '',
       end_date: data.end_date || '',
       end_time: data.end_time || '07:00',
       cover: data.cover || '',
+      cover_candidates: data.cover_candidates || [],
+      cover_diagnostics: data.cover_diagnostics || null,
       video: data.video_url || '',
       locName: loc.name || '',
       locSlug: loc.slug || '',
@@ -110,19 +109,20 @@
       performers: [],
       matched_loc: data.matched_loc || 0,
       existing_id: data.existing_id || 0,
-      ready: data.ready || null,
+      ready: body.ready || data.ready || null,
+      diagnostics: body.diagnostics || [],
       _server: true
     };
   }
 
-  async function previewBlueTicket(rawUrl) {
+  async function previewImport(rawUrl) {
     const base = restBase();
     const path = (AUI.boot.importPreviewPath || 'apollo/v1/eventos/importar-url/preview').replace(/^\//, '');
     if (!base) {
       throw new Error('configure a base da REST API primeiro.');
     }
     const coupon = (AUI.$('cfgCoupon') && AUI.$('cfgCoupon').value.trim()) || (AUI.boot.defaultCoupon || 'apollo');
-    logMsg('BlueTicket → preview server-side (' + path + ')…', 'info');
+    logMsg('preview server-side (' + path + ')…', 'info');
     const res = await fetch(base.replace(/\/$/, '') + '/' + path, {
       method: 'POST',
       headers: restHeaders(),
@@ -131,21 +131,26 @@
     });
     const body = await res.json().catch(function () { return null; });
     if (!res.ok) {
+      if (AUI.Diagnostics) AUI.Diagnostics.fromImportError(body || {});
       const msg = (body && (body.message || (body.data && body.data.message))) || ('HTTP ' + res.status);
       throw new Error(msg);
     }
     if (!body || !body.ok || !body.data) {
       throw new Error('preview sem data');
     }
-    return extractFromServerPreview(body.data, rawUrl);
+    if (AUI.Diagnostics) AUI.Diagnostics.fromPreview(body);
+    return extractFromServerPreview(body, rawUrl);
+  }
+
+  /** @deprecated use previewImport */
+  async function previewBlueTicket(rawUrl) {
+    return previewImport(rawUrl);
   }
 
   function buildPayload(values, extract) {
     const status = AUI.$('cfgStatus').value || 'draft';
-    /* Submitted page URL is always the ticket CTA — never drop it. */
     let ticketUrl = (values.ticketUrl || values.sourceUrl || (extract && (extract.ticketUrl || extract.sourceUrl)) || '').trim();
     let ticketTitle = (values.ticket_price || '').trim();
-    /* Guard: offer scrape / paste mistakes put the page URL into ticket_price. */
     if (!ticketUrl && /^https?:\/\//i.test(ticketTitle)) {
       ticketUrl = ticketTitle;
       ticketTitle = '';
@@ -261,7 +266,6 @@
     if (!url) {
       throw new Error('URL de origem ausente na linha.');
     }
-    /* Keep the submitted ticket URL on the row even though the server re-fetches. */
     if (!row.values.ticketUrl) {
       row.values.ticketUrl = url;
     }
@@ -294,6 +298,7 @@
     });
     const body = await res.json().catch(function () { return null; });
     if (!res.ok) {
+      if (AUI.Diagnostics) AUI.Diagnostics.fromImportError(body || {});
       const msg = (body && (body.message || (body.code && (body.message || body.code)))) || ('HTTP ' + res.status);
       throw new Error(typeof msg === 'string' ? msg : JSON.stringify(msg));
     }
@@ -308,11 +313,15 @@
     }
     row.result = body;
     row.values.locId = String(body.loc_id);
+    if (AUI.Cover) AUI.Cover.afterImportRow(row, body);
+    if (body.diagnostics && AUI.Diagnostics) AUI.Diagnostics.fromPreview(body);
     return body;
   }
 
-  async function sendToWordPress(row, card) {
-    const useServer = row.platform === 'blueticket' || (row.extract && row.extract._server);
+  async function sendToWordPress(row, card, opts) {
+    opts = opts || {};
+    /* importar-url ONLY when preview came from server (BlueTicket API path). */
+    const useServer = !!(row.extract && row.extract._server);
 
     setRowStatus(row, card, 'sending');
     try {
@@ -322,16 +331,19 @@
         logMsg(
           'importar-url OK #' + body.post_id +
           ' banner=' + body.banner.attachment_id +
+          (body.banner.local_url ? ' local=' + body.banner.local_url : '') +
           ' thumb=' + body.thumb_id +
           ' loc=' + body.loc_id +
-          ' synced=' + body.synced,
+          ' synced=' + body.synced +
+          (body.banner.reused ? ' reused' : ''),
           'ok'
         );
-        return;
+        if (AUI.UI && AUI.UI.renderResults) AUI.UI.renderResults();
+        return body;
       }
 
       const base = AUI.$('cfgWpBase').value.trim();
-      const insertPath = AUI.$('cfgInsertPath').value.trim();
+      const insertPath = AUI.$('cfgInsertPath') && AUI.$('cfgInsertPath').value.trim();
       if (!base || !insertPath) {
         throw new Error('configure a base da REST API e o endpoint de inserção primeiro.');
       }
@@ -348,7 +360,10 @@
       setRowStatus(row, card, 'sent');
     } catch (e) {
       setRowStatus(row, card, 'failed');
-      alert('falha ao enviar: ' + e.message);
+      if (!opts.silentAlert) {
+        alert('falha ao enviar: ' + e.message);
+      }
+      throw e;
     }
   }
 
@@ -363,6 +378,7 @@
   AUI.Api = {
     restHeaders: restHeaders,
     fetchHTML: fetchHTML,
+    previewImport: previewImport,
     previewBlueTicket: previewBlueTicket,
     extractFromServerPreview: extractFromServerPreview,
     buildPayload: buildPayload,

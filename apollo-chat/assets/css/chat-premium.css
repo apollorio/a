@@ -1,4 +1,4 @@
-﻿/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 	APOLLO CHAT::RIO â€” PREMIUM LUXURY MOBILE-FIRST + DESKTOP SPLIT
 	â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
@@ -10,6 +10,7 @@
 	margin: 0;
 	padding: 0;
 	-webkit-tap-highlight-color: transparent;
+	corner-shape: squircle;
 }
 
 html,
@@ -29,9 +30,8 @@ body {
 .apollo-chat-wrap {
 	width: 100%;
 	height: 100%;
-	position: relative;
 	overflow: hidden;
-	background: #f7f7f8;
+	background: #fff;
 }
 
 .ac-layout {
@@ -39,9 +39,9 @@ body {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
-	background: var(--black-1, #131517);
+	background: #fff;
 	position: relative;
-	background: #f7f7f8;
+	overflow: hidden;
 }
 
 /* â”€â”€ LAYOUT STARS â€” subtle across full shell â”€â”€ */
@@ -60,27 +60,6 @@ body {
 	left: 50%;
 	top: 50%;
 	border-radius: 100%;
-	box-shadow:
-		-45vw -38vh 1px 0px rgba(var(--rgb-t), 0.35),
-		-82vw -12vh 0px 0.5px rgba(var(--rgb-t), 0.25),
-		-18vw -28vh 1px 0px rgba(255, 245, 230, 0.3),
-		32vw -42vh 0px 0.5px rgba(var(--rgb-t), 0.22),
-		68vw -8vh 1px 0px rgba(255, 250, 240, 0.28),
-		-58vw -22vh 0px 0.5px rgba(var(--rgb-t), 0.18),
-		14vw -35vh 1px 0px rgba(255, 245, 225, 0.32),
-		85vw -18vh 0px 0.5px rgba(var(--rgb-t), 0.2),
-		-92vw -5vh 1px 0px rgba(255, 250, 235, 0.26),
-		48vw -32vh 0px 0.5px rgba(var(--rgb-t), 0.15),
-		-35vw -48vh 1px 0px rgba(255, 240, 220, 0.3),
-		72vw -45vh 0px 0.5px rgba(var(--rgb-t), 0.22),
-		-5vw -15vh 1px 0px rgba(255, 248, 232, 0.35),
-		55vw -25vh 0px 0.5px rgba(var(--rgb-t), 0.19),
-		-70vw -42vh 1px 0px rgba(255, 244, 225, 0.24),
-		25vw -48vh 0px 0.5px rgba(var(--rgb-t), 0.28),
-		92vw -38vh 1px 0px rgba(255, 250, 238, 0.2),
-		-28vw -8vh 0px 0.5px rgba(var(--rgb-t), 0.32),
-		42vw -18vh 1px 0px rgba(255, 242, 218, 0.26),
-		-85vw -32vh 0px 0.5px rgba(var(--rgb-t), 0.17);
 	animation: ac-layout-twinkle 6s ease-in-out infinite alternate;
 }
 
@@ -90,22 +69,6 @@ body {
 	left: 50%;
 	top: 50%;
 	border-radius: 100%;
-	box-shadow:
-		-52vw -20vh 0px 0.5px rgba(var(--rgb-t), 0.2),
-		-75vw -45vh 1px 0px rgba(255, 248, 230, 0.28),
-		-10vw -33vh 0px 0.5px rgba(var(--rgb-t), 0.18),
-		38vw -15vh 1px 0px rgba(255, 244, 222, 0.32),
-		78vw -42vh 0px 0.5px rgba(var(--rgb-t), 0.24),
-		-62vw -5vh 1px 0px rgba(255, 250, 235, 0.2),
-		8vw -48vh 0px 0.5px rgba(var(--rgb-t), 0.3),
-		88vw -28vh 1px 0px rgba(255, 240, 215, 0.22),
-		-40vw -38vh 0px 0.5px rgba(var(--rgb-t), 0.16),
-		62vw -10vh 1px 0px rgba(255, 246, 228, 0.26),
-		-88vw -25vh 0px 0.5px rgba(var(--rgb-t), 0.21),
-		18vw -40vh 1px 0px rgba(255, 250, 240, 0.35),
-		95vw -15vh 0px 0.5px rgba(var(--rgb-t), 0.18),
-		-22vw -48vh 1px 0px rgba(255, 244, 225, 0.27),
-		50vw -5vh 0px 0.5px rgba(var(--rgb-t), 0.23);
 	animation: ac-layout-twinkle 8s 2s ease-in-out infinite alternate;
 }
 
@@ -132,8 +95,7 @@ body {
 	flex: 1;
 	min-height: 0;
 	transition: transform 0.4s cubic-bezier(.16, 1, .3, 1);
-	background: #f7f7f8;
-	;
+	background: #fff;
 }
 
 .ac-sidebar.hidden {
@@ -146,21 +108,22 @@ body {
 
 /* â”€â”€ HEADER â€” padding-top 45px for Apollo navbar clearance â”€â”€ */
 .ac-sidebar-header {
-	background: var(--black-1, #131517);
-	padding: 45px 16px 14px;
+	background: var(--white-3, #f5f5f7);
+	padding: 18px 16px 14px;
+	color: rgba(var(--txt-rgb, 19, 21, 23), 0.88);
 	position: relative;
 	z-index: 40;
 	flex-shrink: 0;
 	overflow: hidden;
 }
 
-/* â”€â”€ HEADER STARS â€” dense sparkle layer â”€â”€ */
+/* â”€â”€ HEADER STARS â€” off on light shell â”€â”€ */
 .ac-sidebar-header::before,
-.ac-sidebar-header::after {
-	content: '';
-	position: absolute;
-	pointer-events: none;
-	border-radius: 100%;
+.ac-sidebar-header::after,
+.ac-layout::before,
+.ac-layout::after {
+	display: none !important;
+	content: none !important;
 }
 
 .ac-sidebar-header::before {
@@ -168,27 +131,6 @@ body {
 	height: 1px;
 	left: 50%;
 	top: 50%;
-	box-shadow:
-		-40vw -8px 1px 0.5px rgba(var(--rgb-t), 0.55),
-		-72vw 12px 0px 1px rgba(var(--rgb-t), 0.4),
-		-12vw -15px 1px 0.5px rgba(255, 248, 230, 0.5),
-		28vw 8px 0px 1px rgba(var(--rgb-t), 0.35),
-		62vw -5px 1px 0.5px rgba(255, 250, 240, 0.6),
-		-55vw 18px 0px 0.5px rgba(var(--rgb-t), 0.3),
-		15vw -20px 1px 1px rgba(255, 245, 225, 0.45),
-		80vw 5px 0px 0.5px rgba(var(--rgb-t), 0.38),
-		-88vw -2px 1px 0.5px rgba(255, 250, 235, 0.52),
-		45vw 15px 0px 1px rgba(var(--rgb-t), 0.28),
-		-25vw -12px 1px 0.5px rgba(255, 240, 220, 0.48),
-		70vw -18px 0px 0.5px rgba(var(--rgb-t), 0.42),
-		-5vw 10px 1px 1px rgba(255, 248, 232, 0.55),
-		90vw -8px 0px 0.5px rgba(var(--rgb-t), 0.32),
-		-65vw 20px 1px 0.5px rgba(255, 244, 225, 0.4),
-		35vw -22px 0px 1px rgba(var(--rgb-t), 0.5),
-		-48vw 2px 1px 0.5px rgba(255, 250, 238, 0.35),
-		55vw 22px 0px 0.5px rgba(var(--rgb-t), 0.45),
-		-82vw -18px 1px 1px rgba(255, 242, 218, 0.38),
-		8vw -5px 0px 0.5px rgba(var(--rgb-t), 0.58);
 	animation: ac-header-sparkle 5s ease-in-out infinite alternate;
 	z-index: 0;
 }
@@ -198,22 +140,6 @@ body {
 	height: 1px;
 	left: 50%;
 	top: 50%;
-	box-shadow:
-		-30vw 5px 0px 0.5px rgba(var(--rgb-t), 0.42),
-		-60vw -10px 1px 0.5px rgba(255, 248, 230, 0.35),
-		-2vw 18px 0px 1px rgba(var(--rgb-t), 0.28),
-		40vw -15px 1px 0.5px rgba(255, 244, 222, 0.5),
-		75vw 12px 0px 0.5px rgba(var(--rgb-t), 0.38),
-		-50vw -20px 1px 1px rgba(255, 250, 235, 0.45),
-		20vw 2px 0px 0.5px rgba(var(--rgb-t), 0.32),
-		85vw -12px 1px 0.5px rgba(255, 240, 215, 0.52),
-		-38vw 15px 0px 1px rgba(var(--rgb-t), 0.22),
-		58vw -2px 1px 0.5px rgba(255, 246, 228, 0.48),
-		-78vw 8px 0px 0.5px rgba(var(--rgb-t), 0.4),
-		10vw -22px 1px 1px rgba(255, 250, 240, 0.55),
-		95vw 18px 0px 0.5px rgba(var(--rgb-t), 0.3),
-		-18vw -8px 1px 0.5px rgba(255, 244, 225, 0.42),
-		48vw 20px 0px 0.5px rgba(var(--rgb-t), 0.36);
 	animation: ac-header-sparkle 7s 1.5s ease-in-out infinite alternate;
 	z-index: 0;
 }
@@ -245,14 +171,14 @@ body {
 }
 
 .ac-header-title {
-	color: #fff;
+	color: rgba(var(--txt-rgb, 19, 21, 23), 0.92);
 	font-size: 17px;
-	font-weight: 600;
+	font-weight: 650;
 	font-family: var(--ff-mono, "Space Mono", monospace);
-	letter-spacing: 0.4px;
-	opacity: 0.95;
+	letter-spacing: -0.02em;
+	opacity: 1;
 	margin: 0;
-	text-shadow: 0 0 20px rgba(var(--rgb-t), 0.15);
+	text-shadow: none;
 }
 
 .ac-header-title .dim {
@@ -265,7 +191,6 @@ body {
 	width: 36px;
 	height: 36px;
 	border-radius: 50%;
-	border: 1.5px solid rgba(var(--rgb-t), 0.25);
 	background: rgba(var(--rgb-t), 0.12);
 	backdrop-filter: blur(8px);
 	-webkit-backdrop-filter: blur(8px);
@@ -280,7 +205,6 @@ body {
 
 .ac-btn-new:hover {
 	background: rgba(var(--rgb-t), 0.22);
-	border-color: rgba(var(--rgb-t), 0.45);
 	transform: scale(1.05);
 }
 
@@ -304,38 +228,27 @@ body {
 	pointer-events: none;
 }
 
+/* Fill/colour/focus — shell owns (recessed well + focus ring). What stayed
+   here is geometry only. The removed rules were the dark-shell leftovers:
+   translucent white fill and `color:#fff`, i.e. white text in a white field. */
 .ac-sidebar-search input {
 	width: 100%;
 	height: 40px;
 	border-radius: 20px;
-	border: none;
 	padding: 0 16px 0 40px;
 	font-size: 13px;
 	font-family: inherit;
-	background: rgba(var(--rgb-t), 0.15);
-	color: #fff;
 	outline: none;
-	transition: background 0.25s, box-shadow 0.25s;
 }
 
-.ac-sidebar-search input::placeholder {
-	color: rgba(var(--rgb-t), 0.55);
-}
+.ac-sidebar-search input::placeholder { /* shell owns */ }
 
-.ac-sidebar-search input:focus {
-	background: rgba(var(--rgb-t), 0.25);
-	box-shadow: 0 0 0 2px rgba(var(--rgb-t), 0.15);
-}
+.ac-sidebar-search input:focus { /* shell owns */ }
 
-/* â”€â”€ STARFIELD â€” Permanent dark sky with stars â”€â”€ */
+/* â”€â”€ STARFIELD â€” disabled on light shell â”€â”€ */
 .ac-starfield {
-	position: absolute;
-	inset: 0;
-	width: 100%;
-	height: 100%;
-	background: var(--black-1, #131517);
-	overflow: hidden;
-	z-index: 0;
+	display: none !important;
+	background: var(--white-3, #f5f5f7);
 }
 
 /* Static stars â€” fixed layer */
@@ -347,33 +260,6 @@ body {
 	left: 50%;
 	top: 50%;
 	border-radius: 100%;
-	box-shadow:
-		-42vw -8vh 1px 0.5px rgba(var(--rgb-t), 0.9),
-		-78vw -18vh 0px 0.5px rgba(255, 240, 220, 0.85),
-		-15vw 6vh 1px 0.5px rgba(var(--rgb-t), 0.7),
-		28vw -12vh 0px 0.5px rgba(255, 245, 230, 0.8),
-		65vw -4vh 1px 0.5px rgba(var(--rgb-t), 0.88),
-		-55vw 12vh 0px 0.5px rgba(255, 250, 240, 0.75),
-		12vw -16vh 1px 0.5px rgba(var(--rgb-t), 0.65),
-		82vw 8vh 0px 0.5px rgba(255, 240, 215, 0.82),
-		-90vw -2vh 1px 0.5px rgba(var(--rgb-t), 0.55),
-		45vw 14vh 0px 0.5px rgba(255, 245, 225, 0.9),
-		-30vw -20vh 1px 0.5px rgba(var(--rgb-t), 0.78),
-		70vw -15vh 0px 0.5px rgba(255, 250, 235, 0.6),
-		-8vw 10vh 1px 0.5px rgba(var(--rgb-t), 0.72),
-		92vw -8vh 0px 0.5px rgba(255, 240, 220, 0.68),
-		-65vw 16vh 1px 0.5px rgba(var(--rgb-t), 0.58),
-		38vw -22vh 0px 0.5px rgba(255, 248, 230, 0.88),
-		-48vw -14vh 1px 0.5px rgba(var(--rgb-t), 0.5),
-		55vw 4vh 0px 0.5px rgba(255, 244, 220, 0.76),
-		-20vw -6vh 1px 0.5px rgba(var(--rgb-t), 0.83),
-		78vw -20vh 0px 0.5px rgba(255, 250, 238, 0.92),
-		-88vw 8vh 1px 0.5px rgba(var(--rgb-t), 0.62),
-		8vw 18vh 0px 0.5px rgba(255, 242, 218, 0.7),
-		-35vw 2vh 1px 0.5px rgba(var(--rgb-t), 0.95),
-		60vw 12vh 0px 0.5px rgba(255, 246, 228, 0.58),
-		-72vw -10vh 1px 0.5px rgba(var(--rgb-t), 0.67),
-		22vw -2vh 0px 0.5px rgba(255, 250, 235, 0.85);
 }
 
 /* Moving stars â€” layer 1 (fast) */
@@ -387,81 +273,18 @@ body {
 }
 
 .ac-stars-layer-1 {
-	box-shadow:
-		-33vw -9vh 1px 0.5px rgba(var(--rgb-t), 0.9),
-		-59vw -16vh 0px 0.5px rgba(255, 240, 220, 0.86),
-		-5vw 2vh 1px 0.5px rgba(var(--rgb-t), 0.76),
-		55vw 14vh 0px 0.5px rgba(255, 244, 225, 0.82),
-		90vw -3vh 1px 0.5px rgba(var(--rgb-t), 0.68),
-		22vw 5vh 0px 0.5px rgba(255, 248, 232, 0.92),
-		54vw -10vh 1px 0.5px rgba(var(--rgb-t), 0.58),
-		70vw -18vh 0px 0.5px rgba(255, 242, 218, 0.74),
-		-22vw 12vh 1px 0.5px rgba(var(--rgb-t), 0.88),
-		88vw -2vh 0px 0.5px rgba(255, 250, 238, 0.65),
-		-80vw -12vh 1px 0.5px rgba(var(--rgb-t), 0.55),
-		36vw -16vh 0px 0.5px rgba(255, 246, 228, 0.95),
-		-96vw -22vh 1px 0.5px rgba(var(--rgb-t), 0.72),
-		64vw 8vh 0px 0.5px rgba(255, 240, 215, 0.8),
-		-50vw 10vh 1px 0.5px rgba(var(--rgb-t), 0.6),
-		78vw 6vh 0px 0.5px rgba(255, 248, 230, 0.88),
-		-74vw -5vh 1px 0.5px rgba(var(--rgb-t), 0.78),
-		15vw -14vh 0px 0.5px rgba(255, 244, 222, 0.7),
-		-31vw 18vh 1px 0.5px rgba(var(--rgb-t), 0.52),
-		47vw -20vh 0px 0.5px rgba(255, 250, 235, 0.9);
 	animation: ac-star-burst 7s cubic-bezier(0.55, 0, 1, 0.45) infinite,
 		ac-star-drift 25s ease-in-out alternate infinite;
 }
 
 /* Moving stars â€” layer 2 (medium) */
 .ac-stars-layer-2 {
-	box-shadow:
-		29vw 12vh 1px 0.5px rgba(var(--rgb-t), 0.85),
-		-90vw 8vh 0px 0.5px rgba(255, 244, 225, 0.78),
-		53vw -5vh 1px 0.5px rgba(var(--rgb-t), 0.68),
-		-65vw 18vh 0px 0.5px rgba(255, 248, 232, 0.9),
-		38vw -14vh 1px 0.5px rgba(var(--rgb-t), 0.56),
-		-77vw -10vh 0px 0.5px rgba(255, 240, 218, 0.82),
-		66vw 2vh 1px 0.5px rgba(var(--rgb-t), 0.75),
-		-4vw -20vh 0px 0.5px rgba(255, 246, 228, 0.65),
-		94vw -6vh 1px 0.5px rgba(var(--rgb-t), 0.95),
-		-49vw 4vh 0px 0.5px rgba(255, 250, 235, 0.72),
-		82vw 16vh 1px 0.5px rgba(var(--rgb-t), 0.6),
-		-35vw -16vh 0px 0.5px rgba(255, 242, 220, 0.88),
-		75vw -12vh 1px 0.5px rgba(var(--rgb-t), 0.52),
-		-20vw 14vh 0px 0.5px rgba(255, 248, 230, 0.76),
-		55vw -18vh 1px 0.5px rgba(var(--rgb-t), 0.82),
-		-10vw -4vh 0px 0.5px rgba(255, 244, 222, 0.58),
-		40vw 10vh 1px 0.5px rgba(var(--rgb-t), 0.7),
-		-87vw 2vh 0px 0.5px rgba(255, 250, 238, 0.92),
-		12vw -8vh 1px 0.5px rgba(var(--rgb-t), 0.64),
-		67vw 20vh 0px 0.5px rgba(255, 240, 215, 0.84);
 	animation: ac-star-burst 7s -2.3s cubic-bezier(0.55, 0, 1, 0.45) infinite,
 		ac-star-drift 25s ease-in-out alternate infinite;
 }
 
 /* Moving stars â€” layer 3 (slow) */
 .ac-stars-layer-3 {
-	box-shadow:
-		-80vw -12vh 1px 0.5px rgba(var(--rgb-t), 0.86),
-		-50vw 6vh 0px 0.5px rgba(255, 244, 225, 0.72),
-		18vw 2vh 1px 0.5px rgba(var(--rgb-t), 0.68),
-		97vw -5vh 0px 0.5px rgba(255, 248, 232, 0.55),
-		-15vw -18vh 1px 0.5px rgba(var(--rgb-t), 0.9),
-		32vw -14vh 0px 0.5px rgba(255, 242, 218, 0.82),
-		-94vw -20vh 1px 0.5px rgba(var(--rgb-t), 0.58),
-		53vw 12vh 0px 0.5px rgba(255, 250, 235, 0.76),
-		85vw -8vh 1px 0.5px rgba(var(--rgb-t), 0.88),
-		-33vw -22vh 0px 0.5px rgba(255, 246, 228, 0.64),
-		-47vw 16vh 1px 0.5px rgba(var(--rgb-t), 0.94),
-		76vw 10vh 0px 0.5px rgba(255, 240, 215, 0.7),
-		-11vw -6vh 1px 0.5px rgba(var(--rgb-t), 0.52),
-		41vw 14vh 0px 0.5px rgba(255, 248, 230, 0.86),
-		-69vw -16vh 1px 0.5px rgba(var(--rgb-t), 0.78),
-		34vw -10vh 0px 0.5px rgba(255, 244, 222, 0.62),
-		-39vw 8vh 1px 0.5px rgba(var(--rgb-t), 0.83),
-		67vw -18vh 0px 0.5px rgba(255, 250, 238, 0.92),
-		-21vw 4vh 1px 0.5px rgba(var(--rgb-t), 0.56),
-		92vw -2vh 0px 0.5px rgba(255, 242, 220, 0.74);
 	animation: ac-star-burst 7s -4.6s cubic-bezier(0.55, 0, 1, 0.45) infinite,
 		ac-star-drift 25s ease-in-out alternate infinite;
 }
@@ -475,9 +298,6 @@ body {
 	height: 2px;
 	border-radius: 100%;
 	background: rgba(var(--rgb-t), 0.9);
-	box-shadow:
-		0 0 12px 4px rgba(var(--rgb-t), 0.3),
-		0 0 40px 12px rgba(var(--rgb-t), 0.12);
 	opacity: 0;
 	animation: ac-flare-pulse 4s 1.5s ease-in-out infinite;
 }
@@ -527,75 +347,15 @@ body {
 	}
 }
 
-/* â”€â”€ PP-XPACE â€” Sky black background with dense stars â”€â”€ */
-.pp-xpace {
-	background: var(--black-1, #131517);
-	position: relative;
-	overflow: hidden;
-}
-
-.pp-xpace::before,
-.pp-xpace::after {
-	content: '';
-	position: absolute;
-	pointer-events: none;
-	border-radius: 100%;
-}
-
-.pp-xpace::before {
-	width: 1px;
-	height: 1px;
-	left: 50%;
-	top: 50%;
-	box-shadow:
-		-40vw -8px 1px 0.5px rgba(var(--rgb-t), 0.55),
-		-72vw 12px 0px 1px rgba(var(--rgb-t), 0.4),
-		-12vw -15px 1px 0.5px rgba(255, 248, 230, 0.5),
-		28vw 8px 0px 1px rgba(var(--rgb-t), 0.35),
-		62vw -5px 1px 0.5px rgba(255, 250, 240, 0.6),
-		-55vw 18px 0px 0.5px rgba(var(--rgb-t), 0.3),
-		15vw -20px 1px 1px rgba(255, 245, 225, 0.45),
-		80vw 5px 0px 0.5px rgba(var(--rgb-t), 0.38),
-		-88vw -2px 1px 0.5px rgba(255, 250, 235, 0.52),
-		45vw 15px 0px 1px rgba(var(--rgb-t), 0.28),
-		-25vw -12px 1px 0.5px rgba(255, 240, 220, 0.48),
-		70vw -18px 0px 0.5px rgba(var(--rgb-t), 0.42),
-		-5vw 10px 1px 1px rgba(255, 248, 232, 0.55),
-		90vw -8px 0px 0.5px rgba(var(--rgb-t), 0.32),
-		-65vw 20px 1px 0.5px rgba(255, 244, 225, 0.4),
-		35vw -22px 0px 1px rgba(var(--rgb-t), 0.5),
-		-48vw 2px 1px 0.5px rgba(255, 250, 238, 0.35),
-		55vw 22px 0px 0.5px rgba(var(--rgb-t), 0.45),
-		-82vw -18px 1px 1px rgba(255, 242, 218, 0.38),
-		8vw -5px 0px 0.5px rgba(var(--rgb-t), 0.58);
-	animation: ac-header-sparkle 5s ease-in-out infinite alternate;
-	z-index: 0;
-}
-
-.pp-xpace::after {
-	width: 1px;
-	height: 1px;
-	left: 50%;
-	top: 50%;
-	box-shadow:
-		-30vw 5px 0px 0.5px rgba(var(--rgb-t), 0.42),
-		-60vw -10px 1px 0.5px rgba(255, 248, 230, 0.35),
-		-2vw 18px 0px 1px rgba(var(--rgb-t), 0.28),
-		40vw -15px 1px 0.5px rgba(255, 244, 222, 0.5),
-		75vw 12px 0px 0.5px rgba(var(--rgb-t), 0.38),
-		-50vw -20px 1px 1px rgba(255, 250, 235, 0.45),
-		20vw 2px 0px 0.5px rgba(var(--rgb-t), 0.32),
-		85vw -12px 1px 0.5px rgba(255, 240, 215, 0.52),
-		-38vw 15px 0px 1px rgba(var(--rgb-t), 0.22),
-		58vw -2px 1px 0.5px rgba(255, 246, 228, 0.48),
-		-78vw 8px 0px 0.5px rgba(var(--rgb-t), 0.4),
-		10vw -22px 1px 1px rgba(255, 250, 240, 0.55),
-		95vw 18px 0px 0.5px rgba(var(--rgb-t), 0.3),
-		-18vw -8px 1px 0.5px rgba(255, 244, 225, 0.42),
-		48vw 20px 0px 0.5px rgba(var(--rgb-t), 0.36);
-	animation: ac-header-sparkle 7s 1.5s ease-in-out infinite alternate;
-	z-index: 0;
-}
+/* .pp-xpace removed 2026-08-29 — it was a leftover dark-theme "starfield
+   sparkle" header strip (see the box-shadow star-field art below, and the
+   ac-header-sparkle keyframes) fighting its own kill-switch elsewhere in
+   this file (.ac-layout::before/::after already force display:none on any
+   .ac-starfield). The div in chat.php had no text/icon content of any
+   kind, so on the current light "Apple/Figma clean" shell it just printed
+   a blank 55px bar — the "empty nav row" bug. Div removed from chat.php,
+   --ac-nav-h zeroed in chat-shell.css, real headers now self-pad for the
+   safe area instead of relying on this reserved strip. */
 
 /* â”€â”€ THREAD LIST â”€â”€ */
 .ac-thread-list {
@@ -614,7 +374,6 @@ body {
 	gap: 12px;
 	cursor: pointer;
 	transition: background 0.15s ease;
-	border-bottom: 1px solid rgba(var(--rgb-d), 0.04);
 	position: relative;
 }
 
@@ -652,7 +411,19 @@ body {
 }
 
 .ac-thread.muted {
-	opacity: 0.55;
+	opacity: 0.72;
+}
+.ac-thread-name {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	min-width: 0;
+}
+.ac-thread-muted-icon {
+	flex: none;
+	font-size: 14px;
+	line-height: 1;
+	color: rgba(var(--txt-rgb, 19, 21, 23), 0.42);
 }
 
 /* Avatar */
@@ -662,7 +433,7 @@ body {
 	border-radius: 50%;
 	flex-shrink: 0;
 	position: relative;
-	overflow: visible;
+	overflow: visible !important;
 }
 
 .ac-thread-avatar img {
@@ -690,14 +461,20 @@ body {
 
 .ac-online-dot {
 	position: absolute;
-	bottom: 1px;
-	right: 1px;
-	width: 12px;
-	height: 12px;
+	bottom: -1px;
+	right: -1px;
+	width: 9px;
+	height: 9px;
 	border-radius: 50%;
-	background: #22c55e;
-	border: 2.5px solid var(--bg, #fff);
+	border: 0 !important;
+	background: #00e676;
+	box-sizing: border-box;
 	z-index: 2;
+	pointer-events: none;
+	box-shadow:
+		0 0 4px 1px rgba(0, 230, 118, 0.95),
+		0 0 10px 2px rgba(0, 230, 118, 0.5),
+		0 0 16px 3px rgba(0, 230, 118, 0.25);
 }
 
 .ac-thread-body {
@@ -707,19 +484,22 @@ body {
 
 .ac-thread-row {
 	display: flex;
-	align-items: baseline;
+	align-items: center;
 	justify-content: space-between;
 	gap: 8px;
 	margin-bottom: 2px;
 }
 
 .ac-thread-name {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	min-width: 0;
 	font-size: 14px;
 	font-weight: 600;
 	color: rgba(var(--txt-rgb, 19, 21, 23), 0.88);
 	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	overflow: visible;
 }
 
 .ac-thread-time {
@@ -772,7 +552,6 @@ body {
 .ac-spinner {
 	width: 28px;
 	height: 28px;
-	border: 2.5px solid rgba(var(--txt-rgb, 19, 21, 23), 0.1);
 	border-top-color: var(--black-1, #131517);
 	border-radius: 50%;
 	animation: ac-spin 0.7s linear infinite;
@@ -787,35 +566,25 @@ body {
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 	MAIN â€” Conversation Area
 	â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+/* background: shell owns (--ac-ground). `display:none` stays — the main pane
+   is revealed by the shell's media queries / .is-open. */
 .ac-main {
 	display: none;
 	flex-direction: column;
 	min-width: 0;
 	height: 100%;
 	position: relative;
-	background: var(--bg, #fff);
 }
 
-/* Chat Header */
-.ac-chat-header {
-	display: flex;
-	align-items: center;
-	padding: 10px 14px;
-	gap: 10px;
-	background: var(--black-1, #131517);
-	color: #fff;
-	min-height: 56px;
-	flex-shrink: 0;
-	z-index: 50;
-}
+/* Chat Header — owned by chat-shell.css peer chip */
+.ac-chat-header { /* shell */ }
 
 .ac-back-btn,
 .ac-icon-btn {
 	width: 36px;
 	height: 36px;
-	border: none;
-	background: rgba(var(--rgb-t), 0.14);
-	color: #fff;
+	background: rgba(var(--txt-rgb, 19, 21, 23), 0.06);
+	color: rgba(var(--txt-rgb, 19, 21, 23), 0.85);
 	border-radius: 50%;
 	font-size: 18px;
 	cursor: pointer;
@@ -830,7 +599,7 @@ body {
 }
 
 .ac-icon-btn:hover {
-	background: rgba(var(--rgb-t), 0.24);
+	background: rgba(var(--txt-rgb, 19, 21, 23), 0.1);
 }
 
 .ac-icon-btn:active {
@@ -848,43 +617,24 @@ body {
 	font-style: normal;
 }
 
-.ac-header-avatar {
-	width: 38px;
-	height: 38px;
-	border-radius: 50%;
-	position: relative;
-	flex-shrink: 0;
-}
+/* Peer-chip identity block — shell owns all of it (avatar ring, display-type
+   name, mono eyebrow status). These fixed 38px/15px/11px values were sized for
+   the old full-width dark header band that no longer exists, and the .online
+   colour (#86efac) is a mint tuned for a dark bar — unreadable on paper. */
+.ac-header-avatar { /* shell owns */ }
 
-.ac-header-avatar img {
-	width: 38px;
-	height: 38px;
-	border-radius: 50%;
-	object-fit: cover;
-}
+.ac-header-avatar img { /* shell owns */ }
 
 .ac-header-info {
 	flex: 1;
 	min-width: 0;
 }
 
-.ac-header-name {
-	font-size: 15px;
-	font-weight: 700;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
+.ac-header-name { /* shell owns */ }
 
-.ac-header-status {
-	font-size: 11px;
-	opacity: 0.75;
-}
+.ac-header-status { /* shell owns */ }
 
-.ac-header-status.online {
-	opacity: 1;
-	color: #86efac;
-}
+.ac-header-status.online { /* shell owns */ }
 
 .ac-header-actions {
 	display: flex;
@@ -892,12 +642,13 @@ body {
 }
 
 /* â”€â”€ Messages Area â”€â”€ */
+/* background: shell owns (--ac-ground). It was #fff here, which is the white
+   half of the white-on-white the luxe pass removed — 2026-09-12. */
 .ac-messages {
 	flex: 1;
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
-	padding: 16px 14px;
-	background: #f7f7f8;
+	padding: 20px 28px;
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
@@ -943,28 +694,19 @@ body {
 	color: rgba(var(--txt-rgb, 19, 21, 23), 0.2);
 }
 
-/* Date separator */
-.ac-date-sep {
-	text-align: center;
-	padding: 6px 0;
-}
+/* Date separator — shell owns (ruled break + mono eyebrow). The pill that
+   stood here was rgba(…, .05): invisible on white, invisible on the ground. */
+.ac-date-sep { /* shell owns */ }
 
-.ac-date-sep span {
-	display: inline-block;
-	padding: 4px 14px;
-	border-radius: 12px;
-	background: rgba(var(--rgb-d), 0.05);
-	font-size: 11px;
-	font-weight: 500;
-	color: rgba(var(--txt-rgb, 19, 21, 23), 0.4);
-}
+.ac-date-sep span { /* shell owns */ }
 
 /* Message row */
 .ac-msg-row {
 	display: flex;
 	gap: 8px;
 	max-width: 82%;
-	animation: ac-bubbleIn 0.3s cubic-bezier(.16, 1, .3, 1);
+	/* entrance is GSAP slide-up in chat.js — no CSS keyframe fight */
+	animation: none;
 }
 
 @keyframes ac-bubbleIn {
@@ -989,7 +731,6 @@ body {
 }
 
 .ac-msg-row.highlight .ac-bubble {
-	box-shadow: 0 0 0 2px rgba(var(--txt-rgb, 19, 21, 23), 0.2);
 	transition: box-shadow 0.3s;
 }
 
@@ -1008,33 +749,19 @@ body {
 	cursor: pointer;
 }
 
-/* Bubble */
+/* Bubble — shell owns density (text→meta→edge). */
 .ac-bubble {
-	padding: 10px 14px;
-	border-radius: 18px;
-	font-size: 13.5px;
-	line-height: 1.45;
-	position: relative;
-	word-wrap: break-word;
-	overflow-wrap: break-word;
-	max-width: 100%;
+	/* shell owns */
 }
 
-.sent .ac-bubble {
-	background: var(--black-1, #131517);
-	color: #fff;
-	border-bottom-right-radius: 6px;
-}
+/* Bubble fills — shell owns (ink vs paper on the recessed ground).
+   `received` was --white-3 (#f5f5f7) on a #fff pane: a 3% step. */
+.sent .ac-bubble { /* shell owns */ }
 
-.received .ac-bubble {
-	background: #fff;
-	color: rgba(var(--txt-rgb, 19, 21, 23), 0.85);
-	border-bottom-left-radius: 6px;
-	box-shadow: 0 1px 3px rgba(var(--rgb-d), 0.06);
-}
+.received .ac-bubble { /* shell owns */ }
 
 .ac-msg-sender {
-	font-size: 11.5px;
+	font-size: 10px;
 	font-weight: 700;
 	color: rgba(var(--txt-rgb, 19, 21, 23), 0.55);
 	margin-bottom: 2px;
@@ -1054,13 +781,14 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
-	gap: 6px;
-	margin-top: 3px;
+	gap: 2px;
+	margin: 0px;
 }
 
 .ac-msg-time {
-	font-size: 10px;
-	opacity: 0.55;
+	font-size: 8.5px;
+	opacity: 0.4;
+	line-height: .8;
 }
 
 .ac-edited-tag {
@@ -1070,7 +798,7 @@ body {
 }
 
 .ac-receipt i {
-	font-size: 13px;
+	font-size: 10px;
 	opacity: 0.5;
 }
 
@@ -1087,7 +815,6 @@ body {
 	gap: 2px;
 	background: #fff;
 	border-radius: 8px;
-	box-shadow: 0 2px 8px rgba(var(--rgb-d), 0.1);
 	padding: 2px;
 	opacity: 0;
 	pointer-events: none;
@@ -1111,7 +838,6 @@ body {
 .ac-msg-actions button {
 	width: 28px;
 	height: 28px;
-	border: none;
 	background: transparent;
 	color: rgba(var(--txt-rgb, 19, 21, 23), 0.5);
 	border-radius: 6px;
@@ -1128,59 +854,79 @@ body {
 	color: rgba(var(--txt-rgb, 19, 21, 23), 0.8);
 }
 
-/* Reactions */
+/* Reply quote */
+.ac-reply-quote {
+	display: flex;
+	align-items: stretch;
+	gap: 8px;
+	padding: 0;
+	border-radius: 0;
+	background: transparent;
+	margin-bottom: 6px;
+	font-size: inherit;
+	cursor: pointer;
+}
+
+.sent .ac-reply-quote {
+	background: transparent;
+}
+
+.ac-reply-rail {
+	flex: 0 0 2px;
+	width: 2px;
+	align-self: stretch;
+	border-radius: 2px;
+	background: currentColor;
+	opacity: 0.34;
+}
+
+.ac-reply-body {
+	min-width: 0;
+	flex: 1;
+	font-style: italic;
+	font-size: 0.78em;
+	line-height: 1.35;
+	opacity: 0.72;
+}
+
+.ac-reply-sender {
+	font-weight: 600;
+	font-style: italic;
+	font-size: inherit;
+	margin-bottom: 1px;
+}
+
+.ac-reply-text {
+	font-style: italic;
+	opacity: 0.88;
+}
+
+/* Reactions — badge on bubble bottom edge (shell refines position) */
 .ac-reactions {
 	display: flex;
-	gap: 4px;
-	margin-top: 4px;
+	gap: 3px;
+	margin-top: 0;
 	flex-wrap: wrap;
 }
 
 .ac-reaction {
 	display: inline-flex;
 	align-items: center;
-	gap: 3px;
-	padding: 2px 8px;
-	border-radius: 12px;
-	border: none;
-	background: rgba(var(--rgb-d), 0.05);
-	font-size: 13px;
+	gap: 2px;
+	padding: 0 7px;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.92);
+	font-size: 14px;
 	cursor: pointer;
-	transition: all 0.15s;
+	transition: background 0.15s;
 }
 
 .ac-reaction:hover {
-	background: rgba(var(--rgb-d), 0.06);
+	background: #fff;
 }
 
 .ac-reaction.mine {
-	border-color: rgba(var(--txt-rgb, 19, 21, 23), 0.25);
-	background: rgba(var(--txt-rgb, 19, 21, 23), 0.05);
-}
-
-/* Reply quote */
-.ac-reply-quote {
-	padding: 6px 10px;
-	border-left: 3px solid rgba(var(--txt-rgb, 19, 21, 23), 0.2);
-	border-radius: 4px;
-	background: rgba(var(--rgb-d), 0.06);
-	margin-bottom: 6px;
-	font-size: 12px;
-	cursor: pointer;
-}
-
-.sent .ac-reply-quote {
-	background: rgba(var(--rgb-t), 0.15);
-}
-
-.ac-reply-sender {
-	font-weight: 700;
-	font-size: 11px;
-	margin-bottom: 1px;
-}
-
-.ac-reply-text {
-	opacity: 0.75;
+	background: #fff;
 }
 
 /* Typing indicator */
@@ -1284,7 +1030,6 @@ body {
 	gap: 4px;
 	background: #fff;
 	border-radius: 20px;
-	box-shadow: 0 4px 16px rgba(var(--rgb-d), 0.12);
 	padding: 4px 8px;
 	z-index: 20;
 }
@@ -1306,8 +1051,7 @@ body {
 	COMPOSE BAR
 	â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .ac-compose {
-	background: #fff;
-	border-top: 1px solid rgba(var(--rgb-d), 0.06);
+	background: transparent;
 	flex-shrink: 0;
 }
 
@@ -1316,7 +1060,6 @@ body {
 	align-items: center;
 	gap: 8px;
 	padding: 8px 14px;
-	border-bottom: 1px solid rgba(var(--rgb-d), 0.04);
 	background: rgba(var(--txt-rgb, 19, 21, 23), 0.03);
 }
 
@@ -1335,7 +1078,7 @@ body {
 }
 
 .ac-reply-bar-sender {
-	font-size: 11.5px;
+	font-size: 10px;
 	font-weight: 700;
 	color: rgba(var(--txt-rgb, 19, 21, 23), 0.65);
 }
@@ -1362,7 +1105,6 @@ body {
 .ac-attach-preview {
 	display: none;
 	padding: 8px 14px;
-	border-bottom: 1px solid rgba(var(--rgb-d), 0.04);
 	align-items: center;
 	gap: 10px;
 }
@@ -1390,13 +1132,7 @@ body {
 	font-size: 18px;
 }
 
-.ac-compose-form {
-	display: flex;
-	align-items: flex-end;
-	gap: 8px;
-	padding: 8px 12px;
-	min-height: 56px;
-}
+.ac-compose-form { /* shell owns */ }
 
 .ac-compose-left {
 	display: flex;
@@ -1422,26 +1158,7 @@ body {
 	position: relative;
 }
 
-.ac-compose-input {
-	width: 100%;
-	border: none;
-	border-bottom: 1px solid rgba(var(--txt-rgb, 19, 21, 23), 0.12);
-	border-radius: 0;
-	padding: 10px 42px 10px 0;
-	font-family: inherit;
-	font-size: 14px;
-	line-height: 1.4;
-	resize: none;
-	outline: none;
-	max-height: 100px;
-	min-height: 42px;
-	color: rgba(var(--txt-rgb, 19, 21, 23), 0.85);
-	background: transparent;
-	transition: border-bottom-color 0.25s;
-	user-select: text;
-	-webkit-user-select: text;
-	display: block;
-}
+.ac-compose-input { /* shell owns */ }
 
 .ac-compose-input:focus {
 	border-bottom-color: var(--primary, FF9820);
@@ -1475,7 +1192,6 @@ body {
 	max-height: 300px;
 	background: #fff;
 	border-radius: 14px;
-	box-shadow: 0 8px 32px rgba(var(--rgb-d), 0.14);
 	overflow: hidden;
 	z-index: 100;
 }
@@ -1486,13 +1202,10 @@ body {
 
 .ac-emoji-picker-search {
 	padding: 8px;
-	border-bottom: 1px solid rgba(var(--rgb-d), 0.06);
 }
 
 .ac-emoji-picker-search input {
 	width: 100%;
-	border: none;
-	border-bottom: 1px solid rgba(var(--rgb-d), 0.12);
 	border-radius: 0;
 	padding: 6px 0;
 	font-size: 13px;
@@ -1526,7 +1239,6 @@ body {
 	align-items: center;
 	justify-content: center;
 	font-size: 22px;
-	border: none;
 	background: transparent;
 	border-radius: 8px;
 	cursor: pointer;
@@ -1538,27 +1250,11 @@ body {
 	transform: scale(1.15);
 }
 
-/* Send button */
-.ac-send-btn {
-	width: 42px;
-	height: 42px;
-	border-radius: 50%;
-	border: none;
-	background: var(--black-1, #131517);
-	color: #fff;
-	font-size: 18px;
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-shrink: 0;
-	transition: transform 0.15s cubic-bezier(.16, 1, .3, 1), background 0.2s, box-shadow 0.2s;
-	box-shadow: 0 2px 8px rgba(var(--rgb-d), 0.15);
-}
+/* Send button — shell owns */
+.ac-send-btn { /* shell */ }
 
 .ac-send-btn:hover {
 	background: #2a2a2a;
-	box-shadow: 0 4px 14px rgba(var(--rgb-d), 0.2);
 	transform: scale(1.05);
 }
 
@@ -1578,7 +1274,6 @@ body {
 	text-transform: uppercase;
 	line-height: 1;
 	padding: 3px 5px;
-	border: 2px solid currentColor;
 	border-radius: 5px;
 }
 
@@ -1600,7 +1295,6 @@ body {
 	height: 380px;
 	background: var(--bg, #fff);
 	border-radius: 16px;
-	box-shadow: 0 8px 40px rgba(var(--rgb-d), 0.18);
 	z-index: 90;
 	flex-direction: column;
 	overflow: hidden;
@@ -1615,7 +1309,6 @@ body {
 	align-items: center;
 	gap: 8px;
 	padding: 10px 12px;
-	border-bottom: 1px solid rgba(var(--rgb-d), 0.06);
 }
 
 .ac-gif-header i {
@@ -1625,8 +1318,6 @@ body {
 
 .ac-gif-search {
 	flex: 1;
-	border: none;
-	border-bottom: 1px solid rgba(var(--rgb-d), 0.12);
 	border-radius: 0;
 	padding: 7px 0;
 	font-size: 13px;
@@ -1661,7 +1352,6 @@ body {
 
 .ac-gif-item:hover {
 	transform: scale(1.03);
-	box-shadow: 0 4px 12px rgba(var(--rgb-d), 0.12);
 }
 
 .ac-gif-item img {
@@ -1673,7 +1363,6 @@ body {
 
 .ac-gif-footer {
 	padding: 6px 12px;
-	border-top: 1px solid rgba(var(--rgb-d), 0.06);
 	display: flex;
 	justify-content: flex-end;
 	opacity: 0.6;
@@ -1704,14 +1393,21 @@ body {
 	OVERLAYS
 	â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-/* Search overlay */
+/* Search overlay — GSAP owns the open (clip-path + blur + scale).
+   Default is display:none so it stays out of the a11y tree; .show
+   (and the motion engine) flips it to flex. */
 .ac-search-overlay {
 	display: none;
 	position: absolute;
 	inset: 0;
 	z-index: 70;
-	background: var(--bg, #fff);
+	background: rgba(var(--ac-ground-rgb, 240, 240, 243), 0.86);
+	backdrop-filter: blur(28px) saturate(1.22);
+	-webkit-backdrop-filter: blur(28px) saturate(1.22);
 	flex-direction: column;
+	overflow: hidden;
+	isolation: isolate;
+	will-change: clip-path, opacity, filter, transform;
 }
 
 .ac-search-overlay.show {
@@ -1721,9 +1417,13 @@ body {
 .ac-search-header {
 	display: flex;
 	align-items: center;
-	gap: 10px;
-	padding: 12px 14px;
-	border-bottom: 1px solid rgba(var(--rgb-d), 0.06);
+	gap: 2px;
+	margin: 12px 14px 8px;
+	padding: 8px 10px 8px 14px;
+	border-radius: 22px;
+	background: var(--ac-raise, #fff);
+	box-shadow: var(--ac-bevel), var(--ac-lift);
+	will-change: transform, opacity, filter;
 }
 
 .ac-search-header i {
@@ -1733,12 +1433,13 @@ body {
 
 .ac-search-header input {
 	flex: 1;
-	border: none;
 	outline: none;
 	font-size: 14px;
 	font-family: inherit;
 	color: rgba(var(--txt-rgb, 19, 21, 23), 0.85);
-	background: transparent;
+	background: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
 }
 
 .ac-search-results {
@@ -1804,8 +1505,6 @@ body {
 	max-height: 85vh;
 	display: flex;
 	flex-direction: column;
-	border: 1px solid var(--border, rgba(var(--rgb-d),0.10));
-	box-shadow: 0 40px 100px rgba(var(--rgb-d), 0.15);
 	overflow: hidden;
 	transform: translateY(-8px) scale(0.98);
 	transition: transform 0.35s cubic-bezier(.16, 1, .3, 1);
@@ -1819,7 +1518,6 @@ body {
 	align-items: center;
 	justify-content: space-between;
 	padding: 16px 20px;
-	border-bottom: 1px solid var(--border, rgba(var(--rgb-d),0.10));
 }
 
 .ac-modal-header h3 {
@@ -1833,7 +1531,6 @@ body {
 .ac-modal-close {
 	width: 36px;
 	height: 36px;
-	border: 1px solid var(--border, rgba(var(--rgb-d),0.10));
 	background: var(--bg, #fff);
 	color: var(--txt-color, rgba(19, 21, 23, 0.77));
 	border-radius: 50%;
@@ -1847,7 +1544,6 @@ body {
 
 .ac-modal-close:hover {
 	background: var(--surface, rgba(var(--rgb-d),0.025));
-	border-color: var(--border-hover, rgba(var(--rgb-d),0.18));
 	color: var(--txt-color-hover, rgba(19, 21, 23, 0.92));
 }
 
@@ -1864,14 +1560,11 @@ body {
 	justify-content: flex-end;
 	gap: 10px;
 	padding: 12px 20px;
-	border-top: 1px solid var(--border, rgba(var(--rgb-d),0.10));
 }
 
 /* Inputs inside modals */
 .ac-input {
 	width: 100%;
-	border: none;
-	border-bottom: 1px solid var(--border, rgba(var(--rgb-d),0.10));
 	border-radius: 0;
 	padding: 12px 0;
 	font-size: 16px;
@@ -1961,7 +1654,6 @@ body {
 .ac-btn {
 	padding: 8px 18px;
 	border-radius: 10px;
-	border: 1px solid var(--border, rgba(var(--rgb-d),0.10));
 	background: var(--bg, #fff);
 	font-family: var(--ff-main, "Space Grotesk", system-ui, sans-serif);
 	font-size: 13px;
@@ -1973,7 +1665,6 @@ body {
 
 .ac-btn:hover {
 	background: var(--surface, rgba(var(--rgb-d),0.025));
-	border-color: var(--border-hover, rgba(var(--rgb-d),0.18));
 }
 
 .ac-btn:active {
@@ -1983,7 +1674,6 @@ body {
 .ac-btn-primary {
 	background: var(--black-1, #131517);
 	color: var(--bg, #fff);
-	border-color: transparent;
 }
 
 .ac-btn-primary:hover {
@@ -1997,8 +1687,6 @@ html.dark-mode .ac-modal-overlay {
 }
 html.dark-mode .ac-modal {
 	background: var(--bg, #0f0f11);
-	border-color: var(--border, rgba(var(--rgb-t),0.10));
-	box-shadow: 0 40px 100px rgba(var(--rgb-d), 0.45);
 }
 html.dark-mode .ac-modal-header {
 	border-bottom-color: var(--border, rgba(var(--rgb-t),0.10));
@@ -2008,12 +1696,10 @@ html.dark-mode .ac-modal-header h3 {
 }
 html.dark-mode .ac-modal-close {
 	background: var(--bg, #0f0f11);
-	border-color: var(--border, rgba(var(--rgb-t),0.10));
 	color: var(--txt-color, rgba(var(--rgb-t),0.77));
 }
 html.dark-mode .ac-modal-close:hover {
 	background: var(--surface, rgba(var(--rgb-t),0.06));
-	border-color: var(--border-hover, rgba(var(--rgb-t),0.16));
 	color: var(--txt-color-hover, rgba(var(--rgb-t),0.92));
 }
 html.dark-mode .ac-modal-footer {
@@ -2040,17 +1726,14 @@ html.dark-mode .ac-user-handle {
 }
 html.dark-mode .ac-btn {
 	background: var(--bg, #0f0f11);
-	border-color: var(--border, rgba(var(--rgb-t),0.10));
 	color: var(--txt-color, rgba(var(--rgb-t),0.77));
 }
 html.dark-mode .ac-btn:hover {
 	background: var(--surface, rgba(var(--rgb-t),0.06));
-	border-color: var(--border-hover, rgba(var(--rgb-t),0.16));
 }
 html.dark-mode .ac-btn-primary {
 	background: #fff;
 	color: #0f0f11;
-	border-color: transparent;
 }
 html.dark-mode .ac-btn-primary:hover {
 	opacity: 0.85;
@@ -2065,12 +1748,10 @@ html.dark-mode .ac-btn-primary:hover {
 
 .ac-pinned-item {
 	padding: 10px;
-	border-bottom: 1px solid rgba(var(--rgb-d), 0.04);
 	cursor: pointer;
 }
 
 .ac-unpin-btn {
-	border: none;
 	background: transparent;
 	color: rgba(var(--txt-rgb, 19, 21, 23), 0.4);
 	cursor: pointer;
@@ -2148,7 +1829,6 @@ html.dark-mode .ac-btn-primary:hover {
 	color: #fff;
 	font-size: 13px;
 	font-weight: 500;
-	box-shadow: 0 4px 16px rgba(var(--rgb-d), 0.2);
 	animation: ac-toastIn 0.35s cubic-bezier(.16, 1, .3, 1);
 	pointer-events: auto;
 	backdrop-filter: blur(8px);
@@ -2189,7 +1869,6 @@ html.dark-mode .ac-btn-primary:hover {
 	z-index: 250;
 	background: #fff;
 	border-radius: 12px;
-	box-shadow: 0 8px 32px rgba(var(--rgb-d), 0.15);
 	padding: 6px 0;
 	min-width: 180px;
 	overflow: hidden;
@@ -2220,15 +1899,53 @@ html.dark-mode .ac-btn-primary:hover {
 	text-align: center;
 }
 
-/* Thread menu (same as context) */
+/* Thread menu — glass is owned by chat-shell .ac-glass-panel / peer-chip tokens.
+   Opaque #fff here was killing backdrop-filter. */
 .ac-thread-menu {
 	position: absolute;
 	z-index: 100;
-	background: #fff;
-	border-radius: 12px;
-	box-shadow: 0 6px 24px rgba(var(--rgb-d), 0.12);
+	background: transparent;
+	border-radius: 16px;
 	padding: 6px 0;
 	min-width: 180px;
+}
+
+.ac-context-menu {
+	will-change: transform, opacity, filter, clip-path;
+}
+
+/* Ghost bubble — composer text in flight to the sent row. */
+.ac-send-ghost {
+	position: fixed;
+	z-index: 100000;
+	pointer-events: none;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 9px 13px;
+	border-radius: 18px;
+	font-size: 14px;
+	line-height: 1.42;
+	letter-spacing: -0.015em;
+	white-space: pre-wrap;
+	word-break: break-word;
+	overflow: hidden;
+	background: var(--ac-raise, #fff);
+	color: rgba(var(--txt-rgb, 29, 29, 31), 0.92);
+	box-shadow: var(--ac-bevel), var(--ac-lift);
+	will-change: transform, width, height, background-color, color, filter, border-radius;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ac-send-ghost {
+		display: none !important;
+	}
+
+	.ac-search-overlay,
+	.ac-search-header,
+	.ac-thread-menu,
+	.ac-context-menu {
+		will-change: auto;
+	}
 }
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -2256,17 +1973,18 @@ html.dark-mode .ac-btn-primary:hover {
 	â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 @media (min-width: 768px) {
 	body {
-		background: #f3f2ef;
+		background: var(--white-3, #f5f5f7);
 	}
 
 	.ac-layout {
 		flex-direction: row;
-		max-width: 1440px;
-		height: 100vh;
-		height: 100dvh;
-		margin: 0 auto;
-		box-shadow: 0 0 0 1px rgba(var(--rgb-d), 0.06);
-		background: var(--bg, #fff);
+		max-width: none;
+		width: 100%;
+		height: 100%;
+		max-height: 100%;
+		margin: 0;
+		background: #fff;
+		overflow: hidden;
 	}
 
 	.ac-sidebar {
@@ -2274,9 +1992,10 @@ html.dark-mode .ac-btn-primary:hover {
 		min-width: 300px;
 		max-width: 420px;
 		flex: none;
-		border-right: 1px solid rgba(var(--rgb-d), 0.06);
 		height: 100%;
-		background: var(--bg, #fff);
+		max-height: 100%;
+		overflow: hidden;
+		background: #fff;
 	}
 
 	.ac-sidebar.hidden {
@@ -2285,23 +2004,26 @@ html.dark-mode .ac-btn-primary:hover {
 	}
 
 	.ac-sidebar-header {
-		padding-top: 16px;
-		background: var(--black-1, #131517);
+		padding-top: 18px;
+		background: var(--white-3, #f5f5f7);
 	}
 
 	.ac-main {
 		display: flex;
 		flex: 1;
+		min-height: 0;
+		height: 100%;
+		max-height: 100%;
+		overflow: hidden;
 	}
 
-	.ac-chat-header {
-		padding-top: 14px;
-		min-height: 58px;
-	}
+	.ac-chat-header { /* shell peer chip */ }
 
 	.ac-chat-header .ac-back-btn {
 		display: none;
 	}
+
+	.ac-messages { /* shell owns padding */ }
 
 	.ac-toast-container {
 		bottom: 30px;
@@ -2314,7 +2036,16 @@ html.dark-mode .ac-btn-primary:hover {
 	/* chat.js controls display via inline style.display = 'flex' / '' */
 	.ac-main {
 		position: fixed;
-		inset: 0;
+		top: var(--ac-nav-h, 55px);
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: auto;
 		z-index: 90;
+		overflow: hidden;
+	}
+
+	.ac-messages {
+		padding: 18px 20px 24px;
 	}
 }

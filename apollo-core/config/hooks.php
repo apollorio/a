@@ -277,6 +277,75 @@ return array(
 			'params'   => array( 'post_id' ),
 			'fired_by' => 'apollo-mod',
 		),
+		/* ─── Boot, render and route ────────────────────────────────
+		 * These carry the actual boot and render route and were absent from
+		 * this file until 2026-09-09, which is why ApolloHook::definition()
+		 * could not answer for any of them. Declaring them here is data
+		 * only -- it registers nothing and fires nothing. Matching
+		 * ApolloHook constants are deliberately NOT added in the same pass:
+		 * that would invite a string-literal sweep across 43 plugins. */
+		'apollo/canvas/head'                   => array(
+			'params'      => array(),
+			'fired_by'    => 'apollo-core, apollo-templates',
+			'description' => 'Blank Canvas <head>. TWO producers: apollo-core/includes/document-head.php:192 and apollo-templates/includes/class-persistent-ui.php:233. wp_head() is never called on these templates, so assets must use this hook. Listeners MUST be idempotent.',
+		),
+		'apollo/canvas/before_close'           => array(
+			'params'      => array(),
+			'fired_by'    => 'apollo-core',
+			'description' => 'Blank Canvas footer slot (document-head.php:294). wp_footer() is not called there.',
+		),
+		'apollo/plus/before_close'             => array(
+			'params'      => array(),
+			'fired_by'    => 'apollo-templates',
+			'description' => 'Apollo+ footer slot (apollo-plus-api.php:171). apollo-ui and apollo-templates/mobile-runtime both emit here at priority 20.',
+		),
+		'apollo/route/matched'                 => array(
+			'params'      => array( 'match', 'path' ),
+			'fired_by'    => 'apollo-core',
+			'description' => 'A virtual route matched (FrontRouteDispatcher.php:63, template_redirect:0). Fires ONLY on a match; absence of a match is not signalled here. Only BRAIN-01 in mu-plugin/apollo-brain.php listens.',
+		),
+		'apollo/ui/emit'                       => array(
+			'params'      => array(),
+			'fired_by'    => 'any template',
+			'description' => 'Manual escape hatch for a template that reaches neither the canvas hooks nor wp_head/wp_footer. apollo-ui binds head at 10 and footer at 11.',
+		),
+
+		/* ─── BRAIN (mu-plugin/apollo-brain.php) ────────────────────
+		 * The brain is a must-use plugin, so it is not an apollo-* plugin and
+		 * cannot require this file. Its hooks are declared here anyway: this
+		 * is the ecosystem's hook dictionary, and an undeclared hook is one
+		 * nobody discovers. Measured 2026-09-09: zero apollo-* plugins listen
+		 * to any of them. */
+		'apollo/brain/loaded'                  => array(
+			'params'      => array(),
+			'fired_by'    => 'mu-plugin/apollo-brain.php:490',
+			'description' => 'Brain file evaluated, BEFORE bootstrap() runs. For anything needing the registry path or Core, use apollo/brain/bootstrap_complete instead.',
+		),
+		'apollo/brain/before_apollo_core'      => array(
+			'params'      => array(),
+			'fired_by'    => 'mu-plugin/apollo-brain.php:47',
+			'description' => 'muplugins_loaded:-100, before apollo-core is required. BRAIN-01 resolves `method` here. Earliest Apollo hook that exists at all.',
+		),
+		'apollo/brain/after_apollo_core_file'  => array(
+			'params'      => array(),
+			'fired_by'    => 'mu-plugin/apollo-brain.php:51',
+			'description' => 'apollo-core.php has been required, but apollo_core_bootstrap() has NOT run yet (that is plugins_loaded:1).',
+		),
+		'apollo/brain/bootstrap_complete'      => array(
+			'params'      => array(),
+			'fired_by'    => 'mu-plugin/apollo-brain.php:61',
+			'description' => 'Registry path resolved, Core file required, asset filters registered. Still before the active_plugins loop.',
+		),
+		'apollo/brain/core_ready'              => array(
+			'params'      => array(),
+			'fired_by'    => 'mu-plugin/apollo-brain.php:249',
+			'description' => 'Fires INSIDE the apollo/core/initialized listener at priority 99 -- same stage, not a later one. BRAIN-01 resolves `logged_in` here.',
+		),
+		'apollo/brain/page_cache_maybe_init'   => array(
+			'params'      => array(),
+			'fired_by'    => 'mu-plugin/apollo-brain.php:133',
+			'description' => 'DORMANT BY DESIGN. Zero listeners; Apollo\Core\Cache does not exist. The cache boundary is unmapped (Phase 8). Do not wire this to invent a cache layer.',
+		),
 	),
 
 	/*
@@ -352,6 +421,19 @@ return array(
 		'apollo/chat/can_message'                 => array(
 			'params'      => array( 'can', 'sender_id', 'recipient_id' ),
 			'description' => 'Filter chat permission',
+		),
+		/* ─── BRAIN asset policy ────────────────────────────────────
+		 * The brain defers front-end scripts in script_loader_tag
+		 * (apollo-brain.php:234). These two filters are the only supported
+		 * way to exempt a handle or URL fragment from that. Both had zero
+		 * consumers when measured on 2026-09-09. */
+		'apollo/brain/defer_protected_handles'    => array(
+			'params'      => array( 'handles' ),
+			'description' => 'Script handles that never receive defer. Merged with the built-in jQuery/wp-polyfill set (apollo-brain.php:211).',
+		),
+		'apollo/brain/defer_protected_fragments'  => array(
+			'params'      => array( 'fragments' ),
+			'description' => 'Substrings of handle or src that keep a script synchronous. Defaults: apollo-, apollo_, popper, lenis, gsap (apollo-brain.php:224).',
 		),
 	),
 );

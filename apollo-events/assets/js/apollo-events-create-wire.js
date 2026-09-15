@@ -180,9 +180,22 @@
         return;
       }
       var ctx = el.__ctx || {};
-      closePicker();
-      /* id:null marks an externally hosted image — the server stores the URL. */
-      (ctx.cb || function () {})([{ id: null, url: raw }]);
+      toast('Validando imagem…');
+      var img = new Image();
+      img.onload = function () {
+        if (img.naturalWidth < 200 || img.naturalHeight < 200) {
+          toast('Imagem pequena demais (mín. 200×200 para o card do WhatsApp)');
+          urlInput.focus();
+          return;
+        }
+        closePicker();
+        (ctx.cb || function () {})([{ id: null, url: raw }]);
+      };
+      img.onerror = function () {
+        toast('URL não é uma imagem (veio HTML ou falhou o carregamento)');
+        urlInput.focus();
+      };
+      img.src = raw;
     }
 
     el.querySelector('[data-pick-submit]').addEventListener('click', submitUrl);
@@ -269,6 +282,7 @@
   function wireCover() {
     var cover = $id('coverUpload');
     var hidden = $id('ev-banner');
+    var urlIn = $id('ev-banner-url');
     if (!cover || !hidden) { return; }
 
     cover.removeAttribute('onclick');
@@ -281,6 +295,7 @@
         if (!picked.length) { return; }
         /* id for library uploads, raw URL for externally hosted images. */
         hidden.value = (null == picked[0].id) ? picked[0].url : String(picked[0].id);
+        if (urlIn && picked[0].url) { urlIn.value = picked[0].url; }
         paintCover(picked[0].url);
         sync();
       });
@@ -291,10 +306,42 @@
       if ('Enter' === e.key || ' ' === e.key) { e.preventDefault(); open(); }
     });
 
+    if (urlIn) {
+      urlIn.addEventListener('blur', function () {
+        var raw = (urlIn.value || '').trim();
+        if (!raw) { return; }
+        if (!/^https?:\/\//i.test(raw)) {
+          toast('Use um endereço começando com https://');
+          return;
+        }
+        var img = new Image();
+        img.onload = function () {
+          if (img.naturalWidth < 200 || img.naturalHeight < 200) {
+            toast('Imagem pequena demais (mín. 200×200)');
+            return;
+          }
+          hidden.value = raw;
+          paintCover(raw);
+          sync();
+        };
+        img.onerror = function () {
+          toast('URL não é uma imagem válida');
+        };
+        img.src = raw;
+      });
+    }
+
     /* Edit mode: repaint the stored banner (id → resolve, URL → straight in). */
     if (hidden.value) {
-      if (/^https?:\/\//i.test(hidden.value)) { paintCover(hidden.value); }
-      else { paintStoredAttachment(hidden.value, paintCover); }
+      if (/^https?:\/\//i.test(hidden.value)) {
+        paintCover(hidden.value);
+        if (urlIn) { urlIn.value = hidden.value; }
+      } else {
+        paintStoredAttachment(hidden.value, function (url) {
+          paintCover(url);
+          if (urlIn) { urlIn.value = url; }
+        });
+      }
     }
   }
 
@@ -440,20 +487,33 @@
     input.setAttribute('autocomplete', 'off');
 
     var host = input.parentNode;
-    if (host && 'static' === w.getComputedStyle(host).position) {
-      host.style.position = 'relative';
-    }
-    /*
-     * .as2 raises its own stacking context while open so the drop is never
-     * clipped by a later sibling card. Mirror that on the combobox host.
-     */
-    if (host) { host.style.zIndex = '9999999'; }
 
+    /*
+     * PORTAL FIX (2026-08-29): .card carries `isolation: isolate` for the
+     * glass-panel effect (see shell-styles.php). That creates a stacking
+     * context per card — no z-index inside one card, however large, can
+     * ever paint above a LATER sibling card (venue/DJ card vs. "Ingressos
+     * e Listas" below it). The old fix bumped host z-index to 9999999,
+     * which only wins *inside* the isolated card and was never going to
+     * work — hence this bug kept coming back. Real fix: reparent the menu
+     * to <body> and drive it with position:fixed, so it is no longer a
+     * descendant of the isolated card at all.
+     */
     var menu = d.createElement('div');
     menu.className = 'apollo-combo';
     menu.setAttribute('role', 'listbox');
     menu.hidden = true;
-    host.appendChild(menu);
+    d.body.appendChild(menu);
+
+    function place() {
+      var r = input.getBoundingClientRect();
+      menu.style.left = Math.max(8, r.left) + 'px';
+      menu.style.top = (r.bottom + 6) + 'px';
+      menu.style.width = r.width + 'px';
+    }
+    function reposition() { if (!menu.hidden) { place(); } }
+    w.addEventListener('scroll', reposition, true);
+    w.addEventListener('resize', reposition);
 
     var items = [];
 
@@ -464,6 +524,8 @@
       items = o.source().filter(function (it) {
         return !needle || String(it.name || '').toLowerCase().indexOf(needle) !== -1;
       }).slice(0, 40);
+
+      place();
 
       if (!items.length) {
         menu.innerHTML = '<div class="apollo-combo-empty">' + esc(o.empty || 'Nada encontrado') + '</div>';
@@ -714,7 +776,9 @@
          Replicated from .as2-drop in the Design System showcase
          (VIA_core.js_official__uni.theme.v2.1.css) so a code-built dropdown is
          indistinguishable from the taxonomy one. Alpha .2 + z-index per spec. */
-      '.apollo-combo{position:absolute;top:calc(100% + 6px);left:0;right:0;',
+      /* position:fixed + JS-computed left/top/width (see place() above) —
+         portaled to <body>, so no ancestor .card isolation can trap it. */
+      '.apollo-combo{position:fixed;',
       'z-index:9999999!important;',
       'background:rgba(var(--rgb-theme),.2)!important;',
       'backdrop-filter:blur(20px) saturate(180%)!important;',

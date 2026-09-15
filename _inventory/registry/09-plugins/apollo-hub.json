@@ -247,7 +247,7 @@
       "_source": "deep_live_scan"
     }
   ],
-  "version": "1.0.1",
+  "version": "1.0.2",
   "ajax": {
     "priv": [],
     "nopriv": []
@@ -1222,5 +1222,11 @@
       "apollo_hub",
       "apollo_hub_builder"
     ]
+  },
+  "$version_synced": {
+    "date": "2026-08-31",
+    "from": "1.0.1",
+    "to": "1.0.2",
+    "source": "disk docblock via doctor.js"
   }
 }

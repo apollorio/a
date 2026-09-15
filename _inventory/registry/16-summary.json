@@ -11,7 +11,7 @@
     "merge": "deep_merge_last_wins"
   },
   "summary": {
-    "total_plugins": 47,
+    "total_plugins": 48,
     "total_cpts_unique": 17,
     "total_taxonomies_unique": 12,
     "total_tables_unique": 78,

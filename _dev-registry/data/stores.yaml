@@ -1,0 +1,683 @@
+# tables, options, constants, capabilities
+#
+# Apollo DEV registry — GENERATED, do not hand-edit.
+# Source of truth is the code; regenerate with
+#   node D:/dev/_cos/verify/gen-dev-registry.js
+#
+tables:
+  apollo_: { refs: 89, declared: false, owner: null }
+  apollo_activity: { refs: 15, declared: true, owner: apollo-social }
+  apollo_notifications: { refs: 15, declared: true, owner: apollo-notif }
+  apollo_stats_content: { refs: 13, declared: true, owner: apollo-statistics }
+  apollo_event_rsvp: { refs: 12, declared: false, owner: null }
+  apollo_groups: { refs: 11, declared: true, owner: apollo-groups }
+  apollo_reminders: { refs: 11, declared: false, owner: null }
+  apollo_stats_events: { refs: 11, declared: true, owner: apollo-statistics }
+  apollo_stats_users: { refs: 11, declared: true, owner: apollo-statistics }
+  apollo_user_ratings: { refs: 11, declared: false, owner: null }
+  apollo_email_queue: { refs: 9, declared: true, owner: apollo-email }
+  apollo_group_members: { refs: 9, declared: true, owner: apollo-groups }
+  apollo_signatures: { refs: 8, declared: true, owner: apollo-sign }
+  apollo_blocks: { refs: 7, declared: false, owner: null }
+  apollo_remind_push_subs: { refs: 7, declared: false, owner: null }
+  apollo_remind_telegram: { refs: 7, declared: false, owner: null }
+  apollo_favs: { refs: 5, declared: true, owner: apollo-fav }
+  apollo_gestor_activity: { refs: 5, declared: true, owner: apollo-gestor }
+  apollo_gestor_tasks: { refs: 5, declared: true, owner: apollo-gestor }
+  apollo_remind_log: { refs: 5, declared: false, owner: null }
+  apollo_wow_reactions: { refs: 5, declared: false, owner: null }
+  apollo_audit_log: { refs: 4, declared: true, owner: apollo-core }
+  apollo_doc_downloads: { refs: 4, declared: true, owner: apollo-docs }
+  apollo_doc_versions: { refs: 4, declared: true, owner: apollo-docs }
+  apollo_group_meta: { refs: 4, declared: true, owner: apollo-groups }
+  apollo_mod_reports: { refs: 4, declared: false, owner: null }
+  apollo_notif_prefs: { refs: 4, declared: true, owner: apollo-notif }
+  apollo_stats_pageviews: { refs: 4, declared: false, owner: null }
+  apollo_stats_radio: { refs: 4, declared: false, owner: null }
+  apollo_stats_sessions: { refs: 4, declared: false, owner: null }
+  apollo_chat_participants: { refs: 3, declared: true, owner: apollo-chat }
+  apollo_connections: { refs: 3, declared: true, owner: apollo-social }
+  apollo_gestor_reminder_log: { refs: 3, declared: false, owner: null }
+  apollo_matchmaking: { refs: 3, declared: true, owner: apollo-users }
+  apollo_profile_views: { refs: 3, declared: true, owner: apollo-users }
+  apollo_signature_audit: { refs: 3, declared: true, owner: apollo-sign }
+  apollo_stats_clicks: { refs: 3, declared: false, owner: null }
+  apollo_chat_blocks: { refs: 2, declared: true, owner: apollo-chat }
+  apollo_chat_messages: { refs: 2, declared: true, owner: apollo-chat }
+  apollo_gestor_milestones: { refs: 2, declared: true, owner: apollo-gestor }
+  apollo_gestor_payments: { refs: 2, declared: true, owner: apollo-gestor }
+  apollo_gestor_team: { refs: 2, declared: true, owner: apollo-gestor }
+  apollo_mod_actions: { refs: 2, declared: false, owner: null }
+  apollo_telegram_verif: { refs: 2, declared: false, owner: null }
+  apollo_wows: { refs: 2, declared: true, owner: apollo-wow }
+  statistics_pages: { refs: 2, declared: false, owner: null }
+  apollo_achievements: { refs: 1, declared: true, owner: apollo-membership }
+  apollo_chat_attachments: { refs: 1, declared: true, owner: apollo-chat }
+  apollo_chat_presence: { refs: 1, declared: true, owner: apollo-chat }
+  apollo_chat_threads: { refs: 1, declared: true, owner: apollo-chat }
+  apollo_chat_typing: { refs: 1, declared: true, owner: apollo-chat }
+  apollo_cron_execution_log: { refs: 1, declared: false, owner: null }
+  apollo_email_log: { refs: 1, declared: true, owner: apollo-email }
+  apollo_follows: { refs: 1, declared: false, owner: null }
+  apollo_gestor_income: { refs: 1, declared: false, owner: null }
+  apollo_gestor_staff: { refs: 1, declared: false, owner: null }
+  apollo_jwt_refresh: { refs: 1, declared: false, owner: null }
+  apollo_login_attempts: { refs: 1, declared: true, owner: apollo-login }
+  apollo_membership_log: { refs: 1, declared: true, owner: apollo-membership }
+  apollo_mod_log: { refs: 1, declared: true, owner: apollo-mod }
+  apollo_mod_queue: { refs: 1, declared: true, owner: apollo-mod }
+  apollo_newsletter_subscribers: { refs: 1, declared: false, owner: null }
+  apollo_points: { refs: 1, declared: true, owner: apollo-membership }
+  apollo_quiz_results: { refs: 1, declared: true, owner: apollo-login }
+  apollo_ranks: { refs: 1, declared: true, owner: apollo-membership }
+  apollo_simon_scores: { refs: 1, declared: true, owner: apollo-login }
+  apollo_social_posts: { refs: 1, declared: false, owner: null }
+  apollo_steps: { refs: 1, declared: true, owner: apollo-membership }
+  APOLLO_TELEGRAM_chat: { refs: 1, declared: false, owner: null }
+  apollo_triggers: { refs: 1, declared: true, owner: apollo-membership }
+  apollo_url_rewrites: { refs: 1, declared: true, owner: apollo-login }
+  apollo_user_fields: { refs: 1, declared: true, owner: apollo-users }
+  apollo_wow_types: { refs: 1, declared: true, owner: apollo-wow }
+  bp_activity: { refs: 1, declared: false, owner: null }
+  statistics_visit: { refs: 1, declared: false, owner: null }
+  statistics_visitor: { refs: 1, declared: false, owner: null }
+options:
+  active_plugins: { sites: 22, declared: false }
+  apollo_admin_settings: { sites: 13, declared: true }
+  apollo_telegram_linked_chats: { sites: 10, declared: false }
+  apollo_email_settings: { sites: 9, declared: false }
+  apollo_adverts_submit_page_id: { sites: 7, declared: false }
+  apollo_dj_settings: { sites: 6, declared: false }
+  apollo_membership_trigger_points: { sites: 6, declared: false }
+  apollo_radio_json_cdn: { sites: 6, declared: false }
+  apollo_radio_json_fallback: { sites: 6, declared: false }
+  date_format: { sites: 6, declared: false }
+  endurance_cache_level: { sites: 6, declared: false }
+  apollo_adverts_settings: { sites: 5, declared: false }
+  apollo_firewall_blacklist: { sites: 5, declared: false }
+  apollo_radio_sc_proxy_url: { sites: 5, declared: false }
+  apollo_sheets_tables: { sites: 5, declared: false }
+  apollo_sign_db_version: { sites: 5, declared: true }
+  mm_cache_settings: { sites: 5, declared: false }
+  _apollo_matchmaking_dirty_pairs: { sites: 4, declared: false }
+  aj_nrep_prefix: { sites: 4, declared: false }
+  apollo_adverts_archive_page_id: { sites: 4, declared: false }
+  apollo_docs_db_version: { sites: 4, declared: true }
+  apollo_event_settings: { sites: 4, declared: false }
+  apollo_gestor_db_version: { sites: 4, declared: true }
+  apollo_local_settings: { sites: 4, declared: false }
+  apollo_membership_settings: { sites: 4, declared: false }
+  apollo_statistics_db_version: { sites: 4, declared: false }
+  apollo_tg_debug_start_trail: { sites: 4, declared: false }
+  epc_filetype_expirations: { sites: 4, declared: false }
+  home: { sites: 4, declared: false }
+  rewrite_rules: { sites: 4, declared: false }
+  siteurl: { sites: 4, declared: false }
+  apollo_coauthor_version: { sites: 3, declared: false }
+  apollo_dashboard_page_id: { sites: 3, declared: false }
+  apollo_dj_global_message: { sites: 3, declared: false }
+  apollo_dj_maintenance_mode: { sites: 3, declared: false }
+  apollo_dj_min_version: { sites: 3, declared: false }
+  apollo_email_db_version: { sites: 3, declared: true }
+  apollo_login_page_id: { sites: 3, declared: false }
+  apollo_membership_db_version: { sites: 3, declared: false }
+  apollo_newsletter_db_version: { sites: 3, declared: false }
+  apollo_remind_db_version: { sites: 3, declared: false }
+  apollo_remind_telegram_token: { sites: 3, declared: false }
+  apollo_sheets_settings: { sites: 3, declared: false }
+  apollo_templates_settings: { sites: 3, declared: false }
+  apollo_test_spreadsheet: { sites: 3, declared: false }
+  apollo_vapid_public_key: { sites: 3, declared: false }
+  epc_skip_404_handling: { sites: 3, declared: false }
+  _mm_refresh_token: { sites: 2, declared: false }
+  admin_email: { sites: 2, declared: false }
+  apollo_: { sites: 2, declared: false }
+  apollo_admin_frontend_rewrite_v2: { sites: 2, declared: false }
+  apollo_adverts_rewrite_version: { sites: 2, declared: false }
+  apollo_adverts_spam_log: { sites: 2, declared: false }
+  apollo_adverts_version: { sites: 2, declared: false }
+  apollo_chat_rewrite_v: { sites: 2, declared: false }
+  apollo_coauthor_keep_data: { sites: 2, declared: false }
+  apollo_coauthor_settings: { sites: 2, declared: false }
+  apollo_dashboard_settings: { sites: 2, declared: false }
+  apollo_dashboard_version: { sites: 2, declared: false }
+  apollo_dashboard_widgets: { sites: 2, declared: false }
+  apollo_delete_data_on_uninstall: { sites: 2, declared: false }
+  apollo_dj_allowed_memberships_nicotine: { sites: 2, declared: false }
+  apollo_dj_allowed_roles_login: { sites: 2, declared: false }
+  apollo_elementor_settings: { sites: 2, declared: false }
+  apollo_email_cpt_href_repair_v1: { sites: 2, declared: false }
+  apollo_email_logo_png_v1: { sites: 2, declared: false }
+  apollo_email_transactional_shell_v2: { sites: 2, declared: false }
+  apollo_event_requests: { sites: 2, declared: false }
+  apollo_events_rewrite_version: { sites: 2, declared: false }
+  apollo_events_static_shadows: { sites: 2, declared: false }
+  apollo_fav_db_version: { sites: 2, declared: false }
+  apollo_groups_db_version: { sites: 2, declared: false }
+  apollo_hub_rewrite_version: { sites: 2, declared: false }
+  apollo_hub_static_shadows: { sites: 2, declared: false }
+  apollo_hub_version: { sites: 2, declared: false }
+  apollo_login_flush_rewrites: { sites: 2, declared: false }
+  apollo_login_settings: { sites: 2, declared: false }
+  apollo_maps_center_lat: { sites: 2, declared: false }
+  apollo_maps_center_lng: { sites: 2, declared: false }
+  apollo_maps_default_zoom: { sites: 2, declared: false }
+  apollo_membership_badge_types_seeded: { sites: 2, declared: false }
+  apollo_modelo_seeded: { sites: 2, declared: false }
+  apollo_pane_engine_version: { sites: 2, declared: false }
+  apollo_radio_sc_client_id: { sites: 2, declared: false }
+  apollo_route_setup_version: { sites: 2, declared: false }
+  apollo_sheets_db_version: { sites: 2, declared: true }
+  apollo_sheets_version: { sites: 2, declared: false }
+  apollo_social_version: { sites: 2, declared: false }
+  apollo_telegram_rewrites_ver: { sites: 2, declared: false }
+  apollo_users_version: { sites: 2, declared: false }
+  apollo_vapid_private_key: { sites: 2, declared: false }
+  elementor_cpt_support: { sites: 2, declared: false }
+  mm_brand: { sites: 2, declared: false }
+  site_icon: { sites: 2, declared: false }
+  time_format: { sites: 2, declared: false }
+  users_can_register: { sites: 2, declared: false }
+  aj_nrep_format: { sites: 1, declared: false }
+  apollo_admin_activated: { sites: 1, declared: false }
+  apollo_admin_version: { sites: 1, declared: false }
+  apollo_analytics_admin_override: { sites: 1, declared: false }
+  apollo_calendar_db_version: { sites: 1, declared: false }
+  apollo_calendar_version: { sites: 1, declared: false }
+  apollo_cdn_enabled: { sites: 1, declared: false }
+  apollo_cdn_registered: { sites: 1, declared: false }
+  apollo_cdn_url: { sites: 1, declared: false }
+  apollo_chat_bad_words_enabled: { sites: 1, declared: false }
+  apollo_chat_flood_max: { sites: 1, declared: false }
+  apollo_chat_quota_: { sites: 1, declared: false }
+  apollo_chat_retention_days: { sites: 1, declared: false }
+  apollo_chat_version: { sites: 1, declared: false }
+  apollo_debug_mode: { sites: 1, declared: true }
+  apollo_dj_daily_limit: { sites: 1, declared: false }
+  apollo_dj_min_accuracy: { sites: 1, declared: false }
+  apollo_dj_quantize_level: { sites: 1, declared: false }
+  apollo_dj_version: { sites: 1, declared: false }
+  apollo_email_installed_at: { sites: 1, declared: false }
+  apollo_event_version: { sites: 1, declared: false }
+  apollo_fav_settings: { sites: 1, declared: false }
+  apollo_gestor_settings: { sites: 1, declared: false }
+  apollo_groups_rewrite_version: { sites: 1, declared: false }
+  apollo_groups_version: { sites: 1, declared: false }
+  apollo_hub_flush_rewrite: { sites: 1, declared: false }
+  apollo_journal_activated: { sites: 1, declared: false }
+  apollo_lockout_duration: { sites: 1, declared: true }
+  apollo_lockout_max_attempts: { sites: 1, declared: false }
+  apollo_login_custom_url_active: { sites: 1, declared: false }
+  apollo_maps_activated: { sites: 1, declared: false }
+  apollo_membership_activated: { sites: 1, declared: false }
+  apollo_membership_badge_types: { sites: 1, declared: false }
+  apollo_mod_version: { sites: 1, declared: false }
+  apollo_newsletter_settings: { sites: 1, declared: false }
+  apollo_notif_version: { sites: 1, declared: false }
+  apollo_rate_block: { sites: 1, declared: false }
+  apollo_rate_max_hits: { sites: 1, declared: false }
+  apollo_rate_window: { sites: 1, declared: false }
+  apollo_remind_delete_data_on_uninstall: { sites: 1, declared: false }
+  apollo_remind_version: { sites: 1, declared: false }
+  apollo_sc_client_id: { sites: 1, declared: false }
+  apollo_scheduler_version: { sites: 1, declared: false }
+  apollo_seo_settings: { sites: 1, declared: true }
+  apollo_seo_sitemap_version: { sites: 1, declared: false }
+  apollo_seo_version: { sites: 1, declared: false }
+  apollo_sign_version: { sites: 1, declared: false }
+  apollo_statistics_settings: { sites: 1, declared: false }
+  apollo_telegram_options: { sites: 1, declared: false }
+  apollo_users_activated: { sites: 1, declared: false }
+  apollo_users_block_author_enum: { sites: 1, declared: false }
+  apollo_users_default_privacy: { sites: 1, declared: false }
+  apollo_users_delete_data_on_uninstall: { sites: 1, declared: false }
+  apollo_users_profile_slug: { sites: 1, declared: false }
+  apollo_users_radar_slug: { sites: 1, declared: false }
+  apollo_users_settings: { sites: 1, declared: false }
+  apollo_wow_version: { sites: 1, declared: false }
+  elementor_safe_mode_allowed_plugins: { sites: 1, declared: false }
+  endurance_cloudflare_enabled: { sites: 1, declared: false }
+  endurance_file_enabled: { sites: 1, declared: false }
+  permalink_structure: { sites: 1, declared: false }
+  stylesheet: { sites: 1, declared: false }
+  template: { sites: 1, declared: false }
+constants:
+  APOLLO_NAVBAR_LOADED: { defines: 6, units: [apollo-admin, apollo-templates] }
+  WP_USE_THEMES: { defines: 4, units: [apollo-core, apollo-djs, apollo-statistics, apollo-telegram] }
+  ABSPATH: { defines: 2, units: [apollo-core, apollo-events] }
+  APOLLO_APP_SHELL_LOADED: { defines: 2, units: [apollo-admin, apollo-templates] }
+  APOLLO_CASA_RT_CSS: { defines: 2, units: [apollo-templates] }
+  APOLLO_CASA_RT_JS: { defines: 2, units: [apollo-templates] }
+  APOLLO_EVENT_DIR: { defines: 2, units: [apollo-events] }
+  APOLLO_EVENT_SINGLE_RENDERING: { defines: 2, units: [apollo-events] }
+  APOLLO_MAPS_REST_NAMESPACE: { defines: 2, units: [apollo-maps] }
+  APOLLO_WEBP_FORCE_LOADED: { defines: 2, units: [apollo-core, mu-plugin] }
+  APOLLO_ADMIN_BASENAME: { defines: 1, units: [apollo-admin] }
+  APOLLO_ADMIN_DIR: { defines: 1, units: [apollo-admin] }
+  APOLLO_ADMIN_FILE: { defines: 1, units: [apollo-admin] }
+  APOLLO_ADMIN_LAYERS: { defines: 1, units: [apollo-admin] }
+  APOLLO_ADMIN_OPTION_KEY: { defines: 1, units: [apollo-admin] }
+  APOLLO_ADMIN_REST_NAMESPACE: { defines: 1, units: [apollo-admin] }
+  APOLLO_ADMIN_URL: { defines: 1, units: [apollo-admin] }
+  APOLLO_ADMIN_VERSION: { defines: 1, units: [apollo-admin] }
+  APOLLO_ADVERTS_ACCOMMODATION_TYPES: { defines: 1, units: [apollo-adverts] }
+  APOLLO_ADVERTS_ADMIN_ONLY_META: { defines: 1, units: [apollo-adverts] }
+  APOLLO_ADVERTS_BASENAME: { defines: 1, units: [apollo-adverts] }
+  APOLLO_ADVERTS_CONDITIONS: { defines: 1, units: [apollo-adverts] }
+  APOLLO_ADVERTS_CURRENCY: { defines: 1, units: [apollo-adverts] }
+  APOLLO_ADVERTS_DEFAULT_EXPIRATION: { defines: 1, units: [apollo-adverts] }
+  APOLLO_ADVERTS_DIR: { defines: 1, units: [apollo-adverts] }
+  APOLLO_ADVERTS_FILE: { defines: 1, units: [apollo-adverts] }
+  APOLLO_ADVERTS_IMAGE_SIZES: { defines: 1, units: [apollo-adverts] }
+  APOLLO_ADVERTS_INTENTS: { defines: 1, units: [apollo-adverts] }
+  APOLLO_ADVERTS_MAX_IMAGES: { defines: 1, units: [apollo-adverts] }
+  APOLLO_ADVERTS_MEMBER_ONLY_META: { defines: 1, units: [apollo-adverts] }
+  APOLLO_ADVERTS_META_KEYS: { defines: 1, units: [apollo-adverts] }
+  APOLLO_ADVERTS_POSTS_PER_PAGE: { defines: 1, units: [apollo-adverts] }
+  APOLLO_ADVERTS_REST_NAMESPACE: { defines: 1, units: [apollo-adverts] }
+  APOLLO_ADVERTS_TICKET_DOMAINS: { defines: 1, units: [apollo-adverts] }
+  APOLLO_ADVERTS_TICKET_TYPES: { defines: 1, units: [apollo-adverts] }
+  APOLLO_ADVERTS_TYPE_CANONICAL: { defines: 1, units: [apollo-adverts] }
+  APOLLO_ADVERTS_URL: { defines: 1, units: [apollo-adverts] }
+  APOLLO_ADVERTS_VERSION: { defines: 1, units: [apollo-adverts] }
+  APOLLO_AE_DIR: { defines: 1, units: [apollo-elementor] }
+  APOLLO_AE_FILE: { defines: 1, units: [apollo-elementor] }
+  APOLLO_AE_URL: { defines: 1, units: [apollo-elementor] }
+  APOLLO_AE_VERSION: { defines: 1, units: [apollo-elementor] }
+  APOLLO_ASSETS_GRAIN_URL: { defines: 1, units: [apollo-events] }
+  APOLLO_BRAIN_LOADED: { defines: 1, units: [mu-plugin] }
+  APOLLO_CALENDAR_BASENAME: { defines: 1, units: [apollo-calendar] }
+  APOLLO_CALENDAR_DIR: { defines: 1, units: [apollo-calendar] }
+  APOLLO_CALENDAR_FILE: { defines: 1, units: [apollo-calendar] }
+  APOLLO_CALENDAR_URL: { defines: 1, units: [apollo-calendar] }
+  APOLLO_CALENDAR_VERSION: { defines: 1, units: [apollo-calendar] }
+  APOLLO_CANVAS_VARIANT: { defines: 1, units: [apollo-core] }
+  APOLLO_CASA_CELL_LIGHTBOX_EVENT: { defines: 1, units: [apollo-templates] }
+  APOLLO_CASA_CELL_MOTION: { defines: 1, units: [apollo-templates] }
+  APOLLO_CDN_BASE: { defines: 1, units: [apollo-templates] }
+  APOLLO_CHAT_FILE: { defines: 1, units: [apollo-chat] }
+  APOLLO_CHAT_PATH: { defines: 1, units: [apollo-chat] }
+  APOLLO_CHAT_URL: { defines: 1, units: [apollo-chat] }
+  APOLLO_CHAT_VERSION: { defines: 1, units: [apollo-chat] }
+  APOLLO_COAUTHOR_BASENAME: { defines: 1, units: [apollo-coauthor] }
+  APOLLO_COAUTHOR_CACHE_GROUP: { defines: 1, units: [apollo-coauthor] }
+  APOLLO_COAUTHOR_DIR: { defines: 1, units: [apollo-coauthor] }
+  APOLLO_COAUTHOR_FILE: { defines: 1, units: [apollo-coauthor] }
+  APOLLO_COAUTHOR_META_KEY: { defines: 1, units: [apollo-coauthor] }
+  APOLLO_COAUTHOR_POST_TYPES: { defines: 1, units: [apollo-coauthor] }
+  APOLLO_COAUTHOR_REST_NAMESPACE: { defines: 1, units: [apollo-coauthor] }
+  APOLLO_COAUTHOR_TAX: { defines: 1, units: [apollo-coauthor] }
+  APOLLO_COAUTHOR_URL: { defines: 1, units: [apollo-coauthor] }
+  APOLLO_COAUTHOR_VERSION: { defines: 1, units: [apollo-coauthor] }
+  APOLLO_COLOR_INPUT_HANDLE: { defines: 1, units: [apollo-core] }
+  APOLLO_COLOR_INPUT_VERSION: { defines: 1, units: [apollo-core] }
+  APOLLO_COMMENT_FILE: { defines: 1, units: [apollo-comment] }
+  APOLLO_COMMENT_PATH: { defines: 1, units: [apollo-comment] }
+  APOLLO_COMMENT_URL: { defines: 1, units: [apollo-comment] }
+  APOLLO_COMMENT_VERSION: { defines: 1, units: [apollo-comment] }
+  APOLLO_CORE_BOOTSTRAPPED: { defines: 1, units: [apollo-core] }
+  APOLLO_CORE_FILE: { defines: 1, units: [apollo-core] }
+  APOLLO_CORE_PATH: { defines: 1, units: [apollo-core] }
+  APOLLO_CORE_URL: { defines: 1, units: [apollo-core] }
+  APOLLO_CORE_VERSION: { defines: 1, units: [apollo-core] }
+  APOLLO_CPT_CLASSIFIED: { defines: 1, units: [apollo-adverts] }
+  APOLLO_DASHBOARD_BASENAME: { defines: 1, units: [apollo-dashboard] }
+  APOLLO_DASHBOARD_DIR: { defines: 1, units: [apollo-dashboard] }
+  APOLLO_DASHBOARD_FILE: { defines: 1, units: [apollo-dashboard] }
+  APOLLO_DASHBOARD_REST_NAMESPACE: { defines: 1, units: [apollo-dashboard] }
+  APOLLO_DASHBOARD_URL: { defines: 1, units: [apollo-dashboard] }
+  APOLLO_DASHBOARD_VERSION: { defines: 1, units: [apollo-dashboard] }
+  APOLLO_DEBUG: { defines: 1, units: [apollo-core] }
+  APOLLO_DJ_BASENAME: { defines: 1, units: [apollo-djs] }
+  APOLLO_DJ_CACHE_GROUP: { defines: 1, units: [apollo-djs] }
+  APOLLO_DJ_CACHE_TTL: { defines: 1, units: [apollo-djs] }
+  APOLLO_DJ_CPT: { defines: 1, units: [apollo-djs] }
+  APOLLO_DJ_DEFAULT_STYLE: { defines: 1, units: [apollo-djs] }
+  APOLLO_DJ_DIR: { defines: 1, units: [apollo-djs] }
+  APOLLO_DJ_FILE: { defines: 1, units: [apollo-djs] }
+  APOLLO_DJ_META_KEYS: { defines: 1, units: [apollo-djs] }
+  APOLLO_DJ_REST_NAMESPACE: { defines: 1, units: [apollo-djs] }
+  APOLLO_DJ_SINGLE_PARTS: { defines: 1, units: [apollo-djs] }
+  APOLLO_DJ_SYNC_APP_ID: { defines: 1, units: [apollo-dj-sync] }
+  APOLLO_DJ_SYNC_PATH: { defines: 1, units: [apollo-dj-sync] }
+  APOLLO_DJ_SYNC_VERSION: { defines: 1, units: [apollo-dj-sync] }
+  APOLLO_DJ_TAX_SOUND: { defines: 1, units: [apollo-djs] }
+  APOLLO_DJ_URL: { defines: 1, units: [apollo-djs] }
+  APOLLO_DJ_VERSION: { defines: 1, units: [apollo-djs] }
+  APOLLO_DOCS_BASENAME: { defines: 1, units: [apollo-docs] }
+  APOLLO_DOCS_DB_VERSION: { defines: 1, units: [apollo-docs] }
+  APOLLO_DOCS_DIR: { defines: 1, units: [apollo-docs] }
+  APOLLO_DOCS_FILE: { defines: 1, units: [apollo-docs] }
+  APOLLO_DOCS_URL: { defines: 1, units: [apollo-docs] }
+  APOLLO_DOCS_VERSION: { defines: 1, units: [apollo-docs] }
+  APOLLO_ELEMENTOR_DIR: { defines: 1, units: [apollo-elementor-pro] }
+  APOLLO_ELEMENTOR_FILE: { defines: 1, units: [apollo-elementor-pro] }
+  APOLLO_ELEMENTOR_URL: { defines: 1, units: [apollo-elementor-pro] }
+  APOLLO_ELEMENTOR_VERSION: { defines: 1, units: [apollo-elementor-pro] }
+  APOLLO_EMAIL_BASENAME: { defines: 1, units: [apollo-email] }
+  APOLLO_EMAIL_BATCH_SIZE: { defines: 1, units: [apollo-email] }
+  APOLLO_EMAIL_CRON_HOOK: { defines: 1, units: [apollo-email] }
+  APOLLO_EMAIL_DB_VERSION: { defines: 1, units: [apollo-email] }
+  APOLLO_EMAIL_FILE: { defines: 1, units: [apollo-email] }
+  APOLLO_EMAIL_MAX_RETRIES: { defines: 1, units: [apollo-email] }
+  APOLLO_EMAIL_MIN_PHP: { defines: 1, units: [apollo-email] }
+  APOLLO_EMAIL_MIN_WP: { defines: 1, units: [apollo-email] }
+  APOLLO_EMAIL_PATH: { defines: 1, units: [apollo-email] }
+  APOLLO_EMAIL_SLUG: { defines: 1, units: [apollo-email] }
+  APOLLO_EMAIL_URL: { defines: 1, units: [apollo-email] }
+  APOLLO_EMAIL_VERSION: { defines: 1, units: [apollo-email] }
+  APOLLO_EVENT_BASENAME: { defines: 1, units: [apollo-events] }
+  APOLLO_EVENT_CACHE_GROUP: { defines: 1, units: [apollo-events] }
+  APOLLO_EVENT_CACHE_TTL: { defines: 1, units: [apollo-events] }
+  APOLLO_EVENT_CPT: { defines: 1, units: [apollo-events] }
+  APOLLO_EVENT_DEFAULT_SHARE_IMAGE: { defines: 1, units: [apollo-events] }
+  APOLLO_EVENT_DEFAULT_STYLE: { defines: 1, units: [apollo-events] }
+  APOLLO_EVENT_FILE: { defines: 1, units: [apollo-events] }
+  APOLLO_EVENT_GONE_OFFSET_MINUTES: { defines: 1, units: [apollo-events] }
+  APOLLO_EVENT_META_KEYS: { defines: 1, units: [apollo-events] }
+  APOLLO_EVENT_REST_NAMESPACE: { defines: 1, units: [apollo-events] }
+  APOLLO_EVENT_REVEAL_ANIM: { defines: 1, units: [apollo-events] }
+  APOLLO_EVENT_REVEAL_FLOOR: { defines: 1, units: [apollo-events] }
+  APOLLO_EVENT_SINGLE_PARTS: { defines: 1, units: [apollo-events] }
+  APOLLO_EVENT_STYLES: { defines: 1, units: [apollo-events] }
+  APOLLO_EVENT_TAX_CATEGORY: { defines: 1, units: [apollo-events] }
+  APOLLO_EVENT_TAX_SEASON: { defines: 1, units: [apollo-events] }
+  APOLLO_EVENT_TAX_SOUND: { defines: 1, units: [apollo-events] }
+  APOLLO_EVENT_TAX_TAG: { defines: 1, units: [apollo-events] }
+  APOLLO_EVENT_TAX_TYPE: { defines: 1, units: [apollo-events] }
+  APOLLO_EVENT_URL: { defines: 1, units: [apollo-events] }
+  APOLLO_EVENT_VERSION: { defines: 1, units: [apollo-events] }
+  APOLLO_FAV_FILE: { defines: 1, units: [apollo-fav] }
+  APOLLO_FAV_PATH: { defines: 1, units: [apollo-fav] }
+  APOLLO_FAV_TABLE: { defines: 1, units: [apollo-fav] }
+  APOLLO_FAV_URL: { defines: 1, units: [apollo-fav] }
+  APOLLO_FAV_VERSION: { defines: 1, units: [apollo-fav] }
+  APOLLO_GESTOR_BASENAME: { defines: 1, units: [apollo-gestor] }
+  APOLLO_GESTOR_DB_VERSION: { defines: 1, units: [apollo-gestor] }
+  APOLLO_GESTOR_DIR: { defines: 1, units: [apollo-gestor] }
+  APOLLO_GESTOR_FILE: { defines: 1, units: [apollo-gestor] }
+  APOLLO_GESTOR_URL: { defines: 1, units: [apollo-gestor] }
+  APOLLO_GESTOR_VERSION: { defines: 1, units: [apollo-gestor] }
+  APOLLO_GROUPS_FILE: { defines: 1, units: [apollo-groups] }
+  APOLLO_GROUPS_PATH: { defines: 1, units: [apollo-groups] }
+  APOLLO_GROUPS_URL: { defines: 1, units: [apollo-groups] }
+  APOLLO_GROUPS_VERSION: { defines: 1, units: [apollo-groups] }
+  APOLLO_HTACCESS_LOCK_BOOTED: { defines: 1, units: [apollo-core] }
+  APOLLO_HUB_BASENAME: { defines: 1, units: [apollo-hub] }
+  APOLLO_HUB_BIO_MAX_LEN: { defines: 1, units: [apollo-hub] }
+  APOLLO_HUB_BLOCK_TYPES: { defines: 1, units: [apollo-hub] }
+  APOLLO_HUB_CACHE_GROUP: { defines: 1, units: [apollo-hub] }
+  APOLLO_HUB_CACHE_TTL: { defines: 1, units: [apollo-hub] }
+  APOLLO_HUB_CPT: { defines: 1, units: [apollo-hub] }
+  APOLLO_HUB_DIR: { defines: 1, units: [apollo-hub] }
+  APOLLO_HUB_EDIT_SLUG: { defines: 1, units: [apollo-hub] }
+  APOLLO_HUB_FILE: { defines: 1, units: [apollo-hub] }
+  APOLLO_HUB_LINKS_MAX: { defines: 1, units: [apollo-hub] }
+  APOLLO_HUB_META_KEYS: { defines: 1, units: [apollo-hub] }
+  APOLLO_HUB_REST_NAMESPACE: { defines: 1, units: [apollo-hub] }
+  APOLLO_HUB_SLUG: { defines: 1, units: [apollo-hub] }
+  APOLLO_HUB_SOCIAL_ICONS: { defines: 1, units: [apollo-hub] }
+  APOLLO_HUB_THEMES: { defines: 1, units: [apollo-hub] }
+  APOLLO_HUB_URL: { defines: 1, units: [apollo-hub] }
+  APOLLO_HUB_VERSION: { defines: 1, units: [apollo-hub] }
+  APOLLO_JOURNAL_BASENAME: { defines: 1, units: [apollo-journal] }
+  APOLLO_JOURNAL_DIR: { defines: 1, units: [apollo-journal] }
+  APOLLO_JOURNAL_FILE: { defines: 1, units: [apollo-journal] }
+  APOLLO_JOURNAL_NREP_PREFIX: { defines: 1, units: [apollo-journal] }
+  APOLLO_JOURNAL_REST_NAMESPACE: { defines: 1, units: [apollo-journal] }
+  APOLLO_JOURNAL_URL: { defines: 1, units: [apollo-journal] }
+  APOLLO_JOURNAL_VERSION: { defines: 1, units: [apollo-journal] }
+  APOLLO_LISTING_HEADER_KERNEL: { defines: 1, units: [apollo-templates] }
+  APOLLO_LISTING_HEADER_RUNTIME: { defines: 1, units: [apollo-templates] }
+  APOLLO_LOCAL_BASENAME: { defines: 1, units: [apollo-loc] }
+  APOLLO_LOCAL_CACHE_GROUP: { defines: 1, units: [apollo-loc] }
+  APOLLO_LOCAL_CACHE_TTL: { defines: 1, units: [apollo-loc] }
+  APOLLO_LOCAL_CPT: { defines: 1, units: [apollo-loc] }
+  APOLLO_LOCAL_DEFAULT_STYLE: { defines: 1, units: [apollo-loc] }
+  APOLLO_LOCAL_DIR: { defines: 1, units: [apollo-loc] }
+  APOLLO_LOCAL_FILE: { defines: 1, units: [apollo-loc] }
+  APOLLO_LOCAL_META_KEYS: { defines: 1, units: [apollo-loc] }
+  APOLLO_LOCAL_REST_NAMESPACE: { defines: 1, units: [apollo-loc] }
+  APOLLO_LOCAL_TAX_AREA: { defines: 1, units: [apollo-loc] }
+  APOLLO_LOCAL_TAX_TYPE: { defines: 1, units: [apollo-loc] }
+  APOLLO_LOCAL_URL: { defines: 1, units: [apollo-loc] }
+  APOLLO_LOCAL_VERSION: { defines: 1, units: [apollo-loc] }
+  APOLLO_LOCALE: { defines: 1, units: [mu-plugin] }
+  APOLLO_LOCALE_HTML: { defines: 1, units: [mu-plugin] }
+  APOLLO_LOCKOUT_TIER_0: { defines: 1, units: [apollo-login] }
+  APOLLO_LOCKOUT_TIER_1: { defines: 1, units: [apollo-login] }
+  APOLLO_LOCKOUT_TIER_2: { defines: 1, units: [apollo-login] }
+  APOLLO_LOCKOUT_TIER_3: { defines: 1, units: [apollo-login] }
+  APOLLO_LOCKOUT_TIER_4: { defines: 1, units: [apollo-login] }
+  APOLLO_LOGIN_BASENAME: { defines: 1, units: [apollo-login] }
+  APOLLO_LOGIN_BOOTSTRAPPED: { defines: 1, units: [apollo-login] }
+  APOLLO_LOGIN_CUSTOM_LOGIN_SLUG: { defines: 1, units: [apollo-login] }
+  APOLLO_LOGIN_CUSTOM_REGISTER_SLUG: { defines: 1, units: [apollo-login] }
+  APOLLO_LOGIN_DIR: { defines: 1, units: [apollo-login] }
+  APOLLO_LOGIN_FILE: { defines: 1, units: [apollo-login] }
+  APOLLO_LOGIN_LOCKOUT_DURATION: { defines: 1, units: [apollo-login] }
+  APOLLO_LOGIN_LOGIN_SLUG_ALIASES: { defines: 1, units: [apollo-login] }
+  APOLLO_LOGIN_LOGOUT_IN_PROGRESS: { defines: 1, units: [apollo-login] }
+  APOLLO_LOGIN_MAX_ATTEMPTS: { defines: 1, units: [apollo-login] }
+  APOLLO_LOGIN_MIN_REGISTRATION_AGE: { defines: 1, units: [apollo-login] }
+  APOLLO_LOGIN_PAGE_RESET: { defines: 1, units: [apollo-login] }
+  APOLLO_LOGIN_QUIZ_STAGES: { defines: 1, units: [apollo-login] }
+  APOLLO_LOGIN_REACTION_TARGETS: { defines: 1, units: [apollo-login] }
+  APOLLO_LOGIN_REST_NAMESPACE: { defines: 1, units: [apollo-login] }
+  APOLLO_LOGIN_SIMON_LEVELS: { defines: 1, units: [apollo-login] }
+  APOLLO_LOGIN_TABLE_APP_ACTIVITY: { defines: 1, units: [apollo-login] }
+  APOLLO_LOGIN_TABLE_LOGIN_ATTEMPTS: { defines: 1, units: [apollo-login] }
+  APOLLO_LOGIN_TABLE_QUIZ_RESULTS: { defines: 1, units: [apollo-login] }
+  APOLLO_LOGIN_TABLE_SIMON_SCORES: { defines: 1, units: [apollo-login] }
+  APOLLO_LOGIN_TABLE_URL_REWRITES: { defines: 1, units: [apollo-login] }
+  APOLLO_LOGIN_URL: { defines: 1, units: [apollo-login] }
+  APOLLO_LOGIN_VERSION: { defines: 1, units: [apollo-login] }
+  APOLLO_LUX_DIR: { defines: 1, units: [apollo-lux-panels] }
+  APOLLO_LUX_FILE: { defines: 1, units: [apollo-lux-panels] }
+  APOLLO_LUX_URL: { defines: 1, units: [apollo-lux-panels] }
+  APOLLO_LUX_VERSION: { defines: 1, units: [apollo-lux-panels] }
+  APOLLO_MAPS_BASENAME: { defines: 1, units: [apollo-maps] }
+  APOLLO_MAPS_DIR: { defines: 1, units: [apollo-maps] }
+  APOLLO_MAPS_FILE: { defines: 1, units: [apollo-maps] }
+  APOLLO_MAPS_URL: { defines: 1, units: [apollo-maps] }
+  APOLLO_MAPS_VERSION: { defines: 1, units: [apollo-maps] }
+  APOLLO_MEMBERSHIP_BADGE_TYPES: { defines: 1, units: [apollo-membership] }
+  APOLLO_MEMBERSHIP_BASENAME: { defines: 1, units: [apollo-membership] }
+  APOLLO_MEMBERSHIP_DEFAULT_BADGE_IMAGE: { defines: 1, units: [apollo-membership] }
+  APOLLO_MEMBERSHIP_DEFAULT_POINT_IMAGE: { defines: 1, units: [apollo-membership] }
+  APOLLO_MEMBERSHIP_DEFAULT_RANK_IMAGE: { defines: 1, units: [apollo-membership] }
+  APOLLO_MEMBERSHIP_DIR: { defines: 1, units: [apollo-membership] }
+  APOLLO_MEMBERSHIP_FILE: { defines: 1, units: [apollo-membership] }
+  APOLLO_MEMBERSHIP_REST_NAMESPACE: { defines: 1, units: [apollo-membership] }
+  APOLLO_MEMBERSHIP_URL: { defines: 1, units: [apollo-membership] }
+  APOLLO_MEMBERSHIP_VERSION: { defines: 1, units: [apollo-membership] }
+  APOLLO_META_BIRTH_DATE: { defines: 1, units: [apollo-login] }
+  APOLLO_META_EMAIL_VERIFIED: { defines: 1, units: [apollo-login] }
+  APOLLO_META_EXE_CURRENT_ACTION: { defines: 1, units: [apollo-login] }
+  APOLLO_META_EXE_LAST_SEEN: { defines: 1, units: [apollo-login] }
+  APOLLO_META_EXE_VERSION: { defines: 1, units: [apollo-login] }
+  APOLLO_META_LAST_LOGIN: { defines: 1, units: [apollo-login] }
+  APOLLO_META_LOCKOUT_TIER: { defines: 1, units: [apollo-login] }
+  APOLLO_META_LOCKOUT_UNTIL: { defines: 1, units: [apollo-login] }
+  APOLLO_META_LOGIN_ATTEMPTS: { defines: 1, units: [apollo-login] }
+  APOLLO_META_PARTY_ROLE: { defines: 1, units: [apollo-login] }
+  APOLLO_META_PASSWORD_RESET_EXPIRES: { defines: 1, units: [apollo-login] }
+  APOLLO_META_PASSWORD_RESET_TOKEN: { defines: 1, units: [apollo-login] }
+  APOLLO_META_PHONE: { defines: 1, units: [apollo-login] }
+  APOLLO_META_QUIZ_SCORE: { defines: 1, units: [apollo-login] }
+  APOLLO_META_SOCIAL_NAME: { defines: 1, units: [apollo-login] }
+  APOLLO_META_TELEGRAM_CHAT_ID: { defines: 1, units: [apollo-login] }
+  APOLLO_META_VERIFICATION_TOKEN: { defines: 1, units: [apollo-login] }
+  APOLLO_META_ZODIAC_SIGN: { defines: 1, units: [apollo-login] }
+  APOLLO_MOBILE_CELL_BOOT: { defines: 1, units: [apollo-templates] }
+  APOLLO_MOBILE_CELL_GESTURES: { defines: 1, units: [apollo-templates] }
+  APOLLO_MOBILE_CELL_SUPERVISOR: { defines: 1, units: [apollo-templates] }
+  APOLLO_MOBILE_CELL_UNLOCK: { defines: 1, units: [apollo-templates] }
+  APOLLO_MOD_FILE: { defines: 1, units: [apollo-mod] }
+  APOLLO_MOD_PATH: { defines: 1, units: [apollo-mod] }
+  APOLLO_MOD_URL: { defines: 1, units: [apollo-mod] }
+  APOLLO_MOD_VERSION: { defines: 1, units: [apollo-mod] }
+  APOLLO_NAVBAR_V2_LOADED: { defines: 1, units: [apollo-templates] }
+  APOLLO_NOTIF_FILE: { defines: 1, units: [apollo-notif] }
+  APOLLO_NOTIF_PATH: { defines: 1, units: [apollo-notif] }
+  APOLLO_NOTIF_URL: { defines: 1, units: [apollo-notif] }
+  APOLLO_NOTIF_VERSION: { defines: 1, units: [apollo-notif] }
+  APOLLO_PANE_ENGINE_MANIFEST: { defines: 1, units: [apollo-pane-engine] }
+  APOLLO_PANE_ENGINE_PATH: { defines: 1, units: [apollo-pane-engine] }
+  APOLLO_PANE_ENGINE_URL: { defines: 1, units: [apollo-pane-engine] }
+  APOLLO_PANE_ENGINE_VERSION: { defines: 1, units: [apollo-pane-engine] }
+  APOLLO_PLUS_ASIDE_LOADED: { defines: 1, units: [apollo-templates] }
+  APOLLO_PLUS_ASIDE_STYLES: { defines: 1, units: [apollo-templates] }
+  APOLLO_PLUS_TOPBAR_SCRIPTS: { defines: 1, units: [apollo-templates] }
+  APOLLO_PLUS_TOPBAR_STYLES: { defines: 1, units: [apollo-templates] }
+  APOLLO_RADIO_FILE: { defines: 1, units: [apollo-radio] }
+  APOLLO_RADIO_PATH: { defines: 1, units: [apollo-radio] }
+  APOLLO_RADIO_URL: { defines: 1, units: [apollo-radio] }
+  APOLLO_RADIO_VERSION: { defines: 1, units: [apollo-radio] }
+  APOLLO_RATE_TIER_0: { defines: 1, units: [apollo-login] }
+  APOLLO_RATE_TIER_1: { defines: 1, units: [apollo-login] }
+  APOLLO_RATE_TIER_2: { defines: 1, units: [apollo-login] }
+  APOLLO_RATE_TIER_3: { defines: 1, units: [apollo-login] }
+  APOLLO_RATE_TIER_TTL: { defines: 1, units: [apollo-login] }
+  APOLLO_REGISTRY_PATH: { defines: 1, units: [mu-plugin] }
+  APOLLO_REMIND_BASENAME: { defines: 1, units: [apollo-remind] }
+  APOLLO_REMIND_DB_VERSION: { defines: 1, units: [apollo-remind] }
+  APOLLO_REMIND_FILE: { defines: 1, units: [apollo-remind] }
+  APOLLO_REMIND_PATH: { defines: 1, units: [apollo-remind] }
+  APOLLO_REMIND_URL: { defines: 1, units: [apollo-remind] }
+  APOLLO_REMIND_VERSION: { defines: 1, units: [apollo-remind] }
+  APOLLO_SC_DIR: { defines: 1, units: [apollo-soundcloud] }
+  APOLLO_SC_FILE: { defines: 1, units: [apollo-soundcloud] }
+  APOLLO_SC_PREVIEW_END_PCT: { defines: 1, units: [apollo-soundcloud] }
+  APOLLO_SC_PREVIEW_MIN_SECONDS: { defines: 1, units: [apollo-soundcloud] }
+  APOLLO_SC_PREVIEW_START_PCT: { defines: 1, units: [apollo-soundcloud] }
+  APOLLO_SC_URL: { defines: 1, units: [apollo-soundcloud] }
+  APOLLO_SC_VERSION: { defines: 1, units: [apollo-soundcloud] }
+  APOLLO_SCHEDULER_APPOINTMENT_META: { defines: 1, units: [apollo-scheduler] }
+  APOLLO_SCHEDULER_BASENAME: { defines: 1, units: [apollo-scheduler] }
+  APOLLO_SCHEDULER_CACHE_GROUP: { defines: 1, units: [apollo-scheduler] }
+  APOLLO_SCHEDULER_CACHE_TTL: { defines: 1, units: [apollo-scheduler] }
+  APOLLO_SCHEDULER_CPT_APPOINTMENT: { defines: 1, units: [apollo-scheduler] }
+  APOLLO_SCHEDULER_CPT_RESOURCE: { defines: 1, units: [apollo-scheduler] }
+  APOLLO_SCHEDULER_CPT_SERVICE: { defines: 1, units: [apollo-scheduler] }
+  APOLLO_SCHEDULER_DIR: { defines: 1, units: [apollo-scheduler] }
+  APOLLO_SCHEDULER_FILE: { defines: 1, units: [apollo-scheduler] }
+  APOLLO_SCHEDULER_RESOURCE_META: { defines: 1, units: [apollo-scheduler] }
+  APOLLO_SCHEDULER_REST_BASE: { defines: 1, units: [apollo-scheduler] }
+  APOLLO_SCHEDULER_REST_NAMESPACE: { defines: 1, units: [apollo-scheduler] }
+  APOLLO_SCHEDULER_SERVICE_META: { defines: 1, units: [apollo-scheduler] }
+  APOLLO_SCHEDULER_URL: { defines: 1, units: [apollo-scheduler] }
+  APOLLO_SCHEDULER_USER_META_KEYS: { defines: 1, units: [apollo-scheduler] }
+  APOLLO_SCHEDULER_VERSION: { defines: 1, units: [apollo-scheduler] }
+  APOLLO_SEO_FILE: { defines: 1, units: [apollo-seo] }
+  APOLLO_SEO_OPTION: { defines: 1, units: [apollo-seo] }
+  APOLLO_SEO_PATH: { defines: 1, units: [apollo-seo] }
+  APOLLO_SEO_POST_META: { defines: 1, units: [apollo-seo] }
+  APOLLO_SEO_TERM_META: { defines: 1, units: [apollo-seo] }
+  APOLLO_SEO_URL: { defines: 1, units: [apollo-seo] }
+  APOLLO_SEO_VERSION: { defines: 1, units: [apollo-seo] }
+  APOLLO_SHEETS_BASENAME: { defines: 1, units: [apollo-sheets] }
+  APOLLO_SHEETS_CPT: { defines: 1, units: [apollo-sheets] }
+  APOLLO_SHEETS_DB_VERSION: { defines: 1, units: [apollo-sheets] }
+  APOLLO_SHEETS_DEFAULT_COLS: { defines: 1, units: [apollo-sheets] }
+  APOLLO_SHEETS_DEFAULT_ROWS: { defines: 1, units: [apollo-sheets] }
+  APOLLO_SHEETS_DIR: { defines: 1, units: [apollo-sheets] }
+  APOLLO_SHEETS_FILE: { defines: 1, units: [apollo-sheets] }
+  APOLLO_SHEETS_MAX_ENTRIES: { defines: 1, units: [apollo-sheets] }
+  APOLLO_SHEETS_REST_NAMESPACE: { defines: 1, units: [apollo-sheets] }
+  APOLLO_SHEETS_TABLE_SCHEME: { defines: 1, units: [apollo-sheets] }
+  APOLLO_SHEETS_URL: { defines: 1, units: [apollo-sheets] }
+  APOLLO_SHEETS_VERSION: { defines: 1, units: [apollo-sheets] }
+  APOLLO_SIGN_BASENAME: { defines: 1, units: [apollo-sign] }
+  APOLLO_SIGN_DB_VERSION: { defines: 1, units: [apollo-sign] }
+  APOLLO_SIGN_DIR: { defines: 1, units: [apollo-sign] }
+  APOLLO_SIGN_FILE: { defines: 1, units: [apollo-sign] }
+  APOLLO_SIGN_URL: { defines: 1, units: [apollo-sign] }
+  APOLLO_SIGN_VERSION: { defines: 1, units: [apollo-sign] }
+  APOLLO_SOCIAL_FILE: { defines: 1, units: [apollo-social] }
+  APOLLO_SOCIAL_PATH: { defines: 1, units: [apollo-social] }
+  APOLLO_SOCIAL_URL: { defines: 1, units: [apollo-social] }
+  APOLLO_SOCIAL_VERSION: { defines: 1, units: [apollo-social] }
+  APOLLO_STATISTICS_FILE: { defines: 1, units: [apollo-statistics] }
+  APOLLO_STATISTICS_PATH: { defines: 1, units: [apollo-statistics] }
+  APOLLO_STATISTICS_URL: { defines: 1, units: [apollo-statistics] }
+  APOLLO_STATISTICS_VERSION: { defines: 1, units: [apollo-statistics] }
+  APOLLO_STATS_DB_VERSION: { defines: 1, units: [apollo-statistics] }
+  APOLLO_STATS_FILE: { defines: 1, units: [apollo-statistics] }
+  APOLLO_STATS_PATH: { defines: 1, units: [apollo-statistics] }
+  APOLLO_STATS_URL: { defines: 1, units: [apollo-statistics] }
+  APOLLO_STATS_VERSION: { defines: 1, units: [apollo-statistics] }
+  APOLLO_TABLE_ACHIEVEMENTS: { defines: 1, units: [apollo-membership] }
+  APOLLO_TABLE_MEMBERSHIP_LOG: { defines: 1, units: [apollo-membership] }
+  APOLLO_TABLE_POINTS: { defines: 1, units: [apollo-membership] }
+  APOLLO_TABLE_RANKS: { defines: 1, units: [apollo-membership] }
+  APOLLO_TABLE_STEPS: { defines: 1, units: [apollo-membership] }
+  APOLLO_TABLE_TRIGGERS: { defines: 1, units: [apollo-membership] }
+  APOLLO_TELEGRAM_BASENAME: { defines: 1, units: [apollo-telegram] }
+  APOLLO_TELEGRAM_DB_VERSION: { defines: 1, units: [apollo-telegram] }
+  APOLLO_TELEGRAM_DIR: { defines: 1, units: [apollo-telegram] }
+  APOLLO_TELEGRAM_FILE: { defines: 1, units: [apollo-telegram] }
+  APOLLO_TELEGRAM_MENUS_SLUG: { defines: 1, units: [apollo-telegram] }
+  APOLLO_TELEGRAM_OPTIONS_KEY: { defines: 1, units: [apollo-telegram] }
+  APOLLO_TELEGRAM_OPTIONS_KEY_DB_VERSION: { defines: 1, units: [apollo-telegram] }
+  APOLLO_TELEGRAM_SLUG: { defines: 1, units: [apollo-telegram] }
+  APOLLO_TELEGRAM_URL: { defines: 1, units: [apollo-telegram] }
+  APOLLO_TELEGRAM_VERSION: { defines: 1, units: [apollo-telegram] }
+  APOLLO_TEMPLATES_BASENAME: { defines: 1, units: [apollo-templates] }
+  APOLLO_TEMPLATES_BOOTSTRAPPED: { defines: 1, units: [apollo-templates] }
+  APOLLO_TEMPLATES_DIR: { defines: 1, units: [apollo-templates] }
+  APOLLO_TEMPLATES_FILE: { defines: 1, units: [apollo-templates] }
+  APOLLO_TEMPLATES_REST_NAMESPACE: { defines: 1, units: [apollo-templates] }
+  APOLLO_TEMPLATES_URL: { defines: 1, units: [apollo-templates] }
+  APOLLO_TEMPLATES_VERSION: { defines: 1, units: [apollo-templates] }
+  APOLLO_UI_DIR: { defines: 1, units: [apollo-ui] }
+  APOLLO_UI_FILE: { defines: 1, units: [apollo-ui] }
+  APOLLO_UI_OPTION: { defines: 1, units: [apollo-ui] }
+  APOLLO_UI_URL: { defines: 1, units: [apollo-ui] }
+  APOLLO_UI_VERSION: { defines: 1, units: [apollo-ui] }
+  APOLLO_USERS_BASENAME: { defines: 1, units: [apollo-users] }
+  APOLLO_USERS_DIR: { defines: 1, units: [apollo-users] }
+  APOLLO_USERS_FILE: { defines: 1, units: [apollo-users] }
+  APOLLO_USERS_MEMBERSHIP_TYPES: { defines: 1, units: [apollo-users] }
+  APOLLO_USERS_PRIVACY_LEVELS: { defines: 1, units: [apollo-users] }
+  APOLLO_USERS_PROFILE_SLUG: { defines: 1, units: [apollo-users] }
+  APOLLO_USERS_REST_NAMESPACE: { defines: 1, units: [apollo-users] }
+  APOLLO_USERS_TABLE_FIELDS: { defines: 1, units: [apollo-users] }
+  APOLLO_USERS_TABLE_MATCHMAKING: { defines: 1, units: [apollo-users] }
+  APOLLO_USERS_TABLE_MATCHMAKING_SCORES: { defines: 1, units: [apollo-users] }
+  APOLLO_USERS_TABLE_PROFILE_VIEWS: { defines: 1, units: [apollo-users] }
+  APOLLO_USERS_TABLE_RATINGS: { defines: 1, units: [apollo-users] }
+  APOLLO_USERS_URL: { defines: 1, units: [apollo-users] }
+  APOLLO_USERS_VERSION: { defines: 1, units: [apollo-users] }
+  APOLLO_VAPID_PRIVATE_KEY: { defines: 1, units: [apollo-remind] }
+  APOLLO_VAPID_PUBLIC_KEY: { defines: 1, units: [apollo-remind] }
+  APOLLO_WOW_FILE: { defines: 1, units: [apollo-wow] }
+  APOLLO_WOW_PATH: { defines: 1, units: [apollo-wow] }
+  APOLLO_WOW_URL: { defines: 1, units: [apollo-wow] }
+  APOLLO_WOW_VERSION: { defines: 1, units: [apollo-wow] }
+  DB_HOST: { defines: 1, units: [apollo-email] }
+  EPC_VERSION: { defines: 1, units: [mu-plugin] }
+  NFD_EPC_MARKER: { defines: 1, units: [mu-plugin] }
+capabilities:
+  manage_options: 180
+  edit_post: 27
+  edit_posts: 26
+  apollo_moderate_content: 10
+  publish_posts: 7
+  list_users: 5
+  administrator: 4
+  edit_user: 4
+  moderate_comments: 4
+  read_post: 4
+  edit_users: 3
+  upload_files: 3
+  delete_posts: 2
+  edit_others_posts: 2
+  read: 2
+  apollo_access_cena_rio: 1
+  apollo_cena_submit_events: 1
+  delete_post: 1
+  delete_users: 1
+  edit_comment: 1
+  manage_categories: 1
+  unfiltered_html: 1

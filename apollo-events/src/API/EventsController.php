@@ -305,6 +305,25 @@ class EventsController {
 			)
 		);
 
+		register_rest_route(
+			$this->namespace,
+			'/eventos/validar-imagem',
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'validate_image_url' ),
+				'permission_callback' => static function () {
+					return is_user_logged_in();
+				},
+				'args'                => array(
+					'url' => array(
+						'type'              => 'string',
+						'required'          => true,
+						'sanitize_callback' => 'esc_url_raw',
+					),
+				),
+			)
+		);
+
 		// POST /eventos/{id}/clonar
 		register_rest_route(
 			$this->namespace,
@@ -1077,6 +1096,7 @@ class EventsController {
 		}
 
 		apollo_event_set_banner( $id, (int) $attachment_id );
+		apollo_event_heal_cover( $id );
 
 		return new \WP_REST_Response(
 			array(
@@ -1095,6 +1115,30 @@ class EventsController {
 		$id = (int) $request->get_param( 'id' );
 		apollo_event_set_banner( $id, '' );
 		return new \WP_REST_Response( array( 'deleted' => true ) );
+	}
+
+	/**
+	 * POST /eventos/validar-imagem — content-type image/* (not HTML).
+	 */
+	public function validate_image_url( \WP_REST_Request $request ) {
+		$url = (string) $request->get_param( 'url' );
+		$ok  = apollo_event_validate_remote_image( $url );
+		if ( is_wp_error( $ok ) ) {
+			return new \WP_REST_Response(
+				array(
+					'ok'    => false,
+					'error' => $ok->get_error_message(),
+				),
+				400
+			);
+		}
+		return new \WP_REST_Response(
+			array(
+				'ok'  => true,
+				'url' => self::sanitize_image_ref( $url ),
+			),
+			200
+		);
 	}
 
 	/**
@@ -2027,6 +2071,7 @@ class EventsController {
 			'lista_fem_enabled'    => '_event_lista_fem_enabled',
 			'lista_fem_sub'        => '_event_lista_fem_sub',
 			'lista_cta_label'      => '_event_lista_cta_label',
+			'highlighted'          => '_event_highlighted',
 		);
 
 		foreach ( $meta_map as $key => $meta_key ) {
@@ -2076,8 +2121,7 @@ class EventsController {
 		 */
 		if ( array_key_exists( 'banner', $data ) ) {
 			apollo_event_set_banner( $post_id, $data['banner'] );
-			/* Debug log write removed 2026-08-17 — appended to
-			   D:/dev/_livro.rvalle.com.br/… on every banner save. */
+			apollo_event_heal_cover( $post_id );
 		}
 	}
 
@@ -2113,6 +2157,7 @@ class EventsController {
 			case '_event_earlybird_enabled':
 			case '_event_lista_geral_enabled':
 			case '_event_lista_fem_enabled':
+			case '_event_highlighted':
 				$flag = sanitize_text_field( (string) $value );
 				if ( in_array( $flag, array( '1', 'true', 'yes', 'on' ), true ) ) {
 					return '1';

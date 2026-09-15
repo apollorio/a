@@ -1,7 +1,7 @@
 {
   "$schema": "https://apollo.rio/schemas/registry-map-v1.json",
-  "$version": "1.5.0",
-  "$generated": "2026-07-28",
+  "$version": "1.6.0",
+  "$generated": "2026-08-31",
   "$description": "Apollo Ecosystem Modular Registry Map — breaks the monolith apollo-registry.json into a chaptered SSOT. Lossless: rebuilding every chapter in load_order reproduces the monolith exactly.",
   "$canonical_monolith": "plugins/_inventory/apollo-registry.json",
   "$chapters_dir": "plugins/_inventory/registry/",
@@ -24,7 +24,6 @@
         "$philosophy"
       ],
       "owner": "apollo-core",
-      "bytes": 1139,
       "priority": 0
     },
     "02-header": {
@@ -37,7 +36,6 @@
         "$header"
       ],
       "owner": "apollo-core",
-      "bytes": 2570,
       "note": "Also carries the four root scalars ($schema/$version/$generated/$description)."
     },
     "03-apollo-rule": {
@@ -46,7 +44,6 @@
         "$apollo_rule"
       ],
       "owner": "apollo-core",
-      "bytes": 4498,
       "critical": true
     },
     "04-audit": {
@@ -57,8 +54,7 @@
         "$deep_audit.duration_ms",
         "$deep_audit.targets"
       ],
-      "owner": "apollo-core",
-      "bytes": 13212
+      "owner": "apollo-core"
     },
     "04-audit-reports": {
       "file": "04-audit-reports.json",
@@ -66,7 +62,6 @@
         "$deep_audit.reports"
       ],
       "owner": "apollo-core",
-      "bytes": 42258,
       "note": "Carved out of 04-audit: 39 per-plugin deep-audit reports."
     },
     "05-global-architecture": {
@@ -74,39 +69,35 @@
       "keys": [
         "$GLOBAL_ARCHITECTURE"
       ],
-      "owner": "apollo-core",
-      "bytes": 1290
+      "owner": "apollo-core"
     },
     "06-cdn": {
       "file": "06-cdn.json",
       "keys": [
         "cdn"
       ],
-      "owner": "apollo-templates",
-      "bytes": 12336
+      "owner": "apollo-templates"
     },
     "07-icons": {
       "file": "07-icons.json",
       "keys": [
         "icons"
       ],
-      "owner": "apollo-core",
-      "bytes": 4945
+      "owner": "apollo-core"
     },
     "08-architecture-layers": {
       "file": "08-architecture-layers.json",
       "keys": [
         "architecture"
       ],
-      "owner": "apollo-core",
-      "bytes": 1879
+      "owner": "apollo-core"
     },
     "09-plugins": {
       "dir": "09-plugins/",
       "pattern": "{slug}.json",
       "wrap": "plugins.{slug}",
       "owner": "each-plugin",
-      "count": 47,
+      "count": 48,
       "files": [
         "apollo-admin",
         "apollo-adverts",
@@ -143,6 +134,7 @@
         "apollo-remind",
         "apollo-runtime",
         "apollo-scheduler",
+        "apollo-seed-runner",
         "apollo-seo",
         "apollo-sheets",
         "apollo-shortcodes",
@@ -156,7 +148,7 @@
         "apollo-users",
         "apollo-wow"
       ],
-      "on_disk": 41,
+      "on_disk": 42,
       "absent_from_disk": [
         "apollo-cena",
         "apollo-classifieds",
@@ -172,8 +164,7 @@
         "$deep_audit.coupling_edges",
         "$deep_audit.high_risk_plugins"
       ],
-      "owner": "apollo-core",
-      "bytes": 23412
+      "owner": "apollo-core"
     },
     "11-security": {
       "file": "11-security.json",
@@ -181,34 +172,29 @@
         "$deep_audit.open_rest_total",
         "$deep_audit.remediations_applied"
       ],
-      "owner": "apollo-login",
-      "bytes": 392
+      "owner": "apollo-login"
     },
     "12-data-sync": {
       "file": "12-data-sync.json",
       "keys": [
         "$data_registry_sync"
       ],
-      "owner": "apollo-core",
-      "bytes": 1376
+      "owner": "apollo-core"
     },
     "13-runtime": {
       "file": "13-runtime.json",
       "keys": [
         "runtime_wordpress_packages"
       ],
-      "owner": "apollo-runtime",
-      "bytes": 903
+      "owner": "apollo-runtime"
     },
     "14-routing": {
       "file": "14-routing.json",
       "keys": [
         "$routing_canonical",
-        "$mu_plugins",
         "$third_party_plugins"
       ],
-      "owner": "apollo-core",
-      "bytes": 5321
+      "owner": "apollo-core"
     },
     "15-conventions": {
       "file": "15-conventions.json",
@@ -218,8 +204,7 @@
         "namingRules",
         "constants"
       ],
-      "owner": "apollo-core",
-      "bytes": 3713
+      "owner": "apollo-core"
     },
     "16-summary": {
       "file": "16-summary.json",
@@ -228,16 +213,14 @@
         "quick_lookup",
         "divergences"
       ],
-      "owner": "apollo-core",
-      "bytes": 9046
+      "owner": "apollo-core"
     },
     "17-backlog": {
       "file": "17-backlog.json",
       "keys": [
         "$to_be_done"
       ],
-      "owner": "apollo-core",
-      "bytes": 11943
+      "owner": "apollo-core"
     },
     "18-canvas-shell": {
       "file": "18-canvas-shell.json",
@@ -245,7 +228,6 @@
         "$canvas_shell"
       ],
       "owner": "apollo-templates",
-      "bytes": 6786,
       "critical": true
     },
     "19-ssot-audit": {
@@ -254,7 +236,6 @@
         "$ssot_audit"
       ],
       "owner": "apollo-core",
-      "bytes": 5459,
       "critical": true
     },
     "20-meta-schemas": {
@@ -263,7 +244,6 @@
         "$meta_schemas"
       ],
       "owner": "apollo-core",
-      "bytes": 6335,
       "critical": true
     },
     "21-mockup-field-contract": {
@@ -272,9 +252,17 @@
         "$mockup_field_contract"
       ],
       "owner": "apollo-core",
-      "bytes": 20264,
       "critical": true,
       "note": "Register-before-build queue: every node the dj/local single-page mockups print that no registered key can supply, plus four 01-philosophy violations that must NOT be given storage."
+    },
+    "22-mu-plugins": {
+      "file": "22-mu-plugins.json",
+      "keys": [
+        "$mu_plugins"
+      ],
+      "owner": "apollo-core",
+      "critical": true,
+      "note": "The MU boot layer: 15 files that run before active_plugins and cannot be disabled from wp-admin. Carved out of 14-routing, which documented only 5."
     }
   },
   "load_order": [
@@ -299,7 +287,8 @@
     "18-canvas-shell",
     "19-ssot-audit",
     "20-meta-schemas",
-    "21-mockup-field-contract"
+    "21-mockup-field-contract",
+    "22-mu-plugins"
   ],
   "build_rules": {
     "merge_strategy": "deep_merge_last_wins",
@@ -321,14 +310,12 @@
     }
   },
   "$known_divergences": [
-    "6 registry entries have no plugin folder on disk (flagged $disk_status=ABSENT, preserved not deleted): apollo-cena, apollo-classifieds, apollo-pwa, apollo-runtime, apollo-shortcodes, apollo-suppliers.",
+    "6 registry entries have no plugin folder on disk (flagged in chapters['09-plugins'].absent_from_disk, preserved not deleted): apollo-cena, apollo-classifieds (absorbed into apollo-adverts), apollo-pwa, apollo-runtime, apollo-shortcodes (absorbed into apollo-core), apollo-suppliers. Decide per plugin: build it, or retire the entry.",
     "Chapter 13-runtime names apollo-runtime as owner; that plugin does not exist yet — ownership is nominal.",
     "Layers L8_industry, L9_pwa and L12_runtime contain only absent plugins and are effectively empty.",
-    "apollo-registry-2.json is a STALE mirror: identical except plugins.{events,djs,loc}.meta and it lacks $data_registry_sync. apollo-registry.json is canonical.",
-    "apollo-core source was edited for the canvas contract but its version stayed 6.2.3.",
-    "_dj_tracks v2: both write paths (REST + admin metabox) are now consistent (apollo-core 6.2.4, apollo-djs 1.0.3, apollo-lux-panels 1.0.1). Front-end read path (apollo_dj_get_tracks() + out-now templates) still on v1 — see 20-meta-schemas.json known_gap.",
-    "Found + fixed: apollo-djs' plain Admin\\Metabox duplicated apollo-lux-panels' DjPanel field-for-field (two competing _dj_tracks editors on one screen). Guarded behind class_exists() rather than deleted.",
-    "apollo-templates: docblock/constant version split found and fixed (1.3.2 vs 1.3.5, both now 1.3.6) while closing /casa to-dos 002/003/004."
+    "RUNTIME SYNC IS UNVERIFIED. wp-content/apollo-registry.json (what the site reads, via APOLLO_REGISTRY_PATH in mu-plugins/apollo-brain.php) is a SEPARATE file from plugins/_inventory/apollo-registry.json (this build output). build.js deliberately does not write it. Nothing records when they were last synced. See 22-mu-plugins.json $registry_path_warning.",
+    "_dj_tracks v2: both write paths (REST + admin metabox) are consistent (apollo-core, apollo-djs, apollo-lux-panels). Front-end read path (apollo_dj_get_tracks() + out-now templates) still on v1 — see 20-meta-schemas.json known_gap.",
+    "dj.name and local.hero_image claim a metabox that apollo-lux-panels does not render (see 19-ssot-audit)."
   ],
   "$last_ssot_audit": {
     "date": "2026-07-28",
@@ -336,5 +323,25 @@
     "ground_truth": "audit/ground-truth.json",
     "findings": "audit/registry-ssot-audit.json",
     "scope": "40 plugin folders, 1327 PHP files, ~259k LOC"
+  },
+  "$doctor_script": "plugins/_inventory/registry/doctor.js",
+  "$doctor_description": "build.js proves the chapters are structurally sound; doctor.js proves they are TRUE. Run `node doctor.js` before trusting any claim in here, and `node doctor.js --strict` in CI.",
+  "$last_reconciliation": {
+    "date": "2026-08-31",
+    "tool": "doctor.js",
+    "result": "0 error, 0 warn",
+    "what_was_fixed": [
+      "15 plugin versions were stale vs disk (worst: apollo-templates 1.5.1 -> 1.6.24, apollo-core 6.3.0 -> 6.5.2). Synced from the disk docblock; each entry carries a $version_synced note.",
+      "apollo-adverts had a docblock/constant split (1.2.0 vs 1.2.2) — the exact bug class this registry warns about, because WP reads the docblock and cache-busting reads the constant. Docblock corrected to 1.2.2.",
+      "apollo-seed-runner existed on disk since 2026-08-29 with no registry entry. Entry created, placed in the new L14_tooling layer.",
+      "Plugin count disagreed three ways (map 47 / architecture 46 / summary 47 / actual 47). All now derive from the same count: 48.",
+      "architecture.$layers_absent_from_disk listed 4 of the 6 absent plugins. Now identical to absent_from_disk.",
+      "apollo-classifieds and apollo-shortcodes had registry entries but no architecture layer. Placed, with notes saying what absorbed them.",
+      "$mu_plugins documented 5 of 15 real MU files. Moved out of 14-routing into the new 22-mu-plugins chapter with all 15 documented.",
+      "apollo-error-handler was recorded at 'priority 999' (from docblock prose); the real add_action calls use PHP_INT_MAX.",
+      "apollo-route-setup flag was recorded as 2026.05.20.2; disk is 2026.07.03.2.",
+      "Every chapter carried a declared 'bytes' field that invalidates on each edit; 5 of 21 had already drifted. Field removed from all 21.",
+      "The monolith was stale vs its own chapters and apollo-registry-2.json was a known-stale mirror. Rebuilt; both are now byte-identical and round-trip clean."
+    ]
   }
 }

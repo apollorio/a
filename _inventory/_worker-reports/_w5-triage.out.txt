@@ -1,0 +1,1 @@
+I'll read the W5 hits and registry excerpts first, then classify each hit and write the triage report.I’ll read the W5 forbidden notes and existing report format so the triage matches the coordinator’s expected buckets.I’ll inspect the likely social/CPT hits so classification is based on actual code, not the grep line alone.

@@ -3,7 +3,7 @@
  * Plugin Name: Apollo DJs
  * Plugin URI: https://apollo.rio.br/plugins/apollo-djs
  * Description: DJs CPT: Shared across all plugins. Profile pages, social links, sound genres, carousel/slider/grid views. Style: apollo-v1.
- * Version: 1.0.8
+ * Version: 1.1.7
  * Author: Apollo::Rio
  * Author URI: https://apollo.rio.br
  * License: Proprietary
@@ -14,6 +14,37 @@
  * Network: false
  *
  * @package Apollo\DJs
+ */
+
+/*
+ * ARCH: apollo-djs / APOLLO_DJ_CPT, track
+ * ARCH-MANUAL: escrito a mao (2026-09-09). gen-arch-blocks.js recusa
+ *   ficheiros dirty no git e 41 de 42 estao dirty. Ver nota em apollo-core.
+ * Contrato completo: D:/dev/_cos/verify/MODULE-CONTRACT.md
+ *
+ * OWNER     apollo-djs   87 arquivos PHP, 11358 LOC
+ * BOOT      plugins_loaded:15 (:125); card `track` em init:20
+ *           (includes/card-track.php:245)
+ * RUNTIME   CPT/taxonomia/meta registrados por apollo-core (init:5)
+ * UI        emite HTML (9); chrome e do apollo-templates
+ * META      60 chaves tocadas
+ * REST      5 rotas (5 publicas) - controlador so para `dj`, nao `track`
+ * REQUIRES  apollo-core
+ *
+ * CONTRATO  Primeiro consumidor de apollo_card_register(). Partilha o slot
+ *           init:20 com apollo-ui; nao colidem porque as chaves diferem
+ *           (`track` vs type-1..type-6). O contrato e
+ *           primeira-registacao-vence, entao a chave e que importa.
+ *
+ * NAO FACA
+ *   - assumir que `track` esta completo: track.map_meta_cap continua com o
+ *     efetivo do core em false contra a intencao do owner em true. A mesma
+ *     classe ja foi corrigida para event/classified; track ficou de fora.
+ *   - construir para /tracks: e um UNCLAIMED_DOMAIN_SURFACE - has_archive
+ *     existe so para um link morto nao dar 404, sem template nem REST dono.
+ *   - registar CPT direto: apollo-core e o dono do init:5.
+ *
+ * VERIFICAR   node D:/dev/_cos/verify/plugin-audit.js
  */
 
 declare(strict_types=1);
@@ -28,7 +59,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // CONSTANTS
 // ═══════════════════════════════════════════════════════════════════════════
 
-define( 'APOLLO_DJ_VERSION', '1.0.8' ); /* 1.0.8 — track query kills the N+1; ghost credits; preview provider resolution; track card registered against the Card Contract. */
+define( 'APOLLO_DJ_VERSION', '1.1.7' ); /* 1.1.7 — hidden SC transport, 20% seek, 60s fade. */
 define( 'APOLLO_DJ_FILE', __FILE__ );
 define( 'APOLLO_DJ_DIR', plugin_dir_path( __FILE__ ) );
 define( 'APOLLO_DJ_URL', plugin_dir_url( __FILE__ ) );
@@ -103,6 +134,8 @@ require_once APOLLO_DJ_DIR . 'includes/panel-track.php';
 /* Track releases — query + derivation (credits, preview, card data). Pure
    functions; replaces the unbounded N+1 in apollo_get_latest_dj_tracks(). */
 require_once APOLLO_DJ_DIR . 'includes/tracks.php';
+/* Unified listen resolver — SoundCloud chain + native audio for Out Now cards. */
+require_once APOLLO_DJ_DIR . 'includes/track-listen.php';
 /* The track card, registered against apollo-core's Card Contract. First
    consumer: one card on /casa, /tracks and /dj/{id}, styles carried by the
    contract's print-once ledger. */

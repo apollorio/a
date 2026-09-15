@@ -64,6 +64,7 @@ final class Plugin
         // PHASE 008: soft-flush so /anuncios/meus goes live without a manual
         // Save Permalinks click.
         add_action('init', array($this, 'flush_rewrites_if_needed'), 99);
+        add_filter('apollo/seo/virtual_context', array($this, 'seo_virtual_context'));
 
         // Admin menu
         add_action('admin_menu', array($this, 'admin_menu'));
@@ -134,6 +135,13 @@ final class Plugin
         // alongside the existing alias.
         add_rewrite_rule('^anuncios/?$', 'index.php?apollo_adverts_page=marketplace', 'top');
         add_rewrite_rule('^marketplace/?$', 'index.php?apollo_adverts_page=marketplace', 'top');
+        // /classificados — added 2026-08-26. The navbar has linked to this slug all along
+        // (apollo-templates/includes/class-navbar-settings.php:196) and nothing ever served
+        // it: no rewrite here, no claim in apollo-templates' parse_request fallback. It
+        // resolved to a 404 or a stale WP page. It is also what the design calls the screen —
+        // screen/market/market.html's own <title> is "Apollo Classificados | Rio". Third
+        // slug, same query var, same template as /anuncios and /marketplace.
+        add_rewrite_rule('^classificados/?$', 'index.php?apollo_adverts_page=marketplace', 'top');
         add_rewrite_rule('^novo-anuncio/?$', 'index.php?apollo_adverts_page=create', 'top');
         add_rewrite_rule('^criar-anuncio/?$', 'index.php?apollo_adverts_page=create', 'top');
         // /anuncios/meus — PHASE 008: real "Meus Anúncios" screen, Blank Canvas
@@ -153,7 +161,7 @@ final class Plugin
      */
     public function flush_rewrites_if_needed(): void
     {
-        $signature = md5(APOLLO_ADVERTS_VERSION . '|anuncios,marketplace,novo-anuncio,criar-anuncio,anuncios/meus|v1');
+        $signature = md5(APOLLO_ADVERTS_VERSION . '|anuncios,marketplace,classificados,novo-anuncio,criar-anuncio,anuncios/meus|v2');
         $stored    = get_option('apollo_adverts_rewrite_version');
         if ($signature === $stored) {
             return;
@@ -211,11 +219,65 @@ final class Plugin
             return;
         }
 
-        if (! in_array($path, array('anuncios', 'marketplace'), true)) {
+        if (! in_array($path, array('anuncios', 'marketplace', 'classificados'), true)) {
             return;
         }
         $wp->query_vars = array('apollo_adverts_page' => 'marketplace');
         $wp->matched_rule = $path;
+    }
+
+    /**
+     * SEO for virtual marketplace routes. Blank-canvas claims wipe the main
+     * query, so WP treats /anuncios as the front page and apollo-seo used to
+     * emit homepage canonical / OG / JSON-LD onto the classifieds screen.
+     *
+     * @param array<string, mixed>|null $context Existing virtual context.
+     * @return array<string, mixed>|null
+     */
+    public function seo_virtual_context(?array $context): ?array
+    {
+        $page = (string) get_query_var('apollo_adverts_page');
+        $path = trim((string) parse_url(isset($_SERVER['REQUEST_URI']) ? (string) $_SERVER['REQUEST_URI'] : '', PHP_URL_PATH), '/');
+
+        $kw = array(
+            'classificados rio',
+            'marketplace rio de janeiro',
+            'repasse ingresso rio',
+            'hospedagem festa rio',
+            'anúncios rio de janeiro',
+            'ticket resale rio',
+        );
+
+        if ('marketplace' === $page || in_array($path, array('anuncios', 'marketplace', 'classificados'), true)) {
+            return array(
+                'title'       => 'Classificados — Marketplace Apollo::Rio',
+                'description' => 'Repasses de ingressos e hospedagem da cena carioca. Marketplace peer-to-peer da Apollo::Rio.',
+                'canonical'   => home_url('/anuncios/'),
+                'keywords'    => $kw,
+                'schema_type' => 'CollectionPage',
+            );
+        }
+
+        if ('create' === $page || in_array($path, array('novo-anuncio', 'criar-anuncio'), true)) {
+            return array(
+                'title'       => 'Criar Anúncio — Apollo::Rio',
+                'description' => 'Publique um repasse ou uma hospedagem na cena Apollo::Rio.',
+                'canonical'   => home_url('/novo-anuncio/'),
+                'keywords'    => $kw,
+                'robots'      => 'noindex, nofollow',
+            );
+        }
+
+        if ('my_listings' === $page || 'anuncios/meus' === $path) {
+            return array(
+                'title'       => 'Meus Anúncios — Apollo::Rio',
+                'description' => 'Gerencie seus anúncios no marketplace Apollo::Rio.',
+                'canonical'   => home_url('/anuncios/meus/'),
+                'robots'      => 'noindex, nofollow',
+            );
+        }
+
+        return $context;
     }
 
     /**
@@ -246,7 +308,8 @@ final class Plugin
         }
 
         if (! is_user_logged_in()) {
-            wp_redirect(home_url('/acesso'));
+            $back = isset($_SERVER['REQUEST_URI']) ? (string) $_SERVER['REQUEST_URI'] : '/novo-anuncio/';
+            wp_safe_redirect(home_url('/acesso?redirect=' . rawurlencode($back)));
             exit;
         }
 
@@ -273,11 +336,13 @@ final class Plugin
             if (function_exists('apollo_plus_open') && function_exists('apollo_adverts_shortcode_form')) {
                 $ac_edit_id = isset($_GET['edit']) ? absint($_GET['edit']) : 0;
                 $ac_html    = apollo_adverts_shortcode_form();
+                $ac_css     = $this->directory_url . 'assets/css/classifieds.css?v=' . APOLLO_ADVERTS_VERSION;
                 status_header(200);
                 apollo_plus_open(
                     array(
-                        'title'  => get_bloginfo('name') . ' — ' . ($ac_edit_id ? __('Editar Anúncio', 'apollo-adverts') : __('Criar Anúncio', 'apollo-adverts')),
-                        'screen' => 'anuncios/novo',
+                        'title'      => ($ac_edit_id ? __('Editar Anúncio', 'apollo-adverts') : __('Criar Anúncio', 'apollo-adverts')) . ' — Apollo::Rio',
+                        'screen'     => 'anuncios/novo',
+                        'extra_head' => '<link rel="stylesheet" href="' . esc_url($ac_css) . '"><style id="apollo-adverts-form-shell">.apollo-adverts-form-wrap-outer{padding-inline:max(16px,env(safe-area-inset-left),env(safe-area-inset-right));padding-bottom:calc(48px + env(safe-area-inset-bottom,0px));max-width:720px;margin:0 auto;}</style>',
                     )
                 );
                 echo '<div class="ax-main-inner apollo-adverts-form-wrap-outer">' . $ac_html . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- trusted, already-escaped template HTML.
@@ -321,7 +386,7 @@ final class Plugin
      */
     public function register_scripts_and_styles(): void
     {
-        $v = self::$version;
+        $v = defined('APOLLO_ADVERTS_VERSION') ? APOLLO_ADVERTS_VERSION : self::$version;
 
         // Admin
         wp_register_script('apollo-adverts-admin', $this->directory_url . 'assets/js/admin.js', array('jquery'), $v, true);
@@ -333,6 +398,8 @@ final class Plugin
         // Marketplace assets (migrated from apollo-classifieds — FASE 1)
         wp_register_script('apollo-adverts-marketplace', $this->directory_url . 'assets/js/marketplace.js', array('jquery'), $v, true);
         wp_register_style('apollo-adverts-marketplace', $this->directory_url . 'assets/css/marketplace.css', array(), $v);
+        wp_register_style('apollo-adverts-rt-card', $this->directory_url . 'assets/css/rt-card.css', array(), $v);
+        wp_register_script('apollo-adverts-rt-card', $this->directory_url . 'assets/js/rt-card.js', array(), $v, true);
 
         $front_css = file_exists(get_stylesheet_directory() . '/apollo-adverts.css')
             ? get_stylesheet_directory_uri() . '/apollo-adverts.css'

@@ -263,7 +263,7 @@
     }
   ],
   "shortcodes": [],
-  "version": "1.0.3",
+  "version": "1.0.6",
   "ajax": {
     "priv": [],
     "nopriv": []
@@ -901,5 +901,11 @@
     "cpts_found": [],
     "tables_found": [],
     "shortcodes_found": []
+  },
+  "$version_synced": {
+    "date": "2026-08-31",
+    "from": "1.0.3",
+    "to": "1.0.6",
+    "source": "disk docblock via doctor.js"
   }
 }

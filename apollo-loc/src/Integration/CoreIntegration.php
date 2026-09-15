@@ -18,10 +18,38 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class CoreIntegration {
 
 	public function __construct() {
-		if ( defined( 'APOLLO_CORE_VERSION' ) ) {
-			add_action( 'apollo/core/initialized', array( $this, 'on_core_ready' ) );
-			add_filter( 'apollo_core_register_meta', array( $this, 'expose_meta_to_core' ) );
+		if ( ! defined( 'APOLLO_CORE_VERSION' ) ) {
+			return;
 		}
+
+		/*
+		 * WHY did_action() and not a plain add_action().
+		 *
+		 * apollo-core fires apollo/core/initialized from apollo_core_bootstrap()
+		 * at plugins_loaded:1 (apollo-core/apollo-core.php:364). This class is
+		 * constructed from Plugin.php:58, reached from apollo_local_init(), which
+		 * is bound at plugins_loaded:15 (apollo-loc.php:109) -- fourteen priority
+		 * levels AFTER the hook has already fired. A plain add_action() here
+		 * subscribes to an event that is already over, so on_core_ready() never
+		 * ran. It went unnoticed because the handler only re-broadcasts on
+		 * apollo/loc/core_ready, which has zero listeners today.
+		 *
+		 * Do NOT 'simplify' this back to one add_action(), and do NOT fix it by
+		 * moving apollo-loc's boot earlier -- :15 is the ecosystem convention and
+		 * moving it would reorder this plugin against 21 others.
+		 */
+		if ( did_action( 'apollo/core/initialized' ) ) {
+			$this->on_core_ready();
+		} else {
+			add_action( 'apollo/core/initialized', array( $this, 'on_core_ready' ) );
+		}
+
+		/*
+		 * The filter needs no such guard: MetaRegistry applies
+		 * apollo_core_register_meta at src/Core/MetaRegistry.php:2285, during
+		 * meta registration at init -- well after this constructor runs.
+		 */
+		add_filter( 'apollo_core_register_meta', array( $this, 'expose_meta_to_core' ) );
 	}
 
 	/**
@@ -29,7 +57,7 @@ final class CoreIntegration {
 	 *
 	 * @param array $info Dados do core.
 	 */
-	public function on_core_ready( array $info ): void {
+	public function on_core_ready( array $info = array() ): void {
 		do_action( 'apollo/loc/core_ready', $info );
 	}
 

@@ -119,8 +119,13 @@ class SecurityHeaders
         // Prevent clickjacking — allow only same-origin iframes
         header('X-Frame-Options: SAMEORIGIN');
 
-        // Referrer policy — don't leak URL path to third parties
-        header('Referrer-Policy: strict-origin-when-cross-origin');
+        // Referrer policy — don't leak URL path to third parties.
+        // YouTube Error 153 requires a cross-origin Referer; same-origin strips it.
+        // header_remove first so a later host/CDN layer is less likely to win a duplicate.
+        if (function_exists('header_remove')) {
+            header_remove('Referrer-Policy');
+        }
+        header('Referrer-Policy: strict-origin-when-cross-origin', true);
 
         // Prevent Adobe cross-domain policy loading
         header('X-Permitted-Cross-Domain-Policies: none');
@@ -158,7 +163,7 @@ class SecurityHeaders
                     'style-src'   => "'self' 'unsafe-inline' https://cdn.apollo.rio.br http://cdn.apollo.rio.br https://cdn.jsdelivr.net https://fonts.googleapis.com",
                     'font-src'    => "'self' https://cdn.apollo.rio.br http://cdn.apollo.rio.br https://cdn.jsdelivr.net https://assets.apollo.rio.br http://assets.apollo.rio.br https://fonts.gstatic.com data:",
                     'img-src'     => "'self' data: blob: https: http:",
-                    'connect-src' => "'self' https://cdn.apollo.rio.br http://cdn.apollo.rio.br https://cdn.jsdelivr.net https://assets.apollo.rio.br http://assets.apollo.rio.br",
+                    'connect-src' => "'self' https://cdn.apollo.rio.br http://cdn.apollo.rio.br https://cdn.jsdelivr.net https://assets.apollo.rio.br http://assets.apollo.rio.br https://fonts.googleapis.com https://fonts.gstatic.com https://a.basemaps.cartocdn.com https://b.basemaps.cartocdn.com https://c.basemaps.cartocdn.com https://d.basemaps.cartocdn.com https://basemaps.cartocdn.com",
                     'media-src'   => "'self' https://assets.apollo.rio.br http://assets.apollo.rio.br blob: data:",
                     'frame-src'   => "'self' https://assets.apollo.rio.br http://assets.apollo.rio.br https://www.google.com https://www.recaptcha.net https://www.youtube.com https://www.youtube-nocookie.com",
                     'object-src'  => "'none'",
@@ -176,7 +181,7 @@ class SecurityHeaders
                     'style-src'   => "'self' 'unsafe-inline' https://cdn.apollo.rio.br https://fonts.googleapis.com",
                     'font-src'    => "'self' https://cdn.apollo.rio.br https://fonts.gstatic.com data:",
                     'img-src'     => "'self' data: blob: https:",
-                    'connect-src' => "'self' https://cdn.apollo.rio.br https://assets.apollo.rio.br",
+                    'connect-src' => "'self' https://cdn.apollo.rio.br https://assets.apollo.rio.br https://fonts.googleapis.com https://fonts.gstatic.com https://a.basemaps.cartocdn.com https://b.basemaps.cartocdn.com https://c.basemaps.cartocdn.com https://d.basemaps.cartocdn.com https://basemaps.cartocdn.com",
                     'media-src'   => "'self' https://assets.apollo.rio.br blob: data:",
                     'frame-src'   => "'self' https://assets.apollo.rio.br https://www.google.com https://www.recaptcha.net https://www.youtube.com https://www.youtube-nocookie.com",
                     'object-src'  => "'none'",
@@ -313,6 +318,16 @@ class SecurityHeaders
             'locais',
             'hub',
             'classificados',
+            'casa',
+            'anuncios',
+            'anuncio',
+            'marketplace',
+            'feed',
+            'explore',
+            'mural',
+            'mapa',
+            'portal',
+            'tracks',
             'novo-evento',
             'editar-evento',
             'meus-eventos',

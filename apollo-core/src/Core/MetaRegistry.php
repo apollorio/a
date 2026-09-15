@@ -893,6 +893,46 @@ final class MetaRegistry {
 					),
 					'default'      => array(),
 				),
+				// ═══════════════════════════════════════════════════════════════
+				// CLOSING THE UNREGISTERED-WRITE GAP — 2026-08-25
+				// apollo-loc's MetaboxSaver has been WRITING these two keys since
+				// the Details metabox shipped, but neither was ever declared here.
+				// An unregistered key still persists (update_post_meta does not
+				// care), so nothing visibly broke — but it silently skipped this
+				// registry's sanitize_callback and auth_callback, and stayed
+				// invisible to REST no matter what show_in_rest a consumer asked
+				// for. Declaring them makes the write path match the read path.
+				// ═══════════════════════════════════════════════════════════════
+				'_local_hours'        => array(
+					'type'         => 'array',
+					'description'  => 'Opening hours, ALWAYS 7 entries indexed 0=Monday..6=Sunday. An empty string at an index means "closed that day" — it is not the same as a missing index, so the array is stored dense and never compacted.',
+					'single'       => true,
+					'show_in_rest' => array(
+						'schema' => array(
+							'type'  => 'array',
+							'items' => array( 'type' => 'string' ),
+						),
+					),
+					'default'      => array(),
+				),
+				'_local_amenities'    => array(
+					'type'         => 'array',
+					'description'  => 'Amenity rows rendered on the single. Stored as objects {icon,name,sub} — icon is a RemixIcon class (07-icons), name is the label, sub is the optional caption under it. Written from three parallel POST arrays and zipped on save.',
+					'single'       => true,
+					'show_in_rest' => array(
+						'schema' => array(
+							'items' => array(
+								'type'       => 'object',
+								'properties' => array(
+									'icon' => array( 'type' => 'string' ),
+									'name' => array( 'type' => 'string' ),
+									'sub'  => array( 'type' => 'string' ),
+								),
+							),
+						),
+					),
+					'default'      => array(),
+				),
 
 			),
 
@@ -1256,6 +1296,13 @@ final class MetaRegistry {
 					'show_in_rest' => true,
 					'sanitize'     => 'esc_url_raw',
 				),
+				'_track_url_youtube'    => array(
+					'type'         => 'string',
+					'description'  => 'YouTube release / official video URL',
+					'single'       => true,
+					'show_in_rest' => true,
+					'sanitize'     => 'esc_url_raw',
+				),
 				// Set by the migration so a converted row can be traced back to
 				// the dj post it came from, and so the merge in
 				// apollo_dj_get_tracks() can de-duplicate without guessing.
@@ -1309,8 +1356,8 @@ final class MetaRegistry {
 				//   youtube       practical fallback, privacy-friendly iframe
 				//   direct        any other .mp3/.ogg/.m4a — self-hosted
 				//
-				// Guests never receive a preview source; the locked card design
-				// stands in its place.
+				// Guests and members both receive preview sources when set;
+				// the shared player fades volume to 20%.
 				'_track_preview_url'    => array(
 					'type'         => 'string',
 					'description'  => 'Short preview source — Catbox / Archive.org / YouTube / direct audio',

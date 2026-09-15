@@ -46,7 +46,7 @@ class MicrosoftGraph extends OAuth2
     /**
      * {@inheritdoc}
      */
-    protected $scope = 'openid user.read contacts.read offline_access';
+    protected $scope = 'openid user.read offline_access';
 
     /**
      * {@inheritdoc}
@@ -74,10 +74,6 @@ class MicrosoftGraph extends OAuth2
     protected function initialize()
     {
         parent::initialize();
-
-        $this->AuthorizeUrlParameters += [
-			'prompt' => 'consent',
-        ];
 
         $tenant = $this->config->get('tenant');
         if (!empty($tenant)) {

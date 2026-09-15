@@ -1,0 +1,41 @@
+{
+    "root_drift_report_only":  [
+                                   "force-load-apollo-events.php",
+                                   "apollo-events-helpers-guard.php",
+                                   "debug-161c5c.log",
+                                   "debug-e031aa.log"
+                               ],
+    "$role":  "intent",
+    "evidence":  {
+                     "gen_dev_registry":  "pass",
+                     "verify_dev_registry":  "22 pass / 0 fail"
+                 },
+    "$note":  "Coordinator intent only. Does not replace monolith. No product PHP.",
+    "missing_in_reg":  [
+                           "apollo-ui"
+                       ],
+    "match_count":  42,
+    "missing_on_disk":  [
+                            "apollo-cena",
+                            "apollo-classifieds",
+                            "apollo-pwa",
+                            "apollo-runtime",
+                            "apollo-shortcodes",
+                            "apollo-suppliers"
+                        ],
+    "$generated":  "2026-09-15T02:32:12.3749754-03:00",
+    "runtime":  {
+                    "brain_expected":  "WP_CONTENT_DIR/apollo-registry.json",
+                    "local_sites_checked":  [
+                                                "C:\\Users\\User\\Local Sites\\a",
+                                                "C:\\Users\\User\\Local Sites\\fim"
+                                            ],
+                    "slim_draft":  "plugins/_inventory/_worker-reports/W6-slim.draft.json",
+                    "copy_status":  "blocked_no_live_wp_content_registry_target",
+                    "runtime_file_found":  false
+                },
+    "skip":  [
+                 "apollo-waha"
+             ],
+    "$chapter":  "01-disk-vs-plugins"
+}

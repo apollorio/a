@@ -41,8 +41,20 @@ class Integrations {
 	public function register_hooks(): void {
 
 		// ── Apollo Core: loc CPT is registered by core, we add meta boxes ──
+		/*
+		 * apollo/core/initialized has ALREADY FIRED by the time this runs.
+		 * apollo-core fires it at plugins_loaded:1; register_hooks() is reached
+		 * from apollo_local_init() at plugins_loaded:15 (apollo-loc.php:109).
+		 * A plain add_action() subscribes to a finished event -- that is why
+		 * on_core_ready() below has never executed. Same defect, same fix and
+		 * the same rationale as src/Integration/CoreIntegration.php:20.
+		 */
 		if ( \defined( 'APOLLO_CORE_VERSION' ) ) {
-			add_action( 'apollo/core/initialized', array( $this, 'on_core_ready' ) );
+			if ( \did_action( 'apollo/core/initialized' ) ) {
+				$this->on_core_ready();
+			} else {
+				add_action( 'apollo/core/initialized', array( $this, 'on_core_ready' ) );
+			}
 		}
 
 		// ── Apollo Templates: register loc-specific template parts ──
@@ -61,7 +73,7 @@ class Integrations {
 	 *
 	 * @param array $info Core initialization info.
 	 */
-	public function on_core_ready( array $info ): void {
+	public function on_core_ready( array $info = array() ): void {
 		// Future: register additional loc meta, taxonomies, etc.
 		unset( $info );
 	}

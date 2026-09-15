@@ -62,6 +62,9 @@ if ( ! function_exists( 'apollo_track_render_card' ) ) {
 				'id'      => 0,
 				'cover'   => (string) $args['cover'],
 				'preview' => array(),
+				'listen'  => function_exists( 'apollo_track_listen_none' )
+					? apollo_track_listen_none()
+					: array( 'can_play' => false ),
 			);
 		} else {
 			if ( $track_id <= 0 || 'track' !== get_post_type( $track_id ) ) {
@@ -131,10 +134,11 @@ if ( ! function_exists( 'apollo_track_card_styles' ) ) {
 }
 .nh-tracks-rail::-webkit-scrollbar{display:none;}
 .nh-tracks-rail > .nh-track-card{
-  flex:0 0 auto;scroll-snap-align:start;
-  width:clamp(150px,42vw,196px);
+  flex:0 0 120px;scroll-snap-align:start;
+  width:120px;height:auto;
 }
-@media (min-width:900px){ .nh-tracks-rail > .nh-track-card{ width:196px; } }
+@media (min-width:1024px){ .nh-tracks-rail > .nh-track-card{ width:128px; flex-basis:128px; height:auto; } }
+@media (min-width:1400px){ .nh-tracks-rail > .nh-track-card{ width:132px; flex-basis:132px; height:auto; } }
 
 /* A card that is currently previewing. Deliberately quiet — this sits inside a
    rail of 15 and a loud state would strobe as the user scrubs through them. */
@@ -142,9 +146,74 @@ if ( ! function_exists( 'apollo_track_card_styles' ) ) {
 .nh-track-card.is-playing .nh-track-ring{ animation:nh-track-spin 3.2s linear infinite; }
 @keyframes nh-track-spin{ to{ transform:rotate(360deg); } }
 
+/* Platform row — hidden until card expands on preview play. Single CSS owner. */
+.nh-track-expand{
+  max-height:0;opacity:0;overflow:hidden;
+  transition:max-height .38s var(--ease-out, ease), opacity .28s ease, margin .28s ease;
+  margin-top:0;
+}
+.nh-track-card.is-expanded .nh-track-expand{
+  max-height:44px;opacity:1;margin-top:8px;
+}
+.nh-track-card.is-expanded{
+  z-index:2;
+  box-shadow:var(--shadow-lg, 0 8px 24px rgba(0,0,0,.12));
+}
+.nh-track-card.is-expanded .nh-track-info{ overflow:visible; }
+.nh-track-platforms{
+  display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;
+}
+.nh-track-plat{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:24px;height:24px;line-height:1;
+  color:var(--ink, #111);opacity:.9;
+  text-decoration:none;font-size:16px;font-weight:700;
+  transition:opacity .15s ease, transform .15s ease;
+}
+.nh-track-plat:hover,.nh-track-plat:focus-visible{
+  opacity:1;transform:translateY(-1px);outline:none;
+}
+.nh-track-plat i{ font-weight:700; }
+
+/* Empty cover — centered disc glyph */
+.nh-track-artwork--empty{ background:linear-gradient(145deg, var(--onyx-700, #2a2a2a), var(--onyx-800, #1a1a1a)); }
+.nh-track-cover-fallback{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:3;display:flex;align-items:center;justify-content:center;
+  width:50%;height:50%;border-radius:50%;
+  color:rgba(255,255,255,.35);font-size:clamp(28px,40%,48px);
+  pointer-events:none;
+}
+.nh-track-artwork[data-track-artwork-trigger]{ cursor:pointer; }
+
+/* Transport is ALWAYS hidden on track cards — never SoundCloud chrome. */
+.nh-track-sc-transport,
+.nh-track-sc-transport.is-fallback,
+.nh-track-card .apsc-transport,
+.nh-track-card .apsc.is-fallback .apsc-transport{
+  position:absolute !important;width:1px !important;height:1px !important;
+  overflow:hidden !important;clip:rect(0,0,0,0) !important;
+  opacity:0 !important;pointer-events:none !important;
+  display:block !important;margin:0 !important;border:0 !important;
+}
+
+.nh-track-loader{
+  position:absolute;width:28px;height:28px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.22);border-top-color:#fff;
+  opacity:0;pointer-events:none;z-index:6;
+}
+.nh-track-card.is-loading .nh-track-play-overlay{ opacity:1; }
+.nh-track-card.is-loading .nh-track-play-btn{ opacity:0; transform:scale(.6); }
+.nh-track-card.is-loading .nh-track-loader{
+  opacity:1;animation:nh-track-spin .7s linear infinite;
+}
+.nh-track-card.is-playing .nh-track-play-overlay{ opacity:1; }
+
 @media (prefers-reduced-motion: reduce){
   .nh-tracks-rail{ scroll-behavior:auto; }
   .nh-track-card.is-playing .nh-track-ring{ animation:none; }
+  .nh-track-plat{ transition:none; }
+  .nh-track-expand{ transition:none; }
 }
 CSS;
 	}

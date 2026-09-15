@@ -1,0 +1,1168 @@
+{
+  "$schema": "https://doc.apollo.rio.br/schemas/plugin-registry.json",
+  "bible": "apollo-waha / apollo-whatsapp + WAHA GOWS — SSOT for namings, slugs, hooks, REST, meta, screens, security, join chain, and build progress",
+  "version": "1.4.0",
+  "updated": "2026-09-11",
+  "run_log": [
+    { "run": "RUN 0", "what": "Relocate plugin off the WP plugin tree into _lab/", "status": "SKIPPED", "why": "Its precondition could not be verified: scan-plugins.js and gen-manifests.js do not exist anywhere in this checkout, so there is no --strict to prove it is red because of this folder. membership.verify_structure was already 'deliberate_red_undeclared' (a known accepted state, not a new failure). Moving 36 files on a guess was judged worse than leaving them. Plugin still lives at plugins/apollo-waha." },
+    { "run": "RUN 1", "what": "Client + Session WORKING gate + Settings/strip + secrets", "status": "DONE, code-path verified only", "landed": ["inc/class-options.php (new)", "inc/Client/class-client.php", "inc/Session/class-session.php", "admin/class-admin.php", "admin/views/settings.php", "assets/admin.css", "assets/admin.js"], "not_proven": "Never executed against a running WordPress or a live WAHA container." },
+    { "run": "RUN 2", "what": "Webhook HMAC pipeline", "status": "NOT IMPLEMENTED — ZERO CODE WRITTEN", "why": "A design workflow (recon -> 3 drafts -> 3 judges) was launched. All 3 recon agents completed; all 3 draft agents and all 3 judges died on an account session limit. inc/Webhook/class-webhook.php is byte-for-byte the original stub: verify() returns false, handle() returns 401.", "salvaged": "3 recon results survive and ARE the RUN 2 spec: a 10-step ordered execution checklist with rulings on 5 ambiguities, a 26-finding threat model, and a 10-finding WP-semantics analysis. Preserved verbatim in _plan/run2-recon/ and summarised in FOLLOW-UP.txt section 4.", "open_decision": "The two recon agents DISAGREED on when the dedupe transient is written — after the handler succeeds (checklist agent) vs before dispatch with delete_transient on throw (threat agent). Recommended synthesis is the threat agent's shape, which closes both the silent-loss and the TOCTOU window. Decide explicitly in RUN 2 and comment the reason." },
+    { "run": "AUDIT", "what": "Registry-vs-disk truth + RUN 1 review", "status": "DONE inline (subagent fan-out died on the same session limit)", "result": "11 findings — 5 fixed in v1.3.0, 6 open. See audit{}." },
+    { "run": "RUN 2", "what": "AUD-06 loader fix + webhook HMAC pipeline", "status": "DONE, behaviour-verified against stubs, not against live WAHA", "date": "2026-09-11", "landed": ["inc/class-plugin.php — inc/class-options.php is now the FIRST require in $files", "inc/Client/class-client.php — fragile guarded require removed (AUD-06 closed)", "inc/Webhook/class-webhook.php — full 10-step pipeline"], "decision_taken": "Dedupe: set_transient BEFORE dispatch + delete_transient on throw. This resolves the v1.3.0 open_decision in favour of the threat agent's synthesis, which closes both the silent-loss and the TOCTOU window.", "new_option": "apollo_wa_last_payload — WP_DEBUG-gated debug copy of the last inbound message, truncated to 8KB, written with autoload false directly via update_option because Apollo_Waha_Options forces autoload false only for the two declared secrets and this run could not edit it.", "not_done": "Live WAHA test; Session::on_status() still an empty stub so session.status does not move the strip; message.reaction and group.v2.participants not handled; the designed 30 events/min rate limit not implemented." }
+  ],
+  "status": "INCOMPLETE_OR_EXPERIMENTAL",
+  "classification": "designed_skeleton_not_working_bridge",
+  "summary": {
+    "headline": "apollo-waha is a designed skeleton, not a working bridge. Product intent is fully mapped; almost every runtime path is an empty stub.",
+    "trying_to_be": "WordPress cell that talks to a WAHA Docker session (WhatsApp GOWS), not Meta Cloud API.",
+    "user_journey": [
+      "User asks to join a group → queue",
+      "Operator processes queue in WP admin",
+      "WAHA adds / invites on WhatsApp",
+      "Keyword flows answer in DM",
+      "Operator pane sends texts"
+    ],
+    "processes": {
+      "A_wordpress": "WP plugin cell — PHP only, no WA session in-process",
+      "B_waha": "Docker 24h Linux — session apollo, engine GOWS, volume ./sessions",
+      "C_phone": "Operation number WhatsApp app — open once per week — NEVER the verified Apollo Business number"
+    },
+    "bottom_line": "RUN 1 landed: Client speaks real wp_remote_request + X-Api-Key, Session has a real is_working() gate with a 30s ping cache, and Tela 1 (Settings, with Tela 2's session strip embedded) saves apollo_wa_* options with the two secrets autoload false and auto-generates the HMAC key on first save. None of this has been exercised against a live WAHA yet — no Docker lab in this checkout — so 'implemented' means the code path is real and fails safe (session down → false, no fatal), not that it has been proven against a running session. Webhook verify() is still hardcoded false, Phone still returns [], Queue::process() still returns session_down, Pane/Flows are still empty. RUN 2 (HMAC) is next.",
+    "solid_today": [
+      "Full SSOT in this file + _plan/",
+      "JOIN-CHAIN.md 12-step WAHA API sequence",
+      "docs/WEBHOOK-SECURITY.md HMAC-SHA512 fail-closed",
+      "Boot boundary: active plugin only — not mu / not force-load",
+      "Hook family planned: apollo/whatsapp/*",
+      "Meta/options contract listed",
+      "Explicit non-goals: no CPT, no cache invent, no active_plugins, no new REST namespace",
+      "RUN 1: Apollo_Waha_Client real HTTP (get/post/put, X-Api-Key, 20s timeout)",
+      "RUN 1: Apollo_Waha_Session::is_working() real gate, 30s transient ping cache",
+      "RUN 1: Tela 1 settings form wired — admin_menu, save, secrets autoload false, HMAC autogen, AJAX Testar"
+    ]
+  },
+  "naming_drift": {
+    "disk_folder": "apollo-waha",
+    "disk_plugin_header": "apollo-waha",
+    "disk_textdomain": "apollo-waha",
+    "ssot_preferred_slug": "apollo-whatsapp",
+    "ssot_preferred_textdomain": "apollo-whatsapp",
+    "note": "Folder/plugin on disk is apollo-waha; historical SSOT preferred apollo-whatsapp and listed apollo-waha under not[]. Design and disk name disagree — rename is coordinated product work, not cosmetic.",
+    "not_aliases": ["apollo-whats", "apollo-channel", "wawp", "evolution-in-wp", "baileys-in-php"]
+  },
+  "membership": {
+    "git": "untracked",
+    "inventory": "absent_from_PLUGIN-INVENTORY",
+    "inventory_verified": {
+      "ssot_total_plugins": 48,
+      "source": "_inventory/registry/16-summary.json summary.total_plugins",
+      "registry_09_plugins_files": 48,
+      "waha_or_whatsapp_entry": "none",
+      "grep_apollo-waha_in_inventory": 0,
+      "checked_on": "2026-09-11",
+      "note": "Earlier value said 42; the live SSOT is 48. apollo-waha would be the 49th once promoted."
+    },
+    "registry_09_plugins": "absent",
+    "live_wa_routes": 0,
+    "verify_structure": "deliberate_red_undeclared",
+    "credential_gate": "AWAITING_CREDENTIAL_OWNER",
+    "promotion_path": [
+      "rotate credentials outside repo",
+      "real permission_callback",
+      "track in Git",
+      "registry entry",
+      "scan-plugins.js",
+      "gen-manifests.js",
+      "re-verify"
+    ]
+  },
+  "build_totals": {
+    "design_docs_pct": 95,
+    "runtime_bridge_pct": 42,
+    "product_surfaces_pct": 6,
+    "ops_security_pct": 10,
+    "overall_product_pct": 20,
+    "method": "Weighted estimate from source stubs vs SSOT surface. Re-scored after RUN 1 (Client + Session + Settings/strip landed, untested against a live WAHA — no Docker lab in this checkout). Webhook/Phone/Queue/Pane/Flows unchanged. Re-score again after RUN 2 (HMAC).",
+    "as_of": "2026-09-11"
+  },
+  "modules": [
+    {
+      "id": "plugin",
+      "slug": "Apollo_Waha_Plugin",
+      "file": "inc/class-plugin.php",
+      "designed_for": "Boot + wire modules",
+      "code_today": "Real: loads all classes, hooks them",
+      "workable": true,
+      "pct_built": 80,
+      "status": "orchestrator_ok"
+    },
+    {
+      "id": "client",
+      "slug": "Apollo_Waha_Client",
+      "file": "inc/Client/class-client.php",
+      "designed_for": "GET/POST/PUT to WAHA + X-Api-Key",
+      "code_today": "RUN 1: real wp_remote_request, X-Api-Key header, 20s timeout, typed {ok,status,body} return, key never logged. No retry/backoff. Untested against a live WAHA session in this checkout.",
+      "workable": true,
+      "pct_built": 70,
+      "status": "http_implemented_untested_live",
+      "complexity": "medium",
+      "mvp_order": 1
+    },
+    {
+      "id": "options",
+      "slug": "Apollo_Waha_Options",
+      "file": "inc/class-options.php",
+      "designed_for": "apollo_wa_* get/set, secrets autoload false, masked display value",
+      "code_today": "RUN 1: added. Not in inc/class-plugin.php's loader by design — required directly by inc/Client/class-client.php (class_exists guard) so the orchestrator stayed untouched this run. get()/set() cover all keys in registry.options.keys; mask() shows first2+last2 chars only, never the full secret.",
+      "workable": true,
+      "pct_built": 90,
+      "status": "implemented",
+      "complexity": "low",
+      "mvp_order": 1,
+      "note": "New file this run — not part of the original 11-module map."
+    },
+    {
+      "id": "webhook",
+      "slug": "Apollo_Waha_Webhook",
+      "file": "inc/Webhook/class-webhook.php",
+      "designed_for": "POST apollo/v1/wa/webhook + HMAC fail-closed",
+      "code_today": "RUN 2: all 10 pipeline[] steps implemented in SSOT order. verify() runs 1-9 with single-exit discipline (one `return true`, every other exit a WP_Error status 401 — never a bare false, which would yield 403 for a logged-in caller). hash_hmac sha512 + hash_equals, 128-hex shape check, algorithm allowlist, 300s window on unix-ms, secret refused below 32 bytes before hashing, \\Throwable caught into a clean 401. Step 7 split: dedupe lookup in verify (does not return, so 8 and 9 still evaluate in order), 200-empty emitted by handle via state keyed on spl_object_id. handle() runs step 10 and never reads or writes queue status.",
+      "workable": true,
+      "pct_built": 75,
+      "status": "hmac_implemented_untested_live",
+      "complexity": "medium_hard",
+      "mvp_order": 3,
+      "verified_by": "11/11 behaviour cases pass against the real class loaded with WP stubs (unsigned, bad hmac, malformed hex, missing algo, wrong algo, stale ts, future ts, wrong session, >256KB, valid, replay). NOT executed inside a real WordPress and NOT tested against a signature produced by a real WAHA container.",
+      "remaining": "Live WAHA verification; session.status reaches the hook but the strip does not move because Apollo_Waha_Session::on_status() is still an empty stub."
+    },
+    {
+      "id": "session",
+      "slug": "Apollo_Waha_Session",
+      "file": "inc/Session/class-session.php",
+      "designed_for": "WORKING gate — does not load/unload plugins",
+      "code_today": "RUN 1: ping() calls Client GET /api/sessions/{session}, cached 30s in a transient; is_working() true iff ok+status===WORKING; status_label() returns WORKING|SCAN_QR_CODE|STARTING|FAILED|STOPPED|DOWN. No plugin load/unload. Untested against a live WAHA session.",
+      "workable": true,
+      "pct_built": 60,
+      "status": "gate_implemented_untested_live",
+      "complexity": "medium",
+      "mvp_order": 2
+    },
+    {
+      "id": "phone",
+      "slug": "Apollo_Waha_Phone",
+      "file": "inc/Phone/class-phone.php",
+      "designed_for": "BR 12/13 candidates, JID/LID resolve",
+      "code_today": "Always empty arrays",
+      "workable": false,
+      "pct_built": 0,
+      "status": "stub",
+      "complexity": "hard_domain",
+      "mvp_order": 4
+    },
+    {
+      "id": "queue",
+      "slug": "Apollo_Waha_Queue",
+      "file": "inc/Queue/class-queue.php",
+      "designed_for": "Join chain check-exists → add → invite",
+      "code_today": "request_join→0; process→session_down; empty phone hook",
+      "workable": false,
+      "pct_built": 5,
+      "status": "stub",
+      "complexity": "hardest_core",
+      "mvp_order": 5
+    },
+    {
+      "id": "pane",
+      "slug": "Apollo_Waha_Pane",
+      "file": "inc/Pane/class-pane.php",
+      "designed_for": "Operator sendText; fromMe does not run flows",
+      "code_today": "send() → false; no hooks",
+      "workable": false,
+      "pct_built": 0,
+      "status": "stub",
+      "complexity": "large_surface",
+      "mvp_order": 7
+    },
+    {
+      "id": "flows",
+      "slug": "Apollo_Waha_Flows",
+      "file": "inc/Flow/class-flows.php",
+      "designed_for": "Keyword router on message_in",
+      "code_today": "Empty route()",
+      "workable": false,
+      "pct_built": 0,
+      "status": "stub",
+      "complexity": "large_surface",
+      "mvp_order": 8
+    },
+    {
+      "id": "admin",
+      "slug": "Apollo_Waha_Admin",
+      "file": "admin/class-admin.php",
+      "designed_for": "Screens 1–5 under apollo-admin",
+      "code_today": "RUN 1: Tela 1 (settings) + Tela 2 (session strip, embedded) wired — admin_menu nests under apollo-admin's 'apollo' top-level menu (plugins/apollo-admin/src/AdminPage.php:66) when present, else falls back to a standalone top-level menu; admin-post save handler with nonce+cap, secrets autoload false, HMAC autogen on first save; AJAX Testar forces a fresh ping. Telas 3–5 (queue/pane/flows) menus intentionally not wired this run.",
+      "workable": true,
+      "pct_built": 55,
+      "status": "screen_1_2_wired_3_5_not_this_run",
+      "complexity": "medium",
+      "mvp_order": 4
+    },
+    {
+      "id": "public",
+      "slug": "Apollo_Waha_Public",
+      "file": "public/class-public.php",
+      "designed_for": "[apollo_wa_join] + my-requests",
+      "code_today": "Shortcode registered; view is empty div",
+      "workable": false,
+      "pct_built": 15,
+      "status": "markup_stub",
+      "complexity": "medium",
+      "mvp_order": 5
+    },
+    {
+      "id": "assets",
+      "slug": "assets",
+      "file": "assets/{public,admin}.{js,css}",
+      "designed_for": "Front + admin UI",
+      "code_today": "RUN 1: admin.css/admin.js real for the session strip + Testar button (states styling, AJAX fetch, no secrets in DOM). public.css/public.js untouched — still near-empty placeholders.",
+      "workable": false,
+      "pct_built": 20,
+      "status": "admin_assets_built_public_still_stub"
+    }
+  ],
+  "features": [
+    {
+      "id": "boot_active_plugin",
+      "pct_built": 90,
+      "status": "works",
+      "note": "plugins_loaded:20; requires apollo-core; not mu/force-load"
+    },
+    {
+      "id": "waha_http_client",
+      "pct_built": 70,
+      "status": "implemented_untested_live",
+      "note": "RUN 1: wp_remote_request get/post/put, X-Api-Key, 20s timeout. No live WAHA in this checkout to confirm against."
+    },
+    {
+      "id": "session_working_gate",
+      "pct_built": 60,
+      "status": "implemented_untested_live",
+      "note": "RUN 1: is_working() real, 30s transient ping cache. Same live-WAHA caveat as waha_http_client."
+    },
+    {
+      "id": "webhook_hmac_pipeline",
+      "pct_built": 75,
+      "status": "implemented_untested_live",
+      "note": "RUN 2. All 10 steps in SSOT order, fail closed. Dedupe decision resolved: set_transient BEFORE dispatch, delete_transient on throw — closes the TOCTOU double-process window while still letting a WAHA retry after a 500 through instead of swallowing it as a replay. Reason is commented at the call site."
+    },
+    {
+      "id": "settings_secrets",
+      "pct_built": 60,
+      "status": "tela1_wired",
+      "note": "RUN 1: Tela 1 saves apollo_wa_base_url/session/group_id/api_key; api_key/hmac_key autoload false; HMAC autogenerated wp_generate_password(48,true,true) on first save. Values masked in the view, never echoed in full."
+    },
+    {
+      "id": "br_phone_jid",
+      "pct_built": 0,
+      "status": "todo",
+      "complexity": "hard"
+    },
+    {
+      "id": "join_queue_request",
+      "pct_built": 5,
+      "status": "todo"
+    },
+    {
+      "id": "join_chain_process",
+      "pct_built": 0,
+      "status": "todo",
+      "complexity": "hardest"
+    },
+    {
+      "id": "invite_dm_403_paths",
+      "pct_built": 0,
+      "status": "todo"
+    },
+    {
+      "id": "operator_pane",
+      "pct_built": 0,
+      "status": "todo",
+      "complexity": "large"
+    },
+    {
+      "id": "keyword_flows",
+      "pct_built": 0,
+      "status": "todo",
+      "complexity": "large"
+    },
+    {
+      "id": "core_tables_queue_messages",
+      "pct_built": 0,
+      "status": "todo",
+      "note": "register via apollo-core only"
+    },
+    {
+      "id": "login_phone_verified_listen",
+      "pct_built": 10,
+      "status": "hook_registered_empty_callback"
+    },
+    {
+      "id": "event_published_listen",
+      "pct_built": 0,
+      "status": "designed_not_wired"
+    },
+    {
+      "id": "inventory_promotion",
+      "pct_built": 0,
+      "status": "product_gate"
+    }
+  ],
+  "moments": [
+    {
+      "id": "M0_file_load",
+      "when": "plugin file evaluation",
+      "allowed": "constants + class requires only — no WAHA HTTP",
+      "pct_built": 100
+    },
+    {
+      "id": "M1_plugins_loaded",
+      "when": "plugins_loaded:20",
+      "allowed": "boot(), option load, hook registration",
+      "pct_built": 80
+    },
+    {
+      "id": "M2_rest_api_init",
+      "when": "rest_api_init",
+      "allowed": "register /apollo/v1/wa/*",
+      "pct_built": 10,
+      "note": "only /wa/webhook stub registered"
+    },
+    {
+      "id": "M3_admin_menu",
+      "when": "admin_menu",
+      "allowed": "screens 1–5 under apollo-admin",
+      "pct_built": 20,
+      "note": "RUN 1: screen 1 (settings, with screen 2 strip embedded) wired at priority 25, nested under apollo-admin's 'apollo' menu when present. Screens 3–5 (queue/pane/flows) not wired this run."
+    },
+    {
+      "id": "M4_user_join_click",
+      "when": "front [apollo_wa_join]",
+      "expected": "logged-in + verified phone → queue row",
+      "pct_built": 10
+    },
+    {
+      "id": "M5_operator_process",
+      "when": "admin Fila → Processar entrada",
+      "expected": "run join_chain if session WORKING",
+      "pct_built": 0
+    },
+    {
+      "id": "M6_webhook_hit",
+      "when": "WAHA POST webhook",
+      "expected": "HMAC pipeline then event switch — never approve queue",
+      "pct_built": 70,
+      "note": "RUN 2: pipeline and switch implemented and behaviour-verified against stubs. Queue untouched (0 queue writes observed under test). Not yet hit by a real WAHA."
+    },
+    {
+      "id": "M7_flow_dm",
+      "when": "message_in keyword",
+      "expected": "IDLE|FLOW|HUMAN; group anchors whisper to DM",
+      "pct_built": 0
+    },
+    {
+      "id": "M8_pane_send",
+      "when": "admin Conversas composer",
+      "expected": "sendText + nonce + cap; fromMe skips flows",
+      "pct_built": 0
+    },
+    {
+      "id": "M_forbidden_muplugins",
+      "when": "muplugins_loaded:-100",
+      "allowed": "DO NOTHING",
+      "pct_built": 100,
+      "note": "boundary held by design"
+    }
+  ],
+  "layers": {
+    "infra": {
+      "pct_built": 5,
+      "items": ["Docker WAHA lab", "private bind", "secrets outside git", "ops phone != Business"]
+    },
+    "core_bridge": {
+      "pct_built": 42,
+      "items": ["Client", "Session WORKING", "HMAC webhook", "Phone JID", "Join chain"],
+      "note": "After RUN 2: Client 70, Session 60, HMAC webhook 75, Phone JID 0, Join chain 5 — mean 42. The door is now real; identity (Phone) and the join machine remain untouched and are where the remaining calendar time lives. Nothing here has met a live WAHA."
+    },
+    "product_surfaces": {
+      "pct_built": 6,
+      "items": ["Settings UI", "Queue UI", "Pane", "Flows", "Join button UX", "My requests"],
+      "note": "RUN 1: Settings UI (screen 1) is the one item that moved — form saves, secrets autoload false, session strip live. Queue/Pane/Flows/Join button/My requests unchanged. Almost none work until core_bridge does."
+    }
+  },
+  "complexity": {
+    "doable_first_mvp": [
+      { "step": 1, "item": "WAHA Client wp_remote_request + X-Api-Key", "difficulty": "medium" },
+      { "step": 2, "item": "Session status until WORKING", "difficulty": "medium" },
+      { "step": 3, "item": "Webhook HMAC pipeline", "difficulty": "medium_hard" },
+      { "step": 4, "item": "Settings screen + secret options autoload false", "difficulty": "straightforward" },
+      { "step": 5, "item": "Minimal join button + queue row", "difficulty": "medium" }
+    ],
+    "first_useful_mvp": "Client + Session WORKING + HMAC webhook + Settings + request join → appear in admin queue. No auto-add yet.",
+    "hard": [
+      {
+        "id": "A_br_phone_jid",
+        "why": "12 vs 13 digits, mobile 9, landline must not get 9, dual check-exists, store jid+lid. Wrong = silent failed adds."
+      },
+      {
+        "id": "B_join_chain_live",
+        "why": "Multi-step WAHA dance under retries; must be idempotent; never loop add; never treat body 403 as logout; webhook never approves queue."
+      },
+      {
+        "id": "C_credentials_hosting",
+        "why": "Private network; keys outside git; rotate; ops number only. Process/security, not a neat PR."
+      },
+      {
+        "id": "D_product_promotion",
+        "why": "Track → registry → scan → manifests → live routes. Separate product decision from coding."
+      }
+    ],
+    "large_surfaces": [
+      { "id": "operator_pane", "why": "Mini inbox + polling + send gap + fromMe skip flows" },
+      { "id": "keyword_flows", "why": "State machine IDLE|FLOW|HUMAN, anchors, handoff, mute" },
+      { "id": "full_admin_rest", "why": "~15 designed routes; only webhook stub exists" },
+      { "id": "db_via_core", "why": "Queue + messages via apollo-core; no CPT" },
+      { "id": "integrations", "why": "apollo/login/phone_verified + optional apollo/event/published" },
+      { "id": "naming_cleanup", "why": "apollo-waha disk vs apollo-whatsapp SSOT" }
+    ],
+    "practical_order": [
+      "Docker WAHA lab + secrets outside repo",
+      "Client + session WORKING",
+      "HMAC webhook (accept events only; no queue approve)",
+      "Phone candidates + JID resolve",
+      "Queue request + human Processar entrada (join chain)",
+      "Invite/DM paths for 403 cases",
+      "Pane sendText (thin)",
+      "Flows / keyword router",
+      "Inventory + live activation (product gate)"
+    ],
+    "effort_sense": {
+      "thin_mvp_days_to_weeks": "1–5 without polished UI if WAHA lab already up",
+      "reliable_join_weeks": "phone + join chain + idempotency + ops — bugs hide here",
+      "full_product_sprints": "pane + flows + all REST + core tables + promotion"
+    }
+  },
+  "verdict": {
+    "best_solution": true,
+    "why": "Do not clone WhatsApp Web. WP pane is the operator UI. WAHA Docker is the session. Official Cloud API cannot add to a 200-person group (max 8, invite-only). Chatwoot/Typebot/n8n/keeper are phase-2. Operation number != Apollo verified Business number.",
+    "engine": "WAHA 2026.8.2+ GOWS",
+    "plugin_disk": "apollo-waha",
+    "plugin_ssot_preferred": "apollo-whatsapp",
+    "session": "apollo",
+    "runtime_ready": false
+  },
+  "plugin": {
+    "name": "Apollo WhatsApp",
+    "slug_disk": "apollo-waha",
+    "slug_ssot": "apollo-whatsapp",
+    "textdomain_disk": "apollo-waha",
+    "prefix": "apollo_wa_",
+    "capability": "apollo_manage_whatsapp",
+    "capability_fallback": "manage_options",
+    "depends": ["apollo-core"],
+    "integrates": ["apollo-login", "apollo-users", "apollo-events", "apollo-admin"],
+    "provides": ["whatsapp-session-bridge", "group-join-queue", "operator-pane", "keyword-flow-dm"],
+    "register_meta_via": "apollo-core",
+    "no_cpt_outside_core": true,
+    "boot": "plugins_loaded:20 — active plugin only"
+  },
+  "processes": {
+    "A_wordpress": "WordPress — PHP plugins only, no WA session",
+    "B_waha": "Docker 24h Linux — session apollo, engine GOWS, volume ./sessions",
+    "C_phone": "Operation number WhatsApp app — open once per week — NEVER the verified Apollo Business number"
+  },
+  "waha": {
+    "image": "devlikeapro/waha",
+    "min_version": "2026.8.2",
+    "engine": "GOWS",
+    "session_name": "apollo",
+    "apps": ["Brazilian Phone Numbers"],
+    "env": {
+      "WAHA_API_KEY": "sha512:{HASH}",
+      "WAHA_API_KEY_PLAIN": "only-in-wp-options-not-in-git",
+      "WAHA_DASHBOARD_ENABLED": "true-in-lab-false-in-prod-if-unused",
+      "WAHA_GOWS_KEEPALIVE_INTERVAL_MIN": "20",
+      "WAHA_GOWS_KEEPALIVE_INTERVAL_MAX": "25",
+      "WHATSAPP_HOOK_HMAC_KEY": "prefer-per-session-hmac-instead"
+    },
+    "bind": "127.0.0.1:3000 or private docker network — not public internet",
+    "pct_ops_documented": 90,
+    "pct_ops_live": 0
+  },
+  "screens": {
+    "1_settings": {
+      "slug": "apollo-wa-settings",
+      "parent": "apollo-admin",
+      "menu_parent_slug": "apollo",
+      "menu_parent_source": "plugins/apollo-admin/src/AdminPage.php:66 add_menu_page(..., 'apollo', ...) — used when present via menu_page_url('apollo', false); falls back to a standalone top-level menu otherwise",
+      "menu": "Apollo → WhatsApp",
+      "who": "admin",
+      "cards": ["connection", "group", "operation-number", "behavior"],
+      "pct_built": 70,
+      "status": "wired_form_saves_secrets_autoload_false"
+    },
+    "2_session_strip": {
+      "slug": "apollo-wa-session-strip",
+      "parent": "apollo-wa-settings",
+      "who": "admin",
+      "states": ["WORKING", "SCAN_QR_CODE", "STARTING", "FAILED", "STOPPED", "DOWN"],
+      "pct_built": 70,
+      "status": "embedded_in_settings_gate_live",
+      "note": "DOWN added to the original 5 states — the code's actual fallback when the ping fails or WAHA is unreachable."
+    },
+    "3_join_queue": {
+      "slug": "apollo-wa-queue",
+      "menu": "Apollo → WhatsApp → Fila",
+      "who": "admin",
+      "approve_label": "Processar entrada",
+      "pct_built": 15,
+      "status": "view_file_exists_menu_unwired"
+    },
+    "4_pane": {
+      "slug": "apollo-wa-pane",
+      "menu": "Apollo → WhatsApp → Conversas",
+      "who": "admin",
+      "tabs": ["group", "dms"],
+      "pct_built": 15,
+      "status": "view_file_exists_menu_unwired"
+    },
+    "5_flows": {
+      "slug": "apollo-wa-flows",
+      "menu": "Apollo → WhatsApp → Fluxos",
+      "who": "admin",
+      "pct_built": 15,
+      "status": "view_file_exists_menu_unwired"
+    },
+    "6_join_button": {
+      "slug": "apollo-wa-join",
+      "shortcode": "[apollo_wa_join]",
+      "who": "logged-in user with verified phone",
+      "pct_built": 15,
+      "status": "shortcode_empty_div"
+    },
+    "7_user_requests": {
+      "slug": "apollo-wa-my-requests",
+      "template_part": "apollo-whatsapp/my-requests",
+      "who": "logged-in user",
+      "pct_built": 10,
+      "status": "view_file_exists_unwired"
+    },
+    "L_waha_dashboard": {
+      "slug": "waha-dashboard",
+      "url": "http://127.0.0.1:3000",
+      "who": "operator lab only",
+      "pct_built": 0,
+      "status": "external_lab"
+    }
+  },
+  "rest": {
+    "namespace": "apollo/v1",
+    "routes": {
+      "webhook": {
+        "method": "POST",
+        "path": "/wa/webhook",
+        "full": "/wp-json/apollo/v1/wa/webhook",
+        "auth": "hmac-sha512-fail-closed",
+        "permission_callback": "verify() — steps 1-9, single exit, WP_Error status 401 on every denial",
+        "cookie_auth": false,
+        "pct_built": 75,
+        "status": "hmac_fail_closed_implemented"
+      },
+      "session_ping": {
+        "method": "GET",
+        "path": "/wa/session",
+        "cap": "apollo_manage_whatsapp",
+        "pct_built": 0,
+        "status": "designed"
+      },
+      "groups_list": {
+        "method": "GET",
+        "path": "/wa/groups",
+        "cap": "apollo_manage_whatsapp",
+        "pct_built": 0,
+        "status": "designed"
+      },
+      "group_create": {
+        "method": "POST",
+        "path": "/wa/groups",
+        "cap": "apollo_manage_whatsapp",
+        "pct_built": 0,
+        "status": "designed"
+      },
+      "queue_list": {
+        "method": "GET",
+        "path": "/wa/queue",
+        "cap": "apollo_manage_whatsapp",
+        "pct_built": 0,
+        "status": "designed"
+      },
+      "queue_process": {
+        "method": "POST",
+        "path": "/wa/queue/(?P<id>\\d+)/process",
+        "cap": "apollo_manage_whatsapp",
+        "nonce": true,
+        "pct_built": 0,
+        "status": "designed"
+      },
+      "queue_reject": {
+        "method": "POST",
+        "path": "/wa/queue/(?P<id>\\d+)/reject",
+        "cap": "apollo_manage_whatsapp",
+        "nonce": true,
+        "pct_built": 0,
+        "status": "designed"
+      },
+      "queue_resend_invite": {
+        "method": "POST",
+        "path": "/wa/queue/(?P<id>\\d+)/invite",
+        "cap": "apollo_manage_whatsapp",
+        "nonce": true,
+        "pct_built": 0,
+        "status": "designed"
+      },
+      "pane_threads": {
+        "method": "GET",
+        "path": "/wa/pane/threads",
+        "cap": "apollo_manage_whatsapp",
+        "pct_built": 0,
+        "status": "designed"
+      },
+      "pane_messages": {
+        "method": "GET",
+        "path": "/wa/pane/threads/(?P<jid>[^/]+)/messages",
+        "cap": "apollo_manage_whatsapp",
+        "pct_built": 0,
+        "status": "designed"
+      },
+      "pane_send": {
+        "method": "POST",
+        "path": "/wa/pane/send",
+        "cap": "apollo_manage_whatsapp",
+        "nonce": true,
+        "pct_built": 0,
+        "status": "designed"
+      },
+      "pane_mute": {
+        "method": "POST",
+        "path": "/wa/pane/threads/(?P<jid>[^/]+)/mute",
+        "cap": "apollo_manage_whatsapp",
+        "nonce": true,
+        "pct_built": 0,
+        "status": "designed"
+      },
+      "join_request": {
+        "method": "POST",
+        "path": "/wa/join",
+        "auth": "logged-in + verified phone + nonce",
+        "pct_built": 0,
+        "status": "designed"
+      },
+      "my_requests": {
+        "method": "GET",
+        "path": "/wa/me/requests",
+        "auth": "logged-in",
+        "pct_built": 0,
+        "status": "designed"
+      }
+    },
+    "routes_designed": 15,
+    "routes_registered_in_code": 1,
+    "routes_implemented": 1,
+    "routes_working": 0,
+    "routes_working_note": "Still 0 deliberately: 'working' means proven against a live caller. /wa/webhook is fully implemented and passes 11/11 stubbed behaviour cases, but has never served a real request from a real WAHA container."
+  },
+  "hooks": {
+    "actions": [
+      { "name": "apollo/whatsapp/session_status", "pct_built": 10, "note": "listener empty" },
+      { "name": "apollo/whatsapp/message_in", "pct_built": 10, "note": "flows route empty" },
+      { "name": "apollo/whatsapp/message_out", "pct_built": 0 },
+      { "name": "apollo/whatsapp/queue_requested", "pct_built": 0 },
+      { "name": "apollo/whatsapp/queue_processed", "pct_built": 0 },
+      { "name": "apollo/whatsapp/join_added", "pct_built": 0 },
+      { "name": "apollo/whatsapp/join_invited", "pct_built": 0 },
+      { "name": "apollo/whatsapp/join_rejected", "pct_built": 0 },
+      { "name": "apollo/whatsapp/flow_hit", "pct_built": 0 },
+      { "name": "apollo/whatsapp/handoff", "pct_built": 0 },
+      { "name": "apollo/whatsapp/wow_reaction", "pct_built": 0 }
+    ],
+    "filters": [
+      { "name": "apollo/whatsapp/normalize_br_phone", "pct_built": 0 },
+      { "name": "apollo/whatsapp/resolve_jid", "pct_built": 0 },
+      { "name": "apollo/whatsapp/keyword_map", "pct_built": 0 },
+      { "name": "apollo/whatsapp/send_text", "pct_built": 0 },
+      { "name": "apollo/whatsapp/queue_status_label", "pct_built": 0 }
+    ],
+    "listens": [
+      { "name": "apollo/login/phone_verified", "pct_built": 10, "note": "hooked; callback empty" },
+      { "name": "apollo/event/published", "pct_built": 0 }
+    ]
+  },
+  "meta_user": {
+    "_apollo_whatsapp_phone": "canonical digits E.164-ish 55...",
+    "_apollo_whatsapp_optin": "1|0 explicit opt-in",
+    "_apollo_wa_candidates": "json array of 12 and 13 digit BR forms",
+    "_apollo_wa_jid": "resolved chatId from check-exists @c.us or @s.whatsapp.net",
+    "_apollo_wa_lid": "resolved @lid when present",
+    "_apollo_wa_flow_state": "IDLE|FLOW|HUMAN",
+    "_apollo_wa_flow_until": "unix HUMAN expiry",
+    "_apollo_wa_pane_mute": "1 when admin has thread open",
+    "pct_writers_built": 0
+  },
+  "options": {
+    "autoload_false": ["apollo_wa_api_key", "apollo_wa_hmac_key"],
+    "keys": {
+      "apollo_wa_base_url": "http://127.0.0.1:3000",
+      "apollo_wa_api_key": "plain key — never front, never git",
+      "apollo_wa_hmac_key": "48+ chars wp_generate_password on activate",
+      "apollo_wa_session": "apollo",
+      "apollo_wa_group_id": "120363...@g.us",
+      "apollo_wa_engine": "GOWS",
+      "apollo_wa_mirror_group": "1",
+      "apollo_wa_bot_dm": "1",
+      "apollo_wa_group_anchor": "1",
+      "apollo_wa_send_gap_seconds": "10",
+      "apollo_wa_sends_paused": "0",
+      "apollo_wa_last_ping": "unix timestamp of the last WAHA session ping — written by Apollo_Waha_Session::ping() on every cache miss, read by the settings view for the 'último ping há X' label",
+      "apollo_wa_last_payload": "RUN 2 — last inbound message envelope, JSON, truncated to 8KB. WP_DEBUG-gated, autoload false, debug only. Contains personal data (phone numbers, message text): do not ship it enabled in production."
+    },
+    "pct_ui_built": 60,
+    "note": "No secret values in this file. apollo_wa_last_ping was added by RUN 1 code and was missing from this list until the 2026-09-11 audit — see audit.findings AUD-01.",
+    "autoload_true_by_omission": [
+      "apollo_wa_last_ping — currently autoloads because only the two SECRET_KEYS are forced false in Apollo_Waha_Options::set(). It is written frequently and read on one admin screen; it should be autoload false. See audit.findings AUD-09."
+    ]
+  },
+  "transients": {
+    "apollo_wa_session_ping_{md5(session)}": {
+      "set_by": "Apollo_Waha_Session::ping()",
+      "file": "inc/Session/class-session.php",
+      "ttl_seconds": 30,
+      "holds": "the raw Client response array {ok,status,body} of GET /api/sessions/{session}",
+      "purpose": "stops every admin screen load from hammering WAHA",
+      "is_page_cache": false,
+      "note": "Data cache for an outbound HTTP call, NOT transients-as-page-cache — never[] is not engaged. Added by RUN 1 and unrecorded until the 2026-09-11 audit (AUD-02)."
+    },
+    "apollo_wa_hook_{id}": {
+      "set_by": "DESIGNED — Apollo_Waha_Webhook, not yet written",
+      "ttl_seconds": 600,
+      "purpose": "webhook Request-Id idempotency ledger",
+      "built": false
+    }
+  },
+  "admin_endpoints": {
+    "note": "Authenticated admin surface created by RUN 1. These are NOT REST routes and were unrecorded until the 2026-09-11 audit (AUD-03). Both are nonce + capability gated.",
+    "admin_post_apollo_wa_save_settings": {
+      "hook": "admin_post_apollo_wa_save_settings",
+      "handler": "Apollo_Waha_Admin::handle_save()",
+      "nonce_action": "apollo_wa_save_settings",
+      "nonce_field": "_wpnonce",
+      "cap": "apollo_manage_whatsapp || manage_options",
+      "writes": ["apollo_wa_base_url", "apollo_wa_session", "apollo_wa_group_id", "apollo_wa_api_key", "apollo_wa_hmac_key"],
+      "pct_built": 100
+    },
+    "wp_ajax_apollo_wa_test_connection": {
+      "hook": "wp_ajax_apollo_wa_test_connection",
+      "handler": "Apollo_Waha_Admin::handle_test()",
+      "nonce_action": "apollo_wa_test_connection",
+      "nonce_field": "nonce",
+      "cap": "apollo_manage_whatsapp || manage_options",
+      "returns": ["ok", "http", "status", "working"],
+      "returns_secret": false,
+      "pct_built": 100
+    }
+  },
+  "store": {
+    "queue_table": "apollo_wa_queue",
+    "register_via": "apollo-core",
+    "queue_columns": [
+      "id",
+      "user_id",
+      "phone_raw",
+      "candidates_json",
+      "jid",
+      "lid",
+      "status",
+      "invite_code",
+      "invite_expires",
+      "last_error",
+      "created_at",
+      "updated_at",
+      "processed_by"
+    ],
+    "queue_statuses": [
+      "queued",
+      "adding",
+      "added",
+      "invited",
+      "pending_approval",
+      "already",
+      "blocked",
+      "rejected",
+      "session_down"
+    ],
+    "pane_table": "apollo_wa_messages",
+    "pane_columns": [
+      "id",
+      "thread_jid",
+      "direction",
+      "from_jid",
+      "from_lid",
+      "from_me",
+      "body",
+      "wa_message_id",
+      "webhook_request_id",
+      "created_at"
+    ],
+    "pct_built": 0
+  },
+  "webhook": {
+    "events": [
+      "session.status",
+      "message",
+      "message.any",
+      "message.reaction",
+      "group.v2.participants"
+    ],
+    "headers": {
+      "X-Webhook-Hmac": "sha512 hex of raw body",
+      "X-Webhook-Hmac-Algorithm": "sha512 only",
+      "X-Webhook-Request-Id": "idempotency key",
+      "X-Webhook-Timestamp": "unix ms"
+    },
+    "pipeline": [
+      "https-prod",
+      "read-php-input-raw",
+      "require-hmac-header-401",
+      "allowlist-sha512-401",
+      "hash_hmac-sha512 + hash_equals",
+      "timestamp-window-300s-401",
+      "transient-apollo_wa_hook_{id}-ttl-10min-200-empty-if-replay",
+      "session-name-must-match-option",
+      "body-max-256kb-413",
+      "switch-event-no-eval-no-raw-sql"
+    ],
+    "transient_prefix": "apollo_wa_hook_",
+    "transient_key_shape": "apollo_wa_hook_ + sha256( validated Request-Id | else sha256(raw|timestamp) ). The client header is shape-checked against /^[A-Za-z0-9._:-]{1,64}$/ and then ALWAYS hashed, so a request header can never choose an option name and the key stays inside the option_name budget.",
+    "rate_limit": "30 events/min/session — DESIGNED, not implemented",
+    "docs_pct": 100,
+    "code_pct": 75,
+    "never_approves_queue": true,
+    "dedupe_write_order": "set_transient BEFORE dispatch, delete_transient in the catch. Closes TOCTOU double-processing while keeping the SSOT's documented 'handler error -> 500, WAHA retries' path alive. Resolves run_log.open_decision in favour of the threat agent's synthesis.",
+    "events_handled_this_run": {
+      "session.status": "do_action apollo/whatsapp/session_status — listener Apollo_Waha_Session::on_status() is STILL AN EMPTY STUB, so the strip does not move yet",
+      "message|message.any": "stores apollo_wa_last_payload (WP_DEBUG only, truncated 8KB, autoload false) then do_action apollo/whatsapp/message_in",
+      "not_handled": ["message.reaction", "group.v2.participants"]
+    },
+    "behaviour_verified": {
+      "method": "real class loaded against WP stubs, 11/11 cases",
+      "unsigned": 401, "bad_hmac": 401, "malformed_hex": 401, "missing_algorithm": 401,
+      "wrong_algorithm": 401, "stale_timestamp": 401, "future_timestamp": 401,
+      "wrong_session": 401, "oversize_256kb": 413, "valid": 200, "replay": "200 empty",
+      "queue_writes_observed": 0,
+      "caveat": "stubbed WordPress — never run inside a real WP install nor against a real WAHA-generated signature"
+    }
+  },
+  "outbound_waha": {
+    "header": "X-Api-Key",
+    "endpoints": {
+      "session_get": "GET /api/sessions/apollo",
+      "check_exists": "GET /api/contacts/check-exists?phone={n}&session=apollo",
+      "upsert_contact": "PUT /api/apollo/contacts/{chatId}",
+      "group_create": "POST /api/apollo/groups",
+      "groups_list": "GET /api/apollo/groups",
+      "participants_add": "POST /api/apollo/groups/{groupId}/participants/add",
+      "invite_code": "GET /api/apollo/groups/{groupId}/invite-code",
+      "join_requests": "GET /api/apollo/groups/{groupId}/participants/join-requests",
+      "join_approve": "POST /api/apollo/groups/{groupId}/participants/join-requests/approve",
+      "send_text": "POST /api/sendText",
+      "start_typing": "POST /api/startTyping",
+      "stop_typing": "POST /api/stopTyping"
+    },
+    "pct_client_built": 5
+  },
+  "join_chain": [
+    {
+      "step": 1,
+      "action": "session must be WORKING else status session_down",
+      "pct_built": 0
+    },
+    {
+      "step": 2,
+      "action": "resolve BR candidates 12 and 13 digits — never add 9 to landline",
+      "pct_built": 0
+    },
+    {
+      "step": 3,
+      "action": "GET check-exists both forms — trust returned chatId",
+      "pct_built": 0
+    },
+    {
+      "step": 4,
+      "action": "store _apollo_wa_jid and _apollo_wa_lid",
+      "pct_built": 0
+    },
+    {
+      "step": 5,
+      "action": "PUT contact twice with 3s pause",
+      "pct_built": 0
+    },
+    {
+      "step": 6,
+      "action": "wait 5s",
+      "pct_built": 0
+    },
+    {
+      "step": 7,
+      "action": "POST participants/add",
+      "pct_built": 0
+    },
+    {
+      "step": 8,
+      "action": "HTTP 200 and no Error field → added",
+      "pct_built": 0
+    },
+    {
+      "step": 9,
+      "action": "409 → already",
+      "pct_built": 0
+    },
+    {
+      "step": 10,
+      "action": "Error 403 + AddRequest.Code → sendText DM https://chat.whatsapp.com/{Code} → invited",
+      "pct_built": 0
+    },
+    {
+      "step": 11,
+      "action": "403 without Code → GET invite-code → invited",
+      "pct_built": 0
+    },
+    {
+      "step": 12,
+      "action": "never retry add in a loop; never treat body Error 403 as session logout",
+      "pct_built": 100,
+      "note": "documented rule only — not enforced in code"
+    }
+  ],
+  "flows": {
+    "states": ["IDLE", "FLOW", "HUMAN"],
+    "human_ttl_seconds": 7200,
+    "group_policy": "never auto-reply every group message",
+    "group_anchors": ["!evento", "!apollo", "@apollo"],
+    "whisper": "group anchor replies in DM only",
+    "defaults": [
+      {
+        "keys": ["evento", "hoje", "rolê"],
+        "listen": ["dm", "group_anchor"],
+        "action": "events.upcoming",
+        "reply": "dm"
+      },
+      {
+        "keys": ["entrar", "grupo"],
+        "listen": ["dm"],
+        "action": "join.queue",
+        "reply": "dm"
+      },
+      {
+        "keys": ["humano", "atendente"],
+        "listen": ["dm"],
+        "action": "handoff",
+        "reply": "dm"
+      },
+      {
+        "keys": ["sair", "para"],
+        "listen": ["dm"],
+        "action": "idle",
+        "reply": "dm"
+      }
+    ],
+    "admin_composer_commands": ["/grupo", "/silent", "/humano", "/dm"],
+    "pct_built": 0
+  },
+  "operation_number": {
+    "e164": "+5521933008447",
+    "digits": "5521933008447",
+    "country": "55",
+    "ddd": "21",
+    "region": "Rio de Janeiro, Brazil",
+    "shape": "13-digit mobile — 55 + 21 + 9 + 33008447",
+    "candidates_expected": ["5521933008447", "552133008447"],
+    "role": "operation_number",
+    "is_apollo_business_number": false,
+    "runs": "process C — WhatsApp app on the ops handset, opened once per week to keep the session alive",
+    "bound_to_session": "apollo",
+    "secret": false,
+    "note": "Ops identity, not a credential — it is visible to every group member. NEVER swap this for the verified Apollo Business number (see never[]).",
+    "source": "declared by credential owner 2026-09-11",
+    "jid_resolved": false,
+    "group_id_known": false
+  },
+  "br_phone": {
+    "country": "55",
+    "mobile": "55 + DDD2 + 9 + 8 = 13 digits",
+    "legacy_wa_id": "55 + DDD2 + 8 = 12 digits pre-2012 accounts",
+    "landline": "55 + DDD2 + 8 starting 2-5 — do not insert 9",
+    "self_test_vector": {
+      "input": "+5521933008447",
+      "expect_candidates": ["5521933008447", "552133008447"],
+      "why": "Apollo_Waha_Phone::candidates() must return both shapes and check-exists both before add; first correctness test once the stub is filled."
+    },
+    "pct_built": 0
+  },
+  "security": {
+    "fail_closed": true,
+    "hmac_min_bytes": 32,
+    "compare": "hash_equals",
+    "webhook_never_approves_queue": true,
+    "admin_actions_need_nonce_and_cap": true,
+    "no_token_in_querystring": true,
+    "no_secrets_in_dom": true,
+    "media_fetch_allowlist": "waha base host only + X-Api-Key",
+    "apollo_rule": "PHP array_object SSOT — HTML render only",
+    "docs_pct": 100,
+    "code_pct": 5,
+    "note": "Current verify() hardcodes false — fail-closed stub, not real HMAC"
+  },
+  "cron_later": {
+    "hook": "apollo_cron_wa_digest",
+    "requires": "session WORKING and apollo_wa_sends_paused=0",
+    "reuses": "pane sendText to groupId",
+    "not_in_mvp": true,
+    "pct_built": 0
+  },
+  "files_on_disk": [
+    "apollo-waha.php",
+    "inc/class-plugin.php",
+    "inc/class-options.php",
+    "inc/Client/class-client.php",
+    "inc/Webhook/class-webhook.php",
+    "inc/Session/class-session.php",
+    "inc/Phone/class-phone.php",
+    "inc/Queue/class-queue.php",
+    "inc/Pane/class-pane.php",
+    "inc/Flow/class-flows.php",
+    "admin/class-admin.php",
+    "admin/views/settings.php",
+    "admin/views/queue.php",
+    "admin/views/pane.php",
+    "admin/views/flows.php",
+    "public/class-public.php",
+    "public/views/join-button.php",
+    "public/views/my-requests.php",
+    "assets/public.js",
+    "assets/public.css",
+    "assets/admin.js",
+    "assets/admin.css",
+    "docs/WEBHOOK-SECURITY.md",
+    "JOIN-CHAIN.md",
+    "ARCHITECTURE.md",
+    "CONTRACT.md",
+    "BOOT-BOUNDARY.md",
+    "ADMIN-SURFACES.md",
+    "STRUCTURE.md",
+    "waha-registry.json",
+    "uninstall.php",
+    "FOLLOW-UP.txt",
+    "_plan/APOLLO-WAHA — PROJECT CONTEXT.md",
+    "_plan/PASTED_BRAINSTORM.md",
+    "_plan/apollo-waha-blueprint.md",
+    "_plan/apollo-waha-skeleton.zip",
+    "_plan/claude_waha-registry.json",
+    "_plan/run2-recon/01-ordered-pipeline-checklist.json",
+    "_plan/run2-recon/02-threat-model-26.json",
+    "_plan/run2-recon/03-wp-semantics-10.json"
+  ],
+  "brainstorming_dir": {
+    "path": "__ brainstorming/",
+    "files": 71,
+    "appeared": "2026-09-11 17:31, synced in by the owner AFTER the v1.3.0 audit — which is why that audit's 40-file cross-check was correct at the time and is now superseded",
+    "holds": [
+      "APOLLO-WAHA-CLAUDE-CODE-OPUS-RUN.md — the RUN 0-4 operator plan (RUN 3 = queue row only, RUN 4 = Phone + join chain)",
+      "apollo-wa-webhook-security.md (x2, identical to each other AND byte-identical to docs/WEBHOOK-SECURITY.md — verified by diff)",
+      "waha-registry.json — the ORIGINAL v1.0.0, 23 keys; superseded by this file (v1.4.0, 42 keys)",
+      "apollo-waha-flow.png/.svg + apollo-whatsapp-bible-flow.png/.svg — the two flow diagrams; PNG and SVG are the same diagram",
+      "apollo-waha/ and apollo-waha-skeleton (1)/ — pre-RUN-1 copies of the plugin skeleton",
+      "browsed_files/ — an older global Apollo registry v6.6.0 (34 plugins), historical; the live inventory is 48",
+      "imagine_images/ — 2 jpgs"
+    ],
+    "authority": "REFERENCE ONLY. This file is the SSOT. The bible-flow diagram's 'SLUGS TRAVADOS' panel repeats the apollo-whatsapp vs apollo-waha naming drift already recorded in naming_drift{}.",
+    "excluded_from_promotion": true,
+    "not_a_source_dir": "Contains stale duplicate PHP — never load, lint, or ship from here."
+  },
+  "files_on_disk_audit": {
+    "counted": 40,
+    "counted_note": "40 = the plugin proper. Excludes the 71 files under '__ brainstorming/' (see brainstorming_dir{}), which are reference material, not plugin source. Whole-folder find . -type f now returns 111.",
+    "non_plan": 32,
+    "php": 19,
+    "md_docs": 7,
+    "txt_docs": 1,
+    "assets": 4,
+    "plan_scratch": 8,
+    "php_loc_total": 1046,
+    "php_loc_note": "793 after RUN 1 -> 1046 after RUN 2 (+253, almost all the webhook pipeline).",
+    "method": "find . -type f on 2026-09-11, re-counted after RUN 2 and after the owner synced in '__ brainstorming/'",
+    "note": "Correction history: v1.1.0 listed 30 entries and omitted _plan/ entirely. v1.1.1 said 34. v1.2.0 said 35 / php 17 / plan 4 — all three of those were WRONG (author miscount, see AUD-04) and _plan/PASTED_BRAINSTORM.md was missing from files_on_disk[] (AUD-05). The audit corrected them to 36/19/5, then this same audit added 4 files of its own: FOLLOW-UP.txt plus three preserved RUN 2 recon JSONs. Final verified truth: 40 files, 32 outside _plan/, 19 PHP, 793 PHP LOC.",
+    "plan_dir_excluded_from_promotion": true
+  },
+  "follow_up_doc": {
+    "file": "FOLLOW-UP.txt",
+    "holds": "run log (what actually happened per run), true current state, the 6 open audit findings, the full salvaged RUN 2 spec, and the ordered next-actions list",
+    "relationship_to_ssot": "companion only — this JSON is law; the txt is the human-readable handoff"
+  },
+  "audit": {
+    "date": "2026-09-11",
+    "scope": "Everything RUN 0 + RUN 1 actually produced, plus registry-vs-disk truth. RUN 2 was NOT audited because RUN 2 produced no code.",
+    "method": "Performed inline by the session author with direct tool reads (grep/find/php -l/git status), NOT by subagents. A 5-lens adversarial subagent audit was launched and ALL SIX of its agents died on an account session limit ('resets 3:20pm America/Sao_Paulo') before returning anything — zero agent findings exist. This record is therefore single-reviewer work and has NOT been independently verified. Treat it accordingly.",
+    "verified_clean": [
+      "never[] compliance: 0 register_post_type, 0 wp_cache_*, 0 active_plugins mutation, 0 mu/force-load require",
+      "REST namespace: the only register_rest_route call uses apollo/v1 + /wa/webhook",
+      "hook families in code: apollo/whatsapp/session_status, apollo/whatsapp/message_in, plus the explicitly-allowed LISTEN apollo/login/phone_verified — nothing outside the sanctioned families",
+      "containment: git ls-files apollo-waha = 0; git status shows only '?? apollo-waha/'. RUN 1 modified nothing outside this folder. (Other plugins DO show modifications in git status — those are pre-existing repo state, unrelated to this work.)",
+      "no secret literals committed into this JSON",
+      "php -l clean on all 6 PHP files RUN 1 touched or created",
+      "boot boundary intact: plugins_loaded:20, apollo-core guard, no mu-plugin",
+      "webhook stub genuinely untouched: verify() still returns false"
+    ],
+    "findings": [
+      { "id": "AUD-01", "severity": "high", "category": "registry-drift", "claim": "options.keys did not record apollo_wa_last_ping, an option the RUN 1 code both writes (Session::ping) and reads (settings view).", "status": "FIXED in v1.3.0" },
+      { "id": "AUD-02", "severity": "medium", "category": "registry-drift", "claim": "The 30s session-ping transient apollo_wa_session_ping_{md5(session)} existed in code but was recorded nowhere in the registry.", "status": "FIXED in v1.3.0 — new transients{} section" },
+      { "id": "AUD-03", "severity": "medium", "category": "registry-drift", "claim": "RUN 1 created two authenticated admin endpoints (admin_post_apollo_wa_save_settings, wp_ajax_apollo_wa_test_connection) with their own nonces. Neither was recorded — unrecorded authenticated surface.", "status": "FIXED in v1.3.0 — new admin_endpoints{} section" },
+      { "id": "AUD-04", "severity": "medium", "category": "registry-drift", "claim": "files_on_disk_audit counts were wrong: counted 35 (actual 36), php 17 (actual 19), plan_scratch 4 (actual 5). Author miscount in v1.2.0.", "status": "FIXED in v1.3.0" },
+      { "id": "AUD-05", "severity": "low", "category": "registry-drift", "claim": "files_on_disk[] omitted _plan/PASTED_BRAINSTORM.md.", "status": "FIXED in v1.3.0" },
+      { "id": "AUD-06", "severity": "medium", "category": "code-fragility", "claim": "Apollo_Waha_Options is require_once'd ONLY from the top of inc/Client/class-client.php. It works today purely because inc/class-plugin.php happens to list Client first in $files. Reorder that array — or reach Session/Admin by any path that does not load Client — and every call fatals with 'Class Apollo_Waha_Options not found'. Latent, not currently reachable: uninstall.php does not use it and boot() always loads Client first.", "fix": "Add 'inc/class-options.php' as the FIRST entry of $files in inc/class-plugin.php and drop the guarded require from class-client.php.", "status": "FIXED in RUN 2 (2026-09-11) — class-options.php is now the first require in the loader with a comment pinning it there, and the guarded require is gone from class-client.php." },
+      { "id": "AUD-07", "severity": "low", "category": "security", "claim": "Apollo_Waha_Options::mask() reveals 4 of 7 characters on short secrets: 'abcdefg' renders as 'ab***fg' (verified by running the function). Harmless for the real 48-char HMAC key or a normal API key, but the all-bullets threshold (<=6) is too low.", "fix": "Raise the full-mask threshold to <=12, or always reveal at most the final 2 characters.", "status": "OPEN" },
+      { "id": "AUD-08", "severity": "low", "category": "security", "claim": "Apollo_Waha_Options::set() passes autoload=false for the two secrets, but on WordPress < 6.6 update_option() ignores the autoload argument when the option ALREADY exists. A secret written before this code shipped could remain autoload=yes.", "fix": "For secrets, delete_option() then add_option($k,$v,'',false) on first write, or require WP >= 6.6.", "status": "OPEN — does not affect fresh installs" },
+      { "id": "AUD-09", "severity": "info", "category": "performance", "claim": "apollo_wa_last_ping autoloads (only the two SECRET_KEYS are forced false) yet is written on every ping cache miss and read on one admin screen.", "fix": "Add it to a NON_AUTOLOAD list alongside the secrets.", "status": "OPEN" },
+      { "id": "AUD-10", "severity": "low", "category": "security", "claim": "apollo_wa_base_url is admin-settable and flows unvalidated into wp_remote_request — no scheme or host allowlist. Gated behind manage_options so it is an admin-can-do-admin-things issue, BUT security.media_fetch_allowlist already declares 'waha base host only + X-Api-Key' as the intent, so the declared control is not implemented.", "fix": "Validate scheme is http/https and, for media fetches later, pin the host to the configured base URL host.", "status": "OPEN" },
+      { "id": "AUD-11", "severity": "info", "category": "wp-standards", "claim": "admin/views/settings.php reads $_GET['updated'] with isset() and no sanitisation/nonce. The value is never echoed, so it is not an injection, but any admin can trigger the success notice with &updated=1 and WPCS will flag the unslashed superglobal.", "status": "OPEN — cosmetic" }
+    ],
+    "open_count": 5,
+    "fixed_count": 6,
+    "closed_in_run_2": ["AUD-06"],
+    "still_open": ["AUD-07 mask() on short secrets", "AUD-08 update_option autoload on WP<6.6", "AUD-09 apollo_wa_last_ping autoloads", "AUD-10 no scheme/host validation on base_url", "AUD-11 $_GET['updated'] unsanitised"],
+    "not_audited": [
+      "Live runtime behaviour — nothing here was executed against a running WordPress or a live WAHA container. Every RUN 1 'implemented' claim remains code-path-verified only.",
+      "The real contracts of apollo-core, apollo-login (apollo/login/phone_verified payload shape) and apollo-admin were assumed from the registry, not read from those plugins' source.",
+      "Conformance against the global Apollo SSOT chapters (15-conventions, 11-security, 03-apollo-rule, 10-coupling) — the lens assigned to this died with the workflow.",
+      "No independent/adversarial review of these findings — see method."
+    ]
+  },
+  "never": [
+    "CPT registration outside apollo-core",
+    "cache keys / drop-ins / transients-as-page-cache",
+    "active_plugins mutation",
+    "force-load / mu top-level require",
+    "new REST namespace outside apollo/v1",
+    "new hook family outside apollo/whatsapp/*",
+    "treating BRAIN rest/cpt as known",
+    "using verified Apollo Business number on WAHA",
+    "secrets in this JSON or front DOM"
+  ]
+}

@@ -39,8 +39,25 @@ final class Geocoder {
 		$lat = get_post_meta( $post_id, '_local_lat', true );
 		$lng = get_post_meta( $post_id, '_local_lng', true );
 
-		// Já tem coordenadas — não fazer nada
-		if ( $lat !== '' && $lat !== null && $lat !== false && $lng !== '' && $lng !== null && $lng !== false ) {
+		/* Já tem coordenadas REAIS — não fazer nada.
+		   ─────────────────────────────────────────────────────────────────
+		   ⚠ "0" COUNTS AS MISSING, NOT AS A COORDINATE.
+
+		   The old test was `$lat !== ''`, which treated the string "0" as a
+		   valid latitude. MetaboxSaver used to write exactly that for every
+		   blank coordinate box, so this guard returned early and the address
+		   was never looked up — the venue stayed pinned at 0,0 forever and
+		   apollo-maps dropped it from the explorer payload.
+
+		   The saver no longer writes "0" (it deletes instead), but rows saved
+		   before that fix still hold it. Treating 0 as missing here is what
+		   lets those existing locs self-repair on their next save, instead of
+		   needing a migration. Latitude 0 / longitude 0 is open ocean off
+		   West Africa — never a real venue, so nothing legitimate is lost. */
+		$has_lat = ( '' !== $lat && null !== $lat && false !== $lat && 0.0 !== (float) $lat );
+		$has_lng = ( '' !== $lng && null !== $lng && false !== $lng && 0.0 !== (float) $lng );
+
+		if ( $has_lat && $has_lng ) {
 			return false;
 		}
 

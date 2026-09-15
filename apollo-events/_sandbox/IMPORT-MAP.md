@@ -51,17 +51,17 @@ Scan includes `publish|pending|private`. `link_loc=false` cannot bypass.
 ## 3 · Pipeline, end to end (strict)
 
 ```
-/eventos/url
-  ├─ BlueTicket
-  │    ├─ POST …/importar-url/preview
-  │    └─ POST …/importar-url  (server re-fetch is SSOT)
+/eventos/importa  (301 from /eventos/url)
+  ├─ BlueTicket + Shotgun (server-side)
+  │    ├─ POST …/importar-url/preview  → CoverResolver + diagnostics
+  │    └─ POST …/importar-url           → ImportPipeline
+  │         ├─ ProviderRegistry → fetch
   │         ├─ GUARD: title, start_date, cover, venue
   │         ├─ GUARD: match_loc > 0  → _event_loc_id
   │         ├─ insert/update post (title / about)
   │         ├─ meta: dates, ticket, coupon, video, djs…
-  │         └─ apollo_event_set_banner(cover)  [fail → rollback new]
-  └─ Shotgun (until PHP provider)
-       └─ HTML scrape → POST apollo/v1/eventos
+  │         └─ CoverSideloader(cover)  [fail → rollback new]
+  └─ (legacy) HTML paste fallback in UI only
 ```
 
 ---
@@ -94,7 +94,7 @@ ids equal, `loc_id` set, listing card shows cover + venue. Re-import broken #87.
 
 | Gap | Impact |
 | --- | --- |
-| Shotgun PHP provider | Still scrape → `POST /eventos` |
+| Shotgun PHP provider | **DONE v1.7.15** — ShotgunProvider + HtmlEventParser |
 | Broken pre-fix events | Re-import; no self-heal |
 | `apollo/v1/loc-resolve` | Unregistered; BlueTicket uses server `match_loc` |
 | BT checklist edits | Ignored on send (server re-fetch is SSOT); coupon/status from UI still applied |

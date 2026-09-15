@@ -1,0 +1,20 @@
+{
+    "surface_counts":  {
+                           "wp_ajax_nopriv":  14,
+                           "register_rest_route":  461,
+                           "add_shortcode":  125
+                       },
+    "action":  "report_only_until_php_ticket",
+    "$chapter":  "05-forbidden-surface",
+    "$role":  "intent",
+    "triage_counts":  {
+                          "FALSE_POSITIVE":  47,
+                          "CORE_OK":  26,
+                          "TRUE_VIOLATION":  67,
+                          "NEEDS_REVIEW":  125
+                      },
+    "hot_examples":  [
+                         "apollo-adverts/includes/cpt.php register_post_type (outside apollo-core)",
+                         "apollo-admin enable_follow / soc_follow UI vs FORBIDDEN_CONCEPTS"
+                     ]
+}

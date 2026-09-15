@@ -59,8 +59,8 @@ const STYLE_CELLS = [
   { id: 'page-home.php#apollo-home-styles', file: TEMPLATE, kind: 'inline' },
   ...CELLS.map((c) => ({ id: `cells/${c}.php`, file: `${CELL_DIR}${c}.php`, kind: 'inline' })),
 ];
-/* DS cells — NOT loaded by /casa today (see FINDING S1). Listed so the
-   duplicate-selector check can prove the fork. */
+/* DS cells — also loaded by /casa now (F-01 closed: topbar-styles via page-home).
+   Still listed separately so B2 can prove /casa does not redeclare bare DS selectors. */
 const DS_CELLS = [
   { id: 'apollo-plus/topbar-styles.php', file: 'apollo-templates/templates/template-parts/apollo-plus/topbar-styles.php', kind: 'inline' },
   { id: 'apollo-plus/aside-styles.php', file: 'apollo-templates/templates/template-parts/apollo-plus/aside-styles.php', kind: 'inline' },

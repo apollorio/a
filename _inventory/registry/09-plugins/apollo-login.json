@@ -1086,7 +1086,7 @@
     }
   ],
   "cron": [],
-  "version": "1.0.41",
+  "version": "1.0.47",
   "hooks_fired": [
     "apollo/firewall/blocked",
     "apollo/login/email_verified",
@@ -4491,5 +4491,11 @@
       "apollo_simon",
       "apollo_verify_email"
     ]
+  },
+  "$version_synced": {
+    "date": "2026-08-31",
+    "from": "1.0.41",
+    "to": "1.0.47",
+    "source": "disk docblock via doctor.js"
   }
 }

@@ -34,13 +34,13 @@
         { id:'start_time',   label:'Hora início',            required:true,  type:'text',     value:extract.start_time||'23:00' },
         { id:'end_date',     label:'Data fim',               required:true,  type:'text',     value:extract.end_date||'' },
         { id:'end_time',     label:'Hora fim',               required:true,  type:'text',     value:extract.end_time||'07:00' },
-        { id:'cover',        label:'Capa (imagem)',          required:true,  type:'text',     value:extract.cover||'' },
+        { id:'cover',        label:'Capa (imagem)',          required:extract.platform==='blueticket', type:'text', value:extract.cover||'' },
         { id:'video',        label:'Capa (vídeo)',           required:false, type:'text',     value:extract.video||'' },
-        { id:'locName',      label:'Local (nome)',           required:extract.platform==='blueticket', type:'text', value:extract.locName||'' },
-        { id:'locSlug',      label:'Local (slug WP)',        required:extract.platform==='blueticket', type:'text', value:extract.locSlug||'' },
-        { id:'locId',        label:'Local (ID WP)',          required:extract.platform==='blueticket', type:'text', value:extract.locId||'' },
+        { id:'locName',      label:'Local (nome)',           required:false, type:'text', value:extract.locName||'' },
+        { id:'locSlug',      label:'Local (slug WP)',        required:false, type:'text', value:extract.locSlug||'' },
+        { id:'locId',        label:'Local (ID WP)',          required:false, type:'text', value:extract.locId||'' },
         { id:'bio',          label:'Bio / descrição',        required:false, type:'textarea', value:extract.bio||'' },
-        { id:'ticket_price', label:'Nome do ingresso',       required:false, type:'text',     value:(extract.ticket_price && !/^https?:\/\//i.test(extract.ticket_price) ? extract.ticket_price : 'Ingressos do Evento') },
+        { id:'ticket_price', label:'Preço (menor oferta)',   required:false, type:'text',     value:extract.ticket_price||'' },
         { id:'coupon',       label:'Cupom',                  required:false, type:'text',     value:couponDefault },
         { id:'ticketUrl',    label:'URL do ingresso',        required:true,  type:'text',     value:extract.ticketUrl||extract.sourceUrl||'' }
       ];
@@ -64,7 +64,10 @@
         card.dataset.required = f.required ? '1' : '0';
   
         const filled = !!(f.value && f.value.trim());
-        const ledClass = filled ? 'on' : (f.required ? 'off' : 'optional-off');
+        let ledClass = filled ? 'on' : (f.required ? 'off' : 'optional-off');
+        if (f.id === 'cover' && AUI.Cover) {
+          ledClass = AUI.Cover.coverLedClass(extract);
+        }
   
         card.innerHTML =
           '<div class="imp-led-head"><span class="imp-led ' + ledClass + '"></span>' +
@@ -88,6 +91,9 @@
       });
   
       evaluateGate();
+      if (AUI.Cover) {
+        AUI.Cover.renderCoverBlock(extract);
+      }
     }
   
     function evaluateGate(){
@@ -136,8 +142,12 @@
       card.className = 'card ins imp-row';
       card.id = row.id;
   
-      const thumbStyle = v.cover ? ('background-image:url(\'' + v.cover.replace(/'/g,"\\'") + '\')') : '';
-      const thumbLabel = v.cover ? '' : (v.video ? 'VÍDEO' : 'SEM CAPA');
+      const thumbUrl = (row.importCover && row.importCover.local_url) || v.coverLocal || v.cover;
+      const thumbStyle = thumbUrl ? ('background-image:url(\'' + String(thumbUrl).replace(/'/g,"\\'") + '\')') : '';
+      const thumbLabel = thumbUrl ? '' : (v.video ? 'VÍDEO' : 'SEM CAPA');
+      const localTag = row.importCover && row.importCover.attachment_id
+        ? '<span class="tag tag-success">thumb #' + row.importCover.attachment_id + (row.importCover.reused ? ' ↺' : '') + '</span>'
+        : '';
   
       card.innerHTML =
         '<div class="imp-row-top">' +
@@ -148,6 +158,7 @@
               '<span class="tag imp-source-' + row.platform + '">' + row.platform + '</span>' +
               (v.locName ? '<span class="tag">' + AUI.escapeHtml(v.locName) + '</span>' : '') +
               (v.coupon ? '<span class="tag tag-accent">cupom: ' + AUI.escapeHtml(v.coupon) + '</span>' : '') +
+              localTag +
               '<span class="' + statusTagClass(row.status) + '" data-status-tag>' + statusLabel(row.status) + '</span>' +
             '</div>' +
           '</div>' +

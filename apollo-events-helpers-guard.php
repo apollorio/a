@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Apollo Events Helpers Guard
  * Description: Brutal early guarantee that apollo_event_* globals exist before any template runs.
- * Version: 1.0.1
+ * Version: 1.0.2
  *
  * @package Apollo\Event
  */
@@ -61,32 +61,3 @@ add_action(
 	},
 	0
 );
-
-// #region agent log
-add_action(
-	'template_redirect',
-	static function () {
-		$dir = WP_CONTENT_DIR . '/plugins/apollo-events/';
-		@file_put_contents(
-			$dir . 'debug-e031aa.log',
-			wp_json_encode(
-				array(
-					'sessionId'    => 'e031aa',
-					'runId'        => 'brutal-force',
-					'hypothesisId' => 'H3-mu-guard',
-					'location'     => 'apollo-events-helpers-guard.php',
-					'message'      => 'brutal guard on template_redirect',
-					'data'         => array(
-						'has_parse_date' => function_exists( 'apollo_event_parse_date' ),
-						'has_file'       => defined( 'APOLLO_EVENT_FILE' ),
-						'is_event'       => defined( 'APOLLO_EVENT_CPT' ) ? is_singular( APOLLO_EVENT_CPT ) : false,
-					),
-					'timestamp'    => (int) round( microtime( true ) * 1000 ),
-				)
-			) . "\n",
-			FILE_APPEND | LOCK_EX
-		);
-	},
-	0
-);
-// #endregion

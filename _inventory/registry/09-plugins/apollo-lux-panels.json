@@ -10,7 +10,7 @@
   "namespace": "Apollo\\LuxPanels",
   "priority": 60,
   "status": "IMPLEMENTED",
-  "version": "1.0.1",
+  "version": "1.2.0",
   "description": "Luxury-grade advanced data panels for the event, dj and local CPTs — one high-priority tabbed metabox per CPT, 1:1 with the Apollo add-new form design system.",
   "dependencies": [
     "apollo-core",
@@ -113,5 +113,11 @@
       "sanitize_callback": "optional callable(array $rows): array, run on the assembled rows before update_post_meta() — lets the owning plugin enforce its own validation (e.g. apollo_dj_sanitize_tracks_meta) in one place."
     },
     "first_consumer": "DjPanel.php — _dj_tracks (schema v2)"
+  },
+  "$version_synced": {
+    "date": "2026-08-31",
+    "from": "1.0.1",
+    "to": "1.2.0",
+    "source": "disk docblock via doctor.js"
   }
 }

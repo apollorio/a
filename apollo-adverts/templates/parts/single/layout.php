@@ -4,8 +4,9 @@
  * Single classified — layout.
  *
  * Left: the same marketplace card that announced this listing on /anuncios.
- * Right: title/meta/description + #contato pre-contact (safety gate when
- * required, otherwise the chat CTA).
+ * Right: title/meta/description + #contato. Pre-contact safety is the
+ * full-page /seguranca/ interstitial (never inlined here) — CTA links via
+ * apollo_adverts_contact_url() when the gate still applies.
  *
  * Expects from single-classified.php: $classified_id, $is_ticket, $is_accom,
  * $needs_gate.
@@ -70,6 +71,20 @@ $mk_single_mode = true;
 			</p>
 
 			<h1 class="mk-single__title" itemprop="name"><?php echo esc_html(get_the_title($post_id)); ?></h1>
+
+			<?php if (function_exists('apollo_adverts_share_button')) : ?>
+				<div class="mk-single__share">
+					<?php
+					apollo_adverts_enqueue_share_assets();
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					echo apollo_adverts_share_button((string) get_permalink($post_id), array(
+						'class' => 'ap-advert-share mk-single-share',
+						'label' => __('Copiar link deste anúncio', 'apollo-adverts'),
+					));
+					?>
+					<span class="mk-single__share-hint"><?php esc_html_e('Compartilhe o link — detalhes e contato seguem as regras de membro.', 'apollo-adverts'); ?></span>
+				</div>
+			<?php endif; ?>
 
 			<?php if ($price !== '' && $price !== null) : ?>
 				<p class="mk-single__price" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
@@ -152,20 +167,20 @@ $mk_single_mode = true;
 				</h3>
 
 				<?php if ($needs_gate) : ?>
-					<p style="margin:0 0 14px;font-size:14px;color:var(--muted);">
+					<p class="mk-single__gate-note">
 						<?php esc_html_e('Confirme pessoas em comum (ou verificação Apollo) antes de abrir a conversa. O servidor bloqueia o chat até essa etapa.', 'apollo-adverts'); ?>
 					</p>
-					<div class="apollo-stage ap-safety" id="apSafetyStage" data-boot="loading">
-						<div class="apollo-warn" id="apSafetyScroller">
-							<div class="apollo-warn__inner" id="apSafetyInner">
-								<?php
-								if (function_exists('apollo_safety_render')) {
-									apollo_safety_render($post_id);
-								}
-								?>
-							</div>
-						</div>
-					</div>
+					<?php
+					$gate_url = function_exists('apollo_adverts_contact_url')
+						? apollo_adverts_contact_url($post_id)
+						: (function_exists('apollo_safety_url')
+							? apollo_safety_url($post_id, (string) get_permalink($post_id) . '#contato')
+							: (string) get_permalink($post_id));
+					?>
+					<a class="apollo-adverts-chat-btn apollo-adverts-safety-btn" href="<?php echo esc_url($gate_url); ?>">
+						<i class="ri-shield-check-line" aria-hidden="true"></i>
+						<span><?php esc_html_e('Verificar e falar', 'apollo-adverts'); ?></span>
+					</a>
 				<?php elseif (function_exists('apollo_adverts_chat_button')) : ?>
 					<?php
 					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- button helper escapes.

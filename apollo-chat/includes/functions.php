@@ -68,38 +68,134 @@ function apollo_send_message(array $args): int|false
         }
     } else {
         if (empty($r['recipients'])) {
+            // #region agent log
+            @file_put_contents(
+                ( defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : '' ) . '/debug-161c5c.log',
+                wp_json_encode(
+                    array(
+                        'sessionId'    => '161c5c',
+                        'runId'        => 'chat-pre',
+                        'hypothesisId' => 'C6',
+                        'location'     => 'functions.php:apollo_send_message',
+                        'message'      => 'fail: empty recipients on new thread',
+                        'data'         => array('sender' => (int) $r['sender_id']),
+                        'timestamp'    => (int) round(microtime(true) * 1000),
+                    )
+                ) . "\n",
+                FILE_APPEND
+            );
+            // #endregion
             return false;
         }
 
-        $wpdb->insert(
-            "{$pfx}chat_threads",
-            array(
-                'subject'    => sanitize_text_field($r['subject']),
-                'is_group'   => $r['is_group'] ? 1 : (count($r['recipients']) > 1 ? 1 : 0),
-                'group_name' => sanitize_text_field($r['group_name']),
-                'created_by' => $r['sender_id'],
-                'created_at' => $now,
+        $recipients = array_values(
+            array_unique(
+                array_filter(
+                    array_map('intval', (array) $r['recipients']),
+                    static function (int $id) use ($r): bool {
+                        return $id > 0 && $id !== (int) $r['sender_id'];
+                    }
+                )
             )
         );
-        $r['thread_id'] = (int) $wpdb->insert_id;
 
-        $all = array_unique(array_merge(array($r['sender_id']), $r['recipients']));
-        foreach ($all as $uid) {
-            $wpdb->insert(
-                "{$pfx}chat_participants",
+        if (empty($recipients)) {
+            return false;
+        }
+
+        $force_group = ! empty($r['is_group']) || count($recipients) > 1;
+
+        // 1:1 DM — WhatsApp/Telegram model: exactly one thread per pair.
+        if (! $force_group) {
+            $peer         = (int) $recipients[0];
+            $r['thread_id'] = apollo_chat_consolidate_dm_pair(
+                (int) $r['sender_id'],
+                $peer,
+                (string) $r['subject']
+            );
+
+            // #region agent log
+            @file_put_contents(
+                ( defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : '' ) . '/debug-161c5c.log',
+                wp_json_encode(
+                    array(
+                        'sessionId'    => '161c5c',
+                        'runId'        => 'chat-dm-fix',
+                        'hypothesisId' => 'DM1',
+                        'location'     => 'functions.php:apollo_send_message',
+                        'message'      => '1:1 reuse/consolidate before insert',
+                        'data'         => array(
+                            'sender'    => (int) $r['sender_id'],
+                            'peer'      => $peer,
+                            'thread_id' => (int) $r['thread_id'],
+                        ),
+                        'timestamp'    => (int) round(microtime(true) * 1000),
+                    )
+                ) . "\n",
+                FILE_APPEND
+            );
+            // #endregion
+
+            if ($r['thread_id'] <= 0) {
+                return false;
+            }
+        } else {
+            $thread_ok = $wpdb->insert(
+                "{$pfx}chat_threads",
                 array(
-                    'thread_id'    => $r['thread_id'],
-                    'user_id'      => (int) $uid,
-                    'unread_count' => ((int) $uid === $r['sender_id']) ? 0 : 1,
-                    'role'         => ((int) $uid === $r['sender_id']) ? 'admin' : 'member',
-                    'created_at'   => $now,
+                    'subject'    => sanitize_text_field($r['subject']),
+                    'is_group'   => 1,
+                    'group_name' => sanitize_text_field($r['group_name']),
+                    'created_by' => $r['sender_id'],
+                    'created_at' => $now,
                 )
             );
+            $r['thread_id'] = (int) $wpdb->insert_id;
+
+            // #region agent log
+            if (false === $thread_ok || $r['thread_id'] <= 0) {
+                @file_put_contents(
+                    ( defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : '' ) . '/debug-161c5c.log',
+                    wp_json_encode(
+                        array(
+                            'sessionId'    => '161c5c',
+                            'runId'        => 'chat-pre',
+                            'hypothesisId' => 'C6',
+                            'location'     => 'functions.php:apollo_send_message',
+                            'message'      => 'fail: chat_threads insert',
+                            'data'         => array(
+                                'insert_ok'  => $thread_ok !== false,
+                                'insert_id'  => $r['thread_id'],
+                                'db_error'   => (string) $wpdb->last_error,
+                                'last_query' => substr((string) $wpdb->last_query, 0, 240),
+                            ),
+                            'timestamp'    => (int) round(microtime(true) * 1000),
+                        )
+                    ) . "\n",
+                    FILE_APPEND
+                );
+                return false;
+            }
+            // #endregion
+
+            $all = array_unique(array_merge(array( (int) $r['sender_id'] ), $recipients));
+            foreach ($all as $uid) {
+                $wpdb->insert(
+                    "{$pfx}chat_participants",
+                    array(
+                        'thread_id'    => $r['thread_id'],
+                        'user_id'      => (int) $uid,
+                        'unread_count' => ((int) $uid === (int) $r['sender_id']) ? 0 : 1,
+                        'role'         => ((int) $uid === (int) $r['sender_id']) ? 'admin' : 'member',
+                        'created_at'   => $now,
+                    )
+                );
+            }
         }
     }
 
     // ── Insert message ─────────────────────────────────
-    $wpdb->insert(
+    $msg_ok = $wpdb->insert(
         "{$pfx}chat_messages",
         array(
             'thread_id'     => $r['thread_id'],
@@ -112,6 +208,33 @@ function apollo_send_message(array $args): int|false
         )
     );
     $msg_id = (int) $wpdb->insert_id;
+
+    // #region agent log
+    if (false === $msg_ok || $msg_id <= 0) {
+        @file_put_contents(
+            ( defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : '' ) . '/debug-161c5c.log',
+            wp_json_encode(
+                array(
+                    'sessionId'    => '161c5c',
+                    'runId'        => 'chat-pre',
+                    'hypothesisId' => 'C6',
+                    'location'     => 'functions.php:apollo_send_message',
+                    'message'      => 'fail: chat_messages insert',
+                    'data'         => array(
+                        'thread_id'  => (int) $r['thread_id'],
+                        'insert_ok'  => $msg_ok !== false,
+                        'insert_id'  => $msg_id,
+                        'db_error'   => (string) $wpdb->last_error,
+                        'last_query' => substr((string) $wpdb->last_query, 0, 240),
+                    ),
+                    'timestamp'    => (int) round(microtime(true) * 1000),
+                )
+            ) . "\n",
+            FILE_APPEND
+        );
+        return false;
+    }
+    // #endregion
 
     // ── Link attachment to message ─────────────────────
     if ($r['attachment_id']) {
@@ -164,7 +287,7 @@ function apollo_send_message(array $args): int|false
                 'message',
                 "Nova mensagem de {$sender_name}",
                 $preview,
-                home_url('/mensagens/' . $r['thread_id']),
+                apollo_chat_thread_permalink((int) $r['thread_id'], (int) $uid),
                 array(
                     'thread_id' => $r['thread_id'],
                     'sender_id' => $r['sender_id'],
@@ -179,11 +302,15 @@ function apollo_send_message(array $args): int|false
 
 /**
  * Get threads for a user (inbox).
+ * 1:1 DMs are consolidated (one chat per peer) before return — WhatsApp-style.
  */
 function apollo_get_user_threads(int $user_id, int $limit = 20, int $offset = 0): array
 {
     global $wpdb;
     $pfx = $wpdb->prefix . 'apollo_';
+
+    // Over-fetch so dedupe still fills the page after collapsing duplicate DMs.
+    $fetch = max(50, $limit * 5);
 
     $results = $wpdb->get_results(
         $wpdb->prepare(
@@ -191,14 +318,18 @@ function apollo_get_user_threads(int $user_id, int $limit = 20, int $offset = 0)
          FROM {$pfx}chat_threads t
          INNER JOIN {$pfx}chat_participants r ON t.id = r.thread_id
          WHERE r.user_id = %d AND r.is_deleted = 0
-         ORDER BY t.last_message_at DESC
+         ORDER BY COALESCE(t.last_message_at, t.created_at) DESC, t.id DESC
          LIMIT %d OFFSET %d",
             $user_id,
-            $limit,
+            $fetch,
             $offset
         ),
         ARRAY_A
     );
+
+    if (! $results) {
+        return array();
+    }
 
     foreach ($results as &$thread) {
         // Last message
@@ -227,8 +358,64 @@ function apollo_get_user_threads(int $user_id, int $limit = 20, int $offset = 0)
             ARRAY_A
         );
     }
+    unset($thread);
 
-    return $results ?: array();
+    // Collapse duplicate 1:1 threads into one row per peer (merge history).
+    $seen_peers = array();
+    $deduped    = array();
+
+    foreach ($results as $thread) {
+        $is_group = (int) ( $thread['is_group'] ?? 0 ) === 1;
+        $parts    = $thread['participants'] ?? array();
+
+        if (! $is_group && count($parts) === 1) {
+            $peer = (int) ( $parts[0]['user_id'] ?? 0 );
+            if ($peer > 0) {
+                if (isset($seen_peers[ $peer ])) {
+                    continue;
+                }
+                $canonical = apollo_chat_consolidate_dm_pair($user_id, $peer);
+                $seen_peers[ $peer ] = $canonical;
+
+                if ($canonical > 0 && $canonical !== (int) $thread['id']) {
+                    // Reload canonical row metadata briefly.
+                    $canon_row = $wpdb->get_row(
+                        $wpdb->prepare(
+                            "SELECT t.*, r.unread_count, r.last_read_at, r.is_muted, r.last_read_message_id
+                         FROM {$pfx}chat_threads t
+                         INNER JOIN {$pfx}chat_participants r ON t.id = r.thread_id
+                         WHERE t.id = %d AND r.user_id = %d AND r.is_deleted = 0",
+                            $canonical,
+                            $user_id
+                        ),
+                        ARRAY_A
+                    );
+                    if ($canon_row) {
+                        $canon_row['participants'] = $parts;
+                        $canon_row['last_message'] = $wpdb->get_row(
+                            $wpdb->prepare(
+                                "SELECT m.*, u.display_name, u.user_login
+                             FROM {$pfx}chat_messages m
+                             LEFT JOIN {$wpdb->users} u ON m.sender_id = u.ID
+                             WHERE m.thread_id = %d AND m.is_deleted = 0
+                             ORDER BY m.created_at DESC LIMIT 1",
+                                $canonical
+                            ),
+                            ARRAY_A
+                        );
+                        $thread = $canon_row;
+                    }
+                }
+            }
+        }
+
+        $deduped[] = $thread;
+        if (count($deduped) >= $limit) {
+            break;
+        }
+    }
+
+    return $deduped;
 }
 
 /**
@@ -1139,63 +1326,49 @@ function apollo_chat_unpin_message(int $thread_id, int $message_id, int $user_id
 // ═══════════════════════════════════════════════════════════════════
 
 /**
- * Find an existing thread between two users for a given context,
- * or create a new one. Context = "classified:123" or "event:45" etc.
+ * All 1:1 DM thread IDs between two users (including soft-deleted participant rows),
+ * newest activity first. Groups are excluded.
  *
- * @param int    $user_a   First user (the one initiating)
- * @param int    $user_b   Second user (recipient, e.g., ad owner)
- * @param string $context  Context string e.g. 'classified:42'
- * @param string $subject  Thread subject
- * @return int Thread ID
+ * @return array<int, int>
  */
-function apollo_chat_find_or_create_thread(int $user_a, int $user_b, string $context = '', string $subject = ''): int
+function apollo_chat_find_dm_thread_ids(int $user_a, int $user_b): array
 {
     global $wpdb;
     $pfx = $wpdb->prefix . 'apollo_';
 
-    // Try to find existing thread between these two users with same context
-    if ($context) {
-        $existing = $wpdb->get_var(
-            $wpdb->prepare(
-                "SELECT t.id
-             FROM {$pfx}chat_threads t
-             INNER JOIN {$pfx}chat_participants r1 ON t.id = r1.thread_id AND r1.user_id = %d AND r1.is_deleted = 0
-             INNER JOIN {$pfx}chat_participants r2 ON t.id = r2.thread_id AND r2.user_id = %d AND r2.is_deleted = 0
-             WHERE t.context = %s AND t.is_group = 0
-             ORDER BY t.created_at DESC LIMIT 1",
-                $user_a,
-                $user_b,
-                $context
-            )
-        );
-
-        if ($existing) {
-            return (int) $existing;
-        }
+    if ($user_a <= 0 || $user_b <= 0 || $user_a === $user_b) {
+        return array();
     }
 
-    // Also check for any 1:1 thread between these users (no context needed)
-    // to avoid duplicates when context column doesn't exist yet
-    $any_thread = $wpdb->get_var(
+    $ids = $wpdb->get_col(
         $wpdb->prepare(
             "SELECT t.id
          FROM {$pfx}chat_threads t
-         INNER JOIN {$pfx}chat_participants r1 ON t.id = r1.thread_id AND r1.user_id = %d AND r1.is_deleted = 0
-         INNER JOIN {$pfx}chat_participants r2 ON t.id = r2.thread_id AND r2.user_id = %d AND r2.is_deleted = 0
+         INNER JOIN {$pfx}chat_participants r1 ON t.id = r1.thread_id AND r1.user_id = %d
+         INNER JOIN {$pfx}chat_participants r2 ON t.id = r2.thread_id AND r2.user_id = %d
          WHERE t.is_group = 0
-         AND (SELECT COUNT(*) FROM {$pfx}chat_participants rx WHERE rx.thread_id = t.id AND rx.is_deleted = 0) = 2
-         ORDER BY t.last_message_at DESC LIMIT 1",
+           AND (
+             SELECT COUNT(*) FROM {$pfx}chat_participants rx
+             WHERE rx.thread_id = t.id
+           ) = 2
+         ORDER BY COALESCE(t.last_message_at, t.created_at) DESC, t.id DESC",
             $user_a,
             $user_b
         )
     );
 
-    if ($any_thread) {
-        return (int) $any_thread;
-    }
+    return array_map('intval', $ids ?: array());
+}
 
-    // Create new thread
-    $now         = current_time('mysql');
+/**
+ * Create a fresh 1:1 DM thread (no lookup). Prefer apollo_chat_consolidate_dm_pair().
+ */
+function apollo_chat_create_dm_thread(int $user_a, int $user_b, string $context = '', string $subject = ''): int
+{
+    global $wpdb;
+    $pfx = $wpdb->prefix . 'apollo_';
+    $now = current_time('mysql');
+
     $insert_data = array(
         'subject'    => sanitize_text_field($subject),
         'is_group'   => 0,
@@ -1203,21 +1376,22 @@ function apollo_chat_find_or_create_thread(int $user_a, int $user_b, string $con
         'created_at' => $now,
     );
 
-    // Add context column if it exists
     $col_exists = $wpdb->get_var(
         "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
          WHERE TABLE_SCHEMA = DATABASE()
            AND TABLE_NAME = '{$pfx}chat_threads'
            AND COLUMN_NAME = 'context'"
     );
-    if ($col_exists) {
+    if ($col_exists && $context !== '') {
         $insert_data['context'] = sanitize_text_field($context);
     }
 
-    $wpdb->insert("{$pfx}chat_threads", $insert_data);
+    $ok = $wpdb->insert("{$pfx}chat_threads", $insert_data);
     $thread_id = (int) $wpdb->insert_id;
+    if (false === $ok || $thread_id <= 0) {
+        return 0;
+    }
 
-    // Add both users as participants
     foreach (array($user_a, $user_b) as $uid) {
         $wpdb->insert(
             "{$pfx}chat_participants",
@@ -1232,6 +1406,158 @@ function apollo_chat_find_or_create_thread(int $user_a, int $user_b, string $con
     }
 
     return $thread_id;
+}
+
+/**
+ * WhatsApp/Telegram model: one DM thread per user pair.
+ * Merges duplicate threads (moves messages into the newest, soft-deletes the rest).
+ *
+ * @return int Canonical thread ID (0 on failure)
+ */
+function apollo_chat_consolidate_dm_pair(int $user_a, int $user_b, string $subject = '', string $context = ''): int
+{
+    global $wpdb;
+    $pfx = $wpdb->prefix . 'apollo_';
+
+    if ($user_a <= 0 || $user_b <= 0 || $user_a === $user_b) {
+        return 0;
+    }
+
+    $ids = apollo_chat_find_dm_thread_ids($user_a, $user_b);
+    if (empty($ids)) {
+        $created = apollo_chat_create_dm_thread($user_a, $user_b, $context, $subject);
+        // #region agent log
+        @file_put_contents(
+            ( defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : '' ) . '/debug-161c5c.log',
+            wp_json_encode(
+                array(
+                    'sessionId'    => '161c5c',
+                    'runId'        => 'chat-dm-fix',
+                    'hypothesisId' => 'DM1',
+                    'location'     => 'functions.php:consolidate_dm_pair',
+                    'message'      => 'created new 1:1 thread',
+                    'data'         => array('a' => $user_a, 'b' => $user_b, 'thread_id' => $created),
+                    'timestamp'    => (int) round(microtime(true) * 1000),
+                )
+            ) . "\n",
+            FILE_APPEND
+        );
+        // #endregion
+        return $created;
+    }
+
+    $canonical = (int) $ids[0];
+    $merged    = 0;
+
+    // Ensure both users are active on the canonical thread.
+    foreach (array($user_a, $user_b) as $uid) {
+        $wpdb->query(
+            $wpdb->prepare(
+                "UPDATE {$pfx}chat_participants
+             SET is_deleted = 0
+             WHERE thread_id = %d AND user_id = %d",
+                $canonical,
+                $uid
+            )
+        );
+    }
+
+    foreach (array_slice($ids, 1) as $dup_id) {
+        $dup_id = (int) $dup_id;
+        if ($dup_id <= 0 || $dup_id === $canonical) {
+            continue;
+        }
+
+        $wpdb->query(
+            $wpdb->prepare(
+                "UPDATE {$pfx}chat_messages SET thread_id = %d WHERE thread_id = %d",
+                $canonical,
+                $dup_id
+            )
+        );
+
+        $wpdb->query(
+            $wpdb->prepare(
+                "UPDATE {$pfx}chat_participants SET is_deleted = 1 WHERE thread_id = %d",
+                $dup_id
+            )
+        );
+        ++$merged;
+    }
+
+    // Refresh canonical last-message metadata from newest message.
+    $last = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT id, sender_id, message, created_at
+         FROM {$pfx}chat_messages
+         WHERE thread_id = %d AND is_deleted = 0
+         ORDER BY created_at DESC, id DESC LIMIT 1",
+            $canonical
+        ),
+        ARRAY_A
+    );
+
+    if ($last) {
+        $wpdb->update(
+            "{$pfx}chat_threads",
+            array(
+                'last_message_id'      => (int) $last['id'],
+                'last_sender_id'       => (int) $last['sender_id'],
+                'last_message_at'      => $last['created_at'],
+                'last_message_preview' => wp_trim_words((string) $last['message'], 10, '...'),
+            ),
+            array('id' => $canonical)
+        );
+    }
+
+    if ($subject !== '') {
+        $wpdb->update(
+            "{$pfx}chat_threads",
+            array('subject' => sanitize_text_field($subject)),
+            array('id' => $canonical)
+        );
+    }
+
+    // #region agent log
+    @file_put_contents(
+        ( defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : '' ) . '/debug-161c5c.log',
+        wp_json_encode(
+            array(
+                'sessionId'    => '161c5c',
+                'runId'        => 'chat-dm-fix',
+                'hypothesisId' => 'DM1',
+                'location'     => 'functions.php:consolidate_dm_pair',
+                'message'      => 'reused 1:1 thread',
+                'data'         => array(
+                    'a'           => $user_a,
+                    'b'           => $user_b,
+                    'thread_id'   => $canonical,
+                    'dupes_found' => count($ids),
+                    'merged'      => $merged,
+                ),
+                'timestamp'    => (int) round(microtime(true) * 1000),
+            )
+        ) . "\n",
+        FILE_APPEND
+    );
+    // #endregion
+
+    return $canonical;
+}
+
+/**
+ * Find an existing 1:1 thread between two users, or create one.
+ * Always consolidates duplicates — one chat per user pair (WhatsApp/Telegram).
+ *
+ * @param int    $user_a   First user (the one initiating)
+ * @param int    $user_b   Second user (recipient, e.g., ad owner)
+ * @param string $context  Kept for callers; does not fork a second DM thread
+ * @param string $subject  Thread subject
+ * @return int Thread ID
+ */
+function apollo_chat_find_or_create_thread(int $user_a, int $user_b, string $context = '', string $subject = ''): int
+{
+    return apollo_chat_consolidate_dm_pair($user_a, $user_b, $subject, $context);
 }
 
 /**
@@ -1261,7 +1587,38 @@ function apollo_chat_thread_url(array $args): string
 
     $current_user = get_current_user_id();
 
-    // Try to find existing thread
+    /*
+     * Prefer the handle form: /mensagens/@{login}
+     *
+     * A DM is between two PEOPLE, so the durable name for it is the other
+     * person — not the surrogate key of whichever thread row happens to hold
+     * the history. Thread ids also churn: apollo_chat_consolidate_dm_pair()
+     * merges duplicate DM pairs, so a link built today can point at a row that
+     * has since been folded into another. A handle survives that.
+     *
+     * Numeric logins are emitted with the @ prefix too — /mensagens/12345 is
+     * parsed as a thread id by design (see Plugin::register_rewrite_rules),
+     * and the bare form would silently address the wrong thing.
+     *
+     * Falls through to the thread id when the login is unusable, so this can
+     * only ever produce a URL at least as good as the previous behaviour.
+     *
+     * ONLY when there is no $subject and no $context. Those two are not
+     * decoration: callers such as apollo-adverts pass context 'classified:42'
+     * and a subject, and the old code seeded them into the thread through
+     * find_or_create_thread(). The handle form has nowhere to carry them, so
+     * taking it unconditionally would silently drop the subject of every
+     * integration-opened conversation. When either is present, keep the
+     * original path byte-for-byte.
+     */
+    if ('' === (string) $subject && '' === (string) $context) {
+        $user = get_userdata($recipient);
+        if ($user && '' !== (string) $user->user_login) {
+            return home_url('/mensagens/@' . rawurlencode($user->user_login));
+        }
+    }
+
+    // Seeded conversation, or no usable login — thread id, as before.
     $thread_id = apollo_chat_find_or_create_thread($current_user, $recipient, $context, $subject);
 
     if ($thread_id) {
@@ -1282,6 +1639,69 @@ function apollo_chat_thread_url(array $args): string
     }
 
     return add_query_arg($params, $url);
+}
+
+/**
+ * Permalink for an EXISTING thread, addressed by handle where that is possible.
+ *
+ * Every place that links a user to a conversation — notifications, e-mail,
+ * REST payloads — used to hard-code home_url('/mensagens/' . $thread_id).
+ * That is the surrogate key of a row, and DM rows are not stable:
+ * apollo_chat_consolidate_dm_pair() merges duplicate pairs, so a link stored in
+ * a notification or an e-mail can outlive the row it names.
+ *
+ * A DM is between two people, so name it after the other person. A group has no
+ * "other person", so it keeps the numeric form — that is not a fallback, it is
+ * the correct address for a group.
+ *
+ * $viewer_id is required to answer "other than whom". With 0 the function
+ * cannot know, and returns the numeric form rather than guessing.
+ *
+ * @param int $thread_id Thread.
+ * @param int $viewer_id The user this URL is FOR.
+ * @return string
+ */
+function apollo_chat_thread_permalink(int $thread_id, int $viewer_id = 0): string
+{
+    global $wpdb;
+
+    if ($thread_id <= 0) {
+        return home_url('/mensagens');
+    }
+    if ($viewer_id <= 0) {
+        return home_url('/mensagens/' . $thread_id);
+    }
+
+    $pfx = $wpdb->prefix . 'apollo_';
+
+    // Group threads keep the numeric address; there is no single counterpart.
+    $is_group = (int) $wpdb->get_var(
+        $wpdb->prepare("SELECT is_group FROM {$pfx}chat_threads WHERE id = %d", $thread_id)
+    );
+    if ($is_group) {
+        return home_url('/mensagens/' . $thread_id);
+    }
+
+    // The one participant who is not the viewer.
+    $peer = (int) $wpdb->get_var(
+        $wpdb->prepare(
+            "SELECT user_id FROM {$pfx}chat_participants
+              WHERE thread_id = %d AND user_id <> %d AND is_deleted = 0
+              LIMIT 1",
+            $thread_id,
+            $viewer_id
+        )
+    );
+    if ($peer <= 0) {
+        return home_url('/mensagens/' . $thread_id);
+    }
+
+    $user = get_userdata($peer);
+    if (! $user || '' === (string) $user->user_login) {
+        return home_url('/mensagens/' . $thread_id);
+    }
+
+    return home_url('/mensagens/@' . rawurlencode($user->user_login));
 }
 
 /**
@@ -1651,13 +2071,26 @@ function apollo_chat_maybe_notify_by_email(int $thread_id, int $sender_id, strin
 
     $sender      = get_userdata($sender_id);
     $sender_name = $sender ? $sender->display_name : 'Alguém';
-    $thread_url  = home_url('/mensagens/' . $thread_id);
     $site_name   = get_bloginfo('name');
 
     foreach ($recipients as $r) {
         if (empty($r['user_email'])) {
             continue;
         }
+
+        /*
+         * Built per RECIPIENT, not once for the batch.
+         *
+         * The handle form names the OTHER participant, so "the other person"
+         * differs for each addressee — hoisting this out of the loop, as the
+         * previous $thread_url did, would send everyone a link naming whoever
+         * the first recipient happened to be. For a 1:1 that is the recipient
+         * themselves, i.e. a link to their own handle.
+         *
+         * Group threads fall back to the numeric form inside the helper, which
+         * is the correct address for a group and matches the old behaviour.
+         */
+        $thread_url = apollo_chat_thread_permalink((int) $thread_id, (int) $r['user_id']);
 
         // Respect user opt-out (meta = '0' means opted out)
         $pref = get_user_meta((int) $r['user_id'], 'apollo_chat_email_notify', true);

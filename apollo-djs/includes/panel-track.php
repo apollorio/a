@@ -136,13 +136,14 @@ function apollo_dj_register_track_panel(): void {
 								array( 'key' => '_track_url_soundcloud', 'type' => 'url', 'label' => 'SoundCloud', 'grid' => 2 ),
 								array( 'key' => '_track_url_spotify', 'type' => 'url', 'label' => 'Spotify', 'grid' => 2 ),
 								array( 'key' => '_track_url_bandcamp', 'type' => 'url', 'label' => 'Bandcamp', 'grid' => 2 ),
+								array( 'key' => '_track_url_youtube', 'type' => 'url', 'label' => 'YouTube', 'grid' => 2 ),
 								array( 'key' => '_track_url_download', 'type' => 'url', 'label' => __( 'Download direto', 'apollo-djs' ), 'grid' => 2 ),
 							),
 						),
 						array(
 							'label'  => __( 'Prévia', 'apollo-djs' ),
 							'icon'   => 'ri-volume-up-line',
-							'hint'   => __( 'Trecho curto tocado dentro da Apollo. É SEPARADO dos links acima: aqueles são o destino (ouvir a faixa inteira na plataforma do artista), este é a degustação na página. Só aparece para quem tem conta.', 'apollo-djs' ),
+							'hint'   => __( 'Trecho curto tocado dentro da Apollo. É SEPARADO dos links acima: aqueles são o destino (ouvir a faixa inteira na plataforma do artista), este é a degustação na página. Disponível para convidados e membros — volume em 20%.', 'apollo-djs' ),
 							'fields' => array(
 								array(
 									'key'   => '_track_preview_url',

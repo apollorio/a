@@ -31,6 +31,7 @@ return array(
         'archive'     => 'eventos',
         'rest_base'   => 'events',
         'public'      => true,
+        'map_meta_cap' => true,
         'has_archive' => true,
         'supports'    => array('title', 'editor', 'thumbnail', 'author'),
         'labels'      => array(
@@ -219,8 +220,9 @@ return array(
         'archive'     => 'anuncios',
         'rest_base'   => 'classifieds',
         'public'      => true,
+        'map_meta_cap' => true,
         'has_archive' => true,
-        'supports'    => array('title', 'editor', 'thumbnail', 'author'),
+        'supports'    => array('title', 'editor', 'thumbnail', 'author', 'excerpt'),
         'labels'      => array(
             'name'               => 'Anúncios',
             'singular_name'      => 'Anúncio',

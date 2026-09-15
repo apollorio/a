@@ -1,13 +1,8 @@
 <?php
 /**
- * Marketplace — one section (label + grid of cards).
+ * Marketplace — one section (label + grid or ticket carousel).
  *
- * Expects: $mk_label, $mk_icon, $mk_type ('ticket'|'accommodation'), $mk_card
- * (part filename under marketplace/parts/).
- *
- * Queries the canonical stored type value. Both legacy spellings are accepted
- * because apollo_adverts_canonical_type() only normalises on WRITE — rows
- * created before that existed may still carry ticket_sell / rent_space.
+ * Expects: $mk_label, $mk_icon, $mk_type ('ticket'|'accommodation'|'other'), $mk_card
  *
  * @package Apollo\Adverts
  */
@@ -22,17 +17,6 @@ $mk_args = array(
 );
 
 if ( 'other' === $mk_type ) {
-	/* CATCH-ALL — everything that is neither a ticket nor a stay.
-	 *
-	 * Without this section an advert is only visible if it carries a
-	 * _classified_type this screen explicitly asks for. Two real populations
-	 * fall outside that: type 'general', and adverts with NO type meta at all
-	 * — which is EVERY advert created through the frontend before
-	 * create_item() started persisting classified_type. Those would render in
-	 * neither section and be silently invisible on the very page meant to list
-	 * them. NOT EXISTS covers the missing-meta case, which an IN comparison
-	 * cannot.
-	 */
 	$mk_args['meta_query'] = array(
 		'relation' => 'OR',
 		array(
@@ -58,31 +42,54 @@ if ( 'other' === $mk_type ) {
 
 $mk_q = new WP_Query( $mk_args );
 
-/* An empty catch-all is the healthy state — say nothing rather than print a
-   section header for a bucket that should normally be empty. */
 if ( 'other' === $mk_type && ! $mk_q->have_posts() ) {
 	return;
 }
+
+$mk_create = is_user_logged_in()
+	? home_url( '/novo-anuncio/' )
+	: home_url( '/acesso?redirect=' . rawurlencode( home_url( '/novo-anuncio/' ) ) );
+
+$mk_is_carousel = false;
+$mk_grid_mod    = 'ticket' === $mk_type ? 'tickets' : ( 'accommodation' === $mk_type ? 'accom' : 'other' );
 ?>
+<section class="mk-section" data-mk-section="<?php echo esc_attr( $mk_type ); ?>">
 <div class="mk-sec-lbl">
-    <i class="<?php echo esc_attr( $mk_icon ); ?>" aria-hidden="true"></i>
-    <?php echo esc_html( $mk_label ); ?>
-    <span class="mk-sec-count"><?php echo esc_html( (string) $mk_q->found_posts ); ?></span>
+	<i class="<?php echo esc_attr( $mk_icon ); ?>" aria-hidden="true"></i>
+	<?php echo esc_html( $mk_label ); ?>
+	<span class="mk-sec-count"><?php echo esc_html( (string) $mk_q->found_posts ); ?></span>
 </div>
 
 <?php if ( ! $mk_q->have_posts() ) : ?>
-    <p class="mk-empty"><?php esc_html_e( 'Nenhum anúncio publicado ainda.', 'apollo-adverts' ); ?></p>
+	<div class="mk-empty">
+		<i class="<?php echo esc_attr( $mk_icon ); ?>" aria-hidden="true"></i>
+		<p><?php esc_html_e( 'Nenhum anúncio publicado ainda.', 'apollo-adverts' ); ?></p>
+		<a class="mk-cta mk-cta--ghost" href="<?php echo esc_url( $mk_create ); ?>">
+			<?php echo 'accommodation' === $mk_type
+				? esc_html__( 'Anunciar hospedagem', 'apollo-adverts' )
+				: esc_html__( 'Publicar anúncio', 'apollo-adverts' ); ?>
+		</a>
+	</div>
 <?php else : ?>
-    <div class="mk-grid mk-grid--<?php echo esc_attr( 'ticket' === $mk_type ? 'tickets' : ( 'accommodation' === $mk_type ? 'accom' : 'other' ) ); ?>">
-        <?php
-        $mk_card_file = dirname( __DIR__ ) . '/' . $mk_card;
-        while ( $mk_q->have_posts() ) {
-            $mk_q->the_post();
-            if ( is_readable( $mk_card_file ) ) {
-                include $mk_card_file;
-            }
-        }
-        wp_reset_postdata();
-        ?>
-    </div>
+	<div
+		class="<?php echo $mk_is_carousel ? 'carousel' : 'mk-grid mk-grid--' . esc_attr( $mk_grid_mod ); ?>"
+		<?php echo $mk_is_carousel ? ' id="ticketCarousel"' : ''; ?>
+	>
+		<?php
+		$mk_kind = ( 'accommodation' === $mk_type ) ? 'accommodation' : 'ticket';
+		while ( $mk_q->have_posts() ) {
+			$mk_q->the_post();
+			if ( function_exists( 'apollo_adverts_render_rt_card' ) ) {
+				apollo_adverts_render_rt_card( (int) get_the_ID(), array( 'kind' => $mk_kind, 'variant' => 'grid' ) );
+			} else {
+				$mk_card_file = dirname( __DIR__ ) . '/' . $mk_card;
+				if ( is_readable( $mk_card_file ) ) {
+					include $mk_card_file;
+				}
+			}
+		}
+		wp_reset_postdata();
+		?>
+	</div>
 <?php endif; ?>
+</section>

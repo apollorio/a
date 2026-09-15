@@ -6,8 +6,8 @@ if(!defined('ABSPATH')){
 
 // Prevent update of loginizer free
 // This also work for auto update
-add_filter('site_transient_update_plugins', 'loginizer_pro_disable_manual_update_for_plugin');
-add_filter('pre_site_transient_update_plugins', 'loginizer_pro_disable_manual_update_for_plugin');
+add_filter('site_transient_update_plugins', 'loginizer_pro_disable_manual_update_for_plugin', 99);
+add_filter('pre_site_transient_update_plugins', 'loginizer_pro_disable_manual_update_for_plugin', 99);
 
 // Auto update free version after update pro version
 add_action('upgrader_process_complete', 'loginizer_pro_update_free_after_pro', 10, 2);
@@ -75,6 +75,7 @@ function loginizer_security_init(){
 	$loginizer['passwordless_redirect'] = empty($options['passwordless_redirect']) ? 0 : $options['passwordless_redirect'];
 	$loginizer['passwordless_redirect_for'] = empty($options['passwordless_redirect_for']) ? 0 : $options['passwordless_redirect_for'];
 	$loginizer['passwordless_disabled_for'] = empty($options['passwordless_disabled_for']) ? 0 : $options['passwordless_disabled_for'];
+	$loginizer['epl_email_only'] = empty($options['epl_email_only']) ? 0 : $options['epl_email_only'];
 
 	// 2FA OTP Email to Login
 	$options = get_option('loginizer_2fa_email_template');
@@ -172,6 +173,15 @@ $site_name';
 	$loginizer['xmlrpc_disable'] = empty($options['xmlrpc_disable']) ? '' : $options['xmlrpc_disable'];// Disable XML-RPC
 	$loginizer['pingbacks_disable'] = empty($options['pingbacks_disable']) ? '' : $options['pingbacks_disable'];// Disable Pingbacks
 
+	// Username Enumeration Protection
+	$lz_user_enum = get_option('loginizer_user_enum', []);
+	$loginizer['user_enum'] = is_array($lz_user_enum) ? $lz_user_enum : [];
+	$loginizer['user_enum_disable_rest_users'] = !empty($lz_user_enum['disable_rest_users']);
+	$loginizer['user_enum_disable_author_enum'] = !empty($lz_user_enum['disable_author_enum']);
+	$loginizer['user_enum_hide_login_errors'] = !empty($lz_user_enum['hide_login_errors']);
+	$loginizer['user_enum_hide_lostpass_errors'] = !empty($lz_user_enum['hide_lostpass_errors']);
+	$loginizer['user_enum_disable_oembed_author'] = !empty($lz_user_enum['disable_oembed_author']);
+
 	// Admin Slug Settings
 	$options = get_option('loginizer_wp_admin');
 	$loginizer['admin_slug'] = empty($options['admin_slug']) ? '' : $options['admin_slug'];
@@ -260,10 +270,11 @@ $site_name';
 
 	// Handles Concurrent Sessions
 	if(!empty($loginizer['limit_session']) && !empty($loginizer['limit_session']['enable'])){
-		add_filter('wp_authenticate_user', 'loginizer_limit_sessions');
 		add_action('wp_login', 'loginizer_limit_sessions_wp_login');
-		add_filter('check_password', 'loginizer_limit_destroy_sessions_handler', 10, 4);
 		add_filter('loginizer_pro_limit_sessions', 'loginizer_limit_sessions', 10);
+		add_filter('authenticate', 'loginizer_limit_sessions_block_check', 21, 3);
+
+		add_action('set_logged_in_cookie', 'loginizer_limit_destroy_sessions_on_cookie', 10, 6);
 	}
 
 	// MasterStudy Login filter
@@ -297,6 +308,11 @@ $site_name';
 		// Hide the password field
 		add_action('login_enqueue_scripts', 'loginizer_epl_hide_pass');
 		add_action('wp_enqueue_scripts', 'loginizer_epl_hide_woocommerce_pass');
+
+		// When email only login is enabled, show "Email" instead of "Username or Email Address" on the login page
+		if(!empty($loginizer['epl_email_only'])){
+			add_filter('gettext', 'loginizer_epl_email_only_label', 10, 3);
+		}
 
 	}
 
@@ -519,6 +535,20 @@ $site_name';
 			include_once LOGINIZER_PRO_DIR . 'main/captcha.php';
 		}
 
+	}
+
+	//-----------------------------------
+	// Username Enumeration Protection
+	//-----------------------------------
+	if(!empty($loginizer['user_enum'])){
+		add_filter('rest_request_before_callbacks', '\LoginizerPro\UserEnum::block_users_request', 10, 3);
+		add_action('parse_query', '\LoginizerPro\UserEnum::disable_author_enum');
+		// login_errors passes the rendered error string, wp_login_errors passes the WP_Error
+		add_filter('wp_login_errors', '\LoginizerPro\UserEnum::hide_login_errors');
+		add_filter('authenticate', '\LoginizerPro\UserEnum::mask_authenticate', 10004, 3);
+		add_action('lost_password', '\LoginizerPro\UserEnum::hide_lostpass_errors');
+		add_filter('oembed_response_data', '\LoginizerPro\UserEnum::disable_oembed_author', 10, 4);
+		add_filter('rest_pre_serve_request', '\LoginizerPro\UserEnum::oembed_strip_author', 10, 4);
 	}
 
 	//-----------------
@@ -848,6 +878,7 @@ function loginizer_epl_verify(){
 
 	$uid = (int) sanitize_key($_GET['uid']);
 	$token = sanitize_key($_GET['lepltoken']);
+	$remember_me = !empty($_GET['rememberme']);
 	$action = 'loginizer_epl_'.$uid;
 
 	$hash = get_user_meta($uid, $action, true);
@@ -864,16 +895,8 @@ function loginizer_epl_verify(){
 
 	}else{
 
-		if(!empty($loginizer['limit_session']) && !empty($loginizer['limit_session']['enable'])){
-			$limit_session = loginizer_limit_destroy_sessions($uid);
-
-			if(empty($limit_session)){
-				return new WP_Error('loginizer_session_limit', __('User ID not found so can not proceed', 'loginizer'), 'loginizer_epl');
-			}
-		}
-
 		// Login the User
-		wp_set_auth_cookie($uid);
+		wp_set_auth_cookie($uid, $remember_me);
 
 		// Delete the meta
 		delete_user_meta($uid, $action);
@@ -929,6 +952,25 @@ function loginizer_epl_hide_pass() {
 	}
 	</style>
 	<?php
+}
+
+// Swaps "Username or Email Address" for "Email address" on the login page when email only login is enabled
+function loginizer_epl_email_only_label($translated, $text, $domain){
+
+	global $loginizer, $pagenow;
+
+	// Only on the login page
+	if(empty($loginizer['epl_email_only']) || ($pagenow !== 'wp-login.php' && loginizer_cur_page() !== $loginizer['login_slug'] && loginizer_cur_page() !== 'my-account')){
+		return $translated;
+	}
+
+	// WooCommerce uses same text just with E and A small in Email Address
+	if($text === 'Username or Email Address' || $text === 'Username or email address'){
+		return __('Email address', 'loginizer');
+	}
+
+	return $translated;
+
 }
 
 // Hides the password field for the password less email login (WooCommerce)
@@ -1012,6 +1054,12 @@ function loginizer_epl_wp_authenticate($user, $username, $password){
 	if(is_email($username) && email_exists($username)){
 		$email = $username;
 	}
+	
+	// If the user has email only option enabled we will only accept email
+	if(!empty($loginizer['epl_email_only']) && empty($email)){
+		$account_error_msg = __('The email you provided does not exist !', 'loginizer');
+		return new WP_Error('invalid_account', $account_error_msg, 'loginizer_epl');
+	}
 
 	// Maybe its a username
 	if(!is_email($username) && username_exists($username)){
@@ -1086,6 +1134,7 @@ function loginizer_epl_login_url($email){
 	// Get the User ID
 	$user = get_user_by('email', $email);
 	$token = loginizer_epl_token($user->ID);
+	$remember_me = !empty($_POST['rememberme']) ? '&rememberme=1' : '';
 
 	// The current URL
 	$redirect_url = '';
@@ -1099,7 +1148,7 @@ function loginizer_epl_login_url($email){
 
 	$redirect_param = (!empty($redirect_url) ? '&redirect_to='.urlencode($redirect_url) : '');
 
-	$url = wp_login_url().'?uid='.$user->ID.'&lepltoken='.$token.$redirect_param;
+	$url = wp_login_url().'?uid='.$user->ID.'&lepltoken='.$token.$redirect_param.$remember_me;
 
 	return $url;
 
@@ -1378,6 +1427,10 @@ function loginizer_cap_login_verify($user){
 
 // Verify the lostpass captcha is valid ?
 function loginizer_cap_lostpass_verify($res, $uid){
+	
+	if(is_user_logged_in() && is_admin()){
+		return $res;
+	}
 
 	if(!loginizer_cap_verify()){
 		$captcha_fail_msg = __('The CAPTCHA verification failed. Please try again.', 'loginizer');
@@ -2747,46 +2800,33 @@ function loginizer_2fa_notice(){
 
 	echo '
 <style>
-.lz_button {
-background-color: #4CAF50; /* Green */
-border: none;
-color: white;
-padding: 8px 16px;
-text-align: center;
-text-decoration: none;
-display: inline-block;
-font-size: 16px;
-margin: 4px 2px;
--webkit-transition-duration: 0.4s; /* Safari */
-transition-duration: 0.4s;
-cursor: pointer;
-}
 
-.lz_button:focus{
-border: none;
-color: white;
-}
-
-.lz_button1 {
-color: white;
+.wp-core-ui .lz_button1 {
 background-color: #4CAF50;
-border:3px solid #4CAF50;
+border-color: transparent;
+border-radius: 2px;
+color: #fff;
 }
 
-.lz_button1:hover {
-box-shadow: 0 6px 8px 0 rgba(0,0,0,0.24), 0 9px 25px 0 rgba(0,0,0,0.19);
-color: white;
-border:3px solid #4CAF50;
+.wp-core-ui .lz_button1:hover {
+background-color:#3b963f;
+border-color: transparent;
+border-radius: 2px;
+color: #fff;
 }
 
-.lz_button2 {
-color: white;
+.wp-core-ui .lz_button2 {
 background-color: #0085ba;
+border-color: transparent;
+border-radius: 2px;
+color: #fff;
 }
 
-.lz_button2:hover {
-box-shadow: 0 6px 8px 0 rgba(0,0,0,0.24), 0 9px 25px 0 rgba(0,0,0,0.19);
-color: white;
+.wp-core-ui .lz_button2:hover {
+background-color: #0175a3;
+border-color: transparent;
+border-radius: 2px;
+color: #fff;
 }
 
 .lz_button3 {
@@ -2858,8 +2898,8 @@ jQuery(document).ready( function() {
 	<img src="'.LOGINIZER_URL.'/assets/images/loginizer-200.png" style="float:left; margin:10px 20px 10px 10px" width="100" />
 	<p style="font-size:16px">'.__('The site admin has enabled Two Factor Authentication features to secure your account. <br>For your safety, you must setup your login security preferences.', 'loginizer').'</p>
 	<p>
-		<a class="lz_button lz_button1" href="'.admin_url('?page=loginizer_user').'">'.__('Setup My Security Settings', 'loginizer').'</a>
-		<a id="" class="lz_button lz_button2" href="javascript:void(0)">'.__('Remind me later', 'loginizer').'</a>
+		<a class="button lz_button1" href="'.admin_url('?page=loginizer_user').'">'.__('Setup My Security Settings', 'loginizer').'</a>
+		<a id="" class="button lz_button2" href="javascript:void(0)">'.__('Remind me later', 'loginizer').'</a>
 	</p>
 </div>';
 
@@ -3190,7 +3230,7 @@ function loginizer_user_page(){
 	}
 
 	if (current_user_can('manage_options')) {
-		echo '<p><a href="https://wordpress.org/plugins/loginizer/faq/">'._e('You should also bookmark the FAQs, which explain how to de-activate the plugin even if you cannot log in.', 'loginizer').'</a></p>';
+		echo '<p><a href="https://loginizer.com/docs/configuration-and-settings/disabling-the-loginizer-plugin-if-you-are-locked-out/">'.esc_html__('You should also bookmark the docs, which explain how to de-activate the plugin if you cannot log in.', 'loginizer').'</a></p>';
 	}
 
 	wp_enqueue_script('jquery-qrcode', LOGINIZER_PRO_DIR_URL.'/assets/js/jquery.qrcode.min.js', array('jquery'), '0.12.0');
@@ -3993,10 +4033,18 @@ function loginizer_csrf_admin_bar_shortcut($admin_bar){
 
 // CSRF Protection Session Functions - End
 
+// Blocks login for the standard username/password path once the concurrent session
+// limit is reached. Runs on 'authenticate' at priority 21 - see the add_filter call
+// above for why that's the earliest point we can both trust the credentials and still
+// return a custom WP_Error.
+function loginizer_limit_sessions_block_check($user, $username, $password){
+	return loginizer_limit_sessions($user);
+}
+
 // Restricts user from logging in
 function loginizer_limit_sessions($user){
 
-	if(is_wp_error($user)){
+	if(is_wp_error($user) || !is_a($user, 'WP_User')){
 		return $user;
 	}
 
@@ -4034,18 +4082,6 @@ function loginizer_limit_sessions($user){
 		return $user;
 	}
 
-	// Destroying all session
-	if(!empty($concurrent_sessions['type']) && $concurrent_sessions['type'] == 'destroy'){
-		$session = WP_Session_Tokens::get_instance($user->ID);
-		$count = count($session->get_all());
-
-		if($count >= $concurrent_sessions['count']){
-			$session->destroy_all();
-		}
-
-		return $user;
-	}
-
 	return $user;
 
 }
@@ -4075,53 +4111,39 @@ function loginizer_limit_sessions_wp_login($user_login = '', $user = null){
 	}
 }
 
-// Destroys session when concurrent limit is reached
-function loginizer_limit_destroy_sessions_handler($check, $password, $hash, $user_id){
+// Enforces the concurrent-session "destroy" limit for every login path at once.
+// set_logged_in_cookie fires inside wp_set_auth_cookie() - by every login path
+// (standard, social, EPL, SSO, and the 2FA success step in loginizer_user_security())
+// - always after the new session already exists in WP_Session_Tokens, and it hands us
+// that session's own $token directly. That means we never have to guess at $_COOKIE or
+// go looking for "the current session": we already know exactly which one to keep.
+function loginizer_limit_destroy_sessions_on_cookie($logged_in_cookie, $expire, $expiration, $user_id, $scheme, $token){
 
-	if(empty($check)){
-		return false;
+	if(empty($user_id) || empty($token) || !class_exists('WP_Session_Tokens')){
+		return;
 	}
 
-	return loginizer_limit_destroy_sessions($user_id);
-}
+	$concurrent_sessions = get_option('loginizer_limit_session');
 
-function loginizer_limit_destroy_sessions($user_id){
-
-	if(empty($user_id)){
-		return false;
-	}
-
-	if(!class_exists('WP_Session_Tokens')){
-		return true;
+	if(empty($concurrent_sessions) || empty($concurrent_sessions['enable']) || empty($concurrent_sessions['type']) || $concurrent_sessions['type'] != 'destroy'){
+		return;
 	}
 
 	$user = get_userdata($user_id);
 
-	$concurrent_sessions = get_option('loginizer_limit_session');
-
-	if(empty($concurrent_sessions) || empty($concurrent_sessions['enable'])){
-		return true;
-	}
-
 	// Checks if we have excluded the role
 	if(!empty($concurrent_sessions['roles']) && !empty($user->roles) && is_array($user->roles)){
 		if(!empty(array_intersect($concurrent_sessions['roles'], $user->roles))){
-			return true;
+			return;
 		}
 	}
 
-	if(!empty($concurrent_sessions['type']) && $concurrent_sessions['type'] == 'destroy'){
-		$session = WP_Session_Tokens::get_instance($user_id);
-		$count = count($session->get_all());
+	$session = WP_Session_Tokens::get_instance($user_id);
+	$count = count($session->get_all());
 
-		if($count >= $concurrent_sessions['count']){
-			$session->destroy_all();
-		}
-
-		return true;
+	if($count >= $concurrent_sessions['count']){
+		$session->destroy_others($token);
 	}
-
-	return true;
 
 }
 
@@ -4307,14 +4329,6 @@ function loginizer_verify_sso(){
 		return new \WP_Error('token_invalid', $token_error_msg, 'loginizer_sso');
 
 	}else{
-
-		if(!empty($loginizer['limit_session']) && !empty($loginizer['limit_session']['enable'])){
-			$limit_session = loginizer_limit_destroy_sessions($uid);
-
-			if(empty($limit_session)){
-				return new \WP_Error('loginizer_session_limit', __('User ID not found so can not proceed', 'loginizer'), 'loginizer_epl');
-			}
-		}
 
 		// Deducting the count by 1
 		if(!empty($attempts)){

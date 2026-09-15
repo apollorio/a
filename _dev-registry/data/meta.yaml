@@ -1,0 +1,379 @@
+# meta keys
+#
+# Apollo DEV registry — GENERATED, do not hand-edit.
+# Source of truth is the code; regenerate with
+#   node D:/dev/_cos/verify/gen-dev-registry.js
+#
+# governed = declared in meta.php; touched = literal key seen at a *_post_meta call.
+counts:
+  governed: 141
+  touched: 302
+  ungoverned: 224
+  governed_unused: 63
+governed:
+  _event_start_date: { scope: post, group: event, type: string, rest: true, touches: 65 }
+  _event_end_date: { scope: post, group: event, type: string, rest: true, touches: 13 }
+  _event_start_time: { scope: post, group: event, type: string, rest: true, touches: 38 }
+  _event_end_time: { scope: post, group: event, type: string, rest: true, touches: 13 }
+  _event_dj_ids: { scope: post, group: event, type: array, rest: true, touches: 24 }
+  _event_dj_slots: { scope: post, group: event, type: array, rest: true, touches: 14 }
+  _event_loc_id: { scope: post, group: event, type: integer, rest: true, touches: 34 }
+  _event_banner: { scope: post, group: event, type: integer, rest: true, touches: 18 }
+  _event_ticket_url: { scope: post, group: event, type: string, rest: true, touches: 11 }
+  _event_ticket_price: { scope: post, group: event, type: string, rest: true, touches: 10 }
+  _event_privacy: { scope: post, group: event, type: string, rest: true, touches: 7 }
+  _event_status: { scope: post, group: event, type: string, rest: true, touches: 17 }
+  _event_is_gone: { scope: post, group: event, type: string, rest: true, touches: 7 }
+  _event_budget: { scope: post, group: event, type: number, rest: false, touches: 2 }
+  _event_video_url: { scope: post, group: event, type: string, rest: true, touches: 5 }
+  _event_gallery: { scope: post, group: event, type: array, rest: true, touches: 8 }
+  _event_coupon_code: { scope: post, group: event, type: string, rest: true, touches: 5 }
+  _event_list_url: { scope: post, group: event, type: string, rest: true, touches: 4 }
+  _dj_image: { scope: post, group: dj, type: integer, rest: true, touches: 7 }
+  _dj_banner: { scope: post, group: dj, type: integer, rest: true, touches: 3 }
+  _dj_website: { scope: post, group: dj, type: string, rest: true, touches: 2 }
+  _dj_instagram: { scope: post, group: dj, type: string, rest: true, touches: 7 }
+  _dj_soundcloud: { scope: post, group: dj, type: string, rest: true, touches: 4 }
+  _dj_spotify: { scope: post, group: dj, type: string, rest: true, touches: 3 }
+  _dj_youtube: { scope: post, group: dj, type: string, rest: true, touches: 1 }
+  _dj_mixcloud: { scope: post, group: dj, type: string, rest: true, touches: 1 }
+  _dj_user_id: { scope: post, group: dj, type: integer, rest: true, touches: 4 }
+  _dj_verified: { scope: post, group: dj, type: boolean, rest: true, touches: 6 }
+  _dj_bio_short: { scope: post, group: dj, type: string, rest: true, touches: 9 }
+  _local_name: { scope: post, group: local, type: string, rest: true, touches: 3 }
+  _local_address: { scope: post, group: local, type: string, rest: true, touches: 13 }
+  _local_city: { scope: post, group: local, type: string, rest: true, touches: 12 }
+  _local_state: { scope: post, group: local, type: string, rest: true, touches: 6 }
+  _local_country: { scope: post, group: local, type: string, rest: true, touches: 2 }
+  _local_postal: { scope: post, group: local, type: string, rest: true, touches: 2 }
+  _local_lat: { scope: post, group: local, type: number, rest: true, touches: 19 }
+  _local_lng: { scope: post, group: local, type: number, rest: true, touches: 19 }
+  _local_phone: { scope: post, group: local, type: string, rest: true, touches: 6 }
+  _local_website: { scope: post, group: local, type: string, rest: true, touches: 3 }
+  _local_instagram: { scope: post, group: local, type: string, rest: true, touches: 3 }
+  _local_capacity: { scope: post, group: local, type: integer, rest: true, touches: 9 }
+  _local_price_range: { scope: post, group: local, type: string, rest: true, touches: 7 }
+  _classified_price: { scope: post, group: classified, type: number, rest: true, touches: 20 }
+  _classified_currency: { scope: post, group: classified, type: string, rest: true, touches: 7 }
+  _classified_negotiable: { scope: post, group: classified, type: boolean, rest: true, touches: 4 }
+  _classified_condition: { scope: post, group: classified, type: string, rest: true, touches: 5 }
+  _classified_loc: { scope: post, group: classified, type: string, rest: true, touches: 8 }
+  _classified_contact_phone: { scope: post, group: classified, type: string, rest: true, touches: 1 }
+  _classified_contact_whatsapp: { scope: post, group: classified, type: string, rest: true, touches: 1 }
+  _classified_expires_at: { scope: post, group: classified, type: string, rest: true, touches: 8 }
+  _classified_featured: { scope: post, group: classified, type: boolean, rest: true, touches: 5 }
+  _supplier_company: { scope: post, group: supplier, type: string, rest: true, touches: 0 }
+  _supplier_cnpj: { scope: post, group: supplier, type: string, rest: true, touches: 0 }
+  _supplier_contact_name: { scope: post, group: supplier, type: string, rest: true, touches: 0 }
+  _supplier_contact_email: { scope: post, group: supplier, type: string, rest: true, touches: 0 }
+  _supplier_contact_phone: { scope: post, group: supplier, type: string, rest: true, touches: 0 }
+  _supplier_website: { scope: post, group: supplier, type: string, rest: true, touches: 0 }
+  _supplier_address: { scope: post, group: supplier, type: string, rest: true, touches: 0 }
+  _supplier_verified: { scope: post, group: supplier, type: boolean, rest: true, touches: 0 }
+  _supplier_rating: { scope: post, group: supplier, type: number, rest: true, touches: 0 }
+  _doc_file_id: { scope: post, group: doc, type: integer, rest: true, touches: 8 }
+  _doc_folder_id: { scope: post, group: doc, type: integer, rest: true, touches: 4 }
+  _doc_access: { scope: post, group: doc, type: string, rest: true, touches: 7 }
+  _doc_version: { scope: post, group: doc, type: string, rest: true, touches: 9 }
+  _doc_downloads: { scope: post, group: doc, type: integer, rest: true, touches: 6 }
+  _doc_status: { scope: post, group: doc, type: string, rest: true, touches: 15 }
+  _doc_checksum: { scope: post, group: doc, type: string, rest: false, touches: 5 }
+  _doc_cpf: { scope: post, group: doc, type: string, rest: false, touches: 5 }
+  _hub_bio: { scope: post, group: hub, type: string, rest: true, touches: 3 }
+  _hub_links: { scope: post, group: hub, type: array, rest: true, touches: 6 }
+  _hub_socials: { scope: post, group: hub, type: array, rest: true, touches: 6 }
+  _hub_theme: { scope: post, group: hub, type: string, rest: true, touches: 5 }
+  _hub_avatar: { scope: post, group: hub, type: integer, rest: true, touches: 4 }
+  _hub_cover: { scope: post, group: hub, type: integer, rest: true, touches: 3 }
+  _hub_custom_css: { scope: post, group: hub, type: string, rest: false, touches: 5 }
+  _email_subject: { scope: post, group: email_aprio, type: string, rest: true, touches: 10 }
+  _email_type: { scope: post, group: email_aprio, type: string, rest: true, touches: 9 }
+  _email_variables: { scope: post, group: email_aprio, type: array, rest: true, touches: 9 }
+  _fav_count: { scope: post, group: _global, type: integer, rest: true, touches: 1 }
+  _wow_count: { scope: post, group: _global, type: integer, rest: true, touches: 1 }
+  _wow_counts: { scope: post, group: _global, type: object, rest: true, touches: 1 }
+  _coauthors: { scope: post, group: _global, type: array, rest: true, touches: 0 }
+  _mod_status: { scope: post, group: _global, type: string, rest: false, touches: 1 }
+  _mod_notes: { scope: post, group: _global, type: string, rest: false, touches: 1 }
+  _mod_reviewed_by: { scope: post, group: _global, type: integer, rest: false, touches: 1 }
+  _mod_reviewed_at: { scope: post, group: _global, type: string, rest: false, touches: 1 }
+  _apollo_seo: { scope: post, group: _global, type: array, rest: false, touches: 0 }
+  _apollo_template: { scope: post, group: page, type: string, rest: true, touches: 1 }
+  _apollo_canvas_data: { scope: post, group: page, type: array, rest: false, touches: 1 }
+  _apollo_social_name: { scope: user, group: login, type: string, rest: false, touches: 0 }
+  _apollo_instagram: { scope: user, group: login, type: string, rest: false, touches: 0 }
+  _apollo_avatar_url: { scope: user, group: login, type: string, rest: false, touches: 0 }
+  _apollo_avatar_attachment_id: { scope: user, group: login, type: integer, rest: false, touches: 0 }
+  avatar_thumb: { scope: user, group: login, type: string, rest: false, touches: 0 }
+  _apollo_sound_preferences: { scope: user, group: login, type: array, rest: false, touches: 0 }
+  _apollo_quiz_score: { scope: user, group: login, type: integer, rest: false, touches: 0 }
+  _apollo_simon_highscore: { scope: user, group: login, type: integer, rest: false, touches: 0 }
+  _apollo_quiz_answers: { scope: user, group: login, type: array, rest: false, touches: 0 }
+  _apollo_email_verified: { scope: user, group: login, type: boolean, rest: false, touches: 0 }
+  _apollo_verification_token: { scope: user, group: login, type: string, rest: false, touches: 0 }
+  _apollo_password_reset_token: { scope: user, group: login, type: string, rest: false, touches: 0 }
+  _apollo_password_reset_expires: { scope: user, group: login, type: integer, rest: false, touches: 0 }
+  _apollo_login_attempts: { scope: user, group: login, type: integer, rest: false, touches: 0 }
+  _apollo_last_login: { scope: user, group: login, type: string, rest: false, touches: 0 }
+  _apollo_lockout_until: { scope: user, group: login, type: integer, rest: false, touches: 0 }
+  _apollo_user_verified: { scope: user, group: profile, type: boolean, rest: false, touches: 0 }
+  _apollo_membership: { scope: user, group: profile, type: array, rest: true, touches: 0 }
+  _apollo_agent_for: { scope: user, group: profile, type: array, rest: false, touches: 0 }
+  _apollo_profile_completed: { scope: user, group: profile, type: integer, rest: false, touches: 0 }
+  _apollo_matchmaking_data: { scope: user, group: profile, type: array, rest: false, touches: 0 }
+  cover_image: { scope: user, group: profile, type: integer, rest: false, touches: 0 }
+  custom_avatar: { scope: user, group: profile, type: integer, rest: false, touches: 0 }
+  instagram: { scope: user, group: profile, type: string, rest: false, touches: 0 }
+  user_location: { scope: user, group: profile, type: string, rest: false, touches: 0 }
+  _apollo_bio: { scope: user, group: profile, type: string, rest: false, touches: 0 }
+  _apollo_website: { scope: user, group: profile, type: string, rest: false, touches: 0 }
+  _apollo_phone: { scope: user, group: profile, type: string, rest: false, touches: 0 }
+  _apollo_birth_date: { scope: user, group: profile, type: string, rest: false, touches: 0 }
+  _apollo_privacy_profile: { scope: user, group: profile, type: string, rest: false, touches: 0 }
+  _apollo_privacy_email: { scope: user, group: profile, type: boolean, rest: false, touches: 0 }
+  _apollo_disable_author_url: { scope: user, group: profile, type: boolean, rest: false, touches: 0 }
+  _apollo_profile_views: { scope: user, group: profile, type: integer, rest: false, touches: 0 }
+  _apollo_chat_status: { scope: user, group: chat, type: string, rest: false, touches: 0 }
+  _apollo_chat_last_seen: { scope: user, group: chat, type: integer, rest: false, touches: 0 }
+  _apollo_chat_preferences: { scope: user, group: chat, type: array, rest: false, touches: 0 }
+  _apollo_chat_blocked_users: { scope: user, group: chat, type: array, rest: false, touches: 0 }
+  _apollo_chat_muted_threads: { scope: user, group: chat, type: array, rest: false, touches: 0 }
+  _apollo_notif_prefs: { scope: user, group: notifications, type: array, rest: false, touches: 0 }
+  _apollo_notif_unread: { scope: user, group: notifications, type: integer, rest: false, touches: 0 }
+  _apollo_email_prefs: { scope: user, group: notifications, type: array, rest: false, touches: 0 }
+  _apollo_triggered_triggers: { scope: user, group: membership, type: array, rest: false, touches: 0 }
+  _apollo_can_notify_user: { scope: user, group: membership, type: boolean, rest: false, touches: 0 }
+  _apollo_active_achievements: { scope: user, group: membership, type: array, rest: false, touches: 0 }
+  _apollo_achievement_count: { scope: user, group: membership, type: integer, rest: false, touches: 0 }
+  _apollo_points_total: { scope: user, group: membership, type: integer, rest: false, touches: 0 }
+  _apollo_current_rank: { scope: user, group: membership, type: string, rest: false, touches: 0 }
+  _apollo_rank_entry_id: { scope: user, group: membership, type: integer, rest: false, touches: 0 }
+  _apollo_cena_access: { scope: user, group: cena, type: boolean, rest: false, touches: 0 }
+  _apollo_cena_role: { scope: user, group: cena, type: string, rest: false, touches: 0 }
+  _apollo_dashboard_layout: { scope: user, group: dashboard, type: array, rest: false, touches: 0 }
+  _apollo_seo_term: { scope: term, group: seo, type: array, rest: false, touches: 0 }
+ungoverned:
+  _achievement_hidden: { sites: 1, writes: 0, units: [apollo-membership] }
+  _achievement_maximum_earnings: { sites: 2, writes: 0, units: [apollo-membership] }
+  _achievement_point_type: { sites: 1, writes: 0, units: [apollo-membership] }
+  _achievement_points: { sites: 4, writes: 0, units: [apollo-membership] }
+  _achievement_points_required: { sites: 1, writes: 0, units: [apollo-membership] }
+  _achievement_restricted_to: { sites: 1, writes: 0, units: [apollo-membership] }
+  _achievement_trigger: { sites: 1, writes: 0, units: [apollo-membership] }
+  _achievement_type: { sites: 1, writes: 0, units: [apollo-membership] }
+  _apollo_appointment_agent_id: { sites: 2, writes: 1, units: [apollo-scheduler] }
+  _apollo_appointment_customer_id: { sites: 2, writes: 1, units: [apollo-scheduler] }
+  _apollo_appointment_date: { sites: 1, writes: 0, units: [apollo-elementor] }
+  _apollo_appointment_end: { sites: 4, writes: 2, units: [apollo-calendar, apollo-scheduler] }
+  _apollo_appointment_event_id: { sites: 2, writes: 1, units: [apollo-scheduler] }
+  _apollo_appointment_notes: { sites: 1, writes: 1, units: [apollo-scheduler] }
+  _apollo_appointment_nucleo_id: { sites: 2, writes: 1, units: [apollo-scheduler] }
+  _apollo_appointment_payment_status: { sites: 1, writes: 1, units: [apollo-scheduler] }
+  _apollo_appointment_progress: { sites: 1, writes: 0, units: [apollo-elementor] }
+  _apollo_appointment_resource_id: { sites: 2, writes: 1, units: [apollo-scheduler] }
+  _apollo_appointment_service_id: { sites: 2, writes: 1, units: [apollo-scheduler] }
+  _apollo_appointment_service_title: { sites: 1, writes: 0, units: [apollo-calendar] }
+  _apollo_appointment_start: { sites: 4, writes: 2, units: [apollo-calendar, apollo-scheduler] }
+  _apollo_appointment_status: { sites: 2, writes: 1, units: [apollo-scheduler] }
+  _apollo_appointment_time_end: { sites: 1, writes: 0, units: [apollo-elementor] }
+  _apollo_appointment_time_start: { sites: 1, writes: 0, units: [apollo-elementor] }
+  _apollo_appointment_type: { sites: 1, writes: 0, units: [apollo-elementor] }
+  _apollo_appointment_venue: { sites: 1, writes: 0, units: [apollo-elementor] }
+  _apollo_capacity: { sites: 2, writes: 0, units: [apollo-elementor] }
+  _apollo_cena_confirmed_at: { sites: 2, writes: 2, units: [apollo-events] }
+  _apollo_cena_confirmed_by: { sites: 2, writes: 2, units: [apollo-events] }
+  _apollo_cena_status: { sites: 5, writes: 3, units: [apollo-events] }
+  _apollo_cena_submitted_at: { sites: 1, writes: 1, units: [apollo-events] }
+  _apollo_cena_submitted_by: { sites: 1, writes: 1, units: [apollo-events] }
+  _apollo_city: { sites: 1, writes: 0, units: [apollo-elementor] }
+  _apollo_event_date: { sites: 1, writes: 0, units: [apollo-elementor] }
+  _apollo_event_time_end: { sites: 1, writes: 0, units: [apollo-elementor] }
+  _apollo_event_time_start: { sites: 1, writes: 0, units: [apollo-elementor] }
+  _apollo_fav_count: { sites: 1, writes: 0, units: [apollo-events] }
+  _apollo_headline: { sites: 1, writes: 0, units: [apollo-journal] }
+  _apollo_lineup: { sites: 2, writes: 0, units: [apollo-elementor] }
+  _apollo_note_type: { sites: 1, writes: 0, units: [apollo-journal] }
+  _apollo_resource_capacity: { sites: 1, writes: 0, units: [apollo-scheduler] }
+  _apollo_resource_loc_id: { sites: 1, writes: 0, units: [apollo-scheduler] }
+  _apollo_resource_nucleo_id: { sites: 1, writes: 0, units: [apollo-scheduler] }
+  _apollo_revenue: { sites: 2, writes: 0, units: [apollo-elementor] }
+  _apollo_rsvp_count: { sites: 3, writes: 0, units: [apollo-elementor] }
+  _apollo_service_duration: { sites: 1, writes: 0, units: [apollo-scheduler] }
+  _apollo_service_nucleo_id: { sites: 1, writes: 0, units: [apollo-scheduler] }
+  _apollo_service_price: { sites: 1, writes: 0, units: [apollo-scheduler] }
+  _apollo_service_slot_interval: { sites: 1, writes: 0, units: [apollo-scheduler] }
+  _apollo_sheet_id: { sites: 1, writes: 1, units: [apollo-sheets] }
+  _apollo_sheet_options: { sites: 3, writes: 2, units: [apollo-sheets] }
+  _apollo_sheet_visibility: { sites: 3, writes: 2, units: [apollo-sheets] }
+  _apollo_source: { sites: 3, writes: 1, units: [apollo-events, apollo-journal] }
+  _apollo_subtitle: { sites: 1, writes: 0, units: [apollo-journal] }
+  _apollo_venue: { sites: 1, writes: 0, units: [apollo-elementor] }
+  _apollo_venue_address: { sites: 1, writes: 0, units: [apollo-elementor] }
+  _apollo_wow_count: { sites: 1, writes: 0, units: [apollo-events] }
+  _apollo_wows: { sites: 1, writes: 0, units: [apollo-users] }
+  _badge: { sites: 1, writes: 1, units: [apollo-adverts] }
+  _classified_avail_end: { sites: 1, writes: 0, units: [apollo-adverts] }
+  _classified_avail_start: { sites: 2, writes: 0, units: [apollo-adverts] }
+  _classified_event_date: { sites: 5, writes: 2, units: [apollo-adverts] }
+  _classified_event_id: { sites: 5, writes: 4, units: [apollo-adverts] }
+  _classified_event_loc: { sites: 5, writes: 2, units: [apollo-adverts] }
+  _classified_event_title: { sites: 4, writes: 1, units: [apollo-adverts] }
+  _classified_expiring_notified: { sites: 3, writes: 2, units: [apollo-adverts] }
+  _classified_hostel: { sites: 5, writes: 1, units: [apollo-adverts] }
+  _classified_hostel_id: { sites: 2, writes: 1, units: [apollo-adverts] }
+  _classified_hostel_url: { sites: 8, writes: 2, units: [apollo-adverts] }
+  _classified_max_days: { sites: 2, writes: 1, units: [apollo-adverts] }
+  _classified_min_nights: { sites: 2, writes: 1, units: [apollo-adverts] }
+  _classified_original_price: { sites: 1, writes: 0, units: [apollo-adverts] }
+  _classified_quantity: { sites: 5, writes: 2, units: [apollo-adverts] }
+  _classified_status: { sites: 1, writes: 0, units: [apollo-fav] }
+  _classified_type: { sites: 11, writes: 5, units: [apollo-adverts] }
+  _classified_views: { sites: 6, writes: 1, units: [apollo-adverts] }
+  _coupon_code: { sites: 1, writes: 0, units: [apollo-templates] }
+  _depoimento_author_name: { sites: 1, writes: 0, units: [apollo-djs] }
+  _depoimento_author_role: { sites: 1, writes: 0, units: [apollo-djs] }
+  _depoimento_rating: { sites: 1, writes: 0, units: [apollo-djs] }
+  _depoimento_source: { sites: 1, writes: 0, units: [apollo-djs] }
+  _dj_about_photo: { sites: 3, writes: 0, units: [apollo-djs] }
+  _dj_about_video: { sites: 3, writes: 0, units: [apollo-djs] }
+  _dj_audio_url: { sites: 1, writes: 0, units: [apollo-events] }
+  _dj_bandcamp: { sites: 2, writes: 0, units: [apollo-djs] }
+  _dj_bio: { sites: 4, writes: 1, units: [apollo-djs] }
+  _dj_booking: { sites: 5, writes: 2, units: [apollo-djs] }
+  _dj_booking_status: { sites: 3, writes: 2, units: [apollo-djs] }
+  _dj_city: { sites: 2, writes: 0, units: [apollo-events, apollo-pane-engine] }
+  _dj_eyebrow: { sites: 3, writes: 2, units: [apollo-djs] }
+  _dj_footer_image: { sites: 1, writes: 0, units: [apollo-djs] }
+  _dj_gallery: { sites: 4, writes: 1, units: [apollo-djs] }
+  _dj_home_city: { sites: 2, writes: 1, units: [apollo-djs] }
+  _dj_media_kit_stats: { sites: 3, writes: 2, units: [apollo-djs] }
+  _dj_media_kit_url: { sites: 3, writes: 0, units: [apollo-djs] }
+  _dj_name: { sites: 8, writes: 1, units: [apollo-djs] }
+  _dj_name_lines: { sites: 3, writes: 2, units: [apollo-djs] }
+  _dj_original_project_1: { sites: 2, writes: 0, units: [apollo-djs] }
+  _dj_original_project_2: { sites: 2, writes: 0, units: [apollo-djs] }
+  _dj_original_project_3: { sites: 2, writes: 0, units: [apollo-djs] }
+  _dj_preview: { sites: 1, writes: 0, units: [apollo-events] }
+  _dj_resident_at: { sites: 1, writes: 0, units: [apollo-events] }
+  _dj_rider_url: { sites: 2, writes: 0, units: [apollo-djs] }
+  _dj_role: { sites: 1, writes: 0, units: [apollo-events] }
+  _dj_set_url: { sites: 3, writes: 0, units: [apollo-djs, apollo-events] }
+  _dj_soundcloud_url: { sites: 1, writes: 0, units: [apollo-events] }
+  _dj_statement: { sites: 4, writes: 1, units: [apollo-djs] }
+  _dj_tracks: { sites: 6, writes: 2, units: [apollo-djs] }
+  _doc_clauses: { sites: 1, writes: 0, units: [apollo-sign] }
+  _doc_issuer_cnpj: { sites: 1, writes: 0, units: [apollo-sign] }
+  _doc_issuer_name: { sites: 1, writes: 0, units: [apollo-sign] }
+  _doc_number: { sites: 1, writes: 0, units: [apollo-sign] }
+  _doc_pdf_path: { sites: 1, writes: 0, units: [apollo-sign] }
+  _doc_signer_role: { sites: 1, writes: 0, units: [apollo-sign] }
+  _doc_signers: { sites: 9, writes: 6, units: [apollo-docs, apollo-sign] }
+  _edit_last: { sites: 1, writes: 0, units: [apollo-sheets] }
+  _event_access_buttons: { sites: 7, writes: 2, units: [apollo-events] }
+  _event_audio_url: { sites: 5, writes: 0, units: [apollo-events] }
+  _event_bg_color: { sites: 6, writes: 1, units: [apollo-events] }
+  _event_coauthors: { sites: 5, writes: 3, units: [apollo-events] }
+  _event_date: { sites: 7, writes: 1, units: [apollo-adverts, apollo-loc, apollo-seo, apollo-social, apollo-templates] }
+  _event_date_start: { sites: 2, writes: 0, units: [apollo-hub] }
+  _event_earlybird_enabled: { sites: 5, writes: 0, units: [apollo-events] }
+  _event_earlybird_name: { sites: 5, writes: 0, units: [apollo-events] }
+  _event_earlybird_sub: { sites: 5, writes: 0, units: [apollo-events] }
+  _event_earlybird_url: { sites: 5, writes: 0, units: [apollo-events] }
+  _event_highlighted: { sites: 4, writes: 1, units: [apollo-events] }
+  _event_import_id: { sites: 1, writes: 1, units: [apollo-events] }
+  _event_import_provider: { sites: 1, writes: 1, units: [apollo-events] }
+  _event_import_synced: { sites: 1, writes: 1, units: [apollo-events] }
+  _event_import_url: { sites: 1, writes: 1, units: [apollo-events] }
+  _event_int_rank: { sites: 3, writes: 2, units: [apollo-events] }
+  _event_lat: { sites: 3, writes: 2, units: [apollo-events] }
+  _event_list_btn_style: { sites: 4, writes: 0, units: [apollo-events] }
+  _event_lista_cta_label: { sites: 4, writes: 0, units: [apollo-events] }
+  _event_lista_fem_enabled: { sites: 5, writes: 0, units: [apollo-events] }
+  _event_lista_fem_sub: { sites: 5, writes: 0, units: [apollo-events] }
+  _event_lista_geral_enabled: { sites: 5, writes: 0, units: [apollo-events] }
+  _event_lista_geral_sub: { sites: 5, writes: 0, units: [apollo-events] }
+  _event_lng: { sites: 3, writes: 2, units: [apollo-events] }
+  _event_loc_name: { sites: 4, writes: 0, units: [apollo-email, apollo-hub, apollo-social] }
+  _event_local_id: { sites: 1, writes: 0, units: [apollo-loc] }
+  _event_local_name: { sites: 4, writes: 1, units: [apollo-events, apollo-templates] }
+  _event_location: { sites: 1, writes: 0, units: [apollo-calendar] }
+  _event_name: { sites: 1, writes: 0, units: [apollo-templates] }
+  _event_organizer: { sites: 1, writes: 0, units: [apollo-templates] }
+  _event_price: { sites: 1, writes: 0, units: [apollo-pane-engine] }
+  _event_reminder_sent: { sites: 1, writes: 1, units: [apollo-events] }
+  _event_supplier_ids: { sites: 5, writes: 2, units: [apollo-gestor] }
+  _event_ticket_btn_style: { sites: 3, writes: 0, units: [apollo-events] }
+  _event_ticket_status: { sites: 6, writes: 0, units: [apollo-events] }
+  _event_title: { sites: 1, writes: 1, units: [apollo-adverts] }
+  _event_venue_name: { sites: 1, writes: 0, units: [apollo-djs] }
+  _event_view_count: { sites: 4, writes: 1, units: [apollo-events] }
+  _gestor_docs: { sites: 1, writes: 0, units: [apollo-gestor] }
+  _gestor_equipment: { sites: 2, writes: 1, units: [apollo-gestor] }
+  _hub_avatar_type: { sites: 2, writes: 1, units: [apollo-hub] }
+  _hub_blocks: { sites: 7, writes: 3, units: [apollo-hub] }
+  _hub_view_count: { sites: 1, writes: 0, units: [apollo-admin] }
+  _loc: { sites: 1, writes: 0, units: [apollo-templates] }
+  _loc_address: { sites: 2, writes: 0, units: [apollo-events, apollo-pane-engine] }
+  _loc_city: { sites: 4, writes: 0, units: [apollo-djs, apollo-events, apollo-fav] }
+  _loc_gallery: { sites: 2, writes: 0, units: [apollo-events] }
+  _loc_lat: { sites: 1, writes: 0, units: [apollo-events] }
+  _loc_lng: { sites: 1, writes: 0, units: [apollo-events] }
+  _local_amenities: { sites: 3, writes: 1, units: [apollo-loc] }
+  _local_bairro: { sites: 1, writes: 0, units: [apollo-events] }
+  _local_description: { sites: 4, writes: 1, units: [apollo-loc] }
+  _local_facebook: { sites: 1, writes: 0, units: [apollo-loc] }
+  _local_founded_year: { sites: 3, writes: 2, units: [apollo-loc] }
+  _local_gallery: { sites: 3, writes: 0, units: [apollo-events] }
+  _local_hours: { sites: 3, writes: 1, units: [apollo-loc] }
+  _local_image_: { sites: 1, writes: 0, units: [apollo-loc] }
+  _local_image_1: { sites: 3, writes: 0, units: [apollo-loc, apollo-templates] }
+  '_local_image_{$i}': { sites: 3, writes: 0, units: [apollo-loc] }
+  _local_region: { sites: 3, writes: 2, units: [apollo-loc] }
+  _local_rooms: { sites: 2, writes: 1, units: [apollo-loc] }
+  _local_tagline: { sites: 2, writes: 1, units: [apollo-loc] }
+  _local_testimonials: { sites: 3, writes: 0, units: [apollo-loc] }
+  _local_user_id: { sites: 3, writes: 2, units: [apollo-loc] }
+  _local_visit_count: { sites: 2, writes: 1, units: [apollo-loc] }
+  _membership_features: { sites: 1, writes: 0, units: [apollo-admin] }
+  _membership_period: { sites: 1, writes: 0, units: [apollo-admin] }
+  _membership_price: { sites: 1, writes: 0, units: [apollo-admin] }
+  _neighborhood: { sites: 1, writes: 0, units: [apollo-templates] }
+  _nrep_code: { sites: 16, writes: 2, units: [apollo-journal] }
+  _nrep_seq: { sites: 3, writes: 1, units: [apollo-journal] }
+  _nrep_year: { sites: 2, writes: 1, units: [apollo-journal] }
+  _nucleo_role: { sites: 1, writes: 0, units: [apollo-templates] }
+  _open_badge_criteria: { sites: 1, writes: 0, units: [apollo-membership] }
+  _open_badge_enable_baking: { sites: 1, writes: 0, units: [apollo-membership] }
+  _original_price: { sites: 1, writes: 0, units: [apollo-templates] }
+  _price: { sites: 3, writes: 2, units: [apollo-adverts, apollo-templates] }
+  _price_per_night: { sites: 1, writes: 0, units: [apollo-templates] }
+  _rank_points_required: { sites: 1, writes: 0, units: [apollo-membership] }
+  _rank_priority: { sites: 1, writes: 0, units: [apollo-membership] }
+  _rating: { sites: 1, writes: 1, units: [apollo-adverts] }
+  _supplier_category: { sites: 2, writes: 0, units: [apollo-gestor] }
+  _supplier_email: { sites: 1, writes: 0, units: [apollo-gestor] }
+  _supplier_phone: { sites: 1, writes: 0, units: [apollo-gestor] }
+  _ticket_type: { sites: 1, writes: 0, units: [apollo-templates] }
+  _ticket_url: { sites: 1, writes: 0, units: [apollo-templates] }
+  _track_artists: { sites: 1, writes: 0, units: [apollo-djs] }
+  _track_cover_url: { sites: 1, writes: 0, units: [apollo-djs] }
+  _track_dj_ids: { sites: 2, writes: 1, units: [apollo-djs] }
+  _track_duration: { sites: 1, writes: 0, units: [apollo-djs] }
+  _track_genre_legacy: { sites: 1, writes: 0, units: [apollo-djs] }
+  _track_ghost_artists: { sites: 1, writes: 0, units: [apollo-djs] }
+  _track_migrated_from: { sites: 1, writes: 1, units: [apollo-djs] }
+  _track_preview_seconds: { sites: 2, writes: 0, units: [apollo-djs] }
+  _track_preview_start: { sites: 2, writes: 0, units: [apollo-djs] }
+  _track_preview_url: { sites: 3, writes: 0, units: [apollo-djs] }
+  _track_url_bandcamp: { sites: 2, writes: 0, units: [apollo-djs] }
+  _track_url_download: { sites: 2, writes: 0, units: [apollo-djs] }
+  _track_url_soundcloud: { sites: 4, writes: 0, units: [apollo-djs] }
+  _track_url_spotify: { sites: 2, writes: 0, units: [apollo-djs] }
+  _track_url_youtube: { sites: 2, writes: 0, units: [apollo-djs] }
+  _wp_attachment_image_alt: { sites: 2, writes: 0, units: [apollo-events, apollo-seo] }
+  _wp_page_template: { sites: 3, writes: 2, units: [mu-plugin] }
+  canonical: { sites: 1, writes: 0, units: [apollo-seo] }
+  nofollow: { sites: 1, writes: 0, units: [apollo-seo] }
+  noindex: { sites: 1, writes: 0, units: [apollo-seo] }
+  og_description: { sites: 1, writes: 0, units: [apollo-seo] }
+  og_title: { sites: 1, writes: 0, units: [apollo-seo] }

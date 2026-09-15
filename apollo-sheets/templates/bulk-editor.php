@@ -16,8 +16,24 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-// Load Apollo CDN for icons and base styles
-echo '<script src="<?php echo esc_url( function_exists('apollo_cdn_core_js_url') ? apollo_cdn_core_js_url() : 'https://cdn.apollo.rio.br/v1.0.0/core.js?v=t0x1x&versao=bb' ); ?>" fetchpriority="high" crossorigin="anonymous"></script>';
+/*
+ * Load Apollo CDN for icons and base styles.
+ *
+ * This was a PHP TEMPLATE nested inside a single-quoted PHP echo:
+ *   echo '<script src="<?php echo esc_url( function_exists('apollo_cdn…
+ * The inner quote opening 'apollo_cdn_core_js_url' terminated the outer
+ * string, so the file was a parse error and every request for the bulk
+ * editor screen fataled. Resolve the URL first, then echo once — the same
+ * shape apollo-admin/templates/frontend/*.php already uses.
+ */
+$apollo_cdn_src = function_exists('apollo_cdn_core_js_url')
+    ? apollo_cdn_core_js_url()
+    : 'https://cdn.apollo.rio.br/v1.0.0/core.js?v=t0x1x&versao=bb';
+
+printf(
+    '<script src="%s" fetchpriority="high" crossorigin="anonymous"></script>',
+    esc_url($apollo_cdn_src)
+);
 
 $nonce = wp_create_nonce('apollo_bulk_nonce');
 ?>

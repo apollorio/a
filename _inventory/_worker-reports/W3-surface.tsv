@@ -1,0 +1,601 @@
+﻿endpoint	methods	permission	file:line	in_registry?
+add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );			apollo-admin\src\ErrorLogViewer.php:50	UNKNOWN
+public function register_rest_routes(): void {			apollo-admin\src\ErrorLogViewer.php:56	UNKNOWN
+register_rest_route(			apollo-admin\src\ErrorLogViewer.php:60	UNKNOWN
+register_rest_route(			apollo-admin\src\ErrorLogViewer.php:90	UNKNOWN
+add_action('rest_api_init', array($this, 'register_rest_routes'));			apollo-admin\src\Plugin.php:91	UNKNOWN
+public function register_rest_routes(): void			apollo-admin\src\Plugin.php:102	UNKNOWN
+add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );			apollo-admin\src\ToolbarCustomizer.php:51	UNKNOWN
+public function register_rest_routes(): void {			apollo-admin\src\ToolbarCustomizer.php:132	UNKNOWN
+register_rest_route(			apollo-admin\src\ToolbarCustomizer.php:136	UNKNOWN
+register_rest_route(			apollo-admin\src\ToolbarCustomizer.php:149	UNKNOWN
+add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );			apollo-admin\src\UserPreferences.php:56	UNKNOWN
+public function register_rest_routes(): void {			apollo-admin\src\UserPreferences.php:154	UNKNOWN
+register_rest_route(			apollo-admin\src\UserPreferences.php:158	UNKNOWN
+register_rest_route(			apollo-admin\src\UserPreferences.php:171	UNKNOWN
+register_rest_route(			apollo-admin\src\UserPreferences.php:184	UNKNOWN
+register_rest_route(			apollo-admin\src\Frontend\Controller\MembershipController.php:30	UNKNOWN
+register_rest_route(			apollo-admin\src\Frontend\Controller\PendingController.php:31	UNKNOWN
+register_rest_route(			apollo-admin\src\Frontend\Controller\PendingController.php:43	UNKNOWN
+register_rest_route(			apollo-admin\src\Frontend\Controller\PendingController.php:65	UNKNOWN
+register_rest_route(			apollo-admin\src\Rest\SettingsController.php:45	UNKNOWN
+register_rest_route(			apollo-admin\src\Rest\SettingsController.php:56	UNKNOWN
+register_rest_route(			apollo-admin\src\Rest\SettingsController.php:91	UNKNOWN
+register_rest_route(			apollo-admin\src\Rest\SettingsController.php:110	UNKNOWN
+register_rest_route(			apollo-admin\src\Rest\SettingsController.php:121	UNKNOWN
+register_rest_route(			apollo-admin\src\Rest\SettingsController.php:133	UNKNOWN
+register_rest_route(			apollo-admin\src\Rest\SettingsController.php:143	UNKNOWN
+shortcode	N/A	N/A	apollo-admin\apollo-admin.php:39	UNKNOWN
+register_rest_route(			apollo-adverts\includes\event-selector.php:821	UNKNOWN
+add_action('rest_api_init', array($this, 'register_rest_routes'));			apollo-adverts\src\Plugin.php:79	UNKNOWN
+public function register_rest_routes(): void			apollo-adverts\src\Plugin.php:505	UNKNOWN
+add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );			apollo-adverts\src\RelatedAds.php:45	UNKNOWN
+public function register_rest_routes(): void {			apollo-adverts\src\RelatedAds.php:101	UNKNOWN
+register_rest_route(			apollo-adverts\src\RelatedAds.php:102	UNKNOWN
+register_rest_route(			apollo-adverts\src\API\ClassifiedsController.php:33	UNKNOWN
+register_rest_route(			apollo-adverts\src\API\ClassifiedsController.php:53	UNKNOWN
+register_rest_route(			apollo-adverts\src\API\ClassifiedsController.php:82	UNKNOWN
+register_rest_route(			apollo-adverts\src\API\SafetyController.php:42	UNKNOWN
+register_rest_route(			apollo-adverts\src\API\SafetyController.php:55	UNKNOWN
+register_rest_route(			apollo-adverts\src\API\SafetyController.php:70	UNKNOWN
+register_rest_route(			apollo-adverts\src\API\SearchController.php:29	UNKNOWN
+shortcode:apollo_adverts_chat_button	N/A	N/A	apollo-adverts\includes\integrations.php:360	UNKNOWN
+shortcode	N/A	N/A	apollo-adverts\includes\shortcodes.php:18	UNKNOWN
+shortcode:apollo_classifieds	N/A	N/A	apollo-adverts\includes\shortcodes.php:27	UNKNOWN
+shortcode:apollo_classified	N/A	N/A	apollo-adverts\includes\shortcodes.php:28	UNKNOWN
+shortcode:apollo_classified_form	N/A	N/A	apollo-adverts\includes\shortcodes.php:29	UNKNOWN
+shortcode:apollo_classifieds_sell_ticket	N/A	N/A	apollo-adverts\includes\shortcodes.php:31	UNKNOWN
+shortcode:apollo_classifieds_rent_space	N/A	N/A	apollo-adverts\includes\shortcodes.php:32	UNKNOWN
+shortcode:apollo_related_classifieds	N/A	N/A	apollo-adverts\src\RelatedAds.php:42	UNKNOWN
+register_rest_route(			apollo-calendar\src\API\CalendarController.php:41	UNKNOWN
+register_rest_route(			apollo-calendar\src\API\CalendarController.php:69	UNKNOWN
+register_rest_route(			apollo-calendar\src\API\CalendarController.php:80	UNKNOWN
+register_rest_route(			apollo-calendar\src\API\CalendarController.php:115	UNKNOWN
+register_rest_route(			apollo-calendar\src\API\CalendarController.php:143	UNKNOWN
+shortcode	N/A	N/A	apollo-calendar\apollo-calendar.php:39	UNKNOWN
+add_action('rest_api_init', array($this, 'register_rest_routes'));			apollo-chat\src\Plugin.php:76	UNKNOWN
+public function register_rest_routes(): void			apollo-chat\src\Plugin.php:266	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:274	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:284	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:294	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:305	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:315	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:325	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:335	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:345	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:358	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:369	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:380	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:391	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:402	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:413	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:424	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:433	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:444	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:455	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:466	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:477	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:488	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:499	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:510	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:521	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:550	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:575	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:586	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:597	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:610	UNKNOWN
+register_rest_route(			apollo-chat\src\Plugin.php:623	UNKNOWN
+add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );			apollo-coauthor\src\Plugin.php:59	UNKNOWN
+public function register_rest_routes(): void {			apollo-coauthor\src\Plugin.php:90	UNKNOWN
+register_rest_route(			apollo-coauthor\src\API\CoauthorController.php:58	UNKNOWN
+register_rest_route(			apollo-coauthor\src\API\CoauthorController.php:115	UNKNOWN
+add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );			apollo-coauthor\src\Components\BulkEdit.php:38	UNKNOWN
+public function register_rest_routes(): void {			apollo-coauthor\src\Components\BulkEdit.php:168	UNKNOWN
+register_rest_route(			apollo-coauthor\src\Components\BulkEdit.php:169	UNKNOWN
+shortcode	N/A	N/A	apollo-coauthor\apollo-coauthor.php:41	UNKNOWN
+shortcode:apollo_coauthors	N/A	N/A	apollo-coauthor\src\Components\Shortcodes.php:42	UNKNOWN
+shortcode:apollo_coauthor_count	N/A	N/A	apollo-coauthor\src\Components\Shortcodes.php:43	UNKNOWN
+add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );			apollo-comment\src\Plugin.php:45	UNKNOWN
+public function register_rest_routes(): void {			apollo-comment\src\Plugin.php:60	UNKNOWN
+register_rest_route(			apollo-comment\src\API\DepoimentoController.php:26	UNKNOWN
+register_rest_route(			apollo-comment\src\API\DepoimentoController.php:79	UNKNOWN
+shortcode	N/A	N/A	apollo-comment\apollo-comment.php:37	UNKNOWN
+shortcode:apollo_depoimentos	N/A	N/A	apollo-comment\src\Shortcodes.php:20	UNKNOWN
+shortcode:apollo_depoimento_form	N/A	N/A	apollo-comment\src\Shortcodes.php:21	UNKNOWN
+register_rest_route(			apollo-core\includes\surface-contract.php:266	UNKNOWN
+register_rest_route(			apollo-core\src\API\HealthController.php:33	UNKNOWN
+register_rest_route(			apollo-core\src\API\PaneModeController.php:31	UNKNOWN
+register_rest_route(			apollo-core\src\API\PaneModeController.php:42	UNKNOWN
+register_rest_route(			apollo-core\src\API\PaneModeController.php:53	UNKNOWN
+register_rest_route(			apollo-core\src\API\RegistryController.php:41	UNKNOWN
+register_rest_route(			apollo-core\src\API\RegistryController.php:54	UNKNOWN
+register_rest_route(			apollo-core\src\API\RegistryController.php:67	UNKNOWN
+register_rest_route(			apollo-core\src\API\RegistryController.php:80	UNKNOWN
+register_rest_route(			apollo-core\src\API\RegistryController.php:93	UNKNOWN
+register_rest_route(			apollo-core\src\API\RegistryController.php:106	UNKNOWN
+register_rest_route(			apollo-core\src\API\SearchController.php:40	UNKNOWN
+register_rest_route(			apollo-core\src\API\SearchController.php:54	UNKNOWN
+register_rest_route(			apollo-core\src\API\ShortcodesController.php:70	UNKNOWN
+register_rest_route(			apollo-core\src\API\ShortcodesController.php:81	UNKNOWN
+register_rest_route(			apollo-core\src\API\ShortcodesController.php:100	UNKNOWN
+register_rest_route(			apollo-core\src\API\SoundController.php:42	UNKNOWN
+register_rest_route(			apollo-core\src\API\SoundController.php:55	UNKNOWN
+register_rest_route(			apollo-core\src\API\SoundController.php:76	UNKNOWN
+register_rest_route(			apollo-core\src\API\SoundController.php:89	UNKNOWN
+register_rest_route(			apollo-core\src\API\SoundController.php:115	UNKNOWN
+*   register_rest_route(ApolloRoute::NAMESPACE, ApolloRoute::EVENTS, [...]);			apollo-core\src\Config\ApolloRoute.php:10	UNKNOWN
+shortcode	N/A	N/A	apollo-core\src\Core\ShortcodeRegistry.php:148	UNKNOWN
+add_action('rest_api_init', array($this, 'register_rest_routes'));			apollo-dashboard\includes\class-plugin.php:71	UNKNOWN
+public function register_rest_routes(): void			apollo-dashboard\includes\class-plugin.php:215	UNKNOWN
+register_rest_route(			apollo-dashboard\includes\class-plugin.php:218	UNKNOWN
+register_rest_route(			apollo-dashboard\includes\class-plugin.php:229	UNKNOWN
+register_rest_route(			apollo-dashboard\includes\class-plugin.php:240	UNKNOWN
+register_rest_route(			apollo-dashboard\includes\class-plugin.php:251	UNKNOWN
+shortcode	N/A	N/A	apollo-dashboard\apollo-dashboard.php:39	UNKNOWN
+shortcode:apollo_dashboard	N/A	N/A	apollo-dashboard\includes\class-plugin.php:79	UNKNOWN
+shortcode:apollo_dashboard_menu	N/A	N/A	apollo-dashboard\includes\class-plugin.php:80	UNKNOWN
+register_rest_route(			apollo-dj-sync\src\API\DJPermissionsController.php:38	UNKNOWN
+shortcode	N/A	N/A	apollo-dj-sync\apollo-dj-sync.php:36	UNKNOWN
+add_action('rest_api_init', array($this, 'register_rest_routes'));			apollo-djs\src\Plugin.php:55	UNKNOWN
+public function register_rest_routes(): void			apollo-djs\src\Plugin.php:119	UNKNOWN
+register_rest_route(			apollo-djs\src\API\DJsController.php:36	UNKNOWN
+register_rest_route(			apollo-djs\src\API\DJsController.php:92	UNKNOWN
+register_rest_route(			apollo-djs\src\API\DJsController.php:115	UNKNOWN
+register_rest_route(			apollo-djs\src\API\DJsController.php:126	UNKNOWN
+register_rest_route(			apollo-djs\src\API\DJsController.php:137	UNKNOWN
+shortcode:apollo_djs	N/A	N/A	apollo-djs\src\Shortcodes.php:23	UNKNOWN
+shortcode:apollo_dj	N/A	N/A	apollo-djs\src\Shortcodes.php:24	UNKNOWN
+shortcode:apollo_dj_carousel	N/A	N/A	apollo-djs\src\Shortcodes.php:25	UNKNOWN
+shortcode:apollo_add_dj	N/A	N/A	apollo-djs\src\Shortcodes.php:26	UNKNOWN
+register_rest_route(			apollo-docs\src\API\DocsController.php:22	UNKNOWN
+register_rest_route(			apollo-docs\src\API\DocsController.php:34	UNKNOWN
+register_rest_route(			apollo-docs\src\API\DocsController.php:45	UNKNOWN
+register_rest_route(			apollo-docs\src\API\DocsController.php:56	UNKNOWN
+register_rest_route(			apollo-docs\src\API\DocsController.php:67	UNKNOWN
+register_rest_route(			apollo-docs\src\API\DocsController.php:78	UNKNOWN
+register_rest_route(			apollo-docs\src\API\DocsController.php:89	UNKNOWN
+register_rest_route(			apollo-docs\src\API\DocsController.php:100	UNKNOWN
+register_rest_route(			apollo-docs\src\API\DocsController.php:111	UNKNOWN
+register_rest_route(			apollo-docs\src\API\DocsController.php:122	UNKNOWN
+register_rest_route(			apollo-docs\src\API\DocsController.php:133	UNKNOWN
+register_rest_route(			apollo-docs\src\API\FoldersController.php:18	UNKNOWN
+register_rest_route(			apollo-docs\src\API\FoldersController.php:29	UNKNOWN
+register_rest_route(			apollo-docs\src\API\FoldersController.php:40	UNKNOWN
+register_rest_route(			apollo-docs\src\API\FoldersController.php:51	UNKNOWN
+shortcode	N/A	N/A	apollo-docs\apollo-docs.php:36	UNKNOWN
+shortcode	N/A	N/A	apollo-elementor\apollo-elementor.php:37	UNKNOWN
+shortcode	N/A	N/A	apollo-elementor-pro\apollo-elementor-pro.php:37	UNKNOWN
+add_action('rest_api_init', array(__CLASS__, 'register_rest_routes'));			apollo-email\src\Newsletter.php:59	UNKNOWN
+public static function register_rest_routes(): void			apollo-email\src\Newsletter.php:769	UNKNOWN
+register_rest_route(			apollo-email\src\Newsletter.php:771	UNKNOWN
+register_rest_route(			apollo-email\src\Newsletter.php:781	UNKNOWN
+register_rest_route(			apollo-email\src\API\EmailController.php:59	UNKNOWN
+register_rest_route(			apollo-email\src\API\EmailController.php:92	UNKNOWN
+register_rest_route(			apollo-email\src\API\EmailController.php:111	UNKNOWN
+register_rest_route(			apollo-email\src\API\EmailController.php:122	UNKNOWN
+register_rest_route(			apollo-email\src\API\EmailController.php:149	UNKNOWN
+register_rest_route(			apollo-email\src\API\EmailController.php:159	UNKNOWN
+register_rest_route(			apollo-email\src\API\EmailController.php:169	UNKNOWN
+register_rest_route(			apollo-email\src\API\EmailController.php:187	UNKNOWN
+register_rest_route(			apollo-email\src\API\EmailController.php:225	UNKNOWN
+register_rest_route(			apollo-email\src\API\EmailController.php:248	UNKNOWN
+register_rest_route(			apollo-email\src\API\EmailController.php:290	UNKNOWN
+register_rest_route(			apollo-email\src\API\EmailController.php:308	UNKNOWN
+register_rest_route(			apollo-email\src\API\EmailController.php:325	UNKNOWN
+register_rest_route(			apollo-email\src\API\EmailController.php:347	UNKNOWN
+shortcode	N/A	N/A	apollo-email\apollo-email.php:40	UNKNOWN
+shortcode:apollo_newsletter	N/A	N/A	apollo-email\src\Newsletter.php:62	UNKNOWN
+shortcode:apollo_email_prefs	N/A	N/A	apollo-email\src\Plugin.php:114	UNKNOWN
+register_rest_route(			apollo-events\includes\iframe-proxy.php:88	UNKNOWN
+register_rest_route(			apollo-events\includes\render-single.php:1055	UNKNOWN
+add_action('rest_api_init', array(self::class, 'register_rest_routes'));			apollo-events\src\Cena_Rio_Submissions.php:44	UNKNOWN
+public static function register_rest_routes(): void			apollo-events\src\Cena_Rio_Submissions.php:50	UNKNOWN
+register_rest_route(			apollo-events\src\Cena_Rio_Submissions.php:53	UNKNOWN
+register_rest_route(			apollo-events\src\Cena_Rio_Submissions.php:65	UNKNOWN
+register_rest_route(			apollo-events\src\Cena_Rio_Submissions.php:114	UNKNOWN
+register_rest_route(			apollo-events\src\Cena_Rio_Submissions.php:131	UNKNOWN
+add_action('rest_api_init', array($this, 'register_rest_routes'));			apollo-events\src\Plugin.php:80	UNKNOWN
+public function register_rest_routes(): void			apollo-events\src\Plugin.php:814	UNKNOWN
+register_rest_route(			apollo-events\src\API\EventsController.php:54	UNKNOWN
+register_rest_route(			apollo-events\src\API\EventsController.php:74	UNKNOWN
+register_rest_route(			apollo-events\src\API\EventsController.php:105	UNKNOWN
+register_rest_route(			apollo-events\src\API\EventsController.php:117	UNKNOWN
+register_rest_route(			apollo-events\src\API\EventsController.php:129	UNKNOWN
+register_rest_route(			apollo-events\src\API\EventsController.php:140	UNKNOWN
+register_rest_route(			apollo-events\src\API\EventsController.php:161	UNKNOWN
+register_rest_route(			apollo-events\src\API\EventsController.php:179	UNKNOWN
+register_rest_route(			apollo-events\src\API\EventsController.php:197	UNKNOWN
+register_rest_route(			apollo-events\src\API\EventsController.php:238	UNKNOWN
+register_rest_route(			apollo-events\src\API\EventsController.php:266	UNKNOWN
+register_rest_route(			apollo-events\src\API\EventsController.php:291	UNKNOWN
+register_rest_route(			apollo-events\src\API\EventsController.php:308	UNKNOWN
+register_rest_route(			apollo-events\src\API\EventsController.php:328	UNKNOWN
+register_rest_route(			apollo-events\src\API\EventsController.php:340	UNKNOWN
+register_rest_route(			apollo-events\src\API\EventsController.php:351	UNKNOWN
+register_rest_route(			apollo-events\src\API\EventsController.php:398	UNKNOWN
+register_rest_route(			apollo-events\src\API\EventsController.php:423	UNKNOWN
+register_rest_route(			apollo-events\src\API\EventsController.php:447	UNKNOWN
+register_rest_route(			apollo-events\src\API\EventsController.php:472	UNKNOWN
+register_rest_route(			apollo-events\src\API\EventsController.php:502	UNKNOWN
+register_rest_route(			apollo-events\src\Import\UrlImportController.php:66	UNKNOWN
+register_rest_route(			apollo-events\src\Import\UrlImportController.php:77	UNKNOWN
+shortcode:apollo_event_single	N/A	N/A	apollo-events\includes\render-single.php:1043	UNKNOWN
+shortcode:apollo_cena_submit_event	N/A	N/A	apollo-events\src\Cena_Rio_Submissions.php:38	UNKNOWN
+shortcode:a-eve	N/A	N/A	apollo-events\src\Shortcodes.php:51	UNKNOWN
+shortcode	N/A	N/A	apollo-events\src\Shortcodes.php:67	UNKNOWN
+register_rest_route(			apollo-fav\includes\class-rest-controller.php:43	UNKNOWN
+register_rest_route(			apollo-fav\includes\class-rest-controller.php:93	UNKNOWN
+register_rest_route(			apollo-fav\includes\class-rest-controller.php:111	UNKNOWN
+register_rest_route(			apollo-fav\includes\class-rest-controller.php:129	UNKNOWN
+register_rest_route(			apollo-fav\includes\class-rest-controller.php:147	UNKNOWN
+ajax_nopriv:apollo_fav_toggle	POST	nopriv	apollo-fav\includes\class-cbx-bridge.php:47	UNKNOWN
+ajax_nopriv:apollo_get_user_top_sounds	POST	nopriv	apollo-fav\includes\class-fav-ranking.php:50	UNKNOWN
+shortcode	N/A	N/A	apollo-fav\apollo-fav.php:47	UNKNOWN
+shortcode:apollo_my_favs	N/A	N/A	apollo-fav\includes\class-dashboard.php:62	UNKNOWN
+shortcode:apollo_fav	N/A	N/A	apollo-fav\includes\class-dashboard.php:65	UNKNOWN
+shortcode:apollo_top_sounds	N/A	N/A	apollo-fav\includes\class-fav-ranking.php:51	UNKNOWN
+shortcode:apollo_fav_dashboard	N/A	N/A	apollo-fav\includes\class-fav-sound-dashboard.php:28	UNKNOWN
+shortcode:apollo_interesse_dashboard	N/A	N/A	apollo-fav\includes\class-fav-sound-dashboard.php:30	UNKNOWN
+shortcode	N/A	N/A	apollo-gestor\apollo-gestor.php:40	UNKNOWN
+add_action('rest_api_init', array($this, 'register_rest_routes'));			apollo-groups\src\Plugin.php:49	UNKNOWN
+public function register_rest_routes(): void			apollo-groups\src\Plugin.php:211	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:228	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:245	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:269	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:279	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:289	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:299	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:312	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:328	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:340	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:350	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:360	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:377	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:387	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:399	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:416	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:426	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:437	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:449	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:466	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:476	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:487	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:498	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:519	UNKNOWN
+register_rest_route(			apollo-groups\src\Plugin.php:537	UNKNOWN
+shortcode	N/A	N/A	apollo-groups\apollo-groups.php:37	UNKNOWN
+shortcode:apollo_groups	N/A	N/A	apollo-groups\src\Plugin.php:995	UNKNOWN
+shortcode:apollo_group	N/A	N/A	apollo-groups\src\Plugin.php:996	UNKNOWN
+shortcode:apollo_my_groups	N/A	N/A	apollo-groups\src\Plugin.php:997	UNKNOWN
+shortcode:apollo_create_nucleo	N/A	N/A	apollo-groups\src\Plugin.php:998	UNKNOWN
+shortcode:apollo_create_comuna	N/A	N/A	apollo-groups\src\Plugin.php:999	UNKNOWN
+add_action('rest_api_init', array($this, 'register_rest_routes'));			apollo-hub\src\Plugin.php:47	UNKNOWN
+public function register_rest_routes(): void			apollo-hub\src\Plugin.php:342	UNKNOWN
+register_rest_route(			apollo-hub\src\API\HubController.php:41	UNKNOWN
+register_rest_route(			apollo-hub\src\API\HubController.php:67	UNKNOWN
+register_rest_route(			apollo-hub\src\API\HubController.php:93	UNKNOWN
+register_rest_route(			apollo-hub\src\API\HubController.php:144	UNKNOWN
+register_rest_route(			apollo-hub\src\API\HubController.php:195	UNKNOWN
+register_rest_route(			apollo-hub\src\API\HubController.php:218	UNKNOWN
+shortcode	N/A	N/A	apollo-hub\apollo-hub.php:40	UNKNOWN
+shortcode:apollo_hub	N/A	N/A	apollo-hub\src\Shortcodes.php:24	UNKNOWN
+shortcode:apollo_hub_builder	N/A	N/A	apollo-hub\src\Shortcodes.php:25	UNKNOWN
+add_action('rest_api_init', array($this, 'register_rest_routes'));			apollo-journal\src\Plugin.php:85	UNKNOWN
+public function register_rest_routes(): void			apollo-journal\src\Plugin.php:400	UNKNOWN
+register_rest_route(			apollo-journal\src\API\PostsController.php:33	UNKNOWN
+register_rest_route(			apollo-journal\src\API\PostsController.php:47	UNKNOWN
+register_rest_route(			apollo-journal\src\API\PostsController.php:61	UNKNOWN
+shortcode	N/A	N/A	apollo-journal\apollo-journal.php:39	UNKNOWN
+shortcode:apollo_journal	N/A	N/A	apollo-journal\src\Shortcodes.php:38	UNKNOWN
+shortcode:apollo_journal_marquee	N/A	N/A	apollo-journal\src\Shortcodes.php:39	UNKNOWN
+shortcode:apollo_journal_card	N/A	N/A	apollo-journal\src\Shortcodes.php:40	UNKNOWN
+shortcode:apollo_add_news	N/A	N/A	apollo-journal\src\Shortcodes.php:41	UNKNOWN
+shortcode:apollo_add_nrep	N/A	N/A	apollo-journal\src\Shortcodes.php:42	UNKNOWN
+register_rest_route(			apollo-loc\src\API\LocalsController.php:50	UNKNOWN
+register_rest_route(			apollo-loc\src\API\LocalsController.php:72	UNKNOWN
+register_rest_route(			apollo-loc\src\API\LocalsController.php:105	UNKNOWN
+register_rest_route(			apollo-loc\src\API\Router.php:41	UNKNOWN
+register_rest_route(			apollo-loc\src\API\Router.php:58	UNKNOWN
+register_rest_route(			apollo-loc\src\API\Router.php:90	UNKNOWN
+shortcode:apollo_locals	N/A	N/A	apollo-loc\src\Shortcodes\ShortcodeRegistry.php:21	UNKNOWN
+shortcode:apollo_local	N/A	N/A	apollo-loc\src\Shortcodes\ShortcodeRegistry.php:22	UNKNOWN
+shortcode:apollo_map	N/A	N/A	apollo-loc\src\Shortcodes\ShortcodeRegistry.php:23	UNKNOWN
+shortcode:apollo_add_loc	N/A	N/A	apollo-loc\src\Shortcodes\ShortcodeRegistry.php:24	UNKNOWN
+register_rest_route(			apollo-login\src\API\ActivityLogController.php:78	UNKNOWN
+register_rest_route(			apollo-login\src\API\ActivityLogController.php:107	UNKNOWN
+register_rest_route(			apollo-login\src\API\AppAuthController.php:90	UNKNOWN
+register_rest_route(			apollo-login\src\API\AppAuthController.php:124	UNKNOWN
+register_rest_route(			apollo-login\src\API\AppAuthController.php:155	UNKNOWN
+register_rest_route(			apollo-login\src\API\AppAuthController.php:186	UNKNOWN
+register_rest_route(			apollo-login\src\API\AppAuthController.php:197	UNKNOWN
+register_rest_route(			apollo-login\src\API\AuthController.php:60	UNKNOWN
+register_rest_route(			apollo-login\src\API\AuthController.php:88	UNKNOWN
+register_rest_route(			apollo-login\src\API\AuthController.php:214	UNKNOWN
+register_rest_route(			apollo-login\src\API\AuthController.php:225	UNKNOWN
+register_rest_route(			apollo-login\src\API\AuthController.php:243	UNKNOWN
+register_rest_route(			apollo-login\src\API\AuthController.php:261	UNKNOWN
+register_rest_route(			apollo-login\src\API\AuthController.php:279	UNKNOWN
+register_rest_route(			apollo-login\src\API\AuthController.php:302	UNKNOWN
+register_rest_route(			apollo-login\src\API\AuthController.php:325	UNKNOWN
+register_rest_route(			apollo-login\src\API\QuizController.php:48	UNKNOWN
+register_rest_route(			apollo-login\src\API\QuizController.php:67	UNKNOWN
+register_rest_route(			apollo-login\src\API\QuizController.php:95	UNKNOWN
+register_rest_route(			apollo-login\src\API\QuizController.php:128	UNKNOWN
+register_rest_route(			apollo-login\src\API\SecurityController.php:44	UNKNOWN
+register_rest_route(			apollo-login\src\API\SecurityController.php:55	UNKNOWN
+add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );			apollo-login\src\Core\Plugin.php:64	UNKNOWN
+public function register_rest_routes(): void {			apollo-login\src\Core\Plugin.php:319	UNKNOWN
+register_rest_route($namespace, '/auth/token', array(			apollo-login\src\Security\JWTAuth.php:121	UNKNOWN
+register_rest_route($namespace, '/auth/token/refresh', array(			apollo-login\src\Security\JWTAuth.php:139	UNKNOWN
+register_rest_route($namespace, '/auth/token/revoke', array(			apollo-login\src\Security\JWTAuth.php:152	UNKNOWN
+register_rest_route($namespace, '/csp-report', array(			apollo-login\src\Security\SecurityHeaders.php:249	UNKNOWN
+ajax_nopriv:apollo_resend_verification	POST	nopriv	apollo-login\src\Auth\EmailVerification.php:48	UNKNOWN
+ajax_nopriv:apollo_login	POST	nopriv	apollo-login\src\Auth\LoginHandler.php:31	UNKNOWN
+ajax_nopriv:apollo_auth_nonce	POST	nopriv	apollo-login\src\Auth\LoginHandler.php:34	UNKNOWN
+ajax_nopriv:apollo_forgot_password	POST	nopriv	apollo-login\src\Auth\PasswordReset.php:32	UNKNOWN
+ajax_nopriv:apollo_reset_confirm	POST	nopriv	apollo-login\src\Auth\PasswordReset.php:34	UNKNOWN
+ajax_nopriv:apollo_register	POST	nopriv	apollo-login\src\Auth\RegisterHandler.php:33	UNKNOWN
+ajax_nopriv:apollo_validate_cpf	POST	nopriv	apollo-login\src\Auth\RegisterHandler.php:44	UNKNOWN
+ajax_nopriv:apollo_auth_debug_log	POST	nopriv	apollo-login\src\Auth\RegisterHandler.php:48	UNKNOWN
+shortcode:apollo_login	N/A	N/A	apollo-login\src\Core\Plugin.php:339	UNKNOWN
+shortcode:apollo_register	N/A	N/A	apollo-login\src\Core\Plugin.php:340	UNKNOWN
+shortcode:apollo_quiz	N/A	N/A	apollo-login\src\Core\Plugin.php:341	UNKNOWN
+shortcode:apollo_simon	N/A	N/A	apollo-login\src\Core\Plugin.php:342	UNKNOWN
+shortcode:apollo_password_reset	N/A	N/A	apollo-login\src\Core\Plugin.php:343	UNKNOWN
+shortcode:apollo_verify_email	N/A	N/A	apollo-login\src\Core\Plugin.php:344	UNKNOWN
+shortcode	N/A	N/A	apollo-lux-panels\apollo-lux-panels.php:33	UNKNOWN
+add_action('rest_api_init', [$this, 'register_rest_routes']);			apollo-maps\src\Plugin.php:59	UNKNOWN
+public function register_rest_routes(): void			apollo-maps\src\Plugin.php:141	UNKNOWN
+register_rest_route(			apollo-maps\src\API\ExplorerController.php:28	UNKNOWN
+shortcode	N/A	N/A	apollo-maps\apollo-maps.php:40	UNKNOWN
+shortcode:apollo_maps	N/A	N/A	apollo-maps\src\Shortcodes\MapShortcode.php:22	UNKNOWN
+add_action('rest_api_init', array($this, 'register_rest_routes'));			apollo-membership\src\Plugin.php:87	UNKNOWN
+public function register_rest_routes(): void			apollo-membership\src\Plugin.php:225	UNKNOWN
+register_rest_route(			apollo-membership\src\API\AchievementsController.php:35	UNKNOWN
+register_rest_route(			apollo-membership\src\API\AchievementsController.php:62	UNKNOWN
+register_rest_route(			apollo-membership\src\API\AchievementsController.php:79	UNKNOWN
+register_rest_route(			apollo-membership\src\API\AchievementsController.php:106	UNKNOWN
+register_rest_route(			apollo-membership\src\API\AchievementsController.php:128	UNKNOWN
+register_rest_route(			apollo-membership\src\API\AchievementsController.php:155	UNKNOWN
+register_rest_route(			apollo-membership\src\API\AchievementsController.php:177	UNKNOWN
+register_rest_route(			apollo-membership\src\API\LeaderboardController.php:31	UNKNOWN
+register_rest_route(			apollo-membership\src\API\LeaderboardController.php:48	UNKNOWN
+register_rest_route(			apollo-membership\src\API\LeaderboardController.php:65	UNKNOWN
+register_rest_route(			apollo-membership\src\API\LeaderboardController.php:82	UNKNOWN
+register_rest_route(			apollo-membership\src\API\LeaderboardController.php:99	UNKNOWN
+register_rest_route(			apollo-membership\src\API\PointsController.php:33	UNKNOWN
+register_rest_route(			apollo-membership\src\API\PointsController.php:50	UNKNOWN
+register_rest_route(			apollo-membership\src\API\PointsController.php:82	UNKNOWN
+register_rest_route(			apollo-membership\src\API\PointsController.php:109	UNKNOWN
+register_rest_route(			apollo-membership\src\API\PointsController.php:136	UNKNOWN
+register_rest_route(			apollo-membership\src\API\RanksController.php:32	UNKNOWN
+register_rest_route(			apollo-membership\src\API\RanksController.php:42	UNKNOWN
+register_rest_route(			apollo-membership\src\API\RanksController.php:59	UNKNOWN
+register_rest_route(			apollo-membership\src\API\RanksController.php:76	UNKNOWN
+register_rest_route(			apollo-membership\src\API\ReportController.php:53	UNKNOWN
+register_rest_route(			apollo-membership\src\API\TriggersController.php:29	UNKNOWN
+shortcode	N/A	N/A	apollo-membership\apollo-membership.php:48	UNKNOWN
+shortcode:apollo_achievement	N/A	N/A	apollo-membership\includes\shortcodes\apollo-achievement-single.php:108	UNKNOWN
+shortcode:apollo_achievements	N/A	N/A	apollo-membership\includes\shortcodes\apollo-achievements-list.php:106	UNKNOWN
+shortcode:apollo_evidence	N/A	N/A	apollo-membership\includes\shortcodes\apollo-evidence.php:95	UNKNOWN
+shortcode:apollo_leaderboard	N/A	N/A	apollo-membership\includes\shortcodes\apollo-leaderboard.php:96	UNKNOWN
+shortcode:apollo_points	N/A	N/A	apollo-membership\includes\shortcodes\apollo-points.php:107	UNKNOWN
+shortcode:apollo_rank	N/A	N/A	apollo-membership\includes\shortcodes\apollo-rank-single.php:79	UNKNOWN
+shortcode:apollo_ranks	N/A	N/A	apollo-membership\includes\shortcodes\apollo-ranks.php:75	UNKNOWN
+shortcode:apollo_user_achievements	N/A	N/A	apollo-membership\includes\shortcodes\apollo-user-achievements.php:88	UNKNOWN
+shortcode:apollo_user_rank	N/A	N/A	apollo-membership\includes\shortcodes\apollo-user-rank.php:79	UNKNOWN
+add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );			apollo-mod\src\Plugin.php:37	UNKNOWN
+public function register_rest_routes(): void {			apollo-mod\src\Plugin.php:48	UNKNOWN
+register_rest_route(			apollo-mod\src\Plugin.php:54	UNKNOWN
+register_rest_route(			apollo-mod\src\Plugin.php:70	UNKNOWN
+register_rest_route(			apollo-mod\src\Plugin.php:82	UNKNOWN
+register_rest_route(			apollo-mod\src\Plugin.php:94	UNKNOWN
+register_rest_route(			apollo-mod\src\Plugin.php:106	UNKNOWN
+register_rest_route(			apollo-mod\src\Plugin.php:116	UNKNOWN
+register_rest_route(			apollo-mod\src\Plugin.php:127	UNKNOWN
+shortcode	N/A	N/A	apollo-mod\apollo-mod.php:37	UNKNOWN
+add_action('rest_api_init', array($this, 'register_rest_routes'));			apollo-notif\src\Plugin.php:48	UNKNOWN
+public function register_rest_routes(): void			apollo-notif\src\Plugin.php:153	UNKNOWN
+register_rest_route(			apollo-notif\src\Plugin.php:157	UNKNOWN
+register_rest_route(			apollo-notif\src\Plugin.php:199	UNKNOWN
+register_rest_route(			apollo-notif\src\Plugin.php:211	UNKNOWN
+register_rest_route(			apollo-notif\src\Plugin.php:223	UNKNOWN
+register_rest_route(			apollo-notif\src\Plugin.php:235	UNKNOWN
+register_rest_route(			apollo-notif\src\Plugin.php:257	UNKNOWN
+register_rest_route(			apollo-notif\src\Plugin.php:270	UNKNOWN
+register_rest_route(			apollo-notif\src\Plugin.php:283	UNKNOWN
+register_rest_route(			apollo-notif\src\Plugin.php:296	UNKNOWN
+register_rest_route(			apollo-notif\src\Plugin.php:319	UNKNOWN
+register_rest_route(			apollo-notif\src\Plugin.php:338	UNKNOWN
+register_rest_route(			apollo-notif\src\Plugin.php:362	UNKNOWN
+register_rest_route(			apollo-notif\src\Plugin.php:381	UNKNOWN
+shortcode	N/A	N/A	apollo-notif\apollo-notif.php:38	UNKNOWN
+shortcode:apollo_notif	N/A	N/A	apollo-notif\src\Plugin.php:534	UNKNOWN
+shortcode:apollo_notif_badge	N/A	N/A	apollo-notif\src\Plugin.php:535	UNKNOWN
+apollo/v1/pane/plugins			apollo-pane-engine\includes\fragment-helper.php:126	UNKNOWN
+apollo/v1/pane/fragment			apollo-pane-engine\includes\fragment-helper.php:166	UNKNOWN
+apollo/v1/pane/section/(?P<slug>[a-z0-9-]+)			apollo-pane-engine\includes\section-renderer.php:17	UNKNOWN
+apollo/v1/pane/section/chat-thread/(?P<thread_id>\d+)			apollo-pane-engine\includes\section-renderer.php:36	UNKNOWN
+apollo/v1/pane/section/			apollo-pane-engine\includes\section-renderer.php:75	UNKNOWN
+shortcode	N/A	N/A	apollo-pane-engine\apollo-pane-engine.php:37	UNKNOWN
+register_rest_route( $this->namespace, '/' . $this->rest_base . '/status', [			apollo-radio\src\API\RadioController.php:34	UNKNOWN
+register_rest_route( $this->namespace, '/' . $this->rest_base . '/now', [			apollo-radio\src\API\RadioController.php:43	UNKNOWN
+register_rest_route( $this->namespace, '/' . $this->rest_base . '/playlist', [			apollo-radio\src\API\RadioController.php:52	UNKNOWN
+register_rest_route( $this->namespace, '/' . $this->rest_base . '/stream', [			apollo-radio\src\API\RadioController.php:68	UNKNOWN
+shortcode	N/A	N/A	apollo-radio\apollo-radio.php:35	UNKNOWN
+shortcode:apollo_radio	N/A	N/A	apollo-radio\src\Shortcode\RadioShortcode.php:19	UNKNOWN
+register_rest_route( $this->namespace, '/remind/push/subscribe', [			apollo-remind\src\API\PushController.php:18	UNKNOWN
+register_rest_route( $this->namespace, '/remind/push/unsubscribe', [			apollo-remind\src\API\PushController.php:25	UNKNOWN
+register_rest_route( $this->namespace, '/remind/push/vapid-key', [			apollo-remind\src\API\PushController.php:32	UNKNOWN
+register_rest_route( $this->namespace, '/remind', [			apollo-remind\src\API\RemindersController.php:14	UNKNOWN
+register_rest_route( $this->namespace, '/remind', [			apollo-remind\src\API\RemindersController.php:26	UNKNOWN
+register_rest_route( $this->namespace, '/remind/(?P<id>\d+)', [			apollo-remind\src\API\RemindersController.php:33	UNKNOWN
+register_rest_route( $this->namespace, '/remind/(?P<id>\d+)', [			apollo-remind\src\API\RemindersController.php:40	UNKNOWN
+register_rest_route( $this->namespace, '/remind/(?P<id>\d+)', [			apollo-remind\src\API\RemindersController.php:47	UNKNOWN
+register_rest_route( $this->namespace, '/remind/calendar', [			apollo-remind\src\API\RemindersController.php:54	UNKNOWN
+register_rest_route( $this->namespace, '/remind/telegram/link', [			apollo-remind\src\API\RemindersController.php:65	UNKNOWN
+register_rest_route( $this->namespace, '/remind/telegram/status', [			apollo-remind\src\API\RemindersController.php:72	UNKNOWN
+register_rest_route( $this->namespace, '/remind/channels', [			apollo-remind\src\API\RemindersController.php:79	UNKNOWN
+register_rest_route( $this->namespace, '/remind/telegram/webhook', [			apollo-remind\src\API\TelegramWebhook.php:23	UNKNOWN
+shortcode	N/A	N/A	apollo-remind\apollo-remind.php:35	UNKNOWN
+add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );			apollo-scheduler\src\Plugin.php:46	UNKNOWN
+public function register_rest_routes(): void {			apollo-scheduler\src\Plugin.php:101	UNKNOWN
+register_rest_route(			apollo-scheduler\src\API\AvailabilityController.php:24	UNKNOWN
+register_rest_route(			apollo-scheduler\src\API\AvailabilityController.php:37	UNKNOWN
+register_rest_route(			apollo-scheduler\src\API\BookingController.php:27	UNKNOWN
+register_rest_route(			apollo-scheduler\src\API\BookingController.php:49	UNKNOWN
+register_rest_route(			apollo-scheduler\src\API\ICalController.php:23	UNKNOWN
+register_rest_route(			apollo-scheduler\src\API\ManagerController.php:26	UNKNOWN
+register_rest_route(			apollo-scheduler\src\API\ManagerController.php:38	UNKNOWN
+register_rest_route(			apollo-scheduler\src\API\ManagerController.php:56	UNKNOWN
+shortcode	N/A	N/A	apollo-scheduler\apollo-scheduler.php:38	UNKNOWN
+shortcode:apollo_scheduler_book	N/A	N/A	apollo-scheduler\src\Frontend\BookingWizard.php:19	UNKNOWN
+shortcode:apollo_scheduler_manager	N/A	N/A	apollo-scheduler\src\Frontend\ManagerCalendar.php:19	UNKNOWN
+shortcode	N/A	N/A	apollo-seed-runner\apollo-seed-runner.php:45	UNKNOWN
+add_action( 'rest_api_init', array( self::class, 'register_rest_routes' ) );			apollo-seo\src\Plugin.php:123	UNKNOWN
+public static function register_rest_routes(): void {			apollo-seo\src\Plugin.php:444	UNKNOWN
+register_rest_route(			apollo-seo\src\Plugin.php:447	UNKNOWN
+register_rest_route(			apollo-seo\src\Plugin.php:463	UNKNOWN
+register_rest_route(			apollo-seo\src\Plugin.php:479	UNKNOWN
+add_action('rest_api_init', array($this, 'register_rest_routes'));			apollo-sheets\src\Plugin.php:56	UNKNOWN
+public function register_rest_routes(): void			apollo-sheets\src\Plugin.php:204	UNKNOWN
+register_rest_route(			apollo-sheets\src\API\SheetsController.php:40	UNKNOWN
+register_rest_route(			apollo-sheets\src\API\SheetsController.php:60	UNKNOWN
+register_rest_route(			apollo-sheets\src\API\SheetsController.php:100	UNKNOWN
+register_rest_route(			apollo-sheets\src\API\SheetsController.php:121	UNKNOWN
+register_rest_route(			apollo-sheets\src\API\SheetsController.php:135	UNKNOWN
+register_rest_route(			apollo-sheets\src\API\SheetsController.php:163	UNKNOWN
+shortcode	N/A	N/A	apollo-sheets\apollo-sheets.php:40	UNKNOWN
+shortcode:apollo-sheet	N/A	N/A	apollo-sheets\src\Shortcodes.php:24	UNKNOWN
+shortcode:apollo-sheet-info	N/A	N/A	apollo-sheets\src\Shortcodes.php:25	UNKNOWN
+register_rest_route(			apollo-sign\src\API\RequestController.php:39	UNKNOWN
+register_rest_route(			apollo-sign\src\API\RequestController.php:53	UNKNOWN
+register_rest_route(			apollo-sign\src\API\RequestController.php:66	UNKNOWN
+register_rest_route(			apollo-sign\src\API\SignController.php:35	UNKNOWN
+register_rest_route(			apollo-sign\src\API\SignController.php:53	UNKNOWN
+register_rest_route(			apollo-sign\src\API\SignController.php:71	UNKNOWN
+register_rest_route(			apollo-sign\src\API\SignController.php:89	UNKNOWN
+register_rest_route(			apollo-sign\src\API\SignController.php:107	UNKNOWN
+register_rest_route(			apollo-sign\src\API\SignController.php:155	UNKNOWN
+register_rest_route(			apollo-sign\src\API\VerifyController.php:46	UNKNOWN
+shortcode	N/A	N/A	apollo-sign\apollo-sign.php:39	UNKNOWN
+shortcode:apollo_signature_pad	N/A	N/A	apollo-sign\src\Plugin.php:56	UNKNOWN
+add_action('rest_api_init', array($this, 'register_rest_routes'));			apollo-social\src\Plugin.php:49	UNKNOWN
+public function register_rest_routes(): void			apollo-social\src\Plugin.php:81	UNKNOWN
+register_rest_route(			apollo-social\src\Plugin.php:85	UNKNOWN
+register_rest_route(			apollo-social\src\Plugin.php:111	UNKNOWN
+register_rest_route(			apollo-social\src\Plugin.php:123	UNKNOWN
+register_rest_route(			apollo-social\src\Plugin.php:136	UNKNOWN
+register_rest_route(			apollo-social\src\Plugin.php:147	UNKNOWN
+register_rest_route(			apollo-social\src\Plugin.php:166	UNKNOWN
+register_rest_route(			apollo-social\src\Plugin.php:179	UNKNOWN
+register_rest_route(			apollo-social\src\Plugin.php:201	UNKNOWN
+register_rest_route(			apollo-social\src\Plugin.php:213	UNKNOWN
+register_rest_route(			apollo-social\src\Plugin.php:235	UNKNOWN
+register_rest_route(			apollo-social\src\Plugin.php:264	UNKNOWN
+shortcode	N/A	N/A	apollo-social\apollo-social.php:38	UNKNOWN
+shortcode:apollo_feed	N/A	N/A	apollo-social\src\Plugin.php:583	UNKNOWN
+shortcode:apollo_follow_btn	N/A	N/A	apollo-social\src\Plugin.php:584	UNKNOWN
+shortcode:apollo_soundcloud	N/A	N/A	apollo-soundcloud\includes\render.php:170	UNKNOWN
+register_rest_route(			apollo-statistics\includes\class-rest-controller.php:34	UNKNOWN
+register_rest_route(			apollo-statistics\includes\class-rest-controller.php:54	UNKNOWN
+register_rest_route(			apollo-statistics\includes\class-rest-controller.php:66	UNKNOWN
+register_rest_route(			apollo-statistics\includes\class-rest-controller.php:78	UNKNOWN
+register_rest_route(			apollo-statistics\includes\class-rest-controller.php:106	UNKNOWN
+register_rest_route(			apollo-statistics\includes\class-rest-controller.php:132	UNKNOWN
+register_rest_route(			apollo-statistics\includes\class-rest-controller.php:143	UNKNOWN
+register_rest_route(			apollo-statistics\includes\class-rest-controller.php:174	UNKNOWN
+register_rest_route($this->namespace, '/' . $this->rest_base . '/(?P<user_id>\d+)', array(			apollo-statistics\src\API\ProfileController.php:32	UNKNOWN
+register_rest_route($this->namespace, '/' . $this->rest_base . '/visibility', array(			apollo-statistics\src\API\ProfileController.php:45	UNKNOWN
+register_rest_route($this->namespace, '/' . $this->rest_base . '/metrics', array(			apollo-statistics\src\API\StatsController.php:33	UNKNOWN
+register_rest_route($this->namespace, '/' . $this->rest_base . '/metric/(?P<slug>[a-z0-9_-]+)', array(			apollo-statistics\src\API\StatsController.php:42	UNKNOWN
+register_rest_route($this->namespace, '/' . $this->rest_base . '/metric/(?P<slug>[a-z0-9_-]+)/toggle', array(			apollo-statistics\src\API\StatsController.php:52	UNKNOWN
+register_rest_route($this->namespace, '/' . $this->rest_base . '/dashboard', array(			apollo-statistics\src\API\StatsController.php:67	UNKNOWN
+register_rest_route($this->namespace, '/' . $this->rest_base . '/profile/(?P<user_id>\d+)', array(			apollo-statistics\src\API\StatsController.php:77	UNKNOWN
+register_rest_route($this->namespace, '/' . $this->rest_base . '/pageview', array(			apollo-statistics\src\API\TrackController.php:38	UNKNOWN
+register_rest_route($this->namespace, '/' . $this->rest_base . '/click', array(			apollo-statistics\src\API\TrackController.php:48	UNKNOWN
+register_rest_route($this->namespace, '/' . $this->rest_base . '/session', array(			apollo-statistics\src\API\TrackController.php:58	UNKNOWN
+register_rest_route($this->namespace, '/' . $this->rest_base . '/event', array(			apollo-statistics\src\API\TrackController.php:68	UNKNOWN
+register_rest_route($this->namespace, '/' . $this->rest_base . '/radio', array(			apollo-statistics\src\API\TrackController.php:78	UNKNOWN
+register_rest_route($this->namespace, '/' . $this->rest_base . '/batch', array(			apollo-statistics\src\API\TrackController.php:88	UNKNOWN
+ajax_nopriv:apollo_get_user_stats_widget	POST	nopriv	apollo-statistics\includes\class-user-stats-widget.php:37	UNKNOWN
+shortcode:apollo_stats_widget	N/A	N/A	apollo-statistics\includes\class-reports.php:33	UNKNOWN
+shortcode:apollo_user_stats	N/A	N/A	apollo-statistics\includes\class-user-stats-widget.php:33	UNKNOWN
+apollo-telegram/v1/request-support-verification			apollo-telegram\docs\rest-mapping.md:87	UNKNOWN
+apollo-telegram/v1/verify-support-code			apollo-telegram\docs\rest-mapping.md:90	UNKNOWN
+apollo-telegram/v1/telegram			apollo-telegram\docs\rest-mapping.md:93	UNKNOWN
+apollo-telegram/v1/broadcast			apollo-telegram\docs\rest-mapping.md:96	UNKNOWN
+register_rest_route(			apollo-telegram\src\API\BaseEndpoint.php:51	UNKNOWN
+register_rest_route(			apollo-telegram\src\API\VerificationController.php:26	UNKNOWN
+register_rest_route(			apollo-telegram\src\API\VerificationController.php:48	UNKNOWN
+register_rest_route(			apollo-telegram\src\API\VerificationController.php:80	UNKNOWN
+register_rest_route(			apollo-telegram\src\API\VerificationController.php:107	UNKNOWN
+register_rest_route(			apollo-telegram\src\API\VerificationController.php:124	UNKNOWN
+register_rest_route(			apollo-telegram\src\API\VerificationController.php:146	UNKNOWN
+register_rest_route(			apollo-telegram\src\API\VerificationController.php:168	UNKNOWN
+shortcode	N/A	N/A	apollo-telegram\apollo-telegram.php:53	UNKNOWN
+shortcode	N/A	N/A	apollo-telegram\src\Shortcodes\ShortcodeManager.php:13	UNKNOWN
+shortcode	N/A	N/A	apollo-telegram\src\Shortcodes\ShortcodeManager.php:24	UNKNOWN
+register_rest_route(			apollo-templates\examples\user-radar-examples.php:208	UNKNOWN
+register_rest_route(			apollo-templates\examples\user-radar-examples.php:218	UNKNOWN
+add_action('rest_api_init', array($this, 'register_rest_routes'));			apollo-templates\includes\class-plugin.php:66	UNKNOWN
+public function register_rest_routes(): void			apollo-templates\includes\class-plugin.php:155	UNKNOWN
+register_rest_route(			apollo-templates\includes\class-plugin.php:158	UNKNOWN
+register_rest_route(			apollo-templates\includes\class-plugin.php:169	UNKNOWN
+register_rest_route(			apollo-templates\includes\class-plugin.php:180	UNKNOWN
+register_rest_route(			apollo-templates\includes\class-plugin.php:191	UNKNOWN
+ajax_nopriv:apollo_navbar_login	POST	nopriv	apollo-templates\apollo-templates.php:534	UNKNOWN
+ajax_nopriv:apollo_panel_login	POST	nopriv	apollo-templates\apollo-templates.php:568	UNKNOWN
+ajax_nopriv:apollo_suggest_event	POST	nopriv	apollo-templates\apollo-templates.php:637	UNKNOWN
+shortcode:apollo_user_badge	N/A	N/A	apollo-templates\examples\user-radar-examples.php:310	UNKNOWN
+shortcode:apollo_user_ranking	N/A	N/A	apollo-templates\examples\user-radar-examples.php:332	UNKNOWN
+shortcode:apollo_events	N/A	N/A	apollo-templates\includes\class-shortcodes.php:56	UNKNOWN
+shortcode:apollo_event	N/A	N/A	apollo-templates\includes\class-shortcodes.php:57	UNKNOWN
+shortcode:apollo_calendar	N/A	N/A	apollo-templates\includes\class-shortcodes.php:58	UNKNOWN
+shortcode:apollo_event_form	N/A	N/A	apollo-templates\includes\class-shortcodes.php:59	UNKNOWN
+shortcode	N/A	N/A	apollo-ui\README.md:154	UNKNOWN
+shortcode	N/A	N/A	apollo-ui\includes\shortcode.php:8	UNKNOWN
+shortcode	N/A	N/A	apollo-ui\includes\shortcode.php:149	UNKNOWN
+add_action('rest_api_init', array($this, 'register_rest_routes'));			apollo-users\src\Plugin.php:71	UNKNOWN
+public function register_rest_routes(): void			apollo-users\src\Plugin.php:169	UNKNOWN
+// Routes registered externally by Plugin::register_rest_routes()			apollo-users\src\API\ProfileController.php:35	UNKNOWN
+register_rest_route(			apollo-users\src\API\ProfileController.php:45	UNKNOWN
+register_rest_route(			apollo-users\src\API\ProfileController.php:56	UNKNOWN
+register_rest_route(			apollo-users\src\API\ProfileController.php:67	UNKNOWN
+register_rest_route(			apollo-users\src\API\ProfileController.php:78	UNKNOWN
+register_rest_route(			apollo-users\src\API\ProfileController.php:89	UNKNOWN
+// register_rest_route( $this->namespace, '/profile/match', [			apollo-users\src\API\ProfileController.php:106	UNKNOWN
+// register_rest_route( $this->namespace, '/profile/matches', [			apollo-users\src\API\ProfileController.php:122	UNKNOWN
+// Routes registered externally by Plugin::register_rest_routes()			apollo-users\src\API\UsersController.php:37	UNKNOWN
+register_rest_route(			apollo-users\src\API\UsersController.php:47	UNKNOWN
+register_rest_route(			apollo-users\src\API\UsersController.php:58	UNKNOWN
+register_rest_route(			apollo-users\src\API\UsersController.php:69	UNKNOWN
+register_rest_route(			apollo-users\src\API\UsersController.php:87	UNKNOWN
+register_rest_route(			apollo-users\src\API\UsersController.php:112	UNKNOWN
+register_rest_route(			apollo-users\src\API\UsersController.php:138	UNKNOWN
+register_rest_route(			apollo-users\src\API\UsersController.php:156	UNKNOWN
+register_rest_route(			apollo-users\src\API\UsersController.php:189	UNKNOWN
+register_rest_route(			apollo-users\src\API\UsersController.php:207	UNKNOWN
+register_rest_route(			apollo-users\src\API\UsersController.php:225	UNKNOWN
+register_rest_route(			apollo-users\src\API\UsersController.php:243	UNKNOWN
+register_rest_route(			apollo-users\src\API\UsersController.php:261	UNKNOWN
+register_rest_route(			apollo-users\src\API\UsersController.php:279	UNKNOWN
+register_rest_route(			apollo-users\src\API\UsersController.php:297	UNKNOWN
+register_rest_route(			apollo-users\src\API\UsersController.php:315	UNKNOWN
+register_rest_route(			apollo-users\src\API\UsersController.php:333	UNKNOWN
+shortcode	N/A	N/A	apollo-users\apollo-users.php:39	UNKNOWN
+shortcode:apollo_profile	N/A	N/A	apollo-users\src\Plugin.php:156	UNKNOWN
+shortcode:apollo_profile_edit	N/A	N/A	apollo-users\src\Plugin.php:157	UNKNOWN
+shortcode:apollo_radar	N/A	N/A	apollo-users\src\Plugin.php:158	UNKNOWN
+shortcode:apollo_user_card	N/A	N/A	apollo-users\src\Plugin.php:159	UNKNOWN
+shortcode:apollo_matchmaking	N/A	N/A	apollo-users\src\Plugin.php:160	UNKNOWN
+shortcode:apollo_profile_fields	N/A	N/A	apollo-users\src\Plugin.php:161	UNKNOWN
+add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );			apollo-wow\src\Plugin.php:36	UNKNOWN
+public function register_rest_routes(): void {			apollo-wow\src\Plugin.php:41	UNKNOWN
+register_rest_route(			apollo-wow\src\Plugin.php:47	UNKNOWN
+register_rest_route(			apollo-wow\src\Plugin.php:57	UNKNOWN
+register_rest_route(			apollo-wow\src\Plugin.php:74	UNKNOWN
+register_rest_route(			apollo-wow\src\Plugin.php:84	UNKNOWN
+shortcode	N/A	N/A	apollo-wow\apollo-wow.php:37	UNKNOWN
+shortcode:apollo_wow	N/A	N/A	apollo-wow\src\Plugin.php:146	UNKNOWN
+shortcode:apollo_wow_chart	N/A	N/A	apollo-wow\src\Plugin.php:147	UNKNOWN

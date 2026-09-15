@@ -149,10 +149,11 @@
   "architecture": {
     "principle": "Each plugin = ONE focused responsibility. Connected via apollo-core hooks.",
     "master_registry": "apollo-core owns ALL CPT/Taxonomy/Meta/Table definitions - GLOBAL BRIDGE",
-    "total_plugins": 46,
+    "total_plugins": 48,
     "layers": {
       "L0_foundation": [
-        "apollo-core"
+        "apollo-core",
+        "apollo-shortcodes"
       ],
       "L1_auth": [
         "apollo-login",
@@ -162,6 +163,7 @@
       "L2_content": [
         "apollo-adverts",
         "apollo-calendar",
+        "apollo-classifieds",
         "apollo-dj-sync",
         "apollo-djs",
         "apollo-events",
@@ -195,6 +197,7 @@
         "apollo-dashboard",
         "apollo-hub",
         "apollo-radio",
+        "apollo-soundcloud",
         "apollo-pane-engine"
       ],
       "L7_admin": [
@@ -222,19 +225,27 @@
       "L13_pagebuilder": [
         "apollo-elementor",
         "apollo-elementor-pro"
+      ],
+      "L14_tooling": [
+        "apollo-seed-runner"
       ]
     },
-    "total_plugins_on_disk": 40,
+    "total_plugins_on_disk": 42,
     "total_plugins_absent": 6,
     "$layers_absent_from_disk": [
       "apollo-cena",
+      "apollo-classifieds",
       "apollo-pwa",
       "apollo-runtime",
+      "apollo-shortcodes",
       "apollo-suppliers"
     ],
     "$layer_notes": {
       "apollo-lux-panels": "L7_admin — admin metabox input surface for event/dj/local, not a page builder.",
-      "L8_industry / L9_pwa / L12_runtime": "Contain only plugins absent from disk; layers are currently empty in practice."
+      "L8_industry / L9_pwa / L12_runtime": "Contain only plugins absent from disk; layers are currently empty in practice.",
+      "apollo-classifieds": "L2_content — absorbed into apollo-adverts; entry kept, folder absent.",
+      "apollo-shortcodes": "L0_foundation — absorbed into apollo-core; entry kept, folder absent.",
+      "L14_tooling": "Maintenance/dev utilities that are real activated plugins but carry no product surface."
     }
   },
   "plugins": {
@@ -2958,7 +2969,8 @@
         "marketplace"
       ],
       "cpts": [
-        "classified"
+        "classified",
+        "hostel"
       ],
       "taxonomies": [],
       "tables": [],
@@ -3255,7 +3267,7 @@
           "apollo/core/initialized"
         ]
       },
-      "version": "1.0.6",
+      "version": "1.2.2",
       "cron": [],
       "hooks_fired": [
         "apollo/adverts/form/load",
@@ -5020,6 +5032,44 @@
           "registry/09-plugins/{apollo-adverts,apollo-events,apollo-social,apollo-classifieds}.json"
         ],
         "finding_5_schema_drift": "REAL finding surfaced by the above: pages[] has NO consistent shape across chapters. apollo-events and apollo-adverts use 'route'; apollo-social uses 'slug' plus a 'type' discriminator (virtual | redirect_301) and an uppercase 'NOTE'. Any audit that greps one key silently misses the other half of the ecosystem — which is exactly what happened here. Worth normalising to one shape before phases 004-011 add nine more screens, or every future compliance check inherits the same blind spot."
+      },
+      "$rest_pii_leak_closed_2026_08_17": {
+        "date": "2026-08-17",
+        "action": "SECURITY_FIX",
+        "severity": "HIGH — live PII disclosure to anonymous callers.",
+        "finding": "ClassifiedsController::prepare_item() looped APOLLO_ADVERTS_META_KEYS and returned EVERY key, with no allow-list and no login check, while GET /apollo/v1/classifieds carries permission_callback => '__return_true'. That set contains _classified_contact_phone and _classified_contact_whatsapp. Lines 355-356 additionally returned 'author' (user id) and 'author_name' (display_name). So an anonymous GET /wp-json/apollo/v1/classifieds returned every seller's phone number, WhatsApp, user id and display name.",
+        "why_it_survived": "$seller_privacy_leak_fix_2026_07_28 addressed exactly this disclosure and hardened FIVE TEMPLATES — card-accommodation, card-ticket, list-item, single-classified, single — then stopped. A template is one consumer of this data; the API is every other one. This is the canonical shape of a fix applied at the render layer instead of the data layer.",
+        "fix": {
+          "new_constant": "APOLLO_ADVERTS_MEMBER_ONLY_META in includes/constants.php — the READ-side counterpart to APOLLO_ADVERTS_ADMIN_ONLY_META, which had only ever guarded the WRITE boundary. That asymmetry was the whole defect.",
+          "redaction": "prepare_item() computes $is_member once, blanks member-only meta values for guests, and returns author => 0 / author_name => '' for guests.",
+          "shape_preserved_deliberately": "Values are blanked, NOT removed. A consumer reading $item['author_name'] keeps working and gets nothing, where a missing key would throw. Guests could never render identity anyway — the templates already withhold it.",
+          "not_hostel_exempt": "A hostel listing is deliberately public, but that means its title, price, image and booking URL. It never means a person's phone number."
+        },
+        "verified_clean": "SearchController::prepare_search_item() was checked and is already safe — it returns id/title/excerpt/link/image/price/location/condition/is_featured/date, with no author and no contact meta. The leak was confined to ClassifiedsController.",
+        "still_open": "GET /classifieds returns every published advert to guests regardless of hostel status. Restricting the guest SCOPE (hostel inventory only) is Phase B2 of _inventory/PLAN-outnow-and-hostel.md and is gated on an open decision. This entry closes the DISCLOSURE, not the scope.",
+        "files": [
+          "includes/constants.php",
+          "src/API/ClassifiedsController.php",
+          "apollo-adverts.php (version bump 1.1.0 -> 1.1.1)"
+        ]
+      },
+      "$moderation_setting_never_worked_2026_08_17": {
+        "date": "2026-08-17",
+        "action": "BUG_FIX",
+        "finding": "apollo_adverts_config() declared the default key 'moderate_new' => false. NOTHING reads that key. Every actual consumer asks for 'moderation' and compares it to the string 'manual': src/API/ClassifiedsController.php:181, includes/shortcodes/apollo-classified-form.php:74 and :92, templates/admin/settings.php:72-73. Both writers store 'auto'|'manual' — src/Activation.php:44 and templates/admin/settings.php:23.",
+        "effect": "On any install where the option row lacked a value, the read was an undefined-key warning evaluating to null, null is never 'manual', and every advert went straight to publish. MANUAL MODERATION COULD NOT BE SWITCHED ON.",
+        "second_bug_same_family": "templates/form.php:95 read the same setting as `(bool) $settings['moderation']`. (bool) 'auto' is TRUE, so the form promised EVERY user 'Seu anúncio será revisado antes de ser publicado' — including on the default setting where it publishes instantly. A user-facing false statement. Now compares to 'manual' and reads through apollo_adverts_config() so it inherits the default.",
+        "fix": "Defaults array now declares 'moderation' => 'auto', aligning it with both writers and all four readers. The dead 'moderate_new' key is gone.",
+        "files": [
+          "includes/functions.php",
+          "templates/form.php"
+        ]
+      },
+      "$version_synced": {
+        "date": "2026-08-31",
+        "from": "1.1.1",
+        "to": "1.2.2",
+        "source": "disk constant; docblock said 1.2.0 while APOLLO_ADVERTS_VERSION said 1.2.2 — docblock corrected to 1.2.2 in the same pass"
       }
     },
     "apollo-calendar": {
@@ -5941,7 +5991,7 @@
       "namespace": "Apollo\\Chat",
       "priority": 3,
       "status": "IMPLEMENTED",
-      "version": "2.0.1",
+      "version": "2.0.12",
       "description": "Premium instant messaging — real-time polling, typing indicators, read receipts, file/voice attachments, emoji reactions, message editing, reply-to threading, search, groups, user presence, notifications, mute/unmute, pinned messages, message forwarding, user info panels.",
       "dependencies": [
         "apollo-core",
@@ -8332,6 +8382,12 @@
           "apollo_chat_typing"
         ],
         "shortcodes_found": []
+      },
+      "$version_synced": {
+        "date": "2026-08-31",
+        "from": "2.0.1",
+        "to": "2.0.12",
+        "source": "disk docblock via doctor.js"
       }
     },
     "apollo-classifieds": {
@@ -8550,7 +8606,7 @@
           "_source": "deep_live_scan"
         }
       ],
-      "version": "1.0.1",
+      "version": "1.0.2",
       "ajax": {
         "priv": [],
         "nopriv": []
@@ -9219,6 +9275,12 @@
           "apollo_coauthor_count",
           "apollo_coauthors"
         ]
+      },
+      "$version_synced": {
+        "date": "2026-08-31",
+        "from": "1.0.1",
+        "to": "1.0.2",
+        "source": "disk docblock via doctor.js"
       }
     },
     "apollo-comment": {
@@ -10741,7 +10803,7 @@
         }
       ],
       "shortcodes": [],
-      "version": "6.2.6",
+      "version": "6.6.0",
       "ajax": {
         "priv": [],
         "nopriv": []
@@ -15516,6 +15578,257 @@
           "src/Core/MetaRegistry.php",
           "apollo-core.php (version bump 6.2.5 -> 6.2.6)"
         ]
+      },
+      "$card_contract_2026_08_17": {
+        "date": "2026-08-17",
+        "action": "CONTRACT_ADDED",
+        "file": "includes/card-contract.php",
+        "what": "The sibling of the Surface Contract. A SURFACE is the full single page opened in place; a CARD is the repeated small representation of one item inside a list, grid, rail or embed. apollo_card_register() / apollo_card_get() / apollo_card_render() / apollo_card_render_many() / apollo_card_styles_once().",
+        "why_measured_not_asserted": {
+          "accommodation_card_exists_4x": "apollo-adverts/templates/marketplace/parts/card-accommodation.php (.accom-*), apollo-adverts/templates/list-item.php (.resale-ticket), apollo-templates/.../new-home/crash.php (.nh-mq-card), apollo-dashboard/.../panel-feed.php (.ap-accom-embed). Completely different DOM, no shared partial, no shared class contract.",
+          "cross_plugin_cardinal_sin": "apollo-dashboard/.../dashboard/styles.php redeclares the BARE selectors .accom-badge (:800), .accom-title (:869) and .accom-price (:917), which apollo-adverts' _accommodation.css already owns. Two owners for one selector across two plugins — whichever loads last silently wins.",
+          "out_now_exists_5x": "parts/dj-card/out-now.php, styles/base/template-parts/single/sound.php, apollo-templates new-home/tracks.php, plus orphans parts/dj-v3/sounds.php and apollo-hub/templates/home/partials/tracks.php. Three different data shapes.",
+          "worst_one": "The live marketplace renders accommodation cards with NO CARD CSS AT ALL. archive-classified.php:10 deliberately stopped linking marketplace.css (which imports _accommodation.css) and the only head payload, parts/mk/styles.php, styles the grid but not the card. Meanwhile parts/mk/styles.php:42-71 styles a .mk-ticket*/.mk-ac* vocabulary that NO template emits, and .is-locked / .btn-accom--hostel — which templates DO emit — have zero CSS anywhere."
+        },
+        "why_a_registry_and_not_a_shortcode": "Shortcodes and get_template_part() conventions both already existed in this ecosystem and neither prevented four divergent copies, because neither gives a card a SINGLE OWNER or a STYLE LEDGER. A registry turns 'there is exactly one accommodation card' from a habit into a checkable fact.",
+        "the_style_ledger_is_the_point": "apollo_card_render() emits the card's stylesheet the first time that card type is rendered in a request and never again (static $printed, same mechanism as apollo_event_lightbox_state()). This is what makes 'the CSS is not loaded on this screen' structurally impossible — the consumer never had to know the card had styles, so it cannot forget to enqueue them.",
+        "safety_properties": [
+          "DORMANT-SAFE — apollo_card_get() returns null unless the renderer is callable right now, so a screen can be written against a card before that card exists and lights up when the callable appears. Mirrors apollo_surface_get().",
+          "NEVER CLOBBERS — a second registration for a live type is ignored unless $replace is passed explicitly. Losing silently would reintroduce the exact fight this file ends.",
+          "UNKNOWN VARIANT DEGRADES — a typo falls back to the first declared variant rather than rendering '', because an empty string inside a grid reads as 'no results' rather than as a defect.",
+          "EMPTY RENDERER EMITS NOTHING — the '' check runs BEFORE the style call, so a declining renderer cannot leak a bare <style> tag into a grid.",
+          "REGISTERS NOTHING — no CPT, taxonomy, meta key or table. apollo-core's existing registries remain the only place those happen (02-header.CRITICAL_apollo_core_centralization)."
+        ],
+        "verification": "13 behaviours simulated and passed in the sandbox (dormant -> lights up, ledger emits once, variant fallback, no-clobber, explicit replace, bad id, unknown type, empty renderer). Brace structure confirmed balanced: 6 function_exists blocks. No PHP binary in this environment, so php -l is unrun.",
+        "guarded_by": "apollo-events harness E26 — asserts all five functions exist, the dormant gate, the clobber guard, the print-once ledger, that the file registers no CPT/meta, that apollo-core.php requires it, and that the docblock and APOLLO_CORE_VERSION agree.",
+        "consumers": "NONE YET — deliberately. Adoption by the accommodation and track cards is Phase A4/B3 of _inventory/PLAN-outnow-and-hostel.md and is gated on open decisions.",
+        "files": [
+          "includes/card-contract.php (new)",
+          "apollo-core.php (require + version bump 6.2.9 -> 6.3.0)"
+        ]
+      },
+      "$track_and_hostel_cpts_2026_08_17": {
+        "date": "2026-08-17",
+        "action": "CPTS_REGISTERED",
+        "decided_by": "operator, 2026-08-17",
+        "cpt_count": "14 -> 16 unique across the ecosystem (16-summary.total_cpts_unique updated, all_cpt_slugs updated).",
+        "track": {
+          "slug": "track",
+          "rewrite": "/track/{slug}",
+          "archive": "/tracks",
+          "rest_base": "tracks",
+          "owner": "apollo-djs",
+          "supports": "title, editor, thumbnail, AUTHOR",
+          "supersedes": "_dj_tracks — array-of-object post meta on the dj CPT, schema v2.",
+          "why_a_cpt_and_not_a_repeater": [
+            "AUTHORSHIP. 'DJs add, author automatic' is post_author, a post-level fact. A meta row on someone else's post has no author and cannot be given one.",
+            "FRONTEND EDITING WAS STRUCTURALLY IMPOSSIBLE. apollo-templates FrontendEditor::sanitize_field() (:900) returns string and has no array branch, so a repeater can never be edited from the front end. Flat scalars on a post need nothing new from the editor — which is why every track meta key registered here is a scalar.",
+            "A RELEASE CREDITS MORE THAN ONE ARTIST. Meta on one DJ cannot express a B2B or a remix without duplicating the row onto both, and two copies drift. _track_dj_ids mirrors _event_dj_ids.",
+            "THE ARCHIVE WAS ALREADY LINKED. apollo-templates new-home/tracks.php pointed at a releases archive that existed nowhere in the tree."
+          ],
+          "genre_decision": "Genre is a `sound` TERM, not a string. The taxonomy already exists and is already what the DJ surface filters on; registering a second genre vocabulary would fork it. _track_genre_legacy carries the v2 freeform value through migration only and is then retired.",
+          "migration_contract": "_dj_tracks stays registered and readable. apollo_dj_get_tracks() will merge CPT rows with legacy meta rows, de-duplicated via _track_migrated_from, so nothing on screen changes the day this ships. Operator chose: migrate to CPT posts, keep meta readable."
+        },
+        "hostel": {
+          "slug": "hostel",
+          "rewrite": "/hostel/{slug}",
+          "archive": "/hostels",
+          "rest_base": "hostels",
+          "owner": "apollo-adverts",
+          "relation": "_classified_hostel_id (integer) on the `classified` CPT. An advert belongs EITHER to a member (post_author) OR to an official hostel — never both.",
+          "admin_only_enforced_at_the_write_boundary": "_classified_hostel_id was added to APOLLO_ADVERTS_ADMIN_ONLY_META, which branches the register_meta auth_callback to manage_options. So the CPT's generic REST meta endpoint refuses it too, not just the admin UI — the same enforcement the _classified_hostel boolean already had, and for the same reason: the relation decides whether a listing bypasses the auth gate and is shown to the whole internet.",
+          "supersedes": "the _classified_hostel boolean, retained as a read fallback for one release. The boolean could mark a listing official but could not answer 'show me THIS hostel's page'.",
+          "kept_deliberately_thin": "`local` already registers address, coords and gallery meta. The hostel map carries only _hostel_url, _hostel_loc_id, _hostel_contact, _hostel_check_in, _hostel_check_out — a hostel needing a map or gallery relates to a `local` through _hostel_loc_id rather than re-registering those keys. Two copies of address meta is exactly the divergence 09-plugins/apollo-adverts.json flags at $accommodation_meta_and_depoimentos_2026_07_28.",
+          "note_on_the_recommendation_not_taken": "The plan recommended modelling a hostel AS a `local` post. The operator chose a dedicated CPT on the grounds that a hostel is a distinct business entity from a venue. Recorded so the next reader knows it was a decision, not an oversight; _hostel_loc_id is the seam that keeps the two from duplicating meta."
+        },
+        "OPERATOR_ACTION_REQUIRED": "PERMALINKS MUST BE FLUSHED. Both CPTs add rewrite rules, and rules are cached. Until Settings -> Permalinks -> Save is run (or apollo_route_setup_version is bumped in the apollo-route-setup mu-plugin, per 14-routing.json), /track/{slug}, /tracks, /hostel/{slug} and /hostels all 404. Nothing else about this change is visible until then, which is also why it is safe to deploy ahead of the UI.",
+        "not_yet_built": "No renderer, no card, no migration script, no query gating, no admin UI beyond the stock post editor. This entry registers the shapes only. Phases A3-A5 and B2-B4 of _inventory/PLAN-outnow-and-hostel.md.",
+        "files": [
+          "config/cpts.php",
+          "src/Core/MetaRegistry.php",
+          "apollo-djs/src/Registry.php (owner registration for track)",
+          "apollo-adverts/includes/constants.php (admin-only relation)",
+          "registry/16-summary.json (cpt count 14 -> 16)"
+        ]
+      },
+      "$cpt_registration_ground_truth_audit_2026_08_17": {
+        "date": "2026-08-17",
+        "action": "AUDIT",
+        "method": "Every register_post_type() and register_taxonomy() call site read from PHP across all 40 plugin folders, constants resolved to literals, hook priorities traced. Registry JSON was read last and NOT trusted.",
+        "headline": "apollo-core ALWAYS wins the init:5 race, so EVERY owner-plugin CPT registration for a config-declared slug is unreachable dead code. Core adds its callback inside apollo_core_bootstrap() on plugins_loaded:1; every owner plugin boots at plugins_loaded:15. Same-priority init callbacks run in registration order, so core registers first and every owner's post_type_exists() guard returns early.",
+        "the_fallback_philosophy_is_not_implemented": "CPTRegistry::is_owner_active() (:92) — the function that would make 'fallback only when the owner is inactive' true — is defined and never called anywhere in apollo-core. The only gate is post_type_exists().",
+        "consequence": "register_cpt() (:143) takes only labels/public/rewrite/has_archive/menu_icon/supports/rest_base from config and hardcodes the rest. It never passes taxonomies, map_meta_cap, rest_namespace or exclude_from_search. So every owner arg outside that set is silently discarded on a live site.",
+        "live_divergences_measured": {
+          "apollo_sheet": "Owner wants show_ui:false, show_in_rest:false, no rest_base ('custom REST controller instead'). Core forces show_ui:true, show_in_menu:true, show_in_rest:true, rest_base 'sheets'. LIVE, apollo_sheet is exposed at /wp-json/wp/v2/sheets with the stock posts controller — the exact opposite of the owner's stated intent. Most consequential mismatch in the set.",
+          "track": "REGRESSION INTRODUCED TODAY. The owner registration added in $track_and_hostel_cpts_2026_08_17 passes taxonomies:[sound], and that registration never runs. config/taxonomies.php:24 sets $sound_cpts = ['event','dj'] with no 'track', so `sound` is NOT attached to track on a live site — contradicting the rationale written into config/cpts.php and into that registry entry. Fix: add 'track' to $sound_cpts.",
+          "classified": "Owner supports includes excerpt and comments; config declares four. comments is repaired by a deliberate patch at init:20 (apollo_adverts_add_comment_support). excerpt is NOT repaired and is silently absent.",
+          "doc": "Owner adds revisions and rest_namespace 'apollo/v1'. Live: no revisions, served at wp/v2/docs.",
+          "email_aprio": "Same rest_namespace loss — served at wp/v2/email-templates.",
+          "hub": "exclude_from_search:true is lost.",
+          "all_owners": "map_meta_cap:true is never set by core. Capability mapping is uniformly lost."
+        },
+        "count_correction": "17 unique CPTs, not 16. apollo_agent_log was missing from 16-summary.quick_lookup.all_cpt_slugs — it is declared at config/cpts.php:476 and registered by core's fallback, with no owner plugin registering it. Corrected in this pass.",
+        "hostel_has_no_owner_registration": "config/cpts.php declares hostel with owner apollo-adverts, but apollo-adverts contains zero hostel registration — the only match in the plugin is a comment. It exists solely via core's fallback. Same shape as `supplier` (whose plugin is not on disk) and `apollo_agent_log`.",
+        "cpts_outside_the_declaration_layer": "journal_news and journal_nota are registered by apollo-journal at init:4 and appear nowhere in config/cpts.php. They are unaffected by the race because they run earlier, but they sit outside the declaration layer entirely.",
+        "duplicate_registration_inside_one_plugin": "apollo-loc registers `local` twice: src/CPT/CPTRegistrar.php:29 (live, has_archive 'locais') and src/Registry.php:56 (DEAD — class never instantiated, has_archive 'local', and its own docblock claims rewrite='gps'/archive='gps'/rest_base='locals', three values that appear nowhere in its body). The same dead file duplicates the taxonomy registrations and a full metabox. Harmless only because nothing constructs it.",
+        "registry_chapters_corrected_this_pass": [
+          "16-summary.json — total_cpts_unique 16 -> 17; apollo_agent_log added to all_cpt_slugs",
+          "09-plugins/apollo-djs.json — cpts ['dj'] -> ['dj','track']",
+          "09-plugins/apollo-adverts.json — cpts ['classified'] -> ['classified','hostel']"
+        ],
+        "registry_defects_recorded_not_yet_fixed": [
+          "09-plugins/apollo-core.json MASTER_REGISTRY.cpts lists `loc`, which is NOT a post type (the slug is `local`). It omits track, hostel, local, apollo_sheet, appointment, service, resource, apollo_agent_log, and wrongly includes journal_news/journal_nota which core does not declare. Its taxonomies list has the same defect (loc_type/loc_area vs the real local_type/local_area).",
+          "09-plugins/apollo-membership.json cpts is [] while config names it owner of apollo_agent_log.",
+          "Per-plugin nested flags registered_locally:false / via_constant:true are a scanner artifact — every one of those plugins registers locally.",
+          "config/cpts.php docblock says 'All 9 Custom Post Types'; there are 15 keys."
+        ],
+        "one_word_bug_found": "apollo-coauthor/includes/constants.php:25 lists `loc` in APOLLO_COAUTHOR_POST_TYPES. There is no `loc` post type, so co-authors are silently unavailable on venues and register_taxonomy_for_object_type('coauthor','loc') targets nothing. config/taxonomies.php:23 gets it right, so this is a one-word fix.",
+        "full_plan": "_inventory/PLAN-cpt-and-admin-panels.md — includes four live production defects found while mapping (two fatal edit screens, ten debug beacons, an unguarded privilege, and a decorative event panel), the phased remediation, and a per-CPT readiness table."
+      },
+      "$cpt_plan_phase0_and_phase2_executed_2026_08_17": {
+        "date": "2026-08-17",
+        "action": "REMEDIATION_SHIPPED",
+        "scope": "PLAN-cpt-and-admin-panels.md Phase 0 in full, plus Phase 1-3, 1-5 and Phase 2-1..2-4. Phases 1-1/1-2/1-4 and 2-5..2-9 remain GATED on the five open decisions in §6 of that plan.",
+        "fatal_fixed": {
+          "what": "The DJ and Local edit screens threw a fatal on every load. Panel.php:323 did $cols = $f['opts']['cols'] unconditionally and then count($cols); _dj_name_lines (DjPanel) and _local_rooms (LocPanel) both declared type=>repeater with opts.fields and no opts.cols, so $cols was null and count(null) is a TypeError on PHP 8 — and the plugin requires 8.1.",
+          "fixed_twice_over": "Both declarations corrected to opts.cols with `name` keys, AND render_repeater()/save_repeater()/render_repeater_card()/save_repeater_card() now default a missing cols/fields to an empty array and return early. A schema defect must degrade to a missing field, never a dead screen.",
+          "note": "save_repeater() had the SAME unguarded access — the fatal existed on save as well as on load, which the original audit did not surface."
+        },
+        "silent_defects_fixed": {
+          "_dj_media_kit_stats": "repeater_card sub-fields used `key`; render_repeater_card_row() and save_repeater_card() both read `name`. Every input was named `_dj_media_kit_stats[][]` and the saver looked up $data[''] — the field rendered perfectly and NEVER persisted a value.",
+          "_dj_booking_status": "select opts were wrapped in a 'choices' key; render_field() iterates opts as a flat value => label map, so it emitted one <option value=\"choices\"> with an array as its label."
+        },
+        "debug_beacons_removed": {
+          "count": "Ten sites across five plugins — more than the audit's estimate of four.",
+          "client_side": "fetch() to http://127.0.0.1:7514 and :7623 in apollo-events (Admin/Metabox.php, apollo-events-create-wire.js, apollo-events-create-form.js), apollo-loc (GalleryMetabox.php) and apollo-templates (frontend-editor.js). These ran in every visitor's or editor's browser and are blocked mixed content on an HTTPS site.",
+          "server_side": "file_put_contents() to D:/dev/_livro.rvalle.com.br/… — an absolute path belonging to a DIFFERENT project on one developer's machine — in apollo-lux-panels/Panel.php, apollo-events includes/functions.php (x2, one on apollo_event_get_banner which runs on every event card), EventsController.php, Admin/Metabox.php and UrlImportController.php.",
+          "response_header": "apollo-events Plugin.php emitted X-Apollo-Dbg-959e0d on EVERY request, publishing the absolute server path, whether it was writable, and the names of any .shadow-*.bak files. Information disclosure to the open internet. Its init:0 companion did file I/O against ABSPATH on every WordPress boot. Both hooks and both methods removed; debug_959e0d_log() reduced to a no-op because seven inert call sites remain.",
+          "rest_route_REMOVED": "apollo/v1/_agent_debug (POST+GET) deleted along with agent_debug_log() and agent_debug_get(). permission_callback was is_user_logged_in(), so ANY subscriber could POST arbitrary JSON that was written to wp_upload_dir()/debug-c3f157.log — the uploads directory is WEB-SERVED — and GET returned the whole 100-entry ring buffer, so one user could read the debug payloads another user's browser had sent. This was a security hole, not clutter.",
+          "operator_cleanup": "The option row apollo_agent_debug_c3f157 may still exist on the live database, and stray debug-c3f157.log files may exist in wp-content/ and uploads/. Delete them."
+        },
+        "privilege_gaps_closed": {
+          "hostel_and_featured": "APOLLO_ADVERTS_ADMIN_ONLY_META claims enforcement 'at the write boundary, not just hidden in the UI'. That was true for REST (auth_callback branches to manage_options) and FALSE for the metabox: apollo-adverts Plugin::save_meta_box() guarded only on nonce + edit_post, then wrote _classified_hostel, _classified_hostel_url and _classified_featured. Anyone who could edit a classified could flip the switch that bypasses the marketplace auth gate, or promote their own advert. Both render and save are now behind manage_options; a non-admin sees the hostel status as read-only text. _classified_hostel_id gained its first admin input at the same time.",
+          "per_field_cap": "Panel now supports 'cap' => 'manage_options' per field, honoured on BOTH render and save. This is the mechanism that makes an editorial switch declarable instead of hand-guarded in a bespoke metabox — which is how the gap above survived."
+        },
+        "data_loss_fixed": "apollo-events Admin/Metabox.php wrote _event_dj_ids UNCONDITIONALLY, with an else-branch setting it to an empty array. Any save that did not carry _event_dj_ids_json — a quick edit, a bulk action, a programmatic wp_update_post() — blanked the event's line-up. Every other key in that method is written only when its field is present; this one was the exception, and the exception was silent data loss. Now inside its isset guard.",
+        "sound_regression_closed": "config/taxonomies.php $sound_cpts gained 'track'. The track CPT registered earlier the same day passed taxonomies=>[sound] on apollo-djs' owner registration, which never runs (core wins the init:5 race and never forwards `taxonomies`). Until this fix /track posts had no genre at all.",
+        "dead_code_retired": {
+          "apollo-loc/src/Registry.php": "Tombstoned. Held a dead duplicate of the CPT registration, both taxonomy registrations AND a full metabox. Never instantiated. Its args DISAGREED with the live registrar (has_archive 'local' vs 'locais') and its docblock claimed rewrite/archive 'gps' and rest_base 'locals' — three values absent from its own body. Wiring it up by accident would have changed the venue archive URL.",
+          "apollo-loc/src/Admin/Metabox.php": "Tombstoned. Monolith duplicating the four live cells, using THE SAME box ids and THE SAME nonce pair — had anything constructed it, two writers would have raced on every _local_* key.",
+          "note": "Files kept as documented tombstones rather than deleted so the reasoning survives in the tree; nothing loads either."
+        },
+        "panel_system_hardened": {
+          "validate_schema": "New, runs at boot(), WP_DEBUG-gated and non-fatal (a validator that threw would be a worse outage than the bugs it reports, in a folder that deploys on save). Checks: every field has key and type; type is in KNOWN_TYPES; repeater has opts.cols; repeater_card sub-fields use `name`; select opts are a flat map and not wrapped in 'choices'; taxonomy has opts.taxonomy. Verified against all four real defects — catches every one, silent on the corrected forms.",
+          "sanitize_callback": "Was honoured for exactly ONE type (repeater_card). A sanitize_callback on a text, select or repeater field was accepted, ignored, and read like protection that was not there. Now applied through apply_field_callback() for every scalar type.",
+          "select_enum": "A select is a closed set and the saver never enforced it — any value could be posted into an enum field. Now validated against the field's own opts, falling back to the first declared option."
+        },
+        "verification": "Validator logic, select enum validation, and both E27 BANNED-pattern directions simulated and passed in the sandbox. E27's debug-header pattern was tightened to match the header() CALL after it false-positived on its own removal comment — a guard that fires on its own tombstone is a guard people switch off. No PHP binary in this environment, so php -l is unrun and the wp-admin visual pass belongs to the operator.",
+        "harness_added": [
+          "E27 · no executing debug beacon in any shipped php/js across six plugins; patterns match code, not the removal comments",
+          "E28 · Panel::validate_schema() exists, is called from boot(), still encodes the three field rules, and the cols fallback, sanitize_callback, select enum and per-field cap survive"
+        ],
+        "versions_bumped": {
+          "apollo-lux-panels": "1.0.2 -> 1.1.0",
+          "apollo-events": "1.7.2 -> 1.7.3",
+          "apollo-adverts": "1.1.1 -> 1.1.2",
+          "apollo-loc": "1.0.3 -> 1.0.4",
+          "apollo-coauthor": "1.0.1 -> 1.0.2",
+          "apollo-templates": "1.5.1 -> 1.5.2"
+        },
+        "still_open_and_gated": "Phase 1-1/1-2 (make the registration layer honest — config as single source vs a real fallback), 1-4 (journal CPTs into config or recorded as an exception), 2-5..2-9 (apollo_panel_register, migrating classified/hub/doc/email_aprio onto the panel system, retiring apollo-events' legacy metabox so the Lux event panel stops being decorative, folding the apollo-loc cells into LocPanel, and building track + hostel panels), and all of Phases 3-4. Every one depends on the five decisions in PLAN-cpt-and-admin-panels.md §6 — most sharply whether apollo_sheet's REST exposure is a leak to close or a fact to accept."
+      },
+      "$panel_contract_and_health_2026_08_17": {
+        "date": "2026-08-17",
+        "action": "CONTRACT_ADDED",
+        "supersedes_partially": "$cpt_plan_phase0_and_phase2_executed_2026_08_17 listed 2-5 and 2-9 as gated. They were not — re-checked, neither depends on any open decision, and both shipped.",
+        "the_fourth_wire": {
+          "file": "apollo-lux-panels/includes/registry.php",
+          "api": "apollo_panel_register( $cpt, $schema, $replace = false ) · apollo_panel_registry() · apollo_panel_boot_registered() · class DeclarativePanel extends Panel",
+          "what_changed": "An admin editing surface is now declared with a plain array. Before this it required subclassing Panel, which meant a class file, an instantiation and a require inside apollo-lux-panels — a coupling that is exactly why only 3 of 17 CPTs ever got a real edit screen.",
+          "why_a_registry_and_not_a_filter": "A filter is write-only; you can add to it but nothing can ask it what it holds. A registry can be READ, which is what lets the schema validator sweep every panel at once, lets a harness assert coverage per CPT, and will let Phase 4 derive show_in_rest from the panel schema instead of a second declaration in MetaRegistry.",
+          "safety_properties": [
+            "DORMANT-SAFE — apollo_panel_boot_registered() skips any panel whose post type is not registered, so a plugin may declare its panel before (or without) its CPT rather than producing an orphan metabox on no screen.",
+            "NEVER CLOBBERS — a second registration for a live post type is refused unless $replace is explicit. This is the guard that makes the `event` defect (two live metabox systems, the legacy one winning on DOM order) non-reproducible through this contract.",
+            "VALIDATED — every declarative panel runs Panel::validate_schema() at boot, so a malformed field is caught at registration rather than by a fatal on an edit screen.",
+            "REGISTERS NOTHING — no CPT, taxonomy, meta key or table."
+          ],
+          "load_order": "registry.php must be required AFTER Panel.php, which DeclarativePanel extends. Asserted by harness E29."
+        },
+        "first_two_consumers": {
+          "track": "apollo-djs/includes/panel-track.php — 13 fields across 2 tabs. Closes the gap where `track` shipped with 12 registered meta keys and ZERO inputs; a DJ could create a Faixa with a title and nothing else. Field shape mirrors _dj_tracks v2 deliberately, so apollo_dj_get_tracks() can merge CPT rows with legacy meta rows during migration without a translation layer. `sound` is a taxonomy field, not a string — the genre vocabulary already exists and registering a second would fork it.",
+          "hostel": "apollo-adverts/includes/panel-hostel.php — 5 fields. Closes the same gap for hostel. Kept deliberately THIN: no address, coordinates or gallery, because `local` already registers all three and a hostel relates to one through _hostel_loc_id. Duplicating those keys is the divergence apollo-adverts.json already flags at $accommodation_meta_and_depoimentos_2026_07_28.",
+          "proof_of_the_contract": "Neither required an edit to apollo-lux-panels. Both were validated by Panel::validate_schema() in the sandbox before shipping — its first real use — and both came back clean, with coverage of 12/14 track keys and 5/5 hostel keys. The two excluded track keys (_track_genre_legacy, _track_migrated_from) are migration-only and must NOT be hand-editable."
+        },
+        "ecosystem_health": {
+          "file": "apollo-core/includes/ecosystem-health.php",
+          "surface": "Tools → Apollo Health, manage_options.",
+          "what_it_reports": "Per CPT: registered vs declared-in-config, meta key count, whether a panel exists, input count, meta keys with no input anywhere, panel fields with no registered meta key, panels failing schema validation, and whether the surface and card contracts are live or dormant.",
+          "what_it_deliberately_does_not_do": "It writes nothing — no meta, no options, no posts, no files. Harness E29 asserts that mechanically by failing if update_post_meta/update_option/wp_insert_post/file_put_contents/unlink/rename appear in the file at all.",
+          "why_report_and_not_repair": "The brief asked for code that fixes its own channels and applies self-learning. In THIS environment that would be actively harmful: the folder deploys on save with no staging tier, there is no PHP binary and no test suite to verify a self-applied fix, and three plugins sit in the HIGH security-risk band. The stronger argument is the 2026-08-17 audit itself — the REST PII leak, the /_agent_debug hole, two fatal edit screens, a decorative admin panel, and _event_dj_ids blanking line-ups were ALL invisible while the system kept running. A layer that healed around them would have hidden them longer. Self-VALIDATING, not self-modifying; fail-closed, not fail-quiet. Adaptive behaviour is confined to presentation, where a wrong guess is cosmetic: apollo_card_render() falling back to the first declared variant, hydrateScripts() waking whatever runtime a fragment ships.",
+          "exemptions": "_track_genre_legacy, _track_migrated_from and _event_is_gone are excluded from the no-input check — they are written by a migration script or by cron, and giving them a hand-editable field would be the bug rather than the fix."
+        },
+        "strategy_document": "_inventory/STRATEGY-integration.md — the four wires, what adding a new element costs (five declarations, no classes, no edits to other plugins), why 'easiest to connect DB' resolves to eliminating the second declaration rather than adding an ORM, the honest position on self-healing, and the one-line rule: one concept, one declaration, one owner.",
+        "harness_added": [
+          "E29 · surface/card/panel contracts present; panel contract is dormant-safe and refuses to clobber; registry.php loads after Panel.php; ecosystem-health reports and never writes; all three core contracts are required from apollo-core.php"
+        ],
+        "verification": "Panel registry behaviour (register, refuse second, explicit replace, reject empty, skip unregistered CPT) and the health report's gap maths simulated and passed. E29's read-only assertion tested in both directions — silent on the shipped file, fires on a variant that calls update_option(). No PHP binary here, so php -l is unrun and the wp-admin pass belongs to the operator.",
+        "versions_bumped": {
+          "apollo-core": "6.3.0 -> 6.4.0",
+          "apollo-lux-panels": "1.1.0 -> 1.2.0",
+          "apollo-djs": "1.0.6 -> 1.0.7",
+          "apollo-adverts": "1.1.2 -> 1.1.3"
+        },
+        "operator_verification": "Open Tools → Apollo Health. It will show, permanently and on one page, every gap this audit took a day to find: which CPTs still have no panel (appointment, service, resource, apollo_sheet, and the rest), which meta keys have no input, and whether any panel schema is failing. That page is the deliverable — not a number, a standing instrument.",
+        "still_open_and_gated": "Unchanged: Phase 1-1/1-2, 1-4, 2-6/2-7/2-8, and Phases 3-4. All five decisions in PLAN-cpt-and-admin-panels.md §6 remain unanswered; the sharpest is apollo_sheet's REST posture, where closing the exposure could break a consumer not visible from here and leaving it open should be a decision made on purpose."
+      },
+      "$panel_to_frontend_derivation_2026_08_17": {
+        "date": "2026-08-17",
+        "action": "CONTRACT_EXTENDED",
+        "file": "apollo-templates/includes/panel-to-frontend.php",
+        "plan": "_inventory/PLAN-dj-loc-finalization.md §D2",
+        "problem_measured": {
+          "dj": "35 admin panel fields vs 14 frontend form fields — 21 missing, including EVERY social and platform link (_dj_instagram, _dj_facebook, _dj_twitter, _dj_tiktok, _dj_youtube, _dj_soundcloud, _dj_spotify, _dj_bandcamp, _dj_beatport, _dj_mixcloud, _dj_resident_advisor, _dj_website).",
+          "loc": "21 admin vs 16 frontend — 8 missing (_local_amenities, _local_description, _local_facebook, _local_founded_year, _local_hours, _local_rooms, _local_tagline, _local_whatsapp).",
+          "the_sharp_edge": "The approved dj single-page mockup RENDERS _dj_soundcloud, _dj_spotify and _dj_bandcamp. A DJ editing their own page could not fill three fields their own page displays — only an administrator could, in wp-admin.",
+          "bidirectional": "They diverged BOTH ways: the frontend owns _local_image_1..5 and both loc taxonomies, which the admin panel lacks. Neither surface was a superset of the other."
+        },
+        "why_derivation_not_addition": "Hand-writing the missing 21 would produce two files of 35 that must then stay in sync forever — the same two-declarations defect at a larger size. One schema with two renderers cannot drift from itself. Same reasoning as the surface, card and panel contracts.",
+        "design": {
+          "additive_never_destructive": "Runs at priority 20 on apollo_frontend_fields_{cpt}, AFTER each plugin's own definitions at priority 10. A hand-written field ALWAYS wins; derivation only fills gaps. Hand-written definitions carry human-tuned placeholders, descriptions and section assignments, and a generated field must never overwrite considered copy. The old files keep working and can be retired one at a time once proven equivalent.",
+          "type_map_lives_once": "apollo_panel_type_to_frontend(). The two systems grew separate vocabularies — panel says toggle/media_single/wysiwyg, editor says checkbox/image/textarea. Every plugin previously bridged them by hand, which is how _dj_verified ended up a toggle in admin and a checkbox on the front end.",
+          "unrenderable_types_are_SKIPPED_not_downgraded": "repeater, repeater_card, media_gallery, hours, lineup and user_multiselect map to '' and are omitted. FrontendEditor::sanitize_field() returns a string with no array branch, so a repeater submitted through the frontend would be FLATTENED and its stored rows destroyed. A repeater rendered as a text input is a data-loss bug wearing a field's clothing. That same limitation is why `track` became a CPT rather than staying a repeater.",
+          "capability_and_context_honoured": "A field with 'cap' is excluded for users lacking it, so staff-only fields never reach a self-service form. 'contexts' => ['admin'] excludes without needing a capability, for things that are simply not the author's business."
+        },
+        "verified": "Simulated against the real dj panel shape. Admin: 14 hand-written -> 29 fields, +15 derived, all 12 social links gained including the 3 the mockup renders. All four array-shaped fields correctly skipped. Hand-written _dj_name not overwritten. Admin-only _dj_user_id excluded. Non-admin: _dj_verified stays staff-only.",
+        "checked_and_found_SOUND": "FrontendEditor::handle_save() DOES honour 'readonly' (line 681 skips those fields), so the hand-written _dj_verified was already protected against a crafted POST. Investigated on suspicion; the suspicion was wrong and is recorded so it is not re-investigated.",
+        "health_surface": "Tools -> Apollo Health gained a Frontend column showing 'n (+d)' — total fields and how many are derived — plus an 'admin-only (no frontend renderer)' gap line. That line exists so nobody 'fixes' an array-shaped field by downgrading it to text.",
+        "versions_bumped": {
+          "apollo-templates": "-> 1.5.4 (superseded on disk by 1.6.4 from a parallel pass)",
+          "apollo-djs": "docblock 1.0.8 -> 1.0.9 — MISMATCH REPAIR, not a feature bump: the constant had been moved to 1.0.9 by another pass while the docblock stayed at 1.0.8. WordPress reads the docblock and cache-busting reads the constant, so the two disagreeing means cache-busting lies. All 9 plugins now agree."
+        }
+      },
+      "$version_synced": {
+        "date": "2026-08-31",
+        "from": "6.5.2",
+        "to": "6.6.0",
+        "source": "WebP layer added — docblock and APOLLO_CORE_VERSION bumped together",
+        "previous": {
+          "date": "2026-08-31",
+          "from": "6.3.0",
+          "to": "6.5.2",
+          "source": "disk docblock via doctor.js"
+        }
+      },
+      "$webp_layer_2026_08_31": {
+        "what": "apollo-core became the carrier for the WebP MU-plugin.",
+        "files_added": [
+          "mu-plugins/apollo-webp-force.php",
+          "includes/webp-install.php"
+        ],
+        "why_here": "Only wp-content/plugins/ is mirrored to the host, so an MU-plugin cannot be deployed directly. apollo-core already solved this for the .htaccess lock; webp-install.php mirrors apollo_core_htaccess_install_mu_plugin() rather than inventing a second mechanism.",
+        "registered_in": "22-mu-plugins.json -> $mu_plugins -> apollo-webp-force",
+        "phase": "1 of 6 — subsizes convert, originals untouched.",
+        "no_new_surface": "No CPT, no meta key, no option, no REST route, no admin page. One require_once added beside includes/htaccess-lock.php."
       }
     },
     "apollo-dashboard": {
@@ -17040,7 +17353,8 @@
         "dj-meta"
       ],
       "cpts": [
-        "dj"
+        "dj",
+        "track"
       ],
       "taxonomies": [
         "sound"
@@ -17339,7 +17653,7 @@
           "_source": "deep_live_scan"
         }
       ],
-      "version": "1.0.4",
+      "version": "1.1.7",
       "ajax": {
         "priv": [
           "apollo_dj_save_settings"
@@ -18349,6 +18663,121 @@
           "apollo-djs": "1.0.3 -> 1.0.4",
           "apollo-templates": "1.3.7 -> 1.3.8"
         }
+      },
+      "$surface_confirmed_live_2026_08_17": {
+        "date": "2026-08-17",
+        "action": "DOC_CORRECTED",
+        "finding": "includes/surface.php carried a docblock headed 'DECLARED, NOT YET LIVE' together with a three-step recipe for building the renderer it was waiting for. That renderer already existed: includes/render-single.php defines apollo_dj_render_single(), apollo_dj_single_context() and apollo_dj_can_view(), and apollo-djs.php requires it at line 98 — BEFORE surface.php at line 99. apollo_surface_get('dj') therefore resolves, apollo/v1/djs/{id}/fragmento is registered, and apollo_surface_open_attrs('dj',$id) emits. The surface has been live; only the note was stale.",
+        "why_it_matters": "A stale 'not yet built' comment is worse than no comment — it invites a second implementation of something that exists. The 2026-08-07 modularity audit and the global lightbox plan were both written against this note and both understated what was already shipped.",
+        "guarded_by": "Harness E23 now fails if any surface.php says 'not yet live' while the function named in its 'renderer' key exists in that plugin's includes/render-single.php.",
+        "two_single_dj_paths_recorded": {
+          "ssot": "styles/base/single-dj.php composes template-parts/single/* through apollo_dj_render_single(). This is what the REST fragment and the lightbox render.",
+          "legacy": "templates/single-dj.php — the older monolith: context inline at the top, parts in templates/parts/dj/*. Retained, NOT the surface path.",
+          "rule": "Do not point the renderer at the monolith to 'unify' them. The cell path is the one _sandbox/build-dj-cells.py generates into."
+        },
+        "fragment_runtime": "The DJ `scripts` cell ships the runtime as an inline IIFE and is GENERATED (do-not-hand-edit). innerHTML does not execute <script>, so before 2026-08-17 a DJ fragment injected into the lightbox as correct but dead html. apollo-events 1.7.2 added hydrateScripts() to the shared runtime, which re-executes a fragment's own scripts — no per-plugin work, no mount API to maintain. See 09-plugins/apollo-events.json $reader_surface_white_and_hydration_2026_08_17.",
+        "borrowed_not_forked": "'enqueue' => 'apollo_event_lightbox_enqueue'. The lightbox shell and runtime live in apollo-events and are surface-neutral; apollo-djs borrows them rather than shipping a second overlay. Open item, unchanged: apollo-single-event.css is loaded for the DJ surface too — harmless today, revisit before a fourth surface.",
+        "versions_bumped": {
+          "apollo-djs": "1.0.4 -> 1.0.5 (resolves the drift with includes/render-single.php, which already shipped stamped @since 1.0.5)",
+          "apollo-events": "1.7.1 -> 1.7.2"
+        },
+        "files": [
+          "includes/surface.php (docblock corrected; no behaviour change)",
+          "apollo-djs.php (version bump 1.0.4 -> 1.0.5)"
+        ]
+      },
+      "$mockup_corrupted_generator_disarmed_2026_08_17": {
+        "date": "2026-08-17",
+        "action": "TRAP_DISARMED",
+        "severity": "HIGH — the documented workflow would have corrupted the live DJ page.",
+        "finding": "_sandbox/dj-single-page.mockup.html is character-corrupted; the 17 generated cells in styles/base/template-parts/single/ are not. Measured: 152 mockup lines carry double-encoding signatures, 0 cells do. The corruption therefore happened AFTER the cells were generated — an editor or file transfer round-tripped the mockup through CP1252 and saved it back as UTF-8.",
+        "why_it_is_dangerous": "build-dj-cells.py's own header instructs: 'Edit the mockup, re-run the generator, review the diff.' Following that today would replace 17 clean cells with 17 mojibake ones — 'Cartão de artista' becomes 'CartÃ£o de artista' on the live /dj/{slug} page and inside every DJ lightbox fragment. This folder deploys on save.",
+        "exact_transform_identified": "Not a strict CP1252 round trip — that was the first hypothesis and it was wrong. Bytes 0x81 0x8D 0x8F 0x90 0x9D are UNDEFINED in CP1252 and Python's codec refuses them, but the damaging tool passed them through as raw code points. U+2550 '═' (E2 95 90) became 'â' + '•' + U+0090. Confirmed by reproducing the damage synthetically and matching the real file's byte pattern.",
+        "shipped": {
+          "fail_closed": "build-dj-cells.py now refuses to generate from a mockup it can prove is damaged, prints the damaged line numbers and the fix. Same philosophy as apollo_surface_can_view(): a tool that cannot verify its input does not act on it. --force-dirty exists and is documented as 'do not'.",
+          "repair_path": "build-dj-cells.py --repair-mockup performs the inverse transform in Python, where the C1 bytes are addressable. It is self-proving: the result is written ONLY if it strictly reduces the damage count, so an already-clean file or a differently-damaged file is returned untouched rather than mangled. Verified against a synthetic reproduction — exact byte-for-byte round trip, zero residue, correct refusal on both a clean file and plain ASCII.",
+          "range_validation": "New check_ranges(). The CELLS table is line-number driven and NOTHING validated it: SUBS anchors were checked, but the five cells with no SUBS entry (progress, marquee, toast, dock, lightbox) had no guard at all. One inserted line above 427 would slide every range and emit 17 plausible, wrong cells while reporting success. Now asserts contiguity (each cell starts exactly 2 lines after the previous ends, separator blank) and tag balance per slice."
+        },
+        "guarded_by": "apollo-events harness E25 — asserts no shipped cell carries a mojibake signature AND that the generator still has its guard, its repair path and its range validation. The signature set deliberately excludes bare 'Ã', which is a legitimate Portuguese letter present in these very cells (SEÇÃO, NÃO); matching it would fail on healthy files, which is how a guard gets switched off. Validated against those exact lines — zero false positives.",
+        "operator_action_required": "Run: python3 apollo-djs/_sandbox/build-dj-cells.py --repair-mockup — then re-run without the flag and review the diff. Until that is done the mockup must be treated as a damaged artefact, NOT as the approved design. The cells on disk are the good copy.",
+        "structural_parity_verified": "Independent of the encoding damage, the mockup's structure and the cells still agree: CELLS line ranges resolve to the expected anchors (427 .pg, 429-437 .ev-top, 439 header.hero), and the class/id vocabulary matches. The drift is character-level only, not structural.",
+        "files": [
+          "_sandbox/build-dj-cells.py",
+          "_sandbox/dj-single-page.mockup.html (DAMAGED — repair pending, operator action)"
+        ]
+      },
+      "$quick_add_track_silently_discarded_2026_08_17": {
+        "date": "2026-08-17",
+        "action": "BUG_FIX",
+        "finding": "DJsController::save_meta() (:509-526) built a schema-v1 track row {title,url,duration,year} and wrote it with update_post_meta(). _dj_tracks is registered with apollo_dj_sanitize_tracks_meta() as its sanitize callback, and the v2 rules drop any row missing `artists` or all four `url_*`. Every row this produced was discarded. The caller got a 200 and the track vanished — the 'Cadastrar novo DJ' quick-add track field has never worked.",
+        "root_cause_was_a_false_docblock": "includes/functions.php:269-274 asserted that direct update_post_meta() calls are NOT routed through sanitize_meta(), and that 'WP only invokes sanitize_meta() for the REST/registered-meta path'. That is factually wrong: WP core's update_metadata() calls sanitize_meta() on EVERY write, whatever the caller. The quick-add was written against that belief. The docblock is corrected and now states the opposite explicitly, because the wrong version is what made the bug invisible.",
+        "fix": "The quick-add now builds a v2 row: `artists` defaults to the DJ's own post title (a DJ quick-adding their release is the artist, and it is the only honest default the form can supply); the single track_url is routed to url_soundcloud / url_spotify / url_bandcamp by host, falling back to url_download, because v2 has no generic `url` field; release_date is synthesised from the year so the sort key exists. `duration` remains mandatory and comes from the form — a row without one is still dropped, BY THE ONE FUNCTION THAT DECIDES WHAT A VALID ROW IS. This block deliberately does not re-implement those rules.",
+        "principle_restated": "There is exactly one place that defines a valid track row: apollo_dj_sanitize_tracks_meta(). A second inline copy is how the _dj_tracks duplicate-metabox incident happened. Write through it, never around it.",
+        "files": [
+          "src/API/DJsController.php",
+          "includes/functions.php (docblock corrected)",
+          "apollo-djs.php (version bump 1.0.5 -> 1.0.6)"
+        ]
+      },
+      "$track_releases_credits_previews_card_2026_08_17": {
+        "date": "2026-08-17",
+        "action": "FEATURE_SHIPPED",
+        "plan": "_inventory/PLAN-track-releases.md — phases T1 (storage), T2 (derivation), T3 (the card). T4 (rail player JS), T5 (DJ self-service authoring) and T6 (migration) remain open.",
+        "ghost_credits": {
+          "problem": "A release credits artists who may have no dj post — a guest vocalist, a remixer from outside the roster. _track_dj_ids only holds real posts.",
+          "shipped": "_track_ghost_artists, a comma-separated names string. apollo_track_credits() merges it with _track_dj_ids into ONE ordered list: DJs first with permalinks, then ghosts as names.",
+          "why_two_flat_scalars_and_not_a_repeater": "A repeater cannot be edited from the front end — FrontendEditor::sanitize_field() returns string and has no array branch. That limitation is the entire reason `track` became a CPT instead of staying meta; re-introducing a repeater here would rebuild the wall just removed.",
+          "why_ghosts_are_not_auto_created_dj_posts": "A ghost is a CREDIT, not a profile. Auto-creating a stub dj post per featured artist would fill the curated /djs roster with empty posts nobody claims.",
+          "late_resolution": "apollo_track_credits() checks whether a dj post now exists with that exact title; if so the ghost renders as a link. Nothing is written back — the ghost stays a ghost in storage and simply renders richer the day that person registers."
+        },
+        "preview_audio": {
+          "shipped": "_track_preview_url, _track_preview_start, _track_preview_seconds + apollo_track_preview() provider resolution.",
+          "providers": {
+            "catbox": "catbox.moe / files.catbox.moe — direct MP3 hotlink, free, no account, 200MB. THE BEST CASE: native <audio>, real scrubbing, no third-party script.",
+            "archive": "archive.org and ia*.us.archive.org — permanent, free, direct stream. Upload needs an account.",
+            "youtube": "youtube.com / youtu.be, including /shorts/ and /embed/. Practical fallback. Emitted as youtube-nocookie with rel=0, modestbranding, controls=0, playsinline — the card is the control surface, and YouTube chrome inside a 15-card rail is noise.",
+            "direct": "any other URL, accepted ONLY if the path ends .mp3/.ogg/.oga/.m4a/.wav."
+          },
+          "fail_closed": "An unrecognised host, a Spotify link, a plain web page or an empty value all return provider '' and the caller renders no player — never a broken embed, never an <audio> pointed at HTML. Verified against 12 cases including the four the brief named.",
+          "separate_from_release_links_on_purpose": "_track_url_* are DESTINATIONS — where a listener goes to hear the whole thing on the artist's platform. _track_preview_url is a short in-page taste. Conflating them would mean either a full account-walled embed on /casa or no preview at all wherever the release lives somewhere unembeddable.",
+          "guests_never_receive_a_source": "The preview attributes are not emitted into guest markup at all, rather than hidden with CSS."
+        },
+        "the_locked_design_preserved": {
+          "strict_requirement": "The locked-track treatment was NOT to be deleted or redesigned — it is used across many scenarios and had to become reusable.",
+          "what_was_done": "Lifted verbatim into apollo-templates/templates/template-parts/track/card.php. Every class, ring, aria attribute and ● ● ● label is unchanged.",
+          "parity_verified": "Guest DOM diffed before/after: ZERO classes removed, ZERO attributes removed, tag sequence identical. The only additions are the variant class (nh-track-card--rail) and data-track-id. All 16 load-bearing locked-design elements present.",
+          "why_extraction_was_needed": "new-home/tracks.php contained the card markup TWICE — ~55 lines for real tracks and the same ~55 again for simulated placeholders, differing only in data source. Any change to the locked design had to be made in both, and the second copy is where it would be forgotten. Same defect class as the four accommodation cards and the five Out Now sections.",
+          "reuse": "Variants rail (/casa), grid (/tracks), compact (/dj/{id}). Theme-overridable via locate_template('apollo-templates/track/card.php')."
+        },
+        "card_contract_first_consumer": {
+          "what": "apollo_card_register('track', …) in includes/card-track.php — the Card Contract shipped with zero consumers and this is the first.",
+          "style_ledger": "apollo_track_card_styles() carries ONLY the new rail and playing-state rules. The .nh-track-* base styling already ships in the /casa stylesheet and is UNTOUCHED — re-declaring it would give those selectors two owners, the cardinal sin. The ledger is what makes a card impossible to deploy unstyled, which is the .accom-* defect on /anuncios.",
+          "contract_bug_found_and_fixed": "apollo_card_render() guarded $post_id <= 0, so the placeholder path would have rendered NOTHING. Caught in verification, not in production. A narrow, explicit exception now permits post_id 0 when args['placeholder'] is set — a bare 0 with no flag is still refused. Placeholders must go through the contract precisely so they carry the style ledger; a pre-launch surface showing only placeholders would otherwise ship with no card CSS at all."
+        },
+        "n_plus_1_removed": "apollo_track_query() replaces the get_posts(dj, -1) + one get_post_meta per published DJ that apollo_get_latest_dj_tracks() ran uncached on every /casa render. Undated releases sort behind dated ones rather than being dropped — silently discarding rows is how 'my track isn't showing' becomes an unreproducible support thread.",
+        "casa_changes": "The Out Now section is now a horizontal rail of the 15 newest, rendered through the shared card. data-lenis-prevent is REQUIRED not decorative — Lenis binds a non-passive wheel listener on /casa that would otherwise swallow horizontal gestures. 'Ver Todos' repointed from the dead /lancamentos to /tracks. The section returns early and renders nothing if apollo-djs is inactive, because an empty bordered box reads as broken while a missing section reads as 'not yet'.",
+        "verification": "Card contract re-verified after the placeholder exception (8 behaviours incl. bare-0 still refused, 8 placeholders emitting exactly 1 style block). Preview resolution tested against 12 URLs covering all four providers and every fail-closed case. Guest DOM parity diffed. No PHP binary here — php -l unrun, visual pass belongs to the operator.",
+        "still_open": "T4 the rail player JS (preview buttons only appear once _track_preview_url is populated AND the player ships — no track has one today, so nothing is dangling), T5 DJ self-service authoring on /dj/{id}, T6 the _dj_tracks migration.",
+        "versions_bumped": {
+          "apollo-djs": "1.0.7 -> 1.0.8",
+          "apollo-templates": "1.5.2 -> 1.5.3",
+          "apollo-core": "6.4.0 -> 6.4.1"
+        },
+        "files": [
+          "apollo-djs/includes/tracks.php (new — query + credits + preview + card data)",
+          "apollo-djs/includes/card-track.php (new — Card Contract registration)",
+          "apollo-djs/includes/panel-track.php (4 fields added)",
+          "apollo-templates/templates/template-parts/track/card.php (new — the extracted locked design)",
+          "apollo-templates/templates/template-parts/new-home/tracks.php (rewritten — duplication removed)",
+          "apollo-core/src/Core/MetaRegistry.php (4 meta keys)",
+          "apollo-core/includes/card-contract.php (placeholder exception)"
+        ]
+      },
+      "$version_synced": {
+        "date": "2026-08-31",
+        "from": "1.0.6",
+        "to": "1.1.7",
+        "source": "disk docblock via doctor.js"
       }
     },
     "apollo-docs": {
@@ -23117,10 +23546,10 @@
             }
           },
           "auth": "PUBLIC_UNAUTHENTICATED",
-          "permission_risk": "CRITICAL",
+          "permission_risk": "INFO",
           "permission_method": null,
           "permission_binding": "__return_true",
-          "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+          "permission_summary": "SCANNER ARTIFACT CORRECTED 2026-08-05: this entry merges ALL method entries of one register_rest_route() call into a single record, so the READ entry's __return_true was attributed to the write methods too. Verified per-method in src/API/EventsController.php: READABLE=__return_true (intended public read), CREATABLE=can_edit, EDITABLE=can_edit_event, DELETABLE=can_delete_event. No write method is publicly callable.",
           "permission_capabilities": [],
           "permission_resolved": true,
           "permission_body_preview": "return true;",
@@ -23129,7 +23558,8 @@
           "callback": "get_events",
           "rest_namespace": "apollo/v1",
           "file": "src/API/EventsController.php",
-          "_source": "deep_live_scan_perm_body"
+          "_source": "deep_live_scan_perm_body",
+          "permission_verified_2026_08_05": true
         },
         {
           "endpoint": "/eventos/(?P<id>\\d+)",
@@ -23142,10 +23572,10 @@
           ],
           "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
           "auth": "PUBLIC_UNAUTHENTICATED",
-          "permission_risk": "CRITICAL",
+          "permission_risk": "INFO",
           "permission_method": null,
           "permission_binding": "__return_true",
-          "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+          "permission_summary": "SCANNER ARTIFACT CORRECTED 2026-08-05: this entry merges ALL method entries of one register_rest_route() call into a single record, so the READ entry's __return_true was attributed to the write methods too. Verified per-method in src/API/EventsController.php: READABLE=__return_true (intended public read), CREATABLE=can_edit, EDITABLE=can_edit_event, DELETABLE=can_delete_event. No write method is publicly callable.",
           "permission_capabilities": [],
           "permission_resolved": true,
           "permission_body_preview": "return true;",
@@ -23154,7 +23584,8 @@
           "callback": "get_event",
           "rest_namespace": "apollo/v1",
           "file": "src/API/EventsController.php",
-          "_source": "deep_live_scan_perm_body"
+          "_source": "deep_live_scan_perm_body",
+          "permission_verified_2026_08_05": true
         },
         {
           "endpoint": "/eventos/proximos",
@@ -23291,10 +23722,10 @@
           ],
           "description": "Live apollo/v1 (PUBLIC_UNAUTHENTICATED)",
           "auth": "PUBLIC_UNAUTHENTICATED",
-          "permission_risk": "CRITICAL",
+          "permission_risk": "INFO",
           "permission_method": null,
           "permission_binding": "__return_true",
-          "permission_summary": "permission_callback is __return_true [WRITE method is publicly callable]",
+          "permission_summary": "SCANNER ARTIFACT CORRECTED 2026-08-05: this entry merges ALL method entries of one register_rest_route() call into a single record, so the READ entry's __return_true was attributed to the write methods too. Verified per-method in src/API/EventsController.php: READABLE=__return_true (intended public read), CREATABLE=can_edit, EDITABLE=can_edit_event, DELETABLE=can_delete_event. No write method is publicly callable.",
           "permission_capabilities": [],
           "permission_resolved": true,
           "permission_body_preview": "return true;",
@@ -23303,7 +23734,8 @@
           "callback": "get_event_djs",
           "rest_namespace": "apollo/v1",
           "file": "src/API/EventsController.php",
-          "_source": "deep_live_scan_perm_body"
+          "_source": "deep_live_scan_perm_body",
+          "permission_verified_2026_08_05": true
         },
         {
           "endpoint": "/eventos/buscar",
@@ -23733,6 +24165,58 @@
           "auth": false,
           "shell": "blank-canvas-apollo-plus",
           "note": "Alias of /eventos."
+        },
+        {
+          "slug": "eventos/url",
+          "rewrite": "^eventos/url/?$",
+          "query": "index.php?apollo_event_page=url_import",
+          "query_vars": [
+            "apollo_event_page=url_import"
+          ],
+          "type": "virtual_rewrite",
+          "shell": "none — standalone HTML document",
+          "auth": "REQUIRED — handle_virtual_pages() redirects guests to /acesso before this branch",
+          "template": "templates/events-by-url.php",
+          "asset": "templates/events-by-url.html",
+          "pattern": "hub-app readfile: PHP reads the standalone HTML, injects a boot payload before </head>, echoes it and exit()s. Does NOT use the Apollo+ shell and does NOT call apollo_plus_open().",
+          "boot_payload": {
+            "global": "window.ApolloEventUrlImporter",
+            "wpBase": "untrailingslashit(rest_url())",
+            "restNonce": "wp_create_nonce('wp_rest') — safe here, the route is auth-gated so no nonce ever reaches a guest",
+            "insertPath": "apollo/v1/eventos  → EventsController::create_event, permission_callback can_edit",
+            "locPath": "apollo/v1/loc-resolve"
+          },
+          "purpose": "NEW METHOD OF ADDING EVENTS: import an event from a ticketing URL (Shotgun / BlueTicket) instead of filling the long create form. Complements /eventos/novo, does not replace it.",
+          "known_defect": "boot payload's locPath default 'apollo/v1/loc-resolve' is registered NOWHERE in the ecosystem (apollo-events, apollo-loc and apollo-core all lack it; apollo-loc exposes only '/' and '/proximos'). The importer's venue-resolution call therefore 404s on the shipped default. The HTML exposes a cfgLocPath field so an operator can override it at runtime, which is why this went unnoticed. Either register the route or change the default.",
+          "_source": "code_read_2026-08-05"
+        },
+        {
+          "slug": "eventos/novo",
+          "rewrite": "^eventos/novo/?$",
+          "query": "index.php?apollo_event_page=create",
+          "query_vars": [
+            "apollo_event_page=create"
+          ],
+          "type": "virtual_rewrite",
+          "shell": "blank-canvas-apollo-plus",
+          "auth": "REQUIRED",
+          "template": "styles/base/create-event.php",
+          "note": "PHASE 007 alias matching the Apollo+ aside naming convention. Same create form as /novo-evento, /criar-evento, /add-evento — additive, the 3 legacy slugs are untouched.",
+          "_source": "code_read_2026-08-05"
+        },
+        {
+          "slug": "eventos/meus",
+          "rewrite": "^eventos/meus/?$",
+          "query": "index.php?apollo_event_page=meus_dashboard",
+          "query_vars": [
+            "apollo_event_page=meus_dashboard"
+          ],
+          "type": "virtual_rewrite",
+          "shell": "blank-canvas-apollo-plus",
+          "auth": "REQUIRED",
+          "template": "styles/base/dashboard-meus.php",
+          "note": "PHASE 007 KPI \"Painel de Eventos\" (ticket donut, season/genre bars, monthly timeline, DJ/venue/coauthor leaderboards, readiness checklist). A NEW page value, not an alias for dashboard — /meus-eventos, /painel, /painel/eventos and /dashboard keep serving the older manage list unchanged.",
+          "_source": "code_read_2026-08-05"
         }
       ],
       "shortcodes": [
@@ -23783,7 +24267,7 @@
           "description": "RSVP widget + vibe popup + warm-up mural with composer, GSAP animations, skeleton loading, optimistic UI"
         }
       ],
-      "version": "1.5.6",
+      "version": "1.7.16",
       "ajax": {
         "priv": [
           "apollo_event_save_settings"
@@ -24048,24 +24532,52 @@
           "query": "index.php?apollo_event_page=create"
         },
         {
-          "pattern": "^meus-eventos/?$",
-          "query": "index.php?apollo_event_page=dashboard"
-        },
-        {
           "pattern": "^criar-evento/?$",
           "query": "index.php?apollo_event_page=create"
         },
         {
+          "pattern": "^add-evento/?$",
+          "query": "index.php?apollo_event_page=create"
+        },
+        {
+          "pattern": "^eventos/novo/?$",
+          "query": "index.php?apollo_event_page=create"
+        },
+        {
+          "pattern": "^eventos/url/?$",
+          "query": "index.php?apollo_event_page=url_import"
+        },
+        {
+          "pattern": "^meus-eventos/?$",
+          "query": "index.php?apollo_event_page=dashboard"
+        },
+        {
+          "pattern": "^painel/?$",
+          "query": "index.php?apollo_event_page=dashboard"
+        },
+        {
+          "pattern": "^painel/eventos/?$",
+          "query": "index.php?apollo_event_page=dashboard"
+        },
+        {
+          "pattern": "^dashboard/?$",
+          "query": "index.php?apollo_event_page=dashboard"
+        },
+        {
+          "pattern": "^eventos/meus/?$",
+          "query": "index.php?apollo_event_page=meus_dashboard"
+        },
+        {
           "pattern": "^portal/?$",
-          "query": "index.php?apollo_event_page=portal"
+          "query": "index.php?apollo_event_page=portal_archive"
         },
         {
           "pattern": "^portal/eventos/?$",
-          "query": "index.php?apollo_event_page=portal"
+          "query": "index.php?apollo_event_page=portal_archive"
         },
         {
-          "pattern": "^add-evento/?$",
-          "query": "index.php?apollo_event_page=create"
+          "pattern": "^eventos/?$",
+          "query": "index.php?apollo_event_page=portal_archive"
         }
       ],
       "query_vars": [
@@ -26307,6 +26819,152 @@
           "styles/base/template-parts/archive/portal/styles-hero.php",
           "apollo-events.php (version bump 1.5.5 -> 1.5.6)"
         ]
+      },
+      "$lightbox_reveal_scroller_fix_2026_08_01": {
+        "date": "2026-08-01",
+        "severity": "root-cause -- facts strip and venue (map + slider) invisible in the lightbox on /eventos and /portal",
+        "reported": "Facts strip and venue/map appear stranded (present in the DOM, unreadable) directly under the hero when an event card opens in the lightbox, but render correctly on /evento/{slug}.",
+        "root_cause": "apollo-single-event.js's initAnim()/bindDjRail() create every ScrollTrigger (facts+panels reveal, hero parallax, footer parallax, word reveal, DJ rail pin, DJ cards) with no `scroller` option, so they all default to `scroller: window`. On the real page the window scrolls and they fire normally. Inside the lightbox the fragment mounts in `.ev-lb-scroll`, a native overflow-y:auto panel; the document is Lenis-locked and the window never moves, so those triggers can never resolve and the affected elements stay at their GSAP inline `opacity:0` forever. A second, independent gap made this invisible to the existing safety nets: bootstrap.php's unstrand() pass and the CSS floor in styles-lightbox.php both queried only the class `.ev-reveal`, which no single-event template actually applies -- the real reveal targets (.ev-fact, .ev-panel, [data-ev=access/about], .ev-spotify, .ev-gallery, .v-slider, .ev-map, .ev-vbody, .ev-dj) are a separate, hardcoded selector list inline in the JS, so both nets matched zero nodes and were dead code for this exact symptom.",
+        "fix": "(A) Instance now resolves `this.scroller = root.closest('.ev-lb-scroll') || undefined` once at construction and passes `scroller: self.scroller` to all 6 ScrollTrigger configs; undefined on /evento/{slug} and inline embeds, so behaviour there is unchanged, byte for byte. (B) Widened bootstrap.php's unstrand() query and styles-lightbox.php's CSS floor to the same selector list initAnim() actually reveals, as a belt-and-braces layer for anything that still slips through (e.g. a late image reflow). Selector is duplicated by hand in three places (apollo-single-event.js, bootstrap.php, styles-lightbox.php) -- keep them in sync if the reveal list changes.",
+        "why_not_scrollerProxy_alone": "bootstrap.php already registers `ScrollTrigger.scrollerProxy('.ev-lb-scroll', {...})`, but a proxy only supplies custom get/set methods for a scroller identifier -- it does not retroactively re-target ScrollTriggers that were created with `scroller: window` (the default). Every trigger must still be told `scroller: panel` explicitly at creation time, which is exactly what was missing.",
+        "verification": "Structural: confirmed via grep that no template-part applies class `ev-reveal` to any node (facts.php inspected directly); confirmed apollo-single-event.js had exactly 6 scrollTrigger call sites, all now carrying `scroller: self.scroller`. Live /eventos + /portal lightbox check pending -- Claude in Chrome was not connected this session (see BLOCKERS chapter note); handed to the user to confirm the facts strip and venue section are no longer stranded on next open.",
+        "files": [
+          "assets/js/apollo-single-event.js (scroller resolution + 6 ScrollTrigger call sites)",
+          "styles/base/template-parts/archive/portal/bootstrap.php (unstrand() selector widened)",
+          "styles/base/template-parts/archive/portal/styles-lightbox.php (CSS floor widened)",
+          "apollo-events.php (version bump 1.6.9 -> 1.6.10)"
+        ]
+      },
+      "$registry_compliance_audit_2026_08_05": {
+        "date": "2026-08-05",
+        "scope": "apollo-events — every registry chapter key checked against the actual code by script, not by eye.",
+        "method": "Parsed route_map()/path_map() out of src/Plugin.php, register_rest_route() out of src/API/*.php, meta keys out of every .php/.js in the plugin, taxonomy defines out of includes/constants.php; diffed each against this chapter.",
+        "result": "PASS on 4 dimensions, FAIL on 4. Nothing found is a runtime break except the /eventos/url locPath default; the rest is the registry having fallen behind the code.",
+        "PASS": [
+          "path_map() ↔ route_map() parity: 13/13, no drift. The SSOT claim in their docblocks holds.",
+          "taxonomies: 5/5 aligned (event_category, event_type, event_tag, sound, season) — registry matches includes/constants.php exactly.",
+          "REST permissions: 0 write methods are publicly callable. All 13 write entries carry can_edit / can_edit_event / can_delete_event / is_user_logged_in / current_user_can. batch_events additionally re-checks edit_post PER ID.",
+          "cena-rio endpoints: the 4 entries the registry lists DO exist — in src/Cena_Rio_Submissions.php, not EventsController. Registry correct."
+        ],
+        "FAIL": {
+          "routes_undocumented": "7 of 13 live routes were absent: /eventos/novo, /eventos/url, /painel, /painel/eventos, /dashboard, /eventos/meus, /eventos. FIXED in this pass — rewrite_rules now carries all 13.",
+          "routes_stale_value": "^portal/?$ and ^portal/eventos/?$ were recorded as apollo_event_page=portal; the live value has been portal_archive since PHASE 002. 'portal' is a value neither map can emit. FIXED.",
+          "version_drift": "registry said 1.6.0; plugin header and APOLLO_EVENT_VERSION both say 1.6.11. FIXED.",
+          "meta_under_documented": "chapter declares 3 meta keys; the code reads/writes 40+ (_event_banner, _event_dj_ids, _event_highlighted, _event_ticket_status, _event_access_buttons, _event_earlybird_*, _event_lat/_event_lng, _event_gallery, …). NOT fixed here — _inventory/data-registry.json is the canonical field→storage map and already carries them; this chapter should either mirror it or point at it rather than holding a third, thinner copy.",
+          "template_parts_under_documented": "chapter declares 1 template part; 82 exist on disk under styles/base/template-parts/. NOT fixed here — enumerating all 82 in the registry duplicates the filesystem. Recommend documenting only the cell CONTRACTS (portal/, single/, dash/, create/) rather than every file."
+        },
+        "permission_risk_flags_corrected": 3,
+        "assets_note": "The assets chapter lists wp_enqueue HANDLES (apollo-events, leaflet, …), not file paths. A path-existence check against them is meaningless — not a finding.",
+        "open_defect_found": "/eventos/url ships locPath='apollo/v1/loc-resolve', a route registered nowhere in the ecosystem. Recorded on the page entry as known_defect."
+      },
+      "$portal_header_swap_2026_08_08": {
+        "date": "2026-08-08",
+        "scope": "/eventos, /portal, /portal/eventos (portal_archive). The screen's header was replaced. Version bump 1.7.0 -> 1.7.1.",
+        "what_was_removed": ".pev-masthead — the month rail, the month stepper, the scroll-dock glass pill and the 13rem período dropdown. It was built as a JavaScript string inside portal/app.php::skeleton() and styled by portal/styles-masthead.php + portal/styles-chrome.php.",
+        "what_replaced_it": "apollo_listing_header() from apollo-templates — the approved 'Header 02 · Kinetic Mask · Apple'. See 09-plugins/apollo-templates.json $listing_header_block_2026_08_08 for the block itself.",
+        "why": [
+          "It was markup inside a JS string: none of it existed in the first paint, and the month only appeared once the runtime had run.",
+          "It could not be reused. Any other listing wanting the same header would have had to copy skeleton().",
+          "The período menu was a dropdown pinned to the masthead, and filtering by taxonomy did not exist on the screen at all."
+        ],
+        "wiring": {
+          "styles/base/archive-event.php": "requires portal/header.php BEFORE the #apollo-portal-root div, and portal/header-bridge.php AFTER portal/scripts.php.",
+          "why_outside_the_root_div": "skeleton() rewrites #apollo-portal-root's innerHTML on every mount, so anything inside it cannot survive a re-render — nor exist before the runtime boots. The header is a SIBLING; the bridge joins the two by CustomEvent.",
+          "portal/header.php": "adapter. Counts events per month out of $portal_events for the scrubber, builds the filter groups from get_terms(hide_empty), calls the block, and publishes window.APOLLO_PEV_HEADER.",
+          "portal/header-bridge.php": "the only file that knows both halves. apollo:lh:month → setMonth(), apollo:lh:filter → setFilters(), apollo:lh:search → setSearch(); apollo:pev:search-clear (from the portal chip) clears the header input."
+        },
+        "group_key_contract": "periodo → radio, drives state.mode with the SAME values the old dropdown used (passados / neste-fds / mes / prox-fds / proximos), so behaviour did not change — only where the user picks. tax_* → checkbox, matched against e.tags (term NAMES). sound → checkbox, matched against e.genres (term SLUGS).",
+        "app_js_changes": "portal/app.php lost skeleton()'s header markup, syncChromeDock(), the dock hysteresis constants, renderMonthLabel() and the filter-menu open/close pair. It gained setMonth()/setFilters()/setSearch() on the public API and a refine() pass applying tags, sounds and the search query. Also removed in the same pass: a leftover debug beacon in eveCardHTML() that POSTed to 127.0.0.1:7514 on every visitor's browser.",
+        "css_ownership": {
+          "deleted": [
+            "portal/styles-masthead.php",
+            "portal/styles-chrome.php"
+          ],
+          "added": "portal/styles-rhythm.php — what survived of masthead: the `--pev-*` scale (gutter/band/stack) that the bands below consume. It never had anything to do with the header, it just lived in the same file. Still the LAST-WORD cell for .pev-layout / .pev-rails / .pev-browse geometry; do not redeclare those anywhere else — two owners for those selectors is what once printed the month on top of the hero.",
+          "styles.php_loop": "'chrome' and 'masthead' removed, 'rhythm' added before 'lightbox'."
+        },
+        "graceful_degradation": "If apollo-templates is inactive, portal/header.php returns early and the portal renders the current month with no header rather than fatalling. If the bridge never loads, the header animates and changes nothing. Neither half takes the other down.",
+        "verification": {
+          "php_l": "23 changed files, clean.",
+          "inline_js": "every <script> block in the changed templates parsed.",
+          "harness": "_sandbox/build-portal-harness.mjs 34/34 PASS, including four new header assertions (H1-H4). The harness now renders the SHIPPED header through _sandbox/render-portal-header.php (php CLI + a thin WP shim) instead of holding a snapshot copy of its markup — a copy would be the second owner the harness exists to forbid.",
+          "not_verified": "No browser was reachable this session. The header's geometry inside the real Apollo+ shell — and the wipe/mask animations — have not been eyeballed. Open _sandbox/portal-harness.html to check."
+        },
+        "files": [
+          "styles/base/archive-event.php",
+          "styles/base/template-parts/archive/portal/header.php (new)",
+          "styles/base/template-parts/archive/portal/header-bridge.php (new)",
+          "styles/base/template-parts/archive/portal/styles-rhythm.php (new)",
+          "styles/base/template-parts/archive/portal/styles-masthead.php (deleted)",
+          "styles/base/template-parts/archive/portal/styles-chrome.php (deleted)",
+          "styles/base/template-parts/archive/portal/{app,styles,styles-browse,styles-hero,styles-responsive,styles-lightbox}.php",
+          "_sandbox/render-portal-header.php (new)",
+          "_sandbox/build-portal-harness.mjs",
+          "apollo-events.php (version bump 1.7.0 -> 1.7.1)"
+        ]
+      },
+      "$reader_surface_white_and_hydration_2026_08_17": {
+        "date": "2026-08-17",
+        "scope": "The shared lightbox — every surface, not just events. Version bump 1.7.1 -> 1.7.2.",
+        "requirement": "The surface behind a fragment is solid #fff, always, in both themes. Never a token that can flip, never rgba with alpha, never a blur that lets the page behind read through. A close control is always present.",
+        "defect_1_panel_was_not_white": {
+          "trace": [
+            ".ev-lb-panel{background:var(--ev-bg)}  assets/css/apollo-single-event.css:1042",
+            "--ev-bg: var(--white-1)                assets/css/apollo-single-event.css:43",
+            "html.dark-mode{--white-1:#0b0b0d}      theme",
+            "html.dark-mode{--rgb-diff:255,255,255} apollo-login/assets/css/apollo-auth-uni.css:121",
+            "--ev-ink: rgba(var(--rgb-diff),1)      assets/css/apollo-single-event.css:45"
+          ],
+          "effect": "In dark mode the reader panel rendered #0b0b0d — near black. The requirement had been silently violated on every dark-theme install since the lightbox shipped.",
+          "the_trap": "Pinning `background` alone produces WHITE TEXT ON WHITE, because --ev-ink inverts independently of --ev-bg. That renders as a blank panel with a working close button — visually identical to the 2026-08-07 stale-asset failure and considerably harder to diagnose a second time. The whole local --ev-* block has to be pinned together or not at all.",
+          "fix": "portal/styles-lightbox.php pins --ev-bg/--ev-ink/--ev-mute/--ev-faint/--ev-line/--ev-line2/--ev-soft to their resolved light-theme literals and sets background:#fff on .ev-lb-panel. Component-scoped custom properties, the form the DS blesses — NOT a :root entry.",
+          "ownership": "styles-lightbox.php is now the DECLARED LAST-WORD OWNER of the reader surface colour (.ev-lb-panel background + token pin, .ev-lb-bd background). The base sheet keeps its own values as the standalone-page default and is out-specified by the doubled selector. Do not edit both — that is the cardinal sin.",
+          "trade_off_accepted": "Dark-mode readers get a light document panel. Deliberate: the fragment is a document, not chrome."
+        },
+        "defect_2_backdrop_had_alpha": "`.ev-lb-bd` was rgba(var(--rgb-diff),.72). The comment above it claimed nothing shows through a full-bleed panel — true once open, false for the ~520ms the panel is still transitioning from opacity:0, during which the backdrop IS the surface. Now an opaque #fff literal with backdrop-filter:none.",
+        "defect_3_nested_css_comment": {
+          "found_in": "portal/styles-lightbox.php §6 READING COLUMN",
+          "what": ":root { --ev-max: 440px }  followed by an inline /* … */ annotation INSIDE an already-open comment block. CSS comments do not nest, so the outer block terminated at that inner close.",
+          "effect": "A .ev-wrap width rule and fourteen lines of English prose were handed to the CSS parser as source. The .ev-wrap rule escaped unscoped into the global cascade — reaching the real /evento/{slug} page, not just the lightbox — and the prose survived only on the parser's silent error recovery.",
+          "why_it_survived": "Syntax highlighters DO nest comments; browsers do not. It read as a comment in every editor for months. That gap is why assertion E24 is mechanical rather than a review note.",
+          "fix": "Inner annotation rewritten without comment syntax. E24 now scans every styles*.php cell in the portal directory for a second opener inside an open span."
+        },
+        "feature_fragment_hydration": {
+          "problem": "innerHTML never executes <script>. For events that was correct and documented — the event fragment's only script is an inert application/json config block and its behaviour comes from ApolloEventSingle.mount(). It stopped being the whole story the moment a second surface existed: apollo-djs ships its runtime as an inline IIFE in its `scripts` cell, and that cell is GENERATED by _sandbox/build-dj-cells.py with a do-not-hand-edit banner. A DJ fragment therefore injected as correct but DEAD html — no dock, no reveals, no shares, no scroll progress.",
+          "rejected_design": "A per-surface mount() API. It would have required hand-editing exactly the generated cell that must not be hand-edited, once per surface, forever.",
+          "shipped": "hydrateScripts() in assets/js/apollo-event-lightbox.js re-creates the fragment's own <script> nodes so the browser executes them. Zero per-plugin work, works for every surface that will ever be registered.",
+          "safety": [
+            "Order preserved; a src= script blocks the ones after it, re-creating the guarantee a parsed document gives for free.",
+            "state.injectToken generation counter — a superseded fragment's async chain detects it lost and stands down, so two fast opens cannot interleave two runtimes.",
+            "EXECUTABLE allow-list — application/json and application/ld+json are data and are left alone.",
+            "Per-script failure containment; a detached node is skipped rather than aborting the chain.",
+            "KNOWN AND ACCEPTED: document-level listeners bound by a fragment runtime outlive the panel, because unmountCurrent() removes their targets but not the listeners. Their selector lookups then resolve to null and the handlers no-op. Revisit if a surface ever binds something with side effects that survive its own DOM."
+          ],
+          "event_path_untouched": "ApolloEventSingle.mount() still runs exactly as before. Hydration is a no-op for events."
+        },
+        "harness": {
+          "added": [
+            "E20 · reader panel background is an opaque literal, never a themed token, and pins all six companion --ev-* tokens",
+            "E21 · backdrop carries no alpha and no backdrop-filter",
+            "E22 · shell always ships the labelled close button, dialog semantics and an Escape binding",
+            "E23 · hydration + generation token + type gate present; event mount intact; dj/loc surfaces declare renderer AND can_view; a surface whose docblock still says 'not yet live' while its renderer exists is a failure",
+            "E24 · no styles*.php cell opens a comment inside a comment"
+          ],
+          "note": "E20/E21 were validated against negative controls — they were confirmed to FAIL on the pre-fix var(--ev-bg) and rgba(...,.72) values before being accepted.",
+          "not_verified": "No PHP binary and no browser in this environment. The live visual pass — solid white in BOTH themes, close button legible, DJ fragment waking up — is unrun and belongs to the operator, 30s after save."
+        },
+        "files": [
+          "styles/base/template-parts/archive/portal/styles-lightbox.php",
+          "assets/js/apollo-event-lightbox.js",
+          "_sandbox/build-portal-harness.mjs",
+          "apollo-events.php (version bump 1.7.1 -> 1.7.2)"
+        ]
+      },
+      "$version_synced": {
+        "date": "2026-08-31",
+        "from": "1.7.5",
+        "to": "1.7.16",
+        "source": "disk docblock via doctor.js"
       }
     },
     "apollo-fav": {
@@ -30710,7 +31368,7 @@
           "_source": "deep_live_scan"
         }
       ],
-      "version": "1.0.1",
+      "version": "1.0.2",
       "ajax": {
         "priv": [],
         "nopriv": []
@@ -31685,6 +32343,12 @@
           "apollo_hub",
           "apollo_hub_builder"
         ]
+      },
+      "$version_synced": {
+        "date": "2026-08-31",
+        "from": "1.0.1",
+        "to": "1.0.2",
+        "source": "disk docblock via doctor.js"
       }
     },
     "apollo-journal": {
@@ -32753,7 +33417,7 @@
           "_source": "deep_live_scan"
         }
       ],
-      "version": "1.0.1",
+      "version": "1.0.5",
       "ajax": {
         "priv": [],
         "nopriv": []
@@ -33870,6 +34534,30 @@
           "apollo_locals",
           "apollo_map"
         ]
+      },
+      "$mockup_parity_not_verifiable_2026_08_17": {
+        "date": "2026-08-17",
+        "action": "GAP_RECORDED",
+        "question_asked": "Do the dj and loc mockups print the same final structure of styles and visuals as the shipped pages?",
+        "answer_for_loc": "UNANSWERABLE AS THE REPO STANDS. Two things are missing at once, and neither can be substituted by inference.",
+        "missing_1_no_mockup_in_repo": "21-mockup-field-contract.json audits 'screen/single cpt/location/loc-single-page.html', which lives OUTSIDE the plugins folder and was never copied in. apollo-djs has its counterpart at _sandbox/dj-single-page.mockup.html; apollo-loc has no _sandbox and no mockup. There is no approved artefact here to compare against.",
+        "missing_2_no_cell_structure": "apollo-loc never went through the cell treatment. styles/base/single-local.php is a monolith with its per-item context inline at the top (_local_name, address, coords, … from line 31), exactly the shape apollo-djs moved away from. There is no template-parts/single/ tree, no generator, and no render SSOT: apollo_loc_render_single(), apollo_loc_single_context() and apollo_loc_can_view() are all undefined — verified by grep across the whole plugin.",
+        "consequence": "The loc surface in includes/surface.php stays correctly DORMANT — apollo_surface_get('loc') returns null, so no REST fragment route is registered and apollo_surface_open_attrs('loc',$id) returns ''. A loc card renders as a plain anchor to /local/{slug}. That is the designed graceful degradation, not a bug.",
+        "what_would_make_it_verifiable": [
+          "1. Copy the approved loc-single-page.html into apollo-loc/_sandbox/ so the design has a home in the repo, as apollo-djs did.",
+          "2. Extract apollo_loc_single_context( int $id ): array out of styles/base/single-local.php; the template extract()s it. Rendered output must not change — that is the whole test.",
+          "3. Add apollo_loc_render_single() + apollo_loc_can_view(). The surface, its REST fragment and the lightbox then light up together with no further wiring.",
+          "4. Only then does a build-loc-cells.py and a parity assertion have anything to compare."
+        ],
+        "warning_inherited_from_djs": "When the loc mockup is copied in, check its encoding FIRST. The DJ mockup is character-corrupted (152 lines) while its generated cells are clean — see 09-plugins/apollo-djs.json $mockup_corrupted_generator_disarmed_2026_08_17. If the two mockups travelled together they were likely damaged together.",
+        "philosophy_violations_still_open_in_the_loc_mockup": "21-mockup-field-contract.json records VIO-02 (#dockFollow 'Seguir' button with a heart icon), VIO-03 ('Siga o local' copy) and VIO-04 (.map-note printing raw lat/lng plus an internal meta name and the non-existent CPT slug 'events_local' — the real slug is 'local'). These must be fixed in the mockup BEFORE any generator slices it, or the violations become permanent in shipped cells. Copy and icon changes only; no new storage — the fav tables already exist.",
+        "risk_if_ignored": "Building loc cells from an unaudited mockup would bake a follow button into production, which 01-philosophy forbids outright (NO_SELECTIVE_FOLLOW, NO_EGO_COUNTERS)."
+      },
+      "$version_synced": {
+        "date": "2026-08-31",
+        "from": "1.0.1",
+        "to": "1.0.5",
+        "source": "disk docblock via doctor.js"
       }
     },
     "apollo-login": {
@@ -34953,7 +35641,7 @@
         }
       ],
       "cron": [],
-      "version": "1.0.41",
+      "version": "1.0.47",
       "hooks_fired": [
         "apollo/firewall/blocked",
         "apollo/login/email_verified",
@@ -38358,6 +39046,12 @@
           "apollo_simon",
           "apollo_verify_email"
         ]
+      },
+      "$version_synced": {
+        "date": "2026-08-31",
+        "from": "1.0.41",
+        "to": "1.0.47",
+        "source": "disk docblock via doctor.js"
       }
     },
     "apollo-lux-panels": {
@@ -38365,7 +39059,7 @@
       "namespace": "Apollo\\LuxPanels",
       "priority": 60,
       "status": "IMPLEMENTED",
-      "version": "1.0.1",
+      "version": "1.2.0",
       "description": "Luxury-grade advanced data panels for the event, dj and local CPTs — one high-priority tabbed metabox per CPT, 1:1 with the Apollo add-new form design system.",
       "dependencies": [
         "apollo-core",
@@ -38468,6 +39162,12 @@
           "sanitize_callback": "optional callable(array $rows): array, run on the assembled rows before update_post_meta() — lets the owning plugin enforce its own validation (e.g. apollo_dj_sanitize_tracks_meta) in one place."
         },
         "first_consumer": "DjPanel.php — _dj_tracks (schema v2)"
+      },
+      "$version_synced": {
+        "date": "2026-08-31",
+        "from": "1.0.1",
+        "to": "1.2.0",
+        "source": "disk docblock via doctor.js"
       }
     },
     "apollo-maps": {
@@ -49618,6 +50318,37 @@
         ]
       }
     },
+    "apollo-seed-runner": {
+      "slug": "apollo-seed-runner",
+      "namespace": null,
+      "priority": 99,
+      "status": "IMPLEMENTED",
+      "version": "1.0.0",
+      "layer": "L14_tooling",
+      "description": "Minimal loader plugin whose only job is to require _inventory/seed/apollo-seed.php so the idempotent JSON-driven seeder actually executes. Created 2026-08-29 to solve a real autoload gap: the seeder lived outside wp-content/plugins/*/*.php, so WordPress never scanned it and its admin_init hook never registered — the script documented its own usage but could never run.",
+      "dependencies": [],
+      "provides": [
+        "seed-runner"
+      ],
+      "cpts": [],
+      "taxonomies": [],
+      "tables": [],
+      "meta": {},
+      "rest": [],
+      "pages": [],
+      "shortcodes": [],
+      "$product_surface": false,
+      "$tooling": {
+        "role": "maintenance",
+        "loads": "plugins/_inventory/seed/apollo-seed.php",
+        "trigger": "admin_init, gated on ?apollo_seed=1 (dry run) and &write=1 (actually writes)",
+        "idempotency": "_apollo_seed_key post meta is the dedupe key — re-running never duplicates rows",
+        "default_behaviour": "DRY RUN. Writing requires an explicit &write=1.",
+        "data_source": "plugins/_inventory/seed/apollo-seed-data.json"
+      },
+      "$why_it_stays_active": "Left active deliberately: it is admin-gated, dry-run by default, and idempotent, so it is safe to leave in place for future re-seeds. If that judgement changes, deactivating it is harmless — nothing else depends on it.",
+      "$registry_gap_closed": "Created on disk 2026-08-29 but had no registry entry until 2026-08-31. Found by doctor.js."
+    },
     "apollo-seo": {
       "slug": "apollo-seo",
       "namespace": "Apollo\\SEO",
@@ -49876,7 +50607,7 @@
         }
       ],
       "shortcodes": [],
-      "version": "1.0.3",
+      "version": "1.0.6",
       "ajax": {
         "priv": [],
         "nopriv": []
@@ -50514,6 +51245,12 @@
         "cpts_found": [],
         "tables_found": [],
         "shortcodes_found": []
+      },
+      "$version_synced": {
+        "date": "2026-08-31",
+        "from": "1.0.3",
+        "to": "1.0.6",
+        "source": "disk docblock via doctor.js"
       }
     },
     "apollo-sheets": {
@@ -53849,12 +54586,123 @@
         ]
       }
     },
+    "apollo-soundcloud": {
+      "slug": "apollo-soundcloud",
+      "namespace": "Apollo\\SoundCloud",
+      "priority": 40,
+      "status": "IMPLEMENTED",
+      "description": "One SoundCloud player for the whole ecosystem. Apollo's own UI driving a hidden Widget-API iframe, with preview (25-65%) and full modes. Replaces seven hand-rolled implementations.",
+      "version": "1.0.3",
+      "layer": "L6_frontend",
+      "dependencies": [
+        "apollo-core"
+      ],
+      "required": false,
+      "cpts": [],
+      "taxonomies": [],
+      "tables": [],
+      "meta": {
+        "post": [],
+        "user": [],
+        "term": []
+      },
+      "rest": [],
+      "pages": [],
+      "shortcodes": [
+        "apollo_soundcloud"
+      ],
+      "options": [
+        "apollo_sc_client_id"
+      ],
+      "assets": {
+        "scripts": [
+          "apollo-sc"
+        ],
+        "styles": [
+          "apollo-sc"
+        ]
+      },
+      "provides": [
+        "apollo_soundcloud_player",
+        "apollo_soundcloud_resolve",
+        "apollo_soundcloud_meta",
+        "apollo_soundcloud_is",
+        "apollo_sc_provider",
+        "ApolloSC (JS)"
+      ],
+      "hooks_fired": [
+        "apollo/soundcloud/provider",
+        "apollo:sc:play",
+        "apollo:sc:pause",
+        "apollo:sc:ready"
+      ],
+      "hooks_listened": [
+        "apollo:audio:play"
+      ],
+      "$disk_status": "PRESENT",
+      "$created_2026_08_17": {
+        "date": "2026-08-17",
+        "action": "PLUGIN_CREATED",
+        "plan": "_inventory/PLAN-apollo-soundcloud.md",
+        "why": {
+          "seven_implementations_found": [
+            "apollo-djs/assets/js/dj-single.js:41 — full SC.Widget with vinyl binding",
+            "apollo-djs/assets/js/dj-card-single.js:138 — sets iframe.src directly, NO widget",
+            "apollo-djs/styles/base/template-parts/single/scripts.php:154 — sets iframe.src directly, NO widget",
+            "apollo-users/templates/single-profile.php:3815-3859 — full SC.Widget INLINE in a template",
+            "apollo-users/assets/js/profile.js:202-236 — ANOTHER SC.Widget in the same plugin",
+            "apollo-hub/assets/js/home/radio.js:29-74 — lazy api.js + its own SC.Widget",
+            "apollo-events/styles/apollo-v2/single-dj.php:278 — hardcoded iframe, no control"
+          ],
+          "compounding_defects": [
+            "api.js loaded from THREE places (single-dj.php:162, single-profile.php:103, lazily in radio.js) — a page carrying two of them loads the SDK twice.",
+            "The widget-URL string was assembled by hand FOUR times with different colours, auto_play values and chrome toggles, so one track looked and behaved differently depending on which screen you found it on.",
+            "TWO HARDCODED TRACK IDS shipping in production: apollo-dashboard/.../panel-feed.php:211 -> 1293057640 and apollo-hub/.../radio.php:28 -> 293. Neither comes from data.",
+            "Seven independent widgets cannot enforce 'only one thing plays at a time' — none of them knew the others existed. That is a requirement for a social network, not a nicety."
+          ],
+          "same_defect_shape": "Identical to the four accommodation cards and the five Out Now sections: no single owner. See STRATEGY-integration.md §1."
+        },
+        "api_access_reality": {
+          "finding": "SoundCloud CLOSED open API registration. Access is application-only through a form on developers.soundcloud.com, reviewed manually, selective, and can take weeks. Credentials cannot be assumed.",
+          "verified": "Web search 2026-08-17 — developers.soundcloud.com, soundcloud/api issue #219, publicapis.io/soundcloud-api.",
+          "consequence": "The Widget API is the PRIMARY architecture here, NOT a fallback. It needs no credentials, works for everyone today, and is the only way to implement a percentage-based preview at all — that requires getDuration(), which a bare iframe cannot report. oEmbed likewise needs no credentials and supplies title/author/artwork.",
+          "the_seam": "apollo_sc_provider() returns 'widget' today and 'api' if credentials ever arrive. Direct stream URLs would then replace the iframe with ZERO call-site changes. That seam is why the closed registration is an inconvenience rather than a blocker.",
+          "on_the_selfhosted_repos": "Navidrome, Koel, Ampache and Funkwhale are excellent self-hosted MUSIC SERVERS — they host your own audio and none of them plays a SoundCloud track. They answer a different question ('host our own catalogue') and would slot in as a second provider behind the same seam if that becomes the goal. They do not substitute for SoundCloud playback."
+        },
+        "architecture": {
+          "public_api": "apollo_soundcloud_player( $url, [mode, variant, start_pct, end_pct, autoplay] ) — the only entry point. Consumers never know which transport is active.",
+          "modes": "preview = start_pct..end_pct of duration (default 25-65). full = 0..100.",
+          "preview_enforcement": "There is no SoundCloud API for 'play from A to B'. READY -> getDuration() -> compute window -> seekTo(start) -> play() -> watch PLAY_PROGRESS and pause at end. Implemented in the runtime, not in PHP, because duration is only knowable after READY.",
+          "short_track_floor": "Tracks under APOLLO_SC_PREVIEW_MIN_SECONDS (20s) play whole even in preview mode — a 4-second ID clip has no meaningful middle 40%.",
+          "lazy_everything": "The SDK loads once on first play (replacing three eager loads), the iframe is created on first play (fifteen players on /casa would otherwise mean fifteen SoundCloud connections before anyone clicked), and metadata is fetched after paint.",
+          "single_active_player": "The runtime holds one `current` reference and stops it before starting another; it also listens for apollo:audio:play so a catbox/YouTube track preview silences it.",
+          "progress_bar_is_honest": "In preview mode the bar shows the WHOLE track with the window marked, not a 0-100% bar of the excerpt. A bar that fills completely on a 40% slice tells the listener they heard the whole thing, which is false.",
+          "degrades_honestly": "If the SDK is blocked — ad blockers and privacy extensions block w.soundcloud.com often enough that this is a normal path — the hidden transport is revealed as the real, visible embed and the Apollo button is hidden. A dead play button is worse than SoundCloud's own chrome appearing. <noscript> carries the same embed."
+        },
+        "verification": "URL resolution tested against 12 cases (track, set, user, api.soundcloud.com resources, on.soundcloud.com and snd.sc short links, m. subdomain, and four fail-closed non-SoundCloud inputs). Preview window maths verified incl. the short-track floor and percentage clamping (inverted pairs, out-of-range values). No PHP binary here — php -l unrun; the live pass belongs to the operator.",
+        "not_yet_done": "S2 — replacing the seven existing implementations. Deliberately NOT done in the same pass: /dj/{id}, /perfil, /hub and the dashboard all play audio today, and a bad swap fails SILENTLY (nothing plays) rather than loudly. Each is replaced individually, with the old implementation kept until its replacement is confirmed on that page. S3 wires SoundCloud into apollo_track_preview() as a fourth provider alongside catbox/archive/youtube.",
+        "files": [
+          "apollo-soundcloud.php",
+          "includes/resolve.php",
+          "includes/meta.php",
+          "includes/render.php",
+          "assets/js/apollo-sc.js",
+          "assets/css/apollo-sc.css"
+        ]
+      },
+      "$version_synced": {
+        "date": "2026-08-31",
+        "from": "1.0.0",
+        "to": "1.0.3",
+        "source": "disk docblock via doctor.js"
+      }
+    },
     "apollo-statistics": {
       "slug": "apollo-statistics",
       "namespace": "Apollo\\Statistics",
       "priority": 5,
       "status": "IMPLEMENTED",
-      "version": "2.0.6",
+      "version": "2.0.8",
       "description": "Ultra Modular Pro Analytics Engine — 15 MetricGroup classes, 68 plug-and-play metric instances, PostHog-inspired tracker, amCharts 5 visualizations, gamification bridge. Covers ALL 27 Apollo plugins.",
       "dependencies": [
         "apollo-admin",
@@ -56617,6 +57465,12 @@
           "apollo_stats_widget",
           "apollo_user_stats"
         ]
+      },
+      "$version_synced": {
+        "date": "2026-08-31",
+        "from": "2.0.6",
+        "to": "2.0.8",
+        "source": "disk docblock via doctor.js"
       }
     },
     "apollo-suppliers": {
@@ -56787,7 +57641,7 @@
       "namespace": "Apollo\\Telegram",
       "priority": 50,
       "status": "IMPLEMENTED",
-      "version": "1.1.2",
+      "version": "1.1.5",
       "description": "Apollo Telegram Bot - Independent test plugin for Telegram Bot integration with Apollo Rio. Test mode only. No registry involvement yet.",
       "dependencies": [
         "apollo-core",
@@ -58220,6 +59074,12 @@
           "apollo_telegram_verif"
         ],
         "shortcodes_found": []
+      },
+      "$version_synced": {
+        "date": "2026-08-31",
+        "from": "1.1.2",
+        "to": "1.1.5",
+        "source": "disk docblock via doctor.js"
       }
     },
     "apollo-templates": {
@@ -58624,7 +59484,7 @@
           "_source": "deep_live_scan"
         }
       ],
-      "version": "1.4.2",
+      "version": "1.6.24",
       "cron": [],
       "hooks_fired": [
         "apollo/adverts/render_create_form",
@@ -60371,6 +61231,47 @@
           "apollo-templates.php (version bump 1.4.0 -> 1.4.1)"
         ]
       },
+      "$listing_header_block_2026_08_08": {
+        "date": "2026-08-08",
+        "scope": "NEW SHARED BLOCK — apollo_listing_header(). Version bump 1.5.0 -> 1.5.1.",
+        "what": "The month/search/filter band at the top of an archive-style Apollo screen, shipped as a reusable template-part block. Ported from the approved lab file screen/portal/header listing/header-of-listing-events.html, section 'Header 02 · Kinetic Mask · Apple' (the second of the three variants in that file).",
+        "why_here_and_not_in_apollo_events": "It is page chrome that more than one listing will want, and 18-canvas-shell puts Apollo+ chrome plus the apollo_plus_part() include API in apollo-templates. Putting it in the first plugin that happened to need it (apollo-events) would have made every future listing depend on the events plugin for its header.",
+        "not_a_fourth_shell": "IMPORTANT given $unification_2026_08_05 in 18-canvas-shell: this is a BLOCK, not a shell. It emits no <head>, no <body>, no topbar and no aside. It renders inside whatever container the caller already opened — normally .ax-main from apollo_plus_open() — and it does not call any shell function.",
+        "api": {
+          "file": "includes/listing-header-api.php (required from apollo-templates.php)",
+          "functions": [
+            "apollo_listing_header( array $args = [] ) — render",
+            "apollo_get_listing_header( array $args = [] ) — same, returns HTML",
+            "apollo_listing_header_months( array $counts = [] ) — twelve localized rows ready for the 'months' arg",
+            "apollo_listing_header_args() / apollo_listing_header_groups() — normalisers, public so a caller can pre-validate"
+          ],
+          "one_line_use": "apollo_listing_header();",
+          "filter": "apollo/listing_header/skins — register another skin without touching the block"
+        },
+        "structure": {
+          "templates/template-parts/listing-header/index.php": "orchestrator — the only part a page includes; guards the shared layers so N headers on one page emit kernel CSS/JS once",
+          "kernel-styles.php": "overlay + filter primitives shared by every skin",
+          "kernel-scripts.php": "window.ApolloListingHeader — instance registry, circular clip-path wipe, month mask-swap, CustomEvents",
+          "skins/apple.php": "the Header 02 look; a skin only restyles, the markup contract is skin-independent",
+          "parts/{actions,month,scrub}.php": "the header row, the kinetic month/year, the 12-segment scrubber",
+          "parts/{overlay-search,overlay-filter,filter-group}.php": "the two full-viewport panels; overlays are siblings of <header> so they are not trapped in its stacking context"
+        },
+        "controlled_component": "The block never fetches, never filters and never knows what a month contains. It emits apollo:lh:{month,search,filter,clear} and accepts state back through setMonth()/setMonths(). The screen owns the data — that is what makes it reusable.",
+        "data_flow_rule_honoured": "The lab built its filter chips in JS from a hard-coded APOLLO_TAXONOMY literal. That was NOT ported: per 03-apollo-rule.$apollo_rule.data_flow the PHP array is the source of truth, so chips are server-rendered from terms the caller passes. A group with zero options is dropped; zero groups prints one empty state. Nothing is invented.",
+        "conventions": {
+          "icons": "bare <i class=\"ri-*\"> only — core.js's icon runtime hydrates them; no hand-written SVG",
+          "tokens": ":root is never redeclared; the block's own variables are scoped to .alh",
+          "script_payloads": "config goes through apollo_json_for_script() (HEX flags), because month labels and term names are author-influenced text inside a <script>"
+        },
+        "first_consumer": "apollo-events /eventos — see 09-plugins/apollo-events.json $portal_header_swap_2026_08_08.",
+        "files": [
+          "includes/listing-header-api.php (new)",
+          "templates/template-parts/listing-header/{index,kernel-styles,kernel-scripts,boot}.php (new)",
+          "templates/template-parts/listing-header/skins/apple.php (new)",
+          "templates/template-parts/listing-header/parts/{actions,month,scrub,overlay-search,overlay-filter,filter-group}.php (new)",
+          "apollo-templates.php (require + version bump 1.5.0 -> 1.5.1)"
+        ]
+      },
       "$fsx_token_compat_2026_07_28": {
         "date": "2026-07-28",
         "severity": "ROOT CAUSE — explains the majority of 'one ton of elements' wrong across every Apollo+ screen",
@@ -60383,6 +61284,12 @@
           "templates/template-parts/apollo-plus/aside-styles.php",
           "apollo-templates.php (version bump 1.4.1 -> 1.4.2)"
         ]
+      },
+      "$version_synced": {
+        "date": "2026-08-31",
+        "from": "1.5.1",
+        "to": "1.6.24",
+        "source": "disk docblock via doctor.js"
       }
     },
     "apollo-users": {
@@ -67961,57 +68868,8 @@
     "apollo_templates_priorities": "landing-router P4, mural-router P5, main template handler P10 (apollo-templates.php).",
     "apollo_core_front_route": "FrontRouteDispatcher template_redirect P0 — reads wp-content/apollo-pages-rest.json for index/logging (not apollo-registry.json).",
     "apollo_pane_engine": "Default: pane lab at /painel-lab; /casa is apollo-templates guest landing unless APOLLO_PANE_PRIMARY forces pane to own /casa (see apollo-pane-engine/includes/functions.php).",
-    "error_funnel": "apollo-error-handler.php template_redirect PHP_INT_MAX — late 404 to apollo.rio.br erro pages."
-  },
-  "$mu_plugins": {
-    "description": "Must-Use plugins in wp-content/mu-plugins/ — loaded before regular plugins; cannot be deactivated from wp-admin",
-    "apollo-brain": {
-      "file": "mu-plugins/apollo-brain.php",
-      "version": "1.2.0",
-      "status": "active",
-      "priority": -100,
-      "description": "Early boot: defines APOLLO_REGISTRY_PATH (wp-content/apollo-registry.json), validates JSON readable, require_once apollo-core/apollo-core.php before active_plugins. script_loader_tag defer for safe front bundles (preserves GSAP/jQuery/Apollo CDN). save_post and transition_post_status hooks purge apollo_purge_* and Registry::clear_cache(). Does NOT init CPT/CDN/security — apollo_core_bootstrap on plugins_loaded P1 does that.",
-      "constants_defined": [
-        "APOLLO_REGISTRY_PATH",
-        "APOLLO_BRAIN_LOADED"
-      ],
-      "hook": "muplugins_loaded priority -100",
-      "actions": [
-        "apollo/brain/before_apollo_core",
-        "apollo/brain/after_apollo_core_file",
-        "apollo/brain/bootstrap_complete",
-        "apollo/brain/loaded",
-        "apollo/brain/page_cache_maybe_init"
-      ]
-    },
-    "apollo-debug": {
-      "file": "mu-plugins/apollo-debug.php",
-      "status": "dev-only",
-      "description": "Query Monitor Apollo panel, boot timings, registry snapshot. apollo_debug_log() helper when WP_DEBUG or APOLLO_DEV_MODE.",
-      "guard": "WP_DEBUG or APOLLO_DEV_MODE",
-      "provides": [
-        "apollo_debug_log()",
-        "Query Monitor Apollo panel"
-      ]
-    },
-    "apollo-dev-routing": {
-      "file": "mu-plugins/apollo-dev-routing.php",
-      "status": "dev-only",
-      "description": "Logs which route handler wins (template_redirect) when APOLLO_DEV_MODE is true.",
-      "guard": "APOLLO_DEV_MODE"
-    },
-    "apollo-route-setup": {
-      "file": "mu-plugins/apollo-route-setup.php",
-      "status": "active",
-      "description": "One-time maintenance on init P20: drafts WP Pages whose slugs collide with apollo_get_reserved_virtual_slugs() (includes casa, home, acesso, feed, etc.), apollo_templates_add_rewrite_rules(), flush_rewrite_rules(false), Registry::clear_cache(), FrontRouteDispatcher::clear_cache(). Bump apollo_route_setup_version option when reserved slugs change.",
-      "option_flag": "apollo_route_setup_version",
-      "current_flag_example": "2026.05.20.2"
-    },
-    "apollo-error-handler": {
-      "file": "mu-plugins/apollo-error-handler.php",
-      "status": "active",
-      "description": "Late template_redirect: funnel is_404 to https://apollo.rio.br/erro/{code}/ (skips REST/AJAX as configured)."
-    }
+    "error_funnel": "apollo-error-handler.php template_redirect PHP_INT_MAX — late 404 to apollo.rio.br erro pages.",
+    "$mu_plugins_moved": "The MU boot layer now lives in chapter 22-mu-plugins.json (15 files documented, was 5)."
   },
   "$third_party_plugins": {
     "description": "Third-party WordPress plugins present in this aprio installation but not part of the Apollo ecosystem",
@@ -68167,8 +69025,8 @@
     "APOLLO_CDN_URL": "https://cdn.apollo.rio.br/v1.0.0/"
   },
   "summary": {
-    "total_plugins": 46,
-    "total_cpts_unique": 14,
+    "total_plugins": 48,
+    "total_cpts_unique": 17,
     "total_taxonomies_unique": 12,
     "total_tables_unique": 78,
     "total_meta_keys_unique": 492,
@@ -68281,6 +69139,7 @@
   },
   "quick_lookup": {
     "all_cpt_slugs": [
+      "apollo_agent_log",
       "apollo_sheet",
       "appointment",
       "classified",
@@ -68288,13 +69147,15 @@
       "doc",
       "email_aprio",
       "event",
+      "hostel",
       "hub",
       "journal_news",
       "journal_nota",
       "local",
       "resource",
       "service",
-      "supplier"
+      "supplier",
+      "track"
     ],
     "all_taxonomy_slugs": [
       "coauthor",
@@ -68922,7 +69783,42 @@
       "Sync files to host.",
       "Purge page + edge cache.",
       "php -l all changed files."
-    ]
+    ],
+    "$unification_2026_08_05": {
+      "summary": "Collapsed THREE competing Apollo+ shells into one. This chapter was written 2026-07-28, before apollo_plus_open() existed, so it documented only the trait path — the divergence grew underneath it.",
+      "the_three_shells_found": {
+        "A_trait": "BlankCanvasTrait::render_blank_canvas_plus() → template hand-rolls apollo_render_document_open() + <body class=\"ax-body\"> + apollo_render_app_shell() + apollo-events LOCAL template-parts/shared/{topbar,overlay,panels,aside}.php + <div class=\"ax-shell\"> + <main class=\"ax-main\">. Used by create-event.php, dashboard-event.php.",
+        "B_plus_api": "apollo_plus_open()/apollo_plus_close() (apollo-templates/includes/apollo-plus-api.php) → head + topbar-styles + app_shell + apollo-plus/aside.php + <main class=\"ax-main\" id=\"axMain\"> + <body class=\"ax-shell\">. Used by every phase-001..010 screen.",
+        "C_body_helper": "apollo_render_blank_canvas_body([variant=>plus]) → <body class=\"ax-body\"> + apollo_render_blank_canvas_shell(). Used by apollo-users/templates/user-radar.php."
+      },
+      "why_it_mattered": [
+        "DIFFERENT ASIDE: path A rendered apollo-events' own shared/aside.php, which has no gestor group — so Meus eventos / Meus anúncios / Minhas Comunas / Meus Núcleos / Meus projetos / Minhas tarefas simply did not exist on /novo-evento or /meus-eventos. Walking /eventos/meus → /novo-evento swapped the sidebar out from under the user.",
+        "DIFFERENT .ax-main GEOMETRY: shell-styles.php declares .ax-main{padding:50px 30px 180px;max-width:1040px}; aside-styles.php declares .ax-main{padding:0;width:100%;max-width:none} plus the >=1000px pinned-aside offsets. Two owners of one selector, opposite intents, winner decided by load order — the exact failure CLAUDE.md calls the cardinal sin.",
+        "DIFFERENT TOPBAR CSS SOURCE, so the two shells drifted independently. This is also why the topbar was completely unstyled on every path-B screen until 2026-07-30 (apollo_plus_open never loaded any topbar CSS at all).",
+        "Mixing A and B on one request emits two <head>/<body> pairs — already documented as a live failure in comunas.php, apollo-events Plugin.php and apollo-adverts Plugin.php."
+      ],
+      "resolution": {
+        "canonical": "apollo_plus_open() / apollo_plus_close() is now THE Apollo+ shell. One head, one topbar, one aside, one <main>, one CSS source.",
+        "api_extended": "apollo_plus_open() gained `theme` and `html_class` (additive, defaults reproduce prior output byte for byte) so the legacy documents could convert without losing the dark + is-logged treatment they already had.",
+        "converted": [
+          "apollo-events/styles/base/create-event.php",
+          "apollo-events/styles/base/dashboard-event.php"
+        ],
+        "guard_added": "apollo-events/styles/base/template-parts/shared/shell-styles.php now wraps its SHELL FRAME block (.ax-top*, .ax-aside, .ax-main, .panel-r, .apps-pop) in `if (! defined(APOLLO_PLUS_TOPBAR_STYLES))`. Kept, not deleted — it is still the shell for a consumer running without apollo-templates. Its component layer (buttons, cards, .field-input, .as2 combobox) stays unconditional because the forms depend on it and it collides with nothing. This makes the unification self-enforcing rather than a one-off cleanup."
+      },
+      "still_open": [
+        "Path C (apollo_render_blank_canvas_body) survives in apollo-users/templates/user-radar.php — not converted this pass, not verified.",
+        "apollo-dashboard/includes/class-plugin.php:207 still calls render_blank_canvas_plus() — works, but inherits whatever shell its template hand-rolls. Audit before trusting.",
+        "apollo-events shared/{topbar,overlay,panels,aside}.php are now unreferenced by the two converted templates. Left on disk deliberately (rollback + non-apollo-templates fallback); delete only after path A is fully retired."
+      ],
+      "verification": "Structural: <style> balance, PHP brace balance, open/close pairing, no orphan </main> or /ax-shell markup. Portal harness 22/22 green. Live: /novo-evento, /eventos/novo, /meus-eventos all return the expected guest 302 to /acesso (unchanged signature); /eventos unchanged and healthy. LOGGED-IN RENDER OF THE TWO CONVERTED SCREENS IS NOT VERIFIED — no authenticated session available this session. Confirm the aside now shows the gestor group on /novo-evento before trusting this."
+    },
+    "$blocks_vs_shells_2026_08_08": {
+      "why_this_note_exists": "$unification_2026_08_05 above is a record of three things that each thought they were the shell. The next reusable piece of Apollo+ chrome landed three days later, so the distinction is worth stating once rather than rediscovering it.",
+      "rule": "A SHELL owns the document: <head>, <body>, topbar, aside, <main>. There is exactly one, apollo_plus_open()/apollo_plus_close(). A BLOCK owns a band inside <main>: it emits no document furniture, calls no shell function, and is included with apollo_plus_part() like any other part. Blocks are unlimited; shells are one.",
+      "first_block": "apollo_listing_header() (apollo-templates 1.5.1, includes/listing-header-api.php) — the month/search/filter band for archive screens. Documented in 09-plugins/apollo-templates.json $listing_header_block_2026_08_08; first mounted on /eventos, see 09-plugins/apollo-events.json $portal_header_swap_2026_08_08.",
+      "where_a_new_block_goes": "apollo-templates/templates/template-parts/{block}/, with its public API in apollo-templates/includes/{block}-api.php — the same place and shape as the shell parts, so apollo_plus_part()'s child-theme → parent-theme → plugin override chain applies to it for free."
+    }
   },
   "$ssot_audit": {
     "date": "2026-07-28",
@@ -69216,6 +70112,697 @@
         "apollo-djs": "1.0.1 -> 1.0.2 (sanitizer) -> 1.0.3 (metabox retirement)",
         "apollo-lux-panels": "1.0.0 -> 1.0.1 (repeater_card type + DjPanel v2 UI + 5-field parity)"
       }
+    }
+  },
+  "$mockup_field_contract": {
+    "date": "2026-08-08",
+    "method": "Every text node and every media src in both mockups was traced to a storage kind. Three outcomes: MAPPED (a registered key supplies it), DERIVED (computable from registered data — the derivation is named), or MISSING (nothing supplies it — listed below).",
+    "registrar": "apollo-core/src/Core/MetaRegistry.php",
+    "hard_rule": "NO direct register_post_meta / register_post_type / register_taxonomy outside apollo-core. See 02-header.CRITICAL_apollo_core_centralization.",
+    "$philosophy_violations": {
+      "severity": "CRITICAL",
+      "note": "These are not missing fields. They are fields that must NEVER be created, because 01-philosophy forbids the concept. Building storage for them would make the violation permanent. Fix the mockup, do not register the key.",
+      "items": [
+        {
+          "id": "VIO-01",
+          "cpt": "dj",
+          "where": "dj-single-page.html — .hero-pills, second pill",
+          "prints": "4.1k · Seguidores",
+          "violates": "$philosophy.NO_EGO_COUNTERS + FORBIDDEN_CONCEPTS[\"followers count\"]",
+          "verdict": "REMOVE. A follower count is the exact metric the platform is built against. No meta key. Replace with a third derived fact from event history (e.g. anos em atividade, from first played event) or drop the pill to two.",
+          "status": "OPEN"
+        },
+        {
+          "id": "VIO-02",
+          "cpt": "dj + local",
+          "where": "both mockups — #dockFollow",
+          "prints": "aria-label=\"Seguir\" title=\"Seguir\" with <i class=\"ri-heart-3-line\">",
+          "violates": "$philosophy.NO_SELECTIVE_FOLLOW + FORBIDDEN_CONCEPTS[\"follow button\"]; namingRules.FORBIDDEN_TERMS.heart → USE 'wow'; .like → USE 'wow'",
+          "verdict": "RENAME to favoritar (apollo-fav). Icon becomes ri-shining-2-line / ri-shining-2-fill per 07-icons.plugins['apollo-fav']. Storage already exists — apollo_favorites / apollo_favs tables. No new key.",
+          "status": "OPEN"
+        },
+        {
+          "id": "VIO-03",
+          "cpt": "local",
+          "where": "loc-single-page.html — .ag-empty copy",
+          "prints": "Siga o local e seja avisado quando a próxima data cair.",
+          "violates": "$philosophy.NO_SELECTIVE_FOLLOW — 'siga' is the follow verb in Portuguese",
+          "verdict": "REWRITE to the fav vocabulary: 'Favorite o local e a gente te avisa quando a próxima data cair.'",
+          "status": "OPEN"
+        },
+        {
+          "id": "VIO-04",
+          "cpt": "local",
+          "where": "loc-single-page.html — .map-note",
+          "prints": "Lat -23.5265 · Lng -46.6664 — meta do CPT events_local",
+          "violates": "$apollo_rule.data_flow.production ('no debug output, no helper attributes') — an internal meta name is printed to the visitor, and `events_local` is not even a real CPT slug (the slug is `local`)",
+          "verdict": "REMOVE the note entirely, or reduce to the coordinate pair without the storage hint.",
+          "status": "OPEN"
+        }
+      ]
+    },
+    "dj": {
+      "cpt": "dj",
+      "owner_plugin": "apollo-djs",
+      "mockup": "screen/single cpt/dj/dj-single-page.html",
+      "payload": "APOLLO_DJ",
+      "context_fn": "apollo_get_dj_context( $dj_id )",
+      "missing": [
+        {
+          "id": "dj.hero_eyebrow",
+          "prints": "Rio de Janeiro — Hard Groove & Peak Time",
+          "ui": ".hero-eyebrow .lbl",
+          "proposed_key": "_dj_eyebrow",
+          "kind": "meta",
+          "type": "string",
+          "preferred": "DERIVED",
+          "derivation": "apollo_dj_home_city($id) . ' — ' . implode(' & ', first 2 terms of taxonomy `sound`)",
+          "why_not_meta": "Two of the three parts already exist as data; a free-text key would let them drift apart. Register the key only as an editorial OVERRIDE, empty by default.",
+          "empty_behavior": "fallback to derivation",
+          "blocker": "apollo_dj_home_city() does not exist — the dj CPT has NO city/base meta at all. See dj.home_city below."
+        },
+        {
+          "id": "dj.home_city",
+          "prints": "(the 'Rio de Janeiro' in the eyebrow, and '9 Cidades' needs a home to count against)",
+          "ui": ".hero-eyebrow, .hero-pills",
+          "proposed_key": "_dj_home_city",
+          "kind": "meta",
+          "type": "string",
+          "preferred": "META",
+          "why": "There is genuinely no city on the dj CPT. `_loc_city` appears in apollo-djs' meta.post list but it is an event/loc key that leaked into the deep scan, not a dj field. A DJ's base city is a fact about the artist, not derivable from their gig history (a Rio DJ who mostly plays SP would read as an SP artist).",
+          "empty_behavior": "hide the city segment"
+        },
+        {
+          "id": "dj.booking_status",
+          "prints": "Booking aberto · 2026",
+          "ui": ".hero-live",
+          "proposed_key": "_dj_booking_status",
+          "kind": "meta",
+          "type": "enum",
+          "enum": [
+            "open",
+            "selective",
+            "closed"
+          ],
+          "preferred": "META",
+          "why": "`_dj_booking` holds the CONTACT (an email). Whether the artist is currently taking bookings is a separate, changing fact, and the mockup renders it as a live dot — a state, not a link. The year is derived from current_time('Y').",
+          "empty_behavior": "hide the pill",
+          "i18n": "open → 'Booking aberto', selective → 'Booking seletivo', closed → 'Agenda fechada'"
+        },
+        {
+          "id": "dj.name_lines",
+          "prints": "LEO / JANEIRO as two stacked display lines",
+          "ui": "#heroName .hn-line ×2",
+          "proposed_key": "_dj_name_lines",
+          "kind": "meta",
+          "type": "string[]",
+          "preferred": "DERIVED",
+          "derivation": "explode(' ', _dj_name) — first token line 1, remainder line 2",
+          "why_key_still_needed": "The derivation breaks on one-word names (renders one line, hero collapses) and on three-word names (line 2 overflows). Register as an override so an artist can set the break point.",
+          "empty_behavior": "fallback to derivation"
+        },
+        {
+          "id": "dj.statement_accent",
+          "prints": "the single gold word — <em class=\"gold\">solta</em>",
+          "ui": "#stmtTxt em.gold",
+          "proposed_key": "_dj_statement_accent",
+          "kind": "meta",
+          "type": "string",
+          "preferred": "MARKUP-IN-META",
+          "verdict": "Do NOT add a second key. Allow a single <em> in _dj_statement and run it through wp_kses( $v, ['em'=>['class'=>[]]] ). One field, one truth; a separate 'which word is gold' key is a foot-gun the moment the statement is edited.",
+          "empty_behavior": "render statement with no accent"
+        },
+        {
+          "id": "dj.stats_labels",
+          "prints": "'Eventos tocados no circuito Apollo' · 'Casas e promotoras diferentes que já bookaram' · 'Cidades — do Rio a Belo Horizonte' · 'Amanheceres que a pista se recusou a soltar'",
+          "ui": ".nums .num-l ×4",
+          "kind": "static",
+          "preferred": "STATIC + one DERIVED",
+          "verdict": "Labels 1–3 are template copy and belong in the PHP partial, not the database. Label 3 hardcodes 'do Rio a Belo Horizonte' — that must become the actual min/max city pair from event history or drop the suffix.",
+          "blocker": "Metric 4, 'Amanheceres', has NO computable source. apollo_dj_compute_stats() cannot produce it: nothing records an event's end hour on the dj side. Either register `_event_end_time` as a required event field and count events ending after 05:00, or REMOVE the fourth metric.",
+          "status": "DECISION_REQUIRED"
+        },
+        {
+          "id": "dj.media_kit_meta",
+          "prints": "28 MB · Arquivo zip / 12 fotos · 300 dpi / Rider v3 · PDF / 4 promos · Inéditas",
+          "ui": ".kit-meta > div ×4",
+          "proposed_key": "_dj_media_kit_stats",
+          "kind": "meta",
+          "type": "array of {value:string, label:string}",
+          "max_rows": 4,
+          "preferred": "META",
+          "why": "`_dj_media_kit_url` is a Google Drive folder. Nothing on the Apollo side can introspect a Drive folder's size, photo count or file list, so none of these four numbers is derivable — they are claims the artist makes about their own kit. Four hardcoded numbers on a press page that contractors read is exactly the kind of thing that goes stale silently.",
+          "empty_behavior": "hide the .kit-meta row entirely",
+          "sanitizer_note": "Mirror the _dj_tracks pattern: one apollo_dj_sanitize_kit_stats() used by BOTH the REST path and the apollo-lux-panels metabox, per 20-meta-schemas write_paths."
+        },
+        {
+          "id": "dj.media_kit_title",
+          "prints": "Kit de Imprensa 2026",
+          "ui": ".kit-t",
+          "kind": "derived",
+          "preferred": "DERIVED",
+          "derivation": "__('Kit de Imprensa') . ' ' . current_time('Y')",
+          "verdict": "No key. The year must never be hardcoded — a 2026 label still reading 2026 in 2027 is the single most common rot on a press page."
+        },
+        {
+          "id": "dj.media_kit_desc",
+          "prints": "Fotos em alta resolução, rider técnico, logos e promos inéditas — tudo em uma pasta só…",
+          "ui": ".kit-p",
+          "proposed_key": "_dj_media_kit_desc",
+          "kind": "meta",
+          "type": "string",
+          "preferred": "STATIC",
+          "verdict": "Template copy. Register a key ONLY if artists must customise it; default to the static string."
+        },
+        {
+          "id": "dj.footer_image",
+          "prints": "images.unsplash.com/photo-1492684223066 — a stock crowd photo",
+          "ui": "#footImg",
+          "proposed_key": "_dj_footer_image",
+          "kind": "meta",
+          "type": "attachment_id|url",
+          "preferred": "DERIVED then META",
+          "derivation": "newest cover from dj.playedOn (a real crowd shot from a night this artist actually played)",
+          "why": "A stock photo on an artist's own card is the one thing that reads as unfinished. The derivation gives every DJ a real image for free; the key is the override.",
+          "empty_behavior": "hide the footer figure — never ship the placeholder"
+        },
+        {
+          "id": "dj.footer_caption",
+          "prints": "O Rio não fecha",
+          "ui": ".foot-img-ov small",
+          "kind": "static",
+          "preferred": "STATIC",
+          "verdict": "Brand copy. Belongs in the PHP partial. Note it is Rio-specific and this CPT is not — decide whether it is per-city (then derive from _dj_home_city) or global."
+        }
+      ],
+      "registered_but_never_rendered": {
+        "note": "The reverse gap. These keys exist in apollo-core and have an input surface in apollo-lux-panels, but no node in the mockup reads them — so an artist can fill them and see nothing. Every one is either a missing section or a key to retire.",
+        "keys": [
+          "_dj_verified",
+          "_dj_rider_url",
+          "_dj_beatport",
+          "_dj_tiktok",
+          "_dj_facebook",
+          "_dj_website",
+          "_dj_youtube",
+          "_dj_mixcloud",
+          "_dj_resident_advisor",
+          "_dj_gallery",
+          "_dj_original_project_1",
+          "_dj_original_project_2",
+          "_dj_original_project_3",
+          "_dj_set_url",
+          "_dj_bio_short"
+        ],
+        "highest_priority": "_dj_verified — 07-icons.badges.user_verified is defined (ri-shield-check-fill) and data-registry marks dj.verified as a live field, but the mockup renders no badge anywhere. A verification system nobody can see is a verification system nobody trusts.",
+        "second": "_dj_gallery and _dj_original_project_1..3 have a metabox and no section at all. The DJ page has no gallery and no projects block — either build them or retire four keys."
+      },
+      "unwired_links": [
+        {
+          "ui": "footer .socials a[aria-label=\"Instagram\"]",
+          "prints": "href=\"#\"",
+          "fix": "bind to _dj_instagram — the key exists and is already in APOLLO_DJ's sibling fields"
+        }
+      ]
+    },
+    "local": {
+      "cpt": "local",
+      "owner_plugin": "apollo-loc",
+      "mockup": "screen/single cpt/location/loc-single-page.html",
+      "payload": "APOLLO_LOC",
+      "legacy_prefix": "_ap_* → live _local_* (see data-registry.cpts.local.mockup_legacy_prefix)",
+      "missing": [
+        {
+          "id": "local.tagline",
+          "prints": "Templo do Techno desde 2003",
+          "ui": ".hero-kick — trailing segment",
+          "proposed_key": "_local_tagline",
+          "kind": "meta",
+          "type": "string",
+          "preferred": "META",
+          "why": "data-registry maps local.hero_kicker as DERIVED from _local_city + _local_state + 'copy'. That 'copy' is this string, and it is pure editorial — nothing derives 'Templo do Techno'.",
+          "empty_behavior": "render city · area only"
+        },
+        {
+          "id": "local.founded_year",
+          "prints": "23+ · Anos de pista — templo desde 2003",
+          "ui": ".facts .fact:nth-child(2)",
+          "proposed_key": "_local_founded_year",
+          "kind": "meta",
+          "type": "integer",
+          "preferred": "META",
+          "why": "Two printed numbers (23 and 2003) are the same fact stated twice. Store the year, derive the span — otherwise the '23' is wrong on 1 January.",
+          "derivation": "(int) current_time('Y') - _local_founded_year",
+          "empty_behavior": "hide the fact card"
+        },
+        {
+          "id": "local.rooms",
+          "prints": "3 · Ambientes — pista, lounge & rooftop",
+          "ui": ".facts .fact:nth-child(3)",
+          "proposed_key": "_local_rooms",
+          "kind": "meta",
+          "type": "string[]",
+          "preferred": "META",
+          "why": "Count AND names are printed; both are venue facts with no source. Store the names, derive the count. `_local_capacity` exists but is explicitly NOT this — and the mockup's own comment says capacity must never be shown.",
+          "derivation": "count($rooms) for the number; wp_sprintf_l() for the list",
+          "empty_behavior": "hide the fact card"
+        },
+        {
+          "id": "local.venue_format",
+          "prints": "Clube eletrônico · Multi-ambiente",
+          "ui": ".hero-meta .hmeta:nth-child(2)",
+          "kind": "taxonomy + derived",
+          "preferred": "DERIVED",
+          "derivation": "term name from taxonomy `local_type` . ' · ' . (count(_local_rooms) > 1 ? 'Multi-ambiente' : 'Ambiente único')",
+          "verdict": "No new key once local.rooms lands. `local_type` already supplies the first half."
+        },
+        {
+          "id": "local.description_accent",
+          "prints": "the italic run — <em>intensas, escuras e experimentais</em>",
+          "ui": "#stmtTxt em",
+          "preferred": "MARKUP-IN-META",
+          "verdict": "Same call as dj.statement_accent: allow a single <em> inside _local_description via wp_kses, do not add a second key."
+        },
+        {
+          "id": "local.name_accent",
+          "prints": "D-<em>EDGE</em> — second half of the name in the serif italic",
+          "ui": "#heroName .ln em",
+          "preferred": "DERIVED",
+          "derivation": "split _local_name on the last hyphen or space; accent the remainder",
+          "blocker": "Breaks on single-token names. Same shape as dj.name_lines — resolve both with one convention, not two."
+        },
+        {
+          "id": "local.footer_image",
+          "prints": "dedge-stage2-001.jpg",
+          "ui": "#footImg",
+          "kind": "meta",
+          "preferred": "DERIVED",
+          "derivation": "_local_image_2 (gallery slot 2), falling back to _local_image_1",
+          "verdict": "No new key — the gallery already holds five images and the footer is asking for one of them."
+        },
+        {
+          "id": "local.footer_caption",
+          "prints": "Barra Funda nunca dorme / TE VEMOS NA PISTA",
+          "ui": ".foot-img-ov small + strong",
+          "preferred": "DERIVED + STATIC",
+          "derivation": "small = taxonomy local_area term name . ' nunca dorme'; strong = static brand copy",
+          "note": "The area term already exists (`local_area`). Only the verb is copy."
+        },
+        {
+          "id": "local.testimonials",
+          "prints": "#depoTrack cards",
+          "key": "_local_testimonials",
+          "kind": "meta",
+          "status": "STILL_BROKEN — pre-existing, carried from data-registry.gaps",
+          "verdict": "The key is READ by single-local.php:231 and WRITTEN by nobody: it is not in MetaRegistrar and has no metabox. Either route depoimentos through apollo-comment (the registered vocabulary — namingRules maps comment/review → depoimento) and retire the meta, or register it with a writer. Shipping a section fed by a key with no input path is how the mockup ends up permanently empty in production."
+        }
+      ],
+      "registered_but_never_rendered": {
+        "keys": [
+          "_local_country",
+          "_local_postal",
+          "_local_price_range",
+          "_local_visit_count",
+          "_local_image_3",
+          "_local_image_4",
+          "_local_image_5"
+        ],
+        "note": "_local_postal IS printed inside .map-addr as 'CEP 01156-001' but hardcoded, not bound. _local_image_3..5 have metabox inputs (GalleryMetabox renders 1..5) and the mockup's #gal is JS-built — confirm the builder consumes all five, not two."
+      }
+    },
+    "naming_tension": {
+      "severity": "LOW",
+      "finding": "namingRules.FORBIDDEN_TERMS maps `venue` → 'USE loc' and `local` → 'USE loc (except in Portuguese text)'. The live meta prefix is `_local_`, the CPT slug is `local`, and the mockup payload still calls it `meta._ap_venue_name`.",
+      "verdict": "Do not rename anything. The rule is about NEW vocabulary; `_local_*` is the shipped, registered prefix across 32 keys and renaming it would be a migration with no user-visible benefit. Record the tension so the next reader does not 'fix' it. The mockup annotation should say `_local_name`, not `_ap_venue_name`."
+    },
+    "next_actions": [
+      "1. Resolve the four $philosophy_violations in the mockups. No code, no keys — copy and icon changes only.",
+      "2. Decide dj.stats_labels metric 4 ('Amanheceres') — register _event_end_time as required, or cut the metric.",
+      "3. Register the 6 META-verdict keys in apollo-core MetaRegistry: _dj_home_city, _dj_booking_status, _dj_media_kit_stats, _local_tagline, _local_founded_year, _local_rooms.",
+      "4. Register the 3 override keys as nullable with documented fallbacks: _dj_eyebrow, _dj_name_lines, _dj_footer_image.",
+      "5. Widen wp_kses on _dj_statement and _local_description to allow a single <em>.",
+      "6. Decide _local_testimonials: apollo-comment, or a writer.",
+      "7. Build or retire: _dj_verified badge, _dj_gallery section, _dj_original_project_1..3.",
+      "8. Bump apollo-core AND its version constant together — 19-ssot-audit records apollo-core already sitting at 6.2.3 with uncommitted contract changes."
+    ]
+  },
+  "$mu_plugins": {
+    "description": "Must-Use plugins in wp-content/mu-plugins/. Loaded before regular plugins, in ALPHABETICAL filename order, and cannot be deactivated from wp-admin. This is the Apollo boot layer.",
+    "$disk_scan": {
+      "date": "2026-08-31",
+      "path": "wp-content/mu-plugins/",
+      "php_files": 16,
+      "apollo_owned": 14,
+      "third_party": 2,
+      "non_php_debris": 2
+    },
+    "$load_order_note": "WordPress loads mu-plugins alphabetically; there is no dependency resolution. apollo-brain.php sorts first among the apollo-* files, which is why it can hook muplugins_loaded at -100 and still define APOLLO_REGISTRY_PATH before anything reads it. Renaming a file here silently changes boot order.",
+    "$boot_sequence": [
+      "1. WP loads every mu-plugin file alphabetically (apollo-brain → apollo-debug → apollo-dev-routing → apollo-error-handler → apollo-events-helpers-guard → apollo-force-open-registration → apollo-htaccess-lock → apollo-locale-pt-br → apollo-route-setup → apollo-webp-force → elementor-safe-mode → endurance-page-cache → force-load-apollo-events → force-load-apollo-login → force-load-apollo-telegram → force-load-apollo-templates)",
+      "2. apollo-brain hooks muplugins_loaded @ -100 → defines APOLLO_REGISTRY_PATH, require_once apollo-core.php",
+      "3. apollo-core registers its own bootstrap on plugins_loaded @ 1 (CPT/Meta/security init happens THERE, not in the brain)",
+      "4. force-load-* files require their plugin main file directly, bypassing active_plugins",
+      "5. apollo-route-setup runs its one-time maintenance on init @ 20",
+      "6. apollo-webp-force registers three image filters; nothing runs until an image is actually processed"
+    ],
+    "apollo-brain": {
+      "file": "mu-plugins/apollo-brain.php",
+      "version": "1.2.0",
+      "status": "active",
+      "role": "boot",
+      "namespace": "Apollo\\MUBrain",
+      "hook": "muplugins_loaded priority -100",
+      "loc": 305,
+      "description": "THE BRAIN. Earliest Apollo code to run. Defines APOLLO_REGISTRY_PATH, validates the runtime registry JSON parses, require_once apollo-core/apollo-core.php so Core registers its bootstrap before active_plugins is processed, installs the script defer filter, and wires registry/page cache purge.",
+      "constants_defined": [
+        "APOLLO_REGISTRY_PATH",
+        "APOLLO_BRAIN_LOADED"
+      ],
+      "does": [
+        "APOLLO_REGISTRY_PATH := WP_CONTENT_DIR/apollo-registry.json (see $registry_path_warning below)",
+        "json_decode validation of that file — logs to error_log only when WP_DEBUG_LOG, never die()s in production",
+        "require_once WP_PLUGIN_DIR/apollo-core/apollo-core.php, guarded by defined('APOLLO_CORE_FILE')",
+        "script_loader_tag filter: adds defer to front-end scripts, with an explicit allow-list that must stay synchronous",
+        "save_post @ 999 → apollo_purge_single(permalink) + Registry::clear_cache()",
+        "transition_post_status @ 999 → apollo_purge_all() + Registry::clear_cache() on first publish only",
+        "plugins_loaded @ 20 → maybe_init_cache_integration()"
+      ],
+      "does_not": [
+        "Does NOT init CPT / Meta / FieldEncryption / HMAC / SEOTextBlock / PaneMode — apollo_core_bootstrap() on plugins_loaded P1 owns all of that, so ordering is guaranteed and nothing double-inits",
+        "Does NOT load the registry JSON into a constant — Apollo\\Core\\Registry + object cache own that, to avoid duplicating ~2.3 MB in RAM"
+      ],
+      "actions_fired": [
+        "apollo/brain/loaded",
+        "apollo/brain/before_apollo_core",
+        "apollo/brain/after_apollo_core_file",
+        "apollo/brain/bootstrap_complete",
+        "apollo/brain/core_ready",
+        "apollo/brain/page_cache_maybe_init"
+      ],
+      "filters_exposed": [
+        "apollo/brain/defer_protected_handles",
+        "apollo/brain/defer_protected_fragments"
+      ],
+      "defer_protected_handles": [
+        "jquery-core",
+        "jquery-migrate",
+        "jquery-ui-core",
+        "wp-polyfill",
+        "wp-hooks",
+        "wp-dom-ready",
+        "wp-customize-support",
+        "moment"
+      ],
+      "defer_protected_fragments": [
+        "apollo-",
+        "apollo_",
+        "popper",
+        "lenis",
+        "gsap"
+      ],
+      "defer_hard_exclusions": [
+        "any handle matching /^jquery/",
+        "cdn.apollo.rio.br/v1(.x)/core.js — matched by regex on src",
+        "is_admin()",
+        "is_customize_preview()",
+        "tags already carrying defer or async"
+      ]
+    },
+    "apollo-debug": {
+      "file": "mu-plugins/apollo-debug.php",
+      "status": "dev-only",
+      "role": "observability",
+      "loc": 424,
+      "guard": "WP_DEBUG || APOLLO_DEV_MODE — returns immediately otherwise, so production overhead is zero",
+      "description": "Query Monitor panel for the Apollo ecosystem plus the apollo_debug_log() helper. Loads after apollo-brain (alphabetical: brain < debug).",
+      "provides": [
+        "apollo_debug_log()",
+        "Query Monitor → Apollo panel"
+      ],
+      "panel_shows": [
+        "Registry path, load status, plugin count",
+        "Active Apollo plugins with version + status from the registry",
+        "Boot timing (mu → plugins_loaded → init → rest_api_init)",
+        "Whether the registry came from object cache or disk",
+        "apollo_debug_log() entries collected this request"
+      ],
+      "$notable": "Hooks plugins_loaded @ 0 to reset display_errors=0, because the third-party wp-debugging plugin calls @ini_set('display_errors',1) at load time and apollo-core's plugins_loaded @ 1 textdomain notice would otherwise corrupt REST JSON responses."
+    },
+    "apollo-dev-routing": {
+      "file": "mu-plugins/apollo-dev-routing.php",
+      "status": "dev-only",
+      "role": "observability",
+      "loc": 53,
+      "guard": "APOLLO_DEV_MODE — early return at file level",
+      "description": "On template_redirect, records which route handler won into $GLOBALS['apollo_dev_route_handler'] and logs it. Reads apollo_login_page / apollo_home_page / apollo_feed_page query vars and $GLOBALS['apollo_current_route']."
+    },
+    "apollo-error-handler": {
+      "file": "mu-plugins/apollo-error-handler.php",
+      "version": "1.0.0",
+      "status": "active",
+      "role": "http",
+      "namespace": "Apollo\\Core\\ErrorCompliance",
+      "loc": 241,
+      "hook": "template_redirect priority PHP_INT_MAX",
+      "description": "Funnels 4xx/5xx through the central Apollo error pages so every plugin and WP core surface the same UX. Hooked last so each plugin still gets first chance to claim its route (e.g. apollo-login's virtual /acesso). Mirrors the Apache ErrorDocument directives in the project .htaccess.",
+      "base_url": "https://apollo.rio.br/erro/",
+      "supported_codes": [
+        400,
+        403,
+        404,
+        500
+      ],
+      "override_constant": "APOLLO_ERROR_BASE_URL",
+      "$drift_fixed_2026_08_31": "14-routing described this as 'priority 999' from the docblock prose; the actual add_action calls use PHP_INT_MAX."
+    },
+    "apollo-events-helpers-guard": {
+      "file": "mu-plugins/apollo-events-helpers-guard.php",
+      "version": "1.0.1",
+      "status": "active",
+      "role": "shim",
+      "loc": 92,
+      "description": "Brutal early guarantee that apollo_event_* global helpers exist before any template runs. Force-requires apollo-events main file if not already loaded, calls apollo_event_ensure_helpers(), and defines a fallback apollo_event_parse_date() (with hardcoded pt-BR month/weekday tables) if the real one is missing.",
+      "$registry_gap_closed": "Was entirely undocumented before 2026-08-31.",
+      "$risk": "Declares global functions with a pt-BR date table duplicated from apollo-events. If apollo-events changes its own parse_date contract, this shim silently keeps serving the old shape whenever the plugin fails to load. Shim, not a feature — retire once apollo-events is reliably active."
+    },
+    "apollo-force-open-registration": {
+      "file": "mu-plugins/apollo-force-open-registration.php",
+      "version": "1.0.0",
+      "status": "active",
+      "role": "policy-override",
+      "loc": 28,
+      "hook": "filter option_users_can_register priority 10000",
+      "description": "Forces WordPress 'Anyone can register' to READ as enabled. Runs after Really Simple SSL (which filters the same option at 999).",
+      "$registry_gap_closed": "Was entirely undocumented before 2026-08-31.",
+      "$risk": "SECURITY-RELEVANT AND INVISIBLE. Overrides the effective value of users_can_register for every read, including REST and wp-admin. The DB option is untouched, so wp-admin shows 'checked' while the stored value may be '0' — anyone auditing the setting in the UI cannot tell it is being forced. Any decision to close registration MUST delete this file; unchecking the box in wp-admin will not work."
+    },
+    "apollo-htaccess-lock": {
+      "file": "mu-plugins/apollo-htaccess-lock.php",
+      "version": "1.0.0",
+      "status": "active",
+      "role": "infrastructure",
+      "loc": 22,
+      "description": "Restores and read-locks the root .htaccess before regular plugins (NFD / WP core) can truncate it. Thin loader: requires apollo-core/includes/htaccess-lock.php, which holds the real logic.",
+      "real_source": "plugins/apollo-core/includes/htaccess-lock.php",
+      "$registry_gap_closed": "Was entirely undocumented before 2026-08-31.",
+      "$note": "File header says 'Auto-installed from apollo-core. Do not edit; change the source under plugins/apollo-core/mu-plugins/apollo-htaccess-lock.php' — but the path it actually requires is includes/htaccess-lock.php. Verify which of the two is the live source before editing either."
+    },
+    "apollo-locale-pt-br": {
+      "file": "mu-plugins/apollo-locale-pt-br.php",
+      "version": "1.0.0",
+      "status": "active",
+      "role": "i18n",
+      "loc": 144,
+      "description": "Forces Brazilian Portuguese for all rendered WordPress and Apollo UI strings, front and admin. 8 filters + 2 actions covering gettext, date_i18n and wp_date.",
+      "constants_defined": [
+        "APOLLO_LOCALE",
+        "APOLLO_LOCALE_HTML"
+      ],
+      "provides": [
+        "apollo_get_locale()",
+        "apollo_get_locale_html()"
+      ],
+      "$registry_gap_closed": "Was entirely undocumented before 2026-08-31.",
+      "$note": "APOLLO_LOCALE = 'pt_BR' (WP slug) and APOLLO_LOCALE_HTML = 'pt-BR' (BCP 47 for HTML lang / JS Intl) are deliberately different strings. Do not collapse them."
+    },
+    "apollo-route-setup": {
+      "file": "mu-plugins/apollo-route-setup.php",
+      "status": "active",
+      "role": "maintenance",
+      "loc": 191,
+      "hook": "init priority 20",
+      "description": "One-time maintenance, gated on an option flag. Drafts WP Pages whose slugs collide with Apollo virtual routes, clears the Apollo Home template from conflicting pages, re-adds rewrite rules, flushes them, and clears Registry + FrontRouteDispatcher caches.",
+      "option_flag": "apollo_route_setup_version",
+      "current_flag_on_disk": "2026.07.03.2",
+      "$drift_fixed_2026_08_31": "14-routing recorded current_flag_example '2026.05.20.2'; disk is '2026.07.03.2'. Bump this flag whenever the reserved slug list changes, or the maintenance never re-runs.",
+      "production_guard": "On apollo.rio.br / www.apollo.rio.br the page-drafting step is OPT-IN via define('APOLLO_ROUTE_SETUP', true) — so a deploy can never silently unpublish a marketing page that reuses a reserved slug. Rewrite flush + cache clear still run.",
+      "kill_switch": "define('APOLLO_DISABLE_ROUTE_SETUP', true)",
+      "reserved_slugs_source": "apollo_get_reserved_virtual_slugs() when available; otherwise the hardcoded 22-slug fallback in this file",
+      "reserved_slugs_fallback": [
+        "acesso",
+        "access",
+        "acessar",
+        "entrar",
+        "registre",
+        "reset",
+        "verificar-email",
+        "sair",
+        "feed",
+        "explore",
+        "mural",
+        "casa",
+        "home",
+        "sobre",
+        "eventos",
+        "djs",
+        "local",
+        "anuncios",
+        "mensagens",
+        "notificacoes",
+        "painel",
+        "jornal",
+        "classificados"
+      ]
+    },
+    "apollo-webp-force": {
+      "file": "mu-plugins/apollo-webp-force.php",
+      "version": "1.0.0",
+      "status": "active",
+      "role": "media",
+      "loc": 338,
+      "description": "Forces every image size WordPress generates to be written as WebP at quality 80, and prefers Imagick over GD. PHASE 1 ONLY: the uploaded original is deliberately untouched.",
+      "source_of_truth": "plugins/apollo-core/mu-plugins/apollo-webp-force.php",
+      "installed_by": "apollo_core_webp_install_mu_plugin() in apollo-core/includes/webp-install.php, plugins_loaded @ 0, content-diffed",
+      "constants_defined": [
+        "APOLLO_WEBP_FORCE_LOADED",
+        "APOLLO_WEBP_Q_PHOTO",
+        "APOLLO_WEBP_Q_THUMB",
+        "APOLLO_WEBP_LOSSLESS_GRAPHICS",
+        "APOLLO_WEBP_REPLACE_ORIGINAL",
+        "APOLLO_WEBP_REWRITE_CONTENT"
+      ],
+      "filters_hooked": [
+        "image_editor_output_format @ 10 — image/jpeg + image/jpg + image/png => image/webp",
+        "wp_editor_set_quality @ 10 — image/webp => APOLLO_WEBP_Q_PHOTO (80)",
+        "jpeg_quality @ 10 => 82, for any JPEG still generated",
+        "wp_image_editors @ 10 — WP_Image_Editor_Imagick moved first"
+      ],
+      "filters_exposed": [
+        "apollo/media-webp/skip_path"
+      ],
+      "actions_hooked": [
+        "admin_notices — warns only when no editor can write WebP"
+      ],
+      "does_not": [
+        "Does NOT replace or delete the uploaded original. APOLLO_WEBP_REPLACE_ORIGINAL is defined but deliberately UNREAD until Phase 2.",
+        "Does NOT convert gif / webp / avif / svg / ico / bmp / tiff / pdf — by omission: only three keys are ever added to the format map.",
+        "Does NOT convert the site icon. WP favicon paths expect PNG, and a broken fallback there shows on every browser tab.",
+        "Does NOT register a CPT, meta key, option, REST route or admin page."
+      ],
+      "$host_capability_2026_08_31": "Verified from the live library rather than a probe: attachment 117 (club63-3.webp) carries a full generated WebP subsize set and attachment 187 (festa-selvagem.avif) carries a full AVIF set. WordPress can only produce those through WP_Image_Editor, so Imagick with WebP AND AVIF is live on apollo.rio.br.",
+      "$why_mu": "The filters do not need the MU layer to work — the format decision happens inside wp_generate_attachment_metadata(), far after plugins_loaded. MU is chosen so a half-converted library cannot be caused by someone deactivating a plugin in wp-admin.",
+      "$risk": "LOW while Phase 1 stands: three filters, no writes, no state. WordPress core adds its own guard — WP_Image_Editor::get_output_format() honours the mapping only when supports_mime_type() agrees — so an editor without WebP keeps JPEG instead of emitting a broken file. Re-grade this entry to MEDIUM when Phase 2 lands, because Phase 2 deletes originals.",
+      "$phase": "1 of 6. Phase 2 (replace original), 3 (existing library via Tools -> Apollo Health), 4 (scope classified-* sizes), 5 (hardening) are not implemented yet."
+    },
+    "force-load-apollo-events": {
+      "file": "mu-plugins/force-load-apollo-events.php",
+      "status": "active",
+      "role": "force-load",
+      "loc": 36,
+      "target": "apollo-events",
+      "description": "Requires plugins/apollo-events/apollo-events.php directly so the /evento/ CPT rewrite and apollo_event_* helpers exist regardless of active_plugins. Idempotent via defined('APOLLO_EVENT_FILE'); still re-runs apollo_event_ensure_helpers() on the already-loaded path to survive OPcache drift.",
+      "$registry_gap_closed": "Was entirely undocumented before 2026-08-31."
+    },
+    "force-load-apollo-login": {
+      "file": "mu-plugins/force-load-apollo-login.php",
+      "status": "active",
+      "role": "force-load",
+      "loc": 27,
+      "target": "apollo-login",
+      "description": "Requires plugins/apollo-login/apollo-login.php so the virtual /acesso route works without wp-admin activation drift. Idempotent via defined('APOLLO_LOGIN_FILE').",
+      "$registry_gap_closed": "Was entirely undocumented before 2026-08-31.",
+      "$self_declared_temporary": "File header: 'Safe on local; remove when plugin is reliably active in production active_plugins.'"
+    },
+    "force-load-apollo-templates": {
+      "file": "mu-plugins/force-load-apollo-templates.php",
+      "status": "active",
+      "role": "force-load",
+      "loc": 24,
+      "target": "apollo-templates",
+      "description": "Requires plugins/apollo-templates/apollo-templates.php so virtual /feed, /casa etc. resolve. Idempotent via defined('APOLLO_TEMPLATES_FILE').",
+      "$registry_gap_closed": "Was entirely undocumented before 2026-08-31."
+    },
+    "force-load-apollo-telegram": {
+      "file": "mu-plugins/force-load-apollo-telegram.php",
+      "status": "active",
+      "role": "force-load",
+      "loc": 10,
+      "target": "apollo-telegram",
+      "description": "Requires plugins/apollo-telegram/apollo-telegram.php so /telegram, ?telegram-test=1 and its REST endpoints are live without activating the plugin.",
+      "$registry_gap_closed": "Was entirely undocumented before 2026-08-31.",
+      "$risk": "The ONLY force-load file with no defined()/idempotency guard and no declare(strict_types=1) — it is a bare file_exists + require_once. Its own header says 'Safe for test only. Remove this file when you activate the plugin normally.' It is still present on a production host."
+    },
+    "$force_load_pattern": {
+      "what": "Four mu-plugin files each require a plugin's main file directly, bypassing the WordPress active_plugins option.",
+      "why": "Guarantees virtual routes and global helpers exist even when a plugin is not activated in wp-admin, or when activation state drifts between environments.",
+      "cost": [
+        "wp-admin's Plugins screen no longer tells the truth: a force-loaded plugin runs whether it shows as active or not, and DEACTIVATING IT THERE DOES NOTHING.",
+        "register_activation_hook never fires on this path — a plugin that installs DB tables or seeds options on activation will run without them.",
+        "Load order moves from the plugins layer to the MU layer, which is earlier than some plugins expect."
+      ],
+      "retire_when": "The plugin is reliably present in production active_plugins. Three of the four files say so in their own headers.",
+      "$risk": "MEDIUM — invisible activation state. Anyone debugging 'why is this plugin running / not deactivating' will not find the answer in wp-admin."
+    },
+    "$third_party_mu": {
+      "elementor-safe-mode": {
+        "file": "mu-plugins/elementor-safe-mode.php",
+        "vendor": "Elementor.com",
+        "version": "1.0.0",
+        "status": "dormant",
+        "loc": 135,
+        "description": "Elementor's Safe Mode loader — when enabled, loads only the editor without the theme or any other plugin. Auto-installed by Elementor.",
+        "$risk": "If the elementor_safe_mode option is ever switched on, THE ENTIRE APOLLO ECOSYSTEM STOPS LOADING for that session, including every mu-plugin force-load above. Gated on an option + cookie token, so it is inert until triggered."
+      },
+      "endurance-page-cache": {
+        "file": "mu-plugins/endurance-page-cache.php",
+        "vendor": "Mike Hansen / Bluehost",
+        "version": "2.3.0",
+        "status": "active",
+        "loc": 2161,
+        "description": "Host-level page cache purging (Bluehost / Endurance stack). Largest file in the MU layer by an order of magnitude.",
+        "$relationship_to_brain": "apollo-brain's maybe_init_cache_integration() fires apollo/brain/page_cache_maybe_init instead of touching this directly, because Apollo\\Core\\Cache does not exist in this codebase yet. Purges are coordinated through apollo_purge_single() / apollo_purge_all()."
+      }
+    },
+    "$debris": {
+      "description": "Non-PHP files sitting in the MU directory. Harmless to WordPress (it only scans *.php at the top level) but they are noise, and one is a leaked debug artifact.",
+      "debug-1098c0.log": {
+        "lines": 5,
+        "content": "NDJSON from debug session 1098c0 — auth-head.php asset URL probes, local dev (aprio.local) paths, timestamps ~2026-06.",
+        "action": "DELETE — same family of leftover debug beacon already stripped from apollo-events and apollo-chat."
+      },
+      "sync.ffs_db": {
+        "content": "FreeFileSync / RealTimeSync database file.",
+        "action": "Keep if RealTimeSync mirrors this directory; it is tooling state, not code. Should be gitignored."
+      }
+    },
+    "$registry_path_warning": {
+      "severity": "HIGH — naming collision that has confused every reader of this registry",
+      "problem": "TWO different files are called apollo-registry.json.",
+      "runtime": {
+        "path": "wp-content/apollo-registry.json",
+        "constant": "APOLLO_REGISTRY_PATH",
+        "defined_by": "mu-plugins/apollo-brain.php",
+        "read_by": "Apollo\\Core\\Registry (+ object cache)",
+        "purpose": "What the SITE reads at request time."
+      },
+      "documentation": {
+        "path": "plugins/_inventory/apollo-registry.json",
+        "built_by": "plugins/_inventory/registry/build.js --write",
+        "purpose": "The chaptered SSOT's build output. Documentation. NOT read at request time."
+      },
+      "relationship": "The doc monolith is intended to be deployed to the runtime path — 00-registry-map.json build_rules.output.runtime names it, and build.js explicitly does NOT write it ('runtime target (deploy step, not written here)'). So the deploy step is manual and undocumented, and the two files can silently diverge.",
+      "consequence": "A chapter edit changes nothing at runtime until someone runs build.js --write AND copies the monolith to wp-content/. Neither step is automated or verified.",
+      "$open_question": "Nothing in this registry records WHEN the runtime file was last synced, or whether it currently matches the monolith. Add a deploy step, or a doctor check that diffs the two."
     }
   }
 }

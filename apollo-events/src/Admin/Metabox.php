@@ -371,20 +371,14 @@ final class Metabox {
 	}
 
 	public function render_media( \WP_Post $post ): void {
-		$banner    = (int) get_post_meta( $post->ID, '_event_banner', true );
 		$video_url = get_post_meta( $post->ID, '_event_video_url', true );
 		$audio_url = get_post_meta( $post->ID, '_event_audio_url', true );
 		$gallery   = (array) get_post_meta( $post->ID, '_event_gallery', true );
 		$gallery   = \array_filter( \array_map( 'intval', $gallery ) );
 		$gallery_v = \implode( ',', $gallery );
 		?>
-		<p>
-			<label><?php esc_html_e( 'Banner (ID da imagem)', 'apollo-events' ); ?></label><br>
-			<?php if ( $banner ) : ?>
-				<img class="apl-event-media-prev" src="<?php echo esc_url( wp_get_attachment_image_url( $banner, 'thumbnail' ) ); ?>" style="max-width:100px;margin-bottom:6px;display:block;">
-			<?php endif; ?>
-			<input type="number" name="_event_banner" id="apl-event-banner-id" value="<?php echo esc_attr( (string) $banner ); ?>" class="widefat" min="0">
-			<button type="button" class="button button-small apl-media-pick" data-target="apl-event-banner-id"><?php esc_html_e( 'Escolher imagem', 'apollo-events' ); ?></button>
+		<p class="description">
+			<?php esc_html_e( 'A capa (imagem destacada) fica no box Publicar, ao lado de Salvar — é a mesma imagem do card WhatsApp / Twitter.', 'apollo-events' ); ?>
 		</p>
 		<p>
 			<label><?php esc_html_e( 'Cor de Fundo do Hero (fallback)', 'apollo-events' ); ?></label>
@@ -500,6 +494,25 @@ final class Metabox {
 		$highlighted = get_post_meta( $post->ID, '_event_highlighted', true );
 		$tbtn        = get_post_meta( $post->ID, '_event_ticket_btn_style', true ) ?: 'main';
 		$lbtn        = get_post_meta( $post->ID, '_event_list_btn_style', true ) ?: 'lista';
+		/*
+		 * ONE INPUT PER ELEMENT (2026-08-29).
+		 *
+		 * Before this, an editor saw the button style TWICE: here as a single
+		 * event-wide dropdown, and again per-row inside "Early Bird e Listas"
+		 * (render_tickets(), the _event_access_buttons repeater) a few metabox
+		 * sections up. They were never in sync — the repeater's per-row style
+		 * is what actually renders once an event has been touched under the
+		 * new UI (functions.php's metadata_exists('_event_access_buttons')
+		 * migration marker), so these two selects kept accepting input that
+		 * silently did nothing for any migrated event.
+		 *
+		 * Same marker, same rule as the frontend: once an event has a saved
+		 * _event_access_buttons value (even []), these globals are retired for
+		 * it and the repeater is the only place style lives. An event never
+		 * touched under the new UI still needs them — hence the condition, not
+		 * a flat removal.
+		 */
+		$axb_migrated = metadata_exists( 'post', $post->ID, '_event_access_buttons' );
 		?>
 		<p style="background:#fff8ee;border:1px solid #ffd28a;border-radius:4px;padding:8px 10px;">
 			<label>
@@ -508,6 +521,9 @@ final class Metabox {
 			</label><br>
 			<span class="description"><?php esc_html_e( 'Eventos marcados aqui entram no slider de destaque (hero) das telas de Eventos.', 'apollo-events' ); ?></span>
 		</p>
+		<?php if ( $axb_migrated ) : ?>
+		<p class="description"><?php esc_html_e( 'Estilo de botão: definido por linha em "Early Bird e Listas" acima — este evento já usa o repetidor unificado.', 'apollo-events' ); ?></p>
+		<?php else : ?>
 		<p>
 			<label><?php esc_html_e( 'Estilo botão Ingresso', 'apollo-events' ); ?></label>
 			<select name="_event_ticket_btn_style" class="widefat">
@@ -521,7 +537,8 @@ final class Metabox {
 				<option value="lista" <?php selected( $lbtn, 'lista' ); ?>><?php esc_html_e( 'Lista', 'apollo-events' ); ?></option>
 				<option value="fem" <?php selected( $lbtn, 'fem' ); ?>><?php esc_html_e( 'Lista Fem', 'apollo-events' ); ?></option>
 			</select>
-		</p><?php
+		</p>
+		<?php endif; ?><?php
 		?>
 		<p>
 			<label><?php esc_html_e( 'Privacidade', 'apollo-events' ); ?></label>
@@ -645,20 +662,43 @@ final class Metabox {
 			}
 		}
 
-		// ─ Banner / featured (must stay equal)
-		if ( isset( $_POST['_event_banner'] ) ) {
-			$banner_raw = wp_unslash( $_POST['_event_banner'] );
+		// ─ Banner / featured (must stay equal). URL field wins when it is a
+		// new remote image; otherwise the attachment id from the Publish box.
+		$cover_url = isset( $_POST['_event_cover_url'] )
+			? esc_url_raw( wp_unslash( (string) $_POST['_event_cover_url'] ) )
+			: '';
+		$banner_raw = isset( $_POST['_event_banner'] )
+			? wp_unslash( $_POST['_event_banner'] )
+			: null;
+
+		if ( '' !== $cover_url || null !== $banner_raw ) {
+			$current_full = (string) ( get_the_post_thumbnail_url( $post_id, 'full' ) ?: '' );
+			$ref          = $banner_raw;
+
+			if ( '' !== $cover_url && $cover_url !== $current_full ) {
+				$from_url = attachment_url_to_postid( $cover_url );
+				$ref      = $from_url > 0 ? $from_url : $cover_url;
+			}
+
 			if ( function_exists( 'apollo_event_set_banner' ) ) {
-				\Apollo\Event\apollo_event_set_banner( $post_id, $banner_raw );
-			} else {
-				$bid = absint( $banner_raw );
-				update_post_meta( $post_id, '_event_banner', $bid );
-				if ( $bid > 0 ) {
-					set_post_thumbnail( $post_id, $bid );
-				} else {
-					delete_post_thumbnail( $post_id );
+				$result = \Apollo\Event\apollo_event_set_banner( $post_id, $ref );
+				if ( is_wp_error( $result ) ) {
+					add_filter(
+						'redirect_post_location',
+						static function ( string $location ) use ( $result ): string {
+							return add_query_arg(
+								'apollo_event_cover_err',
+								rawurlencode( $result->get_error_message() ),
+								$location
+							);
+						}
+					);
 				}
 			}
+		}
+
+		if ( function_exists( 'apollo_event_heal_cover' ) ) {
+			\apollo_event_heal_cover( $post_id );
 		}
 
 		// ─ Inteiros

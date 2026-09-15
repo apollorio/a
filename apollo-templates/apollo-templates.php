@@ -4,7 +4,7 @@
  * Plugin Name: Apollo Templates
  * Plugin URI: https://apollo.rio.br/plugins/apollo-templates
  * Description: Templates: Page builder canvas, calendar types (01, 02...), PWA templates, all template variations
- * Version: 1.5.3
+ * Version: 1.6.24
  * Author: Apollo::Rio
  * Author URI: https://apollo.rio.br
  * License: Proprietary
@@ -15,6 +15,38 @@
  * Network: false
  *
  * @package Apollo\Templates
+ */
+
+/*
+ * ARCH: apollo-templates / chrome e shell da pagina
+ * ARCH-MANUAL: escrito a mao (2026-09-09). Ver nota em apollo-core.
+ * Contrato completo: D:/dev/_cos/verify/MODULE-CONTRACT.md
+ *
+ * OWNER     apollo-templates   130 arquivos PHP, 28241 LOC
+ * BOOT      plugins_loaded:15 (:634) · template_redirect:10 (:452) ·
+ *           wp_enqueue_scripts:20 (:250) · wp_footer:5 (:288)
+ * RUNTIME   CPT/taxonomia/meta registrados por apollo-core (init:5)
+ * UI        DONO do chrome: apollo_plus_open() / apollo_plus_close()
+ *           (includes/apollo-plus-api.php) — ponto de entrada unico
+ * META      36 chaves tocadas
+ * REST      apollo/v1 — 6 rotas (5 publicas)
+ * REQUIRES  apollo-core
+ *
+ * NAO FACA
+ *   - emitir assets em apollo/canvas/before_close:20 ou
+ *     apollo/plus/before_close:20 sem verificar quem ja esta la.
+ *     includes/mobile-runtime.php:48-49 ocupa EXATAMENTE esse par de
+ *     hooks na MESMA prioridade que apollo-ui/includes/enqueue.php:155-156.
+ *     Dois donos no mesmo slot: hoje nao colidem porque o payload difere e
+ *     cada um tem o seu proprio ledger de idempotencia. Isso e um acidente
+ *     feliz, nao um desenho. Se acrescentar um terceiro, escolha outra
+ *     prioridade e diga porque.
+ *   - ressuscitar os dois caminhos legados de shell. A divergencia de tres
+ *     shells esta documentada em _inventory/registry/18-canvas-shell.json.
+ *   - registar CPT direto: apollo-core e o dono do init:5.
+ *   - gravar meta de outro dominio.
+ *
+ * VERIFICAR   node D:/dev/_cos/verify/plugin-audit.js
  */
 
 declare(strict_types=1);
@@ -43,8 +75,16 @@ if (! defined('ABSPATH')) {
    1.5.1 — Listing header block (includes/listing-header-api.php +
    template-parts/listing-header/): the approved lab "Header 02" (Kinetic Mask ·
    Apple) as a reusable, one-line archive header. First consumer is /eventos,
-   which retired its own .pev-masthead for it. */
-define('APOLLO_TEMPLATES_VERSION', '1.5.3');
+   which retired its own .pev-masthead for it.
+   1.5.6 — /casa diamond polish; 1.5.10 Classificados edge-to-edge: F-01 topbar via apollo-plus/topbar-styles,
+   content truth (marquee/Out Now/PT months), discreet Events toolbar,
+   harness green. 1.6.0 — mobile premium cells (supervisor/unlock/gestures).
+   1.6.3 — /casa canvas close emits mobile helpers; /anuncios CSP connector;
+   map tiles lazy; hero no longer hidden behind the CDN cascade.
+   1.6.4 — drop dead CDN forms.js + missing v2.webm (both 302 to /erro/404/).
+   1.6.7 — /casa footer flush: drop mobile translateY(32%) peek; soft desktop
+   height (min-height 280px, content-driven) so the band sits on the bottom. */
+define('APOLLO_TEMPLATES_VERSION', '1.6.24');
 define('APOLLO_TEMPLATES_FILE', __FILE__);
 define('APOLLO_TEMPLATES_DIR', plugin_dir_path(__FILE__));
 define('APOLLO_TEMPLATES_URL', plugin_dir_url(__FILE__));
@@ -142,10 +182,24 @@ if (file_exists(APOLLO_TEMPLATES_DIR . 'includes/pages.php')) {
 if (file_exists(APOLLO_TEMPLATES_DIR . 'includes/apollo-plus-api.php')) {
     require_once APOLLO_TEMPLATES_DIR . 'includes/apollo-plus-api.php';
 }
+/* Mobile premium stack — supervisor + unlock + gestures (plug-n-play cells).
+   Emits on apollo/plus/before_close; refine via apollo/mobile/cells filter. */
+if (file_exists(APOLLO_TEMPLATES_DIR . 'includes/mobile-runtime.php')) {
+    require_once APOLLO_TEMPLATES_DIR . 'includes/mobile-runtime.php';
+}
 /* Listing header block — apollo_listing_header(). Archive-screen chrome
    (month scrubber + search + filter) shared by every listing surface, mounted
    through apollo_plus_part() like the rest of the Apollo+ system. */
 if (file_exists(APOLLO_TEMPLATES_DIR . 'includes/listing-header-api.php')) {
+    /*
+     * Panel → Frontend derivation. Every editable field was declared twice —
+     * once as an admin panel schema, once as a frontend definition — and the two
+     * diverged in both directions (dj: 35 admin fields vs 14 frontend, including
+     * every social link the approved mockup renders). This fills the gaps from
+     * the panel schema instead of hand-writing 21 more definitions that would
+     * then need syncing forever. Additive at priority 20: hand-written always wins.
+     */
+    require_once APOLLO_TEMPLATES_DIR . 'includes/panel-to-frontend.php';
     require_once APOLLO_TEMPLATES_DIR . 'includes/listing-header-api.php';
 }
 /* Feed screen data providers (phase 001) — real WP data standing in for the
